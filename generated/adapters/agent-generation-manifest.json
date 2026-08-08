@@ -719,7 +719,7 @@
             "bootstrap-project-documentation",
             "route-documentation-work"
           ],
-          "sha256": "44e20d1fd39ba9ff98791aee7e11e806a14ea133241a2715aedb8bf004bf44e1",
+          "sha256": "2048636c940e8cce9af9c6a30181ead9549d02389e3f3c76876480a6dafb603b",
           "source": "agents/roles/project-setup/project-bootstrapper.role.yaml"
         },
         {
@@ -1823,7 +1823,7 @@
             "route-documentation-work",
             "codex-harness-directives"
           ],
-          "sha256": "41f70b4b1cac78f32c141215e8475100093937483670c09c345b8794b5a3c51d",
+          "sha256": "0a1b92f197edb6cad16ee5f6a3cfaa8b8439895d2976fc6ba39e44957bf8279b",
           "source": "agents/roles/project-setup/project-bootstrapper.role.yaml"
         },
         {
@@ -2949,7 +2949,7 @@
             "bootstrap-project-documentation",
             "route-documentation-work"
           ],
-          "sha256": "b604124247d1f5e6577d84bb4c0af99d8427b6b641ebfc9e955d3ca3d733f088",
+          "sha256": "4c0289fc9dc2a75d5b1ce01e5e53673a0320e0eb43cf0db623772440871c4d25",
           "source": "agents/roles/project-setup/project-bootstrapper.role.yaml"
         },
         {
@@ -4075,7 +4075,7 @@
             "bootstrap-project-documentation",
             "route-documentation-work"
           ],
-          "sha256": "1e6d65e7aa5fef60b4069d377712d2a325a7d323ad26516fbe150e6b90edf24f",
+          "sha256": "68c011c4d93bbeffbe293dfd296a31ff7c638f5cc16b4f688a294a8bd293fcdd",
           "source": "agents/roles/project-setup/project-bootstrapper.role.yaml"
         },
         {

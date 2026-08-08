@@ -4,6 +4,23 @@ description: Use when an event in this skill requires temporary protection for a
 metadata:
   category: development-practice
 ---
+<!--
+Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+Artifact-ID: be32b4bc-43bb-437f-8941-40671f28c7bd
+Created-UTC: historical-unknown
+Creating-Agent: historical-unknown
+Runtime: historical-unknown
+Dispatched-Model: historical-unknown
+Reasoning-Effort: historical-unknown
+Task-ID: historical-unknown
+Artifact-ID-Evidence: migration-assigned
+Created-UTC-Evidence: historical-unknown
+Creating-Agent-Evidence: historical-unknown
+Runtime-Evidence: historical-unknown
+Dispatched-Model-Evidence: historical-unknown
+Reasoning-Effort-Evidence: historical-unknown
+Task-ID-Evidence: historical-unknown
+-->
 
 # Resource Claim
 
@@ -16,9 +33,23 @@ contents.
 
 Git provides one primary worktree for a repository. The primary worktree owns the backlog and the main branch. Other worktrees are private working copies.
 
+## Project Configuration Gate
+
+Before loading a claim helper or reading claim state, require a valid PROJECT.yaml at the repository root that explicitly selects resource-claim.
+
+When the root file is absent, resource coordination is NOT_APPLICABLE. Do not load or invoke resource-claim-helper, a configured resource-claim-helper-* Provider Skill, or a claim registry. Do not read claim state, create claim state, or mutate claim state.
+
+When the root file is valid and selects none, resource coordination is also NOT_APPLICABLE. Keep the helper and claim state untouched.
+
+When the root file exists but fails its applicable validation gate, stop with the validation failure. Do not load a helper or access claim state.
+
+The missing-file fallback establishes only the effective SOLO coordination mode. It does not select a Persistence or Commit default. This resource-coordination gate does not disable an explicitly selected Persistence or Commit Provider Skill; those provider families remain governed by their independent selectors.
+
+A valid explicit resource-claim selection replaces the fallback. Preserve all configured claim events, helper behavior, deadlines, and stored state on that path.
+
 ## Coordinate Shared Resource
 
-Use the Claim Events table to decide whether work requires temporary ownership. If a row matches, use its scope and release boundary, then apply the resource-claim-helper operation contract through the configured Provider Skill. If no row matches, continue without acquiring a claim.
+Use the Claim Events table to decide whether work requires temporary ownership. If a row matches, use its scope and release boundary, then apply the resource-claim-helper operation contract through the configured resource-claim-helper-* Provider Skill. If no row matches, continue without acquiring a claim.
 
 This skill owns claim policy. resource-claim-helper owns the common operation, input, result, and uncertain-outcome contract. The selected resource-claim-helper-* Provider Skill explains only how to invoke that contract.
 

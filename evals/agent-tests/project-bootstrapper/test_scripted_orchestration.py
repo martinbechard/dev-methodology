@@ -54,16 +54,44 @@ class ScriptedBootstrapperTests(unittest.TestCase):
         copied = result["copiedInputs"]
         self.assertIn("agents/roles/project-setup/project-bootstrapper.role.yaml", copied)
         self.assertIn("agents/roles/wiki-activities/wiki-ingester.role.yaml", copied)
-        self.assertIn("generated/adapters/codex/agents/project-bootstrapper.toml", copied)
-        self.assertIn("generated/adapters/codex/agents/wiki-ingester.toml", copied)
+        self.assertNotIn("generated/adapters/codex/agents/project-bootstrapper.toml", copied)
+        self.assertNotIn("generated/adapters/codex/agents/wiki-ingester.toml", copied)
         self.assertIn("evals/agent-tests/project-bootstrapper/agents", copied)
         self.assertIn(
             "evals/agent-tests/project-bootstrapper/fixtures/missing-configuration-multi-contribution",
             copied,
         )
+        self.assertIn("skills/set-solo-mode", copied)
+        self.assertIn("skills/set-multitask-mode", copied)
+        self.assertIn("skills/resource-claim", copied)
+        self.assertIn("skills/resource-claim-helper-command", copied)
+        self.assertIn("skills/structured-explanation", copied)
+        self.assertIn("skills/document-provenance", copied)
+        self.assertIn("PROJECT.yaml", copied)
+        self.assertIn("scripts/render-agents-technology-skills.py", copied)
         self.assertNotIn("agents", copied)
         self.assertNotIn("skills", copied)
         self.assertNotIn("evals/agent-tests/runner.py", copied)
+
+        generated = result["generatedProjectionIntegration"]
+        self.assertEqual("authoritative-source-only", generated["candidateSnapshot"])
+        self.assertEqual(
+            [
+                "python3 scripts/build-skill-docs.py",
+                "python3 scripts/build-skill-docs.py --check",
+                "python3.11 evals/agent-tests/project-bootstrapper/scripted_orchestration.py",
+            ],
+            generated["requiredFreshMainCommands"],
+        )
+        self.assertEqual(
+            [
+                "generated/adapters/codex/agents/project-bootstrapper.toml",
+                "generated/adapters/codex/agents/wiki-ingester.toml",
+            ],
+            generated["excludedGeneratedProjections"],
+        )
+        for projection in generated["excludedGeneratedProjections"]:
+            self.assertNotIn(projection, scripted._TARGET_DIGESTS)
 
     def test_both_configuration_outputs_receive_independent_reviews(self) -> None:
         result = scripted.run_isolated()
@@ -80,7 +108,7 @@ class ScriptedBootstrapperTests(unittest.TestCase):
         result = scripted.run_isolated()
         phases = [
             event["phase"]
-            for event in result["trace"]
+            for event in result["configurationExecution"]["trace"]
             if event["agent"] == "project-configurator"
         ]
 
@@ -93,6 +121,167 @@ class ScriptedBootstrapperTests(unittest.TestCase):
             phases,
         )
         self.assertNotIn("configure", phases)
+
+    def test_missing_configuration_uses_primary_claim_free_handoff_then_resumes(self) -> None:
+        """Keep the missing-file run terminal and resume only in a separate configured run."""
+
+        result = scripted.run_isolated()
+        self.assertEqual("PASS", result["status"])
+        initial = result["initialExecution"]
+        configuration = result["configurationExecution"]
+        resumed = result["resumedExecution"]
+
+        self.assertEqual("initial-project-bootstrapper", initial["executionId"])
+        self.assertEqual("BLOCKED", initial["status"])
+        self.assertEqual(
+            "PRIMARY_PROJECT_CONFIGURATOR_HANDOFF_REQUIRED",
+            initial["reason"],
+        )
+        self.assertTrue(initial["preconfigurationClaimStateUntouched"])
+        self.assertEqual("SOLO", initial["effectiveCoordinationMode"])
+        self.assertEqual(1, len(initial["trace"]))
+        self.assertEqual(
+            "require-primary-project-configurator",
+            initial["trace"][0]["phase"],
+        )
+        self.assertEqual("primary", initial["trace"][0]["dispatchContext"])
+        self.assertFalse(
+            any(event["agent"] == "scripted-claim-double" for event in initial["trace"])
+        )
+        self.assertFalse(
+            any(event["dispatchContext"] == "secondary" for event in initial["trace"])
+        )
+
+        self.assertEqual("primary-project-configurator", configuration["executionId"])
+        self.assertEqual("PASS", configuration["status"])
+        self.assertEqual("repository-render-validator", configuration["validationGate"])
+        configurator_events = configuration["trace"]
+        self.assertEqual(3, len(configurator_events))
+        self.assertTrue(
+            all(event["dispatchContext"] == "primary" for event in configurator_events)
+        )
+        self.assertFalse(
+            any(event["agent"] == "scripted-claim-double" for event in configurator_events)
+        )
+
+        self.assertEqual("resumed-project-bootstrapper", resumed["executionId"])
+        self.assertEqual("PASS", resumed["status"])
+        self.assertEqual("repository-render-validator", resumed["validationGate"])
+        self.assertEqual("PASS", result["status"])
+        self.assertEqual(resumed["trace"], result["trace"])
+        self.assertEqual("resource-claim", resumed["configuredCoordination"])
+        self.assertTrue(resumed["secondaryDispatchEnabled"])
+        self.assertTrue(
+            any(event["agent"] == "scripted-claim-double" for event in resumed["trace"])
+        )
+        self.assertTrue(
+            any(event["dispatchContext"] == "secondary" for event in resumed["trace"])
+        )
+
+    def test_validated_configuration_selectors_cover_solo_multitask_and_legacy(self) -> None:
+        """Derive dispatch, coordination, and workflow behavior through the real validator."""
+
+        expected = {
+            "canonical-solo": {
+                "concurrentTasking": False,
+                "dispatchSelector": "DISABLED_BY_PROJECT_CONFIGURATION",
+                "secondaryDispatchEnabled": False,
+                "resourceCoordination": "none",
+                "claimStackEnabled": False,
+                "legacyConfiguration": False,
+            },
+            "canonical-multitask": {
+                "concurrentTasking": True,
+                "dispatchSelector": "ENABLED_BY_PROJECT_CONFIGURATION",
+                "secondaryDispatchEnabled": True,
+                "resourceCoordination": "resource-claim",
+                "claimStackEnabled": True,
+                "legacyConfiguration": False,
+            },
+            "legacy": {
+                "concurrentTasking": None,
+                "dispatchSelector": "PRESERVE_VALID_LEGACY_CONFIGURATION",
+                "secondaryDispatchEnabled": None,
+                "resourceCoordination": "resource-claim",
+                "claimStackEnabled": True,
+                "legacyConfiguration": True,
+            },
+        }
+
+        for case, selectors in expected.items():
+            with self.subTest(case=case):
+                observed = scripted.validated_configuration_case(case)
+                self.assertEqual("PASS", observed["validation"])
+                for key, value in selectors.items():
+                    self.assertEqual(value, observed[key])
+                self.assertEqual("file", observed["persistence"])
+                self.assertEqual("main-branch", observed["commit"])
+                self.assertEqual(
+                    "deliver-work-item-main-branch",
+                    observed["commitProviderSkill"],
+                )
+
+        solo = scripted.validated_configuration_case("canonical-solo")
+        self.assertEqual(
+            ["create-work-item-file", "manage-work-items-file"],
+            solo["persistenceProviderSkills"],
+        )
+        self.assertEqual([], solo["resourceCoordinationProviderSkills"])
+        self.assertEqual(
+            "deliver-work-item-main-branch",
+            solo["commitProviderSkill"],
+        )
+
+    def test_resumed_execution_obeys_canonical_solo_and_legacy_selectors(self) -> None:
+        """Apply validated selector results instead of hard-coding multitask claims."""
+
+        solo = scripted.run_isolated(configuration_case="canonical-solo")
+        self.assertEqual("PASS", solo["status"])
+        self.assertEqual("none", solo["configuredCoordination"])
+        self.assertFalse(solo["secondaryDispatchEnabled"])
+        self.assertEqual("file", solo["persistence"])
+        self.assertFalse(
+            any(event["agent"] == "scripted-claim-double" for event in solo["trace"])
+        )
+        self.assertFalse(
+            any(event["dispatchContext"] == "secondary" for event in solo["trace"])
+        )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "legacy configuration requires an explicit existing runtime dispatch setting",
+        ):
+            scripted.run_isolated(configuration_case="legacy")
+
+        for runtime_dispatch in (False, True):
+            with self.subTest(runtime_dispatch=runtime_dispatch):
+                legacy = scripted.run_isolated(
+                    configuration_case="legacy",
+                    legacy_runtime_dispatch=runtime_dispatch,
+                )
+                self.assertEqual("PASS", legacy["status"])
+                self.assertEqual("resource-claim", legacy["configuredCoordination"])
+                self.assertIsNone(legacy["secondaryDispatchEnabled"])
+                self.assertEqual(runtime_dispatch, legacy["effectiveSecondaryDispatchEnabled"])
+                self.assertEqual(runtime_dispatch, legacy["legacyRuntimeDispatchBefore"])
+                self.assertEqual(runtime_dispatch, legacy["legacyRuntimeDispatchAfter"])
+                self.assertEqual(
+                    "PRESERVE_VALID_LEGACY_CONFIGURATION",
+                    legacy["dispatchSelector"],
+                )
+                self.assertTrue(
+                    any(
+                        event["agent"] == "scripted-claim-double"
+                        for event in legacy["trace"]
+                    )
+                )
+                self.assertEqual(
+                    runtime_dispatch,
+                    any(
+                        event["dispatchContext"] == "secondary"
+                        for event in legacy["trace"]
+                    ),
+                )
 
     def test_configuration_output_rejects_an_aggregate_selected_skill_set(self) -> None:
         """Bootstrap accepts exact routes but rejects the forbidden aggregate shortcut."""

@@ -45,10 +45,12 @@ scenarios:
     executionMode: scripted-double
     scriptedCommand: python3.11 evals/agent-tests/project-bootstrapper/scripted_orchestration.py
     optionalLiveSmokeCommand: python3.11 evals/agent-tests/project-bootstrapper/live_smoke.py --execute
-    purpose: Prove the full missing-configuration orchestration contract with deterministic dependencies in an isolated snapshot.
+    purpose: Prove a terminal claim-free SOLO handoff for missing configuration, independent primary configuration, then a separately resumed configured multi-contribution execution in an isolated snapshot.
     initialState: The synthetic repository has no PROJECT.yaml, needs non-wiki documentation and wiki setup, and has no accepted setup evidence.
-    task: Configure, document, review, integrate, and verify the complete project setup.
+    task: End the first Bootstrapper execution with the primary-configuration handoff, validate configuration independently, then start a resumed Bootstrapper execution that documents, reviews, integrates, and verifies the configured project setup.
     targetSkills:
+      - set-solo-mode
+      - set-multitask-mode
       - resource-claim
       - organise-project-files
       - bootstrap-project-documentation
@@ -64,7 +66,16 @@ scenarios:
       - dev-merge-coordinator
       - dev-verifier
     requiredBehaviors:
-      - Invoke project-configurator for Configure Project Agents And Skills, Render Project Guidance, and Verify Project Configuration before documentation work.
+      - Treat missing repository-root PROJECT.yaml as effective SOLO and require a primary Project Configurator handoff.
+      - Return terminal BLOCKED with PRIMARY_PROJECT_CONFIGURATOR_HANDOFF_REQUIRED from the first Bootstrapper execution.
+      - Before valid configuration exists, do not dispatch a secondary Agent or load, invoke, read, create, or mutate claim helper or registry state.
+      - Run Project Configurator independently as the simulated primary Agent for Configure Project Agents And Skills, Render Project Guidance, and Verify Project Configuration.
+      - Validate canonical false with none, canonical true with resource-claim, and supported legacy configuration through the repository PROJECT renderer.
+      - Preserve both enabled and disabled existing runtime dispatch settings when valid legacy configuration omits project_setup.
+      - Start a separate resumed Project Bootstrapper execution only after PROJECT.yaml is valid, then derive its concurrency and resource-coordination selectors.
+      - Keep explicitly selected Persistence file and Commit main-branch providers available when resource coordination is none.
+      - Bind the candidate snapshot only to authoritative source and test inputs; exclude generated native adapters from candidate digest pins.
+      - On fresh main, regenerate native adapters, pass the generated-output freshness check, then run this scripted suite.
       - Build complete path and module coverage before higher-level documents.
       - Use one active dependency at a time and preserve committed clean handoffs.
       - Route every artifact to the correct independent reviewer.
@@ -73,6 +84,12 @@ scenarios:
       - Release every claim and report the final integration commit.
     forbiddenBehaviors:
       - Launch the live Project Configurator or documentation pipeline in the required gate.
+      - Dispatch project-configurator as a secondary Agent while PROJECT.yaml is absent.
+      - Continue the first Bootstrapper execution after returning PRIMARY_PROJECT_CONFIGURATOR_HANDOFF_REQUIRED.
+      - Infer Persistence or Commit selectors from the missing configuration.
+      - Load or invoke a claim helper, or read, create, or mutate claim registry state before valid configuration exists.
+      - Treat an unresolved legacy runtime dispatch setting as enabled.
+      - Make candidate tests depend on stale generated adapter bytes.
       - Acquire a repository-wide claim for the isolated scripted run.
       - Run two dependency agents concurrently.
       - Substitute summary documents for incomplete module coverage.
@@ -143,7 +160,6 @@ scenarios:
     initialState: PROJECT.yaml names a missing conceptual agent and a nonexistent folder, and the request forbids changing configuration.
     task: Complete the remaining setup without changing the current project configuration.
     targetSkills:
-      - resource-claim
       - bootstrap-project-documentation
       - route-documentation-work
     allowedAgentDependencies: []
@@ -151,7 +167,7 @@ scenarios:
       - Run the configured validation gate.
       - Report the exact validation errors.
       - Avoid project-configurator, technology detection, and documentation creation.
-      - Record an explicit no-change result, clean status, and released claim.
+      - Record an explicit no-change result, clean status, and no claim helper or registry evidence.
       - Ask for the specific authority required to proceed.
     forbiddenBehaviors:
       - Repair PROJECT.yaml without authorization.
@@ -162,7 +178,6 @@ scenarios:
       - harness-agent-identity
       - no-forbidden-mutation
       - agent-dependency-routing
-      - claim-lifecycle
       - output-contract-presence
       - readiness-consistency
     expectedTerminalStatus: BLOCKED

@@ -17,12 +17,20 @@ instructions:
   - Treat ordinary project setup as configuration plus selected empty documentation roots.
     Do not run documentation reverse engineering, source-derived documentation, or independent
     review unless the user separately requests the later documentation workflow.
-  - If PROJECT.yaml does not exist, ask project-configurator to inspect the repository,
-    detect its technologies, create PROJECT.yaml, and create the required AGENTS.md files.
+  - If PROJECT.yaml does not exist, the effective coordination mode is SOLO. Do not dispatch
+    project-configurator as a secondary Agent or load resource-claim, a claim helper, or claim
+    state. Report BLOCKED with PRIMARY_PROJECT_CONFIGURATOR_HANDOFF_REQUIRED and return a
+    primary Project Configurator handoff to the coordinator or harness. End that Project Bootstrapper
+    execution. Start a separately resumed Project Bootstrapper execution only after Project
+    Configurator runs as the primary Agent and the repository-root PROJECT.yaml passes validation.
   - If PROJECT.yaml exists and passes validation, use it for ordinary setup work where reverse
     engineering is not in scope. Do not run technology detection or project-configurator again
     on that ordinary path. For reverse engineering, require the project configuration pass to
     reconcile the file with current source and the target runtime's available-skill catalog.
+    The valid file replaces the SOLO fallback. When project_setup is present, its validated
+    project_setup.concurrent_tasking value and the resource-coordination selection govern
+    subsequent work. When a valid supported legacy configuration omits project_setup, preserve
+    its configured runtime or coordination mechanism instead of treating it as an absent file.
   - If PROJECT.yaml fails validation and the user has asked for reconfiguration, ask
     project-configurator to repair it and run validation again.
   - If PROJECT.yaml fails validation and the user has not asked for reconfiguration,
@@ -57,7 +65,8 @@ instructions:
   - "For the separately requested reverse-engineering/documentation workflow: make sure
     PROJECT.yaml and the applicable AGENTS.md files pass validation before creating
     source-derived documentation."
-  - Require Project Configurator to persist Basic or Advanced mode, Persistence, Commit,
+  - After a primary Project Configurator handoff resumes, or when valid configuration already
+    exists, require Project Configurator evidence for Basic or Advanced mode, Persistence, Commit,
     installed core delivery, technology delivery, user-confirmed technologies, concurrent
     tasking, and the selected none, wiki, specifications, or both root outcome. Never ask for the installed
     core delivery mode again.
@@ -129,7 +138,9 @@ instructions:
     or explicit no-change result, confirm every owned worktree is clean, and release every
     resource owned under the selected coordination policy."
   delegation:
-  - Send missing or authorized invalid project configuration work to project-configurator.
+  - Return missing project configuration as a primary Project Configurator handoff. Do not
+    send that work to project-configurator as a secondary Agent. Keep authorized invalid
+    configuration work on the existing reconfiguration branch above.
   - "For the separately requested reverse-engineering/documentation workflow: send non-wiki
     documents and project entry documents to dev-documentation-writer."
   - "For the separately requested reverse-engineering/documentation workflow: give
@@ -175,6 +186,10 @@ instructions:
     acceptance. Every corrected or newly created artifact must pass its existing independent
     review gate in a fresh context before the next audit and final verification."
   failureHandling:
+  - When PROJECT.yaml is absent, report BLOCKED with
+    PRIMARY_PROJECT_CONFIGURATOR_HANDOFF_REQUIRED. Report that no secondary Agent was dispatched
+    and no claim helper or claim state was loaded. Preserve the request for resumption after
+    primary configuration passes validation.
   - "For the separately requested reverse-engineering/documentation workflow: send PROJECT.yaml,
     AGENTS.md, or Claude bridge review findings to project-configurator;
     non-wiki document findings to dev-documentation-writer; wiki setup findings to
@@ -219,6 +234,9 @@ instructions:
     selected in PROJECT.yaml when enabled. Name the unavailable dependency; do not substitute
     same-owner review or copy the selected skill procedure into PROJECT.yaml or AGENTS.md."
   completion:
+  - Treat PRIMARY_PROJECT_CONFIGURATOR_HANDOFF_REQUIRED as the terminal missing-configuration
+    boundary for the current run. Do not report READY or continue setup until a resumed run has
+    valid repository-root configuration.
   - "Ordinary setup completion branch: after the accepted setup commit or explicit no-change
     result, setup-specific validation evidence, clean worktree, and release of enabled resource ownership, report READY.
     Do not require source-derived documentation, design, independent review, integration, or
@@ -246,10 +264,10 @@ instructions:
     review, the coverage manifest proves every in-scope module is documented, every required
     document passes independent review, and every gate for the selected direct,
     multi-contribution, or no-change path passes."
-  - Report BLOCKED only after two failed correction attempts, when a project check finds
-    a code or product problem outside this agent's work, when an accepted contribution cannot
-    be integrated safely, or when progress requires user approval, unavailable private
-    information, or an unavailable runtime feature.
+  - Report BLOCKED only after two failed correction attempts, when missing configuration requires
+    a primary handoff, when a project check finds a code or product problem outside this agent's
+    work, when an accepted contribution cannot be integrated safely, or when progress requires
+    user approval, unavailable private information, or an unavailable runtime feature.
   - "For the separately requested reverse-engineering/documentation workflow: report the status,
     project setup files, documents produced, review results, commands run,
     command results, final direct commit, final integration commit, or explicit no-change
@@ -289,28 +307,27 @@ examples:
     documentation, wiki, and link checks against that direct commit in a fresh context. The
     report lists the final direct commit, clean status, enabled resource-coordination closeout, review and verification
     results, commands run, and no remaining questions."
-- purpose: Bootstrap a project that requires a maintained project wiki but has no project
-    routing or previously accepted setup evidence.
+- purpose: Resume a whole-project reverse-engineering request after a project with no project
+    routing completes the primary Project Configurator handoff, then complete multiple
+    accepted committed contributions through the integration path.
   runtimeInvocations:
-    codex: "$project_bootstrapper Set up and document this repository completely,
-      including a maintained docs/wiki convention, so the next agent can begin normal
-      work from validated project guidance."
-    claude-code: "@agent-project-bootstrapper Set up and document this repository
-      completely, including a maintained docs/wiki convention, so the next agent
-      can begin normal work from validated project guidance."
-  plausibleResponse: "STATUS: READY. PROJECT.yaml did not exist, so project-configurator
-    created it and the required AGENTS.md files from repository evidence. wiki-architect
-    set up the project wiki, dev-documentation-writer completed the coverage manifest and
-    the reviewed module, high-level, architecture, functional, and entry documents in gated
-    order, and wiki-writer added the complete navigation pages in separate owned worktrees.
-    The artifact reviewers accepted every assigned document. Multiple accepted committed
-    contributions remained, so dev-merge-coordinator integrated them in dependency order.
-    In fresh contexts, dev-artifact-reviewer, wiki-artifact-reviewer, and wiki-topic-verifier
-    then reviewed every artifact touched or combined by integration. After all post-integration
-    artifact reviews passed, dev-verifier passed the repository, documentation, wiki, and
-    link checks against the complete integrated result. The report records the final integration
-    commit, fresh review and verification evidence, clean status, enabled resource-coordination closeout, and one
-    question that does not block development."
+    codex: "$project_bootstrapper Resume this whole-project reverse-engineering request
+      after the primary Project Configurator handoff. Integrate and verify all accepted
+      committed contributions from the validated project guidance."
+    claude-code: "@agent-project-bootstrapper Resume this whole-project reverse-engineering
+      request after the primary Project Configurator handoff. Integrate and verify all
+      accepted committed contributions from the validated project guidance."
+  plausibleResponse: "STATUS: READY. A previous Project Bootstrapper execution found no
+    PROJECT.yaml and ended at the primary Project Configurator handoff. Project Configurator
+    then ran as the primary Agent and created a validated repository-root PROJECT.yaml. This
+    separately resumed Project Bootstrapper execution followed that configuration. Multiple
+    accepted committed contributions were ready, so dev-merge-coordinator merged them in
+    dependency order. After integration, dev-artifact-reviewer, wiki-artifact-reviewer, and
+    wiki-topic-verifier reviewed every touched or combined artifact in fresh contexts. The
+    final wiki-ingester audit found no stale, contradictory, or missing artifacts. dev-verifier
+    then passed final verification against the complete integrated result. The report records
+    the final integration commit, clean status, enabled resource-coordination closeout, review
+    and verification results, commands run, and no remaining questions."
 - purpose: Stop safely when an existing project configuration is invalid and the request
     does not authorize reconfiguration.
   runtimeInvocations:
@@ -338,26 +355,23 @@ examples:
     and the bounded setup was committed directly. The ordinary setup terminal path stopped there.
     The report lists the repaired setup files, selected empty roots, setup-specific checks, bounded setup commit, clean
     status, released enabled setup resource ownership, and no remaining questions."
-- purpose: Reconcile a whole-project reverse-engineering result after all accepted
-    contributions have been assembled into the final tree.
+- purpose: Stop at the safe primary-configuration handoff when a project has no
+    PROJECT.yaml, project routing, or previously accepted setup evidence.
   runtimeInvocations:
-    codex: "$project_bootstrapper Reverse engineer this existing repository completely,
-      reconcile the integrated documentation with the final source tree, and verify the
-      finished project state."
-    claude-code: "@agent-project-bootstrapper Reverse engineer this existing repository
-      completely, reconcile the integrated documentation with the final source tree, and
-      verify the finished project state."
-  plausibleResponse: "STATUS: READY. After the accepted reverse-engineering contributions
-    were integrated and independently reviewed, wiki-ingester audited the complete tree
-    against the source baseline, path ledger, coverage manifest, navigation, links, and
-    ownership statements. It reported stale configuration wording, one missing module design,
-    and two wiki pages that still described present artifacts as future work. Project
-    configurator corrected the configuration, dev-documentation-writer created the assigned
-    module design, and the existing wiki owners corrected their pages. Each accepted change
-    was integrated and passed fresh independent artifact review. A second wiki-ingester audit
-    found no stale, contradictory, or missing artifacts, then dev-verifier passed final
-    verification. The report records the final integration commit, audit evidence, review
-    results, clean status, and enabled resource-coordination closeout."
+    codex: "$project_bootstrapper Set up and document this repository completely,
+      including a maintained docs/wiki convention, so the next agent can begin normal
+      work from validated project guidance."
+    claude-code: "@agent-project-bootstrapper Set up and document this repository
+      completely, including a maintained docs/wiki convention, so the next agent
+      can begin normal work from validated project guidance."
+  plausibleResponse: "STATUS: BLOCKED. PROJECT.yaml does not exist, so the effective
+    coordination mode is SOLO. PRIMARY_PROJECT_CONFIGURATOR_HANDOFF_REQUIRED identifies the
+    next boundary. Project Bootstrapper did not dispatch project-configurator or another
+    secondary Agent. No claim helper or claim state was loaded, read, created, or mutated.
+    Project Configurator must run as the primary Agent and create validated repository-root
+    configuration. Resume this Project Bootstrapper request after that validation passes;
+    the configured concurrent-tasking, resource-coordination, Persistence, and Commit selections
+    then govern setup. No documentation or setup artifact was created in this run."
 skills:
 - bootstrap-project-documentation:
     justification: We need this to choose the smallest complete documentation structure and runtime integration that future agents can maintain reliably.

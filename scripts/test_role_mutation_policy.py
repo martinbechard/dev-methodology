@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Generated with AI assistance.
-# Summary: Verifies mutation policy plus selectable resource coordination in project configuration.
+# Summary: Verifies mutation policy, safe solo fallback, and selectable resource coordination.
 
 from __future__ import annotations
 
@@ -23,6 +23,12 @@ PROJECT_CONFIGURATION_SKILL = ROOT / "skills" / "create-project-configuration" /
 FEATURE_BRANCH_SKILL = ROOT / "skills" / "deliver-work-item-feature-branch" / "SKILL.md"
 MAIN_BRANCH_SKILL = ROOT / "skills" / "deliver-work-item-main-branch" / "SKILL.md"
 WORK_MERGE_SKILL = ROOT / "skills" / "integrate-agent-work" / "SKILL.md"
+SOLO_MODE_SKILL = ROOT / "skills" / "set-solo-mode" / "SKILL.md"
+MULTITASK_MODE_SKILL = ROOT / "skills" / "set-multitask-mode" / "SKILL.md"
+RESOURCE_CLAIM_SKILL = ROOT / "skills" / "resource-claim" / "SKILL.md"
+PROJECT_BOOTSTRAPPER_ROLE = (
+    ROOT / "agents" / "roles" / "project-setup" / "project-bootstrapper.role.yaml"
+)
 EXECUTE_WORKITEM_PACKAGE = ROOT / "skills" / "execute-workitem"
 README = ROOT / "README.md"
 ORCHESTRATED_LIFECYCLE = ROOT / "design" / "orchestrated-development-lifecycle.html"
@@ -34,6 +40,11 @@ RETIRED_UNCONDITIONAL_CLAIM_PHRASES = (
     "six five-minute retries",
     "thirty-minute retry window",
 )
+HISTORICAL_SKILL_ARTIFACT_IDS = {
+    SOLO_MODE_SKILL: "792d36e6-5b37-4351-aeee-709c24a49ea1",
+    MULTITASK_MODE_SKILL: "e8edc1ee-3dd9-4a6e-9925-32185f02f513",
+    RESOURCE_CLAIM_SKILL: "be32b4bc-43bb-437f-8941-40671f28c7bd",
+}
 
 
 def _load_build_skill_docs():
@@ -280,6 +291,151 @@ class RoleMutationPolicyTests(unittest.TestCase):
         self.assertIn("Load resource-claim only through resource_coordination", skill_text)
         self.assertIn("Verify exactly one resource-claim-helper-command or resource-claim-helper-mcp Provider Skill against resource-claim-helper", skill_text)
         self.assertIn("Generated AGENTS.md references resource-claim and includes only the selected claim helper's instructions", skill_text)
+
+    def test_missing_project_configuration_defaults_to_solo_and_can_transition(self) -> None:
+        """Keep absent configuration safe without overriding later explicit configuration."""
+
+        solo = SOLO_MODE_SKILL.read_text(encoding="utf-8")
+        multitask = MULTITASK_MODE_SKILL.read_text(encoding="utf-8")
+
+        self.assertIn(
+            "When PROJECT.yaml is absent from the repository root, the effective coordination mode is SOLO.",
+            solo,
+        )
+        self.assertIn(
+            "Do not inspect or change a secondary-thread dispatch mechanism for this fallback.",
+            solo,
+        )
+        self.assertIn("The current Agent continues the work itself.", solo)
+        self.assertIn(
+            "When PROJECT.yaml is absent from the repository root, do not enable secondary-thread dispatch.",
+            multitask,
+        )
+        for text in (solo, multitask):
+            self.assertIn(
+                "A valid repository-root PROJECT.yaml replaces this fallback",
+                text,
+            )
+            self.assertIn(
+                "Persistence and Commit selectors remain independent",
+                text,
+            )
+            self.assertIn("project_setup.concurrent_tasking", text)
+            self.assertIn("valid legacy configuration", text)
+
+        self.assertIn(
+            "When project_setup.concurrent_tasking is false, keep secondary-thread dispatch disabled",
+            solo,
+        )
+        self.assertIn(
+            "When project_setup.concurrent_tasking is true, temporarily disable",
+            solo,
+        )
+        self.assertIn(
+            "When project_setup.concurrent_tasking is false, do not enable secondary-thread dispatch",
+            multitask,
+        )
+        self.assertIn(
+            "When project_setup.concurrent_tasking is true, enable",
+            multitask,
+        )
+
+    def test_corrected_skills_have_bounded_historical_provenance(self) -> None:
+        """Keep migration provenance immediately after front matter without invented runtime data."""
+
+        for path, artifact_id in HISTORICAL_SKILL_ARTIFACT_IDS.items():
+            with self.subTest(path=path.relative_to(ROOT).as_posix()):
+                text = path.read_text(encoding="utf-8")
+                closing_frontmatter = text.index("\n---\n", len("---\n")) + len("\n---\n")
+                provenance_start = text.index("<!--\n", closing_frontmatter)
+                self.assertEqual(closing_frontmatter, provenance_start)
+                provenance_end = text.index("-->\n", provenance_start) + len("-->\n")
+                provenance = text[provenance_start:provenance_end]
+                self.assertIn(
+                    "Copyright (c) 2026 Martin.Bechard@DevConsult.ca",
+                    provenance,
+                )
+                self.assertIn(f"Artifact-ID: {artifact_id}", provenance)
+                self.assertIn("Artifact-ID-Evidence: migration-assigned", provenance)
+                for field in (
+                    "Created-UTC",
+                    "Creating-Agent",
+                    "Runtime",
+                    "Dispatched-Model",
+                    "Reasoning-Effort",
+                    "Task-ID",
+                ):
+                    self.assertIn(f"{field}: historical-unknown", provenance)
+                    self.assertIn(f"{field}-Evidence: historical-unknown", provenance)
+
+    def test_unconfigured_project_never_loads_or_mutates_claim_state(self) -> None:
+        """Gate the complete claim stack on an explicit validated project selection."""
+
+        policy = RESOURCE_CLAIM_SKILL.read_text(encoding="utf-8")
+
+        self.assertIn(
+            "Before loading a claim helper or reading claim state, require a valid PROJECT.yaml at the repository root",
+            policy,
+        )
+        self.assertIn(
+            "explicitly selects resource-claim",
+            policy,
+        )
+        self.assertIn(
+            "When the root file is absent, resource coordination is NOT_APPLICABLE.",
+            policy,
+        )
+        for prohibited_action in (
+            "load or invoke resource-claim-helper",
+            "read claim state",
+            "create claim state",
+            "mutate claim state",
+        ):
+            with self.subTest(prohibited_action=prohibited_action):
+                self.assertIn(prohibited_action, policy)
+        self.assertIn(
+            "does not select a Persistence or Commit default",
+            policy,
+        )
+        self.assertIn(
+            "configured resource-claim-helper-* Provider Skill",
+            policy,
+        )
+        self.assertNotIn("through the configured Provider Skill", policy)
+        self.assertIn(
+            "does not disable an explicitly selected Persistence or Commit Provider Skill",
+            policy,
+        )
+
+    def test_bootstrapper_requires_primary_configurator_handoff_without_configuration(self) -> None:
+        """Prevent missing configuration from bypassing the effective SOLO boundary."""
+
+        role = yaml.safe_load(PROJECT_BOOTSTRAPPER_ROLE.read_text(encoding="utf-8"))
+        contract = yaml.safe_dump(
+            {
+                "instructions": role["instructions"],
+                "examples": role.get("examples", []),
+            },
+            sort_keys=False,
+        )
+        normalized_contract = " ".join(contract.split())
+
+        self.assertIn("effective coordination mode is SOLO", normalized_contract)
+        self.assertIn(
+            "Do not dispatch project-configurator as a secondary Agent",
+            normalized_contract,
+        )
+        self.assertIn("primary Project Configurator handoff", normalized_contract)
+        self.assertIn("End that Project Bootstrapper execution", normalized_contract)
+        self.assertIn("separately resumed Project Bootstrapper execution", normalized_contract)
+        self.assertIn("project_setup.concurrent_tasking", normalized_contract)
+        self.assertIn("supported legacy configuration", normalized_contract)
+        self.assertIn("only after Project Configurator runs as the primary Agent", normalized_contract)
+        self.assertIn(
+            "PRIMARY_PROJECT_CONFIGURATOR_HANDOFF_REQUIRED",
+            normalized_contract,
+        )
+        self.assertIn("No claim helper or claim state was loaded", normalized_contract)
 
     def test_role_schema_requires_repository_mutation(self) -> None:
         """Expose repository mutation as a required conceptual definition capability declaration."""

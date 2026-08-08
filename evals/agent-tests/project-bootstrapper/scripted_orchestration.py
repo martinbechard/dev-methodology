@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Generated with AI assistance.
-# Summary: Runs the multi-contribution Bootstrapper contract with deterministic scripted agents in a disposable workspace.
+# Summary: Runs the Bootstrapper primary-configuration handoff and configured multi-contribution contract with scripted agents.
 # Governing test plan: evals/agent-tests/project-bootstrapper/test_scripted_orchestration.py
 
 from __future__ import annotations
 
 import argparse
+import copy
 import hashlib
+import importlib.util
 import json
 import os
 import re
@@ -26,7 +28,17 @@ import yaml
 
 _SUITE_ROOT = Path(__file__).resolve().parent
 _REPOSITORY_ROOT = _SUITE_ROOT.parents[2]
+_PROJECT_VALIDATOR = Path("scripts/render-agents-technology-skills.py")
 _FIXTURE_NAME = "missing-configuration-multi-contribution"
+_EXCLUDED_GENERATED_PROJECTIONS = (
+    "generated/adapters/codex/agents/project-bootstrapper.toml",
+    "generated/adapters/codex/agents/wiki-ingester.toml",
+)
+_REQUIRED_FRESH_MAIN_COMMANDS = (
+    "python3 scripts/build-skill-docs.py",
+    "python3 scripts/build-skill-docs.py --check",
+    "python3.11 evals/agent-tests/project-bootstrapper/scripted_orchestration.py",
+)
 _TERMINAL_OUTCOMES = frozenset({"PASS", "FAIL", "BLOCKED", "NEEDS_CORRECTION"})
 _CONTRIBUTIONS = (
     ("dev-documentation-writer", "docs/coverage-manifest.yaml"),
@@ -54,17 +66,20 @@ _PRODUCERS = {
     **{artifact: producer for producer, artifact in _CONTRIBUTIONS},
 }
 _TARGET_DIGESTS = {
-    "agents/roles/project-setup/project-bootstrapper.role.yaml": (
-        "780bf4b01eacc535676697073d3ca1ede58cf132c841617c1a701ff8a6edb29b"
+    "skills/set-solo-mode/SKILL.md": (
+        "b6e42ec9af9396234c2301bc81fe63207d102527fe80d19c9d172cf0ef476d00"
     ),
-    "generated/adapters/codex/agents/project-bootstrapper.toml": (
-        "92fda48e1e69cb1bb0194b1259857976ac6c34586e0c96214b0ddfd882b18d8c"
+    "skills/set-multitask-mode/SKILL.md": (
+        "680ffc34f51f8e87b44ba8067e6734567cf5fa9ea8628e54438c255ba3159b25"
+    ),
+    "skills/resource-claim/SKILL.md": (
+        "bb8a4f5d6074128e20c595cc197a8a45b9a352e78de82df214901d484df91c49"
+    ),
+    "agents/roles/project-setup/project-bootstrapper.role.yaml": (
+        "f21f88f59e26237c206b3d730d2b7ce9897098686ea9fc6133715954b49b00f5"
     ),
     "agents/roles/wiki-activities/wiki-ingester.role.yaml": (
-        "8f6f1947076a7f8c66cff52e8eb555ce18c845ff82582ce13060a5a44fbd66b4"
-    ),
-    "generated/adapters/codex/agents/wiki-ingester.toml": (
-        "1fe6317f67e3595174c296cc263844de4ae3e75c4fbf8a70f6100b8d2a17ea0b"
+        "c704b0df2c9b08fdb38cc99dbdc970d41ad6265ecabc507b809b9a21617a96ba"
     ),
 }
 
@@ -114,6 +129,163 @@ def _evaluate_project_configuration_output(
     return "PASS"
 
 
+def _load_project_validator(repository_root: Path):
+    """Load the repository renderer that owns PROJECT.yaml validation."""
+
+    validator_path = repository_root / _PROJECT_VALIDATOR
+    specification = importlib.util.spec_from_file_location(
+        f"project_bootstrapper_configuration_validator_{id(repository_root)}",
+        validator_path,
+    )
+    if specification is None or specification.loader is None:
+        raise RuntimeError(f"Unable to load project validator: {validator_path}")
+    module = importlib.util.module_from_spec(specification)
+    sys.modules[specification.name] = module
+    specification.loader.exec_module(module)
+    return module
+
+
+def _configuration_case(case: str, repository_root: Path) -> dict[str, Any]:
+    """Build one canonical or supported legacy case from the repository configuration."""
+
+    project = yaml.safe_load((repository_root / "PROJECT.yaml").read_text(encoding="utf-8"))
+    if not isinstance(project, dict):
+        raise ValueError("repository PROJECT.yaml must contain a mapping")
+    project = copy.deepcopy(project)
+    if case == "legacy":
+        project.pop("project_setup", None)
+        selection_policy = project["workflow_selection"].get("selection_policy")
+        project["workflow_selection"] = {
+            "backlog": {
+                "default": "file-based-backlog",
+                "folder_overrides": [],
+            },
+            "workitem": {
+                "default": "simple-workitem",
+                "folder_overrides": [],
+            },
+            "selection_policy": selection_policy,
+        }
+        return project
+    if case not in {"canonical-solo", "canonical-multitask"}:
+        raise ValueError(f"unknown configuration case: {case}")
+    concurrent_tasking = case == "canonical-multitask"
+    candidates: list[dict[str, Any]] = []
+    accepted_skills: list[str] = []
+    for loadout in project["technology_skill_loadouts"]:
+        evidence_by_skill = {
+            item["skill"]: item["evidence"]
+            for item in loadout.get("sourceEvidence", [])
+        }
+        for skill in loadout["skills"]:
+            candidates.append(
+                {
+                    "scope": loadout["pathPattern"],
+                    "skill": skill,
+                    "evidence": evidence_by_skill[skill],
+                    "conflicts": [],
+                    "disposition": "accepted",
+                }
+            )
+            accepted_skills.append(skill)
+    project["technology_confirmation"] = {
+        "candidates": candidates,
+        "accepted_skills": accepted_skills,
+        "rejections": [],
+        "confirmation": {
+            "status": "confirmed",
+            "evidence": "scripted primary Project Configurator confirmation",
+        },
+    }
+    project["project_setup"] = {
+        "mode": "advanced",
+        "concurrent_tasking": concurrent_tasking,
+        **({"concurrent_capacity": 3} if concurrent_tasking else {}),
+        "persistence": "file",
+        "commit": "main-branch",
+        "documentation": "wiki",
+        "core_skill_delivery": {
+            "mode": "by-reference",
+            "source": "installed-agent-metadata",
+        },
+        "technology_skill_delivery": "by-reference",
+        "technology_confirmation_required": True,
+    }
+    if not concurrent_tasking:
+        project["resource_coordination"] = {"selected": "none"}
+        project.pop("agent_claim_transport", None)
+    return project
+
+
+def _validated_project_configuration(
+    project: Mapping[str, Any],
+    repository_root: Path,
+) -> tuple[str, dict[str, Any]]:
+    """Validate one complete project mapping and derive its independent selectors."""
+
+    validator = _load_project_validator(repository_root)
+    project_copy = copy.deepcopy(dict(project))
+    rendered = validator.render(project_copy)
+    workflow, _ = validator._canonical_workflow_selection(project_copy["workflow_selection"])
+    persistence, _ = validator._workflow_configuration(
+        workflow,
+        "persistence",
+        validator.PROVIDER_VALUES,
+    )
+    commit, _ = validator._workflow_configuration(
+        workflow,
+        "commit",
+        validator.COMPLETION_VALUES,
+    )
+    setup = project_copy.get("project_setup")
+    legacy = setup is None
+    concurrent_tasking = None if legacy else setup["concurrent_tasking"]
+    coordination = project_copy["resource_coordination"]["selected"]
+    claim_stack_enabled = coordination == "resource-claim"
+    if legacy:
+        dispatch_selector = "PRESERVE_VALID_LEGACY_CONFIGURATION"
+        secondary_dispatch_enabled = None
+    elif concurrent_tasking:
+        dispatch_selector = "ENABLED_BY_PROJECT_CONFIGURATION"
+        secondary_dispatch_enabled = True
+    else:
+        dispatch_selector = "DISABLED_BY_PROJECT_CONFIGURATION"
+        secondary_dispatch_enabled = False
+    provider_skills = list(validator.PROVIDER_SKILLS.get(persistence, ()))
+    commit_provider_skill = validator.COMPLETION_SKILLS.get(commit)
+    coordination_provider_skills: list[str] = []
+    if claim_stack_enabled:
+        selected_helper = project_copy["agent_claim_transport"]["selected"]
+        coordination_provider_skills.append(validator.CLAIM_HELPER_PROVIDERS[selected_helper])
+    return rendered, {
+        "validation": "PASS",
+        "concurrentTasking": concurrent_tasking,
+        "dispatchSelector": dispatch_selector,
+        "secondaryDispatchEnabled": secondary_dispatch_enabled,
+        "resourceCoordination": coordination,
+        "claimStackEnabled": claim_stack_enabled,
+        "legacyConfiguration": legacy,
+        "persistence": persistence,
+        "commit": commit,
+        "persistenceProviderSkills": provider_skills,
+        "commitProviderSkill": commit_provider_skill,
+        "resourceCoordinationProviderSkills": coordination_provider_skills,
+    }
+
+
+def validated_configuration_case(case: str) -> dict[str, Any]:
+    """Return selectors from one named configuration accepted by the repository validator.
+
+    case selects canonical-solo, canonical-multitask, or legacy. The result contains the
+    validated dispatch, coordination, Persistence, and Commit mappings. Unknown or invalid
+    cases raise ValueError. This helper reads repository source and does not write project state.
+    """
+
+    project = _configuration_case(case, _REPOSITORY_ROOT)
+    _, selectors = _validated_project_configuration(project, _REPOSITORY_ROOT)
+    return selectors
+
+
 class _ScriptedDependency:
     def __init__(self, plan: Mapping[str, Sequence[str]], trace: list[dict[str, Any]]) -> None:
         self._plan = {key: list(values) for key, values in plan.items()}
@@ -126,6 +298,7 @@ class _ScriptedDependency:
         artifact: str = "",
         *,
         default_outcome: str = "PASS",
+        dispatch_context: str = "secondary",
     ) -> str:
         key = f"{phase}:{artifact}" if artifact else phase
         outcomes = self._plan.get(key, self._plan.get(agent, [default_outcome]))
@@ -137,6 +310,7 @@ class _ScriptedDependency:
                 "phase": phase,
                 "artifact": artifact,
                 "outcome": outcome,
+                "dispatchContext": dispatch_context,
             }
         )
         if outcome == "TIMEOUT":
@@ -167,17 +341,22 @@ def _copy_inputs(workspace: Path) -> list[str]:
         _SUITE_ROOT / "fixtures" / _FIXTURE_NAME,
         _SUITE_ROOT / "scenarios.yaml",
         _SUITE_ROOT / "suite.yaml",
+        _REPOSITORY_ROOT / "PROJECT.yaml",
+        _REPOSITORY_ROOT / _PROJECT_VALIDATOR,
         _REPOSITORY_ROOT / "agents" / "roles" / "project-setup" / "project-bootstrapper.role.yaml",
         _REPOSITORY_ROOT / "agents" / "roles" / "wiki-activities" / "wiki-ingester.role.yaml",
-        _REPOSITORY_ROOT / "generated" / "adapters" / "codex" / "agents" / "project-bootstrapper.toml",
-        _REPOSITORY_ROOT / "generated" / "adapters" / "codex" / "agents" / "wiki-ingester.toml",
         *(
             _REPOSITORY_ROOT / "skills" / skill
             for skill in (
+                "set-solo-mode",
+                "set-multitask-mode",
                 "resource-claim",
+                "resource-claim-helper-command",
                 "bootstrap-project-documentation",
                 "route-documentation-work",
                 "organise-project-files",
+                "structured-explanation",
+                "document-provenance",
             )
         ),
     )
@@ -549,21 +728,153 @@ def _terminal(status: str, trace: list[dict[str, Any]], **evidence: Any) -> dict
             )
             for event in trace
         ),
+        "generatedProjectionIntegration": {
+            "candidateSnapshot": "authoritative-source-only",
+            "excludedGeneratedProjections": list(_EXCLUDED_GENERATED_PROJECTIONS),
+            "requiredFreshMainCommands": list(_REQUIRED_FRESH_MAIN_COMMANDS),
+        },
         **evidence,
     }
+
+
+def _run_missing_configuration_worker(workspace: Path) -> dict[str, Any]:
+    """Return the terminal first Bootstrapper execution for an absent root configuration."""
+
+    copied = _copy_inputs(workspace)
+    _validate_snapshot_contract(workspace)
+    candidate = workspace / "candidate"
+    if (candidate / "PROJECT.yaml").exists():
+        raise ValueError("missing-configuration fixture unexpectedly contains PROJECT.yaml")
+    trace = [
+        {
+            "index": 0,
+            "agent": "project-bootstrapper",
+            "phase": "require-primary-project-configurator",
+            "artifact": "PROJECT.yaml",
+            "outcome": "PRIMARY_PROJECT_CONFIGURATOR_HANDOFF_REQUIRED",
+            "dispatchContext": "primary",
+            "coordinationMode": "SOLO",
+        }
+    ]
+    claim_state_untouched = not (candidate / ".codex" / "agent-claim").exists()
+    return _terminal(
+        "BLOCKED",
+        trace,
+        executionId="initial-project-bootstrapper",
+        reason="PRIMARY_PROJECT_CONFIGURATOR_HANDOFF_REQUIRED",
+        copiedInputs=copied,
+        targetContractBound=True,
+        preconfigurationClaimStateUntouched=claim_state_untouched,
+        effectiveCoordinationMode="SOLO",
+    )
+
+
+def _run_configuration_worker(
+    plan: Mapping[str, Sequence[str]],
+    workspace: Path,
+    configuration_case: str,
+) -> dict[str, Any]:
+    """Run the independent primary Configurator execution and repository validation gate."""
+
+    trace: list[dict[str, Any]] = []
+    dependencies = _ScriptedDependency(plan, trace)
+    copied = _copy_inputs(workspace)
+    _validate_snapshot_contract(workspace)
+    for procedure, artifact in (
+        ("Configure Project Agents And Skills", "PROJECT.yaml"),
+        ("Render Project Guidance", "AGENTS.md"),
+        ("Verify Project Configuration", "PROJECT.yaml and AGENTS.md"),
+    ):
+        outcome = dependencies.call(
+            "project-configurator",
+            procedure,
+            artifact,
+            dispatch_context="primary",
+        )
+        if outcome != "PASS":
+            return _terminal(
+                outcome,
+                trace,
+                executionId="primary-project-configurator",
+                copiedInputs=copied,
+                targetContractBound=True,
+            )
+    snapshot_root = workspace / "snapshot"
+    project = _configuration_case(configuration_case, snapshot_root)
+    rendered, selectors = _validated_project_configuration(project, snapshot_root)
+    return _terminal(
+        "PASS",
+        trace,
+        executionId="primary-project-configurator",
+        copiedInputs=copied,
+        targetContractBound=True,
+        validationGate="repository-render-validator",
+        projectConfiguration=project,
+        renderedGuidance=rendered,
+        selectors=selectors,
+    )
 
 
 def _run_worker(
     plan: Mapping[str, Sequence[str]],
     workspace: Path,
+    project_configuration: Mapping[str, Any],
     *,
     reverse_engineering: bool = False,
+    legacy_runtime_dispatch: bool | None = None,
 ) -> dict[str, Any]:
     trace: list[dict[str, Any]] = []
     dependencies = _ScriptedDependency(plan, trace)
     copied = _copy_inputs(workspace)
     _validate_snapshot_contract(workspace)
     candidate = workspace / "candidate"
+    project_path = candidate / "PROJECT.yaml"
+    project_path.write_text(
+        yaml.safe_dump(dict(project_configuration), sort_keys=False),
+        encoding="utf-8",
+    )
+    persisted_project = yaml.safe_load(project_path.read_text(encoding="utf-8"))
+    if not isinstance(persisted_project, dict):
+        raise ValueError("resumed repository-root PROJECT.yaml must contain a mapping")
+    rendered_guidance, selectors = _validated_project_configuration(
+        persisted_project,
+        workspace / "snapshot",
+    )
+    (candidate / "AGENTS.md").write_text(rendered_guidance, encoding="utf-8")
+    if reverse_engineering:
+        for artifact in _SETUP_OUTPUTS:
+            _write_artifact(candidate, artifact, contribution_phase=True)
+    secondary_dispatch_enabled = selectors["secondaryDispatchEnabled"]
+    if secondary_dispatch_enabled is None:
+        if not isinstance(legacy_runtime_dispatch, bool):
+            raise ValueError(
+                "legacy configuration requires an explicit existing runtime dispatch setting"
+            )
+        effective_secondary_dispatch = legacy_runtime_dispatch
+        legacy_runtime_dispatch_before = legacy_runtime_dispatch
+        legacy_runtime_dispatch_after = legacy_runtime_dispatch
+    else:
+        if legacy_runtime_dispatch is not None:
+            raise ValueError(
+                "legacy runtime dispatch setting is allowed only for legacy configuration"
+            )
+        effective_secondary_dispatch = secondary_dispatch_enabled
+        legacy_runtime_dispatch_before = None
+        legacy_runtime_dispatch_after = None
+    claim_stack_enabled = selectors["claimStackEnabled"]
+    trace.append(
+        {
+            "index": len(trace),
+            "agent": "project-bootstrapper",
+            "phase": "resume-after-valid-configuration",
+            "artifact": "PROJECT.yaml",
+            "outcome": "PASS",
+            "dispatchContext": "primary",
+            "coordinationMode": "CONFIGURED",
+            "dispatchSelector": selectors["dispatchSelector"],
+            "resourceCoordination": selectors["resourceCoordination"],
+        }
+    )
     if reverse_engineering and "path-coverage-ledger.json" in plan.get(
         "omitAuditEvidence",
         (),
@@ -595,7 +906,7 @@ def _run_worker(
         default_outcome: str = "PASS",
         claim: bool = True,
     ) -> str:
-        if claim:
+        if claim and claim_stack_enabled:
             trace.append(
                 {
                     "index": len(trace),
@@ -603,6 +914,7 @@ def _run_worker(
                     "phase": "claim-acquire",
                     "artifact": artifact or phase,
                     "outcome": "PASS",
+                    "dispatchContext": "claim-helper",
                 }
             )
         try:
@@ -611,9 +923,10 @@ def _run_worker(
                 phase,
                 artifact,
                 default_outcome=default_outcome,
+                dispatch_context="secondary" if effective_secondary_dispatch else "primary",
             )
         finally:
-            if claim:
+            if claim and claim_stack_enabled:
                 trace.append(
                     {
                         "index": len(trace),
@@ -621,6 +934,7 @@ def _run_worker(
                         "phase": "claim-release",
                         "artifact": artifact or phase,
                         "outcome": "PASS",
+                        "dispatchContext": "claim-helper",
                     }
                 )
 
@@ -667,22 +981,6 @@ def _run_worker(
                     accepted=accepted,
                     targetContractBound=True,
                 )
-
-    for procedure, artifact in (
-        ("Configure Project Agents And Skills", "PROJECT.yaml"),
-        ("Render Project Guidance", "AGENTS.md"),
-        ("Verify Project Configuration", "PROJECT.yaml and AGENTS.md"),
-    ):
-        configuration = invoke("project-configurator", procedure, artifact)
-        if configuration != "PASS":
-            return _terminal(
-                configuration,
-                trace,
-                copiedInputs=copied,
-                targetContractBound=True,
-            )
-    for artifact in _SETUP_OUTPUTS:
-        _write_artifact(candidate, artifact, contribution_phase=reverse_engineering)
 
     accepted: list[str] = []
     for artifact, producer in _PRODUCERS.items():
@@ -1018,6 +1316,7 @@ def _run_worker(
     return _terminal(
         "PASS",
         trace,
+        executionId="resumed-project-bootstrapper",
         copiedInputs=copied,
         accepted=accepted,
         auditFindings=audit_findings,
@@ -1030,6 +1329,16 @@ def _run_worker(
         finalReview=True,
         finalVerification=True,
         targetContractBound=True,
+        validationGate="repository-render-validator",
+        configuredCoordination=selectors["resourceCoordination"],
+        secondaryDispatchEnabled=secondary_dispatch_enabled,
+        effectiveSecondaryDispatchEnabled=effective_secondary_dispatch,
+        legacyRuntimeDispatchBefore=legacy_runtime_dispatch_before,
+        legacyRuntimeDispatchAfter=legacy_runtime_dispatch_after,
+        dispatchSelector=selectors["dispatchSelector"],
+        persistence=selectors["persistence"],
+        commit=selectors["commit"],
+        commitProviderSkill=selectors["commitProviderSkill"],
     )
 
 
@@ -1038,63 +1347,125 @@ def run_isolated(
     *,
     timeout_seconds: float = 180.0,
     reverse_engineering: bool = False,
+    configuration_case: str = "canonical-multitask",
+    legacy_runtime_dispatch: bool | None = None,
 ) -> dict[str, Any]:
-    """Run one scripted Bootstrapper case in a disposable subprocess.
+    """Run terminal and resumed Bootstrapper executions around primary configuration.
 
     The caller supplies ordered outcomes keyed by phase, phase and artifact, or agent name.
     Reverse-engineering mode adds the Wiki Ingester final evidence audit, owner-routed
-    corrections, and a clear re-audit; ordinary setup skips that branch. The timeout is a
-    positive wall-clock duration in seconds, and the command-line boundary exposes it in
-    minutes. The returned result contains the complete call trace and cleanup evidence.
-    Infrastructure failures and timeouts are terminal and never retry a dependency.
+    corrections, and a clear re-audit; ordinary setup skips that branch. A first isolated
+    Bootstrapper execution terminates BLOCKED on missing configuration. A distinct primary
+    Configurator execution writes and validates the selected configuration before a separately
+    isolated Bootstrapper execution resumes. The timeout is one positive wall-clock budget for
+    all executions. configuration_case selects canonical-solo, canonical-multitask, or legacy.
+    A legacy case also requires legacy_runtime_dispatch to describe the existing runtime setting;
+    the resumed execution preserves that setting. The result contains each isolated execution,
+    cleanup evidence, and the fresh-main generated-projection prerequisite. Invalid arguments
+    raise ValueError. Infrastructure failures and timeouts are terminal and never retry.
     """
 
     if timeout_seconds <= 0:
         raise ValueError("timeout_seconds must be positive")
+    if configuration_case == "legacy" and not isinstance(legacy_runtime_dispatch, bool):
+        raise ValueError(
+            "legacy configuration requires an explicit existing runtime dispatch setting"
+        )
+    if configuration_case != "legacy" and legacy_runtime_dispatch is not None:
+        raise ValueError(
+            "legacy runtime dispatch setting is allowed only for legacy configuration"
+        )
     with tempfile.TemporaryDirectory(prefix="project-bootstrapper-scripted-") as directory:
         root = Path(directory)
         plan_path = root / "plan.json"
-        result_path = root / "result.json"
         plan_path.write_text(json.dumps(plan or {}), encoding="utf-8")
-        command = [
-            sys.executable,
-            str(Path(__file__).resolve()),
-            "--worker",
-            "--plan",
-            str(plan_path),
-            "--result",
-            str(result_path),
-            "--workspace",
-            str(root / "workspace"),
-        ]
-        if reverse_engineering:
-            command.append("--reverse-engineering")
-        process = subprocess.Popen(command, start_new_session=True)
-        try:
-            process.wait(timeout=timeout_seconds)
-        except subprocess.TimeoutExpired:
-            os.killpg(process.pid, signal.SIGKILL)
-            process.wait()
-            return {
+        deadline = time.monotonic() + timeout_seconds
+
+        def launch(execution: str, project_path: Path | None = None) -> dict[str, Any]:
+            result_path = root / f"{execution}-result.json"
+            command = [
+                sys.executable,
+                str(Path(__file__).resolve()),
+                "--worker",
+                "--execution",
+                execution,
+                "--plan",
+                str(plan_path),
+                "--result",
+                str(result_path),
+                "--workspace",
+                str(root / f"{execution}-workspace"),
+                "--configuration-case",
+                configuration_case,
+            ]
+            if project_path is not None:
+                command.extend(("--project-configuration", str(project_path)))
+            if execution == "resumed" and legacy_runtime_dispatch is not None:
+                command.extend(
+                    (
+                        "--legacy-runtime-dispatch",
+                        "enabled" if legacy_runtime_dispatch else "disabled",
+                    )
+                )
+            if reverse_engineering and execution == "resumed":
+                command.append("--reverse-engineering")
+            process = subprocess.Popen(command, start_new_session=True)
+            remaining = deadline - time.monotonic()
+            try:
+                process.wait(timeout=max(remaining, 0.001))
+            except subprocess.TimeoutExpired:
+                os.killpg(process.pid, signal.SIGKILL)
+                process.wait()
+                return {
+                    "schema": "project-bootstrapper-scripted-result",
+                    "version": 1,
+                    "status": "INFRASTRUCTURE_FAILED",
+                    "reason": "wall-clock timeout",
+                    "timeoutSeconds": timeout_seconds,
+                    "workerPid": process.pid,
+                }
+            if process.returncode != 0 or not result_path.is_file():
+                return {
+                    "schema": "project-bootstrapper-scripted-result",
+                    "version": 1,
+                    "status": "INFRASTRUCTURE_FAILED",
+                    "reason": f"scripted {execution} worker exited {process.returncode}",
+                }
+            return json.loads(result_path.read_text(encoding="utf-8"))
+
+        initial = launch("initial")
+        if initial.get("status") == "INFRASTRUCTURE_FAILED":
+            result = initial
+        elif (
+            initial.get("status") != "BLOCKED"
+            or initial.get("reason") != "PRIMARY_PROJECT_CONFIGURATOR_HANDOFF_REQUIRED"
+        ):
+            result = {
                 "schema": "project-bootstrapper-scripted-result",
                 "version": 1,
                 "status": "INFRASTRUCTURE_FAILED",
-                "reason": "wall-clock timeout",
-                "timeoutSeconds": timeout_seconds,
-                "ownedProcessCleanup": "complete",
-                "workspaceRemoved": True,
-                "workerPid": process.pid,
+                "reason": "initial Bootstrapper execution did not return the required terminal handoff",
+                "initialExecution": initial,
             }
-        if process.returncode != 0 or not result_path.is_file():
-            return {
-                "schema": "project-bootstrapper-scripted-result",
-                "version": 1,
-                "status": "INFRASTRUCTURE_FAILED",
-                "reason": f"scripted worker exited {process.returncode}",
-                "ownedProcessCleanup": "complete",
-                "workspaceRemoved": True,
-            }
-        result = json.loads(result_path.read_text(encoding="utf-8"))
+        else:
+            configuration = launch("configuration")
+            if configuration.get("status") != "PASS":
+                result = dict(configuration)
+                result["initialExecution"] = initial
+                result["configurationExecution"] = configuration
+            else:
+                project_configuration = configuration.pop("projectConfiguration")
+                configuration.pop("renderedGuidance")
+                project_path = root / "validated-project.json"
+                project_path.write_text(
+                    json.dumps(project_configuration, sort_keys=True),
+                    encoding="utf-8",
+                )
+                resumed = launch("resumed", project_path)
+                result = dict(resumed)
+                result["initialExecution"] = initial
+                result["configurationExecution"] = configuration
+                result["resumedExecution"] = dict(resumed)
     result["ownedProcessCleanup"] = "complete"
     result["workspaceRemoved"] = not root.exists()
     return result
@@ -1112,28 +1483,76 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--plan", type=Path)
     parser.add_argument("--timeout-minutes", type=float, default=3.0)
     parser.add_argument("--worker", action="store_true", help=argparse.SUPPRESS)
+    parser.add_argument(
+        "--execution",
+        choices=("initial", "configuration", "resumed"),
+        default="resumed",
+        help=argparse.SUPPRESS,
+    )
     parser.add_argument("--result", type=Path, help=argparse.SUPPRESS)
     parser.add_argument("--workspace", type=Path, help=argparse.SUPPRESS)
+    parser.add_argument("--project-configuration", type=Path, help=argparse.SUPPRESS)
+    parser.add_argument(
+        "--legacy-runtime-dispatch",
+        choices=("enabled", "disabled"),
+        help="Existing dispatch setting required with --configuration-case legacy.",
+    )
+    parser.add_argument(
+        "--configuration-case",
+        choices=("canonical-solo", "canonical-multitask", "legacy"),
+        default="canonical-multitask",
+    )
     parser.add_argument("--reverse-engineering", action="store_true")
     arguments = parser.parse_args(argv)
     plan = json.loads(arguments.plan.read_text(encoding="utf-8")) if arguments.plan else {}
+    legacy_runtime_dispatch = (
+        None
+        if arguments.legacy_runtime_dispatch is None
+        else arguments.legacy_runtime_dispatch == "enabled"
+    )
     if arguments.worker:
         if arguments.result is None or arguments.workspace is None:
             parser.error("worker mode requires result and workspace")
         try:
-            result = _run_worker(
-                plan,
-                arguments.workspace,
-                reverse_engineering=arguments.reverse_engineering,
-            )
+            if arguments.execution == "initial":
+                result = _run_missing_configuration_worker(arguments.workspace)
+            elif arguments.execution == "configuration":
+                result = _run_configuration_worker(
+                    plan,
+                    arguments.workspace,
+                    arguments.configuration_case,
+                )
+            else:
+                if arguments.project_configuration is None:
+                    parser.error("resumed worker requires --project-configuration")
+                project_configuration = json.loads(
+                    arguments.project_configuration.read_text(encoding="utf-8")
+                )
+                result = _run_worker(
+                    plan,
+                    arguments.workspace,
+                    project_configuration,
+                    reverse_engineering=arguments.reverse_engineering,
+                    legacy_runtime_dispatch=legacy_runtime_dispatch,
+                )
         except Exception as error:
             result = _terminal("INFRASTRUCTURE_FAILED", [], reason=str(error))
         arguments.result.write_text(json.dumps(result, sort_keys=True), encoding="utf-8")
         return 0
+    if arguments.configuration_case == "legacy" and legacy_runtime_dispatch is None:
+        parser.error(
+            "--configuration-case legacy requires --legacy-runtime-dispatch enabled or disabled"
+        )
+    if arguments.configuration_case != "legacy" and legacy_runtime_dispatch is not None:
+        parser.error(
+            "--legacy-runtime-dispatch is allowed only with --configuration-case legacy"
+        )
     result = run_isolated(
         plan,
         timeout_seconds=arguments.timeout_minutes * 60,
         reverse_engineering=arguments.reverse_engineering,
+        configuration_case=arguments.configuration_case,
+        legacy_runtime_dispatch=legacy_runtime_dispatch,
     )
     print(json.dumps(result, indent=2, sort_keys=True))
     return 0 if result["status"] == "PASS" else 1
