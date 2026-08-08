@@ -22,7 +22,7 @@ Branch: codex/add-document-provenance-skill
 
 Worktree: /Users/martinbechard/.codex/worktrees/6cb2/dev-methodology
 
-Phase: Delegated implementation of the private document-provenance skill package under the exact child tree claim before deferred shared catalog, generated-output, review, and integration events
+Phase: Delegated validation of the private document-provenance package under its exact child tree claim before newly released shared catalog, generated-output, review, and integration events
 
 Started At: 2026-08-08T18:11:22Z
 
@@ -151,17 +151,17 @@ Condition Type: delegated-work
 
 Owner: Dev Coder task /root/implement_document_provenance under Root Dev Orchestrator task 019fe291-1ba8-7a43-8d21-391a04dfa9a9
 
-Evidence: The same Dev Coder was paused before further mutation, the two out-of-sequence files were preserved byte-for-byte with hashes and diffs recorded below, and exact child tree claim add-document-provenance-package-tree-019fe291 now protects skills/document-provenance/** for resumed package-only work. Exact shared overlap events remain deferred pending the requested release notification.
+Evidence: The same Dev Coder resumed from preserved bytes under exact child tree claim add-document-provenance-package-tree-019fe291, created the bounded package sources and fixtures, and reached 8/8 green validator tests before the final package metadata and skill checks. The one-time finish-lane release notification was received and current main was read once at 8d0354a930462c97984ee549230cb434411e53b9; no shared path mutation has begun.
 
-Observed At: 2026-08-08T18:24:59Z
+Observed At: 2026-08-08T18:33:34Z
 
 Started At: 2026-08-08T18:11:22Z
 
 Deadline or Expires At: 2026-08-08T22:11:13Z
 
-Next Action: Resume the same Dev Coder from the preserved bytes under the acquired child tree claim, complete package-local source, fixtures, validator, and focused tests, then reconcile the finish-lane release notification before any shared catalog or generated-output event.
+Next Action: Complete package-local metadata, validation, and diff checks without repeating already-green gates; then fast-forward the candidate branch to the one-time observed released main and extend the child claim with the exact shared catalog and generated-output manifest before those mutations.
 
-Next Reconciliation At: 2026-08-08T18:39:00Z
+Next Reconciliation At: 2026-08-08T18:47:33Z
 
 ## Resource Ownership Reconciliation Evidence
 
@@ -204,6 +204,26 @@ Claim Event: 9aeaff46-ebb9-489a-ab55-3c3e83b9d4c0
 Claimed At: 2026-08-08T18:24:20.750128Z
 
 Resume Disposition: Resume the same producer from the preserved bytes under the acquired child tree claim; no bundle item, shared catalog, generated output, shared review, or integration path is authorized by this reconciliation.
+
+## Finish-Lane Release Evidence
+
+Notification Type: Direct one-time release and recovery notification from parent Dev Backlog Coordinator task 019fb057-1767-7ef2-b5fa-41f4417b20b3
+
+Cleared Work Item: reconcile-bundle-content-suite-drift
+
+Terminal Provider Commit: 8d0354a930462c97984ee549230cb434411e53b9
+
+Accepted Replacement: d4a97090
+
+Recorded Integration: 2dedbfa4061cd5fa128dd429de00e1d55bb1f7e9
+
+Aggregate Verification: 168/168
+
+Claim and Cleanup Evidence: Parent reported every bundle work, path, integration, and provider claim released; detached candidate worktree and task-owned branch residue absent; canonical task archived.
+
+Current-Main Reconciliation: Read exactly once after notification; observed main at 8d0354a930462c97984ee549230cb434411e53b9 with recorded integration and accepted replacement ancestral.
+
+Preservation Boundary: Preserve design/agent-owned-evaluation-suites.html and recorded residual bundle defects; do not rerun completed private package gates solely because main advanced.
 
 ## Verification
 
