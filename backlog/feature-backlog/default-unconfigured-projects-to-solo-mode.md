@@ -140,17 +140,17 @@ Condition Type: root-execution.
 
 Owner: Root Dev Orchestrator canonical task 019fe2f2-f195-7670-8367-15d9e5c79de7.
 
-Evidence: Post-integration source reviewer /root/review_integrated_solo_fallback returned PASS on 504d5d852d00c5bfb1a9d12e6ddcaaa03fd76248 with no material findings: exact eight accepted paths, seven generated outputs, adapter/manifests, generator, role 17, Bootstrapper/direct scripted, skills/provenance/diff/clean, and disjoint main advancement. Methodology Artifact Reviewer /root/review_generated_solo_artifacts returned NEEDS_CORRECTION: README.md setup sequence is stale (`once`) versus terminal missing-config handoff plus separate resumption; inline-code spans around `project_setup` and `project_setup.concurrent_tasking` in skills/set-multitask-mode/SKILL.md and skills/set-solo-mode/SKILL.md violate the repository Markdown rule; and the generator-owned design/generated/skill-definitions.js projection must be regenerated. All other adapters, manifests, and artifacts are clean. Dev Merge Coordinator remains active under the same main-integration claim, correcting exactly README.md, the two approved mode skills, and the generator-owned projection, then rerunning required gates and fresh artifact review/integrated verification. No blocker is recorded. No terminology claim is authorized. Primary main remains clean at 598fc736 except provider-only updates; integrated commit is not merged. Title is Implementing.
+Evidence: Read-only claim status at 2026-08-08T23:12:01.629051Z confirms the main-integration claim is live and not overdue, with hard stop 2026-08-08T23:26:30.972063Z and cleanup grace ending 2026-08-08T23:36:30Z; its last heartbeat remains 2026-08-08T22:51:21Z, so an immediate holder heartbeat is requested from Dev Merge Coordinator before further mutation. Post-integration source reviewer /root/review_integrated_solo_fallback returned PASS on 504d5d852d00c5bfb1a9d12e6ddcaaa03fd76248 with no material findings. Methodology Artifact Reviewer /root/review_generated_solo_artifacts returned NEEDS_CORRECTION: README.md setup sequence is stale (`once`) versus terminal missing-config handoff plus separate resumption; inline-code spans around `project_setup` and `project_setup.concurrent_tasking` in the two approved mode skills violate the repository Markdown rule; and generator-owned design/generated/skill-definitions.js must be regenerated. Correction status is pending. No blocker or terminology issue is recorded. Primary main remains clean at 598fc736 except provider-only updates; integrated commit is not merged. Title is Implementing.
 
-Observed At: 2026-08-08T23:07:09Z.
+Observed At: 2026-08-08T23:12:43Z.
 
 Started At: 2026-08-08T20:20:06Z.
 
 Deadline or Expires At: 2026-08-08T23:30:00Z.
 
-Next Action: Receive the clean correction commit, rerun required gates, then obtain fresh artifact review and integrated verification before delivery. The deadline covers the bounded correction, regeneration, review, verification, and delivery handoff.
+Next Action: Confirm the holder heartbeat and correction status. Then receive the clean correction commit, rerun required gates, and obtain fresh artifact review and integrated verification before delivery. The deadline covers the bounded correction, regeneration, review, verification, and delivery handoff.
 
-Next Reconciliation At: 2026-08-08T23:15:09Z.
+Next Reconciliation At: 2026-08-08T23:18:43Z.
 
 ## User Action Required Transition Evidence
 
