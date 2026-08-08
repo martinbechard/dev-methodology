@@ -140,17 +140,17 @@ Condition Type: root-execution.
 
 Owner: Root Dev Orchestrator canonical task 019fe2f2-f195-7670-8367-15d9e5c79de7.
 
-Evidence: Methodology artifact re-review resolved the prior README and inline-format findings with no new material issue. Build check, skills 3, role 17, provenance 4, adapter hashes 4, and scripted digests 5 pass; remaining Bootstrapper suite, CLI, and diff/clean checks are in progress with ETA 4–6 minutes. Integrated verifier /root/verify_integrated_solo_fallback has PASS so far for exact 16 delivery paths, correction 5, freshness, BundleContent 3, role 17, adjacent 3, skills 3, provenance 3, YAML 2, Python 3, diff, and claim status; Bootstrapper exact rerun resumed after output-session loss, with CLI 5, adapters, README mapping, and cleanliness remaining ETA 5–8 minutes. Integration correction claim heartbeat event 7cebf000-699f-480f-9600-54c39dc65dfd at 2026-08-08T23:35:09Z remains live. Primary main’s unrelated untracked terminology files remain the delivery boundary and are untouched; no review blocker is recorded. Title is Reviewing.
+Evidence: Methodology Artifact Reviewer returned PASS with no findings: README and inline fixes, build/check, adapters/hashes/digests, focused tests, provenance, diff, and clean integration. Independent integrated Dev Verifier returned PASS: exact 16-path inventory, correction 5, freshness, BundleContent 3, role 17, adjacent 3, skills 3, provenance 3, YAML 2, Python 3, adapter/manifest checks, semantics, and clean verification; 52/52 focused tests and CLI 5 pass. Corrected integration is ready for delivery once primary main is clean. Main-integration correction claim was released successfully, event 26467f6d-0ad1-41c8-8347-d639a3d6a841; no integration claim is live. Coordinator is instructed not to mutate primary main while unrelated untracked evals/projects/terminology-standard-effect/ remain; owner task 019fe3b8-0b22-79b0-8171-050a0418f8a8 notified once and will send an event-driven clean-main/release notification. Do not poll, retry, reset, steal, or touch those bytes. No product blocker is recorded; delivery boundary is external. Title is Verifying.
 
-Observed At: 2026-08-08T23:37:21Z.
+Observed At: 2026-08-08T23:41:58Z.
 
 Started At: 2026-08-08T20:20:06Z.
 
 Deadline or Expires At: 2026-08-09T00:00:00Z.
 
-Next Action: Receive both final PASS verdicts, then reconcile the unrelated main worktree state externally before any delivery mutation; deliver only after main is clean. The deadline covers final review, verification, and delivery reconciliation.
+Next Action: Await the event-driven clean-main/release notification, then perform exactly one fresh-main claim/reconciliation and delivery sequence. No polling or byte mutation is authorized meanwhile.
 
-Next Reconciliation At: 2026-08-08T23:43:21Z.
+Next Reconciliation At: 2026-08-08T23:49:58Z.
 
 ## User Action Required Transition Evidence
 
