@@ -22,7 +22,7 @@ Branch: codex/add-document-provenance-skill
 
 Worktree: /Users/martinbechard/.codex/worktrees/6cb2/dev-methodology
 
-Phase: Delegated implementation of the private document-provenance skill package before deferred shared catalog, generated-output, review, and integration events
+Phase: Delegated implementation of the private document-provenance skill package under the exact child tree claim before deferred shared catalog, generated-output, review, and integration events
 
 Started At: 2026-08-08T18:11:22Z
 
@@ -151,17 +151,59 @@ Condition Type: delegated-work
 
 Owner: Dev Coder task /root/implement_document_provenance under Root Dev Orchestrator task 019fe291-1ba8-7a43-8d21-391a04dfa9a9
 
-Evidence: The assigned Dev Coder is actively implementing only skills/document-provenance/** in the clean canonical private worktree; read-only pattern discovery completed, and exact shared overlap events remain deferred pending the requested release notification.
+Evidence: The same Dev Coder was paused before further mutation, the two out-of-sequence files were preserved byte-for-byte with hashes and diffs recorded below, and exact child tree claim add-document-provenance-package-tree-019fe291 now protects skills/document-provenance/** for resumed package-only work. Exact shared overlap events remain deferred pending the requested release notification.
 
-Observed At: 2026-08-08T18:20:12Z
+Observed At: 2026-08-08T18:24:59Z
 
 Started At: 2026-08-08T18:11:22Z
 
 Deadline or Expires At: 2026-08-08T22:11:13Z
 
-Next Action: Complete package-local source, fixtures, validator, and focused tests; then reconcile the finish-lane release notification before any shared catalog or generated-output event.
+Next Action: Resume the same Dev Coder from the preserved bytes under the acquired child tree claim, complete package-local source, fixtures, validator, and focused tests, then reconcile the finish-lane release notification before any shared catalog or generated-output event.
 
-Next Reconciliation At: 2026-08-08T18:34:03Z
+Next Reconciliation At: 2026-08-08T18:39:00Z
+
+## Resource Ownership Reconciliation Evidence
+
+Reconciliation Trigger: Parent-directed immediate reconciliation after producer mutation began before a child path or tree claim existed.
+
+Producer Pause: Dev Coder task /root/implement_document_provenance was interrupted before reconciliation reads and remained paused through the claim attempt.
+
+Out-of-Sequence Path: skills/document-provenance/scripts/test_validate_document_provenance.py
+
+Out-of-Sequence Byte SHA-256: 045e93c8fc4522eae01ce909fb3537d7c7341775e76977500f615fa668fd716d
+
+Out-of-Sequence Diff SHA-256: 9ff148087bf3dc540042e8d98583eb8f3774adcb5e45f70007523cf0a1554763
+
+Out-of-Sequence Diff Fact: New untracked text file, 186 lines; complete unified diff was captured read-only before claim acquisition.
+
+Out-of-Sequence Path: skills/document-provenance/scripts/__pycache__/test_validate_document_provenance.cpython-311.pyc
+
+Out-of-Sequence Byte SHA-256: 2cb6f0dc23c77366fd590f690034c4c0878e081c8b8c80f5cb1f096139ea8f74
+
+Out-of-Sequence Diff SHA-256: fe3b44df5d25441b1f4cc9e827d7e0a14e7501d8b55effffd4dcdf4155f79d2d
+
+Out-of-Sequence Diff Fact: New untracked binary file, 10860 bytes; binary-difference evidence was captured read-only before claim acquisition.
+
+Preservation Disposition: Both paths remained unchanged throughout reconciliation; no out-of-sequence byte was discarded or rewritten.
+
+Claim Attempt Count: 1
+
+Child Tree Claim: add-document-provenance-package-tree-019fe291
+
+Claim Scope: skills/document-provenance/**
+
+Claim Owner: Dev Coder task /root/implement_document_provenance
+
+Parent Claim: add-document-provenance-work-019fe291-r2
+
+Claim Outcome: SHARED_CHECKOUT_ACQUIRED
+
+Claim Event: 9aeaff46-ebb9-489a-ab55-3c3e83b9d4c0
+
+Claimed At: 2026-08-08T18:24:20.750128Z
+
+Resume Disposition: Resume the same producer from the preserved bytes under the acquired child tree claim; no bundle item, shared catalog, generated output, shared review, or integration path is authorized by this reconciliation.
 
 ## Verification
 
