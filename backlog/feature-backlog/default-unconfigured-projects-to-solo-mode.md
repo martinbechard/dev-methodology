@@ -136,21 +136,21 @@ Next Reconciliation At: 2026-08-08T20:14:35Z.
 
 ## Active Execution Evidence
 
-Condition Type: delegated-work.
+Condition Type: root-execution.
 
-Owner: Fixed Dev Coder /root/implement_solo_fallback under canonical Root Dev Orchestrator task 019fe2f2-f195-7670-8367-15d9e5c79de7.
+Owner: Root Dev Orchestrator canonical task 019fe2f2-f195-7670-8367-15d9e5c79de7.
 
-Evidence: Exactly three paths are currently modified for this correction, all within the eight-path maximum: evals/agent-tests/project-bootstrapper/scenarios.yaml, evals/agent-tests/project-bootstrapper/scripted_orchestration.py, and evals/agent-tests/project-bootstrapper/test_scripted_orchestration.py. Finding 1 is corrected: generated Codex adapters are removed from snapshot copies and digest pins; the contract declares authoritative-source-only candidate evidence plus mandatory fresh-main generation, freshness checking, then the scripted suite. Finding 2 is corrected: legacy behavior requires explicit existing runtime dispatch state, preserves disabled and enabled values unchanged, and raises when unresolved instead of default-enabling. Finding 3 is corrected: none-coordination regression derives deliver-work-item-main-branch from the Commit selector through renderer COMPLETION_SKILLS and asserts it with file Persistence while the claim provider list is empty. Green evidence includes focused regressions, combined role-policy/scripted tests, full Bootstrapper discovery, Python 3.11 default and legacy disabled/enabled CLIs, targeted provider tests, py_compile, YAML, diff check, skill validation, and three-document historical provenance validation. Exactly seven stale generated projections remain expected; no candidate digest dependency remains. Remaining work is the final combined rerun after small CLI cleanup, exact diff/staging audit, immutable commit, and clean handoff. ETA is 10–15 minutes. No blocker is recorded. No ninth path is authorized. No terminology claim is relied on. Integration, review, and verification remain deferred. Candidate ancestry is f147eca9 -> c80a8a3802fb806bc16d5a73b1a48aa581b5688d -> e67fa4ac1b2b872ba97a3b4b4b18912975065cbb. The isolated worktree is /Users/martinbechard/.codex/worktrees/75e6/dev-methodology on branch codex/default-unconfigured-projects-to-solo-mode. Title is Implementing.
+Evidence: Clean immutable candidate 55b8c805fd8b06fb5687bfaa126cdc577c703a77 is atop e67fa4ac1b2b872ba97a3b4b4b18912975065cbb and c80a8a3802fb806bc16d5a73b1a48aa581b5688d against baseline f147eca9fe03683b362a58481cd0d1a5e473a483. The full range is exactly the eight authorized paths; the final correction commit changed exactly the three evaluation paths. Corrections remove generated Codex adapter and digest dependencies and emit explicit fresh-main regeneration, freshness, and scripted-suite commands; preserve explicit legacy runtime disabled/enabled states and raise when unresolved; and derive deliver-work-item-main-branch from authoritative COMPLETION_SKILLS while asserting it with file Persistence and no claim provider under coordination none. Green evidence includes full Bootstrapper 29/29, focused 3/3, provider/resource 4/4, combined role-mutation/scripted tests, default and legacy disabled/enabled CLIs, compile, YAML, skill, provenance, and diff checks. Exactly seven stale generated projections remain deferred, and the candidate has no digest dependency. Candidate worktree is clean. Fresh reviewer /root/review_final_solo_fallback is active read-only on the immutable candidate. No blocker is recorded. No ninth path is authorized. No terminology claim is relied on. Integration and verification remain deferred. Title is Reviewing.
 
-Observed At: 2026-08-08T21:45:22Z.
+Observed At: 2026-08-08T21:49:32Z.
 
 Started At: 2026-08-08T20:20:06Z.
 
 Deadline or Expires At: 2026-08-08T22:10:00Z.
 
-Next Action: Receive the clean new immutable correction commit. Then switch the title to Reviewing and run a fresh replacement review.
+Next Action: Receive the fresh reviewer verdict. If correction is required, return exact findings to the fixed coder; otherwise dispatch a fresh verifier.
 
-Next Reconciliation At: 2026-08-08T21:55:22Z.
+Next Reconciliation At: 2026-08-08T21:59:32Z.
 
 ## User Action Required Transition Evidence
 
