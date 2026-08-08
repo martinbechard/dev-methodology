@@ -291,7 +291,7 @@
         <desc id="concurrency-svg-desc">One root coordinator connects to four supervisors. Each supervisor connects to one active child. One child may connect to a temporary nested dependency.</desc>
         <defs><marker id="arrowNavy" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#17406d"/></marker></defs>
         <g fill="none" stroke="#17406d" stroke-width="3" marker-end="url(#arrowNavy)">
-          <path d="M560 72 C560 110 140 105 140 150"/><path d="M560 72 C560 110 420 105 420 150"/><path d="M560 72 C560 110 700 105 700 150"/><path d="M560 72 C560 110 980 105 980 150"/>
+          <path d="M455 74 C455 112 140 105 140 150"/><path d="M525 74 C525 108 420 112 420 150"/><path d="M595 74 C595 108 700 112 700 150"/><path d="M665 74 C665 112 980 105 980 150"/>
           <path d="M140 210 V272"/><path d="M420 210 V272"/><path d="M700 210 V272"/><path d="M980 210 V272"/>
         </g>
         <g font-family="Inter, system-ui, sans-serif" text-anchor="middle">
@@ -367,7 +367,7 @@
       <figcaption><span class="diagram-kicker">Receipt audit</span><strong id="receipt-chain-title">The Judge response must remain attached to the exact run</strong><p>An absent, malformed, substituted, or mismatched response remains non-passing.</p></figcaption>
       <svg viewBox="0 0 1120 260" role="img" aria-labelledby="receipt-svg-title receipt-svg-desc">
         <title id="receipt-svg-title">Judge evidence binding chain</title>
-        <desc id="receipt-svg-desc">The selected Judge session, parent, scenario order, rollout digest, response digest, and byte-identical artifact converge on a verified receipt audit.</desc>
+        <desc id="receipt-svg-desc">The selected Judge session, parent, scenario order, rollout digest, response digest, and byte-identical artifact converge through one collector into a verified receipt audit.</desc>
         <defs><marker id="arrowTeal" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#006b67"/></marker></defs>
         <g font-family="Inter, system-ui, sans-serif" text-anchor="middle">
           <g fill="#e5eef8" stroke="#17406d">
@@ -375,7 +375,12 @@
             <rect x="575" y="28" width="155" height="58" rx="11"/><rect x="760" y="28" width="155" height="58" rx="11"/><rect x="945" y="28" width="155" height="58" rx="11"/>
           </g>
           <g fill="#172033" font-size="13" font-weight="760"><text x="97" y="62">Judge session</text><text x="282" y="62">Parent</text><text x="467" y="62">Scenario order</text><text x="652" y="62">Rollout digest</text><text x="837" y="62">Response digest</text><text x="1022" y="54">Byte-identical</text><text x="1022" y="71">output artifact</text></g>
-          <g fill="none" stroke="#006b67" stroke-width="3" marker-end="url(#arrowTeal)"><path d="M97 88 C97 150 560 120 560 176"/><path d="M282 88 C282 140 560 125 560 176"/><path d="M467 88 C467 130 560 130 560 176"/><path d="M652 88 C652 130 560 130 560 176"/><path d="M837 88 C837 140 560 125 560 176"/><path d="M1022 88 C1022 150 560 120 560 176"/></g>
+          <g fill="none" stroke="#006b67" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M97 88 C97 130 430 120 430 150"/><path d="M282 88 C282 125 482 125 482 150"/><path d="M467 88 C467 120 534 125 534 150"/>
+            <path d="M652 88 C652 120 586 125 586 150"/><path d="M837 88 C837 125 638 125 638 150"/><path d="M1022 88 C1022 130 690 120 690 150"/>
+            <path d="M430 150 H690"/>
+            <path d="M560 150 V176" marker-end="url(#arrowTeal)"/>
+          </g>
           <rect x="395" y="176" width="330" height="62" rx="14" fill="#def2ef" stroke="#006b67"/>
           <text x="560" y="213" fill="#17633b" font-size="17" font-weight="850">Verified receipt audit</text>
         </g>
