@@ -960,3 +960,108 @@ cases:
       resource-claim-helper-command: [SKILL.md, scripts/claim.py]
       structured-explanation: [SKILL.md]
     requiredEvidence: [READY-OPEN-QUESTIONS, CONTEXT-ONLY-REJECTED, GENUINE-USER-ACTION, HOLDING, SERIES-LINKAGE, GOVERNED-MANIFEST-REJECTED, EXACT-APPROVAL-ACCEPTED, OUT-OF-SCOPE-REJECTED, CHECKER-NOT-AUTHORITY]
+  - id: terminology-standard-effect
+    coverageStatus: fixture-backed
+    executionStatus: runnable
+    project: evals/projects/terminology-standard-effect
+    task: TASK.md
+    allowedWritePaths: [rewritten-document.md, eval-result.md]
+    ephemeralWritePaths: []
+    protectedPaths: [AGENTS.md, README.md, TASK.md, source-document.md, terminology.md]
+    install: null
+    verify:
+      argv:
+        - python3
+        - -c
+        - |
+          import json
+          import re
+          from pathlib import Path
+
+          expected_terms = {
+              "TERM-01": "Acceptance criterion", "TERM-02": "Agent", "TERM-03": "Agent harness",
+              "TERM-04": "Artifact", "TERM-05": "Backlog", "TERM-06": "Business scenario",
+              "TERM-07": "Campaign", "TERM-08": "Contract validation", "TERM-09": "Defect",
+              "TERM-10": "Evaluation", "TERM-11": "Evaluation case", "TERM-12": "Evaluation decision",
+              "TERM-13": "Evaluation portfolio", "TERM-14": "Evaluation result", "TERM-15": "Evaluation run",
+              "TERM-16": "Evaluation suite", "TERM-17": "Evaluator agent", "TERM-18": "Evidence",
+              "TERM-19": "Requirement", "TERM-20": "Review", "TERM-21": "Skill", "TERM-22": "Test",
+              "TERM-23": "Test case", "TERM-24": "Test condition", "TERM-25": "Test fixture",
+              "TERM-26": "Test harness", "TERM-27": "Test report", "TERM-28": "Test result",
+              "TERM-29": "Test run", "TERM-30": "Test suite", "TERM-31": "Use case",
+              "TERM-32": "User story", "TERM-33": "Verification", "TERM-34": "Work item",
+              "TERM-35": "Workflow",
+          }
+          protected_literals = (
+              "AC-17", "`dev_documentation_writer`", "35", "build-2026.08.08", "`agent_role`",
+              "PASS", "FAIL", "26", "78", "`python3 verify.py`",
+          )
+          scratchpad_candidates = {"TERM-14": "receipt", "TERM-29": "rollout", "TERM-30": "campaign"}
+          artifact = Path("rewritten-document.md")
+          if not artifact.is_file():
+              print(json.dumps({"artifact": str(artifact), "passed": False, "error": "artifact missing"}, sort_keys=True))
+              raise SystemExit(3)
+          text = artifact.read_text(encoding="utf-8")
+          matches = list(re.finditer(r"\[(TERM-\d{2})\]", text))
+          blocks = {
+              match.group(1): text[match.start(): matches[index + 1].start()] if index + 1 < len(matches) else text[match.start():]
+              for index, match in enumerate(matches)
+          }
+          contains = lambda value, term: re.search(rf"(?<![A-Za-z]){re.escape(term)}(?![A-Za-z])", value, re.IGNORECASE) is not None
+          marker_counts = {marker: text.count(f"[{marker}]") for marker in expected_terms}
+          missing_terms = [
+              {"marker": marker, "preferredTerm": term}
+              for marker, term in expected_terms.items()
+              if marker not in blocks or not contains(blocks[marker], term)
+          ]
+          missing_literals = [literal for literal in protected_literals if literal not in text]
+          candidate_occurrences = [
+              {"candidate": candidate, "marker": marker}
+              for marker, candidate in scratchpad_candidates.items()
+              if marker in blocks and contains(blocks[marker], candidate)
+          ]
+          evidence = {
+              "artifact": artifact.name,
+              "semanticMarkersValid": all(count == 1 for count in marker_counts.values()),
+              "markerCounts": marker_counts,
+              "preferredTerminologyValid": not missing_terms,
+              "missingPreferredTerms": missing_terms,
+              "protectedLiteralsValid": not missing_literals,
+              "missingProtectedLiterals": missing_literals,
+              "structureValid": text.startswith("# "),
+              "scratchpadCandidateOccurrences": candidate_occurrences,
+              "scratchpadCandidatesNormative": False,
+          }
+          evidence["passed"] = all((evidence["semanticMarkersValid"], evidence["preferredTerminologyValid"], evidence["protectedLiteralsValid"], evidence["structureValid"]))
+          print(json.dumps(evidence, indent=2, sort_keys=True))
+          raise SystemExit(0 if evidence["passed"] else 3)
+      modelVisible: false
+    harnesses: [codex]
+    risk: {level: ordinary, reasons: []}
+    executionTier: local
+    securityContainmentRequired: false
+    harnessExecutionStatus: {codex: runnable, junie: runnable}
+    requiredAgents: [dev-documentation-writer]
+    agentScenarios: [dev-documentation-writer-terminology-rewrite]
+    requiredSkills: [effective-communication, ste-technical-writing, route-documentation-work, verify-documentation-page, terminology-standard]
+    skillProbes: [probe-terminology-standard]
+    fixtureBackedProbeClaims: [probe-terminology-standard]
+    workflowPack: documentation-methodology
+    sandboxProfiles: {codex: codex-workspace-write}
+    judgePlan:
+      deterministicChecks: [model-input-safety, skill-read-trace, harness-agent-identity, semantic-preservation, artifact-structure, required-command-outcome, allowed-paths-only, contradiction-scan, snapshot-reset, local-execution-boundary]
+      modelRubric: documentation-quality
+    contextPack:
+      fixtureRoot: evals/projects/terminology-standard-effect
+      include: [AGENTS.md, README.md, TASK.md, source-document.md, terminology.md]
+      stagedSkillPackages: [effective-communication, ste-technical-writing, route-documentation-work, verify-documentation-page, terminology-standard]
+      wholeRepositoryAllowed: false
+      approvedSensitiveData: false
+    modelVisiblePaths: [AGENTS.md, README.md, TASK.md, source-document.md, terminology.md]
+    skillResourceAllowlist:
+      effective-communication: [SKILL.md]
+      ste-technical-writing: [SKILL.md]
+      route-documentation-work: [SKILL.md]
+      verify-documentation-page: [SKILL.md]
+      terminology-standard: [SKILL.md]
+    requiredEvidence: [TERMINOLOGY-PREFERRED, SEMANTIC-MARKERS, SCRATCHPAD-OBSERVATION]

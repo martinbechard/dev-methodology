@@ -94,6 +94,7 @@ packs:
       - probe-sql
       - probe-structured-design
       - probe-structured-explanation
+      - probe-terminology-standard
       - probe-tailwind-design-system
       - probe-test-driven-development
       - probe-test-strategy
@@ -232,6 +233,7 @@ packs:
         - junie-workspace-write
     executableCases:
       - documentation-functional-spec
+      - terminology-standard-effect
     caseCoverageStatus: partial
     coverageStatus: declared
   - id: project-setup

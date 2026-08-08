@@ -714,6 +714,29 @@ agents:
           modelRubric: artifact-contract
         executableCases: []
         coverageStatus: declared
+      - id: dev-documentation-writer-terminology-rewrite
+        kind: happy-path
+        fixtureProfile: structured-document
+        promptIntent: Rewrite one technical document for clarity without removing meaning while applying a positive-only project Terminology Standard.
+        expectedOutcome: A clearer custom document that preserves every semantic marker and protected literal while using the preferred term for every defined concept.
+        requiredBehaviors:
+          - Preserve every source claim, semantic marker, exact identifier, command, number, and decision label.
+          - Apply the project Terminology Standard only through the temporarily injected terminology-standard skill.
+          - Report possible negative-rule candidates separately without treating them as normative.
+        forbiddenBehaviors:
+          - Remove meaning to simplify the document.
+          - Read or apply terminology.md when the target skill is intentionally omitted.
+          - Add speculative Avoid rules to the positive-only standard.
+        judgePlan:
+          deterministicChecks:
+            - semantic-preservation
+            - artifact-structure
+            - required-command-outcome
+            - allowed-paths-only
+          modelRubric: documentation-quality
+        executableCases:
+          - terminology-standard-effect
+        coverageStatus: fixture-backed
     coverageStatus: fixture-backed
   - id: dev-merge-coordinator
     source: agents/roles/dev-activities/dev-merge-coordinator.role.yaml
