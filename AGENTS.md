@@ -220,6 +220,73 @@ These project-wide references apply to every Agent. Load a listed skill only whe
 
 - structured-explanation: load when an Agent must present technical reasoning as explicit queries, facts, hypotheses, unknowns, and answers.
 - organise-project-files: load when an Agent must choose or audit the location of a project file or directory.
+- document-provenance: load when an Agent creates, generates, migrates, or accepts a maintained document governed by the project document_provenance configuration.
+
+## Document Provenance
+
+Load document-provenance when an Agent creates, generates, migrates, or accepts a maintained document governed by the project document_provenance configuration.
+
+Governed maintained-document paths:
+
+- README.md
+- design/*.md
+- design/**/*.md
+- design/*.html
+- design/**/*.html
+- docs/*.md
+- docs/**/*.md
+- docs/*.html
+- docs/**/*.html
+- skills/*/SKILL.md
+- skills/*/references/*.md
+- skills/*/references/**/*.md
+- skills/route-documentation-work/assets/templates/*.md
+
+Required copyright text: Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+
+Placement rules:
+
+- Markdown front matter remains the first construct; place the canonical provenance comment immediately after it. Without front matter, place the comment first.
+- HTML doctype remains the first construct; place the canonical provenance comment immediately after it.
+- Exclusions override governed path matches.
+
+Excluded paths and artifact classes:
+
+- backlog/**
+- Clippings/**
+- raw/**
+- external/**
+- vendor/**
+- **/*.yaml
+- **/*.yml
+- **/*.json
+- **/*.toml
+- **/*.lock
+- **/*.csv
+- **/*.tsv
+- **/*.xml
+- **/*.ini
+- **/*.conf
+- **/*.bin
+- **/*.pdf
+- **/*.png
+- **/*.jpg
+- **/*.jpeg
+- **/*.gif
+- **/*.svg
+- **/__pycache__/**
+- **/*.pyc
+- .cache/**
+- node_modules/**
+- design/generated/**
+- generated/**
+- design/agent-skill-test-coverage-checklist.md
+
+Runtime provenance fields must come from the coordinator, orchestrator, or harness as runtime-supplied values. Never infer or reconstruct them from history.
+
+Generated maintained documents inherit provenance through their generator or owning source and runtime envelope; do not hand-edit generated projections.
+
+For an unsupported maintained-document format, use a project-authorized sidecar or manifest. If none is authorized, report the gap and leave the artifact unchanged.
 
 ## Project Skill Extensions
 

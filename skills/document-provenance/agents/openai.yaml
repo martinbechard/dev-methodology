@@ -1,0 +1,17 @@
+# Codex app metadata for this skill.
+# Derived interface fields are refreshed from SKILL.md by scripts/openai_metadata.py.
+interface:
+  # User-facing name shown in Codex skill surfaces.
+  display_name: Document Provenance
+  # User-facing summary shown in Codex skill surfaces.
+  short_description: Apply and validate truthful creation provenance for governed documents without taking ownership...
+  # Prompt Codex can use when launching this skill directly.
+  default_prompt: Use $document-provenance to add or validate truthful runtime-supplied creation provenance for governed documents.
+
+# Optional invocation policy placeholder.
+# policy:
+#   allow_implicit_invocation: false
+
+# Optional tool dependency placeholder.
+# dependencies:
+#   tools: []

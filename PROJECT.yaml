@@ -248,6 +248,56 @@ shared_agent_skills:
     condition: "when an Agent must present technical reasoning as explicit queries, facts, hypotheses, unknowns, and answers"
   - skill: organise-project-files
     condition: "when an Agent must choose or audit the location of a project file or directory"
+  - skill: document-provenance
+    condition: "when an Agent creates, generates, migrates, or accepts a maintained document governed by the project document_provenance configuration"
+
+document_provenance:
+  enabled: true
+  copyright: "Copyright (c) 2026 Martin.Bechard@DevConsult.ca"
+  governed_paths:
+    - README.md
+    - design/*.md
+    - design/**/*.md
+    - design/*.html
+    - design/**/*.html
+    - docs/*.md
+    - docs/**/*.md
+    - docs/*.html
+    - docs/**/*.html
+    - skills/*/SKILL.md
+    - skills/*/references/*.md
+    - skills/*/references/**/*.md
+    - skills/route-documentation-work/assets/templates/*.md
+  excluded_paths:
+    - backlog/**
+    - Clippings/**
+    - raw/**
+    - external/**
+    - vendor/**
+    - "**/*.yaml"
+    - "**/*.yml"
+    - "**/*.json"
+    - "**/*.toml"
+    - "**/*.lock"
+    - "**/*.csv"
+    - "**/*.tsv"
+    - "**/*.xml"
+    - "**/*.ini"
+    - "**/*.conf"
+    - "**/*.bin"
+    - "**/*.pdf"
+    - "**/*.png"
+    - "**/*.jpg"
+    - "**/*.jpeg"
+    - "**/*.gif"
+    - "**/*.svg"
+    - "**/__pycache__/**"
+    - "**/*.pyc"
+    - .cache/**
+    - node_modules/**
+    - design/generated/**
+    - generated/**
+    - design/agent-skill-test-coverage-checklist.md
 
 project_skill_extensions:
   - skill: dev-methodology-repository-maintenance

@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+# AI attribution: Modified with AI assistance.
+# Summary: Verifies OKF migration and validation for concept and reserved project-wiki pages.
+
 """Regression tests for OKF migration and validation."""
 
 from __future__ import annotations
@@ -16,6 +20,23 @@ from project_wiki_ops.okf import (
 
 EXPECTED_NO_FINDINGS = 0
 EXPECTED_ONE_FINDING = 1
+PROVENANCE_COMMENT = """<!--
+Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+Artifact-ID: artifact-reserved-page
+Created-UTC: 2026-08-08T18:17:00Z
+Creating-Agent: Wiki Writer
+Runtime: Codex
+Dispatched-Model: gpt-5.5
+Reasoning-Effort: high
+Task-ID: task-reserved-page
+Artifact-ID-Evidence: runtime-supplied
+Created-UTC-Evidence: runtime-supplied
+Creating-Agent-Evidence: runtime-supplied
+Runtime-Evidence: runtime-supplied
+Dispatched-Model-Evidence: runtime-supplied
+Reasoning-Effort-Evidence: runtime-supplied
+Task-ID-Evidence: runtime-supplied
+-->"""
 
 
 class OkfMigrationTest(unittest.TestCase):
@@ -58,6 +79,48 @@ class OkfMigrationTest(unittest.TestCase):
 
         self.assertFalse(result.changed)
         self.assertEqual(EXPECTED_NO_FINDINGS, len(findings))
+
+    def test_reserved_index_and_log_accept_leading_provenance_comment(self) -> None:
+        for filename, title in (("index.md", "Techniques"), ("log.md", "Change Log")):
+            with self.subTest(filename=filename):
+                with tempfile.TemporaryDirectory() as directory:
+                    page = Path(directory) / "docs" / "wiki" / "techniques" / filename
+                    page.parent.mkdir(parents=True)
+                    page.write_text(
+                        f"{PROVENANCE_COMMENT}\n# {title}\n",
+                        encoding="utf-8",
+                    )
+
+                    findings = validate_okf_page(page)
+
+                self.assertEqual(EXPECTED_NO_FINDINGS, len(findings))
+
+    def test_reserved_page_rejects_malformed_leading_comment(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            page = Path(directory) / "docs" / "wiki" / "techniques" / "index.md"
+            page.parent.mkdir(parents=True)
+            page.write_text(
+                "<!--\nCopyright (c) 2026 Martin.Bechard@DevConsult.ca\n# Techniques\n",
+                encoding="utf-8",
+            )
+
+            findings = validate_okf_page(page)
+
+        self.assertEqual(EXPECTED_ONE_FINDING, len(findings))
+        self.assertIn("malformed leading HTML comment", findings[0].message)
+
+    def test_reserved_page_with_provenance_still_rejects_frontmatter(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            page = Path(directory) / "docs" / "wiki" / "techniques" / "log.md"
+            page.parent.mkdir(parents=True)
+            page.write_text(
+                f'{PROVENANCE_COMMENT}\n---\ntype: "Log"\n---\n# Change Log\n',
+                encoding="utf-8",
+            )
+
+            findings = validate_okf_page(page)
+
+        self.assertTrue(any("must not use frontmatter" in finding.message for finding in findings))
 
     def test_validation_requires_type_for_concepts(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

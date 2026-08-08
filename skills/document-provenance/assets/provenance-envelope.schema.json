@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Document provenance runtime envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "records"],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "records": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "Artifact-ID",
+          "Created-UTC",
+          "Creating-Agent",
+          "Runtime",
+          "Dispatched-Model",
+          "Reasoning-Effort",
+          "Task-ID"
+        ],
+        "properties": {
+          "Artifact-ID": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{7,199}$"
+          },
+          "Created-UTC": {
+            "type": "string",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?(Z|\\+00:00)$"
+          },
+          "Creating-Agent": {
+            "type": "string",
+            "minLength": 1
+          },
+          "Runtime": {
+            "type": "string",
+            "minLength": 1
+          },
+          "Dispatched-Model": {
+            "type": "string",
+            "minLength": 1
+          },
+          "Reasoning-Effort": {
+            "type": "string",
+            "minLength": 1
+          },
+          "Task-ID": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}

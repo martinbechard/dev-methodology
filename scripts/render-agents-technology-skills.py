@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Modified with AI assistance.
-# Summary: Renders project setup, coordination, workflows, shared Agent skills, folder technology, and project skill guidance.
+# Summary: Renders project setup, coordination, workflows, document provenance, shared Agent skills, folder technology, and project skill guidance.
 
 from __future__ import annotations
 
@@ -31,6 +31,20 @@ _RESOURCE_DEADLINE_CLASS_IDS = (
 )
 PROJECT_SKILL_EXTENSIONS_HEADING = "## Project Skill Extensions"
 SHARED_AGENT_SKILLS_HEADING = "## Shared Agent Skills"
+DOCUMENT_PROVENANCE_HEADING = "## Document Provenance"
+DOCUMENT_PROVENANCE_SKILL = "document-provenance"
+DOCUMENT_PROVENANCE_KEYS = {
+    "enabled",
+    "copyright",
+    "governed_paths",
+    "excluded_paths",
+}
+DOCUMENT_PROVENANCE_FORMATS = (".md", ".markdown", ".html", ".htm")
+COPYRIGHT_PATTERN = re.compile(r"^Copyright \(c\) [0-9]{4} \S(?:.*\S)?$")
+PLACEHOLDER_PATTERN = re.compile(
+    r"(?:\{\{|\}\}|<[^>]*>|\b(?:TODO|TBD|REPLACE|NOT[- ]YET)\b)",
+    re.IGNORECASE,
+)
 CLAIM_HELPER_PROVIDERS = {
     "mcp": "resource-claim-helper-mcp",
     "command": "resource-claim-helper-command",
@@ -357,6 +371,162 @@ def _shared_agent_skill_lines(value: dict[str, object]) -> list[str]:
         "These project-wide references apply to every Agent. Load a listed skill only when its condition applies; the skill definitions remain in the bundled catalog and are not copied here.",
         "",
         *(f"- {skill}: load {condition}." for skill, condition in shared_skills),
+        "",
+    ]
+
+
+def _document_provenance_paths(
+    entries: object,
+    field: str,
+    *,
+    require_document_format: bool,
+) -> list[str]:
+    """Validate one ordered provenance path-pattern list without repairing values."""
+
+    if not isinstance(entries, list) or not entries:
+        raise ValueError(f"document_provenance.{field} must be a non-empty list")
+    normalized_entries: list[str] = []
+    first_paths: dict[str, str] = {}
+    for index, entry in enumerate(entries):
+        entry_field = f"document_provenance.{field}[{index}]"
+        normalized = _normalized_technology_scope(entry, entry_field)
+        if PLACEHOLDER_PATTERN.search(normalized):
+            raise ValueError(f"{entry_field} must be an exact non-placeholder path pattern")
+        if normalized in first_paths:
+            raise ValueError(
+                f"{entry_field} path pattern {normalized!r} duplicates {first_paths[normalized]}"
+            )
+        if require_document_format and not normalized.lower().endswith(
+            DOCUMENT_PROVENANCE_FORMATS
+        ):
+            raise ValueError(
+                f"{entry_field} must target a supported maintained-document format: "
+                "Markdown or HTML"
+            )
+        first_paths[normalized] = f"{field}[{index}]"
+        normalized_entries.append(normalized)
+    return normalized_entries
+
+
+def _document_provenance_configuration(
+    value: dict[str, object],
+) -> dict[str, object] | None:
+    """Validate and return the optional centralized document-provenance gate."""
+
+    shared_skills = dict(_shared_agent_skills(value))
+    routed = DOCUMENT_PROVENANCE_SKILL in shared_skills
+    if "document_provenance" not in value:
+        if routed:
+            raise ValueError(
+                "shared_agent_skills document-provenance route requires "
+                "document_provenance.enabled true"
+            )
+        return None
+
+    configuration = value["document_provenance"]
+    if not isinstance(configuration, Mapping):
+        raise ValueError("document_provenance must be a mapping")
+    enabled = configuration.get("enabled")
+    if not isinstance(enabled, bool):
+        raise ValueError("document_provenance.enabled must be a boolean")
+    if not enabled:
+        if set(configuration) != {"enabled"}:
+            raise ValueError("disabled document_provenance keys must be exactly: enabled")
+        if routed:
+            raise ValueError(
+                "shared_agent_skills document-provenance route requires "
+                "document_provenance.enabled true"
+            )
+        return None
+    if set(configuration) != DOCUMENT_PROVENANCE_KEYS:
+        raise ValueError(
+            "enabled document_provenance keys must be exactly: enabled, copyright, "
+            "governed_paths, excluded_paths"
+        )
+    if not routed:
+        raise ValueError(
+            "enabled document_provenance requires shared_agent_skills to route "
+            "document-provenance"
+        )
+
+    condition = shared_skills[DOCUMENT_PROVENANCE_SKILL]
+    if PLACEHOLDER_PATTERN.search(condition):
+        raise ValueError(
+            "shared_agent_skills document-provenance condition must be exact "
+            "non-placeholder text"
+        )
+
+    copyright_text = _single_line_rendered_text(
+        configuration.get("copyright"),
+        "document_provenance.copyright",
+    )
+    if PLACEHOLDER_PATTERN.search(copyright_text) or not COPYRIGHT_PATTERN.fullmatch(
+        copyright_text
+    ):
+        raise ValueError(
+            "document_provenance.copyright must be exact non-placeholder copyright text"
+        )
+    governed_paths = _document_provenance_paths(
+        configuration.get("governed_paths"),
+        "governed_paths",
+        require_document_format=True,
+    )
+    excluded_paths = _document_provenance_paths(
+        configuration.get("excluded_paths"),
+        "excluded_paths",
+        require_document_format=False,
+    )
+    governed_set = set(governed_paths)
+    for index, pattern in enumerate(excluded_paths):
+        if pattern in governed_set:
+            raise ValueError(
+                f"document_provenance.excluded_paths[{index}] path pattern {pattern!r} "
+                "also appears in governed_paths"
+            )
+    return {
+        "condition": condition,
+        "copyright": copyright_text,
+        "governed_paths": governed_paths,
+        "excluded_paths": excluded_paths,
+    }
+
+
+def _document_provenance_lines(value: dict[str, object]) -> list[str]:
+    """Render root-only document provenance guidance from validated project config."""
+
+    configuration = _document_provenance_configuration(value)
+    if configuration is None:
+        return []
+    governed_paths = configuration["governed_paths"]
+    excluded_paths = configuration["excluded_paths"]
+    if not isinstance(governed_paths, list) or not isinstance(excluded_paths, list):
+        raise AssertionError("validated document provenance paths must be lists")
+    return [
+        DOCUMENT_PROVENANCE_HEADING,
+        "",
+        f"Load document-provenance {configuration['condition']}.",
+        "",
+        "Governed maintained-document paths:",
+        "",
+        *(f"- {pattern}" for pattern in governed_paths),
+        "",
+        f"Required copyright text: {configuration['copyright']}",
+        "",
+        "Placement rules:",
+        "",
+        "- Markdown front matter remains the first construct; place the canonical provenance comment immediately after it. Without front matter, place the comment first.",
+        "- HTML doctype remains the first construct; place the canonical provenance comment immediately after it.",
+        "- Exclusions override governed path matches.",
+        "",
+        "Excluded paths and artifact classes:",
+        "",
+        *(f"- {pattern}" for pattern in excluded_paths),
+        "",
+        "Runtime provenance fields must come from the coordinator, orchestrator, or harness as runtime-supplied values. Never infer or reconstruct them from history.",
+        "",
+        "Generated maintained documents inherit provenance through their generator or owning source and runtime envelope; do not hand-edit generated projections.",
+        "",
+        "For an unsupported maintained-document format, use a project-authorized sidecar or manifest. If none is authorized, report the gap and leave the artifact unchanged.",
         "",
     ]
 
@@ -1374,8 +1544,8 @@ def render(
     agent_claim_transport is required only when resource_coordination selects resource-claim
     and must be absent when resource_coordination selects none.
     Technology guidance is always produced from the configured loadouts. Optional
-    shared_agent_skills and project_skill_extensions lists produce root-only reference sections when
-    include_project_skill_extensions is true. The optional inline_tech_skills request must
+    shared_agent_skills, document_provenance, and project_skill_extensions produce root-only
+    guidance when include_project_skill_extensions is true. The optional inline_tech_skills request must
     agree with project_setup.technology_skill_delivery when setup metadata exists. With no
     setup metadata or explicit request, delivery defaults to by-reference. Inline delivery
     embeds each referenced bundled skill body. resource-claim is referenced and its selected
@@ -1383,8 +1553,9 @@ def render(
 
     The return value is the complete generated Markdown text and ends with a newline.
     Rendering does not write an output file, but inlined rendering reads bundled SKILL.md
-    files. Invalid workflow, shared Agent skill, project extension, or source-evidence configuration,
-    unsafe skill names, and invalid skill frontmatter raise ValueError. Missing or unreadable
+    files. Invalid workflow, shared Agent skill, document provenance, project extension, or
+    source-evidence configuration, unsafe skill names, and invalid skill frontmatter raise
+    ValueError. Missing or unreadable
     skill files raise OSError, and malformed YAML may raise yaml.YAMLError.
     """
     _reconcile_setup_workflow(value)
@@ -1513,9 +1684,11 @@ def render(
                 ])
     lines.append("")
     shared_agent_skill_lines = _shared_agent_skill_lines(value)
+    document_provenance_lines = _document_provenance_lines(value)
     project_skill_extension_lines = _project_skill_extension_lines(value)
     if include_project_skill_extensions:
         lines.extend(shared_agent_skill_lines)
+        lines.extend(document_provenance_lines)
         lines.extend(project_skill_extension_lines)
     return "\n".join(lines)
 
@@ -1534,7 +1707,7 @@ def main(arguments: Sequence[str] | None = None) -> int:
     Argument-parser usage failures raise SystemExit with argparse's exit code, normally 2.
     """
     parser = argparse.ArgumentParser(
-        description="Render resource coordination, workflow selectors, technology guidance, shared Agent skills, and root project skill references."
+        description="Render resource coordination, workflow selectors, technology guidance, shared Agent skills, document provenance, and root project skill references."
     )
     parser.add_argument("--project", type=Path, required=True)
     parser.add_argument("--output", type=Path)
