@@ -4,15 +4,27 @@ Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 
 # Add Document Provenance Skill
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
 Provider: file
 
-Owner: Unowned
+Owner: Root Dev Orchestrator
 
 Work Item ID: add-document-provenance-skill
+
+Canonical Conversation: 019fe291-1ba8-7a43-8d21-391a04dfa9a9
+
+Root Agent Task: 019fe291-1ba8-7a43-8d21-391a04dfa9a9
+
+Branch: codex/add-document-provenance-skill
+
+Worktree: /Users/martinbechard/.codex/worktrees/6cb2/dev-methodology
+
+Phase: Implementing private document-provenance skill package before deferred shared catalog, generated-output, review, and integration events
+
+Started At: 2026-08-08T18:11:22Z
 
 Completion: main-branch
 
@@ -132,6 +144,24 @@ Last Contact At: None
 Next Reconciliation At: 2026-08-08T18:23:00Z
 
 Coordination Boundary: Private-worktree discovery and the new skill package may proceed independently. Defer any exact overlapping bundle-content catalog, generated-output, shared review, or main-integration event until `reconcile-bundle-content-suite-drift` clears its active finish lane. Preserve the separately owned untracked `design/agent-owned-evaluation-suites.html` file.
+
+## Active Execution Evidence
+
+Condition Type: root-execution
+
+Owner: Root Dev Orchestrator task 019fe291-1ba8-7a43-8d21-391a04dfa9a9
+
+Evidence: Canonical root execution is active in the clean private worktree on branch codex/add-document-provenance-skill; the independent new-skill package phase can proceed while shared overlap events remain deferred.
+
+Observed At: 2026-08-08T18:11:22Z
+
+Started At: 2026-08-08T18:11:22Z
+
+Deadline or Expires At: 2026-08-08T22:11:13Z
+
+Next Action: Acquire the exact outcome-work claim, inspect package and validator patterns, and implement the bounded private skill package without touching deferred shared paths.
+
+Next Reconciliation At: 2026-08-08T18:25:13Z
 
 ## Verification
 
