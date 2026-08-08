@@ -1,0 +1,32 @@
+{
+  "capture_status": "HARNESS CAPTURE PASS",
+  "event_capture_filename": "terminology-standard-effect-codex-f75fb208c6de-6113ae3566bc43a69409350035fdf63c-events.jsonl",
+  "event_capture_sha256": "fed95a1aa995a2ecde7342bb87a3b04e84a2c2e77a48d79ee6c862284a26bda8",
+  "input_manifest_sha256": "be5a04fcd4027dd4dbaffd550a075088015a84b01afc7a6b94d6c9259ef5b9ac",
+  "missing_preferred_term_count": 1,
+  "missing_preferred_terms": [
+    {
+      "marker": "TERM-30",
+      "preferred_term": "Test suite"
+    }
+  ],
+  "passed": false,
+  "preferred_terminology_valid": false,
+  "probe_comparison_key": "8cbfb52290460f5fc5625f87f3008b757e1450c88a793a31600d5f22a709222c",
+  "probe_variant": "treatment",
+  "protected_literal_count": 10,
+  "protected_literals_valid": true,
+  "schema": "dev-methodology-terminology-effect-verifier-summary",
+  "scratchpad_candidate_occurrences": [
+    {
+      "candidate": "campaign",
+      "marker": "TERM-30"
+    }
+  ],
+  "scratchpad_candidates_normative": false,
+  "semantic_marker_count": 35,
+  "semantic_markers_valid": true,
+  "standard_commit": "60354de8471576969f8115e5702f8141b726a21b",
+  "standard_phase": "positive-only",
+  "version": 1
+}

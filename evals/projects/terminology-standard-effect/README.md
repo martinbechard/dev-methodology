@@ -8,3 +8,5 @@ The harness runs one frozen case in two variants:
 - `treatment` is the green candidate. The skill is staged, project guidance activates it, and the skill may use its explicit project-only fallback when the reference provider is unavailable.
 
 Both variants use the same Agent, prompt, source bytes, model profile, sandbox, and evaluator-owned verification command. The non-model-visible verifier enforces positive term use and preservation of semantic markers and protected literals. It reports scratchpad candidates separately; those observations do not become normative `Avoid` rules unless a treatment run still reproduces them.
+
+The retained [experiment results](evidence/experiment-results.md) record the red control, positive-only treatment, and reinforced treatment. The concise JSON summaries preserve the deterministic outcomes without promoting the local harness captures to full Judge-passed probe evidence.

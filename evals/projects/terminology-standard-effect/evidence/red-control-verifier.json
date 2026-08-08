@@ -1,0 +1,36 @@
+{
+  "capture_status": "HARNESS CAPTURE PASS",
+  "event_capture_filename": "terminology-standard-effect-codex-fed74caab81f-f12acad970404c8a97b736a72fa19dfe-events.jsonl",
+  "event_capture_sha256": "01ab7bf419b67c3a78fca14505f4964a0c7bf629d615cad77ca209589ddebe49",
+  "input_manifest_sha256": "be5a04fcd4027dd4dbaffd550a075088015a84b01afc7a6b94d6c9259ef5b9ac",
+  "missing_preferred_term_count": 34,
+  "passed": false,
+  "preferred_terminology_valid": false,
+  "present_preferred_terms": [
+    "Campaign"
+  ],
+  "probe_comparison_key": "8cbfb52290460f5fc5625f87f3008b757e1450c88a793a31600d5f22a709222c",
+  "probe_variant": "target-omitted",
+  "protected_literal_count": 10,
+  "protected_literals_valid": true,
+  "schema": "dev-methodology-terminology-effect-verifier-summary",
+  "scratchpad_candidate_occurrences": [
+    {
+      "candidate": "receipt",
+      "marker": "TERM-14"
+    },
+    {
+      "candidate": "rollout",
+      "marker": "TERM-29"
+    },
+    {
+      "candidate": "campaign",
+      "marker": "TERM-30"
+    }
+  ],
+  "scratchpad_candidates_normative": false,
+  "semantic_marker_count": 35,
+  "semantic_markers_valid": true,
+  "standard_phase": "omitted",
+  "version": 1
+}

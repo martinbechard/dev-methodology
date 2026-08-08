@@ -1,0 +1,21 @@
+{
+  "capture_status": "HARNESS CAPTURE PASS",
+  "event_capture_filename": "terminology-standard-effect-codex-a1788095a87d-f13c41fece554fd58989f6c4ca1cc2ea-events.jsonl",
+  "event_capture_sha256": "1a1fdd41b4b55362eef373a4bad09f5fb532c4bf20ffd3f1951ecac805b8b1f3",
+  "input_manifest_sha256": "e4767170ef87125b59048cae9efbb6a9d477e02a5ab4dca9035f0847f52e884b",
+  "missing_preferred_term_count": 0,
+  "passed": true,
+  "preferred_terminology_valid": true,
+  "probe_comparison_key": "8cbfb52290460f5fc5625f87f3008b757e1450c88a793a31600d5f22a709222c",
+  "probe_variant": "treatment",
+  "protected_literal_count": 10,
+  "protected_literals_valid": true,
+  "schema": "dev-methodology-terminology-effect-verifier-summary",
+  "scratchpad_candidate_occurrences": [],
+  "scratchpad_candidates_normative": false,
+  "semantic_marker_count": 35,
+  "semantic_markers_valid": true,
+  "standard_commit": "a85380e51b120d23cebe1259b9dbf17b37fcba89",
+  "standard_phase": "campaign-reinforced",
+  "version": 1
+}
