@@ -1,12 +1,12 @@
 # Prevent Retired Skill Cache Directories From Breaking Validation
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
 Provider: file
 
-Owner: Unowned
+Owner: Dev Orchestrator task 019fda3b-119f-7412-a045-29d5f8998d79
 
 Work Item ID: prevent-retired-skill-cache-directories-from-breaking-validation
 
@@ -180,3 +180,21 @@ Owner: Unowned
 Canonical Task: 019fda3b-119f-7412-a045-29d5f8998d79
 
 Next Action: Parent Coordinator records Ready -> Starting for the preserved canonical task; retained candidate, review, verification, and Holding evidence remain history.
+
+## Current Starting Handoff Evidence
+
+Starting Recorded At: 2026-08-08T16:24:45Z
+
+Parent Coordination Thread: 019fb057-1767-7ef2-b5fa-41f4417b20b3
+
+Launch Reservation: Existing Root Dev Orchestrator task 019fda3b-119f-7412-a045-29d5f8998d79 for this exact work item.
+
+Normalized Objective: Resume bounded verification and main-branch reconciliation for the preserved cache-only retired-skill candidate without altering accepted candidate or review evidence.
+
+Launch Result: Started
+
+Canonical Execution: 019fda3b-119f-7412-a045-29d5f8998d79
+
+Last Contact: 2026-08-08T16:24:45Z; existing canonical task confirmed by parent Coordinator.
+
+Next Reconciliation At: 2026-08-08T16:39:45Z
