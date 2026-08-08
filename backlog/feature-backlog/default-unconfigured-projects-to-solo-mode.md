@@ -140,17 +140,17 @@ Condition Type: root-execution.
 
 Owner: Root Dev Orchestrator canonical task 019fe2f2-f195-7670-8367-15d9e5c79de7.
 
-Evidence: Canonical root heartbeat event 7c3d2be3-0049-46e6-b868-d2f56a15924d was recorded on the existing main-integration claim at 2026-08-08T23:16:03.678154Z while the holder’s correction/test call was active; owner, scope, and deadlines remain unchanged, with hard stop 2026-08-08T23:26:30.972063Z. Artifact correction remains active with exact README.md, two mode-skill, and generated skill-definitions scope; no extra mutation has started. Post-integration source reviewer PASS remains valid; artifact correction is still required. No blocker or terminology issue is recorded. Primary main remains clean except provider-only updates; integrated commit is not merged. Title is Implementing.
+Evidence: Previous main-integration claim was safely released after heartbeat, event 3629b1c1-2876-407e-ae11-267c240645a1. Fresh claim default-unconfigured-projects-to-solo-mode-main-integration-correction-019fe2f2 was acquired SHARED_CHECKOUT_ACQUIRED, event 31dd24bc-5e44-48ac-8bcc-9f051b23552d, at 2026-08-08T23:20:35.435133Z for Dev Merge Coordinator on main, parented to the current root Work claim, baseline 74e2da0c; expected release 23:40:35Z, hard stop 23:50:35Z, cleanup 00:00:35Z. The coordinator resumed on the preserved isolated integration worktree and is correcting exactly README.md, two mode skills, and generated skill-definitions, with required gates and commit pending. No blocker, extra path, or terminology issue is recorded. Primary main has no mutation beyond provider updates. Title is Implementing.
 
-Observed At: 2026-08-08T23:18:06Z.
+Observed At: 2026-08-08T23:21:18Z.
 
 Started At: 2026-08-08T20:20:06Z.
 
-Deadline or Expires At: 2026-08-08T23:30:00Z.
+Deadline or Expires At: 2026-08-09T00:00:00Z.
 
-Next Action: Confirm correction status, then receive the clean correction commit, rerun required gates, and obtain fresh artifact review and integrated verification before the hard stop or safe stop. The deadline covers the bounded correction, regeneration, review, verification, and delivery handoff.
+Next Action: Receive the bounded correction commit, rerun required gates, and obtain fresh artifact review and integrated verification before delivery. The deadline is extended because re-review, verifier, and delivery remain after correction.
 
-Next Reconciliation At: 2026-08-08T23:23:06Z.
+Next Reconciliation At: 2026-08-08T23:29:18Z.
 
 ## User Action Required Transition Evidence
 
