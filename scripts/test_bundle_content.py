@@ -6488,6 +6488,10 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("cannot support TERMINOLOGY REVIEW: PASS", base_text)
         self.assertIn("TERMINOLOGY APPLICATION: PARTIAL", base_text)
         self.assertIn("TERMINOLOGY APPLICATION: BLOCKED", base_text)
+        self.assertIn(
+            "Load the active configured reference snapshot through Load Terminology Standards",
+            base_text,
+        )
         self.assertIn("first matching project entry governs", base_text)
         self.assertIn("The Avoid section is optional", base_text)
         self.assertIn("Do not populate Avoid as a speculative synonym list", base_text)
@@ -6507,6 +6511,9 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("TERMINOLOGY STANDARD UPDATE: BLOCKED", update_text)
         self.assertIn("make no mutation", update_text)
         self.assertIn("caller-supplied authorized target path", update_text)
+        self.assertIn("returned catalog revision and source labels", update_text)
+        self.assertIn("does not assert coverage of an unlisted physical root", update_text)
+        self.assertIn("required physical-scope coverage evidence is absent", update_text)
         self.assertEqual(1, update_text.count("Load Terminology Standards result"))
 
         for skill_name in skill_names:

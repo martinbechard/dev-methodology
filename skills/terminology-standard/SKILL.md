@@ -85,7 +85,7 @@ The Avoid section is optional. The example shows its shape, not a requirement to
 
 ## Apply Preferred Terminology
 
-1. Load the shared user and project standards through Load Terminology Standards.
+1. Load the active configured reference snapshot through Load Terminology Standards.
 2. Branch on the load outcome before inspecting the covered text; use the explicit PARTIAL fallback or stop on BLOCKED.
 3. Identify the concept expressed by each material term in the covered text.
 4. Use the first preferred term in provider order whose definition matches that concept.

@@ -32,7 +32,9 @@ Use the project terminology.md by default for a concept specific to one project.
 
 A shared user update also requires a caller-supplied authorized target path or provider-owned mutation capability for one configured shared reference root. Do not derive that target from the path-free reference_load result.
 
-Invoke terminology-standard's Load Terminology Standards operation once before mutation. A loaded aggregate or its conclusive no-content ABSENT form is available for the decision. If the operation returns UNAVAILABLE, return TERMINOLOGY STANDARD UPDATE: BLOCKED with the failed capability and required owner remediation, and make no mutation. Shared user updates therefore require supported shared-scope access as well as the user's explicit scope selection.
+Invoke terminology-standard's Load Terminology Standards operation once before mutation. A loaded aggregate or its no-content ABSENT form is available for the decision relative to the returned catalog revision and source labels. If the operation returns UNAVAILABLE, return TERMINOLOGY STANDARD UPDATE: BLOCKED with the failed capability and required owner remediation, and make no mutation. Shared user updates therefore require supported shared-scope access as well as the user's explicit scope selection.
+
+The loaded result does not prove that an unlisted physical root exists or was eligible. When the requested mutation depends on examining a named physical scope that is not covered by explicit provider evidence, return TERMINOLOGY STANDARD UPDATE: BLOCKED instead of inferring completeness.
 
 Update only the selected scope. Do not copy all shared entries into the project artifact.
 
@@ -40,7 +42,7 @@ Update only the selected scope. Do not copy all shared entries into the project 
 
 1. Identify the concept, preferred term, definition, intended scope, and source of authority.
 2. Consume the one Load Terminology Standards result already obtained for the scope decision and stop without mutation when it is UNAVAILABLE.
-3. Check both standards for an existing entry, overlap, or semantic conflict.
+3. Check every standard returned in the configured snapshot for an existing entry, overlap, or semantic conflict.
 4. Create or revise one positive preferred-term entry with a precise definition.
 5. Add Use for or Examples only when they clarify a real boundary.
 6. Omit Avoid for the initial entry unless retained evidence already proves persistent biased substitution.
@@ -52,4 +54,4 @@ Update an existing entry instead of creating a duplicate. Do not weaken or silen
 
 ## Result
 
-Return TERMINOLOGY STANDARD UPDATE: COMPLETE with the selected scope, authorized target, changed preferred entry, whether Avoid was omitted or added, the evidence supporting any reinforcement, semantic conflicts checked, and validation result. When scope access or shared-target authority is incomplete, return TERMINOLOGY STANDARD UPDATE: BLOCKED with zero mutation and the named remediation.
+Return TERMINOLOGY STANDARD UPDATE: COMPLETE with the selected scope, authorized target, returned catalog revision and source labels, configured-snapshot coverage limit, changed preferred entry, whether Avoid was omitted or added, the evidence supporting any reinforcement, semantic conflicts checked within that snapshot, and validation result. COMPLETE describes the authorized mutation; it does not assert coverage of an unlisted physical root. When the provider is unavailable, required physical-scope coverage evidence is absent, or shared-target authority is incomplete, return TERMINOLOGY STANDARD UPDATE: BLOCKED with zero mutation and the named remediation.

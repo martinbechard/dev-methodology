@@ -1178,7 +1178,7 @@ probes:
     evaluationKind: artifact-contract
     activationCondition: The user requests creation or update of a project or shared user terminology.md.
     negativeCondition: An initial preferred definition does not receive a speculative Avoid list, and shared user scope is not mutated without explicit scope selection.
-    expectedBehavior: Consume exactly one Load Terminology Standards result, distinguish ABSENT from UNAVAILABLE, require an authorized target for shared mutation, return TERMINOLOGY STANDARD UPDATE BLOCKED with zero mutation and named remediation for any unavailable scope or target, default project-specific concepts to project scope, update one positive preferred entry, and add Avoid only from retained persistent-use evidence.
+    expectedBehavior: Consume exactly one Load Terminology Standards result, distinguish ABSENT from UNAVAILABLE, bind update decisions and COMPLETE to the returned catalog revision and source labels, avoid claiming coverage of unlisted physical roots, require explicit provider coverage evidence when a mutation depends on a named physical scope, require an authorized target for shared mutation, return TERMINOLOGY STANDARD UPDATE BLOCKED with zero mutation and named remediation when required evidence, provider access, or target authority is unavailable, default project-specific concepts to project scope, update one positive preferred entry, and add Avoid only from retained persistent-use evidence.
     judgePlan: {deterministicChecks: [skill-read-trace, artifact-structure, allowed-paths-only, required-command-outcome], modelRubric: workflow-quality}
     scenarioAssociations: [dev-documentation-writer-happy, methodology-maintainer-happy]
     workflowAssociations: [documentation-methodology]
