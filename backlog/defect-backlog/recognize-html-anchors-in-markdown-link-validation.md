@@ -1,12 +1,12 @@
 # Recognize HTML Anchors In Markdown Link Validation
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
 Provider: file
 
-Owner: Unowned
+Owner: Dev Orchestrator
 
 Work Item ID: recognize-html-anchors-in-markdown-link-validation
 
@@ -22,7 +22,7 @@ Branch: codex/recognize-html-anchors-in-markdown-link-validation
 
 Worktree: /Users/martinbechard/.codex/worktrees/b07b/dev-methodology
 
-Phase: External delivery accepted; canonical verification resumption
+Phase: Focused README validation and external-main observation
 
 ## Summary
 
@@ -169,3 +169,21 @@ Operational Limitation: The external primary checkout contains only untracked `.
 Recovery Evidence: Accidental local commit `7c00444e9c713ebba6f56895b7176b3dfb36c164` was restored exactly to the baseline before accepted delivery, never pushed or published, and is not on final external `main`.
 
 Next Action: Preserve this evidence, record Ready -> Starting for canonical task `019fda3c-1c2a-7061-9b3b-3deb3db114cd`, then have that same root execution record Starting -> Running, verify the maintained README link with the delivered validator, and perform terminal closure only if the configured completion checks pass.
+
+## Active Execution Evidence
+
+Condition Type: root-execution
+
+Owner: Dev Orchestrator task 019fda3c-1c2a-7061-9b3b-3deb3db114cd
+
+Evidence: The preserved canonical root execution accepted the durable resumption handoff, acquired the exact provider update and path claims, and is beginning the bounded external-main observation and README link check without repeating accepted external gates.
+
+Observed At: 2026-08-08T17:28:20Z
+
+Started At: 2026-08-08T17:28:20Z
+
+Deadline or Expires At: 2026-08-08T19:28:20Z
+
+Next Action: Confirm accepted commit a06549b3b57472814a87c1cd9c03e6a2e4420861 remains on external main, verify only dev-methodology README.md with that source, and apply configured completion and terminal closure if READY.
+
+Next Reconciliation At: 2026-08-08T17:43:20Z
