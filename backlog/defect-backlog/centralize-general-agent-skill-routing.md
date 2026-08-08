@@ -20,7 +20,7 @@ Branch: main
 
 Worktree: /Users/martinbechard/dev/dev-methodology
 
-Phase: Independent documentation and methodology review
+Phase: Independent review findings awaiting Coordinator disposition
 
 ## Summary
 
@@ -104,9 +104,27 @@ Started At: 2026-08-08T16:28:17Z
 
 Deadline or Expires At: 2026-08-08T20:28:31Z
 
-Next Action: Obtain one fresh independent documentation and methodology review of exact candidate `555764d4`; proceed to verifier and delivery only if that review accepts the candidate.
+Next Action: Dev Backlog Coordinator determines the lifecycle disposition and coordinates correction of the three recorded review findings. Do not start verification or delivery unless a corrected candidate receives an accepted independent review.
 
 Next Reconciliation At: 2026-08-08T16:43:31Z
+
+## Independent Review Evidence
+
+Reviewed Candidate: `555764d4`
+
+Reviewer: Fresh Methodology Artifact Reviewer task `/root/review_general_skill_routing`
+
+Review Result: BLOCKED
+
+Review Scope: Documentation and methodology consistency, shared conditional routing, role-source declarations, Agent-group documentation, generated synchronization visible in the immutable candidate, and consistency with the object-oriented Agent and Skill model.
+
+Findings:
+
+1. Medium: `design/agents/general-agent-skills.md` treats Agent-wide applicability as a Skill Group even though `design/object-oriented-agent-and-skill-model.md` defines a Skill Group as a cohesive methodology capability. Model this as a distinct cross-cutting applicability view or explicitly extend the governing model.
+2. Medium: `design/object-oriented-skill-group-models.md` retains stale nine-group, fifty-skill, and seven-design counts while the candidate registry contains ten groups, fifty-two skills, and eight Agent-oriented designs.
+3. Low: `design/agents/backlog-management.md`, `design/agents/documentation-methodology.md`, and `design/agents/main-branch-delivery.md` lack the General Agent Skills link promised by the new design.
+
+Accepted Review Evidence: YAML routing, removal of direct role declarations, generated root guidance, manifest entries, and representative generated adapters were otherwise synchronized. The reviewer did not rerun the preserved 29 tests or any accepted freshness, YAML, or diff gate.
 
 ## Holding Pause Evidence
 
