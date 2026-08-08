@@ -22,7 +22,7 @@ Branch: codex/add-document-provenance-skill
 
 Worktree: /Users/martinbechard/.codex/worktrees/6cb2/dev-methodology
 
-Phase: Fresh independent methodology review and verification of the immutable document-provenance candidate
+Phase: Bounded correction 1 by the original Dev Coder for three independent methodology-review findings
 
 Started At: 2026-08-08T18:11:22Z
 
@@ -153,17 +153,17 @@ Condition Type: delegated-work
 
 Owner: Dev Coder task /root/implement_document_provenance under Root Dev Orchestrator task 019fe291-1ba8-7a43-8d21-391a04dfa9a9
 
-Evidence: Dev Coder produced clean immutable commit 87d99310abad66be170bafac9c7274a884e2c211 with 46 exact claimed paths and all focused producer checks green. Producer path claim add-document-provenance-package-tree-019fe291 was released at the completed mutation boundary. Independent methodology reviewer task /root/review_document_provenance_candidate and verifier task /root/verify_document_provenance_candidate are actively evaluating that same commit read-only.
+Evidence: Independent review of immutable commit 87d99310abad66be170bafac9c7274a884e2c211 returned exactly three bounded findings: reserved wiki OKF compatibility, visible generated skill-browser provenance, and acceptance of indented Markdown provenance. The same Dev Coder is actively correcting only those paths under exact correction claim add-document-provenance-correction1-019fe291. Independent verifier otherwise passed every focused candidate check but correctly preserved a configured-root skill_validate rejection without fallback.
 
-Observed At: 2026-08-08T18:56:54Z
+Observed At: 2026-08-08T19:05:44Z
 
 Started At: 2026-08-08T18:11:22Z
 
 Deadline or Expires At: 2026-08-08T22:11:13Z
 
-Next Action: Obtain one terminal methodology-review verdict and one terminal verification verdict for commit 87d99310abad66be170bafac9c7274a884e2c211; return any actionable finding to the same Dev Coder, otherwise proceed to configured main-branch delivery.
+Next Action: Produce one correction commit on top of immutable commit 87d99310abad66be170bafac9c7274a884e2c211, run only the three findings' consuming tests and freshness checks, then return the replacement candidate to the same reviewer and verifier.
 
-Next Reconciliation At: 2026-08-08T19:10:54Z
+Next Reconciliation At: 2026-08-08T19:19:44Z
 
 ## Candidate Recovery Evidence
 
@@ -184,6 +184,30 @@ Package Checks: 11/11 focused validator tests plus skill, metadata, JSON, positi
 Producer Claim Release: add-document-provenance-package-tree-019fe291 released by event 030f30b0-2b01-4ccf-a2ce-cef18d2d7d9a
 
 Pending Gates: One independent methodology review and one independent verifier result against this immutable commit
+
+## Correction Attempt History
+
+Attempt: 1
+
+Source Candidate: 87d99310abad66be170bafac9c7274a884e2c211
+
+Independent Review: NEEDS_CORRECTION with exactly three findings
+
+Finding 1: Reserved provenance-bearing index.md and log.md fixtures fail the existing OKF H1 gate
+
+Finding 2: Generated skill-browser HTML visibly renders the source provenance comment
+
+Finding 3: Four-space-indented Markdown provenance passes placement validation
+
+Independent Verification: All focused candidate behavior and freshness checks passed; mandatory mcp-agent-ops skill_validate was rejected because the candidate path is outside configured validation roots, and fallback was correctly prohibited
+
+Correction Owner: Original Dev Coder task /root/implement_document_provenance
+
+Correction Claim: add-document-provenance-correction1-019fe291, acquired event 38ead661-fc79-4ad2-a246-92d2e6f847c2 and extended event ed6ed7b6-4a1b-4dab-80a6-77477745b31c
+
+Correction Scope: skills/document-provenance/** plus exact OKF validator/test, skill-doc renderer/test, and generated skill definition paths
+
+Replacement Candidate: Pending
 
 ## Resource Ownership Reconciliation Evidence
 
