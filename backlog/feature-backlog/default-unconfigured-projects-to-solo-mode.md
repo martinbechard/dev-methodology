@@ -140,17 +140,17 @@ Condition Type: root-execution.
 
 Owner: Root Dev Orchestrator canonical task 019fe2f2-f195-7670-8367-15d9e5c79de7.
 
-Evidence: Read-only claim status at 2026-08-08T23:12:01.629051Z confirms the main-integration claim is live and not overdue, with hard stop 2026-08-08T23:26:30.972063Z and cleanup grace ending 2026-08-08T23:36:30Z; its last heartbeat remains 2026-08-08T22:51:21Z, so an immediate holder heartbeat is requested from Dev Merge Coordinator before further mutation. Post-integration source reviewer /root/review_integrated_solo_fallback returned PASS on 504d5d852d00c5bfb1a9d12e6ddcaaa03fd76248 with no material findings. Methodology Artifact Reviewer /root/review_generated_solo_artifacts returned NEEDS_CORRECTION: README.md setup sequence is stale (`once`) versus terminal missing-config handoff plus separate resumption; inline-code spans around `project_setup` and `project_setup.concurrent_tasking` in the two approved mode skills violate the repository Markdown rule; and generator-owned design/generated/skill-definitions.js must be regenerated. Correction status is pending. No blocker or terminology issue is recorded. Primary main remains clean at 598fc736 except provider-only updates; integrated commit is not merged. Title is Implementing.
+Evidence: Canonical root heartbeat event 7c3d2be3-0049-46e6-b868-d2f56a15924d was recorded on the existing main-integration claim at 2026-08-08T23:16:03.678154Z while the holder’s correction/test call was active; owner, scope, and deadlines remain unchanged, with hard stop 2026-08-08T23:26:30.972063Z. Artifact correction remains active with exact README.md, two mode-skill, and generated skill-definitions scope; no extra mutation has started. Post-integration source reviewer PASS remains valid; artifact correction is still required. No blocker or terminology issue is recorded. Primary main remains clean except provider-only updates; integrated commit is not merged. Title is Implementing.
 
-Observed At: 2026-08-08T23:12:43Z.
+Observed At: 2026-08-08T23:18:06Z.
 
 Started At: 2026-08-08T20:20:06Z.
 
 Deadline or Expires At: 2026-08-08T23:30:00Z.
 
-Next Action: Confirm the holder heartbeat and correction status. Then receive the clean correction commit, rerun required gates, and obtain fresh artifact review and integrated verification before delivery. The deadline covers the bounded correction, regeneration, review, verification, and delivery handoff.
+Next Action: Confirm correction status, then receive the clean correction commit, rerun required gates, and obtain fresh artifact review and integrated verification before the hard stop or safe stop. The deadline covers the bounded correction, regeneration, review, verification, and delivery handoff.
 
-Next Reconciliation At: 2026-08-08T23:18:43Z.
+Next Reconciliation At: 2026-08-08T23:23:06Z.
 
 ## User Action Required Transition Evidence
 
