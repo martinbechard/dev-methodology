@@ -88,21 +88,21 @@ Scheduling Evidence: The user answered the recorded question in the preserved ca
 
 ## Active Execution Evidence
 
-Condition Type: root-execution
+Condition Type: delegated-work
 
-Owner: Root Dev Orchestrator task `019fda10-8f12-7ae0-8d71-9b8678c17451` under Dev Backlog Coordinator task `019fb057-1767-7ef2-b5fa-41f4417b20b3`.
+Owner: Original Dev Coder producer `/root/bundle_content_coder` under Root Dev Orchestrator task `019fda10-8f12-7ae0-8d71-9b8678c17451`.
 
-Evidence: The user approval and standing evaluation-only authority protocol are durable in UAR -> Ready commit `b94cdfc39af8001600357ff412293dde920c3997`, Ready -> Starting is durable in commit `9738b06247ec123b5666e77cc2dd2c471cbd0022`, and the preserved isolated worktree still has the exact six-path partial diff SHA-256 `670604590700aa464d669cc8af4d176c299f78369085adaf043132ecb4478000` at detached baseline `9bbbb27692d4e1f73b8434fc85cfcd1bb0cd64cc`. The root holds exact update claim `reconcile-bundle-content-resume-running-update-019fda10`, acquired with event `e40ce321-ad5a-4368-8262-140ceb419fb9`, and exact provider path claim `reconcile-bundle-content-resume-running-path-019fda10`, acquired with event `5c7de213-864b-44a4-8a0e-4e37058c8b3b`. No source edit, candidate commit, aggregate test, review, verification, or integration has resumed before this Running transition.
+Evidence: Dev Coder holds the live exact 13-path candidate claim `reconcile-bundle-content-resume-candidate-path-019fda10`, acquired at 2026-08-08T17:51:57Z with event `e93ab400-2ea8-40ab-b69c-1d4e80a72892`. The claim covers only `scripts/test_bundle_content.py`; the five previously modified suite/scenario manifests; the three approved suite-local Dev Orchestrator supervisor, Judge, and contract definitions; and the four additional directly implicated Dev Orchestrator fixture/test paths. The resumed candidate began from the preserved detached baseline `9bbbb27692d4e1f73b8434fc85cfcd1bb0cd64cc` and exact six-path partial diff SHA-256 `670604590700aa464d669cc8af4d176c299f78369085adaf043132ecb4478000`; all prior focused evidence remains retained. The unrelated documentation owner released its broad claim in event `96123580-014e-47cb-ad32-2cdcd80c6e98`, reacquired only `design/agent-owned-evaluation-suites.html`, and confirmed it modified none of the 13 candidate paths. No distributed skill, distributed Agent definition, generated user-facing adapter, canonical production source, broad suite, simulator, or framework is in the candidate scope.
 
-Observed At: 2026-08-08T17:46:15Z
+Observed At: 2026-08-08T18:00:50Z
 
-Started At: 2026-08-08T17:44:34Z
+Started At: 2026-08-08T17:51:57Z
 
-Deadline or Expires At: 2026-08-08T19:46:15Z
+Deadline or Expires At: 2026-08-08T20:00:50Z
 
-Next Action: Commit and prove this provider-only Starting -> Running transaction, release its update and path claims with handoff, acquire the exact Work Item ID with activity work, then resume the original producer only after acquiring the exact candidate path manifest. If the unrelated broad project-files claim conflicts, preserve the candidate and request one direct release or narrowing notification without polling or bypassing it.
+Next Action: Dev Coder will complete only the exact 13-path evaluation-only alignment, retain the ten accepted focused results, run only newly implicated focused catalog, fixture, YAML, Markdown, and freshness checks, then run the single aggregate `scripts.test_bundle_content` suite once after focused acceptance. If those checks pass, Dev Coder will commit one immutable candidate, prove its exact changed paths and clean worktree, release the candidate claim with handoff, and return the candidate for one fresh independent review and one verifier. The separately observed `evals/agent-tests/runner.py` fixed-steward lane remains an excluded framework residual and will not be edited under this item.
 
-Next Reconciliation At: 2026-08-08T18:00:00Z
+Next Reconciliation At: 2026-08-08T18:15:00Z
 
 Codex Task ID: 019fda10-8f12-7ae0-8d71-9b8678c17451.
 
@@ -116,9 +116,9 @@ Branch: Detached HEAD at `9bbbb27692d4e1f73b8434fc85cfcd1bb0cd64cc`.
 
 Worktree: /Users/martinbechard/.codex/worktrees/6e5c/dev-methodology.
 
-Phase: Provider reconciliation before exact candidate-path handoff to the original Dev Coder.
+Phase: Delegated exact-scope candidate completion and focused verification before immutable candidate freeze.
 
-Conversation Title Evidence: Running title synchronization follows immutable provider commit proof.
+Conversation Title Evidence: `Implementing — Reconcile Bundle Content Suite Drift` synchronized by the parent Coordinator before this reconciliation.
 
 ## Prior Active Execution Evidence
 
