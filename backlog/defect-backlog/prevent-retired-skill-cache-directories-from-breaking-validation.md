@@ -1,6 +1,6 @@
 # Prevent Retired Skill Cache Directories From Breaking Validation
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -12,7 +12,7 @@ Work Item ID: prevent-retired-skill-cache-directories-from-breaking-validation
 
 Completion: main-branch
 
-Phase: Holding
+Phase: Verifying
 
 Branch: codex/prevent-retired-skill-cache-validation-019fda3b
 
@@ -153,21 +153,21 @@ Task-Owned Claim After This Transaction: None.
 
 ## Active Execution Evidence
 
-Condition Type: delegated-work
+Condition Type: root-execution
 
-Owner: Dev Verifier task /root/verify_retired_skill_cache_candidate under Dev Orchestrator task 019fda3b-119f-7412-a045-29d5f8998d79
+Owner: Dev Orchestrator task 019fda3b-119f-7412-a045-29d5f8998d79
 
-Evidence: One fresh independent Dev Code Reviewer returned GOOD with no material findings on immutable candidate afdfcfbf80583e788f11eec79cf868bfcf552025. One independent Dev Verifier now owns the focused acceptance checks for cache-only discovery, genuinely incomplete packages, installer dry-run, validator CLI, retired-provider bounded scan, candidate scope, and clean-state evidence; candidate bytes remain unchanged.
+Evidence: The same canonical root task resumed from durable Starting commit 7b275a49f0b273ae9befaf8fc4522bd9ecd9464b, confirmed immutable candidate afdfcfbf80583e788f11eec79cf868bfcf552025 exists in its clean preserved worktree, retained the completed GOOD review, and is actively completing the provider handoff before dispatching exactly one fresh independent verifier. The prior interrupted verifier remains preservation history and supplies no accepted verdict.
 
-Observed At: 2026-08-07T03:44:58Z
+Observed At: 2026-08-08T16:27:40Z
 
-Started At: 2026-08-07T03:44:38Z
+Started At: 2026-08-08T16:27:40Z
 
-Deadline or Expires At: 2026-08-07T04:44:58Z
+Deadline or Expires At: 2026-08-08T17:27:40Z
 
-Next Action: Reacquire the exact activity=work claim after this atomic provider update, accept or route any verifier failure once, and begin current-main reconciliation for main-branch delivery only if the verifier returns PASS.
+Next Action: Commit this Starting -> Running transaction, release its provider claims, acquire the exact activity=work claim, and dispatch exactly one fresh independent verifier without rerunning implementation or review.
 
-Next Reconciliation At: 2026-08-07T03:58:58Z
+Next Reconciliation At: 2026-08-08T16:41:40Z
 
 ## Ready Resumption Evidence
 
@@ -198,3 +198,29 @@ Canonical Execution: 019fda3b-119f-7412-a045-29d5f8998d79
 Last Contact: 2026-08-08T16:24:45Z; existing canonical task confirmed by parent Coordinator.
 
 Next Reconciliation At: 2026-08-08T16:39:45Z
+
+## Resumed Running Transition Evidence
+
+Transition: Starting -> Running
+
+Running Recorded At: 2026-08-08T16:27:40Z
+
+Starting Provider Commit: 7b275a49f0b273ae9befaf8fc4522bd9ecd9464b
+
+Owner: Dev Orchestrator task 019fda3b-119f-7412-a045-29d5f8998d79
+
+Canonical Conversation: Retained conversation for Codex task 019fda3b-119f-7412-a045-29d5f8998d79; the runtime exposes no separate conversation identifier.
+
+Root Agent Task: /root
+
+Branch: codex/prevent-retired-skill-cache-validation-019fda3b
+
+Worktree: /Users/martinbechard/.codex/worktrees/f905/dev-methodology
+
+Phase: Verifying preserved immutable candidate afdfcfbf80583e788f11eec79cf868bfcf552025 after retained independent review GOOD.
+
+Started At: 2026-08-08T16:27:40Z
+
+Accepted Execution Evidence: The canonical task accepted the parent Coordinator's resumption handoff, preserved the immutable candidate and GOOD review without rerun, and will use one fresh verifier because the earlier verifier was interrupted before producing any accepted terminal verdict.
+
+Next Action: Acquire the exact Work Item ID activity=work claim, start one fresh independent verifier, and continue to main-branch delivery only if that verifier returns PASS.
