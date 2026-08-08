@@ -22,9 +22,11 @@ Branch: codex/add-document-provenance-skill
 
 Worktree: /Users/martinbechard/.codex/worktrees/6cb2/dev-methodology
 
-Phase: Test-driven delegated implementation of project-configured provenance guidance before the remaining claimed template, catalog, and generated-output surfaces
+Phase: Fresh independent methodology review and verification of the immutable document-provenance candidate
 
 Started At: 2026-08-08T18:11:22Z
+
+Accepted Candidate Commit: 87d99310abad66be170bafac9c7274a884e2c211
 
 Completion: main-branch
 
@@ -151,17 +153,37 @@ Condition Type: delegated-work
 
 Owner: Dev Coder task /root/implement_document_provenance under Root Dev Orchestrator task 019fe291-1ba8-7a43-8d21-391a04dfa9a9
 
-Evidence: The same Dev Coder completed the unchanged 26-file package gates, retained the Root Dev Orchestrator-supplied creation envelopes, and is actively applying the claimed renderer/configuration test matrix. New focused project-provenance tests and shared-skill expectation updates reached the intended RED state, and implementation is now present in scripts/render-agents-technology-skills.py. Child claim add-document-provenance-package-tree-019fe291 remains live across the exact dependent manifest.
+Evidence: Dev Coder produced clean immutable commit 87d99310abad66be170bafac9c7274a884e2c211 with 46 exact claimed paths and all focused producer checks green. Producer path claim add-document-provenance-package-tree-019fe291 was released at the completed mutation boundary. Independent methodology reviewer task /root/review_document_provenance_candidate and verifier task /root/verify_document_provenance_candidate are actively evaluating that same commit read-only.
 
-Observed At: 2026-08-08T18:48:52Z
+Observed At: 2026-08-08T18:56:54Z
 
 Started At: 2026-08-08T18:11:22Z
 
 Deadline or Expires At: 2026-08-08T22:11:13Z
 
-Next Action: Make the focused renderer/configuration tests green, update the remaining claimed templates, catalogs, and documentation, regenerate only the four claimed stale outputs plus AGENTS.md, run focused integration-sensitive checks, and commit the single immutable candidate.
+Next Action: Obtain one terminal methodology-review verdict and one terminal verification verdict for commit 87d99310abad66be170bafac9c7274a884e2c211; return any actionable finding to the same Dev Coder, otherwise proceed to configured main-branch delivery.
 
-Next Reconciliation At: 2026-08-08T19:02:52Z
+Next Reconciliation At: 2026-08-08T19:10:54Z
+
+## Candidate Recovery Evidence
+
+Candidate Commit: 87d99310abad66be170bafac9c7274a884e2c211
+
+Candidate Base: 8d0354a930462c97984ee549230cb434411e53b9
+
+Candidate Branch: codex/add-document-provenance-skill
+
+Changed Paths: 46 exact claimed paths
+
+Worktree State: Clean; no generated cache directories
+
+Producer Checks: Renderer and shared routing 14/14; bundle integration and freshness 5/5; probe catalogs valid; skill documentation, support checklist, hierarchy, exact AGENTS rendering, and diff checks current
+
+Package Checks: 11/11 focused validator tests plus skill, metadata, JSON, positive CLI, negative CLI, and whitespace validation passed before the unchanged package was combined with shared outputs
+
+Producer Claim Release: add-document-provenance-package-tree-019fe291 released by event 030f30b0-2b01-4ccf-a2ce-cef18d2d7d9a
+
+Pending Gates: One independent methodology review and one independent verifier result against this immutable commit
 
 ## Resource Ownership Reconciliation Evidence
 
