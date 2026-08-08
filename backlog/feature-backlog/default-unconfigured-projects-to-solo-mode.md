@@ -136,21 +136,21 @@ Next Reconciliation At: 2026-08-08T20:14:35Z.
 
 ## Active Execution Evidence
 
-Condition Type: root-execution.
+Condition Type: delegated-work.
 
-Owner: Root Dev Orchestrator canonical task 019fe2f2-f195-7670-8367-15d9e5c79de7.
+Owner: Fixed Dev Coder /root/implement_solo_fallback under canonical Root Dev Orchestrator task 019fe2f2-f195-7670-8367-15d9e5c79de7.
 
-Evidence: Fresh replacement reviewer /root/review_corrected_solo_fallback confirms prior findings 1–3 are substantively resolved: valid false/none, true/resource-claim, and legacy behavior are covered through the real renderer; initial Bootstrapper, primary Configurator, and resumed Bootstrapper are distinct subprocesses; and all three historical provenance blocks validate. Resource text is correctly scoped and keeps Persistence and Commit independent, but the regression asserts Persistence provider skills and only the Commit selector string, not Commit provider skill mapping. The reviewer also found an integration-blocking generator/test incompatibility: scripted_orchestration.py lines 72–74 pin stale current Codex Bootstrapper adapter digest 41f70..., while fresh generator output is 0a1b92.... The build check reports seven stale projections, so fresh generation would make scripted snapshot validation fail unless corrected. All 41 combined focused tests and 29 Bootstrapper discovery tests pass on current stale bytes; skill and provenance validation, CLI, py_compile, and diff checks pass. Final verdict synthesis is in progress. No final blocker is recorded. No source mutation occurred. No ninth path is authorized. No terminology claim is relied on. Integration and verification remain deferred. Title is Reviewing.
+Evidence: Replacement reviewer /root/review_corrected_solo_fallback returned NEEDS_CORRECTION on e67fa4ac1b2b872ba97a3b4b4b18912975065cbb with exactly three bounded findings. First, stale generated Codex adapter digest 41f70b is pinned while corrected source would generate 0a1b92, so fresh-main generation would break the snapshot suite. Second, legacy secondaryDispatchEnabled None is converted to enabled instead of preserving explicit enabled or disabled legacy runtime settings. Third, the none-coordination regression asserts the Commit selector main-branch but not the deliver-work-item-main-branch provider mapping. The same fixed coder is active correcting only within the exact eight paths; no generated path is allowed in the candidate. Previous green evidence is retained, but new gates are pending. No blocker is recorded. No terminology claim is relied on. No integration, review, or verification is underway. Candidate ancestry is f147eca9 -> c80a8a3802fb806bc16d5a73b1a48aa581b5688d -> e67fa4ac1b2b872ba97a3b4b4b18912975065cbb. The isolated worktree is /Users/martinbechard/.codex/worktrees/75e6/dev-methodology on branch codex/default-unconfigured-projects-to-solo-mode. Title is Implementing.
 
-Observed At: 2026-08-08T21:34:35Z.
+Observed At: 2026-08-08T21:37:43Z.
 
 Started At: 2026-08-08T20:20:06Z.
 
 Deadline or Expires At: 2026-08-08T22:10:00Z.
 
-Next Action: Receive the final reviewer verdict. If NEEDS_CORRECTION, return exact findings to the fixed coder; otherwise dispatch a fresh verifier.
+Next Action: Receive the clean new immutable correction candidate. Then switch the title to Reviewing and run a fresh replacement review.
 
-Next Reconciliation At: 2026-08-08T21:44:35Z.
+Next Reconciliation At: 2026-08-08T21:47:43Z.
 
 ## User Action Required Transition Evidence
 
