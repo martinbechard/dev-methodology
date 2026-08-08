@@ -1,6 +1,6 @@
 # Prevent Retired Skill Cache Directories From Breaking Validation
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
@@ -12,7 +12,7 @@ Work Item ID: prevent-retired-skill-cache-directories-from-breaking-validation
 
 Completion: main-branch
 
-Phase: Verifying
+Phase: Complete
 
 Branch: codex/prevent-retired-skill-cache-validation-019fda3b
 
@@ -29,6 +29,10 @@ Parent Task ID: 019fb057-1767-7ef2-b5fa-41f4417b20b3
 Accepted Candidate Commit: afdfcfbf80583e788f11eec79cf868bfcf552025
 
 Independent Review: GOOD; no material findings on immutable candidate afdfcfbf80583e788f11eec79cf868bfcf552025; exact six-path scope, shared classifier, fail-closed incomplete-package behavior, retired-identity scan, headers, and focused tests accepted.
+
+Independent Verification: PASS; the sole fresh resumed verifier accepted all six criteria on immutable candidate afdfcfbf80583e788f11eec79cf868bfcf552025 with 6/6 focused tests, validator success, exact scope, and clean-state evidence.
+
+Completed At: 2026-08-08T16:35:03Z
 
 ## Summary
 
@@ -224,3 +228,45 @@ Started At: 2026-08-08T16:27:40Z
 Accepted Execution Evidence: The canonical task accepted the parent Coordinator's resumption handoff, preserved the immutable candidate and GOOD review without rerun, and will use one fresh verifier because the earlier verifier was interrupted before producing any accepted terminal verdict.
 
 Next Action: Acquire the exact Work Item ID activity=work claim, start one fresh independent verifier, and continue to main-branch delivery only if that verifier returns PASS.
+
+## Terminal Delivery Evidence
+
+Completion Disposition: READY
+
+Requested Lifecycle: COMPLETED
+
+Provider: file
+
+Completion Selector: main-branch
+
+Accepted Source Commit: afdfcfbf80583e788f11eec79cf868bfcf552025
+
+Integration Commit: 265e8b6b602f07234f79fce2d6ba1789e9422029
+
+Observed Main Branch: main
+
+Observed Main Tip: 265e8b6b602f07234f79fce2d6ba1789e9422029
+
+Source-to-Integration Mapping: Candidate afdfcfbf80583e788f11eec79cf868bfcf552025 was replayed without conflict onto current-main base 37f20fee12f8ea1ded07886fcf6e183d9a544efb as integration commit 265e8b6b602f07234f79fce2d6ba1789e9422029. All six accepted path blobs are byte-identical between candidate and integration commits. The integration commit is the observed main tip and is reachable from main; the non-ancestral candidate is preserved through this exact replay mapping.
+
+Changed Paths: scripts/install-skills.py; scripts/skill_sources.py; scripts/test_install_skills.py; scripts/test_resource_claim_helper.py; scripts/test_validate_agent_skills.py; scripts/validate-agent-skills.py.
+
+Independent Review Result: GOOD with no material findings on the immutable six-path candidate. The shared maintained-source boundary, fail-closed incomplete-package behavior, bounded retired-identity scan, headers, and focused fixtures were accepted.
+
+Independent Verification Result: PASS from the sole fresh resumed verifier. Candidate identity, parent, branch, six-path scope, and clean state matched; 6/6 focused cache-only, incomplete-package, installer, and retired-identity tests passed in 2.716 seconds; the Python 3.11 validator passed in 0.085 seconds; diff check was clean.
+
+Post-Integration Verification: On integration commit 265e8b6b602f07234f79fce2d6ba1789e9422029, the same six focused integration-sensitive tests passed in 1.512 seconds, the Python 3.11 validator passed, candidate-to-integration path content was identical, and git diff --check passed. No broad repository suite, unrelated generator, shared installation, or live-resource check ran.
+
+Main Observation: The primary checkout was clean on main at 265e8b6b602f07234f79fce2d6ba1789e9422029. The clean verification worktree /private/tmp/retired-skill-cache-integration.019fda3b resolved to the same commit. The clean candidate worktree remained at afdfcfbf80583e788f11eec79cf868bfcf552025.
+
+Remote Observation: Remote publication was not configured as a required completion gate for the selected local main-branch workflow; no push was performed.
+
+Integration Claim Evidence: Exact six-path claim prevent-retired-skill-cache-validation-main-paths-019fda3b acquired in event ae4683a6-62f6-4e9f-b101-0ead5033a2f0 with incarnation 043fd260-42a0-4f6a-895a-29ed5dea65dd and released in event afa98759-7358-4864-9848-3e0863a3353c after verified main observation.
+
+Work Claim Handoff: Exact activity=work claim prevent-retired-skill-cache-validation-work-019fda3b, incarnation 9fbaeca5-bc9a-489e-a0ce-31340e3d9ddb, was released with handoff in event 0d99a2a8-98eb-4915-8d5f-a2593ced1cf7 before this terminal provider transaction.
+
+Confirmed Issue Dispositions: None; the independent review returned no material findings and the fresh verifier returned PASS.
+
+Cleanup Eligibility: The integration branch is fully represented by observed main. The source candidate is non-ancestral but content-equivalent through the recorded mapping. Both clean worktrees and branches remain preserved for parent-coordinated cleanup after terminal handoff.
+
+Residual Risk: Future disposable artifact types outside the established __pycache__, .pyc, and .DS_Store patterns require an explicit classifier update. No residual risk blocks the stated acceptance criteria.
