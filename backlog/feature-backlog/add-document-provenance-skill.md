@@ -22,11 +22,11 @@ Branch: codex/add-document-provenance-skill
 
 Worktree: /Users/martinbechard/.codex/worktrees/6cb2/dev-methodology
 
-Phase: Bounded correction 1 by the original Dev Coder for three independent methodology-review findings
+Phase: Independent verification of methodology-accepted replacement candidate 4d3441dec8042c49cfdbb6baf244e53d2c52837d
 
 Started At: 2026-08-08T18:11:22Z
 
-Accepted Candidate Commit: 87d99310abad66be170bafac9c7274a884e2c211
+Accepted Candidate Commit: 4d3441dec8042c49cfdbb6baf244e53d2c52837d
 
 Completion: main-branch
 
@@ -153,17 +153,17 @@ Condition Type: delegated-work
 
 Owner: Dev Coder task /root/implement_document_provenance under Root Dev Orchestrator task 019fe291-1ba8-7a43-8d21-391a04dfa9a9
 
-Evidence: Independent review of immutable commit 87d99310abad66be170bafac9c7274a884e2c211 returned exactly three bounded findings: reserved wiki OKF compatibility, visible generated skill-browser provenance, and acceptance of indented Markdown provenance. The same Dev Coder is actively correcting only those paths under exact correction claim add-document-provenance-correction1-019fe291. Independent verifier otherwise passed every focused candidate check but correctly preserved a configured-root skill_validate rejection without fallback.
+Evidence: Original Dev Coder produced additive clean replacement commit 4d3441dec8042c49cfdbb6baf244e53d2c52837d on immutable source candidate 87d99310abad66be170bafac9c7274a884e2c211, resolving all three findings with focused 14/14 validator, 8/8 OKF, and 2/2 renderer/freshness checks. The same independent methodology reviewer returned VERDICT: GOOD with no residual finding. Correction claim add-document-provenance-correction1-019fe291 is released. The remaining independent verifier gate is mcp-agent-ops skill validation from an authorized configured root; every other focused verifier check already passed.
 
-Observed At: 2026-08-08T19:05:44Z
+Observed At: 2026-08-08T19:19:47Z
 
 Started At: 2026-08-08T18:11:22Z
 
 Deadline or Expires At: 2026-08-08T22:11:13Z
 
-Next Action: Produce one correction commit on top of immutable commit 87d99310abad66be170bafac9c7274a884e2c211, run only the three findings' consuming tests and freshness checks, then return the replacement candidate to the same reviewer and verifier.
+Next Action: Create one read-only verification checkout for commit 4d3441dec8042c49cfdbb6baf244e53d2c52837d beneath an authorized configured project root when its exact claim is available, then return that same replacement candidate to the existing verifier without bypassing any structured root-policy result.
 
-Next Reconciliation At: 2026-08-08T19:19:44Z
+Next Reconciliation At: 2026-08-08T19:33:45Z
 
 ## Candidate Recovery Evidence
 
@@ -207,7 +207,13 @@ Correction Claim: add-document-provenance-correction1-019fe291, acquired event 3
 
 Correction Scope: skills/document-provenance/** plus exact OKF validator/test, skill-doc renderer/test, and generated skill definition paths
 
-Replacement Candidate: Pending
+Replacement Candidate: 4d3441dec8042c49cfdbb6baf244e53d2c52837d
+
+Correction Result: All three findings resolved by focused regressions; correction claim released by event c4e7a1d7-8fa0-434b-b15d-034e3c7d087b
+
+Replacement Review: VERDICT: GOOD from the same independent methodology reviewer; no residual finding
+
+Replacement Verification: Pending only the configured-root skill_validate gate and fresh correction-sensitive checks by the same verifier
 
 ## Resource Ownership Reconciliation Evidence
 
