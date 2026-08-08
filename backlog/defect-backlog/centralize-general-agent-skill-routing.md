@@ -20,7 +20,7 @@ Branch: main
 
 Worktree: /Users/martinbechard/dev/dev-methodology
 
-Phase: Independent review findings awaiting Coordinator disposition
+Phase: Correcting independent documentation review findings
 
 ## Summary
 
@@ -96,17 +96,17 @@ Condition Type: root-execution
 
 Owner: Dev Orchestrator task 019faeed-f816-7d43-819d-814bad4e309c
 
-Evidence: The parent Coordinator restored this same canonical task to Starting in commit `6eb6800707e5f24d09daec3db0b5773070643421`. Candidate `555764d4` and its 29 focused tests plus freshness, YAML, and diff evidence remain preserved. The canonical task reacquired exact Work Item ID activity=work claim `centralize-general-agent-skill-routing-work-019faeed-resume` and exact provider-path claim `centralize-general-agent-skill-routing-running-path-019faeed-resume`; it has not repeated implementation or any accepted green gate.
+Evidence: Candidate `555764d4` and its 29 focused tests plus freshness, YAML, and diff evidence remain preserved. The fresh independent review recorded in commit `ddba0dfd` found three bounded documentation corrections. The Dev Backlog Coordinator kept this same canonical task and provider Running and authorized one correction cycle. The earlier Running-transition provider-path claim `centralize-general-agent-skill-routing-running-path-019faeed-resume` was released in event `326c7b2d-5dd8-43c6-958c-5de37cffe8c3`; it is not an active implementation claim.
 
-Observed At: 2026-08-08T16:28:31Z
+Observed At: 2026-08-08T16:38:42Z
 
-Started At: 2026-08-08T16:28:17Z
+Started At: 2026-08-08T16:38:42Z
 
-Deadline or Expires At: 2026-08-08T20:28:31Z
+Deadline or Expires At: 2026-08-08T20:38:42Z
 
-Next Action: Dev Backlog Coordinator determines the lifecycle disposition and coordinates correction of the three recorded review findings. Do not start verification or delivery unless a corrected candidate receives an accepted independent review.
+Next Action: Model General Agent Skills as a cross-cutting applicability view, correct the supported group and design counts, and add the promised General Agent Skills links to the three identified Agent design pages. Commit one replacement candidate, then obtain one fresh independent review before verifier or delivery.
 
-Next Reconciliation At: 2026-08-08T16:43:31Z
+Next Reconciliation At: 2026-08-08T16:53:42Z
 
 ## Independent Review Evidence
 
