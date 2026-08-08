@@ -1,0 +1,534 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A visual guide to the governed Agent-Owned Evaluation Suites workflow, evidence model, runner commands, and browser containment rules.">
+  <title>Agent-Owned Evaluation Suites</title>
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #526078;
+      --page: #f3f6f9;
+      --panel: #ffffff;
+      --line: #cbd6e2;
+      --navy: #17406d;
+      --teal: #006b67;
+      --amber: #8a4b00;
+      --red: #9f2431;
+      --green: #17633b;
+      --violet: #5a3b8a;
+      --soft-blue: #e5eef8;
+      --soft-teal: #def2ef;
+      --soft-amber: #fff0d2;
+      --soft-red: #fbe4e7;
+      --soft-violet: #eee8f7;
+      --soft-gray: #edf1f5;
+      --shadow: 0 16px 40px rgba(23, 32, 51, 0.09);
+      --shadow-small: 0 8px 22px rgba(23, 32, 51, 0.07);
+      --radius: 0.75rem;
+      --content: 1240px;
+      --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      min-height: 100vh;
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 83% 9%, rgba(0, 107, 103, 0.12), transparent 21rem),
+        linear-gradient(180deg, #e5eef8 0, transparent 30rem),
+        var(--page);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+    }
+
+    a { color: var(--navy); }
+    a:focus-visible { outline: 3px solid #b35f00; outline-offset: 3px; }
+    h1, h2, h3, h4 { margin: 0; line-height: 1.15; }
+    h1 { max-width: 940px; font-size: clamp(2.55rem, 6vw, 5.4rem); letter-spacing: -0.045em; }
+    h2 { font-size: clamp(1.75rem, 4vw, 3rem); letter-spacing: -0.025em; }
+    h3 { font-size: 1.15rem; }
+    p { margin: 0; color: var(--muted); }
+    p + p { margin-top: 0.75rem; }
+    ul, ol { margin: 0; padding-left: 1.2rem; }
+    li + li { margin-top: 0.4rem; }
+    code { font-family: var(--mono); }
+
+    .site-header, main, .site-footer { width: min(100% - 2rem, var(--content)); margin-inline: auto; }
+    .site-header { display: flex; align-items: center; gap: 0.75rem; padding-top: 1.2rem; }
+    .site-brand { display: inline-flex; min-width: 0; align-items: center; gap: 0.75rem; color: var(--ink); font-weight: 800; text-decoration: none; }
+    .site-logo { width: 2.35rem; height: 2.35rem; border-radius: 0.45rem; object-fit: cover; box-shadow: var(--shadow-small); }
+    main { padding: 2rem 0 5rem; }
+
+    .document-nav, .document-sequence { display: flex; flex-wrap: wrap; gap: 0.65rem; }
+    .document-nav { justify-content: space-between; margin-bottom: 2rem; }
+    .document-nav a, .chapter-nav a {
+      padding: 0.5rem 0.8rem;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.86);
+      color: var(--muted);
+      font-size: 0.84rem;
+      font-weight: 780;
+      text-decoration: none;
+    }
+    .document-nav a:hover, .chapter-nav a:hover { border-color: var(--teal); color: var(--teal); }
+
+    .hero { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(19rem, 0.92fr); gap: clamp(2rem, 5vw, 5rem); align-items: center; padding: clamp(2rem, 6vw, 5.5rem) 0 2rem; }
+    .hero-copy { display: grid; gap: 1.35rem; }
+    .eyebrow, .card-kicker, .diagram-kicker { color: var(--teal); font-size: 0.76rem; font-weight: 850; letter-spacing: 0.09em; text-transform: uppercase; }
+    .lede { max-width: 820px; font-size: 1.14rem; }
+    .hero-note { max-width: 820px; padding: 1rem 1.15rem; border-left: 0.35rem solid var(--amber); background: rgba(255, 255, 255, 0.88); box-shadow: var(--shadow-small); }
+    .hero-visual { padding: 1rem; border: 1px solid var(--line); border-radius: 1rem; background: rgba(255, 255, 255, 0.9); box-shadow: var(--shadow); }
+    .hero-visual svg { display: block; width: 100%; height: auto; }
+
+    .metric-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.8rem; margin: 2rem 0 0; }
+    .metric { padding: 1rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); box-shadow: var(--shadow-small); }
+    .metric strong { display: block; color: var(--navy); font-family: var(--mono); font-size: clamp(1.5rem, 3vw, 2.2rem); }
+    .metric span { color: var(--muted); font-size: 0.86rem; font-weight: 720; }
+
+    .chapter-nav { position: sticky; top: 0; z-index: 5; display: flex; gap: 0.35rem; margin: 2rem 0 4rem; padding: 0.55rem; overflow-x: auto; border: 1px solid var(--line); border-radius: 999px; background: rgba(255, 255, 255, 0.95); box-shadow: var(--shadow); }
+    .chapter-nav a { flex: 0 0 auto; border-color: transparent; background: transparent; }
+
+    .section { margin-top: clamp(4rem, 9vw, 7rem); scroll-margin-top: 6rem; }
+    .section-heading { display: grid; gap: 0.7rem; max-width: 850px; margin-bottom: 2rem; }
+    .section-heading p { font-size: 1.05rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); gap: 1rem; }
+    .two-column { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+
+    .card, .panel, .diagram, .command-card, .verdict-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: var(--shadow-small);
+    }
+    .card, .panel, .verdict-card { padding: 1.2rem; }
+    .card { display: grid; gap: 0.65rem; border-top: 0.35rem solid var(--accent, var(--navy)); }
+    .card.target { --accent: var(--teal); }
+    .card.judge { --accent: var(--violet); }
+    .card.control { --accent: var(--amber); }
+    .card.runtime { --accent: var(--navy); }
+    .card h3, .panel h3 { margin-bottom: 0.15rem; }
+    .card ul, .panel ul { color: var(--muted); }
+    .mono-label { color: var(--navy); font-family: var(--mono); font-size: 0.78rem; font-weight: 760; overflow-wrap: anywhere; }
+
+    .diagram { margin-top: 1rem; padding: clamp(1rem, 3vw, 1.8rem); overflow: hidden; }
+    .diagram figcaption { display: grid; gap: 0.35rem; margin-bottom: 1rem; }
+    .diagram figcaption strong { font-size: 1.1rem; }
+    .diagram svg { display: block; width: 100%; height: auto; }
+
+    .harness-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+    .harness { padding: 1.35rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); box-shadow: var(--shadow-small); }
+    .harness h3 { display: flex; justify-content: space-between; gap: 1rem; align-items: center; margin-bottom: 0.8rem; }
+    .badge { display: inline-flex; width: fit-content; align-items: center; padding: 0.24rem 0.55rem; border: 1px solid currentColor; border-radius: 999px; font-family: var(--mono); font-size: 0.72rem; font-weight: 850; white-space: nowrap; }
+    .badge.pass { background: var(--soft-teal); color: var(--green); }
+    .badge.blocked { background: var(--soft-amber); color: var(--amber); }
+    .badge.bound { background: var(--soft-blue); color: var(--navy); }
+
+    .verdict-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+    .verdict-card { display: grid; gap: 0.65rem; }
+    .verdict-card.pass { border-top: 0.4rem solid var(--green); }
+    .verdict-card.fail { border-top: 0.4rem solid var(--red); }
+    .verdict-card.blocked { border-top: 0.4rem solid var(--amber); }
+
+    .command-grid { display: grid; gap: 0.8rem; }
+    .command-card { display: grid; grid-template-columns: minmax(11rem, 0.32fr) minmax(0, 1fr); overflow: hidden; }
+    .command-copy { display: grid; align-content: center; gap: 0.35rem; padding: 1rem 1.15rem; border-right: 1px solid var(--line); background: var(--soft-blue); }
+    .command-copy strong { font-size: 0.96rem; }
+    pre { margin: 0; padding: 1rem 1.15rem; overflow-x: auto; background: #111827; color: #f8fafc; font-family: var(--mono); font-size: 0.82rem; line-height: 1.55; }
+
+    .receipt-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.65rem; margin-top: 1rem; padding: 0; list-style: none; }
+    .receipt-list li { display: flex; gap: 0.65rem; align-items: start; padding: 0.8rem; border: 1px solid var(--line); border-radius: 0.55rem; background: var(--soft-gray); color: var(--muted); }
+    .receipt-list li::before { content: "✓"; flex: 0 0 auto; color: var(--green); font-weight: 900; }
+
+    .callout { margin-top: 1rem; padding: 1rem 1.15rem; border-left: 0.35rem solid var(--accent, var(--amber)); background: var(--soft-amber); color: var(--ink); }
+    .callout.blocked { --accent: var(--amber); }
+    .callout.boundary { --accent: var(--violet); background: var(--soft-violet); }
+    .callout strong { color: var(--ink); }
+
+    .source-panel { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 1rem; align-items: center; padding: 1.2rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); box-shadow: var(--shadow-small); }
+    .source-panel a { font-weight: 800; }
+    .source-path { font-family: var(--mono); font-size: 0.78rem; overflow-wrap: anywhere; }
+
+    .site-footer { padding: 1.5rem 0 3rem; border-top: 1px solid var(--line); }
+    .site-footer p { font-size: 0.8rem; }
+
+    @media (max-width: 900px) {
+      .hero, .two-column, .harness-grid { grid-template-columns: 1fr; }
+      .metric-strip { grid-template-columns: repeat(2, 1fr); }
+      .verdict-grid { grid-template-columns: 1fr; }
+      .hero-visual { max-width: 42rem; }
+    }
+    @media (max-width: 680px) {
+      .chapter-nav { position: static; border-radius: var(--radius); }
+      .metric-strip, .receipt-list { grid-template-columns: 1fr; }
+      .command-card { grid-template-columns: 1fr; }
+      .command-copy { border-right: 0; border-bottom: 1px solid var(--line); }
+      .source-panel { grid-template-columns: 1fr; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+    }
+    @media print {
+      body { background: white; }
+      .document-nav, .chapter-nav { display: none; }
+      .card, .panel, .diagram, .command-card, .verdict-card, .harness { break-inside: avoid; box-shadow: none; }
+    }
+  </style>
+  <link rel="stylesheet" href="page-section-navigation.css">
+</head>
+<body>
+<header class="site-header">
+  <a class="site-brand" href="../index.html">
+    <img class="site-logo" src="../logo.png" alt="DevConsult Canada logo">
+    <span>AI-Assisted Coding Toolkit Index</span>
+  </a>
+</header>
+<main>
+  <nav class="document-nav" aria-label="Documentation navigation">
+    <div class="document-sequence">
+      <a href="agent-and-skill-evaluations.html" rel="prev"><span aria-hidden="true">&larr;</span> Previous: Evaluation Evidence</a>
+      <a href="agentic-configuration.html" rel="next">Next: Agentic Configuration <span aria-hidden="true">&rarr;</span></a>
+    </div>
+  </nav>
+
+  <section class="hero" aria-labelledby="page-title">
+    <div class="hero-copy">
+      <span class="eyebrow">Governed behavioral evaluation</span>
+      <h1 id="page-title">Agent-Owned Evaluation Suites</h1>
+      <p class="lede">Each conceptual agent has an executable suite. The suite runs selected behavior, binds identity to retained evidence, applies exact checks, and uses an independent Judge.</p>
+      <p class="hero-note"><strong>Evidence boundary.</strong> A task label or diagnostic summary cannot prove a verdict. Exact receipts, digests, identities, dispositions, and cleanup evidence determine the result.</p>
+    </div>
+    <figure class="hero-visual" aria-labelledby="evidence-spine-title">
+      <svg viewBox="0 0 620 520" role="img" aria-labelledby="evidence-spine-title evidence-spine-desc">
+        <title id="evidence-spine-title">The evaluation evidence spine</title>
+        <desc id="evidence-spine-desc">A canonical agent definition leads to scenarios, a target run, deterministic checks, independent judgment, and an immutable report.</desc>
+        <defs>
+          <linearGradient id="spineGlow" x1="0" x2="1">
+            <stop offset="0" stop-color="#17406d"/>
+            <stop offset="1" stop-color="#006b67"/>
+          </linearGradient>
+          <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#172033" flood-opacity="0.12"/>
+          </filter>
+        </defs>
+        <path d="M310 64 V456" stroke="url(#spineGlow)" stroke-width="8" stroke-linecap="round"/>
+        <g font-family="Inter, system-ui, sans-serif" filter="url(#softShadow)">
+          <g transform="translate(80 30)">
+            <rect width="460" height="70" rx="14" fill="#e5eef8" stroke="#17406d"/>
+            <text x="230" y="29" text-anchor="middle" fill="#17406d" font-size="13" font-weight="800" letter-spacing="1.3">SOURCE</text>
+            <text x="230" y="53" text-anchor="middle" fill="#172033" font-size="19" font-weight="800">Canonical agent definition</text>
+          </g>
+          <g transform="translate(105 126)">
+            <rect width="410" height="68" rx="14" fill="#def2ef" stroke="#006b67"/>
+            <text x="205" y="28" text-anchor="middle" fill="#006b67" font-size="13" font-weight="800" letter-spacing="1.3">SELECT</text>
+            <text x="205" y="51" text-anchor="middle" fill="#172033" font-size="18" font-weight="800">High-value scenarios</text>
+          </g>
+          <g transform="translate(130 220)">
+            <rect width="360" height="68" rx="14" fill="#ffffff" stroke="#cbd6e2"/>
+            <text x="180" y="28" text-anchor="middle" fill="#526078" font-size="13" font-weight="800" letter-spacing="1.3">RUN</text>
+            <text x="180" y="51" text-anchor="middle" fill="#172033" font-size="18" font-weight="800">Generated target agent</text>
+          </g>
+          <g transform="translate(105 314)">
+            <rect width="410" height="68" rx="14" fill="#fff0d2" stroke="#8a4b00"/>
+            <text x="205" y="28" text-anchor="middle" fill="#8a4b00" font-size="13" font-weight="800" letter-spacing="1.3">GATE</text>
+            <text x="205" y="51" text-anchor="middle" fill="#172033" font-size="18" font-weight="800">Exact checks + independent Judge</text>
+          </g>
+          <g transform="translate(80 408)">
+            <rect width="460" height="78" rx="14" fill="#eee8f7" stroke="#5a3b8a"/>
+            <text x="230" y="31" text-anchor="middle" fill="#5a3b8a" font-size="13" font-weight="800" letter-spacing="1.3">PUBLISH</text>
+            <text x="230" y="57" text-anchor="middle" fill="#172033" font-size="19" font-weight="800">Immutable evidence generation</text>
+          </g>
+        </g>
+      </svg>
+    </figure>
+  </section>
+
+  <div class="metric-strip" aria-label="Evaluation suite limits">
+    <div class="metric"><strong>1:1</strong><span>One executable suite for each conceptual agent</span></div>
+    <div class="metric"><strong>4</strong><span>Maximum concurrent supervisors</span></div>
+    <div class="metric"><strong>9</strong><span>Normal active-agent ceiling</span></div>
+    <div class="metric"><strong>+1</strong><span>Declared nested dependency allowance</span></div>
+  </div>
+
+  <nav class="chapter-nav" aria-label="Page sections">
+    <a href="#suite">Suite anatomy</a>
+    <a href="#execution">Execution</a>
+    <a href="#harnesses">Harnesses</a>
+    <a href="#verdicts">Verdicts</a>
+    <a href="#commands">Commands</a>
+    <a href="#reporting">Reporting</a>
+    <a href="#runtime">Runtime isolation</a>
+    <a href="#browser">Browser proof</a>
+    <a href="#source">Source boundary</a>
+  </nav>
+
+  <section class="section" id="suite" aria-labelledby="suite-title">
+    <div class="section-heading">
+      <span class="eyebrow">One agent at a time</span>
+      <h2 id="suite-title">Suite anatomy</h2>
+      <p>The common protocol and suite index control the catalog. Each named suite owns the participants, scenarios, and target-specific acceptance contract.</p>
+    </div>
+    <div class="grid">
+      <article class="card control"><span class="card-kicker">Control</span><h3>Suite manifest</h3><p>Hardcodes the supervisor, target, and Judge runtime names separately from portable role identifiers and generated adapter paths.</p></article>
+      <article class="card target"><span class="card-kicker">Behavior</span><h3>Scenario catalog</h3><p>One authoritative scenarios.yaml file derives a small set of high-value cases from the complete canonical agent definition.</p></article>
+      <article class="card"><span class="card-kicker">Coordination</span><h3>Supervisor</h3><p>Coordinates one suite under the common protocol and keeps only one child active at a time.</p></article>
+      <article class="card target"><span class="card-kicker">Subject</span><h3>Target agent</h3><p>The standard generated agent performs the behavior under evaluation.</p></article>
+      <article class="card judge"><span class="card-kicker">Judgment</span><h3>Independent Judge</h3><p>Returns the governed semantic disposition after required deterministic gates.</p></article>
+      <article class="card control"><span class="card-kicker">Acceptance</span><h3>Contract skill</h3><p>Defines the acceptance rules that apply to the target agent.</p></article>
+    </div>
+    <div class="two-column" style="margin-top: 1rem;">
+      <div class="panel"><h3>Catalog and coverage</h3><p>Suites are ordered by descending direct end-user value. Existing catalogs and the runner remain the execution and evidence foundation during migration to the agent-owned layout.</p><p>A skill probe is a targeted diagnostic selected by an agent scenario. Skill probes are not the units used to plan exhaustive coverage.</p></div>
+      <div class="panel"><h3>Runtime identity</h3><p>Codex project-agent names contain lowercase letters, digits, and underscores. Retained session evidence must prove that every child loaded the staged project-agent definition.</p><p>Task labels and final prose do not prove that identity.</p></div>
+    </div>
+    <figure class="diagram" aria-labelledby="concurrency-title">
+      <figcaption><span class="diagram-kicker">Bounded topology</span><strong id="concurrency-title">Four supervisors, one active child each</strong><p>The tenth slot exists only for one canonical nested dependency declared by the active suite.</p></figcaption>
+      <svg viewBox="0 0 1120 360" role="img" aria-labelledby="concurrency-svg-title concurrency-svg-desc">
+        <title id="concurrency-svg-title">Agent suite concurrency topology</title>
+        <desc id="concurrency-svg-desc">One root coordinator connects to four supervisors. Each supervisor connects to one active child. One child may connect to a temporary nested dependency.</desc>
+        <defs><marker id="arrowNavy" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#17406d"/></marker></defs>
+        <g fill="none" stroke="#17406d" stroke-width="3" marker-end="url(#arrowNavy)">
+          <path d="M560 72 C560 110 140 105 140 150"/><path d="M560 72 C560 110 420 105 420 150"/><path d="M560 72 C560 110 700 105 700 150"/><path d="M560 72 C560 110 980 105 980 150"/>
+          <path d="M140 210 V272"/><path d="M420 210 V272"/><path d="M700 210 V272"/><path d="M980 210 V272"/>
+        </g>
+        <g font-family="Inter, system-ui, sans-serif" text-anchor="middle">
+          <rect x="430" y="20" width="260" height="54" rx="14" fill="#e5eef8" stroke="#17406d"/><text x="560" y="53" fill="#172033" font-size="17" font-weight="800">Root coordinator</text>
+          <g fill="#fff" stroke="#006b67"><rect x="40" y="150" width="200" height="60" rx="12"/><rect x="320" y="150" width="200" height="60" rx="12"/><rect x="600" y="150" width="200" height="60" rx="12"/><rect x="880" y="150" width="200" height="60" rx="12"/></g>
+          <g fill="#172033" font-size="15" font-weight="800"><text x="140" y="185">Supervisor A</text><text x="420" y="185">Supervisor B</text><text x="700" y="185">Supervisor C</text><text x="980" y="185">Supervisor D</text></g>
+          <g fill="#def2ef" stroke="#006b67"><rect x="55" y="272" width="170" height="54" rx="12"/><rect x="335" y="272" width="170" height="54" rx="12"/><rect x="615" y="272" width="170" height="54" rx="12"/><rect x="895" y="272" width="170" height="54" rx="12"/></g>
+          <g fill="#172033" font-size="14" font-weight="760"><text x="140" y="304">Active child</text><text x="420" y="304">Active child</text><text x="700" y="304">Active child</text><text x="980" y="304">Active child</text></g>
+          <path d="M785 300 H855" stroke="#8a4b00" stroke-width="3" stroke-dasharray="7 6" marker-end="url(#arrowNavy)"/>
+          <text x="820" y="286" fill="#8a4b00" font-size="12" font-weight="800">optional +1</text>
+        </g>
+      </svg>
+    </figure>
+  </section>
+
+  <section class="section" id="execution" aria-labelledby="execution-title">
+    <div class="section-heading">
+      <span class="eyebrow">Bounded runner</span>
+      <h2 id="execution-title">Execution has a controlled beginning and end</h2>
+      <p>The runner validates the complete catalog, selects work, limits each batch, retains partial failures, records timing, and removes disposable state.</p>
+    </div>
+    <div class="grid">
+      <article class="card"><span class="mono-label">01 / VALIDATE</span><h3>Validate the catalog</h3><p>Check the complete suite catalog before selected execution.</p></article>
+      <article class="card target"><span class="mono-label">02 / SELECT</span><h3>Select suites and scenarios</h3><p>Accept explicit suite and scenario selectors.</p></article>
+      <article class="card control"><span class="mono-label">03 / BATCH</span><h3>Bound parallel work</h3><p>Group at most four ordinary supervisors in one coordinator batch.</p></article>
+      <article class="card judge"><span class="mono-label">04 / RETAIN</span><h3>Keep failure evidence</h3><p>Preserve partial failures and governed checkpoints.</p></article>
+      <article class="card"><span class="mono-label">05 / TIME</span><h3>Record two clocks</h3><p>Store UTC completion time and monotonic elapsed time.</p></article>
+      <article class="card target"><span class="mono-label">06 / CLEAN</span><h3>Remove isolated state</h3><p>Remove disposable workspaces and isolated authentication state after each batch.</p></article>
+    </div>
+  </section>
+
+  <section class="section" id="harnesses" aria-labelledby="harnesses-title">
+    <div class="section-heading">
+      <span class="eyebrow">Explicit harness selection</span>
+      <h2 id="harnesses-title">Codex can prove more than Junie</h2>
+      <p>Every reporting run selects Codex or Junie. Worker capacity depends on suite count, processors, available memory, and the repository ceiling of four.</p>
+    </div>
+    <div class="harness-grid">
+      <article class="harness">
+        <h3>Codex <span class="badge bound">digest-bound</span></h3>
+        <ul>
+          <li>Binds generated TOML agent definitions by digest.</li>
+          <li>Can bind the Judge response to its session, parent, scenario order, rollout, extracted response, and output artifact.</li>
+          <li>Can support a governed terminal PASS or FAIL when every required receipt is valid.</li>
+        </ul>
+      </article>
+      <article class="harness">
+        <h3>Junie 2285.4 <span class="badge blocked">BLOCKED</span></h3>
+        <ul>
+          <li>Stages Markdown custom agents through an isolated lookup location.</li>
+          <li>Retains a path- and SHA-256-bound staged manifest.</li>
+          <li>Exposes agent identifier, name, STARTED and FINISHED states, and step identifier.</li>
+          <li>Does not expose the definition digest or parent relationship needed for exact attribution and topology acceptance.</li>
+        </ul>
+      </article>
+    </div>
+    <p class="callout boundary"><strong>Disjoint destinations.</strong> Every selected suite receives separate run, evidence, checkpoint, and report destinations.</p>
+    <p class="callout blocked"><strong>Junie catalog guard.</strong> A full Junie catalog run requires the explicit allow-full-junie option. A selected smoke run does not require that authorization.</p>
+  </section>
+
+  <section class="section" id="verdicts" aria-labelledby="verdicts-title">
+    <div class="section-heading">
+      <span class="eyebrow">Receipt-driven outcomes</span>
+      <h2 id="verdicts-title">Evidence determines the verdict</h2>
+      <p>Every configured deterministic check appears exactly once with catalog-matching criticality, an exact disposition, a retained path, and a SHA-256 digest.</p>
+    </div>
+    <div class="verdict-grid">
+      <article class="verdict-card pass"><span class="badge pass">PASS</span><h3>Complete verified proof</h3><p>Runner-verified receipts and the exact Judge disposition bind to the selected scenario checkpoint and retained artifacts.</p></article>
+      <article class="verdict-card fail"><span class="badge" style="background: var(--soft-red); color: var(--red);">FAIL</span><h3>Governed negative result</h3><p>Exact evidence proves the scenario failed its declared acceptance contract.</p></article>
+      <article class="verdict-card blocked"><span class="badge blocked">BLOCKED</span><h3>Required proof is unavailable</h3><p>Identity, topology, authority, runtime, or evidence limits prevent a valid passing claim.</p></article>
+    </div>
+    <figure class="diagram" aria-labelledby="receipt-chain-title">
+      <figcaption><span class="diagram-kicker">Receipt audit</span><strong id="receipt-chain-title">The Judge response must remain attached to the exact run</strong><p>An absent, malformed, substituted, or mismatched response remains non-passing.</p></figcaption>
+      <svg viewBox="0 0 1120 260" role="img" aria-labelledby="receipt-svg-title receipt-svg-desc">
+        <title id="receipt-svg-title">Judge evidence binding chain</title>
+        <desc id="receipt-svg-desc">The selected Judge session, parent, scenario order, rollout digest, response digest, and byte-identical artifact converge on a verified receipt audit.</desc>
+        <defs><marker id="arrowTeal" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#006b67"/></marker></defs>
+        <g font-family="Inter, system-ui, sans-serif" text-anchor="middle">
+          <g fill="#e5eef8" stroke="#17406d">
+            <rect x="20" y="28" width="155" height="58" rx="11"/><rect x="205" y="28" width="155" height="58" rx="11"/><rect x="390" y="28" width="155" height="58" rx="11"/>
+            <rect x="575" y="28" width="155" height="58" rx="11"/><rect x="760" y="28" width="155" height="58" rx="11"/><rect x="945" y="28" width="155" height="58" rx="11"/>
+          </g>
+          <g fill="#172033" font-size="13" font-weight="760"><text x="97" y="62">Judge session</text><text x="282" y="62">Parent</text><text x="467" y="62">Scenario order</text><text x="652" y="62">Rollout digest</text><text x="837" y="62">Response digest</text><text x="1022" y="54">Byte-identical</text><text x="1022" y="71">output artifact</text></g>
+          <g fill="none" stroke="#006b67" stroke-width="3" marker-end="url(#arrowTeal)"><path d="M97 88 C97 150 560 120 560 176"/><path d="M282 88 C282 140 560 125 560 176"/><path d="M467 88 C467 130 560 130 560 176"/><path d="M652 88 C652 130 560 130 560 176"/><path d="M837 88 C837 140 560 125 560 176"/><path d="M1022 88 C1022 150 560 120 560 176"/></g>
+          <rect x="395" y="176" width="330" height="62" rx="14" fill="#def2ef" stroke="#006b67"/>
+          <text x="560" y="213" fill="#17633b" font-size="17" font-weight="850">Verified receipt audit</text>
+        </g>
+      </svg>
+    </figure>
+    <div class="two-column" style="margin-top: 1rem;">
+      <div class="panel"><h3>Authorized Judge skip</h3><p>The skip names the exact failed critical check and uses the skipped-critical-failure disposition.</p></div>
+      <div class="panel"><h3>Diagnostic summaries</h3><p>Diagnostic text can remain visible in a report. It never proves a verdict.</p></div>
+    </div>
+  </section>
+
+  <section class="section" id="commands" aria-labelledby="commands-title">
+    <div class="section-heading">
+      <span class="eyebrow">Runner entry points</span>
+      <h2 id="commands-title">Install, run, rebuild, and update</h2>
+      <p>Browser suites use the exact Playwright version from package.json and package-lock.json plus the repository-designated Chromium revision.</p>
+    </div>
+    <div class="command-grid">
+      <article class="command-card"><div class="command-copy"><strong>Install browser dependencies</strong><span>Locked local package and Chromium revision</span></div><pre><code>cd evals/agent-tests
+npm ci
+npx playwright install chromium</code></pre></article>
+      <article class="command-card"><div class="command-copy"><strong>Run one Codex suite</strong><span>Update its report and the global report</span></div><pre><code>python3 evals/agent-tests/runner.py reporting run --harness codex --suite dev-coder</code></pre></article>
+      <article class="command-card"><div class="command-copy"><strong>Run selected Codex suites</strong><span>Apply a lower worker limit</span></div><pre><code>python3 evals/agent-tests/runner.py reporting run --harness codex --suite dev-coder --suite dev-code-reviewer --max-workers 2</code></pre></article>
+      <article class="command-card"><div class="command-copy"><strong>Run the complete Codex catalog</strong><span>Omit suite selectors</span></div><pre><code>python3 evals/agent-tests/runner.py reporting run --harness codex</code></pre></article>
+      <article class="command-card"><div class="command-copy"><strong>Run one Junie smoke suite</strong><span>No full-catalog authorization required</span></div><pre><code>python3 evals/agent-tests/runner.py reporting run --harness junie --suite dev-coder</code></pre></article>
+      <article class="command-card"><div class="command-copy"><strong>Rebuild Codex reports</strong><span>Do not invoke a harness</span></div><pre><code>python3 evals/agent-tests/runner.py reporting rebuild --harness codex</code></pre></article>
+      <article class="command-card"><div class="command-copy"><strong>Update global Codex HTML</strong><span>Do not run or rewrite suite reports</span></div><pre><code>python3 evals/agent-tests/runner.py reporting update --harness codex</code></pre></article>
+    </div>
+  </section>
+
+  <section class="section" id="reporting" aria-labelledby="reporting-title">
+    <div class="section-heading">
+      <span class="eyebrow">Immutable publication</span>
+      <h2 id="reporting-title">A report is an evidence package</h2>
+      <p>Each suite generation stores self-contained HTML, machine-readable metadata, and a content-addressed evidence bundle in one immutable directory.</p>
+    </div>
+    <div class="grid">
+      <article class="card"><span class="mono-label">PACKAGE</span><h3>Build one generation</h3><p>Write only the selected suite generation and its stable manifest. Update aggregate counts and the suite's global entry deterministically.</p></article>
+      <article class="card target"><span class="mono-label">RE-HASH</span><h3>Reopen every object</h3><p>Resolve checkpoint and identity roots, then re-hash receipts, bound artifacts, Judge rollout, extracted response, and output artifact.</p></article>
+      <article class="card control"><span class="mono-label">BIND</span><h3>Bind the manifests</h3><p>Metadata and the stable suite manifest bind the evidence-manifest digest. The generation digest covers metadata, HTML, and evidence manifest.</p></article>
+      <article class="card judge"><span class="mono-label">VALIDATE</span><h3>Validate before replacement</h3><p>Validate the complete pending generation and bundled objects before replacing the stable manifest.</p></article>
+      <article class="card target"><span class="mono-label">REBUILD</span><h3>Validate again</h3><p>Aggregate rebuild validates the same bundle before counting CURRENT PASS or FAIL.</p></article>
+      <article class="card control"><span class="mono-label">EXPOSE</span><h3>Keep bad inputs visible</h3><p>Missing, mutated, stale, malformed, duplicate, incompatible-revision, and mixed-harness evidence remains non-passing.</p></article>
+    </div>
+  </section>
+
+  <section class="section" id="runtime" aria-labelledby="runtime-title">
+    <div class="section-heading">
+      <span class="eyebrow">Declared runtime capabilities</span>
+      <h2 id="runtime-title">Exceptional facilities stay narrow</h2>
+      <p>A scenario declares exceptional facilities through runtimeCapabilities. The runner supplies only the pinned inputs and local permissions that the selected case needs.</p>
+    </div>
+    <div class="grid">
+      <article class="card runtime"><span class="card-kicker">Offline Node</span><h3>Matched dependency tree</h3><p>The fixture receives only the selected project dependency tree after installed TypeScript matches the tracked lockfile.</p></article>
+      <article class="card runtime"><span class="card-kicker">Offline Maven</span><h3>Checksum-pinned repository</h3><p>The fixture receives only manifest-named repository files. The isolated home forces offline execution, and fixture tests pass before model execution.</p></article>
+      <article class="card runtime"><span class="card-kicker">Loopback and processes</span><h3>Single-supervisor batch</h3><p>The managed profile permits local binding, denies non-local destinations, and limits writes to the disposable workspace.</p></article>
+      <article class="card runtime"><span class="card-kicker">Browser</span><h3>Fresh runner-owned state</h3><p>Each interaction gets a fresh headless browser, context, page, and loopback fixture server with pinned Playwright and Chromium.</p></article>
+    </div>
+    <p class="callout boundary"><strong>Two network barriers.</strong> Request interception blocks non-loopback HTTP and HTTPS. The managed permission profile independently denies non-local network access.</p>
+  </section>
+
+  <section class="section" id="browser" aria-labelledby="browser-title">
+    <div class="section-heading">
+      <span class="eyebrow">Target-authored interaction</span>
+      <h2 id="browser-title">Browser PASS proves the whole interaction</h2>
+      <p>The target is the sole author and initiator. The runner owns preflight, broker authentication, bounded execution, retained runtime evidence, and cleanup proof.</p>
+    </div>
+    <figure class="diagram" aria-labelledby="browser-flow-title">
+      <figcaption><span class="diagram-kicker">Browser sequence</span><strong id="browser-flow-title">Preflight before coordination, validation before launch</strong><p>A validation failure removes stale validation evidence and does not launch a browser.</p></figcaption>
+      <svg viewBox="0 0 1160 470" role="img" aria-labelledby="browser-svg-title browser-svg-desc">
+        <title id="browser-svg-title">Governed browser scenario sequence</title>
+        <desc id="browser-svg-desc">The runner preflights Chromium, starts a loopback broker, the target writes and validates an interaction, the broker validates the request, a fresh browser runs bounded actions, and the runner retains evidence and proves cleanup.</desc>
+        <defs><marker id="arrowBrowser" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#17406d"/></marker></defs>
+        <g font-family="Inter, system-ui, sans-serif">
+          <g text-anchor="middle" font-size="14" font-weight="820">
+            <rect x="30" y="25" width="180" height="50" rx="10" fill="#e5eef8" stroke="#17406d"/><text x="120" y="56" fill="#172033">Runner</text>
+            <rect x="285" y="25" width="180" height="50" rx="10" fill="#def2ef" stroke="#006b67"/><text x="375" y="56" fill="#172033">Target</text>
+            <rect x="540" y="25" width="180" height="50" rx="10" fill="#fff0d2" stroke="#8a4b00"/><text x="630" y="56" fill="#172033">Broker</text>
+            <rect x="795" y="25" width="180" height="50" rx="10" fill="#eee8f7" stroke="#5a3b8a"/><text x="885" y="56" fill="#172033">Fresh browser</text>
+          </g>
+          <g stroke="#93a4b8" stroke-width="2" stroke-dasharray="6 6"><path d="M120 85 V440"/><path d="M375 85 V440"/><path d="M630 85 V440"/><path d="M885 85 V440"/></g>
+          <g fill="none" stroke="#17406d" stroke-width="2.5" marker-end="url(#arrowBrowser)">
+            <path d="M120 115 H870"/><path d="M885 150 H135"/><path d="M120 190 H615"/><path d="M375 230 H615"/><path d="M375 270 H615"/><path d="M630 310 H870"/><path d="M885 350 H135"/><path d="M120 390 H870"/>
+          </g>
+          <g fill="#172033" font-size="13" font-weight="720">
+            <text x="235" y="108">Preflight local page</text><text x="250" y="143">Close preflight state + retain receipt</text><text x="235" y="183">Start one authenticated loopback broker</text>
+            <text x="440" y="223">Write declarative interaction</text><text x="440" y="263">Validate + send digest-bound receipt</text><text x="700" y="303">Validate token, paths, schema, digests</text>
+            <text x="605" y="343">Bounded actions + runtime evidence</text><text x="255" y="383">Close page, context, browser, fixture, broker</text>
+          </g>
+          <rect x="990" y="105" width="145" height="285" rx="12" fill="#fbe4e7" stroke="#9f2431"/>
+          <text x="1062" y="135" text-anchor="middle" fill="#9f2431" font-size="12" font-weight="850" letter-spacing="1">REJECT</text>
+          <g fill="#526078" font-size="12"><text x="1008" y="168">• wrong token</text><text x="1008" y="195">• wrong paths</text><text x="1008" y="222">• schema drift</text><text x="1008" y="249">• digest drift</text><text x="1008" y="276">• ordering drift</text><text x="1008" y="303">• non-loopback</text><text x="1008" y="330">• missing proof</text><text x="1008" y="357">• bad cleanup</text></g>
+        </g>
+      </svg>
+    </figure>
+    <p class="callout blocked"><strong>Preflight failure.</strong> If Chromium cannot launch or observe the configured local page, the runner returns an infrastructure-blocked batch result before coordinator or target invocation. The runner retains preflight cleanup evidence.</p>
+    <div class="two-column" style="margin-top: 1rem;">
+      <div class="panel">
+        <h3>Bounded interaction rules</h3>
+        <ul>
+          <li>The supervisor passes browser assignment fields without renaming or paraphrasing.</li>
+          <li>The broker validates the one-time token, scenario, exact paths, flat action schema, and both digests.</li>
+          <li>After validation succeeds, the broker launches Chromium outside the target command sandbox.</li>
+          <li>Validation failure removes stale validation evidence, leaves the one-shot broker available, and does not launch a browser.</li>
+          <li>The wrapper accepts user-visible Playwright locators and deterministic waits.</li>
+          <li>The wrapper does not accept arbitrary target evaluation or sleep actions.</li>
+          <li>A role name is an accessible name. Unlabeled alert or status content uses exact visible text.</li>
+          <li>Focus and accessibility-attribute observations can retain an intentionally seeded UX defect.</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3>Runner-owned isolation</h3>
+        <ul>
+          <li>No Chrome channel, persistent profile, desktop browser, existing tab, or inherited authentication state.</li>
+          <li>Scenario evidence, broker identities, and ports have independent roots.</li>
+          <li>Browser-capable suites run as isolated single-supervisor batches.</li>
+          <li>Concurrent work cannot share browser context, profile, evidence, authority, or port state.</li>
+          <li>Unused brokers close after failure or interruption, and closure receipts remain retained.</li>
+        </ul>
+      </div>
+    </div>
+    <h3 style="margin-top: 2rem;">Browser PASS evidence</h3>
+    <ul class="receipt-list">
+      <li>Target-bound validation, runtime, and broker receipts</li>
+      <li>Trace, final screenshot, and target-requested screenshots</li>
+      <li>Console, browser request, and browser response events</li>
+      <li>Service route and status diagnostics</li>
+      <li>Playwright and Chromium versions</li>
+      <li>Broker, browser, context, and page identities</li>
+      <li>Fixture root and selected loopback ports</li>
+      <li>Interaction and receipt digests</li>
+      <li>Timestamped page, context, browser, fixture-server, and broker close receipts</li>
+      <li>Complete cleanup even when a route finishes BLOCKED</li>
+    </ul>
+    <p class="callout blocked"><strong>BLOCKED does not waive cleanup.</strong> The missing-runtime-evidence UX case remains a static-evidence BLOCKED path. The blocked-route-owned-cleanup case must still prove complete runtime cleanup.</p>
+  </section>
+
+  <section class="section" id="source" aria-labelledby="source-title">
+    <div class="section-heading">
+      <span class="eyebrow">Source and limit</span>
+      <h2 id="source-title">What this page can establish</h2>
+      <p>This page explains the suite strategy and runner contract. It does not list the current terminal state of every suite generation.</p>
+    </div>
+    <div class="source-panel">
+      <div><h3>Agent-Owned Evaluation Suites source</h3><p>Use the source strategy for the complete operating text and inspect stable reports and durable results for current generation states.</p></div>
+      <a class="source-path" href="../evals/agent-tests/README.md">evals/agent-tests/README.md</a>
+    </div>
+    <p class="callout boundary"><strong>Direct answer.</strong> The system maps each conceptual agent to an executable suite, binds runtime identity to retained evidence, limits concurrency, applies exact checks and independent judging, publishes immutable evidence bundles, and isolates exceptional runtime facilities. Missing proof remains non-passing or BLOCKED.</p>
+  </section>
+</main>
+<footer class="site-footer">
+  <p>Copyright 2026 (c) Martin.Bechard@DevConsult.ca - <a href="../LICENSE">MIT License</a></p>
+</footer>
+<script src="documentation-settings.js"></script>
+</body>
+</html>
