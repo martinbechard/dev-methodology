@@ -1,12 +1,14 @@
 # Default Unconfigured Projects to Solo Mode
 
-Status: Running
+Status: Completed
 
-Owner: Dev Orchestrator (agent root; canonical task 019fe2f2-f195-7670-8367-15d9e5c79de7)
+Owner: Dev Orchestrator (agent root; canonical task 019fe2f2-f195-7670-8367-15d9e5c79de7; completed)
 
 Type: Feature
 
 Provider: file
+
+Provider Reference: backlog/completed-backlog/features/default-unconfigured-projects-to-solo-mode.md
 
 Work Item ID: default-unconfigured-projects-to-solo-mode
 
@@ -245,3 +247,21 @@ Next Action: The root Dev Orchestrator records Starting -> Running for this same
 ### Unattended Work Boundary
 
 No source mutation, coder dispatch, review, verification, generated artifact update, integration, or delivery may proceed until the answer is recorded with its provenance and the same canonical task resumes through User Action Required -> Ready -> Starting -> Running. Read-only evidence preservation may continue. Expected noncanonical dependents and exact terminology overlaps remain deferred until their applicable release and reconciliation evidence exists.
+
+## Completion Evidence — 2026-08-08
+
+- Completion disposition: READY through the configured main-branch Commit provider; requested file-provider lifecycle: Completed.
+- Completed At: 2026-08-08T23:50:22Z.
+- Accepted source: 16a189b9c6cde179c039bd6357af574848246459 on codex/default-unconfigured-projects-to-solo-mode after fresh source review PASS and independent candidate verification PASS.
+- Accepted integration: ade2839c5497f4e6a51c62d4bf840e91fdfce837 on codex/integrate-default-unconfigured-projects-to-solo-mode after fresh post-integration source review PASS, corrected Methodology Artifact Reviewer PASS, and independent integrated Dev Verifier PASS.
+- Main delivery mapping: integration commits 504d5d852d00c5bfb1a9d12e6ddcaaa03fd76248 and ade2839c5497f4e6a51c62d4bf840e91fdfce837 were deliberately cherry-picked as main commits 416c8c9095090bfce6d14290c055e3f8b6da38a2 and b774ecfbe6d09fc597247c4df59cbd762da5d84e. Both main commits are reachable from observed main a85380e51b120d23cebe1259b9dbf17b37fcba89.
+- Content equivalence: all 16 delivered paths at observed main are byte-identical to accepted integration ade2839c5497f4e6a51c62d4bf840e91fdfce837. The inventory comprises eight accepted source and test paths, seven generator-owned projections, and README.md.
+- Independent review: the final source reviewer reported no material findings. The fresh Methodology Artifact Reviewer confirmed corrected README handoff guidance, repository-compliant mode-skill formatting, generator freshness, adapter parity, manifest hashes, provenance, and focused tests with no findings.
+- Independent verification: the final integrated verifier passed 52 of 52 focused tests, five selector and legacy CLI flows, three skill validations, three provenance validations, YAML and Python checks, generated adapter and manifest hashes, exact inventory, diff checks, and clean-worktree checks.
+- Post-main checks: python3.11 scripts/build-skill-docs.py --check passed; 17 role-mutation tests and the three exact BundleContent tests passed; the scripted Bootstrapper orchestration returned PASS; git diff --check passed; main remained clean.
+- Behavior delivered: without root PROJECT.yaml the effective mode is SOLO, secondary dispatch is disabled, and resource-claim helper or state is neither required nor accessed or mutated. A primary Project Configurator handoff terminates the current Bootstrapper run; a separately resumed run follows validated configuration. Valid configured and supported legacy selectors retain their explicit concurrency, Persistence, Commit, and resource-coordination behavior.
+- Generated artifacts: design skill and role projections, the agent generation manifest, and Claude, Codex, Gemini, and Junie Project Bootstrapper adapters are current and consistent with canonical sources.
+- Coordination: main-integration claims were released after their bounded phases. Final delivery claim default-unconfigured-projects-to-solo-mode-main-delivery-019fe2f2 was released at event c9134ee0-35ab-43c6-a259-b7db79813a08. Terminal update claim default-unconfigured-projects-to-solo-mode-terminal-update-019fe2f2 and exact terminal path claim default-unconfigured-projects-to-solo-mode-terminal-paths-019fe2f2 protect this archive transaction and are released immediately after its commit.
+- Publication: no remote publication was required by the configured local main-branch completion contract; local main observation is the delivery authority.
+- Scoped omissions: optional live-model smoke, browser, database, deployment, and full-repository regression suites were not required for this focused methodology change. The deterministic orchestration and directly affected contracts passed.
+- Terminal archive: backlog/completed-backlog/features/default-unconfigured-projects-to-solo-mode.md.
