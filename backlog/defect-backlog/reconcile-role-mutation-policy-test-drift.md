@@ -1,6 +1,6 @@
 # Reconcile Role Mutation Policy Test Drift
 
-Status: Holding
+Status: Ready
 
 Type: Defect
 
@@ -134,3 +134,15 @@ Prior Task-Owned Claims Released: Provider-path release event 391beb03-0c67-405f
 Pre-Transaction Claim State: No task-owned live claim remained before this transaction.
 
 Resumption Condition: Holding -> Ready -> Starting -> Running in this same canonical task before source work resumes.
+
+## Ready Resumption Evidence
+
+Transition: Holding -> Ready
+
+Resumption Authority: Explicit user directive received by parent Coordinator on 2026-08-08.
+
+Owner: Unowned
+
+Canonical Task: 019fda4f-3b3e-71d0-83c2-e277aa4bec68
+
+Next Action: Parent Coordinator records Ready -> Starting for the preserved canonical task; all Holding evidence remains history.
