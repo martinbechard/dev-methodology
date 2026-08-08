@@ -140,17 +140,17 @@ Condition Type: root-execution.
 
 Owner: Root Dev Orchestrator canonical task 019fe2f2-f195-7670-8367-15d9e5c79de7.
 
-Evidence: Fixed Dev Coder /root/implement_solo_fallback completed clean candidate c80a8a3802fb806bc16d5a73b1a48aa581b5688d from f147eca9 with exactly these eight changed paths and no others: skills/set-solo-mode/SKILL.md; skills/set-multitask-mode/SKILL.md; skills/resource-claim/SKILL.md; agents/roles/project-setup/project-bootstrapper.role.yaml; scripts/test_role_mutation_policy.py; evals/agent-tests/project-bootstrapper/scenarios.yaml; evals/agent-tests/project-bootstrapper/scripted_orchestration.py; evals/agent-tests/project-bootstrapper/test_scripted_orchestration.py. Green evidence: 16/16 role-policy, 22/22 scripted orchestration, 5/5 fixtures, all three skill validations, scripted Python 3.11 PASS, YAML and diff check PASS, and direct resource-claim policy/interface test PASS. The broad helper-module 26-pass result and unrelated baseline missing documentation-inventory heading result are excluded. Candidate worktree is clean. Generated projections are intentionally deferred to fresh-main integration. Title is Reviewing; independent review has not started at transaction start.
+Evidence: Fresh Dev Code Reviewer /root/review_solo_fallback_candidate is active and has reviewed all eight exact candidate paths against base f147eca9, project contracts, acceptance criteria, and generator ownership. The exact scope is clean, and the fallback and claim gate are coherent. The final verdict is being synthesized around two concrete risks: scripted orchestration may not prove the required terminal BLOCKED run boundary before separate resumption, and its synthetic PROJECT.yaml plus hard-coded selectors may not prove preservation of explicit configured behavior, including concurrent_tasking false and resource_coordination none. No final blocker exists yet. No source mutation occurred during review. No terminology claim is relied on. The isolated candidate worktree is /Users/martinbechard/.codex/worktrees/75e6/dev-methodology on branch codex/default-unconfigured-projects-to-solo-mode. All eight paths remain unchanged. Generated-output deferral is conditionally safe only with fresh-main regeneration, digest refresh, source-to-output checks, and documentation validation. Title is Reviewing.
 
-Observed At: 2026-08-08T20:45:58Z.
+Observed At: 2026-08-08T20:58:29Z.
 
 Started At: 2026-08-08T20:20:06Z.
 
 Deadline or Expires At: 2026-08-08T21:20:06Z.
 
-Next Action: Root dispatches a fresh Dev Code Reviewer for c80a8a38, then Dev Verifier. After acceptance, integrate the exact candidate paths onto fresh main and regenerate outputs and documentation.
+Next Action: Receive the reviewer verdict. If it is NEEDS_CORRECTION, return the exact findings to the fixed coder. Otherwise, dispatch a fresh verifier.
 
-Next Reconciliation At: 2026-08-08T21:00:58Z.
+Next Reconciliation At: 2026-08-08T21:10:29Z.
 
 ## User Action Required Transition Evidence
 
