@@ -1,6 +1,8 @@
 # Default Unconfigured Projects to Solo Mode
 
-Status: Running
+Status: Ready
+
+Owner: Unowned
 
 Type: Feature
 
@@ -64,46 +66,26 @@ None.
 - This item changes the default only while PROJECT.yaml is absent; it does not remove resource coordination from configured projects.
 - SOLO is a coordination mode, not a Persistence or Commit selection. This fallback must not infer durable work-item storage or delivery behavior when those selectors are otherwise unresolved.
 
-## Current Starting Handoff Evidence
+## Recovery Evidence
 
-Transition: Ready -> Starting.
+Transition: Running -> Ready.
 
-Parent Coordination Thread: 019fb057-1767-7ef2-b5fa-41f4417b20b3.
+Recorded At: 2026-08-08T20:02:36Z.
 
-Launch Reservation: One Root Dev Orchestrator task for this exact work item.
+Reason: The canonical execution was stopped before source work began. The prior Starting -> Running provider commit was already durable, but its execution ownership ended during reconciliation. This recovery records the truthful non-active state without rewriting either prior commit.
 
-Normalized Objective: Implement the safe unconfigured-project SOLO-mode fallback.
+Canonical Task: 019fe2f2-f195-7670-8367-15d9e5c79de7.
 
-Dispatch Time: 2026-08-08T19:54:46Z.
+Branch: codex/default-unconfigured-projects-to-solo-mode.
 
-Intended Root Role: Dev Orchestrator.
+Worktree: /Users/martinbechard/.codex/worktrees/75e6/dev-methodology.
 
-Launch Result: Not attempted.
+Prior Provider Commits: f147eca9fe03683b362a58481cd0d1a5e473a483 (Starting evidence) and e2afa73eab4a46cf434277b41c5a0b8ba8e546b5 (invalid direct Ready -> Running sequence).
 
-Canonical Execution: None.
+Released Claim Events: 96f5f988-40ac-4f99-9e47-80ba16ee3e87 (provider path) and 80c9cdff-c142-4bfc-a7f0-057312f61105 (work claim handoff).
 
-Owner: Dev Orchestrator (agent root; canonical task 019fe2f2-f195-7670-8367-15d9e5c79de7).
+Source Mutation: None. The canonical branch and worktree remain clean and resumable.
 
-Last Contact At: 2026-08-08T19:54:46Z; parent Coordinator recorded the reservation.
+Owner: Unowned.
 
-Next Reconciliation At: 2026-08-08T20:08:46Z.
-
-Required Next Lifecycle Transition: Starting -> Running is recorded below. The canonical task retains the exact Work Item ID activity=work claim and may begin the approved scoped implementation.
-
-## Active Execution Evidence
-
-Condition Type: root-execution.
-
-Owner: Dev Orchestrator (agent root; canonical task 019fe2f2-f195-7670-8367-15d9e5c79de7).
-
-Evidence: Starting -> Running is accepted for the canonical Root Dev Orchestrator task 019fe2f2-f195-7670-8367-15d9e5c79de7 under parent Coordinator 019fb057-1767-7ef2-b5fa-41f4417b20b3. The canonical branch is codex/default-unconfigured-projects-to-solo-mode and the private worktree is /Users/martinbechard/.codex/worktrees/75e6/dev-methodology. Current phase is independent discovery and private implementation. All overlapping docs, generated outputs, reviewer work, and integration are deferred while terminology task 019fe2b3-4bcd-7f00-88aa-90e281b8f8bf retains its live claim. The exact Work Item ID activity=work claim is live for default-unconfigured-projects-to-solo-mode.
-
-Observed At: 2026-08-08T19:59:18Z.
-
-Started At: 2026-08-08T19:59:18Z.
-
-Deadline or Expires At: 2026-08-08T20:59:18Z.
-
-Next Action: Continue independent discovery and private implementation in the canonical branch and worktree, while deferring overlapping docs, generated outputs, reviewer work, and integration until the terminology claim is released.
-
-Next Reconciliation At: 2026-08-08T20:14:18Z.
+Active Execution Evidence: None. The item is Ready and has no active execution ownership.
