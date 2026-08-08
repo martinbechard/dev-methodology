@@ -1,6 +1,6 @@
 # Recognize HTML Anchors In Markdown Link Validation
 
-Status: User Action Required
+Status: Ready
 
 Type: Defect
 
@@ -22,7 +22,7 @@ Branch: codex/recognize-html-anchors-in-markdown-link-validation
 
 Worktree: /Users/martinbechard/.codex/worktrees/b07b/dev-methodology
 
-Phase: Validator ownership discovery
+Phase: External delivery accepted; awaiting canonical resumption verification and closeout
 
 ## Summary
 
@@ -140,8 +140,32 @@ Work claim recognize-html-anchors-work-019fda3c was released with disposition bl
 
 ### Resolution
 
-Pending. Unanswered.
+Answered and approved on 2026-08-08. In external canonical task `019fe259-29e9-7be2-8edd-036ff256b631`, the user supplied the exact bounded execution prompt authorizing implementation and direct-main delivery in `/Users/martinbechard/dev/mcp-agent-ops`, limited to `src/mcp_agent_ops/verification/markdown_links.py` and `tests/unit/verification/test_markdown_links.py`, with all recorded exclusions preserved. This direct user instruction resolves the recorded authority question; it is not inferred from technical access or delivery success.
 
 ### Unattended Work Boundary
 
-No source mutation, tests, integration, delivery, release, publication, dev-methodology source change, or terminal provider closure may proceed until the user answers. Only provider/status inspection may continue.
+The user-authority boundary is satisfied. Resume only through Ready -> Starting -> Running in the preserved canonical task before dev-methodology verification or terminal provider closure. No additional external source mutation, release, publication, installation, dev-methodology source change, or unrelated cleanup is authorized.
+
+## External Delivery Evidence
+
+External Task: `019fe259-29e9-7be2-8edd-036ff256b631`
+
+External Repository: `/Users/martinbechard/dev/mcp-agent-ops`
+
+Accepted Candidate and Main Commit: `a06549b3b57472814a87c1cd9c03e6a2e4420861`
+
+Baseline: `89f2df0d80fc91f3944849b5387e4ac82ba79e40`
+
+Changed Paths: `src/mcp_agent_ops/verification/markdown_links.py`; `tests/unit/verification/test_markdown_links.py`
+
+Review: Independent review GOOD with no findings on the accepted commit.
+
+Verification: Nine focused tests passed; targeted Ruff, mypy, and `git diff --check` passed; a clean checkout at the exact main commit remained clean.
+
+Delivery: External local `main` fast-forwarded to the accepted candidate. The candidate is ancestral to external `main`; no push, release, tag, publication, packaging, deployment, installation, or version change occurred.
+
+Operational Limitation: The external primary checkout contains only untracked `.codex/agent-claim/` operational state created by its configured claim helper. A clean verification checkout at the exact main commit is clean. No out-of-scope ignore or metadata change was made.
+
+Recovery Evidence: Accidental local commit `7c00444e9c713ebba6f56895b7176b3dfb36c164` was restored exactly to the baseline before accepted delivery, never pushed or published, and is not on final external `main`.
+
+Next Action: Preserve this evidence, record Ready -> Starting for canonical task `019fda3c-1c2a-7061-9b3b-3deb3db114cd`, then have that same root execution record Starting -> Running, verify the maintained README link with the delivered validator, and perform terminal closure only if the configured completion checks pass.
