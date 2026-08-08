@@ -140,17 +140,17 @@ Condition Type: root-execution.
 
 Owner: Root Dev Orchestrator canonical task 019fe2f2-f195-7670-8367-15d9e5c79de7.
 
-Evidence: Fresh integration correction is green so far: freshness, skills 3, provenance 3, BundleContent 3, and role/source-to-adapter 17 pass. Broader Bootstrapper discovery identified stale SHA-256 fixture pins for the two changed mode skills in evals/agent-tests/project-bootstrapper/scripted_orchestration.py. Updating those pins is authorized within the original exact eight candidate paths; the correction commit therefore covers exactly five paths (README.md, two mode skills, generated skill-definitions, and the existing scripted fixture), with no delivery-scope widening. Dev Merge Coordinator is updating only those two pins, then rerunning discovery and full gates. Fresh main-integration claim remains live with heartbeat ca905272 and hard stop 23:50:35Z. No blocker, extra path, or terminology issue is recorded. Primary main has no mutation beyond provider updates. Title is Implementing.
+Evidence: Corrected integration HEAD ade2839c5497f4e6a51c62d4bf840e91fdfce837 (parent 504d5d85) is clean in the isolated integration worktree. Exactly five correction paths are reconciled: README.md handoff sequence, two mode skills’ inline spans, generated skill-definitions regeneration, and scripted_orchestration.py digest pins. Gates PASS: freshness, skills 3, provenance 3, compilation, BundleContent 3, role 17, Bootstrapper 29, README/no-inline, and diff. Integration correction claim heartbeat event 9aff8578-eb29-4b8e-a7bb-ccaa4e03a976 at 2026-08-08T23:28:36Z remains live. Fresh Methodology Artifact Reviewer /root/rereview_corrected_solo_artifacts and independent Dev Verifier /root/verify_integrated_solo_fallback are active read-only. Primary main is currently dirty only with unrelated untracked evals/projects/terminology-standard-effect/; delivery is paused pending external reconciliation, with no polling, overwrite, or absorb action. This is not a current review blocker. Title is Reviewing.
 
-Observed At: 2026-08-08T23:25:32Z.
+Observed At: 2026-08-08T23:30:18Z.
 
 Started At: 2026-08-08T20:20:06Z.
 
 Deadline or Expires At: 2026-08-09T00:00:00Z.
 
-Next Action: Receive the clean five-path correction commit, rerun discovery and full gates, then obtain fresh artifact review and integrated verification before delivery. The deadline covers the in-scope fixture-pin correction and subsequent review/verifier work.
+Next Action: Receive both fresh PASS verdicts, then reconcile the unrelated main worktree state externally before any delivery mutation; deliver only after main is clean. The deadline covers review, verification, and delivery reconciliation.
 
-Next Reconciliation At: 2026-08-08T23:33:32Z.
+Next Reconciliation At: 2026-08-08T23:38:18Z.
 
 ## User Action Required Transition Evidence
 
