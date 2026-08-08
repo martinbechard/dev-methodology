@@ -1,6 +1,6 @@
 # Centralize General Agent Skill Routing
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -20,7 +20,7 @@ Branch: main
 
 Worktree: /Users/martinbechard/dev/dev-methodology
 
-Phase: General Agent Skills routing and design alignment
+Phase: Independent documentation and methodology review
 
 ## Summary
 
@@ -96,17 +96,17 @@ Condition Type: root-execution
 
 Owner: Dev Orchestrator task 019faeed-f816-7d43-819d-814bad4e309c
 
-Evidence: The canonical task has centralized `structured-explanation` in project-wide conditional routing, removed duplicate role-source declarations, added focused shared-routing coverage, and started the General Agent Skills design while preserving the exact implementation path and generated-adapter tree claims.
+Evidence: The parent Coordinator restored this same canonical task to Starting in commit `6eb6800707e5f24d09daec3db0b5773070643421`. Candidate `555764d4` and its 29 focused tests plus freshness, YAML, and diff evidence remain preserved. The canonical task reacquired exact Work Item ID activity=work claim `centralize-general-agent-skill-routing-work-019faeed-resume` and exact provider-path claim `centralize-general-agent-skill-routing-running-path-019faeed-resume`; it has not repeated implementation or any accepted green gate.
 
-Observed At: 2026-08-07T03:33:19Z
+Observed At: 2026-08-08T16:28:31Z
 
-Started At: 2026-08-07T03:29:07Z
+Started At: 2026-08-08T16:28:17Z
 
-Deadline or Expires At: 2026-08-07T07:29:07Z
+Deadline or Expires At: 2026-08-08T20:28:31Z
 
-Next Action: Centralize project-wide conditional skill routing, create the General Agent Skills design, remove duplicated role and Agent-group declarations, regenerate derived artifacts, and verify the synchronized result.
+Next Action: Obtain one fresh independent documentation and methodology review of exact candidate `555764d4`; proceed to verifier and delivery only if that review accepts the candidate.
 
-Next Reconciliation At: 2026-08-07T03:43:19Z
+Next Reconciliation At: 2026-08-08T16:43:31Z
 
 ## Holding Pause Evidence
 
