@@ -136,21 +136,21 @@ Next Reconciliation At: 2026-08-08T20:14:35Z.
 
 ## Active Execution Evidence
 
-Condition Type: root-execution.
+Condition Type: delegated-work.
 
-Owner: Root Dev Orchestrator canonical task 019fe2f2-f195-7670-8367-15d9e5c79de7.
+Owner: Fixed Dev Coder /root/implement_solo_fallback under canonical Root Dev Orchestrator task 019fe2f2-f195-7670-8367-15d9e5c79de7.
 
-Evidence: Fresh Dev Code Reviewer /root/review_solo_fallback_candidate is active and has reviewed all eight exact candidate paths against base f147eca9, project contracts, acceptance criteria, and generator ownership. The exact scope is clean, and the fallback and claim gate are coherent. The final verdict is being synthesized around two concrete risks: scripted orchestration may not prove the required terminal BLOCKED run boundary before separate resumption, and its synthetic PROJECT.yaml plus hard-coded selectors may not prove preservation of explicit configured behavior, including concurrent_tasking false and resource_coordination none. No final blocker exists yet. No source mutation occurred during review. No terminology claim is relied on. The isolated candidate worktree is /Users/martinbechard/.codex/worktrees/75e6/dev-methodology on branch codex/default-unconfigured-projects-to-solo-mode. All eight paths remain unchanged. Generated-output deferral is conditionally safe only with fresh-main regeneration, digest refresh, source-to-output checks, and documentation validation. Title is Reviewing.
+Evidence: Dev Code Reviewer /root/review_solo_fallback_candidate returned NEEDS_CORRECTION after reviewing all eight exact candidate paths. Findings are: configured selectors and valid legacy configuration are not genuinely tested; absent-config Bootstrapper handoff must terminate the first run BLOCKED and resume separately; the three changed skill documents need bounded historical provenance; and the resource-claim gate must be narrowed to resource-claim-helper-* while preserving unrelated provider routing. The same fixed Dev Coder is active correcting only the existing eight paths; no ninth path is authorized. The Orchestrator supplied three migration-assigned Artifact IDs and recorded historical-unknown for unsupported facts. Generated outputs remain deferred to fresh-main integration. No blocker is recorded. No terminology claim is relied on. No integration, review, or verification is underway. The immutable prior candidate remains c80a8a3802fb806bc16d5a73b1a48aa581b5688d with its exact eight-path scope, isolated worktree /Users/martinbechard/.codex/worktrees/75e6/dev-methodology, and branch codex/default-unconfigured-projects-to-solo-mode.
 
-Observed At: 2026-08-08T20:58:29Z.
+Observed At: 2026-08-08T21:06:49Z.
 
 Started At: 2026-08-08T20:20:06Z.
 
 Deadline or Expires At: 2026-08-08T21:20:06Z.
 
-Next Action: Receive the reviewer verdict. If it is NEEDS_CORRECTION, return the exact findings to the fixed coder. Otherwise, dispatch a fresh verifier.
+Next Action: Receive a clean corrected immutable candidate. Then set the title to Reviewing and dispatch a fresh replacement review.
 
-Next Reconciliation At: 2026-08-08T21:10:29Z.
+Next Reconciliation At: 2026-08-08T21:16:49Z.
 
 ## User Action Required Transition Evidence
 
