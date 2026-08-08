@@ -1,12 +1,12 @@
 # Centralize General Agent Skill Routing
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
 Provider: file
 
-Owner: Unowned
+Owner: Dev Orchestrator task 019faeed-f816-7d43-819d-814bad4e309c
 
 Work Item ID: centralize-general-agent-skill-routing
 
@@ -141,3 +141,21 @@ Owner: Unowned
 Canonical Task: 019faeed-f816-7d43-819d-814bad4e309c
 
 Next Action: Parent Coordinator records Ready -> Starting for the preserved canonical task; no implementation, review, verification, or integration work is authorized by this transition.
+
+## Current Starting Handoff Evidence
+
+Starting Recorded At: 2026-08-08T16:23:23Z
+
+Parent Coordination Thread: 019fb057-1767-7ef2-b5fa-41f4417b20b3
+
+Launch Reservation: Existing Root Dev Orchestrator task 019faeed-f816-7d43-819d-814bad4e309c for this exact work item.
+
+Normalized Objective: Centralize the General Agent Skills design and shared conditional routing while preserving the retained candidate, focused evidence, and canonical task identity.
+
+Launch Result: Started
+
+Canonical Execution: 019faeed-f816-7d43-819d-814bad4e309c
+
+Last Contact: 2026-08-08T16:23:23Z; existing canonical task confirmed by parent Coordinator.
+
+Next Reconciliation At: 2026-08-08T16:38:23Z
