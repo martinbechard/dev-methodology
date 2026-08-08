@@ -1,6 +1,6 @@
 # Prevent Retired Skill Cache Directories From Breaking Validation
 
-Status: Holding
+Status: Ready
 
 Type: Defect
 
@@ -168,3 +168,15 @@ Deadline or Expires At: 2026-08-07T04:44:58Z
 Next Action: Reacquire the exact activity=work claim after this atomic provider update, accept or route any verifier failure once, and begin current-main reconciliation for main-branch delivery only if the verifier returns PASS.
 
 Next Reconciliation At: 2026-08-07T03:58:58Z
+
+## Ready Resumption Evidence
+
+Transition: Holding -> Ready
+
+Resumption Authority: Explicit user directive received by parent Coordinator on 2026-08-08.
+
+Owner: Unowned
+
+Canonical Task: 019fda3b-119f-7412-a045-29d5f8998d79
+
+Next Action: Parent Coordinator records Ready -> Starting for the preserved canonical task; retained candidate, review, verification, and Holding evidence remain history.
