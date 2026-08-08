@@ -22,7 +22,7 @@ Branch: codex/add-document-provenance-skill
 
 Worktree: /Users/martinbechard/.codex/worktrees/6cb2/dev-methodology
 
-Phase: Delegated validation of the private document-provenance package under its exact child tree claim before newly released shared catalog, generated-output, review, and integration events
+Phase: Delegated completion of the single candidate across the released exact shared catalog, project-guidance, template, generated-output, and focused-test manifest
 
 Started At: 2026-08-08T18:11:22Z
 
@@ -151,17 +151,17 @@ Condition Type: delegated-work
 
 Owner: Dev Coder task /root/implement_document_provenance under Root Dev Orchestrator task 019fe291-1ba8-7a43-8d21-391a04dfa9a9
 
-Evidence: The same Dev Coder resumed from preserved bytes under exact child tree claim add-document-provenance-package-tree-019fe291, created the bounded package sources and fixtures, and reached 8/8 green validator tests before the final package metadata and skill checks. The one-time finish-lane release notification was received and current main was read once at 8d0354a930462c97984ee549230cb434411e53b9; no shared path mutation has begun.
+Evidence: The same Dev Coder completed the 26-file package phase with 11/11 focused tests and all package metadata, validation, CLI, JSON, and whitespace gates green. After the one-time finish-lane release and one current-main read, the canonical branch fast-forwarded to 8d0354a930462c97984ee549230cb434411e53b9 without changing package bytes. Child claim add-document-provenance-package-tree-019fe291 was extended through events 8560047e-418b-4250-8fb3-4f6932916995 and a16f8ca7-d46a-4177-a560-fb685a594e94 to the exact dependent manifest, and the same producer is completing one immutable candidate.
 
-Observed At: 2026-08-08T18:33:34Z
+Observed At: 2026-08-08T18:40:32Z
 
 Started At: 2026-08-08T18:11:22Z
 
 Deadline or Expires At: 2026-08-08T22:11:13Z
 
-Next Action: Complete package-local metadata, validation, and diff checks without repeating already-green gates; then fast-forward the candidate branch to the one-time observed released main and extend the child claim with the exact shared catalog and generated-output manifest before those mutations.
+Next Action: Complete only the claimed shared sources, focused tests, project guidance, templates, and supported generated outputs; run integration-sensitive focused checks without repeating unchanged package gates; then commit the single immutable candidate for independent review and verification.
 
-Next Reconciliation At: 2026-08-08T18:47:33Z
+Next Reconciliation At: 2026-08-08T18:54:32Z
 
 ## Resource Ownership Reconciliation Evidence
 
