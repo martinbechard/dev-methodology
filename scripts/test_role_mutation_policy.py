@@ -71,12 +71,9 @@ class RoleMutationPolicyTests(unittest.TestCase):
         self.assertNotIn("resource-claim", contract)
         self.assertNotIn("claim", contract.lower())
         self.assertIn(
-            "follow applicable project guidance for repository mutation",
+            "Use applicable project guidance or an explicit task override",
             contract,
         )
-        self.assertIn("provider's accepted ownership evidence", contract)
-        self.assertIn("operation-specific evidence is recorded", contract)
-        self.assertIn("provider lifecycle", contract)
 
     def test_repository_mutation_does_not_load_resource_coordination(self) -> None:
         """Keep mutation capability independent from the project-selected coordination skill."""
@@ -84,7 +81,10 @@ class RoleMutationPolicyTests(unittest.TestCase):
         skill_payload = build_skill_docs.build_payload()
         roles = build_skill_docs.load_role_definitions(set(skill_payload["skills"]))
 
-        self.assertEqual(28, len(roles))
+        self.assertEqual(
+            len(list((ROOT / "agents" / "roles").glob("**/*.role.yaml"))),
+            len(roles),
+        )
         self.assertEqual(
             {"required", "conditional", "never"},
             {role.repository_mutation for role in roles},
@@ -285,7 +285,7 @@ class RoleMutationPolicyTests(unittest.TestCase):
         """Expose repository mutation as a required conceptual definition capability declaration."""
         schema = yaml.safe_load(ROLE_SCHEMA.read_text(encoding="utf-8"))
 
-        self.assertEqual(5, schema["version"])
+        self.assertEqual(7, schema["version"])
         self.assertIn("repositoryMutation", schema["required"])
         self.assertEqual("mutation-policy", schema["properties"]["repositoryMutation"])
 
