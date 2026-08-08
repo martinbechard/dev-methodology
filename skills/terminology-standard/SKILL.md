@@ -33,11 +33,11 @@ Use the exact filename terminology.md at either supported scope:
 - The shared user standard applies across projects.
 - The project standard narrows or extends the shared standard for one project.
 
-Load both scopes before covered writing, review, or update. Do not search arbitrary user-home paths or expose their physical locations.
+Load the active configured reference snapshot before covered writing, review, or update. The installer configures that snapshot to check the active project and shared user roots, but a model-facing result proves only the scopes that the provider included in its current snapshot. Do not search arbitrary user-home paths or expose their physical locations.
 
 ## Load Terminology Standards
 
-The provider-neutral operation is Load Terminology Standards. Its configured MCP realization is mcp-agent-ops reference_load. Invoke reference_load exactly once with names set to a one-item list containing terminology.md. The server must run with:
+The provider-neutral operation is Load Terminology Standards. Its configured MCP realization is mcp-agent-ops reference_load. Invoke reference_load exactly once with names set to a one-item list containing terminology.md. The intended server configuration is:
 
 - the active project beneath MCP_AGENT_OPS_WORKSPACE_ROOTS;
 - the shared user reference directories in MCP_AGENT_OPS_REFERENCE_ROOTS; and
@@ -45,11 +45,11 @@ The provider-neutral operation is Load Terminology Standards. Its configured MCP
 
 Map its structured result into exactly one consumer outcome:
 
-- When ok is true, return TERMINOLOGY STANDARDS LOADED with catalog_revision, the aggregated content, aggregate digest, source_count, and every ordered source scope, digest, and byte_count. Project content is first and configured user content follows. Within the aggregate, the first matching preferred-term definition governs, so a project definition takes precedence without losing shared entries for other concepts.
-- When the only error code is reference_not_found, return TERMINOLOGY STANDARDS LOADED with no content and conclusive ABSENT status across the configured project and user scopes.
-- When reference_load is absent, the server or configured project boundary cannot be used, required reference configuration is missing, or any other error is returned, return TERMINOLOGY STANDARD SCOPE UNAVAILABLE with the failed capability and owner remediation. Do not reinterpret UNAVAILABLE as ABSENT.
+- When ok is true, return TERMINOLOGY STANDARDS LOADED with catalog_revision, the aggregated content, aggregate digest, source_count, and every ordered source scope, digest, and byte_count. This is conclusive only for the active configured snapshot. Project content is first when the provider included an active project scope, and configured user content follows. Within the aggregate, the first matching preferred-term definition governs, so a project definition takes precedence without losing shared entries for other concepts.
+- When the only error code is reference_not_found, return TERMINOLOGY STANDARDS LOADED with no content and ABSENT status within the active configured snapshot.
+- When reference_load is absent or returns any other error, return TERMINOLOGY STANDARD SCOPE UNAVAILABLE with the failed capability and owner remediation. Do not reinterpret UNAVAILABLE as ABSENT.
 
-This base skill owns the provider-neutral operation and entry-format contract. mcp-agent-ops owns scope discovery, aggregation, ordering, and the structured reference_load result. The runtime configuration owns the authorized project and shared user roots. Do not emulate the provider by searching paths.
+This base skill owns the provider-neutral operation and entry-format contract. mcp-agent-ops owns scope discovery, aggregation, ordering, skipped-root behavior, and the structured reference_load result. The runtime configuration owns the authorized project and shared user roots. A successful result does not prove that an unlisted physical root exists or was eligible; report conformance relative to the returned catalog revision and source labels. Do not emulate the provider by searching paths.
 
 An ABSENT standard is valid. Continue the requested work without creating terminology.md unless the user asks to create or update it.
 
@@ -97,4 +97,4 @@ Do not perform blind substring replacement. Preserve exact identifiers, code, sc
 
 ## Result
 
-Return the load outcome, standards and scopes applied, any project-over-shared precedence decision, unresolved terminology conflict, unavailable scope, and the covered writing result.
+Return the load outcome, catalog revision, returned source labels, configured-snapshot coverage limit, standards applied, any project-over-shared precedence decision, unresolved terminology conflict, unavailable capability, and the covered writing result.

@@ -6497,7 +6497,7 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("even when that term is not yet listed under Avoid", review_text)
         self.assertIn("A review never adds a preferred or avoided term", review_text)
         self.assertIn("TERMINOLOGY REVIEW: BLOCKED", review_text)
-        self.assertIn("Do not return PASS from incomplete scope coverage", review_text)
+        self.assertIn("Bind PASS to the returned catalog revision and source labels", review_text)
 
         update_text = skill_texts["terminology-standard-update"]
         self.assertIn("project terminology.md by default", update_text)
@@ -6509,12 +6509,14 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("caller-supplied authorized target path", update_text)
         self.assertEqual(1, update_text.count("Load Terminology Standards result"))
 
-        openai_metadata = load_yaml_object(
-            SKILLS_ROOT / "terminology-standard" / "agents" / "openai.yaml"
-        )
-        tool_dependencies = openai_metadata["dependencies"]["tools"]
-        self.assertEqual("mcp-agent-ops", tool_dependencies[0]["value"])
-        self.assertIn("reference_load", tool_dependencies[0]["description"])
+        for skill_name in skill_names:
+            with self.subTest(skill_dependency=skill_name):
+                openai_metadata = load_yaml_object(
+                    SKILLS_ROOT / skill_name / "agents" / "openai.yaml"
+                )
+                tool_dependencies = openai_metadata["dependencies"]["tools"]
+                self.assertEqual("mcp-agent-ops", tool_dependencies[0]["value"])
+                self.assertIn("reference_load", tool_dependencies[0]["description"])
 
         routed_agents = {skill_name: set() for skill_name in skill_names}
         for role_path in sorted(ROLES_ROOT.glob("*/*.role.yaml")):

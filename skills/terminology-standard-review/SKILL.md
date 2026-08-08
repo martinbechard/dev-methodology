@@ -34,8 +34,8 @@ Review whether covered language expresses each defined concept with its preferre
 
 ## Review Workflow
 
-1. Load terminology-standard and invoke Load Terminology Standards for both terminology.md scopes.
-2. When the result is TERMINOLOGY STANDARD SCOPE UNAVAILABLE, stop with TERMINOLOGY REVIEW: BLOCKED, name each unavailable scope and its remediation, and make no mutation. Do not return PASS from incomplete scope coverage.
+1. Load terminology-standard and invoke Load Terminology Standards for the active configured terminology.md snapshot.
+2. When the result is TERMINOLOGY STANDARD SCOPE UNAVAILABLE, stop with TERMINOLOGY REVIEW: BLOCKED, name the failed capability and its remediation, and make no mutation. Do not return PASS after a provider error.
 3. Treat TERMINOLOGY STANDARDS LOADED as conclusive for the configured provider snapshot, including its no-content ABSENT form, and continue with its aggregate.
 4. Identify material concept expressions in the target before comparing individual words.
 5. Match each expression to the governing preferred-term definition.
@@ -48,7 +48,7 @@ Do not flag exact identifiers, code, schemas, commands, quotations, external pro
 
 ## Review Result
 
-Return TERMINOLOGY REVIEW: PASS only when the configured project-and-user snapshot returned TERMINOLOGY STANDARDS LOADED and every governed concept uses its preferred term. Return TERMINOLOGY REVIEW: BLOCKED when Load Terminology Standards returned UNAVAILABLE. Otherwise return TERMINOLOGY REVIEW: NEEDS CORRECTION with:
+Return TERMINOLOGY REVIEW: PASS only when the active configured snapshot returned TERMINOLOGY STANDARDS LOADED and every governed concept uses its preferred term. Bind PASS to the returned catalog revision and source labels; it is not proof that an unlisted host root exists or was eligible. Return TERMINOLOGY REVIEW: BLOCKED when Load Terminology Standards returned UNAVAILABLE. Otherwise return TERMINOLOGY REVIEW: NEEDS CORRECTION with:
 
 - the target location;
 - the expressed concept;

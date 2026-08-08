@@ -17,5 +17,5 @@ dependencies:
   tools:
     - type: mcp
       value: mcp-agent-ops
-      description: Loads allowlisted terminology.md reference data across the active project
-        and configured shared user scopes through reference_load.
+      description: Loads allowlisted terminology.md reference data across the active configured
+        reference snapshot through reference_load.

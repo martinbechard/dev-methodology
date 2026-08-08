@@ -1150,7 +1150,7 @@ probes:
     evaluationKind: workflow-invariant
     activationCondition: Durable technical prose or user-visible language may be governed by a project or shared user terminology.md.
     negativeCondition: Raw evidence, exact identifiers, code, schemas, commands, quotations, and external product names are not rewritten through terminology preference.
-    expectedBehavior: Invoke mcp-agent-ops reference_load exactly once with terminology.md, map a loaded aggregate or reference_not_found to TERMINOLOGY STANDARDS LOADED, map missing capability or any other error to TERMINOLOGY STANDARD SCOPE UNAVAILABLE, apply the project-first aggregate, return explicit PARTIAL or BLOCKED ordinary-use behavior, and never search user-home paths as a fallback.
+    expectedBehavior: Invoke mcp-agent-ops reference_load exactly once with terminology.md, map a loaded aggregate or reference_not_found to TERMINOLOGY STANDARDS LOADED for the returned catalog revision and source labels, avoid claiming coverage of unlisted host roots, map missing capability or any other error to TERMINOLOGY STANDARD SCOPE UNAVAILABLE, apply the project-first aggregate when present, and never search user-home paths as a fallback.
     judgePlan: {deterministicChecks: [skill-read-trace, artifact-structure, operation-coverage], modelRubric: workflow-quality}
     scenarioAssociations: [dev-coder-happy, dev-documentation-writer-happy, wiki-writer-happy]
     workflowAssociations: [code-delivery, documentation-methodology, wiki-lifecycle]
@@ -1164,7 +1164,7 @@ probes:
     evaluationKind: activation-and-behavior
     activationCondition: A read-only review target contains language governed by a project or shared user Terminology Standard.
     negativeCondition: Similar words are not findings when the surrounding concept is unclear or the wording is exact evidence excluded by the standard.
-    expectedBehavior: Load the base contract and both scopes, return TERMINOLOGY REVIEW BLOCKED without mutation when either scope is UNAVAILABLE, accept conclusively ABSENT scopes, compare concept expressions with governing definitions, find nonpreferred terms even before they appear under Avoid, and recommend reinforcement separately.
+    expectedBehavior: Load the base contract and active configured snapshot, return TERMINOLOGY REVIEW BLOCKED without mutation when the provider is UNAVAILABLE, bind PASS to the returned catalog revision and source labels without claiming coverage of unlisted host roots, compare concept expressions with governing definitions, find nonpreferred terms even before they appear under Avoid, and recommend reinforcement separately.
     judgePlan: {deterministicChecks: [skill-read-trace, finding-recall, finding-precision, no-forbidden-mutation], modelRubric: workflow-quality}
     scenarioAssociations: [dev-artifact-reviewer-happy, wiki-topic-verifier-happy, methodology-artifact-reviewer-happy]
     workflowAssociations: [documentation-methodology, wiki-lifecycle]

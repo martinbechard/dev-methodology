@@ -612,6 +612,184 @@ class InstallSkillsTests(unittest.TestCase):
                 config,
             )
 
+    def test_retained_terminology_skill_keeps_reference_configuration(self) -> None:
+        installer = load_installer()
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            project = root / "project"
+            initial_source = root / "initial-source"
+            later_source = root / "later-source"
+            user_home = root / "user-home"
+            executable = root / "bin" / "mcp-agent-ops"
+            self.create_skill(initial_source, "terminology-standard")
+            self.create_skill(later_source, "alpha")
+            project.mkdir()
+            user_home.mkdir()
+            executable.parent.mkdir()
+            executable.write_text("server", encoding="utf-8")
+
+            with (
+                patch.object(installer.Path, "cwd", return_value=project),
+                patch.object(installer.Path, "home", return_value=user_home),
+                redirect_stdout(io.StringIO()),
+            ):
+                initial_exit_code = installer.main(
+                    [
+                        "--adapter",
+                        "codex",
+                        "--source",
+                        str(initial_source),
+                        "--scope",
+                        "project",
+                        "--mcp-agent-ops-executable",
+                        str(executable),
+                    ]
+                )
+                retained_exit_code = installer.main(
+                    [
+                        "--adapter",
+                        "codex",
+                        "--source",
+                        str(later_source),
+                        "--scope",
+                        "project",
+                        "--cleanup",
+                        "false",
+                    ]
+                )
+
+            self.assertEqual(installer.SUCCESS_EXIT_CODE, initial_exit_code)
+            self.assertEqual(installer.SUCCESS_EXIT_CODE, retained_exit_code)
+            self.assertTrue(
+                (project / ".agents/skills/terminology-standard/SKILL.md").is_file()
+            )
+            config = (project / ".codex/config.toml").read_text(encoding="utf-8")
+            self.assertIn("MCP_AGENT_OPS_REFERENCE_ROOTS", config)
+            self.assertIn(
+                'MCP_AGENT_OPS_REFERENCE_NAMES = "terminology.md"',
+                config,
+            )
+
+    def test_unowned_terminology_skill_keeps_reference_configuration(self) -> None:
+        installer = load_installer()
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            project = root / "project"
+            source = root / "source"
+            user_home = root / "user-home"
+            executable = root / "bin" / "mcp-agent-ops"
+            self.create_skill(source, "alpha")
+            self.create_skill(project / ".agents/skills", "terminology-standard")
+            user_home.mkdir()
+            executable.parent.mkdir()
+            executable.write_text("server", encoding="utf-8")
+
+            with (
+                patch.object(installer.Path, "cwd", return_value=project),
+                patch.object(installer.Path, "home", return_value=user_home),
+                redirect_stdout(io.StringIO()),
+            ):
+                exit_code = installer.main(
+                    [
+                        "--adapter",
+                        "codex",
+                        "--source",
+                        str(source),
+                        "--scope",
+                        "project",
+                        "--mcp-agent-ops-executable",
+                        str(executable),
+                    ]
+                )
+
+            self.assertEqual(installer.SUCCESS_EXIT_CODE, exit_code)
+            config = (project / ".codex/config.toml").read_text(encoding="utf-8")
+            self.assertIn("MCP_AGENT_OPS_REFERENCE_ROOTS", config)
+            self.assertIn(
+                'MCP_AGENT_OPS_REFERENCE_NAMES = "terminology.md"',
+                config,
+            )
+
+    def test_user_scope_reconciles_existing_terminology_reference_configuration(
+        self,
+    ) -> None:
+        installer = load_installer()
+
+        for adapter_name in ("codex", "junie"):
+            with self.subTest(adapter=adapter_name), tempfile.TemporaryDirectory() as temp_dir:
+                root = Path(temp_dir)
+                source = root / "source"
+                user_home = root / "user-home"
+                invocation = root / "invocation"
+                self.create_skill(source, "terminology-standard")
+                user_home.mkdir()
+                invocation.mkdir()
+                if adapter_name == "codex":
+                    config_path = user_home / ".codex/config.toml"
+                    original = (
+                        '[mcp_servers.mcp-agent-ops]\n'
+                        'enabled = true\n'
+                        'required = false\n'
+                        'command = "/installed/server"\n'
+                        f'startup_timeout_sec = {installer.MCP_STARTUP_TIMEOUT_SECONDS}\n'
+                        f'tool_timeout_sec = {installer.MCP_TOOL_TIMEOUT_SECONDS}\n\n'
+                        '[mcp_servers.mcp-agent-ops.env]\n'
+                        'MCP_AGENT_OPS_SKILL_ROOTS = "/stale/skills"\n'
+                        'MCP_AGENT_OPS_DETECTION_REGISTRY = "/stale/registry.yaml"\n'
+                        'MCP_AGENT_OPS_WORKSPACE_ROOTS = "/stale/workspace"\n'
+                    )
+                else:
+                    config_path = user_home / ".junie/mcp.json"
+                    original = json.dumps(
+                        {
+                            "mcpServers": {
+                                "mcp-agent-ops": {
+                                    "command": "/installed/server",
+                                    "args": [],
+                                    "env": {
+                                        "MCP_AGENT_OPS_SKILL_ROOTS": "/stale/skills",
+                                        "MCP_AGENT_OPS_DETECTION_REGISTRY": "/stale/registry.yaml",
+                                        "MCP_AGENT_OPS_WORKSPACE_ROOTS": "/stale/workspace",
+                                    },
+                                }
+                            }
+                        },
+                        indent=2,
+                    ) + "\n"
+                config_path.parent.mkdir(parents=True)
+                config_path.write_text(original, encoding="utf-8")
+
+                with (
+                    patch.object(installer.Path, "home", return_value=user_home),
+                    patch.object(installer.Path, "cwd", return_value=invocation),
+                    patch.object(installer.shutil, "which", return_value=None),
+                    redirect_stdout(io.StringIO()),
+                ):
+                    exit_code = installer.main(
+                        [
+                            "--adapter",
+                            adapter_name,
+                            "--source",
+                            str(source),
+                            "--scope",
+                            "user",
+                        ]
+                    )
+
+                self.assertEqual(installer.SUCCESS_EXIT_CODE, exit_code)
+                self.assertEqual(
+                    original,
+                    config_path.with_suffix(config_path.suffix + ".bak").read_text(
+                        encoding="utf-8"
+                    ),
+                )
+                active = config_path.read_text(encoding="utf-8")
+                self.assertIn("MCP_AGENT_OPS_REFERENCE_ROOTS", active)
+                self.assertIn("MCP_AGENT_OPS_REFERENCE_NAMES", active)
+                self.assertIn("terminology.md", active)
+
     def test_codex_deployment_updates_config_without_mcp_servers_and_saves_backup(self) -> None:
         installer = load_installer()
 

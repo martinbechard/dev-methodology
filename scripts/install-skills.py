@@ -93,7 +93,13 @@ MCP_TOOL_TIMEOUT_SECONDS = 60.0
 MCP_DETECTION_REGISTRY_RELATIVE_PATH = Path(
     "detect-technology-skills/references/technology-skill-detection-registry.yaml"
 )
-MCP_REFERENCE_SKILL_NAME = "terminology-standard"
+MCP_REFERENCE_SKILL_NAMES = frozenset(
+    (
+        "terminology-standard",
+        "terminology-standard-review",
+        "terminology-standard-update",
+    )
+)
 MCP_REFERENCE_NAMES = ("terminology.md",)
 MCP_USER_REFERENCE_RELATIVE_PATHS = (
     Path(".agents/references"),
@@ -544,8 +550,21 @@ def _mcp_environment(
 
 def _mcp_reference_configuration(
     skill_plan: _SkillInstallPlan,
+    skills_destination: Path,
+    cleanup: bool,
 ) -> tuple[tuple[Path, ...], tuple[str, ...]]:
-    if MCP_REFERENCE_SKILL_NAME not in skill_plan.current_skill_names:
+    reference_enabled = bool(
+        MCP_REFERENCE_SKILL_NAMES.intersection(skill_plan.current_skill_names)
+    )
+    previous_owned_names = set(manifest_skill_paths(skill_plan.previous_manifest))
+    if not reference_enabled:
+        destination_root = _resolve_destination_root(skills_destination, "skill")
+        reference_enabled = any(
+            (destination_root / skill_name / SKILL_MANIFEST_FILE_NAME).is_file()
+            and (skill_name not in previous_owned_names or not cleanup)
+            for skill_name in MCP_REFERENCE_SKILL_NAMES
+        )
+    if not reference_enabled:
         return (), ()
     reference_roots = tuple(
         (Path.home() / relative_path).resolve()
@@ -871,6 +890,7 @@ def _prepare_mcp_config(
     skills_destination: Path,
     skill_plan: _SkillInstallPlan,
     replace: bool,
+    cleanup: bool,
     project_root: Path | None,
 ) -> _McpConfigPlan | None:
     if adapter.name not in MCP_CONFIG_ADAPTERS:
@@ -895,16 +915,6 @@ def _prepare_mcp_config(
     )
     candidate_path = active_path.with_name(MCP_CONFIG_CANDIDATE_FILE_NAMES[adapter.name])
     target_is_configured = MCP_AGENT_OPS_SERVER_NAME in server_names
-    if target_is_configured and scope != PROJECT_SCOPE:
-        return _McpConfigPlan(
-            active_path=active_path,
-            candidate_path=candidate_path,
-            backup_path=active_path.with_suffix(active_path.suffix + ".bak"),
-            rendered_content=active_content,
-            active_exists=active_path.exists(),
-            other_server_count=len(server_names - {MCP_AGENT_OPS_SERVER_NAME}),
-            target_already_configured=True,
-        )
     workspace_roots = _mcp_workspace_roots(
         scope,
         configured_workspace_roots,
@@ -915,7 +925,11 @@ def _prepare_mcp_config(
         skill_plan,
         replace,
     )
-    reference_roots, reference_names = _mcp_reference_configuration(skill_plan)
+    reference_roots, reference_names = _mcp_reference_configuration(
+        skill_plan,
+        skills_destination,
+        cleanup,
+    )
     expected_environment = _mcp_environment(
         skills_destination,
         detection_registry,
@@ -2480,6 +2494,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                     destination,
                     skill_plan,
                     args.replace,
+                    args.cleanup,
                     project_root,
                 )
             agents_source = None
