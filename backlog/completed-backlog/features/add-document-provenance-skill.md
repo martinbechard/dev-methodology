@@ -4,7 +4,7 @@ Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 
 # Add Document Provenance Skill
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
@@ -22,11 +22,15 @@ Branch: codex/add-document-provenance-skill
 
 Worktree: /Users/martinbechard/.codex/worktrees/6cb2/dev-methodology
 
-Phase: Independent verification of methodology-accepted replacement candidate 4d3441dec8042c49cfdbb6baf244e53d2c52837d
+Phase: Completed after verified main-branch delivery and shared catalog refresh
 
 Started At: 2026-08-08T18:11:22Z
 
 Accepted Candidate Commit: 4d3441dec8042c49cfdbb6baf244e53d2c52837d
+
+Integration Commit: d4cd66c6e6b8a8e90314ae0a7f683a740ab5ede2
+
+Completed At: 2026-08-08T19:35:08Z
 
 Completion: main-branch
 
@@ -276,6 +280,17 @@ Claim and Cleanup Evidence: Parent reported every bundle work, path, integration
 Current-Main Reconciliation: Read exactly once after notification; observed main at 8d0354a930462c97984ee549230cb434411e53b9 with recorded integration and accepted replacement ancestral.
 
 Preservation Boundary: Preserve design/agent-owned-evaluation-suites.html and recorded residual bundle defects; do not rerun completed private package gates solely because main advanced.
+
+## Completion Evidence
+
+- The immutable accepted replacement is 4d3441dec8042c49cfdbb6baf244e53d2c52837d, built additively from candidate 87d99310abad66be170bafac9c7274a884e2c211.
+- The independent methodology reviewer returned VERDICT: GOOD with no residual finding.
+- The same independent verifier returned VERDICT: PASS after reconciling genuine mcp-agent-ops skill_validate `{ok:true, findings:[]}` on the exact clean candidate with the preserved 14/14 validator, 8/8 OKF, 2/2 renderer/freshness, and git diff evidence.
+- Terminology-standard main d9e12b27087ee3fe34ae38b1eeae477342a4233a and the document-provenance replacement were combined without overwriting either contract. Candidate commits map to integration commits 53c30c00 and f6ffb840; current main delivery commit d4cd66c6e6b8a8e90314ae0a7f683a740ab5ede2 contains both mappings.
+- Python 3.11 focused coexistence tests passed for both document-provenance and terminology-standard bundle contracts. build-skill-docs, build-agent-skill-hierarchy, and build-support-checklist were byte-current; git diff validation passed.
+- The separately owned design/agent-owned-evaluation-suites.html remained unchanged at SHA-256 0e6461d094261ef0e80323d65e77245781aaa40c51976ef5f49b4204f977bdef.
+- Under exact shared-install claim add-document-provenance-shared-install-019fe291, the Codex user skill catalog was refreshed after main delivery. The installed package is byte-identical to canonical main, catalog/SKILL digest ed1c5c69e223993b82f103537c188d167f936c474fc0a095f0a3fe3717349ef1, and installed skill validation returned `{ok:true, findings:[]}`.
+- Root work claim add-document-provenance-work-019fe291-r2 was released with handoff in event ea5cba12-669d-41a2-9d9a-288cea1c2a3d before exact Work Item update claim add-document-provenance-update-019fe291 and terminal path claim add-document-provenance-terminal-paths-019fe291 were acquired.
 
 ## Verification
 
