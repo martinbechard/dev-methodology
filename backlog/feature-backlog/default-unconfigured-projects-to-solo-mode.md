@@ -136,21 +136,21 @@ Next Reconciliation At: 2026-08-08T20:14:35Z.
 
 ## Active Execution Evidence
 
-Condition Type: root-execution.
+Condition Type: delegated-work.
 
-Owner: Root Dev Orchestrator canonical task 019fe2f2-f195-7670-8367-15d9e5c79de7.
+Owner: Fixed Dev Coder /root/implement_solo_fallback under canonical Root Dev Orchestrator task 019fe2f2-f195-7670-8367-15d9e5c79de7.
 
-Evidence: Fresh reviewer /root/review_final_solo_fallback verifies the latest three corrections: no generated adapter pins and explicit fresh-main generate -> check -> suite order; explicit boolean legacy false/true values are preserved and unresolved state raises; and Commit mapping derives deliver-work-item-main-branch from COMPLETION_SKILLS with file Persistence and no claim provider under coordination none. Two pre-existing bundle tests fail at candidate HEAD, not excluded documentation-inventory debt: scripts/test_bundle_content.py around line 10529 expects the removed multi-contribution plausible response, and around line 10883 expects a no-PROJECT example STATUS READY while the corrected contract requires terminal BLOCKED. The reviewer is completing authority and scope analysis and final verdict synthesis. No ninth path is authorized or mutated. No final blocker is recorded. No terminology claim is relied on. No integration or verification is underway. Candidate 55b8c805fd8b06fb5687bfaa126cdc577c703a77 remains clean with exact eight-path scope and isolated branch/worktree. Title is Reviewing.
+Evidence: The third fresh reviewer final NEEDS_CORRECTION found one high in-scope consumer issue. The role’s missing-config terminal BLOCKED example is correct, but the five-example matrix lost the configured multi-contribution READY branch, which causes two directly affected BundleContentTests to fail. The compatible remedy is within the already approved role YAML: retain terminal missing-config BLOCKED in another slot and restore slot two as separately resumed READY multi-contribution execution after primary Configurator handoff, with merge, named fresh-context reviewers, final verification, and final integration commit evidence. The same fixed coder is active correcting one already authorized path; no ninth path is authorized. All other objective, selector, legacy, provider, adapter, provenance, and focused evidence remains supported. No blocker is recorded. No terminology claim is relied on. Integration, review, and verification remain deferred. Candidate ancestry through 55b8c805fd8b06fb5687bfaa126cdc577c703a77 and exact eight-path scope remain unchanged. The isolated worktree is /Users/martinbechard/.codex/worktrees/75e6/dev-methodology on branch codex/default-unconfigured-projects-to-solo-mode. Title is Implementing.
 
-Observed At: 2026-08-08T21:57:39Z.
+Observed At: 2026-08-08T22:05:28Z.
 
 Started At: 2026-08-08T20:20:06Z.
 
-Deadline or Expires At: 2026-08-08T22:45:00Z. Extended because fresh review and bounded consumer reconciliation may be required.
+Deadline or Expires At: 2026-08-08T22:45:00Z.
 
-Next Action: Receive the reviewer verdict and determine whether correction can remain within the candidate scope or requires explicit reconciliation before any extra path.
+Next Action: Receive the clean immutable single-path correction. Then switch the title to Reviewing and run a fresh replacement review.
 
-Next Reconciliation At: 2026-08-08T22:07:39Z.
+Next Reconciliation At: 2026-08-08T22:15:28Z.
 
 ## User Action Required Transition Evidence
 
