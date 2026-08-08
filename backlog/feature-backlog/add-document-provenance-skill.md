@@ -153,17 +153,17 @@ Condition Type: delegated-work
 
 Owner: Dev Coder task /root/implement_document_provenance under Root Dev Orchestrator task 019fe291-1ba8-7a43-8d21-391a04dfa9a9
 
-Evidence: Original Dev Coder produced additive clean replacement commit 4d3441dec8042c49cfdbb6baf244e53d2c52837d on immutable source candidate 87d99310abad66be170bafac9c7274a884e2c211, resolving all three findings with focused 14/14 validator, 8/8 OKF, and 2/2 renderer/freshness checks. The same independent methodology reviewer returned VERDICT: GOOD with no residual finding. Correction claim add-document-provenance-correction1-019fe291 is released. The remaining independent verifier gate is mcp-agent-ops skill validation from an authorized configured root; every other focused verifier check already passed.
+Evidence: Original Dev Coder produced additive clean replacement commit 4d3441dec8042c49cfdbb6baf244e53d2c52837d on immutable source candidate 87d99310abad66be170bafac9c7274a884e2c211, resolving all three findings with focused 14/14 validator, 8/8 OKF, and 2/2 renderer/freshness checks. The same independent methodology reviewer returned VERDICT: GOOD with no residual finding. A parent primary-main-rooted MCP session returned structured skill_validate {ok:true, findings:[]} on the exact clean replacement package and git diff --check passed; the same independent verifier reconciled that immutable evidence with every previously green focused gate and returned VERDICT: PASS. Terminology main d9e12b27087ee3fe34ae38b1eeae477342a4233a was combined without overwriting either feature contract on preserved integration branch codex/integrate-document-provenance-019fe291 as candidate mappings 53c30c00 and f6ffb840; the six declared overlaps and generated outputs are ready for one fresh-current-main delivery reconciliation.
 
-Observed At: 2026-08-08T19:19:47Z
+Observed At: 2026-08-08T19:32:15Z
 
 Started At: 2026-08-08T18:11:22Z
 
 Deadline or Expires At: 2026-08-08T22:11:13Z
 
-Next Action: Create one read-only verification checkout for commit 4d3441dec8042c49cfdbb6baf244e53d2c52837d beneath an authorized configured project root when its exact claim is available, then return that same replacement candidate to the existing verifier without bypassing any structured root-policy result.
+Next Action: Acquire the exact current-main integration scope, reconcile the preserved f6ffb840 mapping onto fresh main once, run only integration-sensitive checks, deliver to main, then refresh and verify the shared installed skill catalog under its exact exclusive claim.
 
-Next Reconciliation At: 2026-08-08T19:33:45Z
+Next Reconciliation At: 2026-08-08T19:47:00Z
 
 ## Candidate Recovery Evidence
 
@@ -213,7 +213,7 @@ Correction Result: All three findings resolved by focused regressions; correctio
 
 Replacement Review: VERDICT: GOOD from the same independent methodology reviewer; no residual finding
 
-Replacement Verification: Pending only the configured-root skill_validate gate and fresh correction-sensitive checks by the same verifier
+Replacement Verification: VERDICT: PASS from the same independent verifier after reconciling genuine primary-main-rooted mcp-agent-ops skill_validate {ok:true, findings:[]} on the exact clean 4d3441de package, git diff --check, and the preserved 14/14 validator, 8/8 OKF, and 2/2 renderer/freshness evidence; prior refusals were session-root routing failures, not source findings
 
 ## Resource Ownership Reconciliation Evidence
 
