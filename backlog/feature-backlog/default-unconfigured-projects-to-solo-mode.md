@@ -140,17 +140,17 @@ Condition Type: delegated-work.
 
 Owner: Fixed Dev Coder /root/implement_solo_fallback under canonical Root Dev Orchestrator task 019fe2f2-f195-7670-8367-15d9e5c79de7.
 
-Evidence: Dev Code Reviewer /root/review_solo_fallback_candidate returned NEEDS_CORRECTION after reviewing all eight exact candidate paths. Findings are: configured selectors and valid legacy configuration are not genuinely tested; absent-config Bootstrapper handoff must terminate the first run BLOCKED and resume separately; the three changed skill documents need bounded historical provenance; and the resource-claim gate must be narrowed to resource-claim-helper-* while preserving unrelated provider routing. The same fixed Dev Coder is active correcting only the existing eight paths; no ninth path is authorized. The Orchestrator supplied three migration-assigned Artifact IDs and recorded historical-unknown for unsupported facts. Generated outputs remain deferred to fresh-main integration. No blocker is recorded. No terminology claim is relied on. No integration, review, or verification is underway. The immutable prior candidate remains c80a8a3802fb806bc16d5a73b1a48aa581b5688d with its exact eight-path scope, isolated worktree /Users/martinbechard/.codex/worktrees/75e6/dev-methodology, and branch codex/default-unconfigured-projects-to-solo-mode.
+Evidence: Six paths are currently modified within the exact eight-path scope: skills/set-solo-mode/SKILL.md, skills/set-multitask-mode/SKILL.md, skills/resource-claim/SKILL.md, scripts/test_role_mutation_policy.py, evals/agent-tests/project-bootstrapper/scripted_orchestration.py, and evals/agent-tests/project-bootstrapper/test_scripted_orchestration.py. The scenario and role source remain planned within the eight before commit; no ninth path is authorized. Finding 1 selector semantics and real-validator tests for false/none and true/resource-claim are substantially encoded. Finding 4 resource-helper wording is narrowed and an unrelated file Persistence routing regression is added. Finding 2 separate terminal BLOCKED/resumed execution refactor is in progress. Finding 3 provenance blocks are added to exactly three skill documents; historical validation is pending. Remaining work is the subprocess refactor, scenario/role consistency, target digest refreshes within accepted paths, focused provenance/package/build/tests, immutable commit, and clean handoff. The estimate is 35–50 minutes from 2026-08-08T21:13:34Z. Generated, integration, review, and verification work remains deferred. No blocker is recorded. No terminology claim is relied on. The reviewed candidate ancestry is c80a8a3802fb806bc16d5a73b1a48aa581b5688d; the isolated worktree is /Users/martinbechard/.codex/worktrees/75e6/dev-methodology on branch codex/default-unconfigured-projects-to-solo-mode. Title is Implementing.
 
-Observed At: 2026-08-08T21:06:49Z.
+Observed At: 2026-08-08T21:14:21Z.
 
 Started At: 2026-08-08T20:20:06Z.
 
-Deadline or Expires At: 2026-08-08T21:20:06Z.
+Deadline or Expires At: 2026-08-08T22:10:00Z. Extended because bounded reviewer correction and focused gates remain.
 
-Next Action: Receive a clean corrected immutable candidate. Then set the title to Reviewing and dispatch a fresh replacement review.
+Next Action: Receive the clean corrected immutable candidate. Then set the title to Reviewing and dispatch a fresh replacement review.
 
-Next Reconciliation At: 2026-08-08T21:16:49Z.
+Next Reconciliation At: 2026-08-08T21:24:21Z.
 
 ## User Action Required Transition Evidence
 
