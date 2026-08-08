@@ -136,21 +136,21 @@ Next Reconciliation At: 2026-08-08T20:14:35Z.
 
 ## Active Execution Evidence
 
-Condition Type: delegated-work.
+Condition Type: root-execution.
 
-Owner: Fixed Dev Coder child /root/implement_solo_fallback under canonical Root Dev Orchestrator task 019fe2f2-f195-7670-8367-15d9e5c79de7.
+Owner: Root Dev Orchestrator canonical task 019fe2f2-f195-7670-8367-15d9e5c79de7.
 
-Evidence: All four exact governed pre-mutation receipts independently returned ALLOWED_APPROVED_DEFINITION_CHANGE for skills/set-solo-mode/SKILL.md, skills/set-multitask-mode/SKILL.md, skills/resource-claim/SKILL.md, and agents/roles/project-setup/project-bootstrapper.role.yaml. The child returned clean/no-change handoff evidence before source mutation. Current bounded phase is source-to-focused-test mapping and implementation for the explicit primary Project Configurator handoff/resume. No secondary dispatch or claim/helper/registry activity occurs before a valid PROJECT.yaml; configured behavior resumes after. No terminology claim is active. The isolated worktree is /Users/martinbechard/.codex/worktrees/75e6/dev-methodology on branch codex/default-unconfigured-projects-to-solo-mode. Reviewer and integration have not started.
+Evidence: Fixed Dev Coder /root/implement_solo_fallback completed clean candidate c80a8a3802fb806bc16d5a73b1a48aa581b5688d from f147eca9 with exactly these eight changed paths and no others: skills/set-solo-mode/SKILL.md; skills/set-multitask-mode/SKILL.md; skills/resource-claim/SKILL.md; agents/roles/project-setup/project-bootstrapper.role.yaml; scripts/test_role_mutation_policy.py; evals/agent-tests/project-bootstrapper/scenarios.yaml; evals/agent-tests/project-bootstrapper/scripted_orchestration.py; evals/agent-tests/project-bootstrapper/test_scripted_orchestration.py. Green evidence: 16/16 role-policy, 22/22 scripted orchestration, 5/5 fixtures, all three skill validations, scripted Python 3.11 PASS, YAML and diff check PASS, and direct resource-claim policy/interface test PASS. The broad helper-module 26-pass result and unrelated baseline missing documentation-inventory heading result are excluded. Candidate worktree is clean. Generated projections are intentionally deferred to fresh-main integration. Title is Reviewing; independent review has not started at transaction start.
 
-Observed At: 2026-08-08T20:37:06Z.
+Observed At: 2026-08-08T20:45:58Z.
 
 Started At: 2026-08-08T20:20:06Z.
 
 Deadline or Expires At: 2026-08-08T21:20:06Z.
 
-Next Action: Fixed Dev Coder completes a clean verified candidate commit. Root Orchestrator then dispatches fresh independent source review and verification. Generated and documentation integration remains fresh-main only.
+Next Action: Root dispatches a fresh Dev Code Reviewer for c80a8a38, then Dev Verifier. After acceptance, integrate the exact candidate paths onto fresh main and regenerate outputs and documentation.
 
-Next Reconciliation At: 2026-08-08T20:47:06Z.
+Next Reconciliation At: 2026-08-08T21:00:58Z.
 
 ## User Action Required Transition Evidence
 
