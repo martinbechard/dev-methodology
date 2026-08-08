@@ -6,6 +6,8 @@ Documentation Methodology contains the documentation router, setup procedure, wh
 
 The applied-model conventions are defined in [Object-Oriented Skill Group Models](../object-oriented-skill-group-models.md#2-applied-model-legend).
 
+The [General Agent Skills](general-agent-skills.md) cross-cutting view explains the universal and project-wide conditional skills available to all Agents; this capability design does not repeat them.
+
 ## Design
 
 Documentation Methodology supplies four complementary procedures used by several Agent groups. The overall view identifies those consumers; the scenario views show routing, bootstrap and reverse engineering, and page verification separately.

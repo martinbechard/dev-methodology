@@ -2,19 +2,19 @@
 
 ## Scope
 
-General Agent Skills are skills whose applicability rule is shared by every Agent rather than owned by one Agent role or one activity group. Their common scope makes them easier to understand and maintain when one design explains them and the configuration supplies them once.
+General Agent Skills is a cross-cutting applicability view of skills whose loading rule can apply to every Agent rather than being owned by one Agent role or one methodology capability. The view brings those rules together for comprehension; it is not a Skill Group because its members do not divide one cohesive capability.
 
 General does not mean that every skill is active during every task. Some general skills are loaded into every generated Agent definition. Others are available to every Agent through one project-wide conditional rule and are loaded only when that condition applies.
 
-The diagram conventions and the relationship between a named set and its expanded or collapsed views are defined in [Object-Oriented Analysis of Agents and Skills](../object-oriented-agent-and-skill-model.md#31-skill-group). The applied group registry is defined in [Object-Oriented Skill Group Models](../object-oriented-skill-group-models.md#3-skill-group-registry).
+The exact-name and project-wide conditional loading conventions are defined in [Object-Oriented Analysis of Agents and Skills](../object-oriented-agent-and-skill-model.md#project-wide-conditional-skill-routing). The applied capability-group registry and this separate [cross-cutting view](../object-oriented-skill-group-models.md#31-cross-cutting-agent-wide-applicability-view) are inventoried in Object-Oriented Skill Group Models.
 
 ## Design
 
 The General Agent Skills design separates two loading mechanisms that reach every Agent. The role schema supplies universal Agent skills when generated definitions are built. `PROJECT.yaml` supplies project-wide conditional skills through root `AGENTS.md`, which the harness makes available automatically.
 
-### General Agent Skills Membership
+### Agent-Wide Applicability View
 
-The group contains four independent skills whose common property is Agent-wide applicability. The expanded view itemizes the actual membership without implying that one skill depends on another.
+The view contains four independent skills whose common property is Agent-wide applicability. The box itemizes that applicability set without treating it as a cohesive capability or implying that one skill depends on another.
 
 ```mermaid
 classDiagram
@@ -36,7 +36,7 @@ classDiagram
     }
 ```
 
-The expanded box is a comprehension boundary. It says which skills belong to this design; it does not create runtime dependencies among them.
+The box is a cross-cutting comprehension boundary. It says which skills share an Agent-wide applicability rule; it does not create Skill Group membership or runtime dependencies among them.
 
 ### Universal Skills In Every Generated Agent
 

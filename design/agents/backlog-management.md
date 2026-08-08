@@ -6,6 +6,8 @@ Backlog Management is independent of Resource Coordination and Commit delivery. 
 
 The applied-model conventions are defined in [Object-Oriented Skill Group Models](../object-oriented-skill-group-models.md#2-applied-model-legend).
 
+The [General Agent Skills](general-agent-skills.md) cross-cutting view explains the universal and project-wide conditional skills available to all Agents; this capability design does not repeat them.
+
 ## Design
 
 Backlog Management owns work-item creation, provider lifecycle management, explicit file-backed

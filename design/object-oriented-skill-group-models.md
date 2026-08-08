@@ -1,10 +1,10 @@
 # Object-Oriented Skill Group Models
 
-This document applies the reusable [Skill Organization](object-oriented-agent-and-skill-model.md#3-skill-organization) method to the development-methodology skill groups. It owns the applied legend, group registry, navigation, and steady-state completeness checks. Agent-oriented design documents under design/agents show how the groups are used together.
+This document applies the reusable [Skill Organization](object-oriented-agent-and-skill-model.md#3-skill-organization) method to the development-methodology skill groups. It owns the applied legend, capability-group registry, cross-cutting applicability inventory, navigation, and steady-state completeness checks. Agent-oriented design documents under design/agents show how the groups and cross-cutting views are used.
 
 ## 1. Application Scope
 
-The application covers nine top-level comprehension groups and fifty current skill packages.
+The application covers nine top-level Skill Groups plus one cross-cutting Agent-wide applicability view. Together, these ten organizational views represent fifty-two current skill packages across eight Agent-oriented designs.
 
 Every agent-oriented design document contains:
 
@@ -20,7 +20,7 @@ Provider-family labels use one uniform mapping. An exact Interface Skill is a lo
 
 Work Item Dispatching, Resource Coordination, and Feature Branch And Worktrees are independent Skill Groups shown together in the Work Item Dispatching And Delivery design because the same Agents use them during dispatch and delivery. Their shared page does not create a containing Skill Group or assign one group ownership of another.
 
-Each skill has one primary direct group. A skill repeated outside that group and outside a containing ancestor is marked Cross-group. The repeated node exposes a dependency or loading relationship without changing ownership.
+Each capability-group skill has one primary direct group. A skill repeated outside that group and outside a containing ancestor is marked Cross-group. The four General Agent Skills instead belong to the separate cross-cutting applicability view because they share loading scope rather than one methodology capability.
 
 ## 2. Applied Model Legend
 
@@ -113,13 +113,24 @@ classDiagram
 
 The solid-diamond lines describe the contents of Parent Group and Nested Group. The regular arrow from ExampleAgent to ProcedureInterface shows a procedure-name dependency on the abstract contract. The harness loads AGENTS.md automatically, so no Agent-to-ProcedureFactory arrow is drawn. The factory names one provider, and the realization arrow records provider conformance. A reader must not infer a dependency between direct-skill and nested-skill merely because both are contained by Parent Group.
 
-## 3. Skill Group Registry
+## 3. Applied Organization Inventory
 
-The registry assigns every current skill one primary direct group and records nested-group membership explicitly.
+The inventory separates cohesive methodology capabilities from a cross-cutting view that groups independent skills only by their Agent-wide loading scope.
+
+### 3.1 Cross-Cutting Agent-Wide Applicability View
+
+| Cross-cutting view | Skills | Total skills represented |
+| --- | --- | ---: |
+| [General Agent Skills](agents/general-agent-skills.md) | effective-communication; ste-technical-writing; structured-explanation; organise-project-files | 4 |
+
+These four skills share an Agent-wide loading boundary but do not divide one methodology capability.
+
+### 3.2 Skill Group Registry
+
+The registry assigns every current capability-group skill one primary direct group and records nested-group membership explicitly. General Agent Skills remain outside this registry because Agent-wide applicability does not make their independent responsibilities one Skill Group.
 
 | Top-level group | Direct skills | Nested groups | Total skills represented |
 | --- | --- | --- | ---: |
-| General Agent Skills | effective-communication; ste-technical-writing; structured-explanation; organise-project-files | None | 4 |
 | Baseline Development | careful-coding; code-comments; code-discovery; test-driven-development; structured-design; review-structured-artifact; explain-code-fix | None | 7 |
 | Project Setup | detect-technology-skills; create-project-configuration | None | 2 |
 | Documentation Methodology | route-documentation-work; bootstrap-project-documentation; reverse-engineer-project-documentation; verify-documentation-page | None | 4 |
@@ -130,7 +141,7 @@ The registry assigns every current skill one primary direct group and records ne
 | Main Branch Delivery | deliver-work-item; deliver-work-item-main-branch | None | 2 |
 | Review And Verification | review-code-with-evidence; test-strategy; verify-end-to-end-workflow; analyze-root-cause; collect-runtime-evidence; trace-code-execution; review-prompt-contracts | None | 7 |
 
-The totals count primary membership once. Cross-group repetitions in detailed diagrams do not increase the fifty-two-skill inventory.
+The nine Skill Groups contain forty-eight skills. Adding the four skills in the cross-cutting Agent-wide applicability view yields the complete fifty-two-skill inventory. Cross-group repetitions in detailed diagrams do not increase either count.
 
 ## 4. Agent-Oriented Designs
 
@@ -153,9 +164,9 @@ The applied model is complete when it describes the maintained skill inventory a
   - **SYNOPSIS:** A reader can inspect the Agents that use a responsibility boundary and follow its detailed relationships through concrete scenarios. One design can show several independent Skill Groups when the same Agent workflow uses them together.
   - **EXAMPLE:** Work Item Dispatching And Delivery shows Work Item Dispatching, Resource Coordination, Feature Branch And Worktrees, and Main Branch Delivery as independent groups used by Backlog Management Agents and Dev Delivery Agents.
 
-- **RULE: RULE-57** Every skill has one primary direct group
-  - **SYNOPSIS:** The registry and detailed documents assign each current skill package to one direct comprehension boundary.
-  - **EXAMPLE:** resource-claim belongs directly to Resource Coordination and appears elsewhere only as a Cross-group dependency.
+- **RULE: RULE-57** Every capability-group skill has one primary direct group
+  - **SYNOPSIS:** The registry and detailed documents assign each skill that contributes to a cohesive capability to one direct Skill Group. A cross-cutting applicability view separately owns skills grouped by shared loading scope.
+  - **EXAMPLE:** resource-claim belongs directly to Resource Coordination and appears elsewhere only as a Cross-group dependency, while structured-explanation appears in the General Agent Skills applicability view rather than a capability group.
 
 - **RULE: RULE-58** Diagrams use current skill and procedure vocabulary
   - **SYNOPSIS:** Every skill identity resolves to a maintained SKILL.md, and every displayed procedure traces to a current heading or to a single-operation skill identity.
@@ -185,7 +196,7 @@ The applied model is complete when it describes the maintained skill inventory a
 
 The applied model is grounded in the repository sources below.
 
-- The fifty SKILL.md files and conceptual Agent definitions linked from the seven agent-oriented design documents.
+- The fifty-two SKILL.md files and conceptual Agent definitions linked from the eight Agent-oriented design documents.
 - [Object-Oriented Analysis Of Agents And Skills](object-oriented-agent-and-skill-model.md)
 - [Bundled Skill Inventory](../README.md)
 - [Agentic Configuration](agentic-configuration.html)

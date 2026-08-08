@@ -6,6 +6,8 @@ Main Branch Delivery contains the provider-neutral delivery interface and the Co
 
 The applied-model conventions are defined in [Object-Oriented Skill Group Models](../object-oriented-skill-group-models.md#2-applied-model-legend).
 
+The [General Agent Skills](general-agent-skills.md) cross-cutting view explains the universal and project-wide conditional skills available to all Agents; this capability design does not repeat them.
+
 ## Design
 
 Main Branch Delivery participates in the project-selected delivery family. The overall view identifies its Agent and cross-group dependencies; the scenario views expand provider selection and the main-branch implementation separately.
