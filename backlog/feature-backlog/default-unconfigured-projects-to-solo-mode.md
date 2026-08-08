@@ -140,17 +140,17 @@ Condition Type: delegated-work.
 
 Owner: Fixed Dev Coder /root/implement_solo_fallback under canonical Root Dev Orchestrator task 019fe2f2-f195-7670-8367-15d9e5c79de7.
 
-Evidence: The third fresh reviewer final NEEDS_CORRECTION found one high in-scope consumer issue. The role’s missing-config terminal BLOCKED example is correct, but the five-example matrix lost the configured multi-contribution READY branch, which causes two directly affected BundleContentTests to fail. The compatible remedy is within the already approved role YAML: retain terminal missing-config BLOCKED in another slot and restore slot two as separately resumed READY multi-contribution execution after primary Configurator handoff, with merge, named fresh-context reviewers, final verification, and final integration commit evidence. The same fixed coder is active correcting one already authorized path; no ninth path is authorized. All other objective, selector, legacy, provider, adapter, provenance, and focused evidence remains supported. No blocker is recorded. No terminology claim is relied on. Integration, review, and verification remain deferred. Candidate ancestry through 55b8c805fd8b06fb5687bfaa126cdc577c703a77 and exact eight-path scope remain unchanged. The isolated worktree is /Users/martinbechard/.codex/worktrees/75e6/dev-methodology on branch codex/default-unconfigured-projects-to-solo-mode. Title is Implementing.
+Evidence: The role matrix is corrected. Slot 2 is now a separately resumed READY whole-project and multi-contribution execution after primary Configurator handoff, with explicit multiple accepted commits, dev-merge-coordinator merge, named fresh-context dev-artifact-reviewer, wiki-artifact-reviewer, and wiki-topic-verifier post-integration reviews, dev-verifier final verification, and final integration commit evidence. Missing-PROJECT remains terminal BLOCKED with PRIMARY_PROJECT_CONFIGURATOR_HANDOFF_REQUIRED, no secondary dispatch, and no claim in slot 5. Directly affected BundleContent consumers are green 3/3; role mutation is green 17/17; Bootstrapper evaluation is green 29/29; and adjacent selector/provider tests are green 4/4. Exactly two approved paths are currently modified: the role YAML and the existing accepted scripted snapshot source digest path; the full range remains exactly the eight authorized paths. Remaining work is the final CLI and gate wording, commit, clean range evidence, and handoff. ETA is 6–9 minutes. No blocker is recorded. No ninth path is authorized. No terminology claim is relied on. Integration, review, and verification remain deferred. Candidate ancestry through 55b8c805fd8b06fb5687bfaa126cdc577c703a77 and the isolated branch/worktree remain unchanged. Title is Implementing.
 
-Observed At: 2026-08-08T22:05:28Z.
+Observed At: 2026-08-08T22:12:25Z.
 
 Started At: 2026-08-08T20:20:06Z.
 
 Deadline or Expires At: 2026-08-08T22:45:00Z.
 
-Next Action: Receive the clean immutable single-path correction. Then switch the title to Reviewing and run a fresh replacement review.
+Next Action: Receive the clean immutable correction commit. Then switch the title to Reviewing and run a fresh replacement review.
 
-Next Reconciliation At: 2026-08-08T22:15:28Z.
+Next Reconciliation At: 2026-08-08T22:22:25Z.
 
 ## User Action Required Transition Evidence
 
