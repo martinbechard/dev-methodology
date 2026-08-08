@@ -2349,11 +2349,11 @@ class BundleContentTests(unittest.TestCase):
         manual_action = r"(?:read(?:s|ing)?|re[- ]?read(?:s|ing)?|open(?:s|ed|ing)?(?!-)|locat(?:e|es|ed|ing)|follow(?:s|ed|ing)?|inspect(?:s|ed|ing)?|discover(?:s|ed|ing)?|scan(?:s|ned|ning)?)"
         load_action = r"load(?:s|ed|ing)?"
         all_actions = rf"(?:{manual_action}|{load_action})"
-        agent_subject = r"(?:agents?|reviewers?|writers?|coders?|orchestrators?)"
+        agent_subject = r"(?:agents?|reviewers?|writers?|workers?|coders?|orchestrators?)"
         target_prefix = r"(?:the\s+)?(?:all\s+)?(?:(?:root|nearest|applicable|nested)(?:\s+and\s+(?:root|nearest|applicable|nested))?\s+)?"
-        direct_loading = rf"\b{all_actions}\b(?:\s+and\s+\b{all_actions}\b)?\s+{target_prefix}\b{manual_target}\b"
+        direct_loading = rf"(?:\b(?:first|carefully|manually)\s+)?\b{all_actions}\b(?:\s+and\s+\b{all_actions}\b)?\s+{target_prefix}\b{manual_target}\b"
         manual_loading = re.compile(
-            rf"(?:^(?:<[^>]+>\s*|[-*#]+\s*)*(?:(?:before|after)\b[^,.;!?]{{0,80}},\s*)?{direct_loading}|\b{agent_subject}\b(?:(?:\s+(?:must|should|shall|will|can|needs?\s+to|has\s+to|first|manually)){{0,2}}\s+){direct_loading}|\b{instruction_target}\b(?:\s+(?:file|files|instructions?))?\s+(?:is|are|was|were|gets?|got)\s*\b{all_actions}\b|\b{instruction_target}\b[^.;!?]{{0,80}}\b{agent_subject}\b[^.;!?]{{0,40}}\b{all_actions}\b\s+(?:it|them|that\s+(?:file|artifact)|the\s+(?:file|instructions?))\b)",
+            rf"(?:^(?:<[^>]+>\s*|[-*#]+\s*)*(?:(?:before|after)\b[^,.;!?]{{0,80}},\s*)?{direct_loading}|\b{agent_subject}\b(?:(?:\s+(?:must|should|shall|will|can|needs?\s+to|has\s+to|is\s+required\s+to|first|manually)){{0,2}}\s+){direct_loading}|\b{instruction_target}\b(?:\s+(?:file|files|instructions?))?\s+(?:is|are|was|were|gets?|got)\s*\b{all_actions}\b|\b{instruction_target}\b[^.;!?]{{0,80}}\b{agent_subject}\b[^.;!?]{{0,40}}\b{all_actions}\b\s+(?:it|them|that\s+(?:file|artifact)|the\s+(?:file|instructions?))\b)",
             re.IGNORECASE,
         )
         prohibition = re.compile(
@@ -2409,6 +2409,10 @@ class BundleContentTests(unittest.TestCase):
             "Load the applicable project instructions before coding.",
             "The orchestrator loads the project instructions before delivery.",
             "After AGENTS.md is available, the reviewer reads it before review.",
+            "First read AGENTS.md before coding.",
+            "Before acting, carefully read the applicable AGENTS.md.",
+            "The reviewer is required to read AGENTS.md before review.",
+            "Workers must read the nearest AGENTS.md before changing files.",
         )
         allowed_examples = (
             "Do not tell ordinary agents to read AGENTS.md.",
@@ -11392,6 +11396,7 @@ class BundleContentTests(unittest.TestCase):
 
         review_case = by_id["typescript-code-review"]
         self.assertTrue(review_case["expectVerifyFailure"])
+        self.assertIn("code-comments", review_case["requiredSkills"])
         self.assertIn("review-code-with-evidence", review_case["requiredSkills"])
         self.assertEqual(3, len(review_case["requiredFindings"]))
 
