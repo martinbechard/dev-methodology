@@ -140,17 +140,17 @@ Condition Type: root-execution.
 
 Owner: Root Dev Orchestrator canonical task 019fe2f2-f195-7670-8367-15d9e5c79de7.
 
-Evidence: Fourth fresh reviewer /root/review_role_matrix_solo_fallback returned PASS with no material corrections on f147eca9 through 16a189b9c6cde179c039bd6357af574848246459. Accepted evidence covers slot 2 separately resumed READY multi-contribution and slot 5 terminal BLOCKED; missing-config no secondary dispatch and no claims; real renderer configured, legacy, and provider semantics; separate subprocesses; no generated adapter pins; provenance and headers; BundleContent 3/3; role 17/17; Bootstrapper 29/29; adjacent 4/4; CLI flows; and validators. Exactly seven generated projections remain stale intentionally, with mandatory integration generate -> check -> scripted suite. Fresh independent Dev Verifier /root/verify_solo_fallback_candidate is active read-only on the immutable candidate. No blocker is recorded. No ninth path is authorized. No terminology claim is relied on. No integration or generation has started. Candidate worktree is clean. Title is Verifying.
+Evidence: Fourth fresh reviewer /root/review_role_matrix_solo_fallback returned PASS with no material corrections on f147eca9 through 16a189b9c6cde179c039bd6357af574848246459. Accepted evidence covers slot 2 separately resumed READY multi-contribution and slot 5 terminal BLOCKED; missing-config no secondary dispatch and no claims; real renderer configured, legacy, and provider semantics; separate subprocesses; no generated adapter pins; provenance and headers; BundleContent 3/3; role 17/17; Bootstrapper 29/29; adjacent 4/4; CLI flows; and validators. Exactly seven generated projections remain stale intentionally, with mandatory integration generate -> check -> scripted suite. Fresh independent Dev Verifier /root/verify_solo_fallback_candidate remains active read-only on immutable candidate 16a189b9c6cde179c039bd6357af574848246459; no failure or blocker has been reported, and its exact progress snapshot is pending. No blocker is recorded. No ninth path is authorized. No terminology claim is relied on. No integration or generation has started. Candidate worktree is clean. Title is Verifying.
 
-Observed At: 2026-08-08T22:27:54Z.
+Observed At: 2026-08-08T22:36:48Z.
 
 Started At: 2026-08-08T20:20:06Z.
 
-Deadline or Expires At: 2026-08-08T22:45:00Z.
+Deadline or Expires At: 2026-08-08T23:30:00Z.
 
-Next Action: Receive the verifier verdict. If PASS, perform fresh-main integration with generation, freshness checks, and the scripted suite.
+Next Action: Receive the verifier verdict. If PASS, perform fresh-main integration with generation, freshness checks, generated-output review, and the scripted suite. The deadline is extended to cover independent verification plus mandatory fresh-main generation, integration, review, and verification.
 
-Next Reconciliation At: 2026-08-08T22:37:54Z.
+Next Reconciliation At: 2026-08-08T22:46:48Z.
 
 ## User Action Required Transition Evidence
 
