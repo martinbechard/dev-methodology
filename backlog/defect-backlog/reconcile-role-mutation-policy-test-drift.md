@@ -1,6 +1,6 @@
 # Reconcile Role Mutation Policy Test Drift
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -89,9 +89,11 @@ Branch: codex/reconcile-role-mutation-policy-test-drift
 
 Worktree: /Users/martinbechard/.codex/worktrees/d0e3/dev-methodology
 
-Phase: Preparing the focused stale-assertion correction
+Phase: Resuming the focused stale-assertion correction
 
-Started At: 2026-08-07T03:42:39Z
+Started At: 2026-08-08T16:27:15Z
+
+Candidate State: None; the preserved branch is clean at 1db807768d696c3aa2813d3824b5bbd298b3d9ae.
 
 ## Active Execution Evidence
 
@@ -99,17 +101,17 @@ Condition Type: root-execution
 
 Owner: Dev Orchestrator (019fda4f-3b3e-71d0-83c2-e277aa4bec68)
 
-Evidence: The canonical Codex task is active, its clean private worktree is on the dedicated branch, and it is accepting this exact bounded work item.
+Evidence: The same canonical Codex task has resumed from the durable Starting handoff; its dedicated private worktree remains clean with no candidate, and it is accepting this exact bounded work item before implementation.
 
-Observed At: 2026-08-07T03:42:39Z
+Observed At: 2026-08-08T16:27:15Z
 
-Started At: 2026-08-07T03:42:39Z
+Started At: 2026-08-08T16:27:15Z
 
-Deadline or Expires At: 2026-08-07T04:27:39Z
+Deadline or Expires At: 2026-08-08T17:12:15Z
 
-Next Action: Acquire outcome-work ownership and assign the focused three-assertion correction to Dev Coder.
+Next Action: Acquire outcome-work ownership and resume Dev Coder on the original bounded three-assertion correction.
 
-Next Reconciliation At: 2026-08-07T03:57:39Z
+Next Reconciliation At: 2026-08-08T16:42:15Z
 
 ## Holding Evidence
 
