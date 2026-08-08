@@ -1,6 +1,6 @@
 # Reconcile Bundle Content Suite Drift
 
-Status: User Action Required
+Status: Ready
 
 Type: Defect
 
@@ -86,7 +86,7 @@ Intended Root Role: Dev Orchestrator
 
 Scheduling Evidence: No Starting or Running provider item, no finish-lane work, clean main at `d2c72418e8f69855737c684f0b74d4ee1a8f729d`, empty resource-claim registry, and no duplicate canonical task. The User Action Required item remains non-dispatchable and untouched.
 
-## Active Execution Evidence
+## Prior Active Execution Evidence
 
 Condition Type: delegated-work
 
@@ -130,9 +130,9 @@ Recorded At: 2026-08-07T03:08:00Z
 
 Do you approve expanding reconcile-bundle-content-suite-drift to modify exactly these three governed Dev Orchestrator evaluation definitions: evals/agent-tests/dev-orchestrator/skills/dev-orchestrator-suite-contract/SKILL.md, evals/agent-tests/dev-orchestrator/agents/supervisor.toml, and evals/agent-tests/dev-orchestrator/agents/judge.toml; and the five directly implicated ordinary fixture/test paths already identified, solely to remove the retired dev-backlog-steward fixed-dependency contract and align the suite with the canonical Dev Orchestrator role?
 
-### Why User Input Is Required
+### Why User Input Was Requested
 
-The three skill/Agent eval definitions are governed and the current item explicitly forbids changing them without new exact authority.
+The earlier workflow treated the three suite-local skill/Agent evaluation definitions as governed paths and the current item explicitly forbade changing them without new exact authority. The user's answer below approves the current change and corrects that protocol for future non-distributed evaluation-only artifacts.
 
 ### Approved Ordinary Fixture/Test Paths
 
@@ -144,7 +144,7 @@ The three skill/Agent eval definitions are governed and the current item explici
 
 ### Explicit Exclusions
 
-No other governed skill, Agent definition, broad suite, simulator, framework, production methodology, design source, generated artifact, or repository path is approved.
+No distributed skill, distributed Agent definition, broad suite, simulator, framework, production methodology, canonical production source, design source, generated artifact, or unrelated repository path is approved.
 
 ### Current Recovery Evidence
 
@@ -156,4 +156,16 @@ No further source edit, candidate commit, aggregate bundle-content run, review, 
 
 ### Resolution
 
-Pending.
+Approved on 2026-08-08 in canonical conversation `019fda10-8f12-7ae0-8d71-9b8678c17451`. The user's exact answer was: `1) the current change is approved 2) future protocol: changes to test artifacts / judges/ skills etc not distributed to users don't need special approval.` The current eight-path evaluation correction is therefore authorized. Preserve the existing six-path partial candidate and resume through Ready -> Starting -> Running before further mutation.
+
+## Evaluation-Only Authority Protocol
+
+Authority Source: Direct user instruction in canonical conversation `019fda10-8f12-7ae0-8d71-9b8678c17451` on 2026-08-08 America/Toronto.
+
+Standing Boundary: Evaluation-only test artifacts that are not installed or distributed to users or projects do not require special governed-definition approval merely because they are named skills, supervisors, Judges, scenarios, fixtures, or suite-local Agent definitions.
+
+Covered Examples: Suite-local supervisors and Judges, evaluation-only skills and contracts, scenarios, fixtures, expected findings, test data, and test-harness instructions under the non-distributed evaluation surface.
+
+Unchanged Governance: Distributed skills, distributed Agent definitions, generated user-facing adapters, canonical production sources, and other artifacts installed or published to users or projects retain their normal authority and scope requirements.
+
+Integrity Boundary: This protocol does not authorize weakening tests to hide a real defect, expanding into an unrelated framework or broad suite, or changing distributed/canonical behavior merely to make a private evaluation pass. Evidence must still show that an evaluation-only correction aligns the suite with the current canonical contract.
