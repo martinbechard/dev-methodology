@@ -140,17 +140,17 @@ Condition Type: root-execution.
 
 Owner: Root Dev Orchestrator canonical task 019fe2f2-f195-7670-8367-15d9e5c79de7.
 
-Evidence: Corrected immutable candidate e67fa4ac1b2b872ba97a3b4b4b18912975065cbb is layered on c80a8a3802fb806bc16d5a73b1a48aa581b5688d against baseline f147eca9fe03683b362a58481cd0d1a5e473a483. Its worktree is clean, and its exact range is all and only the eight authorized paths. All four prior findings are corrected: selector-backed valid false/none, true/resource-claim, and legacy coverage; terminal initial BLOCKED plus independent Configurator and separately resumed Bootstrapper processes; exact historical provenance on three skill documents; and narrowed helper wording with file Persistence retained. Green coder evidence includes combined mutation-policy/scripted tests, full Bootstrapper unittest discovery, the Python 3.11 scripted CLI initial BLOCKED/configuration PASS/resumed PASS/claims closed/temp removed, skill validation, historical provenance validation for three documents, targeted resource-provider tests, py_compile, and diff check. Exactly seven stale generated projections remain deferred. Fresh replacement reviewer /root/review_corrected_solo_fallback is active read-only on the corrected immutable candidate. No blocker is recorded. No ninth path is authorized. No terminology claim is relied on. No integration or verification is underway. Title is Reviewing.
+Evidence: Fresh replacement reviewer /root/review_corrected_solo_fallback confirms prior findings 1–3 are substantively resolved: valid false/none, true/resource-claim, and legacy behavior are covered through the real renderer; initial Bootstrapper, primary Configurator, and resumed Bootstrapper are distinct subprocesses; and all three historical provenance blocks validate. Resource text is correctly scoped and keeps Persistence and Commit independent, but the regression asserts Persistence provider skills and only the Commit selector string, not Commit provider skill mapping. The reviewer also found an integration-blocking generator/test incompatibility: scripted_orchestration.py lines 72–74 pin stale current Codex Bootstrapper adapter digest 41f70..., while fresh generator output is 0a1b92.... The build check reports seven stale projections, so fresh generation would make scripted snapshot validation fail unless corrected. All 41 combined focused tests and 29 Bootstrapper discovery tests pass on current stale bytes; skill and provenance validation, CLI, py_compile, and diff checks pass. Final verdict synthesis is in progress. No final blocker is recorded. No source mutation occurred. No ninth path is authorized. No terminology claim is relied on. Integration and verification remain deferred. Title is Reviewing.
 
-Observed At: 2026-08-08T21:26:39Z.
+Observed At: 2026-08-08T21:34:35Z.
 
 Started At: 2026-08-08T20:20:06Z.
 
 Deadline or Expires At: 2026-08-08T22:10:00Z.
 
-Next Action: Receive the replacement review verdict. If correction is required, return exact findings to the fixed coder; otherwise dispatch a fresh verifier.
+Next Action: Receive the final reviewer verdict. If NEEDS_CORRECTION, return exact findings to the fixed coder; otherwise dispatch a fresh verifier.
 
-Next Reconciliation At: 2026-08-08T21:36:39Z.
+Next Reconciliation At: 2026-08-08T21:44:35Z.
 
 ## User Action Required Transition Evidence
 
