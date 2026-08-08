@@ -122,8 +122,8 @@
     <div class="section-heading"><h2 id="coverage-title">Coverage and case catalogs</h2><p>Current catalog inventory remains separate from historical campaign results. Probe records retain their executable case, agent-scenario, and workflow associations without turning declarations into verified runs.</p></div>
     <h3>Current catalog inventory</h3>
     <div class="grid" style="margin-top:1rem">
-      <article class="metric"><strong>141</strong><span>Bundled skills</span></article>
-      <article class="metric"><strong>139</strong><span>Diagnostic probe records</span></article>
+      <article class="metric"><strong>142</strong><span>Bundled skills</span></article>
+      <article class="metric"><strong>140</strong><span>Diagnostic probe records</span></article>
       <article class="metric"><strong>30</strong><span>Conceptual agents</span></article>
       <article class="metric"><strong>30</strong><span>Current suites</span></article>
       <article class="metric"><strong>114</strong><span>Current suite scenarios</span></article>
@@ -135,7 +135,7 @@
       <article class="metric"><strong>5</strong><span>Workflow packs</span></article>
     </div>
     <div class="grid" style="margin-top:1rem">
-      <article class="method-card"><h3>Skill catalog states</h3><ul><li>0 skills have a direct governed skill result.</li><li>139 skills have a direct diagnostic probe declaration but no direct skill verdict.</li><li>1 skills have only indirect current-suite coverage without a direct probe or skill result.</li><li>1 skills have no recorded evaluation evidence.</li><li>54 skills are named by at least one selected-campaign scenario; 87 are not.</li></ul><p><strong>No skill-level verdict:</strong> the selected campaign publishes no skill receipts, so linked PASS outcomes remain agent-scenario evidence.</p></article>
+      <article class="method-card"><h3>Skill catalog states</h3><ul><li>0 skills have a direct governed skill result.</li><li>140 skills have a direct diagnostic probe declaration but no direct skill verdict.</li><li>1 skills have only indirect current-suite coverage without a direct probe or skill result.</li><li>1 skills have no recorded evaluation evidence.</li><li>54 skills are named by at least one selected-campaign scenario; 88 are not.</li></ul><p><strong>No skill-level verdict:</strong> the selected campaign publishes no skill receipts, so linked PASS outcomes remain agent-scenario evidence.</p></article>
     </div>
   </section>
 
@@ -150,7 +150,7 @@
       <div><dt>Evidence level</dt><dd>Governed agent-suite campaign</dd></div>
       <div><dt>Documentation snapshot mode</dt><dd>Deterministic source snapshot</dd></div>
       <div><dt>Wall-clock build time</dt><dd>Not retained; deterministic output does not claim an unsupported generation timestamp</dd></div>
-      <div><dt>Current source snapshot</dt><dd><code>0ec6c8ec4017934ca35fa688342d3af326f99bea9e8f1c8959f95311fb07c1af</code>; regenerated and compared by the focused check</dd></div>
+      <div><dt>Current source snapshot</dt><dd><code>acfabaee56e9ad5403bf16b654543dd072e74045d54e305bb7d0745713fcc194</code>; regenerated and compared by the focused check</dd></div>
     </dl>
     <div style="margin-top:2rem"><h3>Campaign verdict results</h3></div>
     <div class="grid" style="margin-top:1rem">
@@ -2187,7 +2187,7 @@
       <label class="field" for="skill-status">Coverage status<select id="skill-status" data-filter-status="skill"><option value="all">All statuses</option><option value="direct-governed">Direct governed result</option><option value="direct-probe">Direct diagnostic probe</option><option value="indirect-only">Indirect suite only</option><option value="none">No recorded evidence</option></select></label>
       <button type="button" data-filter-clear="skill">Clear skill filters</button>
     </div>
-    <p class="result-count" id="skill-result-count" aria-live="polite">Showing all 141 skills.</p>
+    <p class="result-count" id="skill-result-count" aria-live="polite">Showing all 142 skills.</p>
     <noscript><p class="scope-note">JavaScript is disabled. All skill entries remain visible; text and status filtering are optional enhancements.</p></noscript>
     <div class="catalog" id="skill-catalog">
     <article class="evaluation-card skill-card" id="skill-agent-harness"
@@ -3254,6 +3254,36 @@
       <ul class="link-list"><li><a href="../evals/agent-tests/project-configurator/scenarios.yaml">project-configurator / valid-configuration-reuse</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/project-configurator/scenarios.yaml">project-configurator / technology-routing</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/project-configurator/scenarios.yaml">project-configurator / invalid-configuration</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li></ul>
       <dl class="compact-list">
         <div><dt>Latest governed outcome</dt><dd>Linked agent-suite outcomes only: PASS</dd></div>
+        <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
+        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
+      </dl>
+    </article>
+
+    <article class="evaluation-card skill-card" id="skill-document-provenance"
+      data-kind="skill" data-status="direct-probe" data-search="document-provenance apply and validate truthful creation provenance for governed documents without taking ownership of code comments or document-specific metadata. documentation-methodology probe-document-provenance no governed campaign link">
+      <div class="card-heading">
+        <div><span class="card-kicker">Skill</span><h3>document-provenance</h3></div>
+        <span class="status status--direct-probe">Direct diagnostic probe</span>
+      </div>
+      <p>Apply and validate truthful creation provenance for governed documents without taking ownership of code comments or document-specific metadata.</p>
+      <p class="source-row"><a href="../skills/document-provenance/SKILL.md">Skill source</a></p>
+      <h4>Direct diagnostic probe</h4>
+
+        <dl class="compact-list">
+          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-document-provenance</a></dd></div>
+          <div><dt>Coverage state</dt><dd>declared: catalog declaration, not a verified run</dd></div>
+          <div><dt>Kind</dt><dd>artifact-contract</dd></div>
+          <div><dt>Executable cases</dt><dd>None declared</dd></div>
+          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-documentation-writer-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-artifact-reviewer-happy</a></dd></div>
+          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">documentation-methodology</a></dd></div>
+          <div><dt>Deterministic checks</dt><dd>skill-read-trace, artifact-structure, allowed-paths-only</dd></div>
+          <div><dt>Model rubric</dt><dd>source-faithfulness</dd></div>
+        </dl>
+
+      <h4>Governed campaign links</h4>
+      <p><span class="status status--missing">No governed campaign link</span></p><p>No selected-campaign scenario currently names this skill as a target skill.</p>
+      <dl class="compact-list">
+        <div><dt>Latest governed outcome</dt><dd>No governed campaign link</dd></div>
         <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
         <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
       </dl>

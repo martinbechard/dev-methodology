@@ -501,7 +501,7 @@ The documentation methodology skills are:
 - skill-authoring
 - name-methodology-artifacts
 
-The terminology-standard family uses the exact terminology.md artifact name at shared user and project scope. Ordinary use and review load both scopes together when the runtime supports multi-scope artifact retrieval. Project entries govern overlaps within their project. A preferred definition is sufficient to establish the expected term; Avoid remains optional reinforcement for observed persistent substitutions.
+The terminology-standard family uses the exact terminology.md artifact name at shared user and project scope. One provider-neutral operation loads both scopes and distinguishes a conclusively absent artifact from an unavailable scope. Review cannot pass and updates cannot mutate while a requested scope is unavailable. Project entries govern overlaps within their project. A preferred definition is sufficient to establish the expected term; Avoid remains optional reinforcement for observed persistent substitutions.
 
 The artifact creation skills are:
 

@@ -28,6 +28,7 @@ Conceptual agent definitions contain required and conditional technology-agnosti
 - Use create-high-level-design when creating or substantially rewriting a high-level design artifact from the high-level design template.
 - Use create-module-design when creating or substantially rewriting a module design artifact from the module design template.
 - Use create-unit-test-plan when creating or substantially rewriting a durable unit test plan from the unit test plan template.
+- Use terminology-standard-update when creating or revising the exact terminology.md governance artifact, then use terminology-standard-review for its triggering or governed text.
 - Use create-work-item-file when creating one file-backed work item from the file work-item template.
 - Use project-wiki-review before finishing project wiki pages or project-wiki-template artifacts.
 - Use review-functional-spec before finishing functional specification artifacts.
@@ -55,7 +56,7 @@ The returned catalog revision and content digests identify the bytes supplied by
 
 ## Shared Page Contract
 
-The shared page contract applies to docs/wiki topic pages and methodology artifacts created from this bundle's templates.
+The shared page contract applies to docs/wiki topic pages and methodology artifacts created from this bundle's templates. It does not apply to terminology.md, whose compact structure is owned by terminology-standard-update.
 
 When the user, target file type, runtime schema, existing document, or surrounding documentation indicates a specific structure or format, preserve that structure. Verify source support, links, steady-state prose, and completeness inside the indicated format instead of adding shared page sections. Do not impose the shared page contract on design HTML pages, README files, runtime adapter profiles, generated data files, or native agent definition files unless the user asks to convert them into a methodology artifact or wiki-compatible page.
 
@@ -83,6 +84,7 @@ Use the smallest document type that fully explains the work:
 - High-level design: coherent subsystem, feature family, system slice, integration path, or multi-module implementation plan.
 - Module design: one module, service, class, task, utility, UI component, or tightly scoped feature unit.
 - Unit test plan: durable scenario, boundary-double, failure, and coverage planning for one unit before or alongside test implementation.
+- Terminology Standard: preferred concept language for one project by default, or shared user language only when the user explicitly selects that wider scope.
 
 ## Artifact Creation Routes
 
@@ -95,6 +97,7 @@ Use this route table when the task is to create or substantially rewrite a metho
 - High-level design artifact: use create-high-level-design, template high-level-design-template.md, and review-high-level-design.
 - Module design artifact: use create-module-design, template module-design-template.md, and review-module-design.
 - Unit test plan artifact: use create-unit-test-plan, template unit-test-plan-template.md, and review-unit-test-plan.
+- Terminology Standard artifact: use terminology-standard-update for the exact terminology.md filename and terminology-standard-review for conformance. It has no reusable template, defaults to project scope, and uses shared user scope only when explicitly selected.
 Use project-wiki-topic-write for ordinary docs/wiki topic pages that summarize or link source material without becoming one of the specialized methodology artifacts. Use reverse-engineer-project-documentation when the user asks for a source-derived documentation set rather than one artifact.
 
 ## Template Assets

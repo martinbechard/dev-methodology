@@ -1150,7 +1150,7 @@ probes:
     evaluationKind: workflow-invariant
     activationCondition: Durable technical prose or user-visible language may be governed by a project or shared user terminology.md.
     negativeCondition: Raw evidence, exact identifiers, code, schemas, commands, quotations, and external product names are not rewritten through terminology preference.
-    expectedBehavior: Load the project and shared user artifacts in one multi-scope call when available, apply shared entries before narrower project entries, match concepts before words, use the preferred term, preserve meaning and exact content, and continue without creating an absent standard.
+    expectedBehavior: Invoke Load Terminology Standards once for project and shared user scope, report each as PRESENT or conclusively ABSENT through TERMINOLOGY STANDARDS LOADED, distinguish UNAVAILABLE through TERMINOLOGY STANDARD SCOPE UNAVAILABLE, apply shared entries before narrower project entries, match concepts before words, preserve exact content, and never search user-home paths as a fallback.
     judgePlan: {deterministicChecks: [skill-read-trace, artifact-structure, operation-coverage], modelRubric: workflow-quality}
     scenarioAssociations: [dev-coder-happy, dev-documentation-writer-happy, wiki-writer-happy]
     workflowAssociations: [code-delivery, documentation-methodology, wiki-lifecycle]
@@ -1164,7 +1164,7 @@ probes:
     evaluationKind: activation-and-behavior
     activationCondition: A read-only review target contains language governed by a project or shared user Terminology Standard.
     negativeCondition: Similar words are not findings when the surrounding concept is unclear or the wording is exact evidence excluded by the standard.
-    expectedBehavior: Load the base contract and both scopes, compare concept expressions with governing definitions, find nonpreferred terms even before they appear under Avoid, strengthen findings for explicit Avoid violations, preserve exclusions, and recommend reinforcement separately without mutation.
+    expectedBehavior: Load the base contract and both scopes, return TERMINOLOGY REVIEW BLOCKED without mutation when either scope is UNAVAILABLE, accept conclusively ABSENT scopes, compare concept expressions with governing definitions, find nonpreferred terms even before they appear under Avoid, and recommend reinforcement separately.
     judgePlan: {deterministicChecks: [skill-read-trace, finding-recall, finding-precision, no-forbidden-mutation], modelRubric: workflow-quality}
     scenarioAssociations: [dev-artifact-reviewer-happy, wiki-topic-verifier-happy, methodology-artifact-reviewer-happy]
     workflowAssociations: [documentation-methodology, wiki-lifecycle]
@@ -1178,7 +1178,7 @@ probes:
     evaluationKind: artifact-contract
     activationCondition: The user requests creation or update of a project or shared user terminology.md.
     negativeCondition: An initial preferred definition does not receive a speculative Avoid list, and shared user scope is not mutated without explicit scope selection.
-    expectedBehavior: Load both scopes once, default project-specific concepts to project scope, update one positive preferred entry, add clarification only when useful, add Avoid only from retained persistent-use evidence, avoid duplicate entries, and validate the selected artifact.
+    expectedBehavior: Load both scopes once, distinguish ABSENT from UNAVAILABLE, return TERMINOLOGY STANDARD UPDATE BLOCKED with zero mutation and named remediation for any unavailable scope, default project-specific concepts to project scope, update one positive preferred entry, and add Avoid only from retained persistent-use evidence.
     judgePlan: {deterministicChecks: [skill-read-trace, artifact-structure, allowed-paths-only, required-command-outcome], modelRubric: workflow-quality}
     scenarioAssociations: [dev-documentation-writer-happy, methodology-maintainer-happy]
     workflowAssociations: [documentation-methodology]

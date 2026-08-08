@@ -6,7 +6,7 @@ The Terminology Standard Skill Group keeps preferred concept language consistent
 
 The exact artifact name is terminology.md. A shared user artifact applies across projects. A project artifact narrows or extends that shared standard for one project.
 
-The runtime loads both scopes in one multi-scope artifact call when that capability is available. Shared entries apply first. A project entry governs when the scopes overlap within that project. An absent artifact is valid and does not trigger creation.
+The runtime loads both scopes through one provider-neutral multi-scope artifact operation. Each scope is PRESENT with content, conclusively ABSENT, or UNAVAILABLE. An absent artifact is valid and does not trigger creation. An unavailable scope blocks conformance PASS and every standard mutation; it is never inferred to be absent. Shared entries apply first. A project entry governs when the scopes overlap within that project.
 
 Each entry starts with a preferred term and definition. Use for and Examples are optional clarifications. Avoid is optional reinforcement added only after retained evidence shows repeated substitution, a misleading metaphor, or another persistent bias toward a nonpreferred term.
 
@@ -109,9 +109,6 @@ classDiagram
         class DevPromptReviewer {
             <<Agent>>
         }
-        class DevSkillLintReviewer {
-            <<Agent>>
-        }
         class DevUxSpecialist {
             <<Agent>>
         }
@@ -135,7 +132,6 @@ classDiagram
     DevArtifactReviewer o..> terminology-standard-review : when technical prose is governed
     DevCodeReviewer o..> terminology-standard-review : when a diff changes governed language
     DevPromptReviewer o..> terminology-standard-review : when model-facing prose is governed
-    DevSkillLintReviewer o..> terminology-standard-review : when skill prose is governed
     DevUxSpecialist o..> terminology-standard-review : when interface language is governed
     WikiArtifactReviewer o..> terminology-standard-review : when wiki methodology is governed
     WikiTopicVerifier o..> terminology-standard-review : when durable topics are governed
@@ -144,7 +140,7 @@ classDiagram
 
 ### Scenario: Update The Standard
 
-Dev Documentation Writer owns ordinary terminology.md authoring. Methodology Maintainer uses the same update skill when a methodology maintenance request includes the standard. Project scope is the default for project-specific concepts. Shared user scope requires explicit selection because it affects more than one project.
+Dev Documentation Writer owns ordinary terminology.md authoring. Methodology Maintainer uses the same update skill when a methodology maintenance request includes the standard. Project scope is the default for project-specific concepts. Shared user scope requires explicit selection because it affects more than one project. Either update blocks without mutation when one requested scope is unavailable.
 
 ```mermaid
 classDiagram
@@ -186,7 +182,6 @@ The relationships are grounded in these skill and Agent definitions.
 - [Dev Artifact Reviewer](../../agents/roles/dev-activities/dev-artifact-reviewer.role.yaml)
 - [Dev Code Reviewer](../../agents/roles/dev-activities/dev-code-reviewer.role.yaml)
 - [Dev Prompt Reviewer](../../agents/roles/dev-activities/dev-prompt-reviewer.role.yaml)
-- [Dev Skill Lint Reviewer](../../agents/roles/dev-activities/dev-skill-lint-reviewer.role.yaml)
 - [Dev UX Specialist](../../agents/roles/dev-activities/dev-ux-specialist.role.yaml)
 - [Wiki Writer](../../agents/roles/wiki-activities/wiki-writer.role.yaml)
 - [Wiki Ingester](../../agents/roles/wiki-activities/wiki-ingester.role.yaml)

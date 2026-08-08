@@ -6477,7 +6477,11 @@ class BundleContentTests(unittest.TestCase):
 
         base_text = skill_texts["terminology-standard"]
         self.assertIn("exact filename terminology.md", base_text)
-        self.assertIn("one multi-scope artifact operation", base_text)
+        self.assertIn("one provider-neutral multi-scope artifact operation", base_text)
+        self.assertIn("TERMINOLOGY STANDARDS LOADED", base_text)
+        self.assertIn("TERMINOLOGY STANDARD SCOPE UNAVAILABLE", base_text)
+        self.assertIn("Do not reinterpret UNAVAILABLE as ABSENT", base_text)
+        self.assertIn("cannot support TERMINOLOGY REVIEW: PASS", base_text)
         self.assertIn("Apply the shared user entries first", base_text)
         self.assertIn("A project entry governs within its project", base_text)
         self.assertIn("The Avoid section is optional", base_text)
@@ -6487,12 +6491,16 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("Apply terminology-standard", review_text)
         self.assertIn("even when that term is not yet listed under Avoid", review_text)
         self.assertIn("A review never adds a preferred or avoided term", review_text)
+        self.assertIn("TERMINOLOGY REVIEW: BLOCKED", review_text)
+        self.assertIn("Do not return PASS from incomplete scope coverage", review_text)
 
         update_text = skill_texts["terminology-standard-update"]
         self.assertIn("project terminology.md by default", update_text)
         self.assertIn("shared user standard only when the user explicitly selects", update_text)
         self.assertIn("Omit Avoid for the initial entry", update_text)
         self.assertIn("retained evidence", update_text)
+        self.assertIn("TERMINOLOGY STANDARD UPDATE: BLOCKED", update_text)
+        self.assertIn("make no mutation", update_text)
 
         routed_agents = {skill_name: set() for skill_name in skill_names}
         for role_path in sorted(ROLES_ROOT.glob("*/*.role.yaml")):
@@ -6519,7 +6527,6 @@ class BundleContentTests(unittest.TestCase):
                 "dev-artifact-reviewer",
                 "dev-code-reviewer",
                 "dev-prompt-reviewer",
-                "dev-skill-lint-reviewer",
                 "dev-ux-specialist",
                 "methodology-artifact-reviewer",
                 "wiki-artifact-reviewer",
@@ -6547,6 +6554,18 @@ class BundleContentTests(unittest.TestCase):
             group_registry,
         )
         self.assertIn("complete fifty-five-skill inventory", group_registry)
+        self.assertIn("used in nine methodology topics", group_registry)
+        agent_design_links = group_registry.split(
+            "## 4. Agent-Oriented Designs", maxsplit=1
+        )[1].split("## 5. Definition Of Good", maxsplit=1)[0]
+        self.assertEqual(9, agent_design_links.count("- ["))
+
+        documentation_router = (
+            SKILLS_ROOT / "route-documentation-work" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn("Terminology Standard artifact:", documentation_router)
+        self.assertIn("It has no reusable template", documentation_router)
+        self.assertIn("does not apply to terminology.md", documentation_router)
 
     def test_project_file_organisation_defines_taxonomy_contract(self) -> None:
         skill_text = (
@@ -10913,6 +10932,7 @@ Visible after.
                 "review-high-level-design",
                 "review-module-design",
                 "review-unit-test-plan",
+                "terminology-standard-review",
             } | set(CORE_PATTERN_SKILLS),
             set(role.skill_conditions),
         )

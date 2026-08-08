@@ -146,7 +146,7 @@ The ten Skill Groups contain fifty-one skills. Adding the four skills in the cro
 
 ## 4. Agent-Oriented Designs
 
-The design documents show the Agent groups, Skill Groups, and detailed dependencies used in eight methodology topics.
+The design documents show the Agent groups, Skill Groups, and detailed dependencies used in nine methodology topics.
 
 - [General Agent Skills](agents/general-agent-skills.md)
 - [Baseline Development](agents/baseline-development.md)
