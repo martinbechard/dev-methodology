@@ -1,28 +1,35 @@
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Generated with AI assistance.
-# Summary: Protects the positive-only terminology rewrite evaluation contract.
+# Summary: Verifies production-routed terminology probe and positive-first fixture contracts.
 
 from __future__ import annotations
 
+import importlib.util
 import json
 import subprocess
 import sys
 import tempfile
 import unittest
 from pathlib import Path
+from types import ModuleType
 
 import yaml
 
+from scripts.agent_skill_evals import ContextPackBuilder
 
+
+_REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 _ROOT = (
-    Path(__file__).resolve().parents[1]
+    _REPOSITORY_ROOT
     / "evals"
     / "projects"
     / "terminology-standard-effect"
 )
+_NEGATIVE_ROOT = _ROOT / "negative-activation"
 _SOURCE = _ROOT / "source-document.md"
 _STANDARD = _ROOT / "terminology.md"
-_CASES = Path(__file__).resolve().parents[1] / "evals" / "cases.yaml"
+_CASES = _REPOSITORY_ROOT / "evals" / "cases.yaml"
+_RUNNER = _REPOSITORY_ROOT / "scripts" / "run-agent-skill-evals.py"
 
 _CONFORMING_SENTENCES = {
     "TERM-01": "The Acceptance criterion AC-17 requires the Artifact to retain all 35 concept statements.",
@@ -91,8 +98,99 @@ def _run_verifier(artifact_text: str) -> subprocess.CompletedProcess[str]:
         )
 
 
+def _load_runner() -> ModuleType:
+    spec = importlib.util.spec_from_file_location(
+        "terminology_standard_effect_runner",
+        _RUNNER,
+    )
+    if spec is None or spec.loader is None:
+        raise RuntimeError("Unable to load the Agent and Skill evaluation runner")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 class TerminologyEffectVerifierTests(unittest.TestCase):
     """Keep the experimental red/green contract positive-first and auditable."""
+
+    def test_fixture_has_no_project_guidance_injection(self) -> None:
+        self.assertFalse((_ROOT / "AGENTS.md").exists())
+
+    def test_production_route_stages_generated_writer_and_probe_variants(self) -> None:
+        runner = _load_runner()
+        case = runner.load_cases()["terminology-standard-effect"]
+        treatment = runner._apply_probe_variant(
+            case,
+            "probe-terminology-standard",
+            "treatment",
+        )
+        omitted = runner._apply_probe_variant(
+            case,
+            "probe-terminology-standard",
+            "target-omitted",
+        )
+        wrong = runner._apply_probe_variant(
+            case,
+            "probe-terminology-standard",
+            "wrong-skill",
+        )
+
+        self.assertEqual(["dev-documentation-writer"], case["requiredAgents"])
+        self.assertIn("terminology-standard", treatment["executionSkills"])
+        self.assertNotIn("terminology-standard", omitted["executionSkills"])
+        self.assertNotIn("terminology-standard", wrong["executionSkills"])
+        self.assertIn("quartz", wrong["executionSkills"])
+        self.assertEqual(
+            treatment["probeComparisonKey"],
+            omitted["probeComparisonKey"],
+        )
+        self.assertEqual(
+            omitted["probeComparisonKey"],
+            wrong["probeComparisonKey"],
+        )
+
+        staged_by_variant: dict[str, set[str]] = {}
+        for variant_name, variant in (
+            ("treatment", treatment),
+            ("target-omitted", omitted),
+            ("wrong-skill", wrong),
+        ):
+            with tempfile.TemporaryDirectory() as directory:
+                context_pack = ContextPackBuilder(_REPOSITORY_ROOT).stage(
+                    "codex",
+                    "dev-documentation-writer",
+                    variant["executionSkills"],
+                    Path(directory),
+                    skill_files=case["skillResourceAllowlist"],
+                )
+            staged_by_variant[variant_name] = {
+                item.source_path for item in context_pack.files
+            }
+
+        generated_agent = (
+            "generated/adapters/codex/agents/dev-documentation-writer.toml"
+        )
+        target_skill = "skills/terminology-standard/SKILL.md"
+        wrong_skill = "skills/quartz/SKILL.md"
+        for staged_sources in staged_by_variant.values():
+            self.assertIn(generated_agent, staged_sources)
+        self.assertIn(target_skill, staged_by_variant["treatment"])
+        self.assertNotIn(target_skill, staged_by_variant["target-omitted"])
+        self.assertNotIn(target_skill, staged_by_variant["wrong-skill"])
+        self.assertIn(wrong_skill, staged_by_variant["wrong-skill"])
+
+    def test_negative_activation_fixture_preserves_raw_evidence_contract(self) -> None:
+        task = (_NEGATIVE_ROOT / "TASK.md").read_text(encoding="utf-8")
+        source = (_NEGATIVE_ROOT / "source-evidence.md").read_text(encoding="utf-8")
+
+        self.assertIn("preserved-evidence.md", task)
+        self.assertIn("without rewriting", task)
+        for exact_value in (
+            "campaign_receipt_rollout",
+            "python3 tools/export.py --label campaign --receipt rollout.json",
+            '"Campaign receipt rollout"',
+        ):
+            self.assertIn(exact_value, source)
 
     def test_standard_contains_every_preferred_term_and_only_evidenced_avoid_rule(self) -> None:
         standard = _STANDARD.read_text(encoding="utf-8")
@@ -144,6 +242,20 @@ class TerminologyEffectVerifierTests(unittest.TestCase):
         self.assertTrue(evidence["semanticMarkersValid"])
         self.assertTrue(evidence["protectedLiteralsValid"])
         self.assertEqual([], evidence["scratchpadCandidateOccurrences"])
+
+    def test_rewriting_an_exact_identifier_fails_the_negative_activation_boundary(self) -> None:
+        artifact = _conforming_artifact().replace(
+            "`dev_documentation_writer`",
+            "`dev-documentation-writer`",
+            1,
+        )
+        completed = _run_verifier(artifact)
+
+        self.assertEqual(3, completed.returncode)
+        evidence = json.loads(completed.stdout)
+        self.assertTrue(evidence["preferredTerminologyValid"])
+        self.assertTrue(evidence["semanticMarkersValid"])
+        self.assertFalse(evidence["protectedLiteralsValid"])
 
     def test_missing_meaning_marker_fails(self) -> None:
         artifact = _conforming_artifact().replace("[TERM-19] ", "", 1)
