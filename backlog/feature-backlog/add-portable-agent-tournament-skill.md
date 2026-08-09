@@ -10,7 +10,7 @@ Branch: codex/add-portable-agent-tournament-skill
 
 Worktree: /Users/martinbechard/.codex/worktrees/1bbe/dev-methodology
 
-Phase: Implementing — Private tournament skill package
+Phase: Waiting for Claim — Private candidate preserved
 
 Status: Running
 
@@ -181,19 +181,19 @@ Next Reconciliation At: 2026-08-09T04:47:00Z
 
 ## Active Execution Evidence
 
-Condition Type: delegated-work
+Condition Type: owned-wait
 
-Owner: Dev Coder execution /root/tournament_skill_coder under Dev Orchestrator task 019fe4cb-b4f3-7563-8ece-a60e567aae29
+Owner: Dev Orchestrator task 019fe4cb-b4f3-7563-8ece-a60e567aae29
 
-Evidence: Dev Coder execution /root/tournament_skill_coder remains live on the exact four-path private package. It reported complete instruction and evidence synthesis, confirmed the authoritative provider and claim state, created only skills/run-agent-tournament/SKILL.md, agents/openai.yaml, references/tournament-contract.md, and assets/tournament.example.yaml with the runtime-supplied provenance, and is now running focused validation and refinement. The branch worktree shows only the new package directory. Exact Work Item activity=work claim add-portable-agent-tournament-skill-019fe4cb-root-work remains live from journal event 8ed3dca6-9a12-40a7-ac10-8f2b6bb5e4b4. This evidence refresh is protected by exact backlog-path claim add-portable-agent-tournament-skill-019fe4cb-validation-evidence-1, outcome SHARED_CHECKOUT_ACQUIRED, journal event d83ead1d-1250-4e15-92bd-7fd773622ebe. Shared catalog, generated, review, installation, publication, and main-integration surfaces remain deferred pending the Coordinator's direct terminology-owner release event.
+Evidence: Clean private candidate fe2228e2140e4ed212917edfe240fb7001588813 contains only the four approved run-agent-tournament package paths on branch codex/add-portable-agent-tournament-skill in worktree /Users/martinbechard/.codex/worktrees/1bbe/dev-methodology. Repository skill validation, OpenAI metadata synchronization, exact provenance validation, supplemental YAML and Markdown-link checks, focused contract assertions, harness-boundary search, inline-code scan, and Git diff checks passed. Configured MCP validation correctly returned structured outside-configured-root rejections for this private worktree and remains pending from a configured project root; no fallback bypass was claimed. The Coordinator confirmed that terminology still owns review, shared catalogs, generated output, installation, publication, and main integration and queued an event-driven direct release notification. Exact Work Item activity=work claim add-portable-agent-tournament-skill-019fe4cb-root-work remains live from journal event 8ed3dca6-9a12-40a7-ac10-8f2b6bb5e4b4. This wait-state refresh is protected by exact backlog-path claim add-portable-agent-tournament-skill-019fe4cb-candidate-wait-1, outcome SHARED_CHECKOUT_ACQUIRED, journal event f9a32bf3-2809-4482-9ecd-ce447eef8314.
 
-Observed At: 2026-08-09T04:56:17Z
+Observed At: 2026-08-09T04:59:57Z
 
-Started At: 2026-08-09T04:42:00Z
+Started At: 2026-08-09T04:59:42Z
 
 Deadline or Expires At: 2026-08-09T05:27:00Z
 
-Next Action: Dev Coder completes focused package validation and returns one clean candidate commit; the Root Dev Orchestrator preserves it without entering review until the Coordinator forwards the direct terminology-owner release event
+Next Action: On the Coordinator's direct terminology-owner release event, dispatch fresh independent source and methodology review for candidate fe2228e2140e4ed212917edfe240fb7001588813; otherwise preserve the clean candidate and reconcile the same owned wait at the next parent review
 
 Next Reconciliation At: 2026-08-09T05:10:00Z
 
