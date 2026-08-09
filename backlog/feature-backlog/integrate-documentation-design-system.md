@@ -247,14 +247,14 @@ Condition Type: root-execution
 
 Owner: Dev Orchestrator task 019fe3cd-577c-76b1-965c-06fb8793ae42
 
-Evidence: canonical root execution owns corrected clean candidate `74f91caefe815dddca503502a388668be6cb94df`; coder is paused safely at 2026-08-09T02:54:13Z with no command, staging, or commit, and unstaged corrections are preserved. Fail-closed nested validation and effective claims in both directions, unresolved cases, and JSON-safe output pass. Six scenarios now require workspace inventory plus no detected mutation. Focused runner+coordinator evidence is 22 tests: 20 pass, with exactly 2 failures for the suite-specific contract skill missing in runner/coordinator supervisor and judge configs. Changed attempt-2 paths are limited to runner contract/scenarios/test, coordinator simulator/scenarios/test, bundle/static/authorized role-mutation tests. Remaining scope is exactly schema hardening, executable fixture/oracle expansion, suite config skill binding, docs/CSS/static alignment, regeneration, full verification, and commit; no new scope or blocker. Existing HTML, terminology, Future Ideas, and support remain excluded; all 15 governed receipts and five dependent paths remain reconciled; no source mutation has begun. The direct overlap boundary with `publish-and-integrate-terminology-standard` is acknowledged; both tasks defer shared overlap events and preserve each other.
+Evidence: canonical root execution owns corrected clean candidate `74f91caefe815dddca503502a388668be6cb94df`; coder is paused safely at 2026-08-09T03:03:20Z with no command, staging, or commit, and unstaged corrections are preserved. Attempt-2 focused GREEN evidence: static docs 13/13; schema-hardening plus authorized role-v8 2/2; runner/coordinator 22/22; executable v2 fixture oracle PASS. Source-aligned regeneration is complete for skill/role JS, the exact eight adapters plus manifest, hierarchy with no diff, and evaluation HTML; diff check is clean. Remaining scope is exactly deeper final audit including authority-input validation, generator `--checks`, catalogs, broader/baseline isolation, provenance, commit, and no new scope or blocker. Existing HTML, terminology, Future Ideas, and support remain excluded; all 15 governed receipts and five dependent paths remain reconciled; no source mutation has begun. The direct overlap boundary with `publish-and-integrate-terminology-standard` is acknowledged; both tasks defer shared overlap events and preserve each other.
 
-Observed At: 2026-08-09T02:55:00Z
+Observed At: 2026-08-09T03:03:50Z
 
 Started At: 2026-08-08T23:57:32Z
 
 Deadline or Expires At: 2026-08-09T05:00:00Z
 
-Next Action: Reacquire the Work Item activity=work claim, then resume the original coder for grouped attempt-2 behavior implementation, green/generation/verification, and commit without widening scope.
+Next Action: Reacquire the Work Item activity=work claim, then resume the original coder for the final audit, gates, and commit without widening scope.
 
-Next Reconciliation At: 2026-08-09T03:10:00Z
+Next Reconciliation At: 2026-08-09T03:18:00Z
