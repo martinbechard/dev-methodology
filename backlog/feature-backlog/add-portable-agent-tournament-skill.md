@@ -185,17 +185,17 @@ Condition Type: delegated-work
 
 Owner: Dev Coder execution /root/tournament_skill_coder under Dev Orchestrator task 019fe4cb-b4f3-7563-8ece-a60e567aae29
 
-Evidence: Dev Coder execution /root/tournament_skill_coder is live with one bounded assignment to create only skills/run-agent-tournament/SKILL.md, agents/openai.yaml, references/tournament-contract.md, and assets/tournament.example.yaml on branch codex/add-portable-agent-tournament-skill in worktree /Users/martinbechard/.codex/worktrees/1bbe/dev-methodology. The assignment carries the three exact ALLOWED_APPROVED_DEFINITION_CHANGE outcomes, the runtime-supplied provenance envelope, focused validation requirements, and an explicit no-helper and no-shared-surface boundary. Exact Work Item activity=work claim add-portable-agent-tournament-skill-019fe4cb-root-work remains live from journal event 8ed3dca6-9a12-40a7-ac10-8f2b6bb5e4b4. This evidence refresh is protected by exact backlog-path claim add-portable-agent-tournament-skill-019fe4cb-delegated-evidence-1, outcome SHARED_CHECKOUT_ACQUIRED, journal event e401ff9b-54a5-4834-8924-02e90452847f. Shared catalog, generated, review, installation, publication, and main-integration surfaces remain deferred until direct terminology-owner release or reconciliation evidence arrives.
+Evidence: Dev Coder execution /root/tournament_skill_coder remains live on the exact four-path private package. It reported complete instruction and evidence synthesis, confirmed the authoritative provider and claim state, created only skills/run-agent-tournament/SKILL.md, agents/openai.yaml, references/tournament-contract.md, and assets/tournament.example.yaml with the runtime-supplied provenance, and is now running focused validation and refinement. The branch worktree shows only the new package directory. Exact Work Item activity=work claim add-portable-agent-tournament-skill-019fe4cb-root-work remains live from journal event 8ed3dca6-9a12-40a7-ac10-8f2b6bb5e4b4. This evidence refresh is protected by exact backlog-path claim add-portable-agent-tournament-skill-019fe4cb-validation-evidence-1, outcome SHARED_CHECKOUT_ACQUIRED, journal event d83ead1d-1250-4e15-92bd-7fd773622ebe. Shared catalog, generated, review, installation, publication, and main-integration surfaces remain deferred pending the Coordinator's direct terminology-owner release event.
 
-Observed At: 2026-08-09T04:45:15Z
+Observed At: 2026-08-09T04:56:17Z
 
 Started At: 2026-08-09T04:42:00Z
 
 Deadline or Expires At: 2026-08-09T05:27:00Z
 
-Next Action: Dev Coder returns one clean focused candidate commit for the exact private package; the Root Dev Orchestrator then dispatches fresh independent methodology and source review before verification
+Next Action: Dev Coder completes focused package validation and returns one clean candidate commit; the Root Dev Orchestrator preserves it without entering review until the Coordinator forwards the direct terminology-owner release event
 
-Next Reconciliation At: 2026-08-09T04:59:00Z
+Next Reconciliation At: 2026-08-09T05:10:00Z
 
 ## Running Resource Claim Evidence
 
