@@ -2689,6 +2689,30 @@ class HarnessAndJudgeTests(unittest.TestCase):
         )
         self.assertIn("evidence missing required skill: quartz", wrong_skill_errors)
 
+    def test_loaded_terminology_case_requires_reference_contract_after_guidance_removal(self) -> None:
+        cases = yaml.safe_load(yaml.safe_dump(self.module.load_cases()))
+        current_errors = self.module.validate_framework_catalogs(cases=cases)
+        self.assertEqual([], current_errors)
+
+        migrated = _reference_treatment_case(self.module)
+        migrated["contextPack"]["include"] = [
+            path
+            for path in migrated["contextPack"]["include"]
+            if path != "AGENTS.md"
+        ]
+        migrated["modelVisiblePaths"] = [
+            path for path in migrated["modelVisiblePaths"] if path != "AGENTS.md"
+        ]
+        cases["terminology-standard-effect"] = migrated
+        migrated_errors = self.module.validate_framework_catalogs(cases=cases)
+        self.assertEqual([], migrated_errors)
+
+        migrated.pop("mcpAgentOps")
+        missing_errors = self.module.validate_framework_catalogs(cases=cases)
+        self.assertTrue(
+            any("completed terminology routing" in error for error in missing_errors)
+        )
+
     def test_context_pack_stages_only_allowlisted_files_and_records_digest(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -3763,6 +3787,228 @@ class HarnessAndJudgeTests(unittest.TestCase):
                 invocation["mcpAgentOps"]["permissionProfileHostHomeDigest"]
             )
             self.assertNotIn("skillRoot", invocation["mcpAgentOps"])
+
+    def test_junie_reference_runner_artifacts_replay_as_receipt_evidence(self) -> None:
+        case = self.module._apply_probe_variant(
+            _reference_treatment_case(self.module),
+            "probe-terminology-standard",
+            "treatment",
+        )
+        contract = case["mcpAgentOps"]
+        identity = self.module.McpAgentOpsIdentity(
+            Path(sys.executable).resolve(),
+            contract["requiredVersion"],
+            "1" * 64,
+            contract["requiredRuntimeDigest"],
+            "2" * 64,
+        )
+        validation_module = sys.modules[self.module.validate_evidence.__module__]
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            workspace = root / "workspace"
+            workspace.mkdir()
+            (workspace / "terminology.md").write_text(
+                "# Terminology Standard\n\n## Preferred Terms\n",
+                encoding="utf-8",
+            )
+            evidence = root / "evidence"
+            evidence.mkdir()
+            evidence = evidence.resolve()
+            context_pack = self.module.ContextPackBuilder(ROOT).stage(
+                "junie",
+                "dev-documentation-writer",
+                case["executionSkills"],
+                workspace,
+                skill_files=case["skillResourceAllowlist"],
+            )
+            mcp = self.module.stage_mcp_reference_context(
+                "junie",
+                workspace,
+                identity,
+                evidence / "audit.jsonl",
+                evidence,
+                reference_names=contract["referenceNames"],
+                enabled_tools=contract["enabledTools"],
+            )
+            self.module.build_harness_command(
+                "junie",
+                workspace,
+                "dev-documentation-writer",
+                "Apply the terminology standard.",
+                "configured-model",
+                read_only=False,
+                event_output=evidence / "events.jsonl",
+                evidence_root=evidence,
+                isolated_config_root=workspace,
+                skill_locations=[context_pack.skill_location],
+                agent_locations=[context_pack.agent_location],
+                harness_executable=Path(sys.executable),
+                mcp_agent_ops=mcp,
+            )
+
+            argument_digests = self.module.resolve_mcp_tool_argument_digests(
+                contract["requiredToolArguments"],
+                workspace,
+            )
+            stream_id = "3" * 32
+            records = [
+                {
+                    "schema": "mcp-agent-ops-tool-audit",
+                    "version": 2,
+                    "sequence": 1,
+                    "streamId": stream_id,
+                    "sessionId": mcp.audit_session_id,
+                    "callId": "1",
+                    "tool": "reference_load",
+                    "status": "started",
+                    "argumentsDigest": argument_digests["reference_load"],
+                },
+                {
+                    "schema": "mcp-agent-ops-tool-audit",
+                    "version": 2,
+                    "sequence": 2,
+                    "streamId": stream_id,
+                    "sessionId": mcp.audit_session_id,
+                    "callId": "1",
+                    "tool": "reference_load",
+                    "status": "completed",
+                    "resultDigest": "4" * 64,
+                    "outcome": "LOADED",
+                },
+            ]
+            mcp.audit_log.write_text(
+                "\n".join(json.dumps(record) for record in records) + "\n",
+                encoding="utf-8",
+            )
+            outputs = mcp.evidence_directory / "outputs"
+            outputs.mkdir()
+            output_manifest = mcp.evidence_directory / "outputs-manifest.json"
+            output_manifest.write_text(
+                json.dumps(
+                    {
+                        "schema": "dev-methodology-eval-output-manifest",
+                        "version": 1,
+                        "allowedWritePaths": case["allowedWritePaths"],
+                        "files": [],
+                    },
+                    sort_keys=True,
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            attribution = mcp.evidence_directory / "junie-attribution.json"
+            attribution.write_text(
+                json.dumps(
+                    {
+                        "schema": "dev-methodology-eval-junie-agent-attribution",
+                        "version": 1,
+                        "agentId": "dev-documentation-writer",
+                        "status": "name-verified",
+                        "definitionDigestBound": False,
+                        "lifecycle": {
+                            "stepId": "agent-step",
+                            "statuses": ["STARTED", "FINISHED"],
+                            "eventDigests": ["5" * 64, "6" * 64],
+                        },
+                    },
+                    sort_keys=True,
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            mcp_run: dict[str, object] = {
+                "serverName": mcp.server_name,
+                "version": mcp.identity.version,
+                "launcherDigest": mcp.identity.launcher_digest,
+                "runtimeDigest": mcp.identity.runtime_digest,
+                "identityDigest": mcp.identity.identity_digest,
+                "configurationDigest": mcp.configuration_digest,
+                "catalogManifestDigest": mcp.catalog_manifest_digest,
+                "configurationEvidence": (
+                    mcp.configuration_evidence.relative_to(evidence).as_posix()
+                    + "#mcpServers"
+                ),
+                "catalogEvidence": (
+                    mcp.catalog_evidence.relative_to(evidence).as_posix()
+                    + "#dev-methodology-eval-mcp-reference-catalog"
+                ),
+                "catalogEvidenceDigest": digest(mcp.catalog_evidence),
+                "authorizationEvidence": (
+                    mcp.authorization_evidence.relative_to(evidence).as_posix()
+                    + "#mcpTools"
+                ),
+                "authorizationDigest": mcp.authorization_digest,
+                "junieAgentAttributionStatus": "name-verified",
+                "junieAgentAttributionEvidence": (
+                    attribution.relative_to(evidence).as_posix()
+                    + "#dev-methodology-eval-junie-agent-attribution"
+                ),
+                "junieAgentAttributionDigest": digest(attribution),
+                "identityEvidence": "pending-identity.json#dev-methodology-eval-mcp-identity",
+                "identityEvidenceDigest": "0" * 64,
+                "auditSessionId": mcp.audit_session_id,
+                "auditStreamId": stream_id,
+                "auditDigest": digest(mcp.audit_log),
+                "auditEvidence": "audit.jsonl#mcp-agent-ops-tool-audit",
+                "outputManifestDigest": digest(output_manifest),
+                "outputManifestEvidence": (
+                    output_manifest.relative_to(evidence).as_posix()
+                    + "#dev-methodology-eval-output-manifest"
+                ),
+                "completedTools": ["reference_load"],
+                "toolOutcomes": {"reference_load": ["LOADED"]},
+                "requiredToolSequences": contract["requiredToolSequences"],
+                "requiredToolOutcomes": contract["requiredToolOutcomes"],
+                "requiredToolArgumentDigests": argument_digests,
+                "permissionProfileHostHomeDigest": None,
+                "toolEvidenceStatus": "verified",
+            }
+            identity_evidence = mcp.evidence_directory / "identity.json"
+            identity_evidence.write_text(
+                json.dumps(
+                    {
+                        "schema": "dev-methodology-eval-mcp-identity",
+                        "version": 3,
+                        "serverName": mcp_run["serverName"],
+                        "packageVersion": mcp_run["version"],
+                        "launcherDigest": mcp_run["launcherDigest"],
+                        "runtimeDigest": mcp_run["runtimeDigest"],
+                        "identityDigest": mcp_run["identityDigest"],
+                        "configurationDigest": mcp_run["configurationDigest"],
+                        "catalogManifestDigest": mcp_run["catalogManifestDigest"],
+                        "auditSessionId": mcp_run["auditSessionId"],
+                        "configurationEvidenceDigest": mcp_run["configurationDigest"],
+                        "catalogEvidenceDigest": mcp_run["catalogEvidenceDigest"],
+                        "authorizationDigest": mcp_run["authorizationDigest"],
+                        "requiredToolArgumentDigests": argument_digests,
+                        "permissionProfileHostHomeDigest": None,
+                    },
+                    sort_keys=True,
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            mcp_run["identityEvidence"] = (
+                identity_evidence.relative_to(evidence).as_posix()
+                + "#dev-methodology-eval-mcp-identity"
+            )
+            mcp_run["identityEvidenceDigest"] = digest(identity_evidence)
+
+            errors: list[str] = []
+            stale: list[str] = []
+            validation_module._validate_mcp_agent_ops_run(
+                case,
+                {
+                    "harness": "junie",
+                    "agentId": "dev-documentation-writer",
+                    "mcpAgentOps": mcp_run,
+                },
+                evidence / "receipt.yaml",
+                errors,
+                stale,
+            )
+            self.assertEqual([], errors)
+            self.assertEqual([], stale)
 
     def test_mcp_catalog_and_host_configuration_are_exact_and_isolated(self) -> None:
         case = self.module.load_cases()["project-configuration-routing"]

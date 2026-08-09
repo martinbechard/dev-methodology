@@ -876,6 +876,35 @@ def validate_framework_catalogs(
             errors.append(
                 "cases.yaml must retain mcp-agent-ops for project-configuration-routing"
             )
+        terminology_case = selected_cases.get("terminology-standard-effect")
+        if isinstance(terminology_case, Mapping):
+            context_pack = terminology_case.get("contextPack")
+            context_paths = (
+                _string_items(context_pack.get("include"))
+                if isinstance(context_pack, Mapping)
+                else []
+            )
+            model_visible_paths = _string_items(
+                terminology_case.get("modelVisiblePaths")
+            )
+            fixture_guidance_active = "AGENTS.md" in {
+                *context_paths,
+                *model_visible_paths,
+            }
+            terminology_contract = terminology_case.get("mcpAgentOps")
+            exact_reference_activation = (
+                isinstance(terminology_contract, Mapping)
+                and terminology_contract.get("schemaVersion") == 5
+                and terminology_contract.get("enablement")
+                == "probe-treatment-only"
+                and terminology_contract.get("enabledTools")
+                == ["reference_load"]
+            )
+            if not fixture_guidance_active and not exact_reference_activation:
+                errors.append(
+                    "cases.yaml:terminology-standard-effect completed terminology routing "
+                    "requires the exact version-five probe-treatment-only reference_load contract"
+                )
     catalogs = load_framework_catalogs(root)
     for filename, data in catalogs.items():
         item_key, required = _CATALOG_SPECS[filename]
@@ -1861,7 +1890,12 @@ def _validate_mcp_agent_ops_run(
     _validate_mcp_catalog_artifact(value, contract, evidence_path, errors)
     _validate_mcp_output_manifest(value, case, evidence_path, errors)
     if run.get("harness") == "junie":
-        _validate_junie_mcp_authorization(value, evidence_path, errors)
+        _validate_junie_mcp_authorization(
+            value,
+            contract,
+            evidence_path,
+            errors,
+        )
         _validate_junie_agent_attribution(value, run, evidence_path, errors)
 
 
@@ -2025,7 +2059,15 @@ def _validate_mcp_configuration_artifact(
             or not reference_path.parent.name.startswith(".mcp-agent-ops-")
             or configuration_path is None
             or catalog_path is None
-            or reference_path.parent != configuration_path.parent
+            or (
+                harness == "codex"
+                and reference_path.parent != configuration_path.parent
+            )
+            or (
+                harness == "junie"
+                and reference_path.parent / "junie" / "mcp.json"
+                != configuration_path
+            )
             or reference_path.parent != catalog_path.parent
         ):
             errors.append(
@@ -2374,6 +2416,7 @@ def _validate_mcp_output_manifest(
 
 def _validate_junie_mcp_authorization(
     value: Mapping[str, object],
+    contract: Mapping[str, object],
     evidence_path: Path,
     errors: list[str],
 ) -> None:
@@ -2384,7 +2427,15 @@ def _validate_junie_mcp_authorization(
         evidence_path,
         errors,
     )
-    if authorization is not None and dict(authorization) != junie_mcp_agent_ops_authorization_payload():
+    enabled_tools = contract.get("enabledTools")
+    if not isinstance(enabled_tools, list) or any(
+        not isinstance(tool, str) for tool in enabled_tools
+    ):
+        errors.append("evidence Junie MCP authorization lacks a valid tool contract")
+        return
+    if authorization is not None and dict(
+        authorization
+    ) != junie_mcp_agent_ops_authorization_payload(enabled_tools):
         errors.append("evidence Junie MCP authorization is not the narrow evaluator policy")
 
 
