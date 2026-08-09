@@ -277,15 +277,17 @@ Evidence: The canonical root execution remains active on branch `codex/publish-a
 
 Correction Execution: Dev Coder task `/root/fixture_candidate` now owns exact six-path claim `publish-and-integrate-terminology-standard-019fe3d6-projection-review-corrections`, incarnation `1cf0b01b-99cd-4cfd-a654-36bd542c6dad`, acquired at clean candidate `c692a0d96b41aa739aa273950ecfc4270e4eebd3` in event `d0487603-b1d5-4321-bc91-5167c16f51d2`. The claim contains only `scripts/agent_skill_evals/staging.py`, `scripts/agent_skill_evals/validation.py`, `scripts/run-agent-skill-evals.py`, `scripts/test_agent_skill_evals.py`, `evals/evidence-schema.yaml`, and `evals/README.md`. The worktree remains clean while the producer maps focused red Tests for cross-phase byte identity and replay, receipt-relative packaging, full entry type, mode, and directory inventory, late-collision exclusivity, semantic-red versus infrastructure outcomes, and an explicit evaluator-owned verifier command. No scope issue is present. Exact root activity=work claim `publish-and-integrate-terminology-standard-019fe3d6-root-work-harness-authorized` remains live and was heartbeated in event `9f44069b-366d-4de3-94cc-5f9766d95f5e`.
 
-Observed At: 2026-08-09T08:36:24Z
+Correction Progress: Five focused staging regressions were red against `c692a0d9` and now pass. They prove prepared full-fixture identity binding, complete entry type, mode, directory, and transient-tree observation, owner-only receipt packaging with relative `file#marker` references, retained projected inputs and synchronized output bytes with post-sync fixture identity, and deterministic exclusive-create rejection of a destination injected in the prior race window. Current uncommitted work is limited to `scripts/agent_skill_evals/staging.py`, `scripts/run-agent-skill-evals.py`, and `scripts/test_agent_skill_evals.py`. The exact evaluator-owned verifier command, semantic-red versus infrastructure outcome classification, cross-phase receipt replay, schema, and guide corrections remain in progress. No scope issue or excluded resource use is present. The root work claim was heartbeated in event `486cf849-512b-4a5e-8922-eb4127dae26b`.
+
+Observed At: 2026-08-09T08:46:28Z
 
 Started At: 2026-08-09T04:27:45Z
 
 Deadline or Expires At: 2026-08-09T10:48:42Z
 
-Next Action: Establish the smallest focused red Test groups for every supported correction, implement only inside the exact six claimed paths, run directly implicated deterministic checks, commit and release a clean corrected candidate, then submit it to fresh acceptance gates before any live-model, installation, or integration resource
+Next Action: Complete and prove the exact evaluator-owned verifier command and semantic-red infrastructure classification, bind packaged artifacts through receipt replay and validation, align the schema and guide, then run the directly implicated deterministic gates, inspect the exact six-path diff, and commit and release a clean corrected candidate for fresh acceptance
 
-Next Reconciliation At: 2026-08-09T08:50:00Z
+Next Reconciliation At: 2026-08-09T09:00:00Z
 
 ## Generated Checklist Scope Disposition
 
