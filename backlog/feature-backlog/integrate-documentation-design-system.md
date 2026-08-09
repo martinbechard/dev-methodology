@@ -229,18 +229,18 @@ Scheduling Evidence: The older `default-unconfigured-projects-to-solo-mode` fini
 
 ## Active Execution Evidence
 
-Condition Type: root-execution
+Condition Type: delegated-work
 
 Owner: Dev Orchestrator task 019fe3cd-577c-76b1-965c-06fb8793ae42
 
-Evidence: canonical root execution is actively performing repository-local prototype analysis and exact-path planning in the branch/worktree above; its exact Work Item ID activity=work claim was acquired at 2026-08-08T23:57:32.602182Z (journal event `70dc4ea6-24f8-4fd4-b81b-1c91894dad66`) and released with disposition handoff at provider-transaction boundary (event `9f4f8956-af67-4c75-851d-296e4a75c14e`), to be reacquired immediately after your transaction.
+Evidence: canonical root execution is active; two bounded read-only analyses map prototype and authoritative repository sources, and eight isolated first-batch work-item-native governed-path prechecks independently evaluate exact approved destinations with criteria and retained receipts. The page-shell receipt already returned ALLOWED_APPROVED_DEFINITION_CHANGE; seven first-batch receipts remain active. No source mutation has begun. The direct overlap boundary with `publish-and-integrate-terminology-standard` is acknowledged; both tasks defer shared overlap events and preserve each other.
 
-Observed At: 2026-08-09T00:00:00Z
+Observed At: 2026-08-09T00:13:24Z
 
 Started At: 2026-08-08T23:57:32Z
 
 Deadline or Expires At: 2026-08-09T01:57:32Z
 
-Next Action: Complete repository-local prototype analysis, exact-path planning, and supported per-path approval checks before any governed definition mutation.
+Next Action: Complete all fifteen exact-path ALLOWED receipts, finish prototype/repository mapping, then dispatch one bounded Dev Coder source lane without widening scope.
 
-Next Reconciliation At: 2026-08-09T00:10:00Z
+Next Reconciliation At: 2026-08-09T00:25:00Z
