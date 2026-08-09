@@ -80,6 +80,14 @@ Definition: An Agent that performs an Evaluation.
 
 Definition: Retained information that supports or contradicts a claim about an Artifact, action, or result.
 
+### Provider
+
+Definition: In software design, an implementation of an interface that supplies a concrete service behind an abstraction, commonly selected or constructed through a Factory.
+
+Use for:
+
+- A concrete implementation selected through an interface or Factory, such as a file-backed implementation of a persistence interface.
+
 ### Requirement
 
 Definition: A documented capability, behavior, quality, or constraint that an Artifact must satisfy.
@@ -147,6 +155,10 @@ Definition: An Evidence-backed check that a claimed result or behavior satisfies
 ### Work item
 
 Definition: A bounded unit of planned work with an objective, ownership, state, and completion conditions.
+
+Avoid:
+
+- Provider: Do not use for a Work item. A Provider implements an interface; a Work item is the unit being planned, tracked, or delivered.
 
 ### Workflow
 

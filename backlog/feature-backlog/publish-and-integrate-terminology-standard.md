@@ -40,6 +40,8 @@ Current canonical Agent definitions already reference the terminology family in 
 
 The user requested this work on 2026-08-08 in task `019fe2b3-4bcd-7f00-88aa-90e281b8f8bf`: “Once we have something that seems plausible, we'll need a work item to update appropriate skills or agent definitions, as well as updating the evals not to inject the skills in AGENTS.md.” The same request authorized a red/green document-writer evaluation, positive-only definitions first, and evidence-based negative rules only when the preferred definitions were insufficient.
 
+On 2026-08-09 in canonical parent task `019fb057-1767-7ef2-b5fa-41f4417b20b3`, the user added a software-design definition for Provider and explicitly prohibited using Provider to refer to Work items. This direct correction authorizes the project terminology entry, the Work item Avoid rule, and the focused terminology fixture updates needed to verify both concepts.
+
 Supporting repository evidence:
 
 - `74e2da0cbd2da8793dc5b069f9d9fc2957c13480` preserves the reviewed standard and scratchpad.
@@ -51,6 +53,8 @@ Supporting repository evidence:
 
 - Publish the accepted candidate as the project-root `terminology.md` through `terminology-standard-update`, including refresh, load, revision, and target-digest verification with the configured reference provider.
 - Keep the standard positive-first. Retain exactly the evidenced `Campaign` rule under `Test suite`; do not add speculative `Receipt`, `Rollout`, or synonym rules.
+- Define Provider as an implementation of an interface that supplies a concrete service behind an abstraction, commonly selected or constructed through a Factory.
+- Under Work item, forbid Provider as a synonym for the unit being planned, tracked, or delivered.
 - Preserve the distinctions among Test suite, Test run, Evaluation portfolio, Evaluation suite, Evaluation, Evaluation case, Evaluation run, Campaign, Evaluation result, and Evaluation decision.
 - Review generated and hand-authored evaluation prose, including the source that owns `design/agent-and-skill-evaluations.html`, and use Test suite, Test run, Test report, Evaluation portfolio, or Campaign according to the defined concept. Preserve exact identifiers, schemas, commands, quotations, and source-native Evidence.
 - Audit the approved canonical Terminology Standard skills and Agent definitions. Update only paths whose current routing or instructions do not implement the accepted application, review, or update boundary.
@@ -64,15 +68,15 @@ Supporting repository evidence:
 
 ## Acceptance Criteria
 
-- A project-root `terminology.md` contains all 35 accepted preferred terms and exactly one `Avoid` entry: the scoped `Campaign` rule under `Test suite`.
+- A project-root `terminology.md` contains all 36 accepted preferred terms and exactly two `Avoid` entries: the scoped `Campaign` rule under `Test suite` and the user-directed `Provider` rule under `Work item`.
 - `reference_refresh` followed by `reference_load` reports the published project standard at the same catalog revision and includes a source digest matching the validated project file.
 - `terminology-standard-review` passes the project standard and the rewritten evaluation document against the provider-returned snapshot.
 - `design/agent-and-skill-evaluations.html` and its owning source use the accepted testing and evaluation terms according to concept, with no blind substring replacements.
 - The approved Agent audit records every applicable writer and reviewer, the terminology skill each consumes, and either the exact canonical change or evidence that the current definition already conforms.
 - Every generated adapter and maintained methodology projection affected by canonical changes is regenerated and passes stale-output checks.
 - No terminology-effect evaluation depends on `evals/projects/terminology-standard-effect/AGENTS.md` to activate `terminology-standard`.
-- The target-omitted control remains red for preferred terminology while preserving all 35 semantic markers and protected literals.
-- The production-routed treatment is green for all 35 preferred terms and has no scratchpad candidate occurrence.
+- The target-omitted control remains red for preferred terminology while preserving all 36 semantic markers and protected literals.
+- The production-routed treatment is green for all 36 preferred terms, uses Provider for the interface implementation, uses Work item for tracked work, and has no scratchpad candidate occurrence.
 - The wrong-skill control receives no terminology credit, and a linked negative-activation case proves the skill does not activate for excluded raw evidence or exact identifiers.
 - No `Receipt` or `Rollout` `Avoid` rule is added unless new retained evidence independently satisfies the promotion threshold.
 - The complete focused and repository-wide verification set passes on the final main commit.
@@ -444,4 +448,16 @@ Next Reconciliation At: 2026-08-09T21:58:30Z
 
 Execution Evidence: The redundant glossary authorization boundary is removed. Integrated implementation commit `e78ac365`, deterministic verification, and the completed target-omitted and wrong-skill controls are preserved. The configured claim registry is empty and claim operations remain disabled for SOLO crisis recovery.
 
-Next Action: Run only the remaining treatment against the already-selected OpenAI `gpt-5.5` profile, retain and validate its semantic result and provider evidence, then finish and archive this work item if all completion gates pass.
+Next Action: Update the standard and focused fixture to the user-directed 36-term contract, rerun deterministic gates, then run the treatment and both controls against the same corrected input before finishing and archiving the work item.
+
+## Provider Terminology Scope Addition
+
+Added At: 2026-08-09
+
+Authority: Direct user instruction in canonical parent task `019fb057-1767-7ef2-b5fa-41f4417b20b3`.
+
+Changed Concept: Provider means the implementation of an interface that supplies a concrete service behind an abstraction, commonly selected or constructed through a Factory.
+
+Required Boundary: Never use Provider to mean a Work item. Use Work item for a unit being planned, tracked, or delivered.
+
+Evaluation Consequence: The prior 35-term live-control evidence predates this material terminology change. Preserve it as history, but rerun treatment, target-omitted, and wrong-skill variants against the same 36-marker input so the paired comparison remains valid.

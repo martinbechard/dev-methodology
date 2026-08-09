@@ -1,6 +1,6 @@
 # Evaluation Program Notes
 
-[TERM-01] The approval condition AC-17 says the rewritten work product must retain all 35 concept statements.
+[TERM-01] The approval condition AC-17 says the rewritten work product must retain all 36 concept statements.
 
 [TERM-02] The automated software participant uses the `dev_documentation_writer` model, instructions, context, and tools within delegated authority.
 
@@ -66,6 +66,8 @@
 
 [TERM-33] The confirmation runs `python3 verify.py` and uses supporting information to check that a claimed outcome satisfies capability statements and approval conditions.
 
-[TERM-34] The ticket is the bounded unit of planned work with an objective, owner, state, and completion conditions.
+[TERM-34] The provider is the bounded unit of planned work with an objective, owner, state, and completion conditions.
 
 [TERM-35] The process is the defined sequence of activities, decisions, and handoffs that produces the intended result.
+
+[TERM-36] The factory selects the concrete service implementation behind the persistence interface.

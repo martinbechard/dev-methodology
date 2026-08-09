@@ -990,13 +990,13 @@ cases:
               "TERM-26": "Test harness", "TERM-27": "Test report", "TERM-28": "Test result",
               "TERM-29": "Test run", "TERM-30": "Test suite", "TERM-31": "Use case",
               "TERM-32": "User story", "TERM-33": "Verification", "TERM-34": "Work item",
-              "TERM-35": "Workflow",
+              "TERM-35": "Workflow", "TERM-36": "Provider",
           }
           protected_literals = (
-              "AC-17", "`dev_documentation_writer`", "35", "build-2026.08.08", "`agent_role`",
+              "AC-17", "`dev_documentation_writer`", "36", "build-2026.08.08", "`agent_role`",
               "PASS", "FAIL", "26", "78", "`python3 verify.py`",
           )
-          scratchpad_candidates = {"TERM-14": "receipt", "TERM-29": "rollout", "TERM-30": "campaign"}
+          scratchpad_candidates = {"TERM-14": "receipt", "TERM-29": "rollout", "TERM-30": "campaign", "TERM-34": "provider"}
           artifact = Path("rewritten-document.md")
           if not artifact.is_file():
               print(json.dumps({"artifact": str(artifact), "passed": False, "error": "artifact missing"}, sort_keys=True))

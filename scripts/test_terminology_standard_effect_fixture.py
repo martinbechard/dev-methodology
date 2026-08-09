@@ -56,7 +56,7 @@ _NEGATIVE_CASE_ID = "terminology-standard-negative-activation"
 _NEGATIVE_SCENARIO_ID = "dev-documentation-writer-terminology-exclusion"
 
 _CONFORMING_SENTENCES = {
-    "TERM-01": "The Acceptance criterion AC-17 requires the Artifact to retain all 35 concept statements.",
+    "TERM-01": "The Acceptance criterion AC-17 requires the Artifact to retain all 36 concept statements.",
     "TERM-02": "The Agent uses the `dev_documentation_writer` model, instructions, context, and tools within delegated authority.",
     "TERM-03": "The Agent harness supplies the runtime, tools, context, and lifecycle controls for the arbitrary writing Workflow.",
     "TERM-04": "The rewritten guide is the durable Artifact created by this work.",
@@ -91,6 +91,7 @@ _CONFORMING_SENTENCES = {
     "TERM-33": "Verification runs `python3 verify.py` and uses Evidence to check that a claimed result satisfies Requirements and Acceptance criteria.",
     "TERM-34": "The Work item is the bounded unit of planned work with an objective, owner, state, and completion conditions.",
     "TERM-35": "The Workflow is the defined sequence of activities, decisions, and handoffs that produces the intended result.",
+    "TERM-36": "The Factory selects the Provider that implements the persistence interface.",
 }
 
 
@@ -322,15 +323,25 @@ class TerminologyEffectVerifierTests(unittest.TestCase):
         self.assertFalse(evidence["exactBytesPreserved"])
         self.assertNotEqual(evidence["sourceSha256"], evidence["artifactSha256"])
 
-    def test_standard_contains_every_preferred_term_and_only_evidenced_avoid_rule(self) -> None:
+    def test_standard_contains_every_preferred_term_and_required_avoid_rules(self) -> None:
         standard = _STANDARD.read_text(encoding="utf-8")
 
-        self.assertEqual(1, standard.count("\nAvoid:"))
+        self.assertEqual(2, standard.count("\nAvoid:"))
         test_suite_entry = standard.split("### Test suite", 1)[1].split(
             "### Use case", 1
         )[0]
         self.assertIn("Campaign:", test_suite_entry)
         self.assertIn("coordinated set of Evaluation runs", test_suite_entry)
+        provider_entry = standard.split("### Provider", 1)[1].split(
+            "### Requirement", 1
+        )[0]
+        self.assertIn("implementation of an interface", provider_entry)
+        self.assertIn("Factory", provider_entry)
+        work_item_entry = standard.split("### Work item", 1)[1].split(
+            "### Workflow", 1
+        )[0]
+        self.assertIn("Provider:", work_item_entry)
+        self.assertIn("Do not use for a Work item", work_item_entry)
         self.assertNotIn("- Receipt:", standard)
         self.assertNotIn("- Rollout:", standard)
         for sentence in _CONFORMING_SENTENCES.values():
@@ -347,7 +358,7 @@ class TerminologyEffectVerifierTests(unittest.TestCase):
                 "Acceptance criterion", "Agent", "Agent harness", "Artifact", "Backlog",
                 "Business scenario", "Campaign", "Contract validation", "Defect", "Evaluation",
                 "Evaluation case", "Evaluation decision", "Evaluation portfolio", "Evaluation result",
-                "Evaluation run", "Evaluation suite", "Evaluator agent", "Evidence", "Requirement",
+                "Evaluation run", "Evaluation suite", "Evaluator agent", "Evidence", "Provider", "Requirement",
                 "Review", "Skill", "Test", "Test case", "Test condition", "Test fixture",
                 "Test harness", "Test report", "Test result", "Test run", "Test suite", "Use case",
                 "User story", "Verification", "Work item", "Workflow",
