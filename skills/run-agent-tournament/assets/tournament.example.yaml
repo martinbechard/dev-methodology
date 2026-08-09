@@ -237,8 +237,8 @@ retry_policy:
     - "transport"
     - "schema"
     - "missing-artifact"
-  maximum_attempts_per_matrix_row: 1
-  maximum_retries_per_matrix_row: 0
+  maximum_attempts_per_candidate_case_repeat: 1
+  maximum_retries_per_candidate_case_repeat: 0
   unchanged_between_attempts:
     - "candidate-configuration-and-digest"
     - "case-input-and-digest"
@@ -250,7 +250,7 @@ retry_policy:
   authorization_reuse: "not-permitted"
   budget_reuse: "not-permitted"
   fresh_authorization_if_policy_changes: true
-  stop_behavior: "stop-row-after-first-invalid-attempt"
+  stop_behavior: "retain-invalid-attempt-and-stop-combination-when-no-authorized-conditional-retry-row-remains"
   contract_version_rule: "any-retry-or-frozen-input-change-requires-new-contract-version"
 
 variance_policy:
@@ -296,7 +296,6 @@ dry_run:
       prior_evidence_state: "none"
       intended_action: "execute"
       expected_live_calls: 1
-      maximum_live_calls: 1
       nondeterminism_control:
         mode: "unsupported"
         value: null
@@ -337,7 +336,6 @@ dry_run:
       prior_evidence_state: "none"
       intended_action: "execute"
       expected_live_calls: 1
-      maximum_live_calls: 1
       nondeterminism_control:
         mode: "unsupported"
         value: null
@@ -378,7 +376,6 @@ dry_run:
       prior_evidence_state: "none"
       intended_action: "execute"
       expected_live_calls: 1
-      maximum_live_calls: 1
       nondeterminism_control:
         mode: "unsupported"
         value: null
@@ -408,6 +405,31 @@ dry_run:
     live_preflight_calls: 0
     maximum_retry_calls: 0
     authorized_maximum_live_calls: 3
+  candidate_case_repeat_combination_limits:
+    - candidate: "candidate-a"
+      case: "case-a"
+      repeat: 1
+      base_attempt_row: "wide-candidate-a-case-a-repeat-1"
+      conditional_retry_rows: []
+      maximum_attempts: 1
+      maximum_retries: 0
+      maximum_live_calls: 1
+    - candidate: "candidate-b"
+      case: "case-a"
+      repeat: 1
+      base_attempt_row: "wide-candidate-b-case-a-repeat-1"
+      conditional_retry_rows: []
+      maximum_attempts: 1
+      maximum_retries: 0
+      maximum_live_calls: 1
+    - candidate: "candidate-c"
+      case: "case-a"
+      repeat: 1
+      base_attempt_row: "wide-candidate-c-case-a-repeat-1"
+      conditional_retry_rows: []
+      maximum_attempts: 1
+      maximum_retries: 0
+      maximum_live_calls: 1
   future_stage_formulas:
     semifinal: "2 advancing candidates * 1 case * 1 repeat = 2 calls"
     final: "2 advancing candidates * 2 cases * 3 repeats = 12 calls"
@@ -426,6 +448,23 @@ execution:
   authorized_maximum_live_calls: 3
   actual_live_calls: 0
   call_limit_enforcement: "stop-before-call-that-would-exceed-authorization-or-budget"
+  attempt_identity_enforcement:
+    duplicate_attempt_identity: "reject"
+    conditional_retry_gate_bypass: "reject"
+    conditional_retry_prior_run_link: "required"
+  cumulative_accounting:
+    scope: "all-attempt-rows-in-execution-order"
+    live_calls: 0
+    usage:
+      total_input: 0
+      cached_input: 0
+      output: 0
+    cost:
+      amount: 0
+      unit: "<currency-or-credit-unit>"
+    budget_debit:
+      amount: 0
+      unit: "<currency-credit-or-call-unit>"
   budget:
     unit: "<currency-credit-or-call-unit>"
     limit: "<maximum>"
@@ -517,6 +556,10 @@ verification:
     - "completed-schema-valid-resume-reuse"
     - "frozen-retry-policy-and-authorized-call-maximum"
     - "attempt-specific-conditional-retry-row-coverage"
+    - "unique-attempt-identity-and-duplicate-rejection"
+    - "conditional-retry-gate-and-prior-run-linkage"
+    - "candidate-case-repeat-and-overall-call-limits"
+    - "cumulative-call-usage-cost-and-budget-accounting"
     - "nondeterminism-control-linked-to-variance-policy"
     - "caller-owned-zero-call-deterministic-rescore-proof"
     - "cached-input-not-double-counted"
@@ -536,6 +579,9 @@ report:
     - "resume-or-rescore-evidence"
     - "preflight-base-retry-actual-and-authorized-call-counts"
     - "attempt-conditions-prior-run-links-and-nondeterminism-controls"
+    - "candidate-case-repeat-combination-limits-and-overall-limit"
+    - "duplicate-attempt-and-retry-gate-bypass-rejections"
+    - "prior-run-links-and-cumulative-call-usage-cost-budget-accounting"
     - "caller-owned-zero-call-preflight-proof-or-live-preflight-evidence"
     - "caller-owned-zero-call-rescore-proof"
     - "frozen-runner-proof"
