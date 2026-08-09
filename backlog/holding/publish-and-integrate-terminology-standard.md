@@ -1,6 +1,6 @@
 # Publish and Integrate the Terminology Standard
 
-Owner: Dev Backlog Coordinator task `019fb057-1767-7ef2-b5fa-41f4417b20b3`
+Owner: Unowned
 
 Canonical Conversation: `019fe3d6-2dd6-7322-a507-e8ca961e27d8`
 
@@ -10,9 +10,9 @@ Branch: `codex/publish-and-integrate-terminology-standard-019fe3d6`
 
 Worktree: `/Users/martinbechard/.codex/worktrees/940b/dev-methodology`
 
-Phase: Running — SOLO Crisis Terminology Treatment
+Phase: Holding — Evaluation Design Reconciliation
 
-Status: Running
+Status: Holding
 
 Type: Feature
 
@@ -461,3 +461,17 @@ Changed Concept: Provider means the implementation of an interface that supplies
 Required Boundary: Never use Provider to mean a Work item. Use Work item for a unit being planned, tracked, or delivered.
 
 Evaluation Consequence: The prior 35-term live-control evidence predates this material terminology change. Preserve it as history, but rerun treatment, target-omitted, and wrong-skill variants against the same 36-marker input so the paired comparison remains valid.
+
+## Holding Evidence
+
+Deferred At: 2026-08-09T22:43:00Z
+
+Deferral Authority: Direct user instruction in canonical parent task `019fb057-1767-7ef2-b5fa-41f4417b20b3`: “Hold off we have problems to solve first.”
+
+Reason: The terminology implementation and 36-term Provider boundary are preserved, but the evaluation workflow requires reconciliation before another live attempt. The shared evaluation runner must use already-installed MCP servers as infrastructure rather than installing or constructing server runtimes, and its temporary-directory, installed-version, and external-model execution boundaries must be explained and accepted before resumption.
+
+Preserved State: Main commit `8f09bcfb6fd0bb1fdaba4b6ecc45ae32a3c40915` contains the 36-term terminology change. Deterministic fixture, catalog, bundle, compilation, and diff checks passed. The official released `mcp-agent-ops` v0.9.0 wheel is now installed as the user-level tool. The attempted live terminal command was rejected before the shell, Python runner, Codex CLI, MCP server, or OpenAI request started; no terminology content was transmitted. The configured claim registry remains empty under the user-directed SOLO crisis procedure.
+
+Resumption Condition: Resume only after the user directs continuation following reconciliation of the evaluation design. Preserve the same Work Item ID and canonical task, move `Holding -> Ready -> Starting`, and require fresh Running evidence before invoking the evaluation harness. Do not infer resumption from the installed MCP version alone.
+
+Unattended Work Boundary: Do not invoke the terminology treatment or controls, launch Codex for this evaluation, install or construct another MCP runtime, mutate shared evaluation machinery, or complete/archive this item while it remains Holding. Read-only analysis and the separately requested Python portability work item may proceed independently.
