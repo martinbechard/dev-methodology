@@ -24,13 +24,13 @@ This page is generated from the live conceptual agent and skill inventories, all
 - [x] 29 agents are scenario-declared and 140 skills are probe-declared.
 - Agents missing scenario declarations: dev-skill-lint-reviewer.
 - Skills missing probe declarations: analyze-document-topics, revise-document-topics.
-- [x] 66 agent scenarios and 5 workflow packs are declared.
+- [x] 68 agent scenarios and 5 workflow packs are declared.
 - 5 workflow packs have associated cases; 5 are partial and 0 have end-to-end fixture coverage.
-- 14 cases are fixture-backed and 14 fixtures are structurally executable before harness readiness is considered.
-- 14 cases can run locally through Codex and 14 can run locally through Junie.
-- 14 cases use the ordinary local tier; 0 explicitly high-risk cases require the externally-contained tier.
+- 16 cases are fixture-backed and 16 fixtures are structurally executable before harness readiness is considered.
+- 16 cases can run locally through Codex and 16 can run locally through Junie.
+- 16 cases use the ordinary local tier; 0 explicitly high-risk cases require the externally-contained tier.
 - 7 agents have at least one case-backed scenario; 5 are partial and 2 have all declared scenarios backed.
-- 31 skills have positive-case support, 0 have negative-activation cases, 0 have executable paired controls, and 0 satisfy the full probe contract.
+- 32 skills have positive-case support, 0 have negative-activation cases, 0 have executable paired controls, and 0 satisfy the full probe contract.
 - 2 agents and 0 skills have executable full fixtures.
 - 0 agents and 0 skills have calibrated Model Judge status.
 - 29 agents and 116 skills have pending Model Judge status.
@@ -65,7 +65,7 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | dev-code-reviewer | advanced | [x] | [x] dev-code-reviewer-boundary, dev-code-reviewer-happy | [x] dev-code-reviewer-happy | [ ] none | [ ] none | pending | none | none | none | none |
 | dev-coder | advanced | [x] | [x] dev-coder-boundary, dev-coder-happy | [x] dev-coder-happy | [ ] none | [ ] none | pending | none | none | none | none |
 | dev-document-topic-editor | documentation | [x] | [x] dev-document-topic-editor-authorized-revision, dev-document-topic-editor-read-only | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
-| dev-documentation-writer | documentation | [x] | [x] dev-documentation-writer-boundary, dev-documentation-writer-happy | [x] dev-documentation-writer-happy | [ ] none | [ ] none | pending | none | none | none | none |
+| dev-documentation-writer | documentation | [x] | [x] dev-documentation-writer-boundary, dev-documentation-writer-happy, dev-documentation-writer-terminology-exclusion, dev-documentation-writer-terminology-rewrite | [x] dev-documentation-writer-happy, dev-documentation-writer-terminology-exclusion, dev-documentation-writer-terminology-rewrite | [ ] none | [ ] none | pending | none | none | none | none |
 | dev-merge-coordinator | advanced | [x] | [x] dev-merge-coordinator-boundary, dev-merge-coordinator-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
 | dev-orchestrator | advanced-long | [x] | [x] dev-orchestrator-boundary, dev-orchestrator-happy | [x] dev-orchestrator-boundary, dev-orchestrator-happy | [x] main-branch-unrelated-dirty-contract | [x] main-branch-unrelated-dirty-contract | pending | none | none | none | none |
 | dev-prompt-reviewer | advanced | [x] | [x] dev-prompt-reviewer-boundary, dev-prompt-reviewer-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
@@ -119,7 +119,7 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | route-documentation-work | [x] | [x] probe-route-documentation-work | [x] documentation-functional-spec, project-configuration-routing | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | skill-authoring | [x] | [x] probe-skill-authoring | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | ste-technical-writing | [x] | [x] probe-ste-technical-writing | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
-| terminology-standard | [x] | [x] probe-terminology-standard | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| terminology-standard | [x] | [x] probe-terminology-standard | [x] terminology-standard-effect | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | terminology-standard-review | [x] | [x] probe-terminology-standard-review | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | terminology-standard-update | [x] | [x] probe-terminology-standard-update | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | verify-documentation-page | [x] | [x] probe-verify-documentation-page | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |

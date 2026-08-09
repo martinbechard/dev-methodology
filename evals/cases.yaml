@@ -1036,7 +1036,7 @@ cases:
           print(json.dumps(evidence, indent=2, sort_keys=True))
           raise SystemExit(0 if evidence["passed"] else 3)
       modelVisible: false
-    harnesses: [codex]
+    harnesses: [codex, junie]
     risk: {level: ordinary, reasons: []}
     executionTier: local
     securityContainmentRequired: false
@@ -1047,7 +1047,7 @@ cases:
     skillProbes: [probe-terminology-standard]
     fixtureBackedProbeClaims: [probe-terminology-standard]
     workflowPack: documentation-methodology
-    sandboxProfiles: {codex: codex-workspace-write}
+    sandboxProfiles: {codex: codex-workspace-write, junie: junie-workspace-write}
     judgePlan:
       deterministicChecks: [model-input-safety, skill-read-trace, harness-agent-identity, semantic-preservation, artifact-structure, required-command-outcome, allowed-paths-only, contradiction-scan, snapshot-reset, local-execution-boundary]
       modelRubric: documentation-quality
@@ -1091,7 +1091,7 @@ cases:
     verify:
       argv: [python3, verify.py, preserved-evidence.md]
       modelVisible: false
-    harnesses: [codex]
+    harnesses: [codex, junie]
     risk: {level: ordinary, reasons: []}
     executionTier: local
     securityContainmentRequired: false
@@ -1103,7 +1103,7 @@ cases:
     skillProbes: [probe-terminology-standard]
     fixtureBackedProbeClaims: []
     workflowPack: documentation-methodology
-    sandboxProfiles: {codex: codex-workspace-write}
+    sandboxProfiles: {codex: codex-workspace-write, junie: junie-workspace-write}
     judgePlan:
       deterministicChecks: [model-input-safety, skill-read-trace, harness-agent-identity, semantic-preservation, required-command-outcome, allowed-paths-only, contradiction-scan, snapshot-reset, local-execution-boundary]
       modelRubric: documentation-quality

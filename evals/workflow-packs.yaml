@@ -234,6 +234,7 @@ packs:
     executableCases:
       - documentation-functional-spec
       - terminology-standard-effect
+      - terminology-standard-negative-activation
     caseCoverageStatus: partial
     coverageStatus: declared
   - id: project-setup
