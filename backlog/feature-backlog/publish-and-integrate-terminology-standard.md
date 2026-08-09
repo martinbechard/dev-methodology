@@ -1,6 +1,6 @@
 # Publish and Integrate the Terminology Standard
 
-Owner: Unowned
+Owner: Dev Backlog Coordinator task `019fb057-1767-7ef2-b5fa-41f4417b20b3`
 
 Canonical Conversation: `019fe3d6-2dd6-7322-a507-e8ca961e27d8`
 
@@ -10,9 +10,9 @@ Branch: `codex/publish-and-integrate-terminology-standard-019fe3d6`
 
 Worktree: `/Users/martinbechard/.codex/worktrees/940b/dev-methodology`
 
-Phase: Starting — Resume Preinstalled-Tool Evaluation
+Phase: Running — Preinstalled-Tool Treatment Evaluation
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -503,3 +503,23 @@ Canonical Execution: `019fe3d6-2dd6-7322-a507-e8ca961e27d8`
 Last Contact At: 2026-08-09T23:07:46Z
 
 Next Reconciliation At: 2026-08-09T23:22:46Z
+
+## SOLO Crisis Running Recovery
+
+Condition Type: root-execution
+
+Owner: Dev Backlog Coordinator task `019fb057-1767-7ef2-b5fa-41f4417b20b3`
+
+Canonical Task Preserved: `019fe3d6-2dd6-7322-a507-e8ca961e27d8`
+
+Evidence: Current main contains the preserved terminology implementation, the 36-term Provider boundary, and the preinstalled-tool evaluation protocol. The obsolete private worktree is absent and preserved correction commit `e6e24ce193730848c07b671a7a89506b25b25c49` is ancestral to main. SOLO crisis recovery performs no claim operations and the known claim registry was empty at the preserved boundary.
+
+Observed At: 2026-08-09T23:08:04Z
+
+Started At: 2026-08-09T23:08:04Z
+
+Deadline or Expires At: 2026-08-10T00:08:04Z
+
+Next Action: Verify the already-installed evaluation tool meets the declared minimum without starting the MCP server, run deterministic treatment preflight, then execute the one authorized treatment and validate its retained evidence.
+
+Next Reconciliation At: 2026-08-09T23:23:04Z
