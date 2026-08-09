@@ -10,9 +10,9 @@ Branch: `codex/publish-and-integrate-terminology-standard-019fe3d6`
 
 Worktree: `/Users/martinbechard/.codex/worktrees/940b/dev-methodology`
 
-Phase: Starting — SOLO Crisis Terminology Treatment
+Phase: Running — SOLO Crisis Terminology Treatment
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -425,3 +425,23 @@ Normalized Objective: Run the already-authorized terminology treatment once agai
 Preservation Boundary: Retain integrated commit `e78ac365`, completed deterministic gates, completed target-omitted and wrong-skill controls, all existing exclusions, and the non-sensitive glossary digest. Do not add another evaluation case, change treatment data, install user-level content, publish remotely, release, or deploy.
 
 Next Action: Record accepted SOLO execution ownership, run the exact treatment once, and reconcile its retained result with the completion contract.
+
+## SOLO Crisis Active Execution Evidence
+
+Condition Type: root-execution
+
+Owner: Dev Backlog Coordinator task `019fb057-1767-7ef2-b5fa-41f4417b20b3`
+
+Canonical Task Preserved: `019fe3d6-2dd6-7322-a507-e8ca961e27d8`
+
+Observed At: 2026-08-09T21:43:30Z
+
+Started At: 2026-08-09T21:43:30Z
+
+Deadline or Expires At: 2026-08-09T22:43:30Z
+
+Next Reconciliation At: 2026-08-09T21:58:30Z
+
+Execution Evidence: The redundant glossary authorization boundary is removed. Integrated implementation commit `e78ac365`, deterministic verification, and the completed target-omitted and wrong-skill controls are preserved. The configured claim registry is empty and claim operations remain disabled for SOLO crisis recovery.
+
+Next Action: Run only the remaining treatment against the already-selected OpenAI `gpt-5.5` profile, retain and validate its semantic result and provider evidence, then finish and archive this work item if all completion gates pass.
