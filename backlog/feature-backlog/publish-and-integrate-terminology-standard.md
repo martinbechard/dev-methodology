@@ -273,14 +273,14 @@ Condition Type: root-execution
 
 Owner: Dev Orchestrator task 019fe3d6-2dd6-7322-a507-e8ca961e27d8
 
-Evidence: The same canonical root execution remains active on the preserved branch and worktree while the original Dev Coder performs one red-green implementation bounded to the seven newly approved treatment-only provider paths. Read-only reconciliation confirmed those seven files were byte-identical between preserved candidate commit 2ee1d3968f710175810131c60d88def629e89d99 and current main before implementation, so no rebase or unrelated absorption was required. The new add-portable-agent-tournament-skill execution is independent and has explicitly deferred its shared documentation, evaluation-catalog, generated-projection, bundle-test, review, installation, and main-integration surfaces until this item sends one direct narrowing or release notice at the first clean committed boundary. No shared-user, unrelated-framework, additional governed-definition, catalog-overlap, shared-installation, live-model, or main-integration mutation has begun.
+Evidence: The same canonical root execution remains active on the preserved branch and worktree while the original Dev Coder completes one red-green implementation bounded to the seven newly approved treatment-only provider paths. The coder retained failing evidence for the four expected gaps, then made five new reference-treatment tests and eight existing MCP regression tests pass; all five changed Python paths compile, the seven-path contract remains viable, and no eighth path is needed. The add-portable-agent-tournament-skill execution remains independent and is waiting for one direct narrowing notice at this candidate's first clean committed boundary. No shared-user, unrelated-framework, additional governed-definition, catalog-overlap, shared-installation, live-model, or main-integration mutation has begun.
 
-Observed At: 2026-08-09T04:40:20Z
+Observed At: 2026-08-09T04:54:00Z
 
 Started At: 2026-08-09T04:27:45Z
 
 Deadline or Expires At: 2026-08-09T06:27:45Z
 
-Next Action: Receive the clean seven-path Dev Coder commit and focused red-green evidence, send the tournament task one direct exact-manifest narrowing notice, then obtain fresh review of the new framework delta without repeating accepted fixture gates
+Next Action: Receive the clean exact seven-path commit after its focused runner module and diff checks, send the tournament task one direct exact-manifest narrowing notice, then obtain fresh review of only the new framework delta without repeating accepted fixture gates
 
-Next Reconciliation At: 2026-08-09T04:55:20Z
+Next Reconciliation At: 2026-08-09T05:09:00Z
