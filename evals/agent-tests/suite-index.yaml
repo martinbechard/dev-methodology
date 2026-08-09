@@ -132,3 +132,11 @@ suites:
     priority: 30
     path: dev-skill-lint-reviewer
     rationale: Finds critical skill-definition defects without turning minor style preferences into blockers.
+  - id: methodology-design-system-checklist-runner
+    priority: 31
+    path: methodology-design-system-checklist-runner
+    rationale: Applies one bounded documentation design-system checklist with complete item-level evidence.
+  - id: methodology-design-system-review-coordinator
+    priority: 32
+    path: methodology-design-system-review-coordinator
+    rationale: Reconciles complete runner evidence and owns the integrated design-system verdict and ranking.

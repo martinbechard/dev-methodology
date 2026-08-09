@@ -1,0 +1,31 @@
+schema: dev-methodology-agent-suite
+version: 1
+id: methodology-design-system-review-coordinator
+priority: 32
+target:
+  conceptualRole: agents/roles/methodology-maintenance/methodology-design-system-review-coordinator.role.yaml
+  nativeAgent: generated/adapters/codex/agents/methodology-design-system-review-coordinator.toml
+  repositoryMutation: never
+  requiredSkills: []
+  conditionalSkills: {}
+  allowedAgentDependencies: [methodology-design-system-checklist-runner]
+  requiredOutputs: [status, coverage, reconciledFindings, evidenceConflicts, acceptanceRationale, modelEvalRanking, runnerReports]
+projectAgents:
+  supervisor: agents/supervisor.toml
+  judge: agents/judge.toml
+projectSkills:
+  shared: [../skills/agent-suite-supervision/SKILL.md, ../skills/agent-scenario-design/SKILL.md, ../skills/agent-evidence-judging/SKILL.md]
+  suite: [skills/methodology-design-system-review-coordinator-suite-contract/SKILL.md]
+execution:
+  maximumActiveChildren: 1
+  nestedAgentLimit: 1
+  scenarioCatalog: scenarios.yaml
+  supervisorInvocation: methodology_design_system_review_coordinator_suite_supervisor
+  targetInvocation: methodology_design_system_review_coordinator
+  judgeInvocation: methodology_design_system_review_coordinator_suite_judge
+  requireCodexIdentityEvidence: true
+acceptance:
+  deterministicFirst: true
+  criticalFailureSkipsJudge: true
+  semanticRubric: workflow-quality
+  terminalStatuses: [PASS, FAIL, BLOCKED, STALE]

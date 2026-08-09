@@ -39,6 +39,7 @@ fixtureProfiles:
     purpose: Source set, template-owned or custom artifact, seeded omissions, links, and review checklist expectations.
     executableCases:
       - documentation-functional-spec
+      - documentation-design-system-review
     coverageStatus: fixture-backed
   - id: methodology-catalog-change
     purpose: Skill or conceptual agent definition source change with generated adapters, design surfaces, and regression expectations.
@@ -2061,3 +2062,139 @@ agents:
           modelRubric: source-faithfulness
         executableCases: []
         coverageStatus: declared
+  - id: methodology-design-system-checklist-runner
+    source: agents/roles/methodology-maintenance/methodology-design-system-checklist-runner.role.yaml
+    scenarioFamily: documentation-methodology
+    repositoryMutation: never
+    harnesses:
+      - codex
+      - junie
+    outputContractFields:
+      - status
+      - page
+      - checklist
+      - checks
+      - findings
+      - limits
+    judgePlan:
+      deterministicChecks:
+        - harness-agent-identity
+        - artifact-review-checklist
+        - no-forbidden-mutation
+        - output-contract-presence
+      modelRubric: review-quality
+    workflowAssociations:
+      - documentation-methodology
+    scenarios:
+      - id: methodology-design-system-checklist-runner-happy
+        kind: happy-path
+        fixtureProfile: structured-document
+        promptIntent: Apply the supplied Shared Page checklist to one synthetic HTML page and record every item exactly once.
+        expectedOutcome: One strict PASS, FAIL, or NOT TESTED report with complete item-level evidence and no integrated design-system verdict.
+        requiredBehaviors:
+          - Review exactly one supplied page against exactly one supplied checklist.
+          - Record every assigned checklist identifier exactly once with page-specific evidence.
+          - Derive NOT TESTED before FAIL and PASS from the complete item results.
+        forbiddenBehaviors:
+          - Delegate or invoke another agent.
+          - Edit the page or checklist.
+          - Claim integrated design-system acceptance.
+        judgePlan:
+          deterministicChecks:
+            - artifact-review-checklist
+            - no-forbidden-mutation
+            - output-contract-presence
+          modelRubric: review-quality
+        executableCases:
+          - documentation-design-system-review
+        coverageStatus: fixture-backed
+      - id: methodology-design-system-checklist-runner-boundary
+        kind: boundary-failure
+        fixtureProfile: structured-document
+        promptIntent: Review one exact page, checklist, and expected-ID inventory when required rendered evidence is unavailable.
+        expectedOutcome: NOT TESTED evidence for the exact assignment without expansion, delegation, or inferred checklist results.
+        requiredBehaviors:
+          - Preserve the one-page and one-checklist boundary.
+          - Name the unavailable review evidence as a limit only after the exact page, checklist, and expected-ID inventory exists.
+        forbiddenBehaviors:
+          - Treat malformed assignment identity as a runner result instead of a caller pre-dispatch boundary.
+          - Invent item evidence.
+        judgePlan:
+          deterministicChecks:
+            - no-forbidden-mutation
+            - readiness-consistency
+            - output-contract-presence
+          modelRubric: review-quality
+        executableCases: []
+        coverageStatus: declared
+    coverageStatus: fixture-backed
+  - id: methodology-design-system-review-coordinator
+    source: agents/roles/methodology-maintenance/methodology-design-system-review-coordinator.role.yaml
+    scenarioFamily: documentation-methodology
+    repositoryMutation: never
+    harnesses:
+      - codex
+      - junie
+    outputContractFields:
+      - status
+      - coverage
+      - reconciledFindings
+      - evidenceConflicts
+      - acceptanceRationale
+      - modelEvalRanking
+      - runnerReports
+    judgePlan:
+      deterministicChecks:
+        - harness-agent-identity
+        - agent-dependency-routing
+        - artifact-review-checklist
+        - readiness-consistency
+        - output-contract-presence
+      modelRubric: workflow-quality
+    workflowAssociations:
+      - documentation-methodology
+    scenarios:
+      - id: methodology-design-system-review-coordinator-happy
+        kind: happy-path
+        fixtureProfile: structured-document
+        promptIntent: Dispatch unique page-checklist assignments, reconcile complete runner evidence, decide integrated acceptance, and rank supplied candidates.
+        expectedOutcome: Complete assignment coverage, de-duplicated findings, preserved evidence, one integrated verdict, and deterministic accuracy-cost-speed ranking.
+        requiredBehaviors:
+          - Invoke one checklist runner for each unique page-checklist assignment.
+          - Retry an initially malformed report at most once with the same assignment.
+          - Rank exact accuracy before the inclusive 15-percent priced-cost band and wall time.
+          - Preserve null pricing and mark an unpriced winner provisional.
+        forbiddenBehaviors:
+          - Review missing assignments locally.
+          - Drop contradictory evidence or invent a price.
+          - Treat one runner status as the integrated verdict.
+        judgePlan:
+          deterministicChecks:
+            - agent-dependency-routing
+            - artifact-review-checklist
+            - readiness-consistency
+            - output-contract-presence
+          modelRubric: workflow-quality
+        executableCases: []
+        coverageStatus: declared
+      - id: methodology-design-system-review-coordinator-boundary
+        kind: boundary-failure
+        fixtureProfile: structured-document
+        promptIntent: Reconcile a twice-malformed report, one unavailable runner, and contradictory item evidence.
+        expectedOutcome: BLOCKED with exact missing assignments and conflicts while preserving completed reports and performing no local substitution.
+        requiredBehaviors:
+          - Treat malformed assignment identity before dispatch as BLOCKED without invoking a runner.
+          - Stop retrying after one corrected malformed-report attempt.
+          - Preserve completed reports, uncovered assignments, and both conflicting claims.
+        forbiddenBehaviors:
+          - Infer PASS from omitted evidence.
+          - Invoke a different dependency or self-review the uncovered page.
+        judgePlan:
+          deterministicChecks:
+            - agent-dependency-routing
+            - readiness-consistency
+            - output-contract-presence
+          modelRubric: workflow-quality
+        executableCases: []
+        coverageStatus: declared
+    coverageStatus: declared

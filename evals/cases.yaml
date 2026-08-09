@@ -1127,3 +1127,51 @@ cases:
       ste-technical-writing: [SKILL.md]
       route-documentation-work: [SKILL.md]
     requiredEvidence: [EXACT-BYTES-PRESERVED]
+  - id: documentation-design-system-review
+    coverageStatus: fixture-backed
+    executionStatus: runnable
+    project: evals/projects/documentation-design-system-review
+    task: TASK.md
+    readOnly: true
+    resultDestination: external-evidence
+    allowedWritePaths: []
+    ephemeralWritePaths: []
+    install: null
+    verify: python3 verify.py
+    harnesses: [codex, junie]
+    risk: {level: ordinary, reasons: []}
+    executionTier: local
+    securityContainmentRequired: false
+    harnessExecutionStatus: {codex: runnable, junie: runnable}
+    requiredAgents: [methodology-design-system-checklist-runner]
+    agentScenarios: [methodology-design-system-checklist-runner-happy]
+    requiredSkills: [review-documentation-design-system]
+    skillProbes: [probe-review-documentation-design-system]
+    fixtureBackedProbeClaims: [probe-review-documentation-design-system]
+    workflowPack: documentation-methodology
+    sandboxProfiles: {codex: codex-read-only, junie: junie-read-only}
+    judgePlan:
+      deterministicChecks: [model-input-safety, skill-read-trace, harness-agent-identity, artifact-review-checklist, required-command-outcome, no-forbidden-mutation, readiness-consistency, snapshot-reset, local-execution-boundary]
+      modelRubric: review-quality
+    contextPack:
+      fixtureRoot: evals/projects/documentation-design-system-review
+      include: [TASK.md, interaction-evidence.md, sample-page.html, suite-inputs.yaml, verify.py]
+      stagedSkillPackages: [review-documentation-design-system]
+      wholeRepositoryAllowed: false
+      approvedSensitiveData: false
+    modelVisiblePaths: [TASK.md, interaction-evidence.md, sample-page.html]
+    skillResourceAllowlist:
+      review-documentation-design-system:
+        - SKILL.md
+        - references/review-checklist-documentation-design-system-accessibility.md
+        - references/review-checklist-documentation-design-system-content.md
+        - references/review-checklist-documentation-design-system-data-display.md
+        - references/review-checklist-documentation-design-system-diagrams.md
+        - references/review-checklist-documentation-design-system-forms-and-actions.md
+        - references/review-checklist-documentation-design-system-foundations.md
+        - references/review-checklist-documentation-design-system-index.md
+        - references/review-checklist-documentation-design-system-page-shell.md
+        - references/review-checklist-documentation-design-system-shared.md
+        - references/review-checklist-documentation-design-system-source-inventory.md
+        - references/review-checklist-documentation-design-system-variations.md
+    requiredEvidence: [DDS-COM-002, COMPLETE-CHECKLIST, STATUS-DERIVATION]

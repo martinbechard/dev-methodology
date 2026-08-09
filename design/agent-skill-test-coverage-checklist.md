@@ -20,20 +20,20 @@ This page is generated from the live conceptual agent and skill inventories, all
 
 ## Summary
 
-- [x] 30 conceptual agents and 143 bundled skills have structural coverage.
-- [x] 29 agents are scenario-declared and 141 skills are probe-declared.
+- [x] 32 conceptual agents and 144 bundled skills have structural coverage.
+- [x] 31 agents are scenario-declared and 142 skills are probe-declared.
 - Agents missing scenario declarations: dev-skill-lint-reviewer.
 - Skills missing probe declarations: analyze-document-topics, revise-document-topics.
-- [x] 68 agent scenarios and 5 workflow packs are declared.
+- [x] 72 agent scenarios and 5 workflow packs are declared.
 - 5 workflow packs have associated cases; 5 are partial and 0 have end-to-end fixture coverage.
-- 16 cases are fixture-backed and 16 fixtures are structurally executable before harness readiness is considered.
-- 16 cases can run locally through Codex and 16 can run locally through Junie.
-- 16 cases use the ordinary local tier; 0 explicitly high-risk cases require the externally-contained tier.
-- 7 agents have at least one case-backed scenario; 5 are partial and 2 have all declared scenarios backed.
-- 32 skills have positive-case support, 0 have negative-activation cases, 0 have executable paired controls, and 0 satisfy the full probe contract.
+- 17 cases are fixture-backed and 17 fixtures are structurally executable before harness readiness is considered.
+- 17 cases can run locally through Codex and 17 can run locally through Junie.
+- 17 cases use the ordinary local tier; 0 explicitly high-risk cases require the externally-contained tier.
+- 8 agents have at least one case-backed scenario; 6 are partial and 2 have all declared scenarios backed.
+- 33 skills have positive-case support, 0 have negative-activation cases, 0 have executable paired controls, and 0 satisfy the full probe contract.
 - 2 agents and 0 skills have executable full fixtures.
 - 0 agents and 0 skills have calibrated Model Judge status.
-- 29 agents and 117 skills have pending Model Judge status.
+- 31 agents and 118 skills have pending Model Judge status.
 - 0 agents and 24 skills use Deterministic Judges only and do not require Model Judge calibration.
 - 0 agents and 0 skills have classified executions.
 - 0 agents and 0 skills have Judge-passed evidence.
@@ -75,6 +75,8 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | dev-ux-specialist | default | [x] | [x] dev-ux-specialist-boundary, dev-ux-specialist-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
 | dev-verifier | advanced | [x] | [x] dev-verifier-boundary, dev-verifier-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
 | methodology-artifact-reviewer | advanced | [x] | [x] methodology-artifact-reviewer-boundary, methodology-artifact-reviewer-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
+| methodology-design-system-checklist-runner | simple | [x] | [x] methodology-design-system-checklist-runner-boundary, methodology-design-system-checklist-runner-happy | [x] methodology-design-system-checklist-runner-happy | [ ] none | [ ] none | pending | none | none | none | none |
+| methodology-design-system-review-coordinator | coordination | [x] | [x] methodology-design-system-review-coordinator-boundary, methodology-design-system-review-coordinator-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
 | methodology-maintainer | advanced | [x] | [x] methodology-maintainer-boundary, methodology-maintainer-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
 | project-bootstrapper | advanced-long | [x] | [x] project-bootstrapper-boundary, project-bootstrapper-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
 | project-configurator | default | [x] | [x] project-configurator-advanced-setup, project-configurator-basic-setup, project-configurator-boundary, project-configurator-conceptual-role-technology-exclusion, project-configurator-dev-coder-provider-dependency-exclusion, project-configurator-documentation-roots, project-configurator-happy, project-configurator-persisted-technology-confirmation | [x] project-configurator-happy | [ ] none | [ ] none | pending | none | none | none | none |
@@ -115,6 +117,7 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | maintain-methodology-documentation | [x] | [x] probe-maintain-methodology-documentation | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | name-methodology-artifacts | [x] | [x] probe-name-methodology-artifacts | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | reverse-engineer-project-documentation | [x] | [x] probe-reverse-engineer-project-documentation | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| review-documentation-design-system | [x] | [x] probe-review-documentation-design-system | [x] documentation-design-system-review | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | revise-document-topics | [x] | [ ] none | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | missing | none | none | none | none |
 | route-documentation-work | [x] | [x] probe-route-documentation-work | [x] documentation-functional-spec, project-configuration-routing | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | skill-authoring | [x] | [x] probe-skill-authoring | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |

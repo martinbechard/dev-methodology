@@ -7865,7 +7865,7 @@ Visible after.
 
         self.assertTrue(ROLE_SCHEMA_PATH.is_file())
         role_schema = load_yaml_object(ROLE_SCHEMA_PATH)
-        self.assertEqual(7, role_schema["version"])
+        self.assertEqual(8, role_schema["version"])
         self.assertEqual(
             "instruction-content",
             role_schema["properties"]["instructions"],
@@ -7996,7 +7996,8 @@ Visible after.
                 ))
                 self.assertTrue(
                     all(
-                        set(next(iter(entry.values()))) == {"purpose"}
+                        set(next(iter(entry.values())))
+                        in ({"purpose"}, {"purpose", "schema"})
                         for entry in role_source["outputContract"]
                     )
                 )
@@ -8025,6 +8026,10 @@ Visible after.
                 self.assertEqual(
                     set(role.output_contract),
                     set(role_payload["roles"][role.name]["outputPurposes"]),
+                )
+                self.assertEqual(
+                    role.output_schema,
+                    role_payload["roles"][role.name]["outputSchema"],
                 )
                 for example in role_payload["roles"][role.name]["examples"]:
                     self.assertEqual(
@@ -8823,7 +8828,13 @@ Visible after.
         }
 
         self.assertEqual(
-            {"dev-backlog-watchdog", "wiki-query-responder", "wiki-topic-verifier"},
+            {
+                "dev-backlog-watchdog",
+                "methodology-design-system-checklist-runner",
+                "methodology-design-system-review-coordinator",
+                "wiki-query-responder",
+                "wiki-topic-verifier",
+            },
             read_only_roles,
         )
         for role in roles:
@@ -8970,6 +8981,9 @@ Visible after.
                 "methodology-artifact-reviewer",
                 "dev-verifier",
             ),
+            "methodology-design-system-review-coordinator": (
+                "methodology-design-system-checklist-runner",
+            ),
             "project-bootstrapper": (
                 "project-configurator",
                 "dev-documentation-writer",
@@ -8995,6 +9009,22 @@ Visible after.
         for role_name, dependencies in expected_dependencies.items():
             role = roles_by_name[role_name]
             with self.subTest(role=role_name):
+                if role_name == "methodology-design-system-review-coordinator":
+                    self.assertEqual("never", role.repository_mutation)
+                    self.assertEqual("read-only", role.optional_fields["isolation"])
+                    self.assertIn(
+                        "Invoke methodology-design-system-checklist-runner once for each required assignment",
+                        role.instructions,
+                    )
+                    self.assertIn(
+                        "Retry one malformed report once",
+                        role.instructions,
+                    )
+                    self.assertIn(
+                        "After one malformed-report retry, return BLOCKED",
+                        role.instructions,
+                    )
+                    continue
                 self.assertTrue(
                     {"delegation", "review", "failureHandling", "completion"}
                     .issubset(role.instruction_sections)
@@ -11296,7 +11326,7 @@ Visible after.
     def test_model_profiles_are_semantic_and_adapter_complete(self) -> None:
         source_profiles = load_yaml_object(MODEL_PROFILES_PATH)["profiles"]
         self.assertEqual(
-            {"simple", "default", "documentation", "advanced", "advanced-long", "intermediate"},
+            {"simple", "coordination", "default", "documentation", "advanced", "advanced-long", "intermediate"},
             set(source_profiles),
         )
 
@@ -11314,6 +11344,7 @@ Visible after.
         self.assertEqual(
             {
                 "simple": "gpt-5.6-luna",
+                "coordination": "gpt-5.6-terra",
                 "default": "gpt-5.6-terra",
                 "documentation": "gpt-5.5",
                 "advanced": "gpt-5.6-sol",
@@ -11334,6 +11365,200 @@ Visible after.
                 self.assertNotIn("effort", role)
                 for profile in role.get("modelStages", {}).values():
                     self.assertIn(profile, source_profiles)
+
+    def test_documentation_design_system_roles_and_checklists_are_complete(self) -> None:
+        """The bounded runner and coordinator must retain their distinct skill and evidence contracts."""
+        build_skill_docs = load_build_skill_docs_module()
+        skill_names = set(build_skill_docs.build_payload()["skills"])
+        loaded_roles = {
+            role.name: role
+            for role in build_skill_docs.load_role_definitions(skill_names)
+        }
+        runner_source = load_yaml_object(
+            ROLES_ROOT
+            / "methodology-maintenance"
+            / "methodology-design-system-checklist-runner.role.yaml"
+        )
+        coordinator_source = load_yaml_object(
+            ROLES_ROOT
+            / "methodology-maintenance"
+            / "methodology-design-system-review-coordinator.role.yaml"
+        )
+
+        self.assertEqual(
+            ["review-documentation-design-system"],
+            [next(iter(entry)) for entry in runner_source["skills"]],
+        )
+        self.assertEqual([], coordinator_source["skills"])
+        self.assertEqual(
+            ["methodology-design-system-checklist-runner"],
+            coordinator_source["agentDependencies"],
+        )
+        self.assertEqual("simple", loaded_roles[runner_source["name"]].model_profile)
+        self.assertEqual(
+            "coordination",
+            loaded_roles[coordinator_source["name"]].model_profile,
+        )
+
+        for source, role_name in (
+            (runner_source, runner_source["name"]),
+            (coordinator_source, coordinator_source["name"]),
+        ):
+            with self.subTest(schema_role=role_name):
+                metadata = [next(iter(entry.values())) for entry in source["outputContract"]]
+                self.assertTrue(all(set(item) == {"purpose", "schema"} for item in metadata))
+                output_schema = loaded_roles[role_name].output_schema
+                self.assertEqual("object", output_schema["type"])
+                self.assertFalse(output_schema["additionalProperties"])
+                self.assertEqual(
+                    [next(iter(entry)) for entry in source["outputContract"]],
+                    output_schema["required"],
+                )
+                for adapter, suffix in (
+                    ("codex", ".toml"),
+                    ("claude", ".md"),
+                    ("gemini", ".md"),
+                    ("junie", ".md"),
+                ):
+                    adapter_text = (
+                        GENERATED_ADAPTERS_ROOT
+                        / adapter
+                        / "agents"
+                        / f"{role_name}{suffix}"
+                    ).read_text(encoding="utf-8")
+                    schema_text = (
+                        tomllib.loads(adapter_text)["developer_instructions"]
+                        if adapter == "codex"
+                        else adapter_text
+                    )
+                    self.assertIn("Strict output JSON Schema:", schema_text)
+                    self.assertIn('"additionalProperties": false', schema_text)
+
+        for role_name in (runner_source["name"], coordinator_source["name"]):
+            codex_payload = tomllib.loads(
+                (
+                    GENERATED_ADAPTERS_ROOT
+                    / "codex"
+                    / "agents"
+                    / f"{role_name}.toml"
+                ).read_text(encoding="utf-8")
+            )
+            self.assertEqual("read-only", codex_payload["sandbox_mode"])
+            claude_text = (
+                GENERATED_ADAPTERS_ROOT / "claude" / "agents" / f"{role_name}.md"
+            ).read_text(encoding="utf-8")
+            claude_frontmatter = yaml.safe_load(claude_text.split("---", 2)[1])
+            self.assertEqual(["Read", "Grep", "Glob"], claude_frontmatter["tools"])
+            for adapter in ("gemini", "junie"):
+                text = (
+                    GENERATED_ADAPTERS_ROOT / adapter / "agents" / f"{role_name}.md"
+                ).read_text(encoding="utf-8")
+                self.assertIn(
+                    "does not prevent repository mutation for this role",
+                    text,
+                )
+
+        references = sorted(
+            (SKILLS_ROOT / "review-documentation-design-system" / "references").glob(
+                "review-checklist-documentation-design-system-*.md"
+            )
+        )
+        checklist_ids = [
+            check_id
+            for path in references
+            for check_id in re.findall(r"\bDDS-[A-Z]{3}-\d{3}\b", path.read_text(encoding="utf-8"))
+        ]
+        self.assertEqual(11, len(references))
+        self.assertEqual(91, len(checklist_ids))
+        self.assertEqual(91, len(set(checklist_ids)))
+
+    def test_role_output_json_schema_subset_fails_closed(self) -> None:
+        """Reject incompatible, type-mismatched, or silently discarded schema content."""
+
+        build_skill_docs = load_build_skill_docs_module()
+        source_path = (
+            ROLES_ROOT
+            / "methodology-maintenance"
+            / "methodology-design-system-review-coordinator.role.yaml"
+        )
+        valid = {
+            "type": ["string", "null"],
+            "enum": ["PASS", None],
+            "minLength": 1,
+            "default": None,
+            "examples": ["PASS", None],
+        }
+        self.assertEqual(
+            valid,
+            build_skill_docs.validate_json_schema(valid, "output", source_path),
+        )
+        nested_valid = {
+            "type": "object",
+            "additionalProperties": False,
+            "required": ["groups"],
+            "properties": {
+                "groups": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": False,
+                        "required": ["label", "rank"],
+                        "properties": {
+                            "label": {"type": "string", "minLength": 1},
+                            "rank": {"type": "integer", "minimum": 1},
+                        },
+                    },
+                }
+            },
+            "default": {"groups": [{"label": "primary", "rank": 1}]},
+            "examples": [{"groups": [{"label": "secondary", "rank": 2}]}],
+        }
+        self.assertEqual(
+            nested_valid,
+            build_skill_docs.validate_json_schema(nested_valid, "output", source_path),
+        )
+
+        invalid_schemas = (
+            {
+                "type": "string",
+                "properties": {"value": {"type": "string"}},
+                "required": ["value"],
+                "additionalProperties": False,
+            },
+            {"type": "array", "items": {"type": "string"}, "minLength": 1},
+            {"type": "object", "items": {"type": "string"}},
+            {"type": "string", "enum": [1]},
+            {"type": "number", "default": "1"},
+            {"type": "integer", "examples": [True]},
+            {
+                "type": "object",
+                "properties": {"value": []},
+                "required": ["value"],
+                "additionalProperties": False,
+            },
+            {"type": "array", "items": []},
+        )
+        for schema in invalid_schemas:
+            with self.subTest(schema=schema), self.assertRaises(ValueError):
+                build_skill_docs.validate_json_schema(schema, "output", source_path)
+
+        invalid_nested_annotations = (
+            {**nested_valid, "default": {"groups": [{"label": "primary", "rank": "1"}]}},
+            {**nested_valid, "default": {"groups": []}},
+            {**nested_valid, "default": {"groups": [{"label": "", "rank": 1}]}},
+            {**nested_valid, "default": {"groups": [{"label": "primary"}]}},
+            {
+                **nested_valid,
+                "default": {
+                    "groups": [{"label": "primary", "rank": 1, "unexpected": True}]
+                },
+            },
+            {**nested_valid, "examples": [{"groups": [None]}]},
+        )
+        for schema in invalid_nested_annotations:
+            with self.subTest(schema=schema), self.assertRaises(ValueError):
+                build_skill_docs.validate_json_schema(schema, "output", source_path)
 
     def test_context_budget_percent_defaults_overrides_and_validation(self) -> None:
         build_skill_docs = load_build_skill_docs_module()
@@ -11512,6 +11737,7 @@ Visible after.
             },
             "junie": {
                 "simple": 786_432,
+                "coordination": 750_000,
                 "default": 750_000,
                 "documentation": 787_500,
                 "advanced": 750_000,
@@ -11724,6 +11950,7 @@ Visible after.
         expected_profiles = {
             "codex": {
                 "simple": ("gpt-5.6-luna", "medium"),
+                "coordination": ("gpt-5.6-terra", "low"),
                 "default": ("gpt-5.6-terra", "medium"),
                 "documentation": ("gpt-5.5", "high"),
                 "advanced": ("gpt-5.6-sol", "high"),
@@ -11732,6 +11959,7 @@ Visible after.
             },
             "claude": {
                 "simple": ("fable-5", None),
+                "coordination": ("sonnet-5", None),
                 "default": ("sonnet-5", None),
                 "documentation": ("fable-5", None),
                 "advanced": ("opus-4.8", None),
@@ -11740,6 +11968,7 @@ Visible after.
             },
             "gemini": {
                 "simple": ("flash", None),
+                "coordination": ("auto", None),
                 "default": ("auto", None),
                 "documentation": ("auto", None),
                 "advanced": ("pro", None),
@@ -11748,6 +11977,7 @@ Visible after.
             },
             "junie": {
                 "simple": ("gemini-flash", "low"),
+                "coordination": ("sonnet", "medium"),
                 "default": ("sonnet", "medium"),
                 "documentation": ("gpt-5.6-sol", "high"),
                 "advanced": ("opus", "high"),
@@ -11908,10 +12138,12 @@ Visible after.
             "dev-backlog-watchdog",
             "dev-document-topic-editor",
             "dev-skill-lint-reviewer",
+            "methodology-design-system-checklist-runner",
+            "methodology-design-system-review-coordinator",
         ]
         suite_entries = index["suites"]
         self.assertEqual(expected_suites, [entry["id"] for entry in suite_entries])
-        self.assertEqual(list(range(1, 31)), [entry["priority"] for entry in suite_entries])
+        self.assertEqual(list(range(1, 33)), [entry["priority"] for entry in suite_entries])
         suite_directories = {
             path.name
             for path in AGENT_TEST_SUITES_ROOT.iterdir()

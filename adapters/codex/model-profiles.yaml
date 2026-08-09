@@ -10,6 +10,14 @@ profiles:
     contextCapacityEvidence:
     - https://developers.openai.com/api/docs/models
     contextBudgetMechanismEvidence: https://developers.openai.com/codex/subagents
+  coordination:
+    model: gpt-5.6-terra
+    effort: low
+    contextCapacityTokens: 1050000
+    contextBudgetMechanism: instruction
+    contextCapacityEvidence:
+    - https://developers.openai.com/api/docs/models
+    contextBudgetMechanismEvidence: https://developers.openai.com/codex/subagents
   default:
     model: gpt-5.6-terra
     effort: medium

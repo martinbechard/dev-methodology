@@ -1,0 +1,12 @@
+schema: dev-methodology-documentation-design-system-suite-inputs
+version: 1
+runnerCases:
+  complete:
+    page: sample-page.html
+    checklist: Shared Page
+    checklistIds: [DDS-COM-001, DDS-COM-002, DDS-COM-003, DDS-COM-004, DDS-COM-005, DDS-COM-006, DDS-COM-007, DDS-COM-008, DDS-COM-009, DDS-COM-010]
+  incompleteEvidence:
+    unavailableEvidence: [keyboard trace, narrow-width layout]
+  ambiguousAssignment:
+    pages: [sample-page.html, second-page.html]
+    checklist: null

@@ -1,0 +1,61 @@
+<!doctype html>
+<!--
+Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+Artifact-ID: f8b14c53-96d1-40fa-8fde-145a418bc5f6
+Created-UTC: 2026-08-09T00:26:37Z
+Creating-Agent: Dev Coder
+Runtime: Codex
+Dispatched-Model: gpt-5.6-sol
+Reasoning-Effort: high
+Task-ID: 019fe3cd-577c-76b1-965c-06fb8793ae42
+Artifact-ID-Evidence: runtime-supplied
+Created-UTC-Evidence: runtime-supplied
+Creating-Agent-Evidence: runtime-supplied
+Runtime-Evidence: runtime-supplied
+Dispatched-Model-Evidence: runtime-supplied
+Reasoning-Effort-Evidence: runtime-supplied
+Task-ID-Evidence: runtime-supplied
+-->
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="design-system-version" content="0.1.0"><title>Content · Documentation Design System</title><link rel="stylesheet" href="assets/design-system.css"></head>
+<body id="top">
+  <a class="skip-link" href="#main-content">Skip to main content</a><header class="ds-header"><a class="site-brand" href="index.html"><img class="site-logo" src="assets/dev-methodology-logo.png" alt="DevConsult Canada logo"><span>Documentation Design System</span></a></header>
+  <nav class="suite-nav" aria-label="Design system pages"><a href="index.html">Index</a><a href="foundations.html">Foundations</a><a href="page-shell.html">Page shell</a><a href="content.html" aria-current="page">Content</a><a href="data-display.html">Data display</a><a href="forms-and-actions.html">Forms</a><a href="diagrams.html">Diagrams</a><a href="accessibility.html">Accessibility</a><a href="variations.html">Variations</a><a href="source-inventory.html">Inventory</a></nav>
+  <main id="main-content"><nav class="document-nav" aria-label="Documentation navigation"><div class="document-sequence"><a href="page-shell.html" rel="prev">← Previous: Page Shell</a><a href="data-display.html" rel="next">Next: Data Display →</a></div></nav>
+    <section class="hero" aria-labelledby="page-title"><span class="eyebrow">Concern 03</span><h1 id="page-title">Content</h1><p class="lede">Content components organize explanation from page-level concepts down to exact identifiers. The source suite combines semantic HTML with reusable card, callout, note, panel, and code treatments.</p></section>
+    <nav class="page-nav" aria-label="Page sections"><a href="#top">Top</a><a href="#type">Text</a><a href="#lists">Lists</a><a href="#code">Code</a><a href="#cards">Cards</a><a href="#callouts">Callouts</a><a href="#disclosure">Disclosure</a></nav>
+
+    <section class="section" id="type" aria-labelledby="type-title"><div class="section-heading"><h2 id="type-title">Text Hierarchy</h2><p>Headings identify page, section, subsection, and boundary levels. A lede carries the opening definition, and body paragraphs carry one related idea at a time.</p></div>
+      <article class="example-frame"><span class="eyebrow">Context label</span><h2>Section heading</h2><h3>Subsection heading</h3><h4>Boundary heading</h4><p class="lede">A lede gives the reader the central idea before details.</p><p>Body prose can use <strong>strong importance</strong>, a <b>visual label</b>, an <a href="#type">inline link</a>, and an exact <code>configuration.identifier</code>.</p><small class="muted">Small text supports captions, paths, and secondary metadata.</small></article>
+    </section>
+
+    <section class="section" id="lists" aria-labelledby="lists-title"><div class="section-heading"><h2 id="lists-title">Lists And Definitions</h2><p>Ordered lists represent sequences. Unordered lists represent sets. Description lists pair stable terms with their definitions.</p></div>
+      <div class="card-grid"><article class="card"><h3>Unordered</h3><ul><li>Source authority</li><li>Verification evidence</li><li>Known limitation</li></ul></article><article class="card"><h3>Ordered</h3><ol><li>Select the source.</li><li>Run the exact check.</li><li>Record the result.</li></ol></article><article class="card"><h3>Definitions</h3><dl class="definition-list"><div><dt>Ready</dt><dd>The item can start.</dd></div><div><dt>Blocked</dt><dd>A named boundary prevents progress.</dd></div></dl></article></div>
+      <p class="source-path">Lists appear across the suite. Rich description lists are prominent in agent-and-skill-evaluations.html and orchestrated-development-lifecycle.html.</p>
+    </section>
+
+    <section class="section" id="code" aria-labelledby="code-title"><div class="section-heading"><h2 id="code-title">Code And Exact Text</h2><p>Inline code marks exact names inside prose. Preformatted blocks preserve commands, configuration, templates, and directory structure.</p></div>
+      <p>Run <code>python3 scripts/build-skill-docs.py --check</code> to compare generated documentation with its source.</p>
+      <pre><code>schema: project
+documentation:
+  roots:
+    - design/documentation-design-system
+verification:
+  source_snapshot: 36f8c1be6d04c865c4e718917c5812dc3fdf0363</code></pre>
+      <p class="source-path">Block examples: agent-skill-specialization-examples.html; documentation-templates.html; agent-owned-evaluation-suites.html; skills-modularization.html.</p>
+    </section>
+
+    <section class="section" id="cards" aria-labelledby="cards-title"><div class="section-heading"><h2 id="cards-title">Cards, Panels, And Articles</h2><p>Cards group independent items in a catalog. Panels group related explanation inside a larger section. Articles provide semantic ownership for self-contained entries.</p></div>
+      <div class="card-grid"><article class="card"><span class="card-kicker">Catalog item</span><h3>Card</h3><p>Use for a self-contained concept that can stand beside peers.</p><span class="path">.card</span></article><article class="panel"><h3>Panel</h3><p>Use for supporting explanation that remains part of the parent section.</p><span class="path">.panel</span></article><a class="card card--link" href="#cards"><span class="card-index">04</span><h3>Linked index card</h3><p>The complete card acts as one navigation target.</p><span class="path">index.html · .doc-card</span></a></div>
+    </section>
+
+    <section class="section" id="callouts" aria-labelledby="callouts-title"><div class="section-heading"><h2 id="callouts-title">Callouts, Notes, And Asides</h2><p>Callouts emphasize an important boundary. Notes provide secondary context. Asides hold related information that is not part of the main narrative flow.</p></div>
+      <div class="grid"><aside class="callout"><h3>Evidence boundary</h3><p>A declaration is not a verified result.</p></aside><aside class="callout callout--warning"><h3>Decision pending</h3><p>The variation audit records options but does not select one.</p></aside><aside class="note"><p>This supporting detail remains useful without becoming the main claim.</p></aside></div>
+      <p class="source-path">.callout appears on six detail pages; .note appears on six; hero and section asides appear in documentation-templates.html, skills-modularization.html, wiki-skills-and-project-context.html, and orchestrated-development-lifecycle.html.</p>
+    </section>
+
+    <section class="section" id="disclosure" aria-labelledby="disclosure-title"><div class="section-heading"><h2 id="disclosure-title">Disclosure</h2><p>A native disclosure keeps optional detail available without placing it in the initial reading path.</p></div>
+      <details><summary>Show retained evidence detail</summary><p>The source lifecycle page uses two <code>details</code> elements for optional operational explanation. Native <code>summary</code> keeps keyboard and disclosure semantics.</p></details>
+    </section>
+  </main><footer class="ds-footer"><p><span class="ds-version">Design system v0.1.0</span> · Content concern · Examples cover headings, paragraphs, links, strong text, small text, lists, code, articles, asides, blockquotes, and disclosure.</p></footer>
+</body></html>

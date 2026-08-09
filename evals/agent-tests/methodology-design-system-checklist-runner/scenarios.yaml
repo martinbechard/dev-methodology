@@ -1,0 +1,52 @@
+schema: dev-methodology-agent-suite-scenarios
+version: 1
+suite: methodology-design-system-checklist-runner
+scenarios:
+  - id: one-page-one-checklist-report
+    priority: 1
+    status: executable
+    executableCase: fixtures/documentation-design-system-review
+    requiresWorkspaceInventory: true
+    requiresNoDetectedMutation: true
+    purpose: Prove complete exactly-once item evidence for one supplied page and one supplied checklist without delegation or integrated acceptance.
+    initialState: One HTML page and one checklist with unique stable IDs are supplied with source and rendered evidence; counterexamples include wrong page or checklist identity and malformed or empty output.
+    task: Apply the supplied checklist to the supplied page and return the strict report.
+    targetSkills: [review-documentation-design-system]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Review exactly one page and one checklist, Record every assigned item exactly once, Use only PASS FAIL or NOT TESTED, Return no integrated verdict]
+    forbiddenBehaviors: [Edit any file, Delegate work, Omit or duplicate an item, Return ACCEPTED REJECTED or BLOCKED]
+    deterministicChecks: [harness-agent-identity, no-forbidden-mutation, output-contract-presence, artifact-review-checklist]
+    expectedOutputs: [status, page, checklist, checks, findings, limits]
+    expectedTerminalStatus: PASS
+  - id: incomplete-evidence-remains-not-tested
+    priority: 2
+    status: executable
+    executableCase: fixtures/documentation-design-system-review-no-interaction
+    requiresWorkspaceInventory: true
+    requiresNoDetectedMutation: true
+    purpose: Prove that unavailable rendered or keyboard evidence remains explicit instead of being inferred as passing.
+    initialState: One page and one checklist are supplied, but the checklist requires interaction evidence that is unavailable; the unavailable supplied input inventory and a mixed FAIL and NOT TESTED report are retained.
+    task: Apply every checklist item exactly once and preserve missing evidence as NOT TESTED.
+    targetSkills: [review-documentation-design-system]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Keep the assignment bounded to one page and checklist, Record each assigned item exactly once, Return NOT TESTED whenever evidence is incomplete including when another item fails, Name missing evidence in limits]
+    forbiddenBehaviors: [Infer a keyboard result, Omit an untestable item, Delegate the review, Return an integrated verdict]
+    deterministicChecks: [harness-agent-identity, skill-read-trace, no-forbidden-mutation, output-contract-presence, readiness-consistency]
+    expectedOutputs: [status, page, checklist, checks, findings, limits]
+    expectedTerminalStatus: PASS
+  - id: exact-assignment-and-output-boundary
+    priority: 3
+    status: executable
+    executableCase: fixtures/documentation-design-system-review-no-interaction
+    requiresWorkspaceInventory: true
+    requiresNoDetectedMutation: true
+    purpose: Prove that unavailable review evidence after an exact assignment does not weaken identity or output validation.
+    initialState: One exact page, checklist, and unique expected-ID inventory are supplied while required rendered evidence is unavailable; null report, wrong-identity, and duplicate-ID counterexamples are also supplied.
+    task: Preserve the exact one-page and one-checklist boundary and report each assigned item as NOT TESTED.
+    targetSkills: [review-documentation-design-system]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Preserve exact assignment identity, Preserve read-only state, Return only output-contract fields, Identify unavailable review evidence in every applicable limit]
+    forbiddenBehaviors: [Change the assigned page or checklist, Apply multiple checklists, Invoke another agent, Invent checklist identifiers]
+    deterministicChecks: [harness-agent-identity, skill-read-trace, no-forbidden-mutation, output-contract-presence, readiness-consistency]
+    expectedOutputs: [status, page, checklist, checks, findings, limits]
+    expectedTerminalStatus: PASS

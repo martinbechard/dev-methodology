@@ -1,0 +1,31 @@
+schema: dev-methodology-agent-suite
+version: 1
+id: methodology-design-system-checklist-runner
+priority: 31
+target:
+  conceptualRole: agents/roles/methodology-maintenance/methodology-design-system-checklist-runner.role.yaml
+  nativeAgent: generated/adapters/codex/agents/methodology-design-system-checklist-runner.toml
+  repositoryMutation: never
+  requiredSkills: [review-documentation-design-system]
+  conditionalSkills: {}
+  allowedAgentDependencies: []
+  requiredOutputs: [status, page, checklist, checks, findings, limits]
+projectAgents:
+  supervisor: agents/supervisor.toml
+  judge: agents/judge.toml
+projectSkills:
+  shared: [../skills/agent-suite-supervision/SKILL.md, ../skills/agent-scenario-design/SKILL.md, ../skills/agent-evidence-judging/SKILL.md]
+  suite: [skills/methodology-design-system-checklist-runner-suite-contract/SKILL.md]
+execution:
+  maximumActiveChildren: 1
+  nestedAgentLimit: 0
+  scenarioCatalog: scenarios.yaml
+  supervisorInvocation: methodology_design_system_checklist_runner_suite_supervisor
+  targetInvocation: methodology_design_system_checklist_runner
+  judgeInvocation: methodology_design_system_checklist_runner_suite_judge
+  requireCodexIdentityEvidence: true
+acceptance:
+  deterministicFirst: true
+  criticalFailureSkipsJudge: true
+  semanticRubric: artifact-contract
+  terminalStatuses: [PASS, FAIL, BLOCKED, STALE]

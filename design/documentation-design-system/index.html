@@ -1,0 +1,87 @@
+<!doctype html>
+<!--
+Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+Artifact-ID: f5cae956-6441-49c7-8bf9-9c44b88c39f2
+Created-UTC: 2026-08-09T00:26:37Z
+Creating-Agent: Dev Coder
+Runtime: Codex
+Dispatched-Model: gpt-5.6-sol
+Reasoning-Effort: high
+Task-ID: 019fe3cd-577c-76b1-965c-06fb8793ae42
+Artifact-ID-Evidence: runtime-supplied
+Created-UTC-Evidence: runtime-supplied
+Creating-Agent-Evidence: runtime-supplied
+Runtime-Evidence: runtime-supplied
+Dispatched-Model-Evidence: runtime-supplied
+Reasoning-Effort-Evidence: runtime-supplied
+Task-ID-Evidence: runtime-supplied
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="design-system-version" content="0.1.0">
+  <meta name="description" content="Source-backed documentation design system for the dev-methodology HTML documentation suite.">
+  <title>Documentation Design System</title>
+  <link rel="stylesheet" href="assets/design-system.css">
+</head>
+<body id="top">
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <header class="ds-header">
+    <a class="site-brand" href="index.html" aria-current="page">
+      <img class="site-logo" src="assets/dev-methodology-logo.png" alt="DevConsult Canada logo">
+      <span>Documentation Design System</span>
+    </a>
+  </header>
+  <nav class="suite-nav" aria-label="Design system pages">
+    <a href="index.html" aria-current="page">Index</a><a href="foundations.html">Foundations</a><a href="page-shell.html">Page shell</a><a href="content.html">Content</a><a href="data-display.html">Data display</a><a href="forms-and-actions.html">Forms</a><a href="diagrams.html">Diagrams</a><a href="accessibility.html">Accessibility</a><a href="variations.html">Variations</a><a href="source-inventory.html">Inventory</a>
+  </nav>
+  <main id="main-content">
+    <section class="hero hero--split" aria-labelledby="page-title">
+      <div class="hero-copy">
+        <span class="eyebrow">Source-backed component catalog</span>
+        <h1 id="page-title">Documentation Design System</h1>
+        <p class="lede">This design system catalogs the visual, structural, interactive, and accessibility elements in the audited <code>dev-methodology</code> HTML snapshot. It defines adopted documentation patterns and records unresolved source variations for later review.</p>
+      </div>
+      <aside class="hero-principle" aria-label="Audit boundary">
+        <strong>Audit boundary</strong>
+        <p>Reviewed on 2026-08-08 at source commit <code>36f8c1be6d04c865c4e718917c5812dc3fdf0363</code>.</p>
+        <p>All 16 design-relevant sources were inspected from 17 tracked HTML files: 11 documentation pages, one report example, and four interaction fixtures. One provenance-validator fixture is excluded.</p>
+      </aside>
+    </section>
+
+    <section class="section" aria-labelledby="concerns-title">
+      <div class="section-heading">
+        <h2 id="concerns-title">Cross-Cutting Concerns</h2>
+        <p>Each page defines one concern, presents live examples, and names the source patterns that supplied the examples.</p>
+      </div>
+      <div class="card-grid">
+        <a class="card card--link" href="foundations.html"><span class="card-index">01</span><h3>Foundations</h3><p>Color, typography, spacing, width, radius, shadow, and light or dark theme families.</p><span class="path">foundations.html</span></a>
+        <a class="card card--link" href="page-shell.html"><span class="card-index">02</span><h3>Page Shell</h3><p>Skip link, brand header, suite navigation, sequence navigation, default and two-column heroes, section navigation, main content, and footer.</p><span class="path">page-shell.html</span></a>
+        <a class="card card--link" href="content.html"><span class="card-index">03</span><h3>Content</h3><p>Headings, prose, lists, code, callouts, notes, panels, cards, asides, and disclosure content.</p><span class="path">content.html</span></a>
+        <a class="card card--link" href="data-display.html"><span class="card-index">04</span><h3>Data Display</h3><p>Tables, metrics, catalogs, status treatments, badges, tags, and definition lists.</p><span class="path">data-display.html</span></a>
+        <a class="card card--link" href="forms-and-actions.html"><span class="card-index">05</span><h3>Forms And Actions</h3><p>Filters, labels, text and file inputs, checkboxes, selects, buttons, live regions, alerts, and dialog behavior.</p><span class="path">forms-and-actions.html</span></a>
+        <a class="card card--link" href="diagrams.html"><span class="card-index">06</span><h3>Diagrams</h3><p>Figures, reusable SVG block-entry arrows, fan-out and fan-in connectors, flow steps, lifecycle rails, and folder trees.</p><span class="path">diagrams.html</span></a>
+        <a class="card card--link" href="accessibility.html"><span class="card-index">07</span><h3>Accessibility And Responsive Behavior</h3><p>Landmarks, names, focus, keyboard behavior, live feedback, breakpoints, overflow, and print handling.</p><span class="path">accessibility.html</span></a>
+        <a class="card card--link" href="variations.html"><span class="card-index">08</span><h3>Variation Audit</h3><p>Source locations, pros, and cons for the inconsistent patterns that need later standardization.</p><span class="path">variations.html</span></a>
+        <a class="card card--link" href="source-inventory.html"><span class="card-index">09</span><h3>Source Inventory</h3><p>Complete page-by-page scope, classification, theme, navigation, and distinctive element coverage.</p><span class="path">source-inventory.html</span></a>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="findings-title">
+      <div class="section-heading"><h2 id="findings-title">Audit Summary</h2><p>The source suite has a stable semantic shell and several purposeful but unsynchronized visual families.</p></div>
+      <div class="metric-grid">
+        <div class="metric"><strong>11</strong><span>Primary documentation pages share the brand header, hero, and footer.</span></div>
+        <div class="metric"><strong>10</strong><span>Detail pages share previous and next document navigation.</span></div>
+        <div class="metric"><strong>7 + 3</strong><span>Seven detail pages use <code>.page-section-nav</code>; three use <code>.chapter-nav</code>.</span></div>
+        <div class="metric"><strong>3</strong><span>Visual families: original light, editorial/evaluation, and dark narrative.</span></div>
+      </div>
+      <div class="callout callout--warning" style="margin-top:1rem">
+        <h3>Adoption boundary</h3>
+        <p>Patterns marked as adopted apply to the design system. Unresolved source variations remain review material. Neither status authorizes changes to the audited source HTML pages.</p>
+      </div>
+    </section>
+  </main>
+  <footer class="ds-footer"><p><span class="ds-version">Design system v0.1.0</span> · Source snapshot <code>36f8c1be6d04c865c4e718917c5812dc3fdf0363</code> · Source pages remain unchanged.</p></footer>
+</body>
+</html>

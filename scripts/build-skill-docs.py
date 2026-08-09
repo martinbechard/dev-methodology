@@ -3,6 +3,7 @@
 # AI attribution: Modified with AI assistance.
 # Summary: Generates skill and template documentation data, conceptual agent definition views, runtime agent adapters, and their deterministic inventory.
 # Design: design/generic-agent-definitions-source.html
+# Tests: scripts/test_bundle_content.py
 
 from __future__ import annotations
 
@@ -10,6 +11,7 @@ import argparse
 import hashlib
 import html
 import json
+import math
 import re
 import sys
 from dataclasses import dataclass
@@ -84,6 +86,7 @@ ROLE_OUTPUT_CONTRACT_FIELD_NAME = "outputContract"
 ROLE_SKILL_JUSTIFICATION_FIELD_NAME = "justification"
 ROLE_SKILL_CONDITION_FIELD_NAME = "condition"
 ROLE_OUTPUT_PURPOSE_FIELD_NAME = "purpose"
+ROLE_OUTPUT_SCHEMA_FIELD_NAME = "schema"
 ROLE_EXAMPLES_FIELD_NAME = "examples"
 ROLE_MODEL_PROFILE_FIELD_NAME = "modelProfile"
 ROLE_MODEL_STAGES_FIELD_NAME = "modelStages"
@@ -157,6 +160,7 @@ ROLE_ACTOR_SUFFIXES = {
     "researcher",
     "responder",
     "reviewer",
+    "runner",
     "specialist",
     "steward",
     "verifier",
@@ -246,6 +250,7 @@ class RoleDefinition:
     skill_conditions: dict[str, str]
     output_contract: tuple[str, ...]
     output_purposes: dict[str, str]
+    output_schema: dict[str, object] | None
     examples: tuple[dict[str, object], ...]
     group: str
     group_label: str
@@ -859,12 +864,337 @@ def validate_annotated_list(
     return tuple(names), annotations
 
 
+def validate_json_schema(value: object, field_path: str, source_path: Path) -> dict[str, object]:
+    """Validate the deterministic JSON Schema subset used by role outputs."""
+
+    if not isinstance(value, dict) or not value:
+        raise ValueError(
+            f"Conceptual agent definition {field_path} must be a non-empty JSON Schema mapping: {source_path}"
+        )
+    allowed_keywords = {
+        "type",
+        "enum",
+        "properties",
+        "required",
+        "additionalProperties",
+        "items",
+        "minItems",
+        "minLength",
+        "minimum",
+        "default",
+        "examples",
+    }
+    unknown = sorted(set(value) - allowed_keywords)
+    if unknown:
+        raise ValueError(
+            f"Conceptual agent definition {field_path} has unsupported JSON Schema keywords {unknown}: {source_path}"
+        )
+    raw_type = value.get("type")
+    schema_types = (
+        raw_type
+        if isinstance(raw_type, list)
+        else [raw_type]
+    )
+    allowed_types = {"object", "array", "string", "integer", "number", "boolean", "null"}
+    if (
+        not schema_types
+        or any(not isinstance(item, str) or item not in allowed_types for item in schema_types)
+        or len(schema_types) != len(set(schema_types))
+    ):
+        raise ValueError(
+            f"Conceptual agent definition {field_path}.type is invalid: {source_path}"
+        )
+    normalized: dict[str, object] = {"type": list(schema_types) if isinstance(raw_type, list) else raw_type}
+
+    keyword_types = {
+        "properties": {"object"},
+        "required": {"object"},
+        "additionalProperties": {"object"},
+        "items": {"array"},
+        "minItems": {"array"},
+        "minLength": {"string"},
+        "minimum": {"integer", "number"},
+    }
+    for keyword, compatible_types in keyword_types.items():
+        if keyword in value and not compatible_types.intersection(schema_types):
+            raise ValueError(
+                f"Conceptual agent definition {field_path}.{keyword} is incompatible with type {raw_type!r}: {source_path}"
+            )
+
+    if "object" in schema_types:
+        properties = value.get("properties")
+        required = value.get("required")
+        if (
+            not isinstance(properties, dict)
+            or not properties
+            or any(not isinstance(name, str) or not name.strip() for name in properties)
+        ):
+            raise ValueError(
+                f"Conceptual agent definition {field_path}.properties must be a non-empty mapping with nonblank string names: {source_path}"
+            )
+        if (
+            not isinstance(required, list)
+            or any(not isinstance(item, str) or not item.strip() for item in required)
+            or len(required) != len(set(required))
+            or set(required) != set(properties)
+        ):
+            raise ValueError(
+                f"Conceptual agent definition {field_path}.required must name every property exactly once: {source_path}"
+            )
+        if value.get("additionalProperties") is not False:
+            raise ValueError(
+                f"Conceptual agent definition {field_path}.additionalProperties must be false: {source_path}"
+            )
+        normalized["additionalProperties"] = False
+        normalized["required"] = list(required)
+        normalized["properties"] = {
+            name: validate_json_schema(schema, f"{field_path}.properties.{name}", source_path)
+            for name, schema in properties.items()
+        }
+    if "array" in schema_types:
+        if "items" not in value:
+            raise ValueError(
+                f"Conceptual agent definition {field_path}.items is required for an array: {source_path}"
+            )
+        normalized["items"] = validate_json_schema(value["items"], f"{field_path}.items", source_path)
+        if "minItems" in value:
+            min_items = value["minItems"]
+            if not isinstance(min_items, int) or isinstance(min_items, bool) or min_items < 0:
+                raise ValueError(
+                    f"Conceptual agent definition {field_path}.minItems must be a nonnegative integer: {source_path}"
+                )
+            normalized["minItems"] = min_items
+    if "enum" in value:
+        enum = value["enum"]
+        if not isinstance(enum, list) or not enum:
+            raise ValueError(
+                f"Conceptual agent definition {field_path}.enum must contain unique values: {source_path}"
+            )
+        try:
+            encoded_enum = [json.dumps(item, allow_nan=False, sort_keys=True) for item in enum]
+        except (TypeError, ValueError) as error:
+            raise ValueError(
+                f"Conceptual agent definition {field_path}.enum must contain JSON values: {source_path}"
+            ) from error
+        if len(set(encoded_enum)) != len(enum):
+            raise ValueError(
+                f"Conceptual agent definition {field_path}.enum must contain unique values: {source_path}"
+            )
+        normalized["enum"] = list(enum)
+
+    if "minLength" in value:
+        min_length = value["minLength"]
+        if not isinstance(min_length, int) or isinstance(min_length, bool) or min_length < 0:
+            raise ValueError(
+                f"Conceptual agent definition {field_path}.minLength must be a nonnegative integer: {source_path}"
+            )
+        normalized["minLength"] = min_length
+    if "minimum" in value:
+        minimum = value["minimum"]
+        if (
+            not isinstance(minimum, (int, float))
+            or isinstance(minimum, bool)
+            or (isinstance(minimum, float) and not math.isfinite(minimum))
+        ):
+            raise ValueError(
+                f"Conceptual agent definition {field_path}.minimum must be a finite number: {source_path}"
+            )
+        normalized["minimum"] = minimum
+
+    def declared_types(instance_schema: dict[str, object]) -> list[object]:
+        instance_raw_type = instance_schema["type"]
+        return (
+            instance_raw_type
+            if isinstance(instance_raw_type, list)
+            else [instance_raw_type]
+        )
+
+    def matches_declared_type(
+        instance: object,
+        instance_schema: dict[str, object],
+    ) -> bool:
+        for schema_type in declared_types(instance_schema):
+            if schema_type == "null" and instance is None:
+                return True
+            if schema_type == "boolean" and isinstance(instance, bool):
+                return True
+            if schema_type == "string" and isinstance(instance, str):
+                return True
+            if schema_type == "integer" and isinstance(instance, int) and not isinstance(instance, bool):
+                return True
+            if (
+                schema_type == "number"
+                and isinstance(instance, (int, float))
+                and not isinstance(instance, bool)
+                and (isinstance(instance, int) or math.isfinite(instance))
+            ):
+                return True
+            if schema_type == "array" and isinstance(instance, list):
+                return True
+            if schema_type == "object" and isinstance(instance, dict):
+                return True
+        return False
+
+    def validate_annotated_instance(
+        instance: object,
+        instance_schema: dict[str, object],
+        annotation_path: str,
+    ) -> None:
+        try:
+            encoded = json.dumps(instance, allow_nan=False, sort_keys=True)
+        except (TypeError, ValueError) as error:
+            raise ValueError(
+                f"Conceptual agent definition {annotation_path} must be a JSON value: {source_path}"
+            ) from error
+        if not matches_declared_type(instance, instance_schema):
+            raise ValueError(
+                f"Conceptual agent definition {annotation_path} must match a declared type: {source_path}"
+            )
+        if "enum" in instance_schema:
+            instance_enum = {
+                json.dumps(item, allow_nan=False, sort_keys=True)
+                for item in instance_schema["enum"]
+            }
+            if encoded not in instance_enum:
+                raise ValueError(
+                    f"Conceptual agent definition {annotation_path} must match an enum value: {source_path}"
+                )
+        if isinstance(instance, dict) and "object" in declared_types(instance_schema):
+            instance_properties = instance_schema["properties"]
+            if set(instance) != set(instance_properties):
+                raise ValueError(
+                    f"Conceptual agent definition {annotation_path} must contain every declared property exactly once: {source_path}"
+                )
+            for property_name, property_schema in instance_properties.items():
+                validate_annotated_instance(
+                    instance[property_name],
+                    property_schema,
+                    f"{annotation_path}.{property_name}",
+                )
+        if isinstance(instance, list) and "array" in declared_types(instance_schema):
+            for index, item in enumerate(instance):
+                validate_annotated_instance(
+                    item,
+                    instance_schema["items"],
+                    f"{annotation_path}[{index}]",
+                )
+        if (
+            isinstance(instance, str)
+            and "minLength" in instance_schema
+            and len(instance) < instance_schema["minLength"]
+        ):
+            raise ValueError(
+                f"Conceptual agent definition {annotation_path} violates minLength: {source_path}"
+            )
+        if (
+            isinstance(instance, (int, float))
+            and not isinstance(instance, bool)
+            and "minimum" in instance_schema
+            and instance < instance_schema["minimum"]
+        ):
+            raise ValueError(
+                f"Conceptual agent definition {annotation_path} violates minimum: {source_path}"
+            )
+        if (
+            isinstance(instance, list)
+            and "minItems" in instance_schema
+            and len(instance) < instance_schema["minItems"]
+        ):
+            raise ValueError(
+                f"Conceptual agent definition {annotation_path} violates minItems: {source_path}"
+            )
+
+    if "enum" in value:
+        for index, enum_value in enumerate(value["enum"]):
+            if not matches_declared_type(enum_value, normalized):
+                raise ValueError(
+                    f"Conceptual agent definition {field_path}.enum[{index}] must match a declared type: {source_path}"
+                )
+    if "default" in value:
+        validate_annotated_instance(
+            value["default"],
+            normalized,
+            f"{field_path}.default",
+        )
+        normalized["default"] = value["default"]
+    if "examples" in value:
+        examples = value["examples"]
+        if not isinstance(examples, list) or not examples:
+            raise ValueError(
+                f"Conceptual agent definition {field_path}.examples must be a non-empty list: {source_path}"
+            )
+        for index, example in enumerate(examples):
+            validate_annotated_instance(example, normalized, f"{field_path}.examples[{index}]")
+        normalized["examples"] = list(examples)
+    return normalized
+
+
+def validate_output_contract(
+    value: object,
+    source_path: Path,
+) -> tuple[tuple[str, ...], dict[str, str], dict[str, object] | None]:
+    """Load output purposes and an optional complete strict nested JSON Schema."""
+
+    if not isinstance(value, list) or not value:
+        raise ValueError(f"Conceptual agent definition outputContract must be a non-empty list: {source_path}")
+    names: list[str] = []
+    purposes: dict[str, str] = {}
+    schemas: dict[str, dict[str, object]] = {}
+    for item in value:
+        if not isinstance(item, dict) or len(item) != 1:
+            raise ValueError(
+                f"Conceptual agent definition outputContract entries must contain exactly one named mapping: {source_path}"
+            )
+        name, metadata = next(iter(item.items()))
+        if not isinstance(name, str) or not name.strip() or name.strip() in purposes:
+            raise ValueError(f"Conceptual agent definition outputContract names must be unique non-empty strings: {source_path}")
+        normalized_name = name.strip()
+        if not isinstance(metadata, dict) or set(metadata) not in (
+            {ROLE_OUTPUT_PURPOSE_FIELD_NAME},
+            {ROLE_OUTPUT_PURPOSE_FIELD_NAME, ROLE_OUTPUT_SCHEMA_FIELD_NAME},
+        ):
+            raise ValueError(
+                f"Conceptual agent definition outputContract {normalized_name} must contain purpose and optional schema only: {source_path}"
+            )
+        purpose = metadata[ROLE_OUTPUT_PURPOSE_FIELD_NAME]
+        if not isinstance(purpose, str) or not purpose.strip():
+            raise ValueError(
+                f"Conceptual agent definition outputContract {normalized_name} purpose must be a non-empty string: {source_path}"
+            )
+        names.append(normalized_name)
+        purposes[normalized_name] = purpose.strip()
+        if ROLE_OUTPUT_SCHEMA_FIELD_NAME in metadata:
+            schemas[normalized_name] = validate_json_schema(
+                metadata[ROLE_OUTPUT_SCHEMA_FIELD_NAME],
+                f"outputContract.{normalized_name}.schema",
+                source_path,
+            )
+    if schemas and set(schemas) != set(names):
+        raise ValueError(
+            f"Conceptual agent definition outputContract must provide schemas for every output or none: {source_path}"
+        )
+    output_schema = None
+    if schemas:
+        output_schema = {
+            "type": "object",
+            "additionalProperties": False,
+            "required": list(names),
+            "properties": {name: schemas[name] for name in names},
+        }
+    return tuple(names), purposes, output_schema
+
+
 def validate_role_skills(
     value: object,
     source_path: Path,
+    *,
+    allow_empty: bool = False,
 ) -> tuple[tuple[str, ...], dict[str, str], dict[str, str]]:
-    if not isinstance(value, list) or not value:
-        raise ValueError(f"Conceptual agent definition {ROLE_SKILLS_FIELD_NAME} must be a non-empty list: {source_path}")
+    if not isinstance(value, list) or (not value and not allow_empty):
+        qualifier = "a list" if allow_empty else "a non-empty list"
+        raise ValueError(
+            f"Conceptual agent definition {ROLE_SKILLS_FIELD_NAME} must be {qualifier}: {source_path}"
+        )
 
     names: list[str] = []
     justifications: dict[str, str] = {}
@@ -1116,6 +1446,7 @@ def load_role_definition(
     role_skills, skill_justifications, skill_conditions = validate_role_skills(
         parsed[ROLE_SKILLS_FIELD_NAME],
         source_path,
+        allow_empty=True,
     )
     duplicate_shared_skills = sorted(set(role_skills) & set(shared_skills))
     if duplicate_shared_skills:
@@ -1150,10 +1481,8 @@ def load_role_definition(
             f"repositoryMutation never: {source_path}"
         )
 
-    output_contract, output_purposes = validate_annotated_list(
+    output_contract, output_purposes, output_schema = validate_output_contract(
         parsed[ROLE_OUTPUT_CONTRACT_FIELD_NAME],
-        ROLE_OUTPUT_CONTRACT_FIELD_NAME,
-        ROLE_OUTPUT_PURPOSE_FIELD_NAME,
         source_path,
     )
 
@@ -1195,6 +1524,7 @@ def load_role_definition(
         skill_conditions=skill_conditions,
         output_contract=output_contract,
         output_purposes=output_purposes,
+        output_schema=output_schema,
         examples=examples,
         group=group,
         group_label=ROLE_GROUP_LABELS[group],
@@ -1339,6 +1669,7 @@ def build_role_payload(roles: Sequence[RoleDefinition]) -> dict[str, object]:
                 "skillConditions": role.skill_conditions,
                 "outputs": list(role.output_contract),
                 "outputPurposes": role.output_purposes,
+                "outputSchema": role.output_schema,
                 "examples": list(role.examples),
                 "group": role.group,
                 "groupLabel": role.group_label,
@@ -1689,6 +2020,11 @@ def role_instruction_text(
     if loading_instructions:
         sections.append(loading_instructions)
     sections.append(f"{ROLE_OUTPUT_INSTRUCTION_PREFIX} {output_text}.")
+    if role.output_schema is not None:
+        sections.append(
+            "Strict output JSON Schema:\n"
+            + json.dumps(role.output_schema, indent=2, ensure_ascii=False)
+        )
     if inline_core_skills:
         inlined_skills = render_inlined_core_skills(role, adapter_name)
         if inlined_skills:
@@ -1721,6 +2057,12 @@ def markdown_role_instruction_text(
         sections.append(loading_instructions)
     output_lines = "\n".join(f"- {item}" for item in role.output_contract)
     sections.append(f"Return:\n\n{output_lines}")
+    if role.output_schema is not None:
+        sections.append(
+            "Strict output JSON Schema:\n\n```json\n"
+            + json.dumps(role.output_schema, indent=2, ensure_ascii=False)
+            + "\n```"
+        )
     if inline_core_skills:
         inlined_skills = render_inlined_core_skills(role, adapter_name)
         if inlined_skills:
@@ -1761,6 +2103,14 @@ def codex_role_instruction_text(
         if loading_instructions:
             sections.append(loading_instructions)
         sections.append(f"{ROLE_OUTPUT_INSTRUCTION_PREFIX} {output_text}.")
+        if role.output_schema is not None:
+            sections.append(
+                "Strict output JSON Schema:\n"
+                + codex_role_reference_text(
+                    json.dumps(role.output_schema, indent=2, ensure_ascii=False),
+                    role_names,
+                )
+            )
         inlined_skills = render_inlined_core_skills(role, CODEX_ADAPTER_NAME)
         if inlined_skills:
             sections.append(inlined_skills)
@@ -1777,6 +2127,14 @@ def codex_role_instruction_text(
         if loading_instructions:
             sections.append(loading_instructions)
         sections.append(f"{ROLE_OUTPUT_INSTRUCTION_PREFIX} {output_text}.")
+        if role.output_schema is not None:
+            sections.append(
+                "Strict output JSON Schema:\n"
+                + codex_role_reference_text(
+                    json.dumps(role.output_schema, indent=2, ensure_ascii=False),
+                    role_names,
+                )
+            )
         return "\n\n".join(sections)
     harness_instruction = (
         f"Before acting, load the {CODEX_HARNESS_DIRECTIVES_SKILL_NAME} skill completely; "
@@ -1793,6 +2151,14 @@ def codex_role_instruction_text(
             f"{ROLE_OUTPUT_INSTRUCTION_PREFIX} {output_text}.",
         ]
     )
+    if role.output_schema is not None:
+        sections.append(
+            "Strict output JSON Schema:\n"
+            + codex_role_reference_text(
+                json.dumps(role.output_schema, indent=2, ensure_ascii=False),
+                role_names,
+            )
+        )
     return "\n\n".join(sections)
 
 
@@ -1925,6 +2291,12 @@ def render_claude_agent(
     if not inline_core_skills:
         frontmatter[ROLE_SKILLS_FIELD_NAME] = list(fixed_role_skills(role))
     frontmatter["model"] = adapter_profile.model
+    if (
+        role.optional_fields.get("isolation") == ROLE_READ_ONLY_ISOLATION
+        and role.output_schema is not None
+        and "tools" not in role.optional_fields
+    ):
+        frontmatter["tools"] = ["Read", "Grep", "Glob"]
     for field_name in (
         "tools",
         "disallowedTools",

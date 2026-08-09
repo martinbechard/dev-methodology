@@ -1,0 +1,70 @@
+<!doctype html>
+<!--
+Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+Artifact-ID: 727d7818-abff-448b-85ca-874463342e43
+Created-UTC: 2026-08-09T00:26:37Z
+Creating-Agent: Dev Coder
+Runtime: Codex
+Dispatched-Model: gpt-5.6-sol
+Reasoning-Effort: high
+Task-ID: 019fe3cd-577c-76b1-965c-06fb8793ae42
+Artifact-ID-Evidence: runtime-supplied
+Created-UTC-Evidence: runtime-supplied
+Creating-Agent-Evidence: runtime-supplied
+Runtime-Evidence: runtime-supplied
+Dispatched-Model-Evidence: runtime-supplied
+Reasoning-Effort-Evidence: runtime-supplied
+Task-ID-Evidence: runtime-supplied
+-->
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="design-system-version" content="0.1.0"><title>Foundations · Documentation Design System</title><link rel="stylesheet" href="assets/design-system.css"></head>
+<body id="top">
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <header class="ds-header"><a class="site-brand" href="index.html"><img class="site-logo" src="assets/dev-methodology-logo.png" alt="DevConsult Canada logo"><span>Documentation Design System</span></a></header>
+  <nav class="suite-nav" aria-label="Design system pages"><a href="index.html">Index</a><a href="foundations.html" aria-current="page">Foundations</a><a href="page-shell.html">Page shell</a><a href="content.html">Content</a><a href="data-display.html">Data display</a><a href="forms-and-actions.html">Forms</a><a href="diagrams.html">Diagrams</a><a href="accessibility.html">Accessibility</a><a href="variations.html">Variations</a><a href="source-inventory.html">Inventory</a></nav>
+  <main id="main-content">
+    <nav class="document-nav" aria-label="Documentation navigation"><div class="document-sequence"><a href="index.html" rel="prev">← Previous: Index</a><a href="page-shell.html" rel="next">Next: Page Shell →</a></div></nav>
+    <section class="hero" aria-labelledby="page-title"><span class="eyebrow">Concern 01</span><h1 id="page-title">Foundations</h1><p class="lede">Foundations are the low-level values that give unrelated documentation components a related appearance. The source pages share a recognizable palette and system font, but token names and values vary.</p></section>
+    <nav class="page-nav" aria-label="Page sections"><a href="#top">Top</a><a href="#color">Color</a><a href="#themes">Themes</a><a href="#type">Typography</a><a href="#space">Spacing</a><a href="#shape">Shape</a><a href="#width">Width</a></nav>
+
+    <section class="section" id="color" aria-labelledby="color-title"><div class="section-heading"><h2 id="color-title">Color Roles</h2><p>The common palette uses a dark blue ink, cool gray page and line colors, white panels, and blue, teal, amber, purple, or rose accents.</p></div>
+      <div class="token-grid">
+        <div class="token-swatch" style="--token-color:#172033;--token-ink:white"><strong>Ink</strong><code>#172033</code></div>
+        <div class="token-swatch" style="--token-color:#596579"><strong>Muted</strong><code>#596579</code></div>
+        <div class="token-swatch" style="--token-color:#f6f8fb"><strong>Page</strong><code>#f6f8fb</code></div>
+        <div class="token-swatch" style="--token-color:#ffffff"><strong>Panel</strong><code>#ffffff</code></div>
+        <div class="token-swatch" style="--token-color:#2563eb;--token-ink:white"><strong>Blue</strong><code>#2563eb</code></div>
+        <div class="token-swatch" style="--token-color:#0f766e;--token-ink:white"><strong>Teal</strong><code>#0f766e</code></div>
+        <div class="token-swatch" style="--token-color:#fff1d8"><strong>Soft amber</strong><code>#fff1d8</code></div>
+        <div class="token-swatch" style="--token-color:#ffe5ec"><strong>Soft rose</strong><code>#ffe5ec</code></div>
+      </div>
+      <p class="source-path">Common sources: index.html; design/agent-and-skill-definitions.html; design/agentic-configuration.html; design/documentation-templates.html; design/generic-agent-definitions-source.html; design/skills-modularization.html.</p>
+    </section>
+
+    <section class="section" id="themes" aria-labelledby="themes-title"><div class="section-heading"><h2 id="themes-title">Theme Families</h2><p>The suite uses light pages for reference material and dark pages for narrative lifecycle or compiled-context material.</p></div>
+      <div class="two-column">
+        <article class="theme-swatch"><h3>Light toolkit family</h3><p>Cool gray page, white panels, dark ink, soft accent fills, and shallow shadows.</p><span class="source-path">index.html and eight light detail pages</span></article>
+        <article class="theme-swatch" style="--swatch-bg:#0f1728;--swatch-ink:#edf4ff;--swatch-muted:#b8c4d8;border-color:#33425b"><h3 style="color:#edf4ff">Dark narrative family</h3><p>Dark navy page and panel colors with pale text, stronger borders, and luminous accents.</p><span class="source-path" style="color:#b8c4d8">orchestrated-development-lifecycle.html; wiki-skills-and-project-context.html</span></article>
+      </div>
+    </section>
+
+    <section class="section" id="type" aria-labelledby="type-title"><div class="section-heading"><h2 id="type-title">Typography</h2><p>Most pages use an Inter-first system stack. Monospace text marks paths, code, configuration, and exact identifiers.</p></div>
+      <div class="example-frame"><span class="eyebrow">Eyebrow label</span><p class="specimen-page-title" style="font-size:clamp(2.3rem,5vw,4rem)">Page title</p><h2>Section heading</h2><h3>Card or subsection heading</h3><h4>Boundary heading</h4><p class="lede">A lede explains the page’s essence before details.</p><p>Body text carries the main explanation. <code>Inline code</code> preserves exact identifiers.</p></div>
+      <div class="note" style="margin-top:1rem"><p>The newer evaluation and lifecycle pages use larger display titles and tighter letter spacing. The original toolkit family uses smaller titles and neutral tracking.</p></div>
+    </section>
+
+    <section class="section" id="space" aria-labelledby="space-title"><div class="section-heading"><h2 id="space-title">Spacing Scale</h2><p>The original family defines 0.5, 0.75, 1, 1.25, 1.5, 2, and 2.5 rem steps. Newer pages use the same approximate rhythm without named tokens.</p></div>
+      <div class="scale-row" aria-label="Spacing scale examples"><div><div class="scale-block" style="--scale:.5rem"></div><small>.5</small></div><div><div class="scale-block" style="--scale:.75rem"></div><small>.75</small></div><div><div class="scale-block" style="--scale:1rem"></div><small>1</small></div><div><div class="scale-block" style="--scale:1.25rem"></div><small>1.25</small></div><div><div class="scale-block" style="--scale:1.5rem"></div><small>1.5</small></div><div><div class="scale-block" style="--scale:2rem"></div><small>2</small></div><div><div class="scale-block" style="--scale:2.5rem"></div><small>2.5</small></div></div>
+    </section>
+
+    <section class="section" id="shape" aria-labelledby="shape-title"><div class="section-heading"><h2 id="shape-title">Radii And Shadows</h2><p>Rectangular content uses modest rounding. Navigation pills and status labels use a full pill radius.</p></div>
+      <div class="card-grid"><div class="panel" style="border-radius:.35rem"><h3>Small · 0.35 rem</h3><p>Controls, logos, and compact labels.</p></div><div class="panel" style="border-radius:.5rem"><h3>Base · 0.5 rem</h3><p>Original cards, tables, and code blocks.</p></div><div class="panel" style="border-radius:.75rem"><h3>Editorial · 0.7–0.75 rem</h3><p>Evaluation and lifecycle surfaces.</p></div><div class="panel" style="border-radius:999px"><h3>Pill · 999 px</h3><p>Section navigation, badges, and statuses.</p></div></div>
+    </section>
+
+    <section class="section" id="width" aria-labelledby="width-title"><div class="section-heading"><h2 id="width-title">Content Width</h2><p>Every primary documentation page centers content, but the maximum width ranges from 1120 to 1240 pixels.</p></div>
+      <div class="table-wrap"><table><thead><tr><th>Width</th><th>Sources</th><th>Observed use</th></tr></thead><tbody><tr><td><code>1120px</code></td><td><code>index.html</code></td><td>Card index</td></tr><tr><td><code>1160px</code></td><td><code>agentic-configuration.html</code>; <code>generic-agent-definitions-source.html</code></td><td>Dense tables and prose</td></tr><tr><td><code>1180px</code></td><td><code>orchestrated-development-lifecycle.html</code></td><td>Narrative diagrams</td></tr><tr><td><code>1220px</code></td><td>Four original-family detail pages</td><td>General reference</td></tr><tr><td><code>1240px</code></td><td>Evaluation pages and specialization examples</td><td>Wide grids and evidence tables</td></tr></tbody></table></div>
+    </section>
+  </main>
+  <footer class="ds-footer"><p><span class="ds-version">Design system v0.1.0</span> · Foundations concern · Sources are repository-relative to <code>dev-methodology</code>.</p></footer>
+</body>
+</html>
