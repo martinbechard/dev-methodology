@@ -1,6 +1,18 @@
 # Add A Portable Skill For Evidence-Based Agent Tournaments
 
-Status: Starting
+Owner: Dev Orchestrator task 019fe4cb-b4f3-7563-8ece-a60e567aae29
+
+Canonical Conversation: 019fe4cb-b4f3-7563-8ece-a60e567aae29
+
+Canonical Task: 019fe4cb-b4f3-7563-8ece-a60e567aae29
+
+Branch: codex/add-portable-agent-tournament-skill
+
+Worktree: /Users/martinbechard/.codex/worktrees/1bbe/dev-methodology
+
+Phase: Implementing — Private tournament skill package
+
+Status: Running
 
 Type: Feature
 
@@ -166,3 +178,27 @@ Scheduling Evidence: Provider inventory has one Running item, `publish-and-integ
 Preservation Boundary: Use one new isolated canonical worktree and task. Do not reuse source task `019fe4be-9c87-7823-8594-80b432af6237`; it only notified the Coordinator that the backlog changed and has no provider reservation. No source mutation is authorized until the new canonical Root Dev Orchestrator independently records Starting -> Running with fresh bounded Active Execution Evidence and an exact activity=work claim.
 
 Next Reconciliation At: 2026-08-09T04:47:00Z
+
+## Active Execution Evidence
+
+Condition Type: root-execution
+
+Owner: Dev Orchestrator task 019fe4cb-b4f3-7563-8ece-a60e567aae29
+
+Evidence: The canonical root execution is actively coordinating the private run-agent-tournament package on branch codex/add-portable-agent-tournament-skill in worktree /Users/martinbechard/.codex/worktrees/1bbe/dev-methodology from reserved main commit f69f58690fd638563a24e9c93d242d707a5798bf. Exact Work Item activity=work claim add-portable-agent-tournament-skill-019fe4cb-root-work was acquired before source mutation with outcome SHARED_CHECKOUT_ACQUIRED and journal event 8ed3dca6-9a12-40a7-ac10-8f2b6bb5e4b4. Exact backlog-path claim add-portable-agent-tournament-skill-019fe4cb-running-backlog protects this atomic provider transition with outcome SHARED_CHECKOUT_ACQUIRED and journal event 7170bb08-1505-4da5-9961-3f9fa9646af1. Shared catalog, generated, review, installation, publication, and main-integration surfaces remain deferred until direct terminology-owner release or reconciliation evidence arrives.
+
+Observed At: 2026-08-09T04:37:21Z
+
+Started At: 2026-08-09T04:37:15Z
+
+Deadline or Expires At: 2026-08-09T06:37:15Z
+
+Next Action: Plan, implement, and focus-test only the independently runnable private skills/run-agent-tournament package and non-overlapping fixtures, then reconcile direct terminology-owner release before any deferred shared mutation or integration
+
+Next Reconciliation At: 2026-08-09T04:52:00Z
+
+## Running Resource Claim Evidence
+
+Work Claim: add-portable-agent-tournament-skill-019fe4cb-root-work; Work Item ID add-portable-agent-tournament-skill; activity work; outcome SHARED_CHECKOUT_ACQUIRED; acquired at 2026-08-09T04:37:15.407440Z; journal event 8ed3dca6-9a12-40a7-ac10-8f2b6bb5e4b4; retained through bounded outcome work
+
+Provider Path Claim: add-portable-agent-tournament-skill-019fe4cb-running-backlog; path backlog/feature-backlog/add-portable-agent-tournament-skill.md; outcome SHARED_CHECKOUT_ACQUIRED; acquired at 2026-08-09T04:37:20.997294Z; journal event 7170bb08-1505-4da5-9961-3f9fa9646af1; release immediately after the Running provider transaction
