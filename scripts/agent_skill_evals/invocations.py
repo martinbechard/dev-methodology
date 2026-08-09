@@ -1472,7 +1472,13 @@ def _delegation_prompt(agent_id: str, prompt: str) -> str:
         raise ValueError("agent_id must be a non-empty string")
     if not prompt.strip():
         raise ValueError("prompt must be a non-empty string")
-    return f"Delegate the following task to the {agent_id} subagent. {prompt}"
+    return (
+        f"Delegate the following task to the {agent_id} subagent. "
+        "Use one full-history delegation request with exactly one message payload. "
+        "Do not also send items, and omit agent_type, model, and reasoning_effort because "
+        "the named subagent inherits those configured values. "
+        f"{prompt}"
+    )
 
 
 def _normalize_event(harness: str, sequence: int, raw: Mapping[str, object]) -> dict[str, object]:

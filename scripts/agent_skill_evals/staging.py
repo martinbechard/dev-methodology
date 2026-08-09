@@ -606,20 +606,30 @@ def stage_mcp_reference_context(
     *,
     reference_names: Sequence[str],
     enabled_tools: Sequence[str],
+    reference_source_root: Path | None = None,
 ) -> McpAgentOpsContext:
     """Stage one isolated reference-only MCP context for an evaluation treatment.
 
-    The destination is the disposable workspace. Each reference name must identify one
-    regular top-level workspace file. The function copies only those files, records their
-    digests, writes an isolated host configuration and audit identity, and returns their
-    runner-owned context. Invalid paths, duplicate names or tools, unsafe roots, and existing
-    destinations raise ``ValueError``.
+    The destination is the disposable harness workspace. Each reference name must identify
+    one regular top-level file in ``reference_source_root`` or, when omitted, the destination
+    workspace. This lets a projected treatment stage an evaluator-only reference from the
+    full fixture without exposing that file to either control workspace. The function copies
+    only those files, records their digests, writes an isolated host configuration and audit
+    identity, and returns their runner-owned context. Invalid paths, duplicate names or tools,
+    unsafe roots, and existing destinations raise ``ValueError``.
     """
 
     if harness not in SUPPORTED_HARNESSES:
         raise ValueError(f"supported harness values are codex and junie, not {harness}")
     destination_root = destination_root.resolve()
+    source_root = (
+        reference_source_root.resolve()
+        if reference_source_root is not None
+        else destination_root
+    )
     audit_root = audit_root.resolve()
+    if source_root.is_symlink() or not source_root.is_dir():
+        raise ValueError("MCP reference source root must be an existing non-symlink directory")
     if audit_root.is_symlink() or not audit_root.is_dir():
         raise ValueError("MCP audit root must be an existing non-symlink directory")
     if (
@@ -658,7 +668,7 @@ def stage_mcp_reference_context(
     reference_root.mkdir(mode=0o700)
     reference_records: list[dict[str, object]] = []
     for name in names:
-        source = destination_root / name
+        source = source_root / name
         if source.is_symlink() or not source.is_file():
             raise ValueError(f"MCP reference source is missing or unsafe: {name}")
         _source, effective, sanitizations = selected_context_identity(

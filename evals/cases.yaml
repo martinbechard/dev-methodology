@@ -1071,11 +1071,11 @@ cases:
       stagedSkillPackages: [effective-communication, ste-technical-writing, route-documentation-work, verify-documentation-page, terminology-standard]
       wholeRepositoryAllowed: false
       approvedSensitiveData: false
-    modelVisiblePaths: [README.md, TASK.md, source-document.md, terminology.md]
+    modelVisiblePaths: [README.md, TASK.md, source-document.md]
     modelVisibleProjection:
       schemaVersion: 1
       mode: isolated-harness-workspace
-      evaluatorOnlyPaths: [evidence, negative-activation]
+      evaluatorOnlyPaths: [terminology.md, evidence, negative-activation]
     skillResourceAllowlist:
       effective-communication: [SKILL.md]
       ste-technical-writing: [SKILL.md]

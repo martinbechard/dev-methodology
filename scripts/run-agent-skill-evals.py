@@ -1744,6 +1744,25 @@ def _handle_harness_invocation(
         return f"model-visible projection preflight failed: {error}"
 
 
+def _case_prompt(case: Mapping[str, object], prompt: str) -> str:
+    """Add the exact treatment-only reference handoff without changing controls."""
+
+    contract = case.get("mcpAgentOps")
+    if not isinstance(contract, Mapping) or contract.get("schemaVersion") != 5:
+        return prompt
+    reference_names = contract.get("referenceNames")
+    if reference_names != ["terminology.md"]:
+        raise ValueError("reference treatment prompt requires exactly terminology.md")
+    return (
+        "In the single delegation message, require the named subagent to call its available "
+        "mcp-agent-ops reference_load tool exactly once with names set to "
+        "[\"terminology.md\"], require a LOADED outcome, and apply the returned aggregate. "
+        "The parent must not load or copy the standard into the delegation prompt. Neither "
+        "agent may read terminology.md from the workspace or invent a fallback standard.\n\n"
+        + prompt
+    )
+
+
 def _handle_harness_invocation_in_workspace(
     args: argparse.Namespace,
     case: Mapping[str, object],
@@ -1753,7 +1772,7 @@ def _handle_harness_invocation_in_workspace(
     functional_before: Mapping[str, str] | None,
 ) -> str | None:
     task_path = harness_root / str(case["task"])
-    prompt = task_path.read_text(encoding="utf-8")
+    prompt = _case_prompt(case, task_path.read_text(encoding="utf-8"))
     agent_id = args.agent_id or next(iter(case.get("requiredAgents", [])), None)
     if not isinstance(agent_id, str):
         return "harness invocation requires an agent id"
@@ -1916,6 +1935,7 @@ def _handle_harness_invocation_in_workspace(
                     evidence_root,
                     reference_names=mcp_contract["referenceNames"],
                     enabled_tools=mcp_contract["enabledTools"],
+                    reference_source_root=active_root,
                 )
             else:
                 available_skills = read_mcp_skill_catalog(  # noqa: F405

@@ -2636,6 +2636,9 @@ class HarnessAndJudgeTests(unittest.TestCase):
                 agent_locations=[root / ".junie" / "agents"],
             )
             self.assertTrue(any(value.startswith("--task=Delegate the following task") for value in junie.argv))
+            delegated_task = next(value for value in junie.argv if value.startswith("--task="))
+            self.assertIn("exactly one message payload", delegated_task)
+            self.assertIn("omit agent_type, model, and reasoning_effort", delegated_task)
             self.assertFalse(any("sandbox" in value.lower() for value in junie.argv))
             self.assertIn("JUNIE_HOME", junie.environment)
             self.assertNotEqual(junie.environment["HOME"], junie.environment["JUNIE_HOME"])
@@ -3645,11 +3648,15 @@ class HarnessAndJudgeTests(unittest.TestCase):
 
         self.assertEqual(case["mcpAgentOps"], treatment["mcpAgentOps"])
         self.assertTrue(self.module._case_uses_mcp_agent_ops(treatment))
+        treatment_prompt = self.module._case_prompt(treatment, "Do the task.")
+        self.assertIn("reference_load tool exactly once", treatment_prompt)
+        self.assertIn("parent must not load or copy the standard", treatment_prompt)
         for control in (omitted, wrong):
             with self.subTest(variant=control["probeVariant"]):
                 self.assertNotIn("mcpAgentOps", control)
                 self.assertFalse(self.module._case_uses_mcp_agent_ops(control))
                 self.assertIn("terminology-standard", control["forbiddenSkills"])
+                self.assertEqual("Do the task.", self.module._case_prompt(control, "Do the task."))
         self.assertEqual(treatment["probeComparisonKey"], omitted["probeComparisonKey"])
         self.assertEqual(omitted["probeComparisonKey"], wrong["probeComparisonKey"])
 
@@ -3882,7 +3889,11 @@ class HarnessAndJudgeTests(unittest.TestCase):
             {
                 "schemaVersion": 1,
                 "mode": "isolated-harness-workspace",
-                "evaluatorOnlyPaths": ["evidence", "negative-activation"],
+                "evaluatorOnlyPaths": [
+                    "terminology.md",
+                    "evidence",
+                    "negative-activation",
+                ],
             },
             cases["terminology-standard-effect"]["modelVisibleProjection"],
         )
@@ -3910,6 +3921,7 @@ class HarnessAndJudgeTests(unittest.TestCase):
         cases = self.module.load_cases()
         excluded = {
             "terminology-standard-effect": {
+                "terminology.md",
                 "evidence",
                 "negative-activation",
             },
@@ -6796,7 +6808,7 @@ class HarnessAndJudgeTests(unittest.TestCase):
             "probe-terminology-standard",
             "treatment",
         )
-        case["modelVisiblePaths"] = ["TASK.md", "terminology.md"]
+        case["modelVisiblePaths"] = ["TASK.md"]
         contract = case["mcpAgentOps"]
         identity = self.module.McpAgentOpsIdentity(
             Path(sys.executable).resolve(),
