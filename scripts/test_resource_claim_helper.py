@@ -171,12 +171,12 @@ def _maintained_text_files(repository_root: Path) -> Iterator[Path]:
             yield path
 
 
-def _markdown_section(document: str, heading: str) -> str:
-    """Return one level-two Markdown section without content from its siblings."""
+def _markdown_section(document: str, heading: str, *, level: int = 2) -> str:
+    """Return one Markdown section without content from same-level siblings."""
 
-    marker = f"## {heading}\n"
+    marker = f"{'#' * level} {heading}\n"
     start = document.index(marker) + len(marker)
-    end = document.find("\n## ", start)
+    end = document.find(f"\n{'#' * level} ", start)
     return document[start:] if end < 0 else document[start:end]
 
 
@@ -1299,15 +1299,17 @@ class ResourceClaimHelperTests(unittest.TestCase):
         """Keep the maintained inventory total aligned with its registry rows."""
 
         model = SKILL_GROUP_MODEL.read_text(encoding="utf-8")
-        registry = _markdown_section(model, "3. Skill Group Registry")
+        registry = _markdown_section(model, "3.2 Skill Group Registry", level=3)
         counts = [
             int(match.group("count"))
             for line in registry.splitlines()
             if (match := re.search(r"\| (?P<count>\d+) \|$", line))
         ]
 
-        self.assertEqual(47, sum(counts))
-        self.assertEqual(3, model.count("forty-seven"))
+        self.assertEqual(51, sum(counts))
+        self.assertEqual(1, model.count("fifty-one"))
+        self.assertEqual(3, model.count("fifty-five"))
+        self.assertNotIn("forty-seven", model)
         self.assertNotIn("forty-four", model)
 
     def test_providers_read_results_and_reconcile_uncertain_calls_in_place(self) -> None:
@@ -1712,8 +1714,8 @@ class ResourceClaimHelperTests(unittest.TestCase):
         self.assertIn("Omit exact files", task)
         self.assertNotIn("Extend the same claim", task)
 
-    def test_mcp_eval_contract_pins_canonical_schema_v2_runtime(self) -> None:
-        """Replace the retired MCP fixture identity and legacy acquisition outcome."""
+    def test_mcp_eval_contract_requires_a_supported_installed_runtime(self) -> None:
+        """Require a minimum supported version without manufacturing a runtime."""
 
         catalog = yaml.safe_load(CASES_PATH.read_text(encoding="utf-8"))
         case = next(
@@ -1725,11 +1727,7 @@ class ResourceClaimHelperTests(unittest.TestCase):
         self.assertEqual(4, contract["schemaVersion"])
         self.assertEqual(2, contract["claimResultSchemaVersion"])
         self.assertEqual("UNAVAILABLE", contract["claimHelperAvailability"])
-        self.assertEqual("0.4.0", contract["requiredVersion"])
-        self.assertEqual(
-            "b4abdd4054a3b6181d2cc48d4c9de6b4fbbc29eb6fd256e0427d861e2ae1620d",
-            contract["requiredRuntimeDigest"],
-        )
+        self.assertEqual("0.5.1", contract["minimumVersion"])
         enabled_tools = set(contract["enabledTools"])
         self.assertTrue(
             REQUIRED_FUTURE_MCP_CLAIM_TOOLS

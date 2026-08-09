@@ -62,7 +62,7 @@ class HarnessIdentity:
 
 @dataclass(frozen=True)
 class McpAgentOpsIdentity:
-    """Record the pinned MCP executable, package version, and executable digest."""
+    """Record the installed MCP executable, package version, and observed digests."""
 
     executable: Path
     version: str
@@ -977,10 +977,9 @@ def capture_harness_identity(harness: str) -> HarnessIdentity:
 def capture_mcp_agent_ops_identity(
     executable: Path | None = None,
     *,
-    required_version: str | None = None,
-    required_runtime_digest: str | None = None,
+    minimum_version: str | None = None,
 ) -> McpAgentOpsIdentity:
-    """Capture and optionally enforce launcher and installed-runtime identity."""
+    """Capture identity and enforce that an existing installation is new enough."""
     discovered = executable or (
         Path(value) if (value := shutil.which("mcp-agent-ops")) is not None else None
     )
@@ -1067,10 +1066,11 @@ def capture_mcp_agent_ops_identity(
     runtime_digest = str(runtime_identity["runtimeDigest"])
     if version_value != runtime_version:
         raise RuntimeError("mcp-agent-ops identity probes report different versions")
-    if required_version is not None and version_value != required_version:
-        raise RuntimeError("mcp-agent-ops version does not match the evaluation contract")
-    if required_runtime_digest is not None and runtime_digest != required_runtime_digest:
-        raise RuntimeError("mcp-agent-ops runtime digest does not match the evaluation contract")
+    if minimum_version is not None and not _semantic_version_at_least(
+        version_value,
+        minimum_version,
+    ):
+        raise RuntimeError("mcp-agent-ops version is below the evaluation minimum")
     identity_digest = hashlib.sha256(
         json.dumps(
             {
@@ -1089,6 +1089,38 @@ def capture_mcp_agent_ops_identity(
         runtime_digest=runtime_digest,
         identity_digest=identity_digest,
     )
+
+
+def _semantic_version_at_least(actual: str, minimum: str) -> bool:
+    """Compare supported semantic versions without installing packaging helpers."""
+
+    def parse(value: str) -> tuple[tuple[int, int, int], tuple[tuple[int, object], ...] | None]:
+        match = re.fullmatch(
+            r"(\d+)\.(\d+)\.(\d+)(?:-([A-Za-z0-9.-]+))?(?:\+[A-Za-z0-9.-]+)?",
+            value,
+        )
+        if match is None:
+            raise ValueError(f"invalid semantic version: {value}")
+        core = tuple(int(part) for part in match.group(1, 2, 3))
+        prerelease = match.group(4)
+        if prerelease is None:
+            return core, None
+        identifiers: list[tuple[int, object]] = []
+        for identifier in prerelease.split("."):
+            identifiers.append(
+                (0, int(identifier)) if identifier.isdigit() else (1, identifier)
+            )
+        return core, tuple(identifiers)
+
+    actual_core, actual_prerelease = parse(actual)
+    minimum_core, minimum_prerelease = parse(minimum)
+    if actual_core != minimum_core:
+        return actual_core > minimum_core
+    if minimum_prerelease is None:
+        return actual_prerelease is None
+    if actual_prerelease is None:
+        return True
+    return actual_prerelease >= minimum_prerelease
 
 
 def _resolve_harness_executable(harness: str, discovered: Path) -> Path:

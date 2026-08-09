@@ -68,8 +68,7 @@ def _reference_treatment_case(module: ModuleType) -> dict[str, object]:
         "enablement": "probe-treatment-only",
         "serverName": "mcp-agent-ops",
         "enabledTools": ["reference_load"],
-        "requiredVersion": "0.8.0",
-        "requiredRuntimeDigest": "d" * 64,
+        "minimumVersion": "0.8.0",
         "referenceNames": ["terminology.md"],
         "requiredToolSequences": [["reference_load"]],
         "requiredToolOutcomes": {"reference_load": ["LOADED"]},
@@ -3073,9 +3072,9 @@ class HarnessAndJudgeTests(unittest.TestCase):
             ])
             identity = self.module.McpAgentOpsIdentity(
                 Path(sys.executable).resolve(),
-                contract["requiredVersion"],
+                contract["minimumVersion"],
                 "1" * 64,
-                contract["requiredRuntimeDigest"],
+                "d" * 64,
                 "2" * 64,
             )
             harness_identity = self.module.HarnessIdentity(
@@ -3672,10 +3671,10 @@ class HarnessAndJudgeTests(unittest.TestCase):
 
         for version in ("0.7.0", "0.9.0"):
             invalid_version = yaml.safe_load(yaml.safe_dump(case))
-            invalid_version["mcpAgentOps"]["requiredVersion"] = version
-            with self.subTest(required_version=version):
+            invalid_version["mcpAgentOps"]["minimumVersion"] = version
+            with self.subTest(minimum_version=version):
                 self.assertIn(
-                    "case.mcpAgentOps.requiredVersion must be 0.8.0",
+                    "case.mcpAgentOps.minimumVersion must be 0.8.0",
                     self.module.validate_case_definition(invalid_version),
                 )
 
@@ -6583,35 +6582,38 @@ class HarnessAndJudgeTests(unittest.TestCase):
         )
         path.chmod(0o700)
 
-    def test_mcp_identity_binds_launcher_and_runtime_and_fails_on_drift(self) -> None:
+    def test_mcp_identity_accepts_installed_minimum_and_records_observed_digests(self) -> None:
         runtime_digest = "a" * 64
         with tempfile.TemporaryDirectory() as directory:
             executable = Path(directory) / "mcp-agent-ops"
             self._write_fake_mcp_agent_ops(executable, runtime_digest)
             identity = self.module.capture_mcp_agent_ops_identity(
                 executable,
-                required_version="0.2.3",
-                required_runtime_digest=runtime_digest,
+                minimum_version="0.2.0",
             )
             self.assertEqual(executable.resolve(), identity.executable)
             self.assertEqual(digest(executable), identity.launcher_digest)
             self.assertEqual(runtime_digest, identity.runtime_digest)
             self.assertRegex(identity.identity_digest, r"^[0-9a-f]{64}$")
-            with self.assertRaisesRegex(RuntimeError, "runtime digest"):
+            with self.assertRaisesRegex(RuntimeError, "below the evaluation minimum"):
                 self.module.capture_mcp_agent_ops_identity(
                     executable,
-                    required_version="0.2.3",
-                    required_runtime_digest="b" * 64,
+                    minimum_version="0.3.0",
                 )
+
+    def test_mcp_identity_stops_when_the_required_tool_is_not_installed(self) -> None:
+        with mock.patch.object(self.module.shutil, "which", return_value=None):
+            with self.assertRaisesRegex(RuntimeError, "executable is not installed"):
+                self.module.capture_mcp_agent_ops_identity(minimum_version="0.8.0")
 
     def test_reference_context_is_isolated_digest_bound_and_uses_the_ordinary_sandbox(self) -> None:
         case = _reference_treatment_case(self.module)
         contract = case["mcpAgentOps"]
         identity = self.module.McpAgentOpsIdentity(
             Path(sys.executable).resolve(),
-            contract["requiredVersion"],
+            contract["minimumVersion"],
             "1" * 64,
-            contract["requiredRuntimeDigest"],
+            "d" * 64,
             "2" * 64,
         )
         with tempfile.TemporaryDirectory() as directory:
@@ -6812,9 +6814,9 @@ class HarnessAndJudgeTests(unittest.TestCase):
         contract = case["mcpAgentOps"]
         identity = self.module.McpAgentOpsIdentity(
             Path(sys.executable).resolve(),
-            contract["requiredVersion"],
+            contract["minimumVersion"],
             "1" * 64,
-            contract["requiredRuntimeDigest"],
+            "d" * 64,
             "2" * 64,
         )
         harness_identity = self.module.HarnessIdentity(
@@ -6908,9 +6910,9 @@ class HarnessAndJudgeTests(unittest.TestCase):
         contract = case["mcpAgentOps"]
         identity = self.module.McpAgentOpsIdentity(
             Path(sys.executable).resolve(),
-            contract["requiredVersion"],
+            contract["minimumVersion"],
             "1" * 64,
-            contract["requiredRuntimeDigest"],
+            "d" * 64,
             "2" * 64,
         )
         validation_module = sys.modules[self.module.validate_evidence.__module__]
@@ -7660,11 +7662,7 @@ class HarnessAndJudgeTests(unittest.TestCase):
         ]
         self.assertEqual(expected_tools, contract["enabledTools"])
         self.assertEqual(2, contract["claimResultSchemaVersion"])
-        self.assertEqual("0.4.0", contract["requiredVersion"])
-        self.assertEqual(
-            "b4abdd4054a3b6181d2cc48d4c9de6b4fbbc29eb6fd256e0427d861e2ae1620d",
-            contract["requiredRuntimeDigest"],
-        )
+        self.assertEqual("0.5.1", contract["minimumVersion"])
         self.assertEqual(
             ["SHARED_CHECKOUT_ACQUIRED"],
             contract["requiredToolOutcomes"]["claim_acquire"],
@@ -7728,7 +7726,7 @@ class HarnessAndJudgeTests(unittest.TestCase):
 
         self.assertIn(
             "The project-configuration-routing base case additionally evaluates "
-            f"mcp-agent-ops {contract['requiredVersion']} through Codex and Junie.",
+            f"mcp-agent-ops {contract['minimumVersion']} or newer through Codex and Junie.",
             documentation,
         )
 
@@ -8094,7 +8092,7 @@ class HarnessAndJudgeTests(unittest.TestCase):
                             "MCP_AGENT_OPS_AUDIT_ROOTS": str(root),
                             "MCP_AGENT_OPS_AUDIT_SHARED": "true",
                             "MCP_AGENT_OPS_AUDIT_SESSION_ID": session_id,
-                            "MCP_AGENT_OPS_REQUIRED_RUNTIME_DIGEST": contract["requiredRuntimeDigest"],
+                            "MCP_AGENT_OPS_REQUIRED_RUNTIME_DIGEST": "d" * 64,
                         },
                         "enabled": True,
                         "required": True,
@@ -8147,9 +8145,9 @@ class HarnessAndJudgeTests(unittest.TestCase):
             )
             mcp_run: dict[str, object] = {
                 "serverName": contract["serverName"],
-                "version": contract["requiredVersion"],
+                "version": "0.9.0",
                 "launcherDigest": "1" * 64,
-                "runtimeDigest": contract["requiredRuntimeDigest"],
+                "runtimeDigest": "d" * 64,
                 "identityDigest": "2" * 64,
                 "configurationDigest": digest(configuration_path),
                 "catalogManifestDigest": catalog_manifest_digest,

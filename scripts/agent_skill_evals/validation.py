@@ -24,6 +24,7 @@ from .invocations import (
     read_mcp_agent_ops_audit,
     resolve_mcp_tool_argument_digests,
     select_mcp_tool_stream,
+    _semantic_version_at_least,
 )
 from .judges import JUDGE_TYPES, validate_calibration_record
 from .staging import selected_context_identity
@@ -447,8 +448,7 @@ def _validate_mcp_agent_ops_case(
         "serverName",
         "enabledTools",
         "mcpOnlySkills",
-        "requiredVersion",
-        "requiredRuntimeDigest",
+        "minimumVersion",
         "skillCatalogSource",
         "catalogResourceAllowlist",
         "requiredToolSequences",
@@ -498,16 +498,11 @@ def _validate_mcp_agent_ops_case(
             errors.append(
                 "case.mcpAgentOps.claimHelperAvailability cannot be UNAVAILABLE when the complete MCP claim surface is enabled"
             )
-    if not isinstance(value.get("requiredVersion"), str) or not re.fullmatch(
+    if not isinstance(value.get("minimumVersion"), str) or not re.fullmatch(
         r"\d+\.\d+\.\d+(?:[-+][A-Za-z0-9.-]+)?",
-        str(value.get("requiredVersion")),
+        str(value.get("minimumVersion")),
     ):
-        errors.append("case.mcpAgentOps.requiredVersion must be a semantic version")
-    _require_digest(
-        value.get("requiredRuntimeDigest"),
-        "case.mcpAgentOps.requiredRuntimeDigest",
-        errors,
-    )
+        errors.append("case.mcpAgentOps.minimumVersion must be a semantic version")
     catalog_source = value.get("skillCatalogSource")
     _validate_case_relative_path(
         catalog_source,
@@ -698,8 +693,7 @@ def _validate_reference_mcp_agent_ops_case(
         "enablement",
         "serverName",
         "enabledTools",
-        "requiredVersion",
-        "requiredRuntimeDigest",
+        "minimumVersion",
         "referenceNames",
         "requiredToolSequences",
         "requiredToolOutcomes",
@@ -719,13 +713,8 @@ def _validate_reference_mcp_agent_ops_case(
         errors.append(
             "case.mcpAgentOps.enabledTools must be exactly reference_load"
         )
-    if value.get("requiredVersion") != "0.8.0":
-        errors.append("case.mcpAgentOps.requiredVersion must be 0.8.0")
-    _require_digest(
-        value.get("requiredRuntimeDigest"),
-        "case.mcpAgentOps.requiredRuntimeDigest",
-        errors,
-    )
+    if value.get("minimumVersion") != "0.8.0":
+        errors.append("case.mcpAgentOps.minimumVersion must be 0.8.0")
     if value.get("referenceNames") != ["terminology.md"]:
         errors.append(
             "case.mcpAgentOps.referenceNames must be exactly terminology.md"
@@ -2885,10 +2874,17 @@ def _validate_mcp_agent_ops_run(
         _require_digest(value.get(field), f"run.mcpAgentOps.{field}", errors)
     if value.get("serverName") != contract.get("serverName"):
         errors.append("evidence MCP server name does not match the selected case")
-    if value.get("version") != contract.get("requiredVersion"):
-        stale_reasons.append("evidence MCP package version does not match the selected case")
-    if value.get("runtimeDigest") != contract.get("requiredRuntimeDigest"):
-        stale_reasons.append("evidence MCP runtime digest does not match the selected case")
+    minimum_version = contract.get("minimumVersion")
+    try:
+        version_sufficient = (
+            isinstance(value.get("version"), str)
+            and isinstance(minimum_version, str)
+            and _semantic_version_at_least(str(value.get("version")), minimum_version)
+        )
+    except ValueError:
+        version_sufficient = False
+    if not version_sufficient:
+        stale_reasons.append("evidence MCP package version is below the selected case minimum")
     required_sequences = contract.get("requiredToolSequences")
     if value.get("requiredToolSequences") != required_sequences:
         errors.append("evidence MCP required tool sequences do not match the selected case")

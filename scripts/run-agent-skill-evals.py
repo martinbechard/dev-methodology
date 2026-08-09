@@ -1919,8 +1919,7 @@ def _handle_harness_invocation_in_workspace(
             }
             mcp_identity = capture_mcp_agent_ops_identity(  # noqa: F405
                 args.mcp_agent_ops_executable,
-                required_version=str(mcp_contract["requiredVersion"]),
-                required_runtime_digest=str(mcp_contract["requiredRuntimeDigest"]),
+                minimum_version=str(mcp_contract["minimumVersion"]),
             )
             if mcp_contract.get("schemaVersion") == 5:
                 required_tool_argument_digests = resolve_mcp_tool_argument_digests(  # noqa: F405

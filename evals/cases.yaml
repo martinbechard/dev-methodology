@@ -481,8 +481,7 @@ cases:
       serverName: mcp-agent-ops
       enabledTools: [claim_status, claim_acquire, claim_extend, claim_heartbeat, claim_release, claim_maintain_journal, claim_report, skill_list, skill_load, skill_resource_load, skill_refresh, skill_validate, detect_technology_skills, verify_yaml, verify_markdown_links]
       mcpOnlySkills: [skill-authoring, maintain-methodology-documentation]
-      requiredVersion: 0.4.0
-      requiredRuntimeDigest: b4abdd4054a3b6181d2cc48d4c9de6b4fbbc29eb6fd256e0427d861e2ae1620d
+      minimumVersion: 0.5.1
       skillCatalogSource: available-skills.txt
       catalogResourceAllowlist:
         detect-technology-skills: [references/technology-skill-detection-registry.yaml]
@@ -1056,8 +1055,7 @@ cases:
       enablement: probe-treatment-only
       serverName: mcp-agent-ops
       enabledTools: [reference_load]
-      requiredVersion: 0.8.0
-      requiredRuntimeDigest: 912980522356193c6bb06e8b29e9e0a9fe7c910a3ad48d273febf443d2c66aee
+      minimumVersion: 0.8.0
       referenceNames: [terminology.md]
       requiredToolSequences: [[reference_load]]
       requiredToolOutcomes:

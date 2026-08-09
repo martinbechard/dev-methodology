@@ -40,10 +40,7 @@ _REFERENCE_CONTRACT = {
     "enablement": "probe-treatment-only",
     "serverName": "mcp-agent-ops",
     "enabledTools": ["reference_load"],
-    "requiredVersion": "0.8.0",
-    "requiredRuntimeDigest": (
-        "912980522356193c6bb06e8b29e9e0a9fe7c910a3ad48d273febf443d2c66aee"
-    ),
+    "minimumVersion": "0.8.0",
     "referenceNames": ["terminology.md"],
     "requiredToolSequences": [["reference_load"]],
     "requiredToolOutcomes": {"reference_load": ["LOADED"]},
