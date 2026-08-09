@@ -10,7 +10,7 @@ Branch: codex/add-portable-agent-tournament-skill
 
 Worktree: /Users/martinbechard/.codex/worktrees/1bbe/dev-methodology
 
-Phase: Reviewing — Exact private candidate
+Phase: Implementing — Review corrections
 
 Status: Running
 
@@ -183,19 +183,19 @@ Next Reconciliation At: 2026-08-09T04:47:00Z
 
 Condition Type: delegated-work
 
-Owner: Dev Code Reviewer execution /root/tournament_source_review and Methodology Artifact Reviewer execution /root/tournament_methodology_review under Dev Orchestrator task 019fe4cb-b4f3-7563-8ece-a60e567aae29
+Owner: Dev Coder execution /root/tournament_skill_coder under Dev Orchestrator task 019fe4cb-b4f3-7563-8ece-a60e567aae29
 
-Evidence: Terminology task 019fe3d6-2dd6-7322-a507-e8ca961e27d8 supplied one-time clean-boundary status at correction commit 2d7f5924c04473f03bf7faeed65c427d1b6143ba and directly released exact-manifest source review and focused private verification for clean tournament candidate fe2228e2140e4ed212917edfe240fb7001588813. Fresh read-only Dev Code Reviewer execution /root/tournament_source_review and Methodology Artifact Reviewer execution /root/tournament_methodology_review are live against exactly the four run-agent-tournament package paths with no mutation authority and finite 2026-08-09T06:05:00Z response deadlines. README, design, generated catalogs and projections, adapters, eval catalogs, scripts/test_bundle_content.py, shared installation, live-model evaluation, and main integration remain retained by terminology and excluded. Exact Work Item activity=work claim add-portable-agent-tournament-skill-019fe4cb-root-work remains live. This review-phase refresh is protected by exact backlog-path claim add-portable-agent-tournament-skill-019fe4cb-review-evidence-1, outcome SHARED_CHECKOUT_ACQUIRED, journal event 927a8344-ffcc-4491-90e0-d15aa77937d7.
+Evidence: Terminology task 019fe3d6-2dd6-7322-a507-e8ca961e27d8 supplied one-time clean-boundary status at correction commit 2d7f5924c04473f03bf7faeed65c427d1b6143ba and directly released exact-manifest source review and focused private verification for clean tournament candidate fe2228e2140e4ed212917edfe240fb7001588813. Fresh read-only Dev Code Reviewer execution /root/tournament_source_review and Methodology Artifact Reviewer execution /root/tournament_methodology_review both returned NEEDS_CORRECTION. Their converged bounded findings are: auditable zero-live-call preflight and rescore evidence; a frozen retry policy with maximum-call accounting; a complete normative example and row schema including external-reference digests and manifest-validator evidence; deterministic unresolved or partial ranking for cost-dependent unpriced ties; a frozen variance disposition including screening-only outcomes; and report-mode reference loading. Original Dev Coder execution /root/tournament_skill_coder is applying correction attempt 1 of at most 2 to exactly skills/run-agent-tournament/SKILL.md, skills/run-agent-tournament/agents/openai.yaml, skills/run-agent-tournament/references/tournament-contract.md, and skills/run-agent-tournament/assets/tournament.example.yaml while preserving the accepted provenance envelope and adding focused assertions. README, design, generated catalogs and projections, adapters, eval catalogs, scripts/test_bundle_content.py, shared installation, live-model evaluation, and main integration remain retained by terminology and excluded. Exact Work Item activity=work claim add-portable-agent-tournament-skill-019fe4cb-root-work remains live and was heartbeated at 2026-08-09T05:50:04.715082Z, journal event 05a2f165-b219-4707-8858-e1d186fe68e4. This correction-phase refresh is protected by exact backlog-path claim add-portable-agent-tournament-skill-019fe4cb-correction-evidence-1, outcome SHARED_CHECKOUT_ACQUIRED, journal event 2f8397b1-bbcf-460f-b212-8305741d0371.
 
-Observed At: 2026-08-09T05:39:27Z
+Observed At: 2026-08-09T05:50:11Z
 
-Started At: 2026-08-09T05:39:00Z
+Started At: 2026-08-09T05:49:00Z
 
-Deadline or Expires At: 2026-08-09T06:05:00Z
+Deadline or Expires At: 2026-08-09T06:20:00Z
 
-Next Action: Collect both independent review verdicts for candidate fe2228e2140e4ed212917edfe240fb7001588813, route every confirmed finding to the original Dev Coder, or dispatch focused private verification only after both reviews pass
+Next Action: Collect the clean correction commit from original Dev Coder execution /root/tournament_skill_coder, then dispatch the same two fresh-context reviewers against the replacement candidate before any focused verifier work
 
-Next Reconciliation At: 2026-08-09T05:53:00Z
+Next Reconciliation At: 2026-08-09T06:04:00Z
 
 ## Running Resource Claim Evidence
 
