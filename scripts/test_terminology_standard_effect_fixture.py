@@ -31,7 +31,29 @@ _NEGATIVE_VERIFIER = _NEGATIVE_ROOT / "verify.py"
 _SOURCE = _ROOT / "source-document.md"
 _STANDARD = _ROOT / "terminology.md"
 _CASES = _REPOSITORY_ROOT / "evals" / "cases.yaml"
+_AGENT_SCENARIOS = _REPOSITORY_ROOT / "evals" / "agent-scenarios.yaml"
+_SKILL_PROBES = _REPOSITORY_ROOT / "evals" / "skill-probes.yaml"
 _RUNNER = _REPOSITORY_ROOT / "scripts" / "run-agent-skill-evals.py"
+
+_REFERENCE_CONTRACT = {
+    "schemaVersion": 5,
+    "enablement": "probe-treatment-only",
+    "serverName": "mcp-agent-ops",
+    "enabledTools": ["reference_load"],
+    "requiredVersion": "0.8.0",
+    "requiredRuntimeDigest": (
+        "21fe8d907e65de0a2e428d4d681eef427404cfc98fb260112467371c5e0b4156"
+    ),
+    "referenceNames": ["terminology.md"],
+    "requiredToolSequences": [["reference_load"]],
+    "requiredToolOutcomes": {"reference_load": ["LOADED"]},
+    "requiredToolArguments": {
+        "reference_load": {"names": ["terminology.md"]},
+    },
+}
+
+_NEGATIVE_CASE_ID = "terminology-standard-negative-activation"
+_NEGATIVE_SCENARIO_ID = "dev-documentation-writer-terminology-exclusion"
 
 _CONFORMING_SENTENCES = {
     "TERM-01": "The Acceptance criterion AC-17 requires the Artifact to retain all 35 concept statements.",
@@ -134,7 +156,7 @@ class TerminologyEffectVerifierTests(unittest.TestCase):
     def test_fixture_has_no_project_guidance_injection(self) -> None:
         self.assertFalse((_ROOT / "AGENTS.md").exists())
 
-    def test_production_route_stages_generated_writer_and_probe_variants(self) -> None:
+    def test_catalog_preflight_routes_provider_only_to_the_treatment(self) -> None:
         runner = _load_runner()
         case = runner.load_cases()["terminology-standard-effect"]
         treatment = runner._apply_probe_variant(
@@ -153,6 +175,11 @@ class TerminologyEffectVerifierTests(unittest.TestCase):
             "wrong-skill",
         )
 
+        self.assertEqual([], runner.validate_framework_catalogs())
+        self.assertNotIn("AGENTS.md", case["protectedPaths"])
+        self.assertNotIn("AGENTS.md", case["contextPack"]["include"])
+        self.assertNotIn("AGENTS.md", case["modelVisiblePaths"])
+        self.assertEqual(_REFERENCE_CONTRACT, case["mcpAgentOps"])
         self.assertEqual(["dev-documentation-writer"], case["requiredAgents"])
         self.assertIn("terminology-standard", treatment["executionSkills"])
         self.assertNotIn("terminology-standard", omitted["executionSkills"])
@@ -166,6 +193,30 @@ class TerminologyEffectVerifierTests(unittest.TestCase):
             omitted["probeComparisonKey"],
             wrong["probeComparisonKey"],
         )
+
+        frozen_fields = (
+            "project",
+            "task",
+            "verify",
+            "allowedWritePaths",
+            "ephemeralWritePaths",
+            "protectedPaths",
+            "contextPack",
+            "modelVisiblePaths",
+            "sandboxProfiles",
+        )
+        for variant in (treatment, omitted, wrong):
+            with self.subTest(preflight=variant["probeVariant"]):
+                self.assertEqual([], runner.validate_case_definition(variant))
+                self.assertEqual([], runner.validate_case(variant, _ROOT, None))
+                for field in frozen_fields:
+                    self.assertEqual(case[field], variant[field])
+
+        self.assertEqual(_REFERENCE_CONTRACT, treatment["mcpAgentOps"])
+        for control in (omitted, wrong):
+            with self.subTest(control=control["probeVariant"]):
+                self.assertNotIn("mcpAgentOps", control)
+                self.assertIn("terminology-standard", control["forbiddenSkills"])
 
         staged_by_variant: dict[str, set[str]] = {}
         for variant_name, variant in (
@@ -196,6 +247,48 @@ class TerminologyEffectVerifierTests(unittest.TestCase):
         self.assertNotIn(target_skill, staged_by_variant["target-omitted"])
         self.assertNotIn(target_skill, staged_by_variant["wrong-skill"])
         self.assertIn(wrong_skill, staged_by_variant["wrong-skill"])
+
+    def test_negative_activation_case_is_linked_but_not_probe_selected(self) -> None:
+        runner = _load_runner()
+        cases = runner.load_cases()
+        negative = cases[_NEGATIVE_CASE_ID]
+        probe_catalog = yaml.safe_load(_SKILL_PROBES.read_text(encoding="utf-8"))
+        probe = next(
+            item
+            for item in probe_catalog["probes"]
+            if item["id"] == "probe-terminology-standard"
+        )
+        scenario_catalog = yaml.safe_load(
+            _AGENT_SCENARIOS.read_text(encoding="utf-8")
+        )
+        writer = next(
+            item
+            for item in scenario_catalog["agents"]
+            if item["id"] == "dev-documentation-writer"
+        )
+        scenario = next(
+            item
+            for item in writer["scenarios"]
+            if item["id"] == _NEGATIVE_SCENARIO_ID
+        )
+
+        self.assertEqual([], runner.validate_case(negative, _NEGATIVE_ROOT, None))
+        self.assertEqual(["dev-documentation-writer"], negative["requiredAgents"])
+        self.assertEqual([_NEGATIVE_SCENARIO_ID], negative["agentScenarios"])
+        self.assertEqual(["probe-terminology-standard"], negative["skillProbes"])
+        self.assertEqual([], negative["fixtureBackedProbeClaims"])
+        self.assertEqual(["terminology-standard"], negative["forbiddenSkills"])
+        self.assertNotIn("terminology-standard", negative["requiredSkills"])
+        self.assertNotIn("mcpAgentOps", negative)
+        self.assertEqual(
+            {"codex": "codex-workspace-write"},
+            negative["sandboxProfiles"],
+        )
+        self.assertEqual("boundary-failure", scenario["kind"])
+        self.assertEqual([_NEGATIVE_CASE_ID], scenario["executableCases"])
+        self.assertIn(_NEGATIVE_SCENARIO_ID, probe["scenarioAssociations"])
+        self.assertEqual(["terminology-standard-effect"], probe["executableCases"])
+        self.assertNotIn(_NEGATIVE_CASE_ID, probe["executableCases"])
 
     def test_negative_activation_verifier_accepts_an_exact_byte_copy(self) -> None:
         completed = _run_negative_verifier(_NEGATIVE_SOURCE.read_bytes())

@@ -663,8 +663,8 @@ def _validate_reference_mcp_agent_ops_case(
         errors.append(
             "case.mcpAgentOps.enabledTools must be exactly reference_load"
         )
-    if value.get("requiredVersion") != "0.7.0":
-        errors.append("case.mcpAgentOps.requiredVersion must be 0.7.0")
+    if value.get("requiredVersion") != "0.8.0":
+        errors.append("case.mcpAgentOps.requiredVersion must be 0.8.0")
     _require_digest(
         value.get("requiredRuntimeDigest"),
         "case.mcpAgentOps.requiredRuntimeDigest",

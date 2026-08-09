@@ -52,7 +52,7 @@ def _reference_treatment_case(module: ModuleType) -> dict[str, object]:
         "enablement": "probe-treatment-only",
         "serverName": "mcp-agent-ops",
         "enabledTools": ["reference_load"],
-        "requiredVersion": "0.7.0",
+        "requiredVersion": "0.8.0",
         "requiredRuntimeDigest": "d" * 64,
         "referenceNames": ["terminology.md"],
         "requiredToolSequences": [["reference_load"]],
@@ -2616,6 +2616,15 @@ class HarnessAndJudgeTests(unittest.TestCase):
             )
         )
         self.assertEqual([], self.module.validate_case_definition(case))
+
+        for version in ("0.7.0", "0.9.0"):
+            invalid_version = yaml.safe_load(yaml.safe_dump(case))
+            invalid_version["mcpAgentOps"]["requiredVersion"] = version
+            with self.subTest(required_version=version):
+                self.assertIn(
+                    "case.mcpAgentOps.requiredVersion must be 0.8.0",
+                    self.module.validate_case_definition(invalid_version),
+                )
 
         for field, value, expected in (
             ("enabledTools", ["reference_load", "reference_refresh"], "enabledTools"),

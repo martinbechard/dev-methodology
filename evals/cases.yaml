@@ -967,7 +967,7 @@ cases:
     task: TASK.md
     allowedWritePaths: [rewritten-document.md, eval-result.md]
     ephemeralWritePaths: []
-    protectedPaths: [AGENTS.md, README.md, TASK.md, source-document.md, terminology.md]
+    protectedPaths: [README.md, TASK.md, source-document.md, terminology.md]
     install: null
     verify:
       argv:
@@ -1051,13 +1051,27 @@ cases:
     judgePlan:
       deterministicChecks: [model-input-safety, skill-read-trace, harness-agent-identity, semantic-preservation, artifact-structure, required-command-outcome, allowed-paths-only, contradiction-scan, snapshot-reset, local-execution-boundary]
       modelRubric: documentation-quality
+    mcpAgentOps:
+      schemaVersion: 5
+      enablement: probe-treatment-only
+      serverName: mcp-agent-ops
+      enabledTools: [reference_load]
+      requiredVersion: 0.8.0
+      requiredRuntimeDigest: 21fe8d907e65de0a2e428d4d681eef427404cfc98fb260112467371c5e0b4156
+      referenceNames: [terminology.md]
+      requiredToolSequences: [[reference_load]]
+      requiredToolOutcomes:
+        reference_load: [LOADED]
+      requiredToolArguments:
+        reference_load:
+          names: [terminology.md]
     contextPack:
       fixtureRoot: evals/projects/terminology-standard-effect
-      include: [AGENTS.md, README.md, TASK.md, source-document.md, terminology.md]
+      include: [README.md, TASK.md, source-document.md, terminology.md]
       stagedSkillPackages: [effective-communication, ste-technical-writing, route-documentation-work, verify-documentation-page, terminology-standard]
       wholeRepositoryAllowed: false
       approvedSensitiveData: false
-    modelVisiblePaths: [AGENTS.md, README.md, TASK.md, source-document.md, terminology.md]
+    modelVisiblePaths: [README.md, TASK.md, source-document.md, terminology.md]
     skillResourceAllowlist:
       effective-communication: [SKILL.md]
       ste-technical-writing: [SKILL.md]
@@ -1065,3 +1079,43 @@ cases:
       verify-documentation-page: [SKILL.md]
       terminology-standard: [SKILL.md]
     requiredEvidence: [TERMINOLOGY-PREFERRED, SEMANTIC-MARKERS, SCRATCHPAD-OBSERVATION]
+  - id: terminology-standard-negative-activation
+    coverageStatus: fixture-backed
+    executionStatus: runnable
+    project: evals/projects/terminology-standard-effect/negative-activation
+    task: TASK.md
+    allowedWritePaths: [preserved-evidence.md, eval-result.md]
+    ephemeralWritePaths: []
+    protectedPaths: [TASK.md, source-evidence.md, verify.py]
+    install: null
+    verify:
+      argv: [python3, verify.py, preserved-evidence.md]
+      modelVisible: false
+    harnesses: [codex]
+    risk: {level: ordinary, reasons: []}
+    executionTier: local
+    securityContainmentRequired: false
+    harnessExecutionStatus: {codex: runnable, junie: runnable}
+    requiredAgents: [dev-documentation-writer]
+    agentScenarios: [dev-documentation-writer-terminology-exclusion]
+    requiredSkills: [effective-communication, ste-technical-writing, route-documentation-work]
+    forbiddenSkills: [terminology-standard]
+    skillProbes: [probe-terminology-standard]
+    fixtureBackedProbeClaims: []
+    workflowPack: documentation-methodology
+    sandboxProfiles: {codex: codex-workspace-write}
+    judgePlan:
+      deterministicChecks: [model-input-safety, skill-read-trace, harness-agent-identity, semantic-preservation, required-command-outcome, allowed-paths-only, contradiction-scan, snapshot-reset, local-execution-boundary]
+      modelRubric: documentation-quality
+    contextPack:
+      fixtureRoot: evals/projects/terminology-standard-effect/negative-activation
+      include: [TASK.md, source-evidence.md]
+      stagedSkillPackages: [effective-communication, ste-technical-writing, route-documentation-work]
+      wholeRepositoryAllowed: false
+      approvedSensitiveData: false
+    modelVisiblePaths: [TASK.md, source-evidence.md]
+    skillResourceAllowlist:
+      effective-communication: [SKILL.md]
+      ste-technical-writing: [SKILL.md]
+      route-documentation-work: [SKILL.md]
+    requiredEvidence: [EXACT-BYTES-PRESERVED]
