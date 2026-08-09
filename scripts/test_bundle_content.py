@@ -11437,6 +11437,32 @@ Visible after.
             valid,
             build_skill_docs.validate_json_schema(valid, "output", source_path),
         )
+        nested_valid = {
+            "type": "object",
+            "additionalProperties": False,
+            "required": ["groups"],
+            "properties": {
+                "groups": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": False,
+                        "required": ["label", "rank"],
+                        "properties": {
+                            "label": {"type": "string", "minLength": 1},
+                            "rank": {"type": "integer", "minimum": 1},
+                        },
+                    },
+                }
+            },
+            "default": {"groups": [{"label": "primary", "rank": 1}]},
+            "examples": [{"groups": [{"label": "secondary", "rank": 2}]}],
+        }
+        self.assertEqual(
+            nested_valid,
+            build_skill_docs.validate_json_schema(nested_valid, "output", source_path),
+        )
 
         invalid_schemas = (
             {
@@ -11459,6 +11485,23 @@ Visible after.
             {"type": "array", "items": []},
         )
         for schema in invalid_schemas:
+            with self.subTest(schema=schema), self.assertRaises(ValueError):
+                build_skill_docs.validate_json_schema(schema, "output", source_path)
+
+        invalid_nested_annotations = (
+            {**nested_valid, "default": {"groups": [{"label": "primary", "rank": "1"}]}},
+            {**nested_valid, "default": {"groups": []}},
+            {**nested_valid, "default": {"groups": [{"label": "", "rank": 1}]}},
+            {**nested_valid, "default": {"groups": [{"label": "primary"}]}},
+            {
+                **nested_valid,
+                "default": {
+                    "groups": [{"label": "primary", "rank": 1, "unexpected": True}]
+                },
+            },
+            {**nested_valid, "examples": [{"groups": [None]}]},
+        )
+        for schema in invalid_nested_annotations:
             with self.subTest(schema=schema), self.assertRaises(ValueError):
                 build_skill_docs.validate_json_schema(schema, "output", source_path)
 

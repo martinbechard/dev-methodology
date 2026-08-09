@@ -405,6 +405,29 @@ class DesignSystemCoordinatorTests(unittest.TestCase):
             [candidate["id"] for candidate in result["ranking"]],
         )
 
+    def test_inclusive_cost_band_is_equivalent_before_speed_tie_breaking(self) -> None:
+        """Equal speed must leave the cheapest and exact-boundary peers tied."""
+
+        result = subject.rank_candidates(
+            (
+                {"id": "cheapest", "accuracy": "1", "estimated_cost": "100", "wall_seconds": "3"},
+                {"id": "exact-boundary", "accuracy": "1", "estimated_cost": "115", "wall_seconds": "3"},
+                {
+                    "id": "outside-boundary",
+                    "accuracy": "1",
+                    "estimated_cost": "115.000000000000000001",
+                    "wall_seconds": "1",
+                },
+            )
+        )
+        ranking = result["ranking"]
+        self.assertEqual(
+            ["cheapest", "exact-boundary", "outside-boundary"],
+            [candidate["id"] for candidate in ranking],
+        )
+        self.assertEqual([1, 1, 3], [candidate["rank"] for candidate in ranking])
+        self.assertEqual([True, True, False], [candidate["tie"] for candidate in ranking])
+
     def test_priced_precedes_unpriced_and_exact_ties_remain_explicit(self) -> None:
         """Price availability is ordered before speed and exact metric ties share a rank."""
 
@@ -507,6 +530,63 @@ class DesignSystemCoordinatorTests(unittest.TestCase):
                 )
                 json.dumps(conflict_output, allow_nan=False)
                 self._assert_matches_schema(conflict_output, output_schema)
+
+    def test_decimal_json_output_is_faithful_or_fails_closed(self) -> None:
+        """Extreme integers stay exact while underflow and fractional overflow fail closed."""
+
+        extreme = subject.rank_candidates(
+            (
+                {
+                    "id": "extreme",
+                    "accuracy": "1e309",
+                    "estimated_cost": "1e309",
+                    "wall_seconds": "1e309",
+                },
+            )
+        )
+        encoded_extreme = 10**309
+        self.assertEqual(
+            (encoded_extreme, encoded_extreme, encoded_extreme),
+            (
+                extreme["ranking"][0]["accuracy"],
+                extreme["ranking"][0]["estimated_cost"],
+                extreme["ranking"][0]["wall_seconds"],
+            ),
+        )
+        json.dumps(extreme, allow_nan=False)
+
+        for measurement in ("1e-400", f"{10**309}.1"):
+            with self.subTest(measurement=measurement), self.assertRaisesRegex(
+                ValueError,
+                "faithfully",
+            ):
+                subject.rank_candidates(
+                    (
+                        {
+                            "id": "unrepresentable",
+                            "accuracy": measurement,
+                            "estimated_cost": "1",
+                            "wall_seconds": "1",
+                        },
+                    )
+                )
+
+        key = subject.assignment_key(self.assignment)
+        blocked = subject.coordinate(
+            (self.assignment,),
+            {key: [self._report()]},
+            candidates=(
+                {
+                    "id": "underflow",
+                    "accuracy": "1e-400",
+                    "estimated_cost": "1",
+                    "wall_seconds": "1",
+                },
+            ),
+        )
+        self.assertEqual("BLOCKED", blocked["status"])
+        self.assertEqual([], blocked["modelEvalRanking"])
+        json.dumps(blocked, allow_nan=False)
 
     def test_cached_input_is_subtracted_before_cached_charge(self) -> None:
         """Cached tokens must not also receive the full input rate."""

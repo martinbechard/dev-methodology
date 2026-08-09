@@ -10,6 +10,8 @@ from __future__ import annotations
 
 import importlib.util
 from pathlib import Path
+import sys
+import tempfile
 import unittest
 
 import yaml
@@ -21,6 +23,20 @@ SPEC = importlib.util.spec_from_file_location("design_system_runner_contract", M
 assert SPEC and SPEC.loader
 contract = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(contract)
+
+AGENT_TEST_ROOT = ROOT / "evals" / "agent-tests"
+sys.path.insert(0, str(AGENT_TEST_ROOT))
+try:
+    RUNNER_SPEC = importlib.util.spec_from_file_location(
+        "documentation_design_system_suite_runner",
+        AGENT_TEST_ROOT / "runner.py",
+    )
+    assert RUNNER_SPEC and RUNNER_SPEC.loader
+    suite_runner = importlib.util.module_from_spec(RUNNER_SPEC)
+    sys.modules[RUNNER_SPEC.name] = suite_runner
+    RUNNER_SPEC.loader.exec_module(suite_runner)
+finally:
+    sys.path.remove(str(AGENT_TEST_ROOT))
 
 
 class ChecklistRunnerContractTests(unittest.TestCase):
@@ -226,6 +242,57 @@ class ChecklistRunnerContractTests(unittest.TestCase):
         for agent_name in ("supervisor.toml", "judge.toml"):
             agent_text = (suite_root / "agents" / agent_name).read_text(encoding="utf-8")
             self.assertIn(suite_skill, agent_text)
+
+    def test_every_scenario_resolves_and_stages_its_workspace_inventory(self) -> None:
+        """Every inventory-enforced scenario must stage from a real suite-local fixture."""
+
+        suite_root = Path(__file__).parent
+        manifest = yaml.safe_load((suite_root / "suite.yaml").read_text(encoding="utf-8"))
+        scenarios = tuple(
+            yaml.safe_load((suite_root / "scenarios.yaml").read_text(encoding="utf-8"))["scenarios"]
+        )
+        suite = suite_runner._Suite(
+            suite_id=manifest["id"],
+            priority=manifest["priority"],
+            path=suite_root,
+            manifest=manifest,
+            scenarios=scenarios,
+        )
+        run = suite_runner._RunSpec(
+            suite=suite,
+            scenario_ids=tuple(scenario["id"] for scenario in scenarios),
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            temporary_root = Path(directory)
+            fixture_root = temporary_root / "fixtures"
+            checkpoint_root = temporary_root / "checkpoints"
+            fixture_root.mkdir()
+            checkpoint_root.mkdir()
+            baselines = suite_runner._stage_workspace_inventory_fixtures(
+                (run,),
+                fixture_root,
+                checkpoint_root,
+            )
+
+            expected_keys = {(suite.suite_id, scenario["id"]) for scenario in scenarios}
+            self.assertEqual(expected_keys, set(baselines))
+            for scenario in scenarios:
+                with self.subTest(scenario=scenario["id"]):
+                    self.assertIs(True, scenario["requiresWorkspaceInventory"])
+                    self.assertIs(True, scenario["requiresNoDetectedMutation"])
+                    self.assertTrue((suite_root / scenario["executableCase"]).is_dir())
+                    staged_root = fixture_root / suite.suite_id / scenario["id"]
+                    self.assertTrue((staged_root / ".git").is_dir())
+                    self.assertTrue((staged_root / "TASK.md").is_file())
+                    self.assertTrue(
+                        (
+                            checkpoint_root
+                            / suite.suite_id
+                            / scenario["id"]
+                            / "artifacts"
+                            / "workspace-baseline.json"
+                        ).is_file()
+                    )
 
 
 if __name__ == "__main__":

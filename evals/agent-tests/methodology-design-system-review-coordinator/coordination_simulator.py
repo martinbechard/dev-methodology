@@ -14,6 +14,7 @@ from decimal import Decimal, InvalidOperation
 import importlib.util
 import math
 from pathlib import Path
+import sys
 from typing import Any
 
 
@@ -600,13 +601,21 @@ def _candidate(candidate: object) -> dict[str, object]:
     }
 
 
-def _json_number(number: Decimal) -> float:
-    """Convert an internally exact Decimal to a finite standard-JSON number."""
+def _json_number(number: Decimal) -> int | float:
+    """Convert Decimal without JSON-range overflow or nonzero underflow."""
 
     converted = float(number)
-    if not math.isfinite(converted):
-        raise ValueError("numeric measurement is outside the standard-JSON number range")
-    return converted
+    if math.isfinite(converted) and Decimal(str(converted)) == number:
+        return converted
+    if number == number.to_integral_value():
+        digit_limit = sys.get_int_max_str_digits() or 4300
+        if number.adjusted() + 1 <= digit_limit:
+            return int(number)
+    if math.isfinite(converted) and converted != 0:
+        return converted
+    raise ValueError(
+        "numeric measurement cannot be represented faithfully as a standard-JSON number"
+    )
 
 
 def _append_rank_group(
@@ -616,14 +625,13 @@ def _append_rank_group(
     *,
     pricing_status: str,
 ) -> int:
-    """Append stable candidates and retain a shared rank for exact ties."""
+    """Append one cost-equivalent group and retain shared ranks for speed ties."""
 
-    previous_metrics: tuple[Decimal, Decimal | None, Decimal] | None = None
+    previous_metrics: tuple[Decimal, Decimal] | None = None
     current_rank = rank
     for candidate in group:
         metrics = (
             candidate["accuracy"],
-            candidate["estimated_cost"],
             candidate["wall_seconds"],
         )
         if previous_metrics is None or metrics != previous_metrics:
@@ -644,7 +652,6 @@ def _append_rank_group(
                     for peer in group
                     if (
                         peer["accuracy"],
-                        peer["estimated_cost"],
                         peer["wall_seconds"],
                     )
                     == metrics
@@ -653,7 +660,7 @@ def _append_rank_group(
                 "pricingStatus": pricing_status,
                 "provisional": pricing_status == "unpriced",
                 "evidence": (
-                    "Exact measured accuracy, pricing status, inclusive cost band, and wall time determine this rank."
+                    "Exact measured accuracy, pricing status, inclusive cost-band equivalence, and wall time determine this rank."
                 ),
             }
         )

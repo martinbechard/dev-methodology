@@ -1001,8 +1001,19 @@ def validate_json_schema(value: object, field_path: str, source_path: Path) -> d
             )
         normalized["minimum"] = minimum
 
-    def matches_declared_type(instance: object) -> bool:
-        for schema_type in schema_types:
+    def declared_types(instance_schema: dict[str, object]) -> list[object]:
+        instance_raw_type = instance_schema["type"]
+        return (
+            instance_raw_type
+            if isinstance(instance_raw_type, list)
+            else [instance_raw_type]
+        )
+
+    def matches_declared_type(
+        instance: object,
+        instance_schema: dict[str, object],
+    ) -> bool:
+        for schema_type in declared_types(instance_schema):
             if schema_type == "null" and instance is None:
                 return True
             if schema_type == "boolean" and isinstance(instance, bool):
@@ -1024,47 +1035,87 @@ def validate_json_schema(value: object, field_path: str, source_path: Path) -> d
                 return True
         return False
 
-    def validate_annotated_instance(instance: object, annotation_path: str) -> None:
+    def validate_annotated_instance(
+        instance: object,
+        instance_schema: dict[str, object],
+        annotation_path: str,
+    ) -> None:
         try:
             encoded = json.dumps(instance, allow_nan=False, sort_keys=True)
         except (TypeError, ValueError) as error:
             raise ValueError(
                 f"Conceptual agent definition {annotation_path} must be a JSON value: {source_path}"
             ) from error
-        if not matches_declared_type(instance):
+        if not matches_declared_type(instance, instance_schema):
             raise ValueError(
                 f"Conceptual agent definition {annotation_path} must match a declared type: {source_path}"
             )
-        if "enum" in value and encoded not in encoded_enum:
-            raise ValueError(
-                f"Conceptual agent definition {annotation_path} must match an enum value: {source_path}"
-            )
-        if isinstance(instance, str) and "minLength" in value and len(instance) < value["minLength"]:
+        if "enum" in instance_schema:
+            instance_enum = {
+                json.dumps(item, allow_nan=False, sort_keys=True)
+                for item in instance_schema["enum"]
+            }
+            if encoded not in instance_enum:
+                raise ValueError(
+                    f"Conceptual agent definition {annotation_path} must match an enum value: {source_path}"
+                )
+        if isinstance(instance, dict) and "object" in declared_types(instance_schema):
+            instance_properties = instance_schema["properties"]
+            if set(instance) != set(instance_properties):
+                raise ValueError(
+                    f"Conceptual agent definition {annotation_path} must contain every declared property exactly once: {source_path}"
+                )
+            for property_name, property_schema in instance_properties.items():
+                validate_annotated_instance(
+                    instance[property_name],
+                    property_schema,
+                    f"{annotation_path}.{property_name}",
+                )
+        if isinstance(instance, list) and "array" in declared_types(instance_schema):
+            for index, item in enumerate(instance):
+                validate_annotated_instance(
+                    item,
+                    instance_schema["items"],
+                    f"{annotation_path}[{index}]",
+                )
+        if (
+            isinstance(instance, str)
+            and "minLength" in instance_schema
+            and len(instance) < instance_schema["minLength"]
+        ):
             raise ValueError(
                 f"Conceptual agent definition {annotation_path} violates minLength: {source_path}"
             )
         if (
             isinstance(instance, (int, float))
             and not isinstance(instance, bool)
-            and "minimum" in value
-            and instance < value["minimum"]
+            and "minimum" in instance_schema
+            and instance < instance_schema["minimum"]
         ):
             raise ValueError(
                 f"Conceptual agent definition {annotation_path} violates minimum: {source_path}"
             )
-        if isinstance(instance, list) and "minItems" in value and len(instance) < value["minItems"]:
+        if (
+            isinstance(instance, list)
+            and "minItems" in instance_schema
+            and len(instance) < instance_schema["minItems"]
+        ):
             raise ValueError(
                 f"Conceptual agent definition {annotation_path} violates minItems: {source_path}"
             )
 
     if "enum" in value:
         for index, enum_value in enumerate(value["enum"]):
-            if not matches_declared_type(enum_value):
+            if not matches_declared_type(enum_value, normalized):
                 raise ValueError(
                     f"Conceptual agent definition {field_path}.enum[{index}] must match a declared type: {source_path}"
                 )
     if "default" in value:
-        validate_annotated_instance(value["default"], f"{field_path}.default")
+        validate_annotated_instance(
+            value["default"],
+            normalized,
+            f"{field_path}.default",
+        )
         normalized["default"] = value["default"]
     if "examples" in value:
         examples = value["examples"]
@@ -1073,7 +1124,7 @@ def validate_json_schema(value: object, field_path: str, source_path: Path) -> d
                 f"Conceptual agent definition {field_path}.examples must be a non-empty list: {source_path}"
             )
         for index, example in enumerate(examples):
-            validate_annotated_instance(example, f"{field_path}.examples[{index}]")
+            validate_annotated_instance(example, normalized, f"{field_path}.examples[{index}]")
         normalized["examples"] = list(examples)
     return normalized
 
