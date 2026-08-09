@@ -273,14 +273,14 @@ Condition Type: root-execution
 
 Owner: Dev Orchestrator task 019fe3d6-2dd6-7322-a507-e8ca961e27d8
 
-Evidence: The same canonical root execution remains active on the preserved branch and worktree. Dev Coder commit ae70fda537537b2df45193447d73b0de6c1e9605 cleanly changes exactly the seven newly approved treatment-only provider paths; its full focused runner module passed 123 of 123 tests, focused reference and MCP regressions passed 13 of 13, post-commit new tests passed 5 of 5, catalogs validated, and all changed Python paths compile. Commit 2ba452fb5cb927a9d18e38346056e2af3340aa2a then corrects exactly the two accepted generator-copy findings without changing generated HTML or another shared surface; fresh independent non-security review returned GOOD after three focused tests, compilation, terminology review, and exact diff checks passed. The first seven-path reviewer stopped before source inspection under the Codex cybersecurity-routing safeguard; the Coordinator classified that receipt as a non-blocking review exclusion and authorized the already-running ordinary contract/code review and independent verification. The user-installed reference provider remains 0.5.1 while the development provider now identifies as 0.8.0, so no shared installation or catalog runtime identity has been inferred from the earlier 0.7.0 analysis.
+Evidence: The same canonical root execution remains active on the preserved branch and worktree. Commit 2ba452fb5cb927a9d18e38346056e2af3340aa2a has a fresh independent GOOD verdict for the exact generator-copy correction. Commit 6281b7c03d58e71995870952510aa19f5da1606c publishes project-root terminology.md as an exact copy of the accepted candidate with SHA-256 273834ed065ecc93dcd9fb337b8a9b00c69f038216da68744b413e62b7d7b733, 35 preferred terms, and the one evidenced Campaign rule; fresh artifact review returned GOOD and TERMINOLOGY REVIEW: PASS, and root terminology.md is outside configured document-provenance patterns. Ordinary functional review of the seven-path runner commit ae70fda537537b2df45193447d73b0de6c1e9605 found two concrete defects: schema-v5 Junie artifacts could not validate against their runner-owned configuration and authorization layout, and catalog validation lacked a migration-complete activation guard. The original Dev Coder is correcting only those seven approved paths without entering deferred catalogs or shared surfaces. The installed provider remains 0.5.1; the clean development provider is tagged v0.8.0 at commit 425783f32c0bdb0e5568df09019494b7e63ac34b with runtime digest 21fe8d907e65de0a2e428d4d681eef427404cfc98fb260112467371c5e0b4156, so no stale 0.7.0 identity will be written to catalogs.
 
-Observed At: 2026-08-09T05:19:38Z
+Observed At: 2026-08-09T05:34:43Z
 
 Started At: 2026-08-09T04:27:45Z
 
 Deadline or Expires At: 2026-08-09T06:27:45Z
 
-Next Action: Reconcile the fresh seven-path functional review, obtain independent source verification for the accepted private candidate, and reconcile the current provider runtime identity before entering any owner-deferred catalog, shared-installation, generated-output, live-model, or main-integration surface
+Next Action: Finish and freshly re-review the exact seven-path correction, send the requested finite clean-boundary status to the waiting tournament task, obtain independent source verification, and then reconcile the v0.8.0 runtime identity only after the catalog owner directly releases the deferred shared surfaces
 
-Next Reconciliation At: 2026-08-09T05:34:38Z
+Next Reconciliation At: 2026-08-09T05:49:43Z
