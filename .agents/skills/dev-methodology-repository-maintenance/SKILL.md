@@ -125,7 +125,9 @@ When a targeted test fails, determine whether the implementation or test is wron
 
 Run broader tests only when the user requests them or a focused failure identifies a concrete dependency.
 
-Record an unrelated failure as a distinct defect. Do not fix it under the current scope or keep the current item open solely because of it.
+Correct a trivial unrelated failure immediately without creating a work item when current source makes both the cause and correction unambiguous, the edit is limited to a stale assertion, fixture, test-support value, or documentation statement, no production behavior or governed definition changes, no user-owned bytes overlap, and one focused check can verify the correction in the same bounded turn. Report the incidental correction separately from the primary result.
+
+Record the failure as a distinct defect when any of those conditions is absent, the correction needs investigation or design judgment, the change affects production behavior or a governed definition, the failure recurs after the obvious correction, or focused verification identifies a wider dependency. Do not keep the current item open solely because of a recorded distinct defect.
 
 If this repository later adds a build script, run the build after changing code, imports, generated artifacts, or project metadata.
 

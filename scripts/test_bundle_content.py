@@ -943,6 +943,8 @@ REPOSITORY_MAINTENANCE_REQUIRED_PHRASES = (
     "Run scripts/openai_metadata.py skills after changing a skill name or description.",
     "Choose tests from changed behavior and actual dependency paths.",
     "A tier identifies the affected surface; it does not trigger a full repository regression.",
+    "Correct a trivial unrelated failure immediately without creating a work item",
+    "Record the failure as a distinct defect when any of those conditions is absent",
     ".worktrees contains ignored operational checkouts under the primary worktree. Resolve this directory from the primary worktree, never from another linked checkout.",
 )
 
