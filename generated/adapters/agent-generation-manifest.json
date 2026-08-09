@@ -1,7 +1,7 @@
 {
   "adapters": {
     "claude": {
-      "agentCount": 30,
+      "agentCount": 32,
       "agents": [
         {
           "contextAllocation": {
@@ -668,6 +668,65 @@
               "contextBudgetMechanismEvidence": "https://code.claude.com/docs/en/sub-agents",
               "contextBudgetTokens": 750000,
               "contextCapacityEvidence": [
+                "https://platform.claude.com/docs/en/about-claude/models/introducing-claude-fable-5-and-claude-mythos-5"
+              ],
+              "contextCapacityTokens": 1000000,
+              "headroomTokens": 250000,
+              "model": "fable-5",
+              "modelProfile": "simple"
+            },
+            "rounding": "floor"
+          },
+          "name": "methodology-design-system-checklist-runner",
+          "output": "generated/adapters/claude/agents/methodology-design-system-checklist-runner.md",
+          "referencedFixedSkills": [
+            "effective-communication",
+            "ste-technical-writing",
+            "review-documentation-design-system"
+          ],
+          "sha256": "f0d49d20a9144d3b62b43a8bf3d518ecbdd6e396b97349c8bda2dd19a4fc65f1",
+          "source": "agents/roles/methodology-maintenance/methodology-design-system-checklist-runner.role.yaml"
+        },
+        {
+          "contextAllocation": {
+            "additionalReserveTokens": 0,
+            "contextBudgetPercent": 75,
+            "headroomPercent": 25,
+            "modelStages": {},
+            "primary": {
+              "contextBudgetMechanism": "instruction",
+              "contextBudgetMechanismEvidence": "https://code.claude.com/docs/en/sub-agents",
+              "contextBudgetTokens": 750000,
+              "contextCapacityEvidence": [
+                "https://platform.claude.com/docs/en/about-claude/models/whats-new-sonnet-5"
+              ],
+              "contextCapacityTokens": 1000000,
+              "headroomTokens": 250000,
+              "model": "sonnet-5",
+              "modelProfile": "coordination"
+            },
+            "rounding": "floor"
+          },
+          "name": "methodology-design-system-review-coordinator",
+          "output": "generated/adapters/claude/agents/methodology-design-system-review-coordinator.md",
+          "referencedFixedSkills": [
+            "effective-communication",
+            "ste-technical-writing"
+          ],
+          "sha256": "6e819560509cee7ad032eadaba53ae35f8e8d1e3a9b573cd097e0c1441d44adb",
+          "source": "agents/roles/methodology-maintenance/methodology-design-system-review-coordinator.role.yaml"
+        },
+        {
+          "contextAllocation": {
+            "additionalReserveTokens": 0,
+            "contextBudgetPercent": 75,
+            "headroomPercent": 25,
+            "modelStages": {},
+            "primary": {
+              "contextBudgetMechanism": "instruction",
+              "contextBudgetMechanismEvidence": "https://code.claude.com/docs/en/sub-agents",
+              "contextBudgetTokens": 750000,
+              "contextCapacityEvidence": [
                 "https://platform.claude.com/docs/en/release-notes/overview"
               ],
               "contextCapacityTokens": 1000000,
@@ -1086,7 +1145,7 @@
       "outputRoot": "generated/adapters/claude/agents"
     },
     "codex": {
-      "agentCount": 30,
+      "agentCount": 32,
       "agents": [
         {
           "contextAllocation": {
@@ -1774,6 +1833,65 @@
               ],
               "contextCapacityTokens": 1050000,
               "headroomTokens": 262500,
+              "model": "gpt-5.6-luna",
+              "modelProfile": "simple"
+            },
+            "rounding": "floor"
+          },
+          "name": "methodology-design-system-checklist-runner",
+          "output": "generated/adapters/codex/agents/methodology-design-system-checklist-runner.toml",
+          "referencedFixedSkills": [
+            "effective-communication",
+            "ste-technical-writing",
+            "review-documentation-design-system"
+          ],
+          "sha256": "f9ccc75bfc109854fa2970b48a1b422dd9360adaa5389ab5a86be508594f8c11",
+          "source": "agents/roles/methodology-maintenance/methodology-design-system-checklist-runner.role.yaml"
+        },
+        {
+          "contextAllocation": {
+            "additionalReserveTokens": 0,
+            "contextBudgetPercent": 75,
+            "headroomPercent": 25,
+            "modelStages": {},
+            "primary": {
+              "contextBudgetMechanism": "instruction",
+              "contextBudgetMechanismEvidence": "https://developers.openai.com/codex/subagents",
+              "contextBudgetTokens": 787500,
+              "contextCapacityEvidence": [
+                "https://developers.openai.com/api/docs/models"
+              ],
+              "contextCapacityTokens": 1050000,
+              "headroomTokens": 262500,
+              "model": "gpt-5.6-terra",
+              "modelProfile": "coordination"
+            },
+            "rounding": "floor"
+          },
+          "name": "methodology-design-system-review-coordinator",
+          "output": "generated/adapters/codex/agents/methodology-design-system-review-coordinator.toml",
+          "referencedFixedSkills": [
+            "effective-communication",
+            "ste-technical-writing"
+          ],
+          "sha256": "a5ee7902fe09996f59bd5e4c521fece9b612235817750a3f096a81aa0cf73b26",
+          "source": "agents/roles/methodology-maintenance/methodology-design-system-review-coordinator.role.yaml"
+        },
+        {
+          "contextAllocation": {
+            "additionalReserveTokens": 0,
+            "contextBudgetPercent": 75,
+            "headroomPercent": 25,
+            "modelStages": {},
+            "primary": {
+              "contextBudgetMechanism": "instruction",
+              "contextBudgetMechanismEvidence": "https://developers.openai.com/codex/subagents",
+              "contextBudgetTokens": 787500,
+              "contextCapacityEvidence": [
+                "https://developers.openai.com/api/docs/models"
+              ],
+              "contextCapacityTokens": 1050000,
+              "headroomTokens": 262500,
               "model": "gpt-5.6-sol",
               "modelProfile": "advanced"
             },
@@ -2204,7 +2322,7 @@
       "outputRoot": "generated/adapters/codex/agents"
     },
     "gemini": {
-      "agentCount": 30,
+      "agentCount": 32,
       "agents": [
         {
           "contextAllocation": {
@@ -2901,6 +3019,67 @@
               ],
               "contextCapacityTokens": 1048576,
               "headroomTokens": 262144,
+              "model": "flash",
+              "modelProfile": "simple"
+            },
+            "rounding": "floor"
+          },
+          "name": "methodology-design-system-checklist-runner",
+          "output": "generated/adapters/gemini/agents/methodology-design-system-checklist-runner.md",
+          "referencedFixedSkills": [
+            "effective-communication",
+            "ste-technical-writing",
+            "review-documentation-design-system"
+          ],
+          "sha256": "4bff338c6ae9e2bb54d512a609e9d7f8f5ab14ff8916b04ccec4136b7ad681e0",
+          "source": "agents/roles/methodology-maintenance/methodology-design-system-checklist-runner.role.yaml"
+        },
+        {
+          "contextAllocation": {
+            "additionalReserveTokens": 0,
+            "contextBudgetPercent": 75,
+            "headroomPercent": 25,
+            "modelStages": {},
+            "primary": {
+              "contextBudgetMechanism": "instruction",
+              "contextBudgetMechanismEvidence": "https://geminicli.com/docs/core/subagents/",
+              "contextBudgetTokens": 786432,
+              "contextCapacityEvidence": [
+                "https://geminicli.com/docs/cli/model/",
+                "https://ai.google.dev/gemini-api/docs/models"
+              ],
+              "contextCapacityTokens": 1048576,
+              "headroomTokens": 262144,
+              "model": "auto",
+              "modelProfile": "coordination"
+            },
+            "rounding": "floor"
+          },
+          "name": "methodology-design-system-review-coordinator",
+          "output": "generated/adapters/gemini/agents/methodology-design-system-review-coordinator.md",
+          "referencedFixedSkills": [
+            "effective-communication",
+            "ste-technical-writing"
+          ],
+          "sha256": "aad08cb83ad0984bed67242ba315da2388454345acfe4178ad4caac4c090e048",
+          "source": "agents/roles/methodology-maintenance/methodology-design-system-review-coordinator.role.yaml"
+        },
+        {
+          "contextAllocation": {
+            "additionalReserveTokens": 0,
+            "contextBudgetPercent": 75,
+            "headroomPercent": 25,
+            "modelStages": {},
+            "primary": {
+              "contextBudgetMechanism": "instruction",
+              "contextBudgetMechanismEvidence": "https://geminicli.com/docs/core/subagents/",
+              "contextBudgetTokens": 786432,
+              "contextCapacityEvidence": [
+                "https://geminicli.com/docs/cli/model/",
+                "https://ai.google.dev/gemini-api/docs/models"
+              ],
+              "contextCapacityTokens": 1048576,
+              "headroomTokens": 262144,
               "model": "pro",
               "modelProfile": "advanced"
             },
@@ -3330,7 +3509,7 @@
       "outputRoot": "generated/adapters/gemini/agents"
     },
     "junie": {
-      "agentCount": 30,
+      "agentCount": 32,
       "agents": [
         {
           "contextAllocation": {
@@ -4020,6 +4199,67 @@
             "primary": {
               "contextBudgetMechanism": "instruction",
               "contextBudgetMechanismEvidence": "https://junie.jetbrains.com/docs/junie-cli-subagents.html",
+              "contextBudgetTokens": 786432,
+              "contextCapacityEvidence": [
+                "https://junie.jetbrains.com/docs/junie-cli-model-selection.html",
+                "https://ai.google.dev/gemini-api/docs/models"
+              ],
+              "contextCapacityTokens": 1048576,
+              "headroomTokens": 262144,
+              "model": "gemini-flash",
+              "modelProfile": "simple"
+            },
+            "rounding": "floor"
+          },
+          "name": "methodology-design-system-checklist-runner",
+          "output": "generated/adapters/junie/agents/methodology-design-system-checklist-runner.md",
+          "referencedFixedSkills": [
+            "effective-communication",
+            "ste-technical-writing",
+            "review-documentation-design-system"
+          ],
+          "sha256": "e51b8e8c600bd2976fc5d2bcf8c40871a37d0de3efe136428b53a65ca9b0c3c8",
+          "source": "agents/roles/methodology-maintenance/methodology-design-system-checklist-runner.role.yaml"
+        },
+        {
+          "contextAllocation": {
+            "additionalReserveTokens": 0,
+            "contextBudgetPercent": 75,
+            "headroomPercent": 25,
+            "modelStages": {},
+            "primary": {
+              "contextBudgetMechanism": "instruction",
+              "contextBudgetMechanismEvidence": "https://junie.jetbrains.com/docs/junie-cli-subagents.html",
+              "contextBudgetTokens": 750000,
+              "contextCapacityEvidence": [
+                "https://junie.jetbrains.com/docs/junie-cli-model-selection.html",
+                "https://platform.claude.com/docs/en/release-notes/overview"
+              ],
+              "contextCapacityTokens": 1000000,
+              "headroomTokens": 250000,
+              "model": "sonnet",
+              "modelProfile": "coordination"
+            },
+            "rounding": "floor"
+          },
+          "name": "methodology-design-system-review-coordinator",
+          "output": "generated/adapters/junie/agents/methodology-design-system-review-coordinator.md",
+          "referencedFixedSkills": [
+            "effective-communication",
+            "ste-technical-writing"
+          ],
+          "sha256": "db9dbec84e7e171a6f75a9e5a29be5290c854fdb4464e849db139e3180c2eb08",
+          "source": "agents/roles/methodology-maintenance/methodology-design-system-review-coordinator.role.yaml"
+        },
+        {
+          "contextAllocation": {
+            "additionalReserveTokens": 0,
+            "contextBudgetPercent": 75,
+            "headroomPercent": 25,
+            "modelStages": {},
+            "primary": {
+              "contextBudgetMechanism": "instruction",
+              "contextBudgetMechanismEvidence": "https://junie.jetbrains.com/docs/junie-cli-subagents.html",
               "contextBudgetTokens": 750000,
               "contextCapacityEvidence": [
                 "https://junie.jetbrains.com/docs/junie-cli-model-selection.html",
@@ -4456,7 +4696,7 @@
       "outputRoot": "generated/adapters/junie/agents"
     }
   },
-  "canonicalRoleCount": 30,
+  "canonicalRoleCount": 32,
   "generationOptions": {
     "coreSkillDelivery": "by-reference",
     "inlineCoreSkills": false

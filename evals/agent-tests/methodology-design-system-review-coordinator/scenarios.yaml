@@ -1,0 +1,46 @@
+schema: dev-methodology-agent-suite-scenarios
+version: 1
+suite: methodology-design-system-review-coordinator
+scenarios:
+  - id: complete-reconciliation-and-ranking
+    priority: 1
+    status: executable
+    executableCase: documentation-design-system-review
+    purpose: Prove bounded runner dispatch, complete evidence reconciliation, integrated acceptance, and deterministic candidate ranking.
+    initialState: Unique page-checklist assignments, strict runner reports, and measured candidate accuracy, cost, price status, and wall time are supplied.
+    task: Coordinate the assignments, reconcile every report, return the integrated verdict, and rank candidates.
+    targetSkills: []
+    allowedAgentDependencies: [methodology-design-system-checklist-runner]
+    requiredBehaviors: [Invoke one runner per page-checklist assignment, Retry one malformed report at most once, Preserve conflicts and missing coverage, Return the only integrated verdict, Rank accuracy before inclusive cost band and speed]
+    forbiddenBehaviors: [Review a missing checklist locally, Drop contradictory evidence, Invent an unpriced cost, Delegate integrated acceptance]
+    deterministicChecks: [harness-agent-identity, agent-dependency-routing, no-forbidden-mutation, output-contract-presence, readiness-consistency]
+    expectedOutputs: [status, coverage, reconciledFindings, evidenceConflicts, acceptanceRationale, modelEvalRanking, runnerReports]
+    expectedTerminalStatus: PASS
+  - id: malformed-unavailable-and-conflicting-evidence
+    priority: 2
+    status: executable
+    executableCase: documentation-design-system-review
+    purpose: Prove one malformed-report retry, unavailable-runner handling, and conflict preservation without local substitution.
+    initialState: One report is malformed twice, one runner is unavailable, other reports are complete, and two material item claims conflict.
+    task: Reconcile all supplied evidence and return the correct integrated blocked result.
+    targetSkills: []
+    allowedAgentDependencies: [methodology-design-system-checklist-runner]
+    requiredBehaviors: [Retry one malformed report at most once, Preserve completed runner reports, Inventory every uncovered assignment, Preserve both contradictory claims, Return BLOCKED]
+    forbiddenBehaviors: [Review an uncovered assignment locally, Retry a report more than once, Drop conflict evidence, Infer PASS]
+    deterministicChecks: [harness-agent-identity, agent-dependency-routing, no-forbidden-mutation, output-contract-presence, readiness-consistency]
+    expectedOutputs: [status, coverage, reconciledFindings, evidenceConflicts, acceptanceRationale, modelEvalRanking, runnerReports]
+    expectedTerminalStatus: PASS
+  - id: accuracy-cost-band-speed-and-unpriced-ranking
+    priority: 3
+    status: executable
+    executableCase: documentation-design-system-review
+    purpose: Prove exact ranking precedence, the inclusive priced-cost boundary, cached-token accounting, and provisional unpriced behavior.
+    initialState: Candidate measurements include unequal accuracy, equal accuracy at and just outside 115 percent of the cheapest priced cost, cached input, wall time, and one unpriced candidate.
+    task: Return the complete deterministic ranking with price status and supporting evidence.
+    targetSkills: []
+    allowedAgentDependencies: [methodology-design-system-checklist-runner]
+    requiredBehaviors: [Rank higher accuracy first, Treat exactly 115 percent as cost-equivalent, Prefer speed only inside the equivalent band, Subtract cached input before cached charging, Preserve null cost and provisional unpriced winners]
+    forbiddenBehaviors: [Round an outside-band candidate into the band, Prefer cost over accuracy, Double-charge cached input, Invent an unpriced cost]
+    deterministicChecks: [harness-agent-identity, no-forbidden-mutation, output-contract-presence, readiness-consistency]
+    expectedOutputs: [status, coverage, reconciledFindings, evidenceConflicts, acceptanceRationale, modelEvalRanking, runnerReports]
+    expectedTerminalStatus: PASS

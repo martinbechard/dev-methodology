@@ -1,0 +1,51 @@
+<!doctype html>
+<!--
+Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+Artifact-ID: da710f2f-02cd-47cf-99af-17ace40a7fe3
+Created-UTC: 2026-08-09T00:26:37Z
+Creating-Agent: Dev Coder
+Runtime: Codex
+Dispatched-Model: gpt-5.6-sol
+Reasoning-Effort: high
+Task-ID: 019fe3cd-577c-76b1-965c-06fb8793ae42
+Artifact-ID-Evidence: runtime-supplied
+Created-UTC-Evidence: runtime-supplied
+Creating-Agent-Evidence: runtime-supplied
+Runtime-Evidence: runtime-supplied
+Dispatched-Model-Evidence: runtime-supplied
+Reasoning-Effort-Evidence: runtime-supplied
+Task-ID-Evidence: runtime-supplied
+-->
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="design-system-version" content="0.1.0"><title>Forms And Actions · Documentation Design System</title><link rel="stylesheet" href="assets/design-system.css"></head>
+<body id="top">
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <header class="ds-header"><a class="site-brand" href="index.html"><img class="site-logo" src="assets/dev-methodology-logo.png" alt="DevConsult Canada logo"><span>Documentation Design System</span></a><button class="icon-button" type="button" aria-label="Open documentation settings" aria-haspopup="dialog" aria-expanded="false" aria-controls="settings-dialog" data-dialog-open><span aria-hidden="true">⚙</span></button></header>
+  <nav class="suite-nav" aria-label="Design system pages"><a href="index.html">Index</a><a href="foundations.html">Foundations</a><a href="page-shell.html">Page shell</a><a href="content.html">Content</a><a href="data-display.html">Data display</a><a href="forms-and-actions.html" aria-current="page">Forms</a><a href="diagrams.html">Diagrams</a><a href="accessibility.html">Accessibility</a><a href="variations.html">Variations</a><a href="source-inventory.html">Inventory</a></nav>
+  <main id="main-content"><noscript><div class="callout callout--warning"><p>JavaScript is unavailable. Static examples remain readable, but the dialog and validation demonstrations do not run.</p></div></noscript><nav class="document-nav" aria-label="Documentation navigation"><div class="document-sequence"><a href="data-display.html" rel="prev">← Previous: Data Display</a><a href="diagrams.html" rel="next">Next: Diagrams →</a></div></nav>
+    <section class="hero" aria-labelledby="page-title"><span class="eyebrow">Concern 05</span><h1 id="page-title">Forms And Actions</h1><p class="lede">Interactive documentation controls help readers filter large catalogs, set viewing preferences, upload evidence in test workflows, and complete accessible form steps.</p></section>
+    <nav class="page-nav" aria-label="Page sections"><a href="#top">Top</a><a href="#filters">Filters</a><a href="#controls">Controls</a><a href="#feedback">Feedback</a><a href="#dialog">Dialog</a><a href="#fixtures">Fixtures</a></nav>
+
+    <section class="section" id="filters" aria-labelledby="filters-title"><div class="section-heading"><h2 id="filters-title">Catalog Filters</h2><p>Filters combine explicit labels with inputs and selects. The results count must update as readable text.</p></div>
+      <form class="filters" action="#filters" data-filter-form><label class="field">Search<input type="search" name="query" placeholder="Agent or skill"></label><label class="field">Evidence state<select name="state"><option value="">All states</option><option>Pass</option><option>Blocked</option><option>Missing</option></select></label><label class="field">Harness<select name="harness"><option value="">All harnesses</option><option>Codex</option><option>Claude Code</option></select></label><div class="field"><span class="field-label">Actions</span><button class="button" type="submit">Apply filters</button></div></form>
+      <p class="demo-status" role="status" data-result-count>3 results</p>
+      <p class="source-path">Source: agent-and-skill-evaluations.html uses text and search inputs, selects, labels, buttons, a result count, and external filtering JavaScript.</p>
+    </section>
+
+    <section class="section" id="controls" aria-labelledby="controls-title"><div class="section-heading"><h2 id="controls-title">Control Types</h2><p>Each control needs a visible label, predictable type, and a text result when the action changes state.</p></div>
+      <div class="card-grid"><article class="card"><h3>Text and email</h3><label class="field">Email address<input type="email" placeholder="name@example.test"></label></article><article class="card"><h3>File upload</h3><label class="field">Attachment<input type="file"></label></article><article class="card"><h3>Checkbox</h3><label class="check-field"><input type="checkbox" data-preference> Weekly summary</label><p class="demo-status" role="status" data-preference-status>Weekly summary disabled</p></article><article class="card"><h3>Buttons</h3><div class="button-row"><button class="button" type="button">Primary</button><button class="button button--secondary" type="button">Secondary</button><button class="button button--quiet" type="button">Quiet</button></div></article></div>
+    </section>
+
+    <section class="section" id="feedback" aria-labelledby="feedback-title"><div class="section-heading"><h2 id="feedback-title">Validation And Live Feedback</h2><p>Validation identifies the invalid field and explains the correction. Completion moves focus to a status message when the new state needs immediate announcement.</p></div>
+      <form class="panel" data-demo-form novalidate><label class="field">Work email<input type="email" required data-email aria-describedby="email-error"></label><p id="email-error" class="demo-alert" role="alert" data-email-error hidden>Enter a valid email address.</p><button class="button" type="submit">Continue</button><p class="demo-status" role="status" tabindex="-1" data-form-status hidden>Example form accepted.</p></form>
+    </section>
+
+    <section class="section" id="dialog" aria-labelledby="dialog-title"><div class="section-heading"><h2 id="dialog-title">Settings Dialog</h2><p>The shared source script injects a settings trigger and modal dialog into each primary header. The dialog traps intent with focus movement, Escape handling, and a return to the trigger.</p></div><button class="button" type="button" data-dialog-open aria-haspopup="dialog" aria-expanded="false" aria-controls="settings-dialog">Open settings example</button><p class="source-path">Source: design/documentation-settings.js.</p></section>
+
+    <section class="section" id="fixtures" aria-labelledby="fixtures-title"><div class="section-heading"><h2 id="fixtures-title">Test-Only Interaction Sources</h2><p>Four tracked HTML fixtures supply controls and accessibility states that are not part of the production documentation shell.</p></div>
+      <div class="callout callout--warning"><ul><li><code>settings.html</code> supplies a persisted checkbox and <code>role="status"</code>.</li><li><code>upload.html</code> supplies a file input, button, and <code>role="alert"</code>.</li><li><code>complete-flow.html</code> supplies required email validation, hidden steps, focus movement, live progress, and recovery.</li><li><code>accessibility-defects.html</code> is a deliberate negative example with an unlabeled text input and weak progress text. Do not copy it as a component.</li></ul></div>
+    </section>
+  </main>
+  <div class="dialog-backdrop" id="settings-dialog" role="dialog" aria-modal="true" aria-labelledby="settings-title" data-dialog hidden><div class="dialog-panel"><h2 id="settings-title">Settings</h2><p>These controls demonstrate the source documentation-settings pattern.</p><label class="field">Default harness<select><option>Codex</option><option>Claude Code</option><option>Gemini CLI</option><option>Junie CLI</option><option>GitHub Copilot</option></select></label><label class="field">Editor<select><option>VS Code</option><option>IntelliJ</option></select></label><button class="button" type="button" data-dialog-close>Close</button></div></div>
+  <footer class="ds-footer"><p><span class="ds-version">Design system v0.1.0</span> · Forms concern · The interactive examples are local and do not persist or upload data.</p></footer><script src="assets/design-system.js"></script>
+</body></html>

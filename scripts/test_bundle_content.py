@@ -8768,7 +8768,13 @@ Visible after.
         }
 
         self.assertEqual(
-            {"dev-backlog-watchdog", "wiki-query-responder", "wiki-topic-verifier"},
+            {
+                "dev-backlog-watchdog",
+                "methodology-design-system-checklist-runner",
+                "methodology-design-system-review-coordinator",
+                "wiki-query-responder",
+                "wiki-topic-verifier",
+            },
             read_only_roles,
         )
         for role in roles:
@@ -8915,6 +8921,9 @@ Visible after.
                 "methodology-artifact-reviewer",
                 "dev-verifier",
             ),
+            "methodology-design-system-review-coordinator": (
+                "methodology-design-system-checklist-runner",
+            ),
             "project-bootstrapper": (
                 "project-configurator",
                 "dev-documentation-writer",
@@ -8940,6 +8949,22 @@ Visible after.
         for role_name, dependencies in expected_dependencies.items():
             role = roles_by_name[role_name]
             with self.subTest(role=role_name):
+                if role_name == "methodology-design-system-review-coordinator":
+                    self.assertEqual("never", role.repository_mutation)
+                    self.assertEqual("read-only", role.optional_fields["isolation"])
+                    self.assertIn(
+                        "Invoke methodology-design-system-checklist-runner once for each required assignment",
+                        role.instructions,
+                    )
+                    self.assertIn(
+                        "Retry one malformed report once",
+                        role.instructions,
+                    )
+                    self.assertIn(
+                        "After one malformed-report retry, return BLOCKED",
+                        role.instructions,
+                    )
+                    continue
                 self.assertTrue(
                     {"delegation", "review", "failureHandling", "completion"}
                     .issubset(role.instruction_sections)
@@ -11241,7 +11266,7 @@ Visible after.
     def test_model_profiles_are_semantic_and_adapter_complete(self) -> None:
         source_profiles = load_yaml_object(MODEL_PROFILES_PATH)["profiles"]
         self.assertEqual(
-            {"simple", "default", "documentation", "advanced", "advanced-long", "intermediate"},
+            {"simple", "coordination", "default", "documentation", "advanced", "advanced-long", "intermediate"},
             set(source_profiles),
         )
 
@@ -11259,6 +11284,7 @@ Visible after.
         self.assertEqual(
             {
                 "simple": "gpt-5.6-luna",
+                "coordination": "gpt-5.6-terra",
                 "default": "gpt-5.6-terra",
                 "documentation": "gpt-5.5",
                 "advanced": "gpt-5.6-sol",
@@ -11279,6 +11305,54 @@ Visible after.
                 self.assertNotIn("effort", role)
                 for profile in role.get("modelStages", {}).values():
                     self.assertIn(profile, source_profiles)
+
+    def test_documentation_design_system_roles_and_checklists_are_complete(self) -> None:
+        """The bounded runner and coordinator must retain their distinct skill and evidence contracts."""
+        build_skill_docs = load_build_skill_docs_module()
+        skill_names = set(build_skill_docs.build_payload()["skills"])
+        loaded_roles = {
+            role.name: role
+            for role in build_skill_docs.load_role_definitions(skill_names)
+        }
+        runner_source = load_yaml_object(
+            ROLES_ROOT
+            / "methodology-maintenance"
+            / "methodology-design-system-checklist-runner.role.yaml"
+        )
+        coordinator_source = load_yaml_object(
+            ROLES_ROOT
+            / "methodology-maintenance"
+            / "methodology-design-system-review-coordinator.role.yaml"
+        )
+
+        self.assertEqual(
+            ["review-documentation-design-system"],
+            [next(iter(entry)) for entry in runner_source["skills"]],
+        )
+        self.assertEqual([], coordinator_source["skills"])
+        self.assertEqual(
+            ["methodology-design-system-checklist-runner"],
+            coordinator_source["agentDependencies"],
+        )
+        self.assertEqual("simple", loaded_roles[runner_source["name"]].model_profile)
+        self.assertEqual(
+            "coordination",
+            loaded_roles[coordinator_source["name"]].model_profile,
+        )
+
+        references = sorted(
+            (SKILLS_ROOT / "review-documentation-design-system" / "references").glob(
+                "review-checklist-documentation-design-system-*.md"
+            )
+        )
+        checklist_ids = [
+            check_id
+            for path in references
+            for check_id in re.findall(r"\bDDS-[A-Z]{3}-\d{3}\b", path.read_text(encoding="utf-8"))
+        ]
+        self.assertEqual(11, len(references))
+        self.assertEqual(91, len(checklist_ids))
+        self.assertEqual(91, len(set(checklist_ids)))
 
     def test_context_budget_percent_defaults_overrides_and_validation(self) -> None:
         build_skill_docs = load_build_skill_docs_module()
@@ -11457,6 +11531,7 @@ Visible after.
             },
             "junie": {
                 "simple": 786_432,
+                "coordination": 750_000,
                 "default": 750_000,
                 "documentation": 787_500,
                 "advanced": 750_000,
@@ -11669,6 +11744,7 @@ Visible after.
         expected_profiles = {
             "codex": {
                 "simple": ("gpt-5.6-luna", "medium"),
+                "coordination": ("gpt-5.6-terra", "low"),
                 "default": ("gpt-5.6-terra", "medium"),
                 "documentation": ("gpt-5.5", "high"),
                 "advanced": ("gpt-5.6-sol", "high"),
@@ -11677,6 +11753,7 @@ Visible after.
             },
             "claude": {
                 "simple": ("fable-5", None),
+                "coordination": ("sonnet-5", None),
                 "default": ("sonnet-5", None),
                 "documentation": ("fable-5", None),
                 "advanced": ("opus-4.8", None),
@@ -11685,6 +11762,7 @@ Visible after.
             },
             "gemini": {
                 "simple": ("flash", None),
+                "coordination": ("auto", None),
                 "default": ("auto", None),
                 "documentation": ("auto", None),
                 "advanced": ("pro", None),
@@ -11693,6 +11771,7 @@ Visible after.
             },
             "junie": {
                 "simple": ("gemini-flash", "low"),
+                "coordination": ("sonnet", "medium"),
                 "default": ("sonnet", "medium"),
                 "documentation": ("gpt-5.6-sol", "high"),
                 "advanced": ("opus", "high"),
@@ -11853,10 +11932,12 @@ Visible after.
             "dev-backlog-watchdog",
             "dev-document-topic-editor",
             "dev-skill-lint-reviewer",
+            "methodology-design-system-checklist-runner",
+            "methodology-design-system-review-coordinator",
         ]
         suite_entries = index["suites"]
         self.assertEqual(expected_suites, [entry["id"] for entry in suite_entries])
-        self.assertEqual(list(range(1, 31)), [entry["priority"] for entry in suite_entries])
+        self.assertEqual(list(range(1, 33)), [entry["priority"] for entry in suite_entries])
         suite_directories = {
             path.name
             for path in AGENT_TEST_SUITES_ROOT.iterdir()

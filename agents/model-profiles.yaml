@@ -3,6 +3,8 @@ version: 1
 profiles:
   simple:
     purpose: Extraction, classification, lookup, and mechanical evidence checks.
+  coordination:
+    purpose: Bounded dispatch, completeness validation, evidence reconciliation, and deterministic ranking.
   default:
     purpose: Normal implementation, documentation, and bounded verification work.
   documentation:

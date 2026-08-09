@@ -10,6 +10,14 @@ profiles:
     - https://geminicli.com/docs/cli/model/
     - https://ai.google.dev/gemini-api/docs/models
     contextBudgetMechanismEvidence: https://geminicli.com/docs/core/subagents/
+  coordination:
+    model: auto
+    contextCapacityTokens: 1048576
+    contextBudgetMechanism: instruction
+    contextCapacityEvidence:
+    - https://geminicli.com/docs/cli/model/
+    - https://ai.google.dev/gemini-api/docs/models
+    contextBudgetMechanismEvidence: https://geminicli.com/docs/core/subagents/
   default:
     model: auto
     contextCapacityTokens: 1048576

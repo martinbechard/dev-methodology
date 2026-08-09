@@ -1,0 +1,42 @@
+<!doctype html>
+<!--
+Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+Artifact-ID: 3e9091bb-6a3d-4e3c-a12c-9dbb283e9c4b
+Created-UTC: 2026-08-09T00:26:37Z
+Creating-Agent: Dev Coder
+Runtime: Codex
+Dispatched-Model: gpt-5.6-sol
+Reasoning-Effort: high
+Task-ID: 019fe3cd-577c-76b1-965c-06fb8793ae42
+Artifact-ID-Evidence: runtime-supplied
+Created-UTC-Evidence: runtime-supplied
+Creating-Agent-Evidence: runtime-supplied
+Runtime-Evidence: runtime-supplied
+Dispatched-Model-Evidence: runtime-supplied
+Reasoning-Effort-Evidence: runtime-supplied
+Task-ID-Evidence: runtime-supplied
+-->
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="design-system-version" content="0.1.0"><title>Accessibility And Responsive Behavior · Documentation Design System</title><link rel="stylesheet" href="assets/design-system.css"></head>
+<body id="top">
+  <a class="skip-link" href="#main-content">Skip to main content</a><header class="ds-header"><a class="site-brand" href="index.html"><img class="site-logo" src="assets/dev-methodology-logo.png" alt="DevConsult Canada logo"><span>Documentation Design System</span></a></header>
+  <nav class="suite-nav" aria-label="Design system pages"><a href="index.html">Index</a><a href="foundations.html">Foundations</a><a href="page-shell.html">Page shell</a><a href="content.html">Content</a><a href="data-display.html">Data display</a><a href="forms-and-actions.html">Forms</a><a href="diagrams.html">Diagrams</a><a href="accessibility.html" aria-current="page">Accessibility</a><a href="variations.html">Variations</a><a href="source-inventory.html">Inventory</a></nav>
+  <main id="main-content"><nav class="document-nav" aria-label="Documentation navigation"><div class="document-sequence"><a href="diagrams.html" rel="prev">← Previous: Diagrams</a><a href="variations.html" rel="next">Next: Variations →</a></div></nav>
+    <section class="hero" aria-labelledby="page-title"><span class="eyebrow">Concern 07</span><h1 id="page-title">Accessibility And Responsive Behavior</h1><p class="lede">Accessible documentation keeps structure, names, focus, feedback, and reading order available at every viewport. Responsive changes must preserve the same information and interaction.</p></section>
+    <nav class="page-nav" aria-label="Page sections"><a href="#top">Top</a><a href="#structure">Structure</a><a href="#names">Names</a><a href="#focus">Focus</a><a href="#feedback">Feedback</a><a href="#responsive">Responsive</a><a href="#print">Print</a><a href="#gaps">Observed gaps</a></nav>
+
+    <section class="section" id="structure" aria-labelledby="structure-title"><div class="section-heading"><h2 id="structure-title">Landmarks And Reading Order</h2><p>Semantic landmarks let readers move between the header, navigation, main content, sections, articles, asides, figures, and footer.</p></div><div class="card-grid"><article class="card"><span class="card-kicker">Header</span><h3>Site identity</h3><p>One brand link identifies the documentation suite.</p></article><article class="card"><span class="card-kicker">Navigation</span><h3>Named navigation</h3><p>Each nav has a distinct <code>aria-label</code>.</p></article><article class="card"><span class="card-kicker">Main</span><h3>Primary content</h3><p>A skip link moves focus to the main content.</p></article><article class="card"><span class="card-kicker">Section</span><h3>Heading association</h3><p><code>aria-labelledby</code> points to the visible heading.</p></article></div></section>
+
+    <section class="section" id="names" aria-labelledby="names-title"><div class="section-heading"><h2 id="names-title">Accessible Names And Descriptions</h2><p>Controls and visuals need names that describe their purpose. Visible labels should provide the name when possible.</p></div><div class="callout"><ul><li>Brand images use meaningful alternative text.</li><li>Decorative arrows and gear glyphs use <code>aria-hidden="true"</code>.</li><li>Icon-only controls use <code>aria-label</code>.</li><li>SVG figures use <code>title</code> and <code>desc</code>.</li><li>CSS diagrams use <code>role="img"</code> with a text alternative.</li></ul></div></section>
+
+    <section class="section" id="focus" aria-labelledby="focus-title"><div class="section-heading"><h2 id="focus-title">Keyboard And Focus</h2><p>Every interactive component needs a visible focus indicator and a complete keyboard path.</p></div><div class="two-column"><article class="panel"><h3>Navigation</h3><p>Pill links use <code>:focus-visible</code> with a three-pixel outline. Sticky section navigation becomes static on small screens.</p></article><article class="panel"><h3>Dialog</h3><p>The settings control moves focus into the dialog, closes on Escape, and returns focus to the trigger.</p></article><article class="panel"><h3>Disclosure</h3><p>Native <code>details</code> and <code>summary</code> preserve keyboard behavior.</p></article><article class="panel"><h3>Workflow</h3><p>The complete account fixture moves focus to the next heading or completion status.</p></article></div></section>
+
+    <section class="section" id="feedback" aria-labelledby="feedback-title"><div class="section-heading"><h2 id="feedback-title">Status, Alerts, And Progress</h2><p>Dynamic feedback uses a live region that matches the urgency of the event.</p></div><div class="table-wrap"><table><thead><tr><th>Pattern</th><th>Semantics</th><th>Use</th></tr></thead><tbody><tr><td>Status</td><td><code>role="status"</code></td><td>Preference or successful completion</td></tr><tr><td>Alert</td><td><code>role="alert"</code></td><td>Validation or upload failure</td></tr><tr><td>Progress</td><td><code>aria-live="polite"</code></td><td>Step changes that do not interrupt</td></tr><tr><td>Hidden state</td><td><code>hidden</code></td><td>Inactive steps and messages</td></tr></tbody></table></div></section>
+
+    <section class="section" id="responsive" aria-labelledby="responsive-title"><div class="section-heading"><h2 id="responsive-title">Responsive Behavior</h2><p>The source pages use content-driven breakpoints from 520 to 900 pixels. Common changes reduce padding, stack columns, wrap navigation, and move wide tables into horizontal overflow.</p></div><div class="metric-grid"><div class="metric"><strong>520–560</strong><span>Narrow diagrams, grids, and page-specific structures</span></div><div class="metric"><strong>620–720</strong><span>Controls, shared shell padding, and editorial layouts</span></div><div class="metric"><strong>780–900</strong><span>Wide matrices, hero splits, and complex diagrams</span></div></div><div class="note" style="margin-top:1rem"><p>Breakpoint values are inconsistent, but several are tied to real component failure points. Later standardization should test components before collapsing them into one global breakpoint.</p></div></section>
+
+    <section class="section" id="print" aria-labelledby="print-title"><div class="section-heading"><h2 id="print-title">Print</h2><p>Print styles remove navigation and controls, use a white background, prevent important cards from splitting, and retain readable content.</p></div><p class="source-path">Explicit print sources: agent-and-skill-evaluations.html; agent-owned-evaluation-suites.html; orchestrated-development-lifecycle.html; page-section-navigation.css; styled-backlog-report.html.</p></section>
+
+    <section class="section" id="gaps" aria-labelledby="gaps-title"><div class="section-heading"><h2 id="gaps-title">Observed Accessibility Gaps</h2><p>The audit found useful patterns that are not applied consistently across the primary documentation suite.</p></div><div class="callout callout--warning"><ul><li>Only <code>wiki-skills-and-project-context.html</code> provides a skip link and a target ID on <code>main</code>.</li><li><code>orchestrated-development-lifecycle.html</code> does not associate its hero with the page title through <code>aria-labelledby</code>.</li><li>Some wide tables make the <code>table</code> itself scrollable; a wrapper is more predictable.</li><li>Only five source surfaces define explicit print behavior.</li><li>The deliberate <code>accessibility-defects.html</code> fixture contains an unlabeled input and is not a production example.</li></ul></div></section>
+  </main><footer class="ds-footer"><p><span class="ds-version">Design system v0.1.0</span> · Accessibility concern · Negative fixtures are documented as test inputs, not recommended patterns.</p></footer>
+</body></html>

@@ -1,0 +1,28 @@
+schema: dev-methodology-documentation-design-system-suite-inputs
+version: 1
+runnerCases:
+  complete:
+    page: sample-page.html
+    checklist: Shared Page
+    checklistIds: [DDS-COM-001, DDS-COM-002, DDS-COM-003, DDS-COM-004, DDS-COM-005, DDS-COM-006, DDS-COM-007, DDS-COM-008, DDS-COM-009, DDS-COM-010]
+  incompleteEvidence:
+    unavailableEvidence: [keyboard trace, narrow-width layout]
+  ambiguousAssignment:
+    pages: [sample-page.html, second-page.html]
+    checklist: null
+coordinatorCases:
+  assignments:
+    - {page: sample-page.html, checklist: Shared Page}
+  malformedAttempts: 2
+  unavailableAssignments:
+    - {page: second-page.html, checklist: Accessibility}
+  conflictingClaims:
+    - {page: sample-page.html, id: DDS-COM-002, result: PASS, source: runner-a}
+    - {page: sample-page.html, id: DDS-COM-002, result: FAIL, source: runner-b}
+  candidates:
+    - {id: accurate-unpriced, accuracy: 1.0, estimatedCost: null, wallSeconds: 5.0}
+    - {id: slow-cheapest, accuracy: 1.0, estimatedCost: 100.0, wallSeconds: 10.0}
+    - {id: fast-at-boundary, accuracy: 1.0, estimatedCost: 115.0, wallSeconds: 2.0}
+    - {id: outside-boundary, accuracy: 1.0, estimatedCost: 115.0001, wallSeconds: 1.0}
+  cachedUsage: {inputTokens: 1000000, cachedInputTokens: 400000, outputTokens: 0}
+  suppliedRatesPerMillion: {inputTokens: 25.0, cachedInputTokens: 2.5, outputTokens: 150.0}

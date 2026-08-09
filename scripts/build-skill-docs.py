@@ -3,6 +3,7 @@
 # AI attribution: Modified with AI assistance.
 # Summary: Generates skill and template documentation data, conceptual agent definition views, runtime agent adapters, and their deterministic inventory.
 # Design: design/generic-agent-definitions-source.html
+# Tests: scripts/test_bundle_content.py
 
 from __future__ import annotations
 
@@ -157,6 +158,7 @@ ROLE_ACTOR_SUFFIXES = {
     "researcher",
     "responder",
     "reviewer",
+    "runner",
     "specialist",
     "steward",
     "verifier",
@@ -862,9 +864,14 @@ def validate_annotated_list(
 def validate_role_skills(
     value: object,
     source_path: Path,
+    *,
+    allow_empty: bool = False,
 ) -> tuple[tuple[str, ...], dict[str, str], dict[str, str]]:
-    if not isinstance(value, list) or not value:
-        raise ValueError(f"Conceptual agent definition {ROLE_SKILLS_FIELD_NAME} must be a non-empty list: {source_path}")
+    if not isinstance(value, list) or (not value and not allow_empty):
+        qualifier = "a list" if allow_empty else "a non-empty list"
+        raise ValueError(
+            f"Conceptual agent definition {ROLE_SKILLS_FIELD_NAME} must be {qualifier}: {source_path}"
+        )
 
     names: list[str] = []
     justifications: dict[str, str] = {}
@@ -1116,6 +1123,7 @@ def load_role_definition(
     role_skills, skill_justifications, skill_conditions = validate_role_skills(
         parsed[ROLE_SKILLS_FIELD_NAME],
         source_path,
+        allow_empty=True,
     )
     duplicate_shared_skills = sorted(set(role_skills) & set(shared_skills))
     if duplicate_shared_skills:

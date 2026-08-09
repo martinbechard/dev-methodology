@@ -52,6 +52,8 @@ The [General Agent Skills design](design/agents/general-agent-skills.md) explain
 
 The [Terminology Standard design](design/agents/terminology-standard.md) defines the positive-first terminology.md contract, shared user and project composition, evidence-based Avoid reinforcement, and the authoring, review, and maintenance Agents that use the three-skill family.
 
+The [Documentation Design System](design/documentation-design-system/index.html) defines the adopted visual, structural, interaction, accessibility, variation-audit, and source-inventory contracts for maintained methodology HTML.
+
 The [Documentation Templates page](design/documentation-templates.html) describes all eight distributed template assets, their creation and review routes, and the project wiki repository and topic-page formats. The [Wiki Skills And Project Context page](design/wiki-skills-and-project-context.html) explains how the eight wiki-related skills turn the LLM-wiki pattern and an OKF-compatible representation into durable, source-governed project context, including the code-aware synchronization specialization.
 
 Normal planned development proceeds top down from accepted functional specifications and architecture through create-high-level-design and review-high-level-design, then through create-module-design and review-module-design, and finally through ordinary implementation agents with the project-routed technology skills. The design skills use PLANNED_DEVELOPMENT mode, account for every applicable requirement, and block downstream work when a critical identity, security, public-response, state-ownership, validation, transaction, asynchronous, or failure-timing contract remains unresolved.

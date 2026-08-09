@@ -2011,3 +2011,17 @@ probes:
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: jest}
+  - id: probe-review-documentation-design-system
+    skill: review-documentation-design-system
+    source: skills/review-documentation-design-system/SKILL.md
+    evaluationCategory: documentation-methodology
+    evaluationKind: review-contract
+    activationCondition: One maintained documentation HTML page must be reviewed against the adopted Documentation Design System version and its shared and page-type contracts.
+    negativeCondition: A page outside the adopted system or a request without an exact page and checklist does not receive an inferred conformance verdict.
+    expectedBehavior: Review one supplied page and checklist at a time; inspect source and supplied rendered evidence; record every assigned checklist identifier exactly once as PASS, FAIL, or NOT TESTED with concrete evidence; derive the checklist status from those results; and avoid treating unresolved variation examples as adopted patterns.
+    judgePlan: {deterministicChecks: [skill-read-trace, artifact-review-checklist, source-link-resolution, no-forbidden-mutation, readiness-consistency], modelRubric: review-quality}
+    scenarioAssociations: [methodology-design-system-checklist-runner-happy, methodology-design-system-checklist-runner-boundary, methodology-design-system-review-coordinator-happy]
+    workflowAssociations: [documentation-methodology]
+    executableCases: [documentation-design-system-review]
+    coverageStatus: fixture-backed
+    ablation: {omitTargetSkill: true, wrongSkillControl: sql}

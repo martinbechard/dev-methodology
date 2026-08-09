@@ -1,0 +1,139 @@
+<!doctype html>
+<!--
+Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+Artifact-ID: 5cc25039-9dd6-4a18-a197-c9c875e48584
+Created-UTC: 2026-08-09T00:26:37Z
+Creating-Agent: Dev Coder
+Runtime: Codex
+Dispatched-Model: gpt-5.6-sol
+Reasoning-Effort: high
+Task-ID: 019fe3cd-577c-76b1-965c-06fb8793ae42
+Artifact-ID-Evidence: runtime-supplied
+Created-UTC-Evidence: runtime-supplied
+Creating-Agent-Evidence: runtime-supplied
+Runtime-Evidence: runtime-supplied
+Dispatched-Model-Evidence: runtime-supplied
+Reasoning-Effort-Evidence: runtime-supplied
+Task-ID-Evidence: runtime-supplied
+-->
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="design-system-version" content="0.1.0"><title>Page Shell · Documentation Design System</title><link rel="stylesheet" href="assets/design-system.css"></head>
+<body id="top">
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <header class="ds-header"><a class="site-brand" href="index.html"><img class="site-logo" src="assets/dev-methodology-logo.png" alt="DevConsult Canada logo"><span>Documentation Design System</span></a></header>
+  <nav class="suite-nav" aria-label="Design system pages"><a href="index.html">Index</a><a href="foundations.html">Foundations</a><a href="page-shell.html" aria-current="page">Page shell</a><a href="content.html">Content</a><a href="data-display.html">Data display</a><a href="forms-and-actions.html">Forms</a><a href="diagrams.html">Diagrams</a><a href="accessibility.html">Accessibility</a><a href="variations.html">Variations</a><a href="source-inventory.html">Inventory</a></nav>
+  <main id="main-content">
+    <nav class="document-nav" aria-label="Documentation navigation"><div class="document-sequence"><a href="foundations.html" rel="prev">← Previous: Foundations</a><a href="content.html" rel="next">Next: Content →</a></div></nav>
+    <section class="hero" aria-labelledby="page-title"><span class="eyebrow">Concern 02</span><h1 id="page-title">Page Shell</h1><p class="lede">The page shell gives every document a predictable entry, navigation path, content boundary, and close. All 11 primary pages share a brand header, hero, main content area, and footer.</p></section>
+    <nav class="page-nav" aria-label="Page sections"><a href="#top">Top</a><a href="#anatomy">Anatomy</a><a href="#header">Header</a><a href="#suite-navigation">Suite navigation</a><a href="#sequence">Sequence</a><a href="#hero">Hero</a><a href="#sections">Sections</a><a href="#footer">Footer</a><a href="#versioning">Versioning</a></nav>
+
+    <section class="section" id="anatomy" aria-labelledby="anatomy-title"><div class="section-heading"><h2 id="anatomy-title">Shell Anatomy</h2><p>The shell uses three navigation levels. Suite navigation moves across the whole documentation set. Document navigation moves through the reading sequence. Section navigation moves within the current page.</p></div>
+      <pre><code>&lt;body&gt;
+  &lt;a class="skip-link" href="#main-content"&gt;...&lt;/a&gt;
+  &lt;header class="site-header"&gt;...&lt;/header&gt;
+  &lt;nav class="suite-nav" aria-label="Documentation pages"&gt;...&lt;/nav&gt;
+  &lt;main id="main-content"&gt;
+    &lt;nav class="document-nav"&gt;...&lt;/nav&gt;
+    &lt;section class="hero"&gt;...&lt;/section&gt;
+    &lt;nav class="page-section-nav"&gt;...&lt;/nav&gt;
+    &lt;section class="section"&gt;...&lt;/section&gt;
+  &lt;/main&gt;
+  &lt;footer class="site-footer"&gt;...&lt;/footer&gt;
+&lt;/body&gt;</code></pre>
+    </section>
+
+    <section class="section" id="header" aria-labelledby="header-title"><div class="section-heading"><h2 id="header-title">Brand Header</h2><p>The source header uses a linked logo and product label. A shared script injects the settings trigger after the brand.</p></div>
+      <div class="example-frame"><div style="display:flex;align-items:center;gap:.75rem"><a class="site-brand" href="#header"><img class="site-logo" src="assets/dev-methodology-logo.png" alt="DevConsult Canada logo"><span>AI-Assisted Coding Toolkit Index</span></a><button class="icon-button" type="button" aria-label="Settings example"><span aria-hidden="true">⚙</span></button></div></div>
+      <p class="source-path">All 11 primary pages use .site-header, .site-brand, and .site-logo. design/documentation-settings.js injects the settings control.</p>
+    </section>
+
+    <section class="section" id="suite-navigation" aria-labelledby="suite-navigation-title"><div class="section-heading"><h2 id="suite-navigation-title">Suite Navigation</h2><p>Suite navigation is the global navigation for a related documentation set. It appears below the brand header and before the main-content sequence navigation.</p></div>
+      <div class="pattern-decision"><span class="pattern-decision__status">Adopted pattern</span><div><strong>Use on every page in a multi-page documentation suite.</strong><p>The current design-system pages demonstrate this pattern. The audited <code>dev-methodology</code> source pages do not yet share it.</p></div></div>
+      <div class="example-frame">
+        <nav class="suite-nav suite-nav--specimen" aria-label="Example documentation pages"><a href="index.html">Index</a><a href="foundations.html">Foundations</a><a href="page-shell.html" aria-current="page">Page shell</a><a href="content.html">Content</a><a href="diagrams.html">Diagrams</a></nav>
+      </div>
+      <div class="two-column shell-guidance">
+        <article class="panel"><h3>Use links, not badges</h3><p>Each pill is an anchor because it changes location. A badge only labels content and must not replace navigation.</p></article>
+        <article class="panel"><h3>Expose the current page</h3><p>Add <code>aria-current="page"</code> to one link. Use color and border changes as supporting visual cues.</p></article>
+        <article class="panel"><h3>Keep labels stable</h3><p>Use the same order and link names on every page. Do not shorten labels differently on narrow screens.</p></article>
+        <article class="panel"><h3>Wrap before scrolling</h3><p>Let links wrap when the set is small. Use horizontal scrolling only when wrapping would create an excessively tall navigation block.</p></article>
+      </div>
+      <pre><code>&lt;nav class="suite-nav" aria-label="Documentation pages"&gt;
+  &lt;a href="index.html"&gt;Index&lt;/a&gt;
+  &lt;a href="page-shell.html" aria-current="page"&gt;Page shell&lt;/a&gt;
+  &lt;a href="content.html"&gt;Content&lt;/a&gt;
+&lt;/nav&gt;</code></pre>
+      <p class="source-path">Design-system-owned pattern: all pages in design/documentation-design-system. Related source gap: the audited dev-methodology pages provide sequence and section navigation but no shared suite navigation.</p>
+    </section>
+
+    <section class="section" id="sequence" aria-labelledby="sequence-title"><div class="section-heading"><h2 id="sequence-title">Document Sequence Navigation</h2><p>Sequence navigation complements suite navigation. It provides the previous and next steps in the intended reading order.</p></div>
+      <div class="example-frame"><nav class="document-nav" aria-label="Example document navigation"><div class="document-sequence"><a href="#sequence" rel="prev">← Previous: Foundations</a><a href="#sequence" rel="next">Next: Content →</a></div></nav><p class="compact">The <code>rel="prev"</code> and <code>rel="next"</code> values expose sequence semantics.</p></div>
+      <p class="source-path">All 10 detail pages use .document-nav and .document-sequence.</p>
+    </section>
+
+    <section class="section" id="hero" aria-labelledby="hero-title"><div class="section-heading"><h2 id="hero-title">Hero</h2><p>A hero introduces the page between document navigation and section navigation. The default hero uses one content column.</p></div>
+      <section class="pattern-subsection" id="default-hero" aria-labelledby="default-hero-title">
+        <div class="section-heading"><h3 id="default-hero-title">Default Hero</h3><p>Use the default hero for most documentation pages. It contains an optional eyebrow, one page title, and a short description of the page scope.</p></div>
+        <div class="example-frame">
+          <div class="hero shell-hero-specimen shell-hero-specimen--default">
+            <span class="eyebrow">Design concern</span><h3>Module Design</h3><p class="lede">This page explains one module’s responsibilities, interfaces, and verification.</p>
+          </div>
+        </div>
+        <pre><code>&lt;section class="hero" aria-labelledby="page-title"&gt;
+  &lt;span class="eyebrow"&gt;Design concern&lt;/span&gt;
+  &lt;h1 id="page-title"&gt;Module Design&lt;/h1&gt;
+  &lt;p class="lede"&gt;This page explains ...&lt;/p&gt;
+&lt;/section&gt;</code></pre>
+        <p class="source-path">Default structure: the original reference-page family uses a single-column title and lede.</p>
+      </section>
+
+      <section class="pattern-subsection" id="two-column-hero" aria-labelledby="two-column-hero-title">
+        <div class="section-heading"><h3 id="two-column-hero-title">Two-Column Hero</h3><p>Use a two-column hero when a compact card provides context that governs the whole page. Suitable content includes a principle, scope boundary, evidence limitation, or source snapshot.</p></div>
+        <div class="example-frame">
+          <div class="hero hero--split shell-hero-specimen">
+            <div class="hero-copy"><span class="eyebrow">Operating model</span><h3>Documentation Lifecycle</h3><p class="lede">The left column introduces the page and defines its scope.</p></div>
+            <aside class="hero-principle" aria-label="Governing principle"><strong>Continuity</strong><p>The right card states context that applies to the whole page.</p></aside>
+          </div>
+        </div>
+        <ul class="source-list">
+          <li>Place the title column before the card in the document order.</li>
+          <li>Stack the card below the title column on narrow screens.</li>
+          <li>Use the default hero when the card would only repeat the description or add decoration.</li>
+        </ul>
+        <pre><code>&lt;section class="hero hero--split" aria-labelledby="page-title"&gt;
+  &lt;div class="hero-copy"&gt;...&lt;/div&gt;
+  &lt;aside class="hero-principle" aria-label="Governing principle"&gt;...&lt;/aside&gt;
+&lt;/section&gt;</code></pre>
+        <p class="source-path">Structural provenance: design/orchestrated-development-lifecycle.html uses a title-and-lede column with a core-principle card. Its typography remains a separate <a href="variations.html#title-scale">foundation variation</a>.</p>
+      </section>
+    </section>
+
+    <section class="section" id="sections" aria-labelledby="sections-title"><div class="section-heading"><h2 id="sections-title">Section Navigation And Headings</h2><p>Section navigation starts with a Top link, stays visible on wide screens, and becomes a wrapping block on narrow screens. Top returns to the page start so the brand, suite navigation, and document sequence are reachable again. The source uses two class families for the same behavior.</p></div>
+      <nav class="page-nav" aria-label="Shared section navigation example"><a href="#top">Top</a><a href="#sections">Overview</a><a href="#sections">Components</a><a href="#sections">Sources</a></nav>
+      <nav class="chapter-nav" aria-label="Editorial chapter navigation example"><a href="#top">Top</a><a href="#sections">Chapter one</a><a href="#sections">Chapter two</a><a href="#sections">Evidence</a></nav>
+      <p class="source-path">Use a link to <code>#top</code>, with <code>id="top"</code> on the body. Top changes location within the document, so it is a link rather than a button.</p>
+      <div class="two-column"><article class="panel"><h3>Plain section heading</h3><p>Seven original-family pages place an <code>h2</code> directly in each section.</p></article><article class="panel"><div class="section-heading"><span class="eyebrow">Chapter 01</span><h3>Editorial section heading</h3><p>Three newer pages group the heading with a summary and optional chapter marker.</p></div></article></div>
+    </section>
+
+    <section class="section" id="footer" aria-labelledby="footer-title"><div class="section-heading"><h2 id="footer-title">Footer</h2><p>The footer closes the page with the design-system version followed by page-specific provenance, scope, copyright, or license information.</p></div>
+      <div class="example-frame"><p style="padding-top:1rem;border-top:1px solid var(--ds-line)"><span class="ds-version">Design system v0.1.0</span> · Copyright 2026 (c) Martin.Bechard@DevConsult.ca · MIT License</p></div>
+    </section>
+
+    <section class="section" id="versioning" aria-labelledby="versioning-title"><div class="section-heading"><h2 id="versioning-title">Versioning And Compatibility</h2><p>The design system uses Semantic Versioning. The current version is <strong>0.1.0</strong>, which identifies a usable draft whose contracts may still change before 1.0.0.</p></div>
+      <div class="pattern-decision"><span class="pattern-decision__status">Required</span><div><strong>Every design-system page and every conforming document must identify the exact design-system version it follows.</strong><p>Use the visible footer label for readers and the metadata value for tools. Both values must match the canonical <code>VERSION</code> file.</p></div></div>
+      <ul class="source-list">
+        <li><strong>Major:</strong> increment for an incompatible change to adopted markup, tokens, behavior, accessibility requirements, or documented usage contracts.</li>
+        <li><strong>Minor:</strong> increment for a backward-compatible component, pattern, token, or capability.</li>
+        <li><strong>Patch:</strong> increment for backward-compatible corrections and clarifications that do not change a contract.</li>
+      </ul>
+      <pre><code>&lt;meta name="design-system-version" content="0.1.0"&gt;
+
+&lt;footer class="ds-footer"&gt;
+  &lt;p&gt;&lt;span class="ds-version"&gt;Design system v0.1.0&lt;/span&gt; · ...&lt;/p&gt;
+&lt;/footer&gt;</code></pre>
+      <p class="source-path">Compatibility requirement: record an exact version, not “latest” or a range. Review the document before changing its declared version. The audited source commit identifies evidence provenance and is not a substitute for the design-system version.</p>
+    </section>
+  </main>
+  <footer class="ds-footer"><p><span class="ds-version">Design system v0.1.0</span> · Page shell concern · Use the default hero for most pages and the two-column hero only when the secondary card adds page-wide context.</p></footer>
+</body>
+</html>

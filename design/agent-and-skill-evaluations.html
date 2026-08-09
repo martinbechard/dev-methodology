@@ -139,20 +139,20 @@ Task-ID-Evidence: historical-unknown
     <div class="section-heading"><h2 id="coverage-title">Coverage and case catalogs</h2><p>Current catalog inventory remains separate from historical campaign results. Probe records retain their executable case, agent-scenario, and workflow associations without turning declarations into verified runs.</p></div>
     <h3>Current catalog inventory</h3>
     <div class="grid" style="margin-top:1rem">
-      <article class="metric"><strong>142</strong><span>Bundled skills</span></article>
-      <article class="metric"><strong>140</strong><span>Diagnostic probe records</span></article>
-      <article class="metric"><strong>30</strong><span>Conceptual agents</span></article>
-      <article class="metric"><strong>30</strong><span>Current suites</span></article>
-      <article class="metric"><strong>114</strong><span>Current suite scenarios</span></article>
+      <article class="metric"><strong>143</strong><span>Bundled skills</span></article>
+      <article class="metric"><strong>141</strong><span>Diagnostic probe records</span></article>
+      <article class="metric"><strong>32</strong><span>Conceptual agents</span></article>
+      <article class="metric"><strong>32</strong><span>Current suites</span></article>
+      <article class="metric"><strong>120</strong><span>Current suite scenarios</span></article>
     </div>
     <div style="margin-top:2rem"><h3>Case and workflow catalogs</h3></div>
     <div class="grid" style="margin-top:1rem">
-      <article class="metric"><strong>14</strong><span>Executable cases</span></article>
-      <article class="metric"><strong>66</strong><span>Agent scenarios</span></article>
+      <article class="metric"><strong>16</strong><span>Executable cases</span></article>
+      <article class="metric"><strong>71</strong><span>Agent scenarios</span></article>
       <article class="metric"><strong>5</strong><span>Workflow packs</span></article>
     </div>
     <div class="grid" style="margin-top:1rem">
-      <article class="method-card"><h3>Skill catalog states</h3><ul><li>0 skills have a direct governed skill result.</li><li>140 skills have a direct diagnostic probe declaration but no direct skill verdict.</li><li>1 skills have only indirect current-suite coverage without a direct probe or skill result.</li><li>1 skills have no recorded evaluation evidence.</li><li>54 skills are named by at least one selected-campaign scenario; 88 are not.</li></ul><p><strong>No skill-level verdict:</strong> the selected campaign publishes no skill receipts, so linked PASS outcomes remain agent-scenario evidence.</p></article>
+      <article class="method-card"><h3>Skill catalog states</h3><ul><li>0 skills have a direct governed skill result.</li><li>141 skills have a direct diagnostic probe declaration but no direct skill verdict.</li><li>1 skills have only indirect current-suite coverage without a direct probe or skill result.</li><li>1 skills have no recorded evaluation evidence.</li><li>56 skills are named by at least one selected-campaign scenario; 87 are not.</li></ul><p><strong>No skill-level verdict:</strong> the selected campaign publishes no skill receipts, so linked PASS outcomes remain agent-scenario evidence.</p></article>
     </div>
   </section>
 
@@ -167,12 +167,12 @@ Task-ID-Evidence: historical-unknown
       <div><dt>Evidence level</dt><dd>Governed agent-suite campaign</dd></div>
       <div><dt>Documentation snapshot mode</dt><dd>Deterministic source snapshot</dd></div>
       <div><dt>Wall-clock build time</dt><dd>Not retained; deterministic output does not claim an unsupported generation timestamp</dd></div>
-      <div><dt>Current source snapshot</dt><dd><code>5f886c23afa4bccf54c12dd9fe51556da656da99dfa23f147cad86a43e1e5eaf</code>; regenerated and compared by the focused check</dd></div>
+      <div><dt>Current source snapshot</dt><dd><code>1957edd2f919b3b99d1561478ed0efb0544e6e69600cc6858b6e1d73e9b46f2a</code>; regenerated and compared by the focused check</dd></div>
     </dl>
     <div style="margin-top:2rem"><h3>Campaign verdict results</h3></div>
     <div class="grid" style="margin-top:1rem">
-      <article class="metric"><strong>26 / 30</strong><span>Campaign suites / current suites (86.7%)</span></article>
-      <article class="metric"><strong>78 / 114</strong><span>Campaign outcomes / current scenarios (68.4%)</span></article>
+      <article class="metric"><strong>26 / 32</strong><span>Campaign suites / current suites (81.2%)</span></article>
+      <article class="metric"><strong>78 / 120</strong><span>Campaign outcomes / current scenarios (65.0%)</span></article>
 
         <article class="metric"><strong>52</strong>
         <span>PASS (66.7%)</span></article>
@@ -189,7 +189,7 @@ Task-ID-Evidence: historical-unknown
   <section class="section" id="limitations" aria-labelledby="limitations-title">
     <div class="section-heading"><h2 id="limitations-title">Evidence limitations</h2><p>Result categories, harness context, containment claims, and skill-level evidence remain separate so the page does not promote incomplete evidence to a verified pass.</p></div>
     <div class="grid">
-      <article class="method-card"><h3>Harness and evidence breakdown</h3><ul><li>78 campaign scenarios: Codex, Governed agent-suite campaign.</li><li>36 current scenarios: no selected-campaign evidence level or harness outcome.</li><li>Per-scenario functional-isolation and security-containment fields are not published in the selected report; the report states clean suite-owned closeout globally.</li></ul></article>
+      <article class="method-card"><h3>Harness and evidence breakdown</h3><ul><li>78 campaign scenarios: Codex, Governed agent-suite campaign.</li><li>42 current scenarios: no selected-campaign evidence level or harness outcome.</li><li>Per-scenario functional-isolation and security-containment fields are not published in the selected report; the report states clean suite-owned closeout globally.</li></ul></article>
       <article class="method-card"><h3>Not verified passes</h3><ul><li>17 BLOCKED outcomes are governed boundaries or unavailable semantic acceptance, not PASS or FAIL.</li><li>9 FAIL outcomes are reproducible defects, not verified passes.</li><li>Missing, historical-only, removed, or drifted current-catalog evidence does not inherit a current PASS.</li><li>Manual observations and uncalibrated semantic Judge outputs are excluded from verified-pass totals.</li></ul></article>
     </div>
     <div class="legend" aria-label="Status legend">
@@ -201,7 +201,7 @@ Task-ID-Evidence: historical-unknown
     <div class="section-heading"><h2 id="history-title">Historical evidence alignment</h2><p>Historical campaign verdicts remain visible, while current definition freshness and current-scenario gaps are reported separately.</p></div>
     <div class="grid">
       <article class="method-card"><h3>Alignment and strength</h3><ul><li><strong>Historical ID alignment; definition freshness unknown</strong> means the current catalog and campaign ledger share an id, but the report retained no scenario-definition snapshot or digest.</li><li>Historical snapshot aligned is available only when a retained definition proves purpose, expected target status, and target skills match.</li><li>Historical definition drift names proved field differences. Campaign-only / removed rows remain visible rather than disappearing.</li><li>Missing campaign evidence means no selected-campaign verdict exists for the current scenario.</li><li>A Manual observation in an older report is historical context, not governed verification.</li></ul></article>
-      <article class="method-card"><h3>Evidence alignment states</h3><ul><li>78 verdicts have only historical id alignment; definition freshness is unknown.</li><li>0 verdicts are aligned to a retained definition snapshot.</li><li>0 verdicts have proved definition-field drift.</li><li>0 campaign verdicts are campaign-only / removed from the current catalog.</li><li>36 current scenarios have missing campaign evidence.</li><li>26 suites are historical-unknown, 0 snapshot-aligned, 0 drifted, and 4 missing.</li></ul></article>
+      <article class="method-card"><h3>Evidence alignment states</h3><ul><li>78 verdicts have only historical id alignment; definition freshness is unknown.</li><li>0 verdicts are aligned to a retained definition snapshot.</li><li>0 verdicts have proved definition-field drift.</li><li>0 campaign verdicts are campaign-only / removed from the current catalog.</li><li>42 current scenarios have missing campaign evidence.</li><li>26 suites are historical-unknown, 0 snapshot-aligned, 0 drifted, and 6 missing.</li></ul></article>
     </div>
   </section>
 
@@ -212,7 +212,7 @@ Task-ID-Evidence: historical-unknown
       <label class="field" for="agent-status">Evidence status<select id="agent-status" data-filter-status="agent"><option value="all">All statuses</option><option value="historical-unknown">Historical, definition unknown</option><option value="snapshot-aligned">Snapshot aligned</option><option value="historical-drift">Definition drift</option><option value="missing">Missing</option></select></label>
       <button type="button" data-filter-clear="agent">Clear agent filters</button>
     </div>
-    <p class="result-count" id="agent-result-count" aria-live="polite">Showing all 30 agents.</p>
+    <p class="result-count" id="agent-result-count" aria-live="polite">Showing all 32 agents.</p>
     <noscript><p class="scope-note">JavaScript is disabled. All agent entries remain visible; text and status filtering are optional enhancements.</p></noscript>
     <div class="catalog" id="agent-catalog">
     <article class="evaluation-card agent-card" id="agent-dev-coder"
@@ -435,7 +435,7 @@ Task-ID-Evidence: historical-unknown
 
             <tr data-campaign-verdict="FAIL">
               <th scope="row">missing-configuration-multi-contribution</th>
-              <td>Prove the full missing-configuration orchestration contract with deterministic dependencies in an isolated snapshot.</td>
+              <td>Prove a terminal claim-free SOLO handoff for missing configuration, independent primary configuration, then a separately resumed configured multi-contribution execution in an isolated snapshot.</td>
               <td>PASS</td>
               <td><span class="status status--fail">FAIL</span></td>
               <td><span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></td>
@@ -2194,6 +2194,122 @@ Task-ID-Evidence: historical-unknown
         </table>
       </div>
     </article>
+
+    <article class="evaluation-card agent-card" id="agent-methodology-design-system-checklist-runner"
+      data-kind="agent" data-status="missing" data-search="methodology-design-system-checklist-runner applies one supplied documentation design system checklist to one supplied page and returns complete item-level evidence without an integrated verdict. missing one-page-one-checklist-report incomplete-evidence-remains-not-tested exact-assignment-and-output-boundary pass 0, blocked 0, fail 0">
+      <div class="card-heading">
+        <div><span class="card-kicker">Conceptual agent</span><h3>methodology-design-system-checklist-runner</h3></div>
+        <span class="status status--missing">Missing campaign evidence</span>
+      </div>
+      <p>Applies one supplied Documentation Design System checklist to one supplied page and returns complete item-level evidence without an integrated verdict.</p>
+      <p class="source-row">
+        <a href="../agents/roles/methodology-maintenance/methodology-design-system-checklist-runner.role.yaml">Role source</a> &middot;
+        <a href="../evals/agent-tests/methodology-design-system-checklist-runner/suite.yaml">Suite</a> &middot;
+        <a href="../evals/agent-tests/methodology-design-system-checklist-runner/scenarios.yaml">Scenarios</a>
+      </p>
+      <dl class="compact-list">
+        <div><dt>Campaign aggregate</dt><dd>PASS 0, BLOCKED 0, FAIL 0</dd></div>
+        <div><dt>Evidence level</dt><dd>Governed agent-suite campaign; scenario verdicts are not skill verdicts</dd></div>
+        <div><dt>Execution context</dt><dd>Codex; disposable synthetic workspaces; per-scenario containment not reported</dd></div>
+        <div><dt>Judge dimension</dt><dd>Governed Judge workflow or proved deterministic boundary; raw per-scenario Judge and calibration fields are not published in this report</dd></div>
+        <div><dt>Unresolved</dt><dd>3 current scenario(s) without campaign evidence</dd></div>
+      </dl>
+
+      <div class="table-scroll" tabindex="0" aria-label="Scenario results for methodology-design-system-checklist-runner">
+        <table>
+          <thead><tr><th>Scenario</th><th>Purpose</th><th>Expected target status</th><th>Campaign verdict</th><th>Evidence alignment</th><th>Catalog state</th><th>Proved drift fields</th></tr></thead>
+          <tbody>
+            <tr data-campaign-verdict="">
+              <th scope="row">one-page-one-checklist-report</th>
+              <td>Prove complete exactly-once item evidence for one supplied page and one supplied checklist without delegation or integrated acceptance.</td>
+              <td>PASS</td>
+              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td>current</td>
+              <td>None proved</td>
+            </tr>
+
+            <tr data-campaign-verdict="">
+              <th scope="row">incomplete-evidence-remains-not-tested</th>
+              <td>Prove that unavailable rendered or keyboard evidence remains explicit instead of being inferred as passing.</td>
+              <td>PASS</td>
+              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td>current</td>
+              <td>None proved</td>
+            </tr>
+
+            <tr data-campaign-verdict="">
+              <th scope="row">exact-assignment-and-output-boundary</th>
+              <td>Prove that an ambiguous or expanded assignment does not produce invented item evidence.</td>
+              <td>PASS</td>
+              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td>current</td>
+              <td>None proved</td>
+            </tr>
+            </tbody>
+        </table>
+      </div>
+    </article>
+
+    <article class="evaluation-card agent-card" id="agent-methodology-design-system-review-coordinator"
+      data-kind="agent" data-status="missing" data-search="methodology-design-system-review-coordinator coordinates bounded documentation design system checklist assignments, validates complete runner evidence, reconciles findings, and alone returns the integrated verdict. missing complete-reconciliation-and-ranking malformed-unavailable-and-conflicting-evidence accuracy-cost-band-speed-and-unpriced-ranking pass 0, blocked 0, fail 0">
+      <div class="card-heading">
+        <div><span class="card-kicker">Conceptual agent</span><h3>methodology-design-system-review-coordinator</h3></div>
+        <span class="status status--missing">Missing campaign evidence</span>
+      </div>
+      <p>Coordinates bounded Documentation Design System checklist assignments, validates complete runner evidence, reconciles findings, and alone returns the integrated verdict.</p>
+      <p class="source-row">
+        <a href="../agents/roles/methodology-maintenance/methodology-design-system-review-coordinator.role.yaml">Role source</a> &middot;
+        <a href="../evals/agent-tests/methodology-design-system-review-coordinator/suite.yaml">Suite</a> &middot;
+        <a href="../evals/agent-tests/methodology-design-system-review-coordinator/scenarios.yaml">Scenarios</a>
+      </p>
+      <dl class="compact-list">
+        <div><dt>Campaign aggregate</dt><dd>PASS 0, BLOCKED 0, FAIL 0</dd></div>
+        <div><dt>Evidence level</dt><dd>Governed agent-suite campaign; scenario verdicts are not skill verdicts</dd></div>
+        <div><dt>Execution context</dt><dd>Codex; disposable synthetic workspaces; per-scenario containment not reported</dd></div>
+        <div><dt>Judge dimension</dt><dd>Governed Judge workflow or proved deterministic boundary; raw per-scenario Judge and calibration fields are not published in this report</dd></div>
+        <div><dt>Unresolved</dt><dd>3 current scenario(s) without campaign evidence</dd></div>
+      </dl>
+
+      <div class="table-scroll" tabindex="0" aria-label="Scenario results for methodology-design-system-review-coordinator">
+        <table>
+          <thead><tr><th>Scenario</th><th>Purpose</th><th>Expected target status</th><th>Campaign verdict</th><th>Evidence alignment</th><th>Catalog state</th><th>Proved drift fields</th></tr></thead>
+          <tbody>
+            <tr data-campaign-verdict="">
+              <th scope="row">complete-reconciliation-and-ranking</th>
+              <td>Prove bounded runner dispatch, complete evidence reconciliation, integrated acceptance, and deterministic candidate ranking.</td>
+              <td>PASS</td>
+              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td>current</td>
+              <td>None proved</td>
+            </tr>
+
+            <tr data-campaign-verdict="">
+              <th scope="row">malformed-unavailable-and-conflicting-evidence</th>
+              <td>Prove one malformed-report retry, unavailable-runner handling, and conflict preservation without local substitution.</td>
+              <td>PASS</td>
+              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td>current</td>
+              <td>None proved</td>
+            </tr>
+
+            <tr data-campaign-verdict="">
+              <th scope="row">accuracy-cost-band-speed-and-unpriced-ranking</th>
+              <td>Prove exact ranking precedence, the inclusive priced-cost boundary, cached-token accounting, and provisional unpriced behavior.</td>
+              <td>PASS</td>
+              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td>current</td>
+              <td>None proved</td>
+            </tr>
+            </tbody>
+        </table>
+      </div>
+    </article>
     </div>
   </section>
 
@@ -2204,7 +2320,7 @@ Task-ID-Evidence: historical-unknown
       <label class="field" for="skill-status">Coverage status<select id="skill-status" data-filter-status="skill"><option value="all">All statuses</option><option value="direct-governed">Direct governed result</option><option value="direct-probe">Direct diagnostic probe</option><option value="indirect-only">Indirect suite only</option><option value="none">No recorded evidence</option></select></label>
       <button type="button" data-filter-clear="skill">Clear skill filters</button>
     </div>
-    <p class="result-count" id="skill-result-count" aria-live="polite">Showing all 142 skills.</p>
+    <p class="result-count" id="skill-result-count" aria-live="polite">Showing all 143 skills.</p>
     <noscript><p class="scope-note">JavaScript is disabled. All skill entries remain visible; text and status filtering are optional enhancements.</p></noscript>
     <div class="catalog" id="skill-catalog">
     <article class="evaluation-card skill-card" id="skill-agent-harness"
@@ -5128,7 +5244,7 @@ Task-ID-Evidence: historical-unknown
         </dl>
 
       <h4>Governed campaign links</h4>
-      <ul class="link-list"><li><a href="../evals/agent-tests/dev-coder/scenarios.yaml">dev-coder / typescript-behavior-change</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-coder/scenarios.yaml">dev-coder / spring-boundary-change</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-coder/scenarios.yaml">dev-coder / insufficient-contract-authority</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-runtime-diagnostician/scenarios.yaml">dev-runtime-diagnostician / retained-process-port</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-runtime-diagnostician/scenarios.yaml">dev-runtime-diagnostician / worker-stall-competing-hypotheses</a> &mdash; <span class="status status--fail">FAIL</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/project-bootstrapper/scenarios.yaml">project-bootstrapper / valid-configuration-direct-path</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/project-bootstrapper/scenarios.yaml">project-bootstrapper / missing-configuration-multi-contribution</a> &mdash; <span class="status status--fail">FAIL</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/project-bootstrapper/scenarios.yaml">project-bootstrapper / invalid-configuration-no-authority</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-orchestrator/scenarios.yaml">dev-orchestrator / bounded-correction</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-orchestrator/scenarios.yaml">dev-orchestrator / terminal-status-integrity</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/project-configurator/scenarios.yaml">project-configurator / valid-configuration-reuse</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/project-configurator/scenarios.yaml">project-configurator / technology-routing</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/project-configurator/scenarios.yaml">project-configurator / invalid-configuration</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-backlog-steward/scenarios.yaml">dev-backlog-steward / creation-and-claim</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-backlog-steward/scenarios.yaml">dev-backlog-steward / interrupted-work-recovery</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-backlog-steward/scenarios.yaml">dev-backlog-steward / blocked-state-transition</a> &mdash; <span class="status status--fail">FAIL</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-merge-coordinator/scenarios.yaml">dev-merge-coordinator / clean-integration</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-merge-coordinator/scenarios.yaml">dev-merge-coordinator / conflict-handling</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-merge-coordinator/scenarios.yaml">dev-merge-coordinator / incomplete-contribution-evidence</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-documentation-writer/scenarios.yaml">dev-documentation-writer / routed-authoring</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-documentation-writer/scenarios.yaml">dev-documentation-writer / source-gaps</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-documentation-writer/scenarios.yaml">dev-documentation-writer / verification-correction</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/wiki-ingester/scenarios.yaml">wiki-ingester / raw-ingest</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/wiki-ingester/scenarios.yaml">wiki-ingester / destination-collision</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/wiki-ingester/scenarios.yaml">wiki-ingester / verifier-failure</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/wiki-writer/scenarios.yaml">wiki-writer / durable-topic-creation</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/wiki-writer/scenarios.yaml">wiki-writer / code-aware-maintenance</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/wiki-writer/scenarios.yaml">wiki-writer / insufficient-sources</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/project-organiser/scenarios.yaml">project-organiser / authorized-taxonomy-extension</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/wiki-architect/scenarios.yaml">wiki-architect / approved-wiki-initialization</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/wiki-architect/scenarios.yaml">wiki-architect / federated-wiki-restructure</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/wiki-architect/scenarios.yaml">wiki-architect / unsafe-unapproved-boundary-change</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/wiki-researcher/scenarios.yaml">wiki-researcher / sufficient-existing-coverage</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/wiki-researcher/scenarios.yaml">wiki-researcher / bounded-missing-topic-research</a> &mdash; <span class="status status--fail">FAIL</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/wiki-researcher/scenarios.yaml">wiki-researcher / unresolved-primary-source-gap</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/wiki-source-collector/scenarios.yaml">wiki-source-collector / approved-window-collection</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/wiki-source-collector/scenarios.yaml">wiki-source-collector / explicit-exclusions-and-ambiguity</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/wiki-source-collector/scenarios.yaml">wiki-source-collector / blocked-raw-repository-write</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/methodology-maintainer/scenarios.yaml">methodology-maintainer / coherent-skill-catalog-change</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/methodology-maintainer/scenarios.yaml">methodology-maintainer / generated-adapter-drift-repair</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/methodology-maintainer/scenarios.yaml">methodology-maintainer / blocked-schema-expansion</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li></ul>
+      <ul class="link-list"><li><a href="../evals/agent-tests/dev-coder/scenarios.yaml">dev-coder / typescript-behavior-change</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-coder/scenarios.yaml">dev-coder / spring-boundary-change</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-coder/scenarios.yaml">dev-coder / insufficient-contract-authority</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-runtime-diagnostician/scenarios.yaml">dev-runtime-diagnostician / retained-process-port</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-runtime-diagnostician/scenarios.yaml">dev-runtime-diagnostician / worker-stall-competing-hypotheses</a> &mdash; <span class="status status--fail">FAIL</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/project-bootstrapper/scenarios.yaml">project-bootstrapper / valid-configuration-direct-path</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/project-bootstrapper/scenarios.yaml">project-bootstrapper / missing-configuration-multi-contribution</a> &mdash; <span class="status status--fail">FAIL</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-orchestrator/scenarios.yaml">dev-orchestrator / bounded-correction</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-orchestrator/scenarios.yaml">dev-orchestrator / terminal-status-integrity</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/project-configurator/scenarios.yaml">project-configurator / valid-configuration-reuse</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/project-configurator/scenarios.yaml">project-configurator / technology-routing</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/project-configurator/scenarios.yaml">project-configurator / invalid-configuration</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-backlog-steward/scenarios.yaml">dev-backlog-steward / creation-and-claim</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-backlog-steward/scenarios.yaml">dev-backlog-steward / interrupted-work-recovery</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-backlog-steward/scenarios.yaml">dev-backlog-steward / blocked-state-transition</a> &mdash; <span class="status status--fail">FAIL</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-merge-coordinator/scenarios.yaml">dev-merge-coordinator / clean-integration</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-merge-coordinator/scenarios.yaml">dev-merge-coordinator / conflict-handling</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-merge-coordinator/scenarios.yaml">dev-merge-coordinator / incomplete-contribution-evidence</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-documentation-writer/scenarios.yaml">dev-documentation-writer / routed-authoring</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-documentation-writer/scenarios.yaml">dev-documentation-writer / source-gaps</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-documentation-writer/scenarios.yaml">dev-documentation-writer / verification-correction</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/wiki-ingester/scenarios.yaml">wiki-ingester / raw-ingest</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/wiki-ingester/scenarios.yaml">wiki-ingester / destination-collision</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/wiki-ingester/scenarios.yaml">wiki-ingester / verifier-failure</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/wiki-writer/scenarios.yaml">wiki-writer / durable-topic-creation</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/wiki-writer/scenarios.yaml">wiki-writer / code-aware-maintenance</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/wiki-writer/scenarios.yaml">wiki-writer / insufficient-sources</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/project-organiser/scenarios.yaml">project-organiser / authorized-taxonomy-extension</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/wiki-architect/scenarios.yaml">wiki-architect / approved-wiki-initialization</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/wiki-architect/scenarios.yaml">wiki-architect / federated-wiki-restructure</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/wiki-architect/scenarios.yaml">wiki-architect / unsafe-unapproved-boundary-change</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/wiki-researcher/scenarios.yaml">wiki-researcher / sufficient-existing-coverage</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/wiki-researcher/scenarios.yaml">wiki-researcher / bounded-missing-topic-research</a> &mdash; <span class="status status--fail">FAIL</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/wiki-researcher/scenarios.yaml">wiki-researcher / unresolved-primary-source-gap</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/wiki-source-collector/scenarios.yaml">wiki-source-collector / approved-window-collection</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/wiki-source-collector/scenarios.yaml">wiki-source-collector / explicit-exclusions-and-ambiguity</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/wiki-source-collector/scenarios.yaml">wiki-source-collector / blocked-raw-repository-write</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/methodology-maintainer/scenarios.yaml">methodology-maintainer / coherent-skill-catalog-change</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/methodology-maintainer/scenarios.yaml">methodology-maintainer / generated-adapter-drift-repair</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/methodology-maintainer/scenarios.yaml">methodology-maintainer / blocked-schema-expansion</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li></ul>
       <dl class="compact-list">
         <div><dt>Latest governed outcome</dt><dd>Linked agent-suite outcomes only: PASS, BLOCKED, FAIL</dd></div>
         <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
@@ -5311,6 +5427,36 @@ Task-ID-Evidence: historical-unknown
       <ul class="link-list"><li><a href="../evals/agent-tests/dev-code-reviewer/scenarios.yaml">dev-code-reviewer / seeded-typescript-defects</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-code-reviewer/scenarios.yaml">dev-code-reviewer / justified-clean-review</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-code-reviewer/scenarios.yaml">dev-code-reviewer / incomplete-review-evidence</a> &mdash; <span class="status status--fail">FAIL</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li></ul>
       <dl class="compact-list">
         <div><dt>Latest governed outcome</dt><dd>Linked agent-suite outcomes only: PASS, FAIL</dd></div>
+        <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
+        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
+      </dl>
+    </article>
+
+    <article class="evaluation-card skill-card" id="skill-review-documentation-design-system"
+      data-kind="skill" data-status="direct-probe" data-search="review-documentation-design-system review a documentation html page against the adopted documentation design system v0.1.0 contracts and return evidence-backed pass or fail results. use for design-system conformance reviews of an index, foundation, shell, content, data-display, form, diagram, accessibility, variation-audit, or source-inventory page. documentation-methodology probe-review-documentation-design-system no governed campaign link">
+      <div class="card-heading">
+        <div><span class="card-kicker">Skill</span><h3>review-documentation-design-system</h3></div>
+        <span class="status status--direct-probe">Direct diagnostic probe</span>
+      </div>
+      <p>Review a documentation HTML page against the adopted Documentation Design System v0.1.0 contracts and return evidence-backed pass or fail results. Use for design-system conformance reviews of an index, foundation, shell, content, data-display, form, diagram, accessibility, variation-audit, or source-inventory page.</p>
+      <p class="source-row"><a href="../skills/review-documentation-design-system/SKILL.md">Skill source</a></p>
+      <h4>Direct diagnostic probe</h4>
+
+        <dl class="compact-list">
+          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-review-documentation-design-system</a></dd></div>
+          <div><dt>Coverage state</dt><dd>fixture-backed: catalog declaration, not a verified run</dd></div>
+          <div><dt>Kind</dt><dd>review-contract</dd></div>
+          <div><dt>Executable cases</dt><dd><a href="../evals/cases.yaml">documentation-design-system-review</a></dd></div>
+          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">methodology-design-system-checklist-runner-happy</a>, <a href="../evals/agent-scenarios.yaml">methodology-design-system-checklist-runner-boundary</a>, <a href="../evals/agent-scenarios.yaml">methodology-design-system-review-coordinator-happy</a></dd></div>
+          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">documentation-methodology</a></dd></div>
+          <div><dt>Deterministic checks</dt><dd>skill-read-trace, artifact-review-checklist, source-link-resolution, no-forbidden-mutation, readiness-consistency</dd></div>
+          <div><dt>Model rubric</dt><dd>review-quality</dd></div>
+        </dl>
+
+      <h4>Governed campaign links</h4>
+      <p><span class="status status--missing">No governed campaign link</span></p><p>No selected-campaign scenario currently names this skill as a target skill.</p>
+      <dl class="compact-list">
+        <div><dt>Latest governed outcome</dt><dd>No governed campaign link</dd></div>
         <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
         <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
       </dl>
@@ -5566,7 +5712,7 @@ available.
     </article>
 
     <article class="evaluation-card skill-card" id="skill-set-multitask-mode"
-      data-kind="skill" data-status="direct-probe" data-search="set-multitask-mode enable dispatch to secondary threads after the condition requiring solo work has ended. development-practice probe-set-multitask-mode no governed campaign link">
+      data-kind="skill" data-status="direct-probe" data-search="set-multitask-mode enable dispatch to secondary threads after the condition requiring solo work has ended. development-practice probe-set-multitask-mode linked agent-suite outcomes only: fail">
       <div class="card-heading">
         <div><span class="card-kicker">Skill</span><h3>set-multitask-mode</h3></div>
         <span class="status status--direct-probe">Direct diagnostic probe</span>
@@ -5587,16 +5733,16 @@ available.
         </dl>
 
       <h4>Governed campaign links</h4>
-      <p><span class="status status--missing">No governed campaign link</span></p><p>No selected-campaign scenario currently names this skill as a target skill.</p>
+      <ul class="link-list"><li><a href="../evals/agent-tests/project-bootstrapper/scenarios.yaml">project-bootstrapper / missing-configuration-multi-contribution</a> &mdash; <span class="status status--fail">FAIL</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li></ul>
       <dl class="compact-list">
-        <div><dt>Latest governed outcome</dt><dd>No governed campaign link</dd></div>
+        <div><dt>Latest governed outcome</dt><dd>Linked agent-suite outcomes only: FAIL</dd></div>
         <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
         <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
       </dl>
     </article>
 
     <article class="evaluation-card skill-card" id="skill-set-solo-mode"
-      data-kind="skill" data-status="direct-probe" data-search="set-solo-mode disable dispatch to secondary threads while the current agent continues work itself. development-practice probe-set-solo-mode no governed campaign link">
+      data-kind="skill" data-status="direct-probe" data-search="set-solo-mode disable dispatch to secondary threads while the current agent continues work itself. development-practice probe-set-solo-mode linked agent-suite outcomes only: fail">
       <div class="card-heading">
         <div><span class="card-kicker">Skill</span><h3>set-solo-mode</h3></div>
         <span class="status status--direct-probe">Direct diagnostic probe</span>
@@ -5617,9 +5763,9 @@ available.
         </dl>
 
       <h4>Governed campaign links</h4>
-      <p><span class="status status--missing">No governed campaign link</span></p><p>No selected-campaign scenario currently names this skill as a target skill.</p>
+      <ul class="link-list"><li><a href="../evals/agent-tests/project-bootstrapper/scenarios.yaml">project-bootstrapper / missing-configuration-multi-contribution</a> &mdash; <span class="status status--fail">FAIL</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li></ul>
       <dl class="compact-list">
-        <div><dt>Latest governed outcome</dt><dd>No governed campaign link</dd></div>
+        <div><dt>Latest governed outcome</dt><dd>Linked agent-suite outcomes only: FAIL</dd></div>
         <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
         <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
       </dl>
@@ -6025,10 +6171,10 @@ inspect.
 
         <dl class="compact-list">
           <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-terminology-standard</a></dd></div>
-          <div><dt>Coverage state</dt><dd>declared: catalog declaration, not a verified run</dd></div>
+          <div><dt>Coverage state</dt><dd>fixture-backed: catalog declaration, not a verified run</dd></div>
           <div><dt>Kind</dt><dd>workflow-invariant</dd></div>
-          <div><dt>Executable cases</dt><dd>None declared</dd></div>
-          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-coder-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-documentation-writer-happy</a>, <a href="../evals/agent-scenarios.yaml">wiki-writer-happy</a></dd></div>
+          <div><dt>Executable cases</dt><dd><a href="../evals/cases.yaml">terminology-standard-effect</a></dd></div>
+          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-coder-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-documentation-writer-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-documentation-writer-terminology-rewrite</a>, <a href="../evals/agent-scenarios.yaml">wiki-writer-happy</a></dd></div>
           <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">code-delivery</a>, <a href="../evals/workflow-packs.yaml">documentation-methodology</a>, <a href="../evals/workflow-packs.yaml">wiki-lifecycle</a></dd></div>
           <div><dt>Deterministic checks</dt><dd>skill-read-trace, artifact-structure, operation-coverage</dd></div>
           <div><dt>Model rubric</dt><dd>workflow-quality</dd></div>
@@ -6503,7 +6649,7 @@ inspect.
   <section class="section" id="sources" aria-labelledby="sources-title">
     <div class="section-heading"><h2 id="sources-title">Authoritative sources</h2><p>Tracked repository artifacts remain authoritative. Temporary retained-summary paths named in the historical campaign are context, not the only support for any statistic on this page.</p></div>
     <div class="grid">
-      <article class="method-card"><h3>Method and catalogs</h3><ul><li><a href="../evals/README.md">Evaluation methodology</a></li><li><a href="../evals/skill-probes.yaml">Skill probe catalog</a></li><li><a href="../evals/cases.yaml">Executable cases (14)</a></li><li><a href="../evals/agent-scenarios.yaml">Agent scenarios (66)</a></li><li><a href="../evals/workflow-packs.yaml">Workflow packs (5)</a></li><li><a href="../evals/agent-tests/suite-index.yaml">Agent suite index</a></li><li><a href="../evals/judges.yaml">Judge catalog and calibration policy</a></li></ul></article>
+      <article class="method-card"><h3>Method and catalogs</h3><ul><li><a href="../evals/README.md">Evaluation methodology</a></li><li><a href="../evals/skill-probes.yaml">Skill probe catalog</a></li><li><a href="../evals/cases.yaml">Executable cases (16)</a></li><li><a href="../evals/agent-scenarios.yaml">Agent scenarios (71)</a></li><li><a href="../evals/workflow-packs.yaml">Workflow packs (5)</a></li><li><a href="../evals/agent-tests/suite-index.yaml">Agent suite index</a></li><li><a href="../evals/judges.yaml">Judge catalog and calibration policy</a></li></ul></article>
       <article class="method-card"><h3>Results</h3><ul><li><a href="../evals/agent-tests/results/2026-07-17-complete-agent-suites.md">Selected complete agent-suite campaign</a></li><li><a href="../evals/results/2026-07-09-live-agent-evaluations.md">Older Manual observation report</a></li></ul><p>The older report is not merged into selected-campaign totals.</p></article>
     </div>
   </section>

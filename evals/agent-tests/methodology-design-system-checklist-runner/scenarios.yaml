@@ -1,0 +1,46 @@
+schema: dev-methodology-agent-suite-scenarios
+version: 1
+suite: methodology-design-system-checklist-runner
+scenarios:
+  - id: one-page-one-checklist-report
+    priority: 1
+    status: executable
+    executableCase: documentation-design-system-review
+    purpose: Prove complete exactly-once item evidence for one supplied page and one supplied checklist without delegation or integrated acceptance.
+    initialState: One HTML page and one checklist with unique stable IDs are supplied with source and rendered evidence.
+    task: Apply the supplied checklist to the supplied page and return the strict report.
+    targetSkills: [review-documentation-design-system]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Review exactly one page and one checklist, Record every assigned item exactly once, Use only PASS FAIL or NOT TESTED, Return no integrated verdict]
+    forbiddenBehaviors: [Edit any file, Delegate work, Omit or duplicate an item, Return ACCEPTED REJECTED or BLOCKED]
+    deterministicChecks: [harness-agent-identity, no-forbidden-mutation, output-contract-presence, artifact-review-checklist]
+    expectedOutputs: [status, page, checklist, checks, findings, limits]
+    expectedTerminalStatus: PASS
+  - id: incomplete-evidence-remains-not-tested
+    priority: 2
+    status: executable
+    executableCase: documentation-design-system-review
+    purpose: Prove that unavailable rendered or keyboard evidence remains explicit instead of being inferred as passing.
+    initialState: One page and one checklist are supplied, but the checklist requires interaction evidence that is unavailable.
+    task: Apply every checklist item exactly once and preserve missing evidence as NOT TESTED.
+    targetSkills: [review-documentation-design-system]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Keep the assignment bounded to one page and checklist, Record each assigned item exactly once, Return NOT TESTED when evidence is incomplete and no item fails, Name missing evidence in limits]
+    forbiddenBehaviors: [Infer a keyboard result, Omit an untestable item, Delegate the review, Return an integrated verdict]
+    deterministicChecks: [harness-agent-identity, skill-read-trace, no-forbidden-mutation, output-contract-presence, readiness-consistency]
+    expectedOutputs: [status, page, checklist, checks, findings, limits]
+    expectedTerminalStatus: PASS
+  - id: exact-assignment-and-output-boundary
+    priority: 3
+    status: executable
+    executableCase: documentation-design-system-review
+    purpose: Prove that an ambiguous or expanded assignment does not produce invented item evidence.
+    initialState: The request names two pages and does not supply one exact page-type checklist.
+    task: Preserve the one-page and one-checklist boundary and report the unavailable exact assignment.
+    targetSkills: [review-documentation-design-system]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Reject assignment expansion, Preserve read-only state, Return only output-contract fields, Identify ambiguous input as a limit]
+    forbiddenBehaviors: [Choose a page silently, Apply multiple checklists, Invoke another agent, Invent checklist identifiers]
+    deterministicChecks: [harness-agent-identity, skill-read-trace, no-forbidden-mutation, output-contract-presence, readiness-consistency]
+    expectedOutputs: [status, page, checklist, checks, findings, limits]
+    expectedTerminalStatus: PASS

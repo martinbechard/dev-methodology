@@ -166,6 +166,8 @@ packs:
       - dev-verifier
       - methodology-maintainer
       - methodology-artifact-reviewer
+      - methodology-design-system-checklist-runner
+      - methodology-design-system-review-coordinator
     skillProbes:
       - probe-resource-claim
       - probe-agent-role-authoring
@@ -188,6 +190,7 @@ packs:
       - probe-review-high-level-design
       - probe-review-module-design
       - probe-review-structured-artifact
+      - probe-review-documentation-design-system
       - probe-review-unit-test-plan
       - probe-skill-authoring
       - probe-structured-design
@@ -214,6 +217,14 @@ packs:
         requiredEvidence:
           - structure and link checks
           - calibrated semantic Judge only when exact checks cannot decide completeness
+      - id: documentation-design-system-conformance
+        agents:
+          - methodology-design-system-checklist-runner
+          - methodology-design-system-review-coordinator
+        requiredEvidence:
+          - one complete item-level report for every required page-checklist assignment
+          - integrated acceptance only from reconciled complete evidence
+          - deterministic accuracy, inclusive priced-cost-band, and speed ranking when candidates are supplied
     judgePlan:
       deterministicChecks:
         - artifact-structure
@@ -233,6 +244,7 @@ packs:
         - junie-workspace-write
     executableCases:
       - documentation-functional-spec
+      - documentation-design-system-review
       - terminology-standard-effect
     caseCoverageStatus: partial
     coverageStatus: declared

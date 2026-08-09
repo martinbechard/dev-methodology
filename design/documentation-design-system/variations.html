@@ -1,0 +1,293 @@
+<!doctype html>
+<!--
+Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+Artifact-ID: de48b287-9546-4bd6-8a74-aea18ed85977
+Created-UTC: 2026-08-09T00:26:37Z
+Creating-Agent: Dev Coder
+Runtime: Codex
+Dispatched-Model: gpt-5.6-sol
+Reasoning-Effort: high
+Task-ID: 019fe3cd-577c-76b1-965c-06fb8793ae42
+Artifact-ID-Evidence: runtime-supplied
+Created-UTC-Evidence: runtime-supplied
+Creating-Agent-Evidence: runtime-supplied
+Runtime-Evidence: runtime-supplied
+Dispatched-Model-Evidence: runtime-supplied
+Reasoning-Effort-Evidence: runtime-supplied
+Task-ID-Evidence: runtime-supplied
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="design-system-version" content="0.1.0">
+  <title>Variation Audit · Documentation Design System</title>
+  <link rel="stylesheet" href="assets/design-system.css">
+</head>
+<body id="top">
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <header class="ds-header"><a class="site-brand" href="index.html"><img class="site-logo" src="assets/dev-methodology-logo.png" alt="DevConsult Canada logo"><span>Documentation Design System</span></a></header>
+  <nav class="suite-nav" aria-label="Design system pages"><a href="index.html">Index</a><a href="foundations.html">Foundations</a><a href="page-shell.html">Page shell</a><a href="content.html">Content</a><a href="data-display.html">Data display</a><a href="forms-and-actions.html">Forms</a><a href="diagrams.html">Diagrams</a><a href="accessibility.html">Accessibility</a><a href="variations.html" aria-current="page">Variations</a><a href="source-inventory.html">Inventory</a></nav>
+
+  <main id="main-content">
+    <nav class="document-nav" aria-label="Documentation navigation"><div class="document-sequence"><a href="accessibility.html" rel="prev">← Previous: Accessibility</a><a href="source-inventory.html" rel="next">Next: Inventory →</a></div></nav>
+
+    <section class="hero hero--split" aria-labelledby="page-title">
+      <div class="hero-copy"><span class="eyebrow">Concern 08</span><h1 id="page-title">Variation Audit</h1><p class="lede">A variation is one documentation concern implemented in more than one way. A variation can be a valid pattern family or an unresolved inconsistency. Each subsection renders the source patterns and records their trade-offs.</p></div>
+      <aside class="hero-principle"><strong>Review status</strong><p>Classifications apply to the design system. Source files remain unchanged.</p></aside>
+    </section>
+
+    <nav class="page-nav" aria-label="Variation categories"><a href="#top">Top</a><a href="#shell">Shell</a><a href="#visual">Visual foundation</a><a href="#components">Components</a><a href="#implementation">Implementation</a><a href="#coverage">Coverage</a></nav>
+
+    <section class="section" aria-labelledby="catalog-title">
+      <div class="section-heading"><h2 id="catalog-title">Variation Catalog</h2><p>Use these links to open one comparison directly. Each comparison has its own heading and stable fragment identifier.</p></div>
+      <nav class="variation-index" aria-label="Individual variations">
+        <a href="#section-navigation">Section navigation</a><a href="#section-headings">Section headings</a><a href="#hero-compositions">Hero compositions</a><a href="#footer-content">Footer content</a>
+        <a href="#page-themes">Page themes</a><a href="#token-names">Token names</a><a href="#content-widths">Content widths</a><a href="#title-scale">Title scale</a>
+        <a href="#card-families">Card families</a><a href="#label-families">Status, badge, tag</a><a href="#table-overflow">Table overflow</a><a href="#code-treatment">Code treatment</a>
+        <a href="#style-ownership">Style ownership</a><a href="#inline-styles">Inline styles</a><a href="#settings-injection">Settings injection</a><a href="#creation-provenance">Creation provenance</a><a href="#breakpoints">Breakpoints</a>
+        <a href="#index-coverage">Index coverage</a><a href="#skip-links">Skip links</a><a href="#hero-labeling">Hero labeling</a><a href="#print-coverage">Print coverage</a>
+      </nav>
+    </section>
+
+    <section class="section variation-group" id="shell" aria-labelledby="shell-title">
+      <div class="section-heading"><span class="eyebrow">Category 01</span><h2 id="shell-title">Shell Variations</h2><p>Shell variations affect navigation, hierarchy, and the reader’s position in the document suite.</p></div>
+
+      <article class="variation-section" id="section-navigation">
+        <header class="variation-header"><span class="variation-number">08.1</span><div><span class="pattern-decision__status">Unresolved source variation</span><h3>Section navigation: shared page navigation and editorial chapter navigation</h3><p>Both patterns provide sticky links to sections. Their names, spacing, colors, mobile rules, and print rules differ.</p></div></header>
+        <div class="variant-showcase">
+          <section class="variant-sample"><div class="variant-label"><strong>Shared page navigation</strong><code>.page-section-nav</code></div><div class="variant-canvas"><nav class="specimen-page-nav" aria-label="Shared page navigation specimen"><a href="#section-navigation">Overview</a><a href="#section-navigation">Rules</a><a href="#section-navigation">Examples</a></nav></div><p class="variant-source">Sources: definitions, specialization, configuration, templates, generic source, modularization, and wiki context.</p></section>
+          <section class="variant-sample"><div class="variant-label"><strong>Editorial chapter navigation</strong><code>.chapter-nav</code></div><div class="variant-canvas"><nav class="specimen-chapter-nav" aria-label="Editorial chapter navigation specimen"><a href="#section-navigation">Purpose</a><a href="#section-navigation">Evidence</a><a href="#section-navigation">Results</a></nav></div><p class="variant-source">Sources: agent-and-skill-evaluations.html, agent-owned-evaluation-suites.html, and orchestrated-development-lifecycle.html.</p></section>
+        </div>
+        <div class="pros-cons"><div class="pros"><strong>Pros</strong><p>Shared navigation centralizes behavior. Chapter navigation permits editorial theme tuning.</p></div><div class="cons"><strong>Cons</strong><p>Two implementations can drift in spacing, color, mobile behavior, and print behavior.</p></div></div>
+      </article>
+
+      <article class="variation-section" id="section-headings">
+        <header class="variation-header"><span class="variation-number">08.2</span><div><span class="pattern-decision__status">Unresolved source variation</span><h3>Section headings: plain and grouped</h3><p>A plain heading starts the content immediately. A grouped heading pairs the title with an explanatory boundary.</p></div></header>
+        <div class="variant-showcase">
+          <section class="variant-sample"><div class="variant-label"><strong>Plain heading</strong><code>h2</code></div><div class="variant-canvas specimen-heading specimen-heading--plain"><h4>Configuration layers</h4><div class="specimen-lines"><i></i><i></i><i></i></div></div><p class="variant-source">Sources: the original reference-page family.</p></section>
+          <section class="variant-sample"><div class="variant-label"><strong>Grouped heading</strong><code>.section-heading</code></div><div class="variant-canvas specimen-heading"><h4>Evaluation layers</h4><p>Each layer answers a distinct evidence question.</p><div class="specimen-lines"><i></i><i></i></div></div><p class="variant-source">Sources: evaluations, evaluation suites, and lifecycle.</p></section>
+        </div>
+        <div class="pros-cons"><div class="pros"><strong>Pros</strong><p>Plain headings are compact. Grouped headings establish the topic before dense evidence.</p></div><div class="cons"><strong>Cons</strong><p>Grouped markup adds a wrapper. Plain headings can open abruptly.</p></div></div>
+      </article>
+
+      <article class="variation-section" id="hero-compositions">
+        <header class="variation-header"><span class="variation-number">08.3</span><div><span class="pattern-decision__status">Partly classified</span><h3>Hero compositions: five information structures</h3><p>The suite uses five hero arrangements. Each arrangement changes the amount and type of information visible beside the title.</p></div></header>
+        <div class="pattern-decision"><span class="pattern-decision__status">Partly classified</span><div><strong>The default hero is standard. The two-column hero is an optional pattern.</strong><p>Other compositions remain review variants. See <a href="page-shell.html#two-column-hero">Page Shell: Two-Column Hero</a> for the adopted explanation and example.</p></div></div>
+        <div class="variant-showcase variant-showcase--five">
+          <section class="variant-sample"><div class="variant-label"><strong>Simple</strong></div><div class="variant-canvas mini-hero"><small>Documentation</small><b>Methodology</b><span>One summary line.</span></div><p class="variant-source">Sources: index and original references.</p></section>
+          <section class="variant-sample"><div class="variant-label"><strong>Evidence note</strong></div><div class="variant-canvas mini-hero mini-hero--note"><div><small>Evaluation</small><b>Evidence</b></div><em>Snapshot note</em></div><p class="variant-source">Source: agent-and-skill-evaluations.html.</p></section>
+          <section class="variant-sample"><div class="variant-label"><strong>Split SVG</strong></div><div class="variant-canvas mini-hero mini-hero--split"><div><small>Suites</small><b>Owned tests</b></div><svg viewBox="0 0 90 54" role="img" aria-label="Small source-to-suite flow"><rect x="2" y="17" width="28" height="20" rx="4"/><path d="M31 27 H58"/><path d="M53 22 L59 27 L53 32"/><rect x="60" y="17" width="28" height="20" rx="4"/></svg></div><p class="variant-source">Source: agent-owned-evaluation-suites.html.</p></section>
+          <section class="variant-sample"><div class="variant-label"><strong>Split principle</strong></div><div class="variant-canvas mini-hero mini-hero--principle"><div><small>Lifecycle</small><b>Orchestration</b></div><em>One governing principle</em></div><p class="variant-source">Source: orchestrated-development-lifecycle.html.</p></section>
+          <section class="variant-sample"><div class="variant-label"><strong>Context note</strong></div><div class="variant-canvas mini-hero mini-hero--context"><div><small>Wiki</small><b>Project context</b></div><em>Scope and audience</em></div><p class="variant-source">Source: wiki-skills-and-project-context.html.</p></section>
+        </div>
+        <div class="pros-cons"><div class="pros"><strong>Pros</strong><p>Each composition can match the page’s information density and narrative purpose.</p></div><div class="cons"><strong>Cons</strong><p>The evidence-note, split-visual, and dark-context compositions still lack complete usage contracts.</p></div></div>
+      </article>
+
+      <article class="variation-section" id="footer-content">
+        <header class="variation-header"><span class="variation-number">08.4</span><div><span class="pattern-decision__status">Resolved in the design system</span><h3>Footer content: versioned index and unversioned detail pages</h3><p>The index publishes the suite version. Detail pages publish only copyright and license information.</p></div></header>
+        <div class="pattern-decision"><span class="pattern-decision__status">Resolved in the design system</span><div><strong>Publish the design-system version on every page.</strong><p>This source variation is retained for audit purposes, while the adopted Page Shell contract gives direct-entry readers the version on detail pages too.</p></div></div>
+        <div class="variant-showcase">
+          <section class="variant-sample"><div class="variant-label"><strong>Index footer</strong></div><div class="variant-canvas specimen-footer"><span>Version 1.0.0</span><span>Copyright and MIT License</span></div><p class="variant-source">Source: index.html.</p></section>
+          <section class="variant-sample"><div class="variant-label"><strong>Detail footer</strong></div><div class="variant-canvas specimen-footer"><span>Copyright and MIT License</span></div><p class="variant-source">Sources: ten detail pages.</p></section>
+        </div>
+        <div class="pros-cons"><div class="pros"><strong>Pros</strong><p>One suite version avoids repeated version updates.</p></div><div class="cons"><strong>Cons</strong><p>A reader who enters on a detail page cannot see the suite version.</p></div></div>
+      </article>
+    </section>
+
+    <section class="section variation-group" id="visual" aria-labelledby="visual-title">
+      <div class="section-heading"><span class="eyebrow">Category 02</span><h2 id="visual-title">Visual Foundation Variations</h2><p>Visual-foundation variations change density, rhythm, and tone more than information structure.</p></div>
+
+      <article class="variation-section" id="page-themes">
+        <header class="variation-header"><span class="variation-number">08.5</span><div><span class="pattern-decision__status">Unresolved source variation</span><h3>Page themes: light, narrative dark, and report dark</h3><p>Three page palettes use different backgrounds, panels, borders, and text contrast.</p></div></header>
+        <div class="variant-showcase variant-showcase--three">
+          <section class="variant-sample"><div class="variant-label"><strong>Light documentation</strong></div><div class="variant-canvas theme-preview theme-preview--light"><small>Reference</small><b>Light page</b><span>White panels on a pale page.</span></div><p class="variant-source">Sources: index and eight detail pages.</p></section>
+          <section class="variant-sample"><div class="variant-label"><strong>Narrative dark</strong></div><div class="variant-canvas theme-preview theme-preview--dark"><small>System story</small><b>Dark page</b><span>Deep blue panels and light text.</span></div><p class="variant-source">Sources: lifecycle and wiki context dark mode.</p></section>
+          <section class="variant-sample"><div class="variant-label"><strong>Report dark</strong></div><div class="variant-canvas theme-preview theme-preview--report"><small>Backlog report</small><b>Operational view</b><span>Near-black panels with cyan accents.</span></div><p class="variant-source">Source: examples/styled-backlog-report.html.</p></section>
+        </div>
+        <div class="pros-cons"><div class="pros"><strong>Pros</strong><p>Dark pages distinguish system narratives and support complex diagrams.</p></div><div class="cons"><strong>Cons</strong><p>Theme changes weaken suite continuity and duplicate token definitions.</p></div></div>
+      </article>
+
+      <article class="variation-section" id="token-names">
+        <header class="variation-header"><span class="variation-number">08.6</span><div><span class="pattern-decision__status">Unresolved source variation</span><h3>Token names: role-prefixed and short</h3><p>Equivalent design roles use two naming conventions.</p></div></header>
+        <div class="variant-showcase">
+          <section class="variant-sample"><div class="variant-label"><strong>Role-prefixed names</strong></div><div class="variant-canvas token-preview"><code>--color-ink</code><span>Text color</span><code>--content-max</code><span>Page width</span><code>--shadow-panel</code><span>Elevation</span></div><p class="variant-source">Sources: the original family.</p></section>
+          <section class="variant-sample"><div class="variant-label"><strong>Short names</strong></div><div class="variant-canvas token-preview"><code>--ink</code><span>Text color</span><code>--content</code><span>Page width</span><code>--shadow</code><span>Elevation</span></div><p class="variant-source">Sources: editorial pages.</p></section>
+        </div>
+        <div class="pros-cons"><div class="pros"><strong>Pros</strong><p>Short names are concise. Role-prefixed names expose purpose and reduce collision risk.</p></div><div class="cons"><strong>Cons</strong><p>Equivalent roles need a mapping before they can move into one shared stylesheet.</p></div></div>
+      </article>
+
+      <article class="variation-section" id="content-widths">
+        <header class="variation-header"><span class="variation-number">08.7</span><div><span class="pattern-decision__status">Unresolved source variation</span><h3>Maximum content width: 1120–1240px</h3><p>Five maximum widths produce small but visible shifts in page alignment.</p></div></header>
+        <div class="variant-showcase variant-showcase--single"><section class="variant-sample"><div class="variant-label"><strong>Relative width specimens</strong><span>Scaled to the 1240px maximum</span></div><div class="variant-canvas width-preview" aria-label="Relative maximum content widths"><div><span>1120</span><i class="width-1120"></i><small>index</small></div><div><span>1160</span><i class="width-1160"></i><small>agentic and generic source</small></div><div><span>1180</span><i class="width-1180"></i><small>lifecycle</small></div><div><span>1220</span><i class="width-1220"></i><small>common reference</small></div><div><span>1240</span><i class="width-1240"></i><small>evaluations and examples</small></div></div><p class="variant-source">Sources: index.html uses 1120px; agentic-configuration.html and generic-agent-definitions-source.html use 1160px; orchestrated-development-lifecycle.html uses 1180px; the original reference family uses 1220px; evaluation and specialization pages use 1240px.</p></section></div>
+        <div class="pros-cons"><div class="pros"><strong>Pros</strong><p>A page width can match card, table, or diagram density.</p></div><div class="cons"><strong>Cons</strong><p>Page alignment shifts, and no documentation explains the width choice.</p></div></div>
+      </article>
+
+      <article class="variation-section" id="title-scale">
+        <header class="variation-header"><span class="variation-number">08.8</span><div><span class="pattern-decision__status">Unresolved source variation</span><h3>Title scale: 3.55–5.8rem maximum</h3><p>The largest editorial title is about sixty-three percent larger than the smallest reference title.</p></div></header>
+        <div class="variant-showcase variant-showcase--three">
+          <section class="variant-sample"><div class="variant-label"><strong>Reference</strong><code>3.55–3.7rem</code></div><div class="variant-canvas title-preview title-preview--reference">Technical title</div><p class="variant-source">Sources: original detail pages.</p></section>
+          <section class="variant-sample"><div class="variant-label"><strong>Evaluations and suites</strong><code>5–5.4rem</code></div><div class="variant-canvas title-preview title-preview--evaluation">Technical title</div><p class="variant-source">Sources: evaluations and evaluation suites.</p></section>
+          <section class="variant-sample"><div class="variant-label"><strong>Lifecycle</strong><code>5.8rem</code></div><div class="variant-canvas title-preview title-preview--lifecycle">Technical title</div><p class="variant-source">Source: orchestrated-development-lifecycle.html.</p></section>
+        </div>
+        <div class="pros-cons"><div class="pros"><strong>Pros</strong><p>Large editorial titles create hierarchy and a distinct visual identity.</p></div><div class="cons"><strong>Cons</strong><p>Long technical titles use significant vertical space and can wrap unpredictably.</p></div></div>
+      </article>
+    </section>
+
+    <section class="section variation-group" id="components" aria-labelledby="components-title">
+      <div class="section-heading"><span class="eyebrow">Category 03</span><h2 id="components-title">Component Variations</h2><p>Component variations express similar roles with different names, structures, or overflow rules.</p></div>
+
+      <article class="variation-section" id="card-families">
+        <header class="variation-header"><span class="variation-number">08.9</span><div><span class="pattern-decision__status">Unresolved source variation</span><h3>Cards: generic and domain-specific families</h3><p>Generic cards share one broad contract. Domain-specific cards embed meaning in their names and visual details.</p></div></header>
+        <div class="variant-showcase variant-showcase--three">
+          <section class="variant-sample"><div class="variant-label"><strong>Generic</strong><code>.card</code></div><div class="variant-canvas card-preview"><small>Concept</small><b>Reusable card</b><span>Neutral content container.</span></div><p class="variant-source">Source: six pages.</p></section>
+          <section class="variant-sample"><div class="variant-label"><strong>Catalog</strong><code>.doc-card</code></div><div class="variant-canvas card-preview card-preview--catalog"><span class="specimen-index">03</span><b>Document card</b><span>Linked suite entry.</span></div><p class="variant-source">Source: index.html.</p></section>
+          <section class="variant-sample"><div class="variant-label"><strong>Domain</strong><code>.evaluation-card</code></div><div class="variant-canvas card-preview card-preview--domain"><small>Conceptual agent</small><b>Evaluation card</b><span class="specimen-status specimen-status--pass">PASS</span></div><p class="variant-source">Also includes method, role, command, and other named card families.</p></section>
+        </div>
+        <div class="pros-cons"><div class="pros"><strong>Pros</strong><p>Domain names communicate intent and permit specialized layouts.</p></div><div class="cons"><strong>Cons</strong><p>Border, radius, spacing, and shadow rules are duplicated.</p></div></div>
+      </article>
+
+      <article class="variation-section" id="label-families">
+        <header class="variation-header"><span class="variation-number">08.10</span><div><span class="pattern-decision__status">Unresolved source variation</span><h3>Compact labels: status, badge, and tag</h3><p>Three compact-label families distinguish verdicts, workflow state, and taxonomy, but their visual boundaries overlap.</p></div></header>
+        <div class="variant-showcase variant-showcase--three">
+          <section class="variant-sample"><div class="variant-label"><strong>Status</strong><code>.status--*</code></div><div class="variant-canvas label-preview"><span class="specimen-status specimen-status--pass">PASS</span><span class="specimen-status specimen-status--blocked">BLOCKED</span></div><p class="variant-source">Source: evaluation catalog.</p></section>
+          <section class="variant-sample"><div class="variant-label"><strong>Badge</strong></div><div class="variant-canvas label-preview"><span class="specimen-badge">RUNNING</span><span class="specimen-badge specimen-badge--teal">RECEIPT</span></div><p class="variant-source">Sources: evaluation suites and report.</p></section>
+          <section class="variant-sample"><div class="variant-label"><strong>Tag</strong></div><div class="variant-canvas label-preview"><span class="specimen-tag">Pattern</span><span class="specimen-tag">Methodology</span></div><p class="variant-source">Sources: skill and wiki pages.</p></section>
+        </div>
+        <div class="pros-cons"><div class="pros"><strong>Pros</strong><p>Separate vocabularies can distinguish verdict, workflow state, and taxonomy.</p></div><div class="cons"><strong>Cons</strong><p>Colors and names can imply the same meaning while using unrelated styles.</p></div></div>
+      </article>
+
+      <article class="variation-section" id="table-overflow">
+        <header class="variation-header"><span class="variation-number">08.11</span><div><span class="pattern-decision__status">Unresolved source variation</span><h3>Wide-table overflow: wrapper, table, and surrounding container</h3><p>All three patterns keep wide data reachable. They assign scrolling to different elements.</p></div></header>
+        <div class="variant-showcase variant-showcase--three">
+          <section class="variant-sample"><div class="variant-label"><strong>Wrapper scrolls</strong><code>.table-scroll</code></div><div class="variant-canvas overflow-preview"><div class="overflow-frame"><div class="mini-table mini-table--wide"><b>Suite</b><b>Status</b><b>Receipt</b><span>Coder</span><span>PASS</span><span>Bound</span></div></div><small>Scroll owner: wrapper</small></div><p class="variant-source">Source: agent-and-skill-evaluations.html.</p></section>
+          <section class="variant-sample"><div class="variant-label"><strong>Table scrolls</strong><code>table { display:block }</code></div><div class="variant-canvas overflow-preview"><div class="overflow-frame overflow-frame--table"><div class="mini-table mini-table--wide"><b>Agent</b><b>Skill</b><b>Source</b><span>Coder</span><span>TDD</span><span>Catalog</span></div></div><small>Scroll owner: table</small></div><p class="variant-source">Sources: some original pages.</p></section>
+          <section class="variant-sample"><div class="variant-label"><strong>Container and minimum width</strong></div><div class="variant-canvas overflow-preview"><div class="overflow-frame overflow-frame--container"><div class="mini-table mini-table--wide"><b>Phase</b><b>Owner</b><b>State</b><span>Review</span><span>Verifier</span><span>Ready</span></div></div><small>Scroll owner: surrounding container</small></div><p class="variant-source">Sources: other original pages.</p></section>
+        </div>
+        <div class="pros-cons"><div class="pros"><strong>Pros</strong><p>Every approach keeps columns available at narrow widths.</p></div><div class="cons"><strong>Cons</strong><p>A scrolling table can affect table semantics, focus treatment, and border behavior.</p></div></div>
+      </article>
+
+      <article class="variation-section" id="code-treatment">
+        <header class="variation-header"><span class="variation-number">08.12</span><div><span class="pattern-decision__status">Unresolved source variation</span><h3>Code treatment: background, font token, font only, and wrapping only</h3><p>Inline identifiers receive four different levels of visual treatment.</p></div></header>
+        <div class="variant-showcase variant-showcase--four">
+          <section class="variant-sample"><div class="variant-label"><strong>Soft background</strong></div><div class="variant-canvas code-preview">Run <code class="code-soft">verify.py</code> first.</div><p class="variant-source">Sources: five original pages.</p></section>
+          <section class="variant-sample"><div class="variant-label"><strong>Utility font token</strong></div><div class="variant-canvas code-preview">State <code class="code-utility">Running</code></div><p class="variant-source">Source: lifecycle.</p></section>
+          <section class="variant-sample"><div class="variant-label"><strong>Monospace only</strong></div><div class="variant-canvas code-preview">Suite <code class="code-mono">dev-coder</code></div><p class="variant-source">Source: evaluation suites.</p></section>
+          <section class="variant-sample"><div class="variant-label"><strong>Wrapping only</strong></div><div class="variant-canvas code-preview">Path <code class="code-wrap">reports/very-long-evidence-name.json</code></div><p class="variant-source">Source: backlog report.</p></section>
+        </div>
+        <div class="pros-cons"><div class="pros"><strong>Pros</strong><p>Page-specific treatments can match light and dark themes.</p></div><div class="cons"><strong>Cons</strong><p>Exact identifiers receive inconsistent emphasis and spacing.</p></div></div>
+      </article>
+    </section>
+
+    <section class="section variation-group" id="implementation" aria-labelledby="implementation-title">
+      <div class="section-heading"><span class="eyebrow">Category 04</span><h2 id="implementation-title">Implementation Variations</h2><p>Implementation variations affect maintenance even when the rendered result looks similar.</p></div>
+
+      <article class="variation-section" id="style-ownership">
+        <header class="variation-header"><span class="variation-number">08.13</span><div><span class="pattern-decision__status">Unresolved source variation</span><h3>Style ownership: embedded page CSS, shared CSS, and JavaScript-injected CSS</h3><p>Styles live in three different types of owner.</p></div></header>
+        <div class="variant-showcase variant-showcase--three">
+          <section class="variant-sample"><div class="variant-label"><strong>Embedded in HTML</strong></div><pre class="variant-code"><code>&lt;style&gt;
+  .hero { ... }
+&lt;/style&gt;</code></pre><p class="variant-source">Source: every primary page.</p></section>
+          <section class="variant-sample"><div class="variant-label"><strong>Shared stylesheet</strong></div><pre class="variant-code"><code>&lt;link rel="stylesheet"
+  href="page-section-navigation.css"&gt;</code></pre><p class="variant-source">Source: eight primary pages.</p></section>
+          <section class="variant-sample"><div class="variant-label"><strong>Injected by JavaScript</strong></div><pre class="variant-code"><code>style.textContent = `
+  .settings-dialog { ... }
+`;</code></pre><p class="variant-source">Source: documentation-settings.js.</p></section>
+        </div>
+        <div class="pros-cons"><div class="pros"><strong>Pros</strong><p>Embedded styles keep pages portable. Shared assets centralize repeated behavior.</p></div><div class="cons"><strong>Cons</strong><p>Repeated CSS is difficult to update, while injected CSS is difficult to discover from HTML.</p></div></div>
+      </article>
+
+      <article class="variation-section" id="inline-styles">
+        <header class="variation-header"><span class="variation-number">08.14</span><div><span class="pattern-decision__status">Unresolved source variation</span><h3>One-off styling: inline attributes and named classes</h3><p>Three editorial pages use inline declarations. Other primary pages use classes for every adjustment.</p></div></header>
+        <div class="variant-showcase">
+          <section class="variant-sample"><div class="variant-label"><strong>Inline declaration</strong></div><pre class="variant-code"><code>&lt;div style="margin-top: 2rem"&gt;
+  ...
+&lt;/div&gt;</code></pre><p class="variant-source">Counts: evaluations 6, evaluation suites 5, lifecycle 1.</p></section>
+          <section class="variant-sample"><div class="variant-label"><strong>Named class</strong></div><pre class="variant-code"><code>&lt;div class="section-gap"&gt;
+  ...
+&lt;/div&gt;</code></pre><p class="variant-source">Sources: other primary pages have no inline style attributes.</p></section>
+        </div>
+        <div class="pros-cons"><div class="pros"><strong>Pros</strong><p>An inline adjustment is visible beside the affected element. A class can be reused and adapted.</p></div><div class="cons"><strong>Cons</strong><p>Inline declarations bypass responsive variants and shared tokens.</p></div></div>
+      </article>
+
+      <article class="variation-section" id="settings-injection">
+        <header class="variation-header"><span class="variation-number">08.15</span><div><span class="pattern-decision__status">Unresolved source variation</span><h3>Documentation settings: injected control and absent static structure</h3><p>JavaScript adds the settings button and dialog after the HTML document loads.</p></div></header>
+        <div class="variant-showcase">
+          <section class="variant-sample"><div class="variant-label"><strong>HTML before script execution</strong></div><div class="variant-canvas settings-preview"><div class="settings-page"><i></i><i></i><i></i></div><span class="settings-absent">No settings control in DOM</span></div><p class="variant-source">Source: all primary HTML pages.</p></section>
+          <section class="variant-sample"><div class="variant-label"><strong>Rendered page after injection</strong></div><div class="variant-canvas settings-preview"><div class="settings-page"><i></i><i></i><i></i></div><button class="settings-button-preview" type="button" aria-label="Documentation settings specimen">⚙</button><div class="settings-dialog-preview"><b>Reading settings</b><span>Theme · Type · Width</span></div></div><p class="variant-source">Source: documentation-settings.js.</p></section>
+        </div>
+        <div class="pros-cons"><div class="pros"><strong>Pros</strong><p>One script provides consistent persistence and keyboard behavior.</p></div><div class="cons"><strong>Cons</strong><p>The structure and styles are harder to discover and are absent when scripts fail.</p></div></div>
+      </article>
+
+      <article class="variation-section" id="creation-provenance">
+        <header class="variation-header"><span class="variation-number">08.16</span><div><span class="pattern-decision__status">Unresolved source variation</span><h3>Creation provenance: historical block present and absent</h3><p>One primary page has a hidden creation-provenance block after its doctype. The other primary pages do not contain the block.</p></div></header>
+        <div class="variant-showcase">
+          <section class="variant-sample"><div class="variant-label"><strong>Historical provenance present</strong></div><pre class="variant-code"><code>&lt;!doctype html&gt;
+&lt;!--
+Artifact-ID: 5a1e…
+Created-UTC-Evidence: git-derived
+Creating-Agent: historical-unknown
+--&gt;</code></pre><p class="variant-source">Source: agent-and-skill-evaluations.html.</p></section>
+          <section class="variant-sample"><div class="variant-label"><strong>Creation provenance absent</strong></div><pre class="variant-code"><code>&lt;!doctype html&gt;
+&lt;html lang="en"&gt;
+  ...
+&lt;/html&gt;</code></pre><p class="variant-source">Sources: index.html and the other nine detail pages.</p></section>
+        </div>
+        <div class="pros-cons"><div class="pros"><strong>Pros</strong><p>The provenance block records an immutable creation identity without changing the rendered page.</p></div><div class="cons"><strong>Cons</strong><p>Uneven coverage makes the suite’s provenance expectation unclear.</p></div></div>
+      </article>
+
+      <article class="variation-section" id="breakpoints">
+        <header class="variation-header"><span class="variation-number">08.17</span><div><span class="pattern-decision__status">Unresolved source variation</span><h3>Responsive breakpoints: nine page-specific thresholds</h3><p>The shell and components change at nine different viewport widths.</p></div></header>
+        <div class="variant-showcase variant-showcase--single"><section class="variant-sample"><div class="variant-label"><strong>Observed breakpoint scale</strong><span>Widths in pixels</span></div><div class="variant-canvas breakpoint-preview" aria-label="Observed responsive breakpoints"><span>520</span><span>560</span><span>620</span><span>680</span><span>720</span><span>780</span><span>820</span><span>860</span><span>900</span></div><p class="variant-source">Sources: page-specific media queries across the primary pages.</p></section></div>
+        <div class="pros-cons"><div class="pros"><strong>Pros</strong><p>Each breakpoint can match the actual failure point of one component.</p></div><div class="cons"><strong>Cons</strong><p>Repeated shell behavior changes at different widths across the suite.</p></div></div>
+      </article>
+    </section>
+
+    <section class="section variation-group" id="coverage" aria-labelledby="coverage-title">
+      <div class="section-heading"><span class="eyebrow">Category 05</span><h2 id="coverage-title">Coverage and Navigation Variations</h2><p>Coverage variations determine whether readers can discover every current page and receive the same accessibility affordances.</p></div>
+
+      <article class="variation-section" id="index-coverage">
+        <header class="variation-header"><span class="variation-number">08.18</span><div><span class="pattern-decision__status">Unresolved source variation</span><h3>Index coverage: nine cards and ten detail pages</h3><p>The index omits one evaluation-suite page that remains reachable through sequence navigation.</p></div></header>
+        <div class="variant-showcase">
+          <section class="variant-sample"><div class="variant-label"><strong>Index catalog</strong><span>9 cards</span></div><div class="variant-canvas coverage-preview" aria-label="Nine visible index cards and one missing card"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="coverage-missing">?</i></div><p class="variant-source">Source: index.html omits design/agent-owned-evaluation-suites.html.</p></section>
+          <section class="variant-sample"><div class="variant-label"><strong>Sequence navigation</strong><span>10 pages</span></div><div class="variant-canvas sequence-preview"><span>09</span><b>→</b><span class="sequence-present">10</span><b>→</b><span>01</span></div><p class="variant-source">Source: detail-page previous and next links include the page.</p></section>
+        </div>
+        <div class="pros-cons"><div class="pros"><strong>Pros</strong><p>The sequence still exposes the omitted page indirectly.</p></div><div class="cons"><strong>Cons</strong><p>Direct discovery and the suite inventory are incomplete.</p></div></div>
+      </article>
+
+      <article class="variation-section" id="skip-links">
+        <header class="variation-header"><span class="variation-number">08.19</span><div><span class="pattern-decision__status">Unresolved source variation</span><h3>Skip links: present on one primary page and absent on the others</h3><p>A skip link lets a keyboard user bypass repeated navigation and move directly to the main content.</p></div></header>
+        <div class="variant-showcase">
+          <section class="variant-sample"><div class="variant-label"><strong>Skip link present</strong></div><div class="variant-canvas skip-preview"><span class="skip-chip">Skip to main content</span><div class="skip-shell"><i></i><i></i><b>Main content</b></div></div><p class="variant-source">Source: wiki-skills-and-project-context.html.</p></section>
+          <section class="variant-sample"><div class="variant-label"><strong>Skip link absent</strong></div><div class="variant-canvas skip-preview"><span class="skip-gap">Repeated navigation receives focus first</span><div class="skip-shell"><i></i><i></i><b>Main content</b></div></div><p class="variant-source">Sources: the other primary pages.</p></section>
+        </div>
+        <div class="pros-cons"><div class="pros"><strong>Pros</strong><p>The implemented page demonstrates the intended keyboard shortcut.</p></div><div class="cons"><strong>Cons</strong><p>Keyboard users do not receive the same shortcut on other pages.</p></div></div>
+      </article>
+
+      <article class="variation-section" id="hero-labeling">
+        <header class="variation-header"><span class="variation-number">08.20</span><div><span class="pattern-decision__status">Unresolved source variation</span><h3>Hero labeling: explicit association and visual-only hierarchy</h3><p>Nine detail heroes identify their heading as the section label. The lifecycle hero relies on visual reading order.</p></div></header>
+        <div class="variant-showcase">
+          <section class="variant-sample"><div class="variant-label"><strong>Explicit association</strong></div><pre class="variant-code"><code>&lt;section aria-labelledby="page-title"&gt;
+  &lt;h1 id="page-title"&gt;...&lt;/h1&gt;
+&lt;/section&gt;</code></pre><div class="semantic-result"><span aria-hidden="true">✓</span><p>Accessible section name: the page title</p></div><p class="variant-source">Sources: nine detail pages.</p></section>
+          <section class="variant-sample"><div class="variant-label"><strong>No association</strong></div><pre class="variant-code"><code>&lt;section class="hero"&gt;
+  &lt;h1&gt;...&lt;/h1&gt;
+&lt;/section&gt;</code></pre><div class="semantic-result semantic-result--warning"><span aria-hidden="true">!</span><p>The heading is visible, but it does not label the section.</p></div><p class="variant-source">Source: orchestrated-development-lifecycle.html.</p></section>
+        </div>
+        <div class="pros-cons"><div class="pros"><strong>Pros</strong><p>Both patterns retain a clear visible reading order.</p></div><div class="cons"><strong>Cons</strong><p>The lifecycle hero has a different semantic section boundary.</p></div></div>
+      </article>
+
+      <article class="variation-section" id="print-coverage">
+        <header class="variation-header"><span class="variation-number">08.21</span><div><span class="pattern-decision__status">Unresolved source variation</span><h3>Print coverage: targeted rules and browser defaults</h3><p>Five surfaces define print cleanup. The remaining pages depend on browser print behavior.</p></div></header>
+        <div class="variant-showcase">
+          <section class="variant-sample"><div class="variant-label"><strong>Targeted print rules</strong></div><div class="variant-canvas print-preview print-preview--clean"><div class="print-page"><i class="print-title"></i><i></i><i></i><i></i></div><ul><li>Navigation removed</li><li>White background</li><li>Cards kept together</li></ul></div><p class="variant-source">Sources: evaluations, evaluation suites, lifecycle, page-section-navigation.css, and the report.</p></section>
+          <section class="variant-sample"><div class="variant-label"><strong>Browser defaults</strong></div><div class="variant-canvas print-preview"><div class="print-page"><i class="print-nav"></i><i class="print-title"></i><i></i><i class="print-split"></i></div><ul><li>Sticky controls may print</li><li>Decorative backgrounds may remain</li><li>Cards can split</li></ul></div><p class="variant-source">Sources: pages without explicit print rules.</p></section>
+        </div>
+        <div class="pros-cons"><div class="pros"><strong>Pros</strong><p>High-density pages receive targeted print cleanup.</p></div><div class="cons"><strong>Cons</strong><p>Other pages can print interactive elements, decorative backgrounds, and split cards.</p></div></div>
+      </article>
+    </section>
+  </main>
+
+  <footer class="ds-footer"><p><span class="ds-version">Design system v0.1.0</span> · Variation audit · Inline specimens reproduce current source patterns · Classification labels identify adopted decisions; remaining pros and cons are review material.</p></footer>
+</body>
+</html>

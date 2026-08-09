@@ -1,0 +1,46 @@
+<!doctype html>
+<!--
+Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+Artifact-ID: 0ff59c8a-a1b3-42ce-8c1e-847deaf888b1
+Created-UTC: 2026-08-09T00:26:37Z
+Creating-Agent: Dev Coder
+Runtime: Codex
+Dispatched-Model: gpt-5.6-sol
+Reasoning-Effort: high
+Task-ID: 019fe3cd-577c-76b1-965c-06fb8793ae42
+Artifact-ID-Evidence: runtime-supplied
+Created-UTC-Evidence: runtime-supplied
+Creating-Agent-Evidence: runtime-supplied
+Runtime-Evidence: runtime-supplied
+Dispatched-Model-Evidence: runtime-supplied
+Reasoning-Effort-Evidence: runtime-supplied
+Task-ID-Evidence: runtime-supplied
+-->
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="design-system-version" content="0.1.0"><title>Data Display · Documentation Design System</title><link rel="stylesheet" href="assets/design-system.css"></head>
+<body id="top">
+  <a class="skip-link" href="#main-content">Skip to main content</a><header class="ds-header"><a class="site-brand" href="index.html"><img class="site-logo" src="assets/dev-methodology-logo.png" alt="DevConsult Canada logo"><span>Documentation Design System</span></a></header>
+  <nav class="suite-nav" aria-label="Design system pages"><a href="index.html">Index</a><a href="foundations.html">Foundations</a><a href="page-shell.html">Page shell</a><a href="content.html">Content</a><a href="data-display.html" aria-current="page">Data display</a><a href="forms-and-actions.html">Forms</a><a href="diagrams.html">Diagrams</a><a href="accessibility.html">Accessibility</a><a href="variations.html">Variations</a><a href="source-inventory.html">Inventory</a></nav>
+  <main id="main-content"><nav class="document-nav" aria-label="Documentation navigation"><div class="document-sequence"><a href="content.html" rel="prev">← Previous: Content</a><a href="forms-and-actions.html" rel="next">Next: Forms →</a></div></nav>
+    <section class="hero" aria-labelledby="page-title"><span class="eyebrow">Concern 04</span><h1 id="page-title">Data Display</h1><p class="lede">Data-display components make repeated values, comparisons, states, and source mappings easy to scan. The suite uses tables for exact comparison and cards or metrics for compact summaries.</p></section>
+    <nav class="page-nav" aria-label="Page sections"><a href="#top">Top</a><a href="#tables">Tables</a><a href="#metrics">Metrics</a><a href="#statuses">Statuses</a><a href="#catalogs">Catalogs</a><a href="#definitions">Definitions</a></nav>
+
+    <section class="section" id="tables" aria-labelledby="tables-title"><div class="section-heading"><h2 id="tables-title">Tables And Horizontal Overflow</h2><p>A table is appropriate when each row uses the same fields. Wide tables need a dedicated overflow wrapper instead of turning the table itself into a block.</p></div>
+      <div class="table-wrap"><table class="wide-table"><caption>Example source comparison</caption><thead><tr><th scope="col">Pattern</th><th scope="col">Source</th><th scope="col">Theme</th><th scope="col">Navigation</th><th scope="col">Status</th></tr></thead><tbody><tr><th scope="row">Original reference</th><td><code>skills-modularization.html</code></td><td>Light</td><td>Page section</td><td><span class="status status--pass">Common</span></td></tr><tr><th scope="row">Editorial evaluation</th><td><code>agent-and-skill-evaluations.html</code></td><td>Light editorial</td><td>Chapter</td><td><span class="status status--blocked">Variant</span></td></tr><tr><th scope="row">Narrative lifecycle</th><td><code>orchestrated-development-lifecycle.html</code></td><td>Dark</td><td>Chapter</td><td><span class="status status--blocked">Variant</span></td></tr></tbody></table></div>
+      <p class="source-path">Tables occur on seven primary pages. Minimum widths range from 52rem to 980px, and overflow ownership varies.</p>
+    </section>
+
+    <section class="section" id="metrics" aria-labelledby="metrics-title"><div class="section-heading"><h2 id="metrics-title">Metrics</h2><p>Metrics give one value and one short interpretation. They are useful for counts, ratios, limits, and current state.</p></div><div class="metric-grid"><article class="metric"><strong>142</strong><span>Bundled skills</span></article><article class="metric"><strong>30</strong><span>Conceptual agents</span></article><article class="metric"><strong>1:1</strong><span>Suite-to-agent relationship</span></article><article class="metric"><strong>+1</strong><span>Declared dependency allowance</span></article></div><p class="source-path">Metric sources: agent-and-skill-evaluations.html; agent-owned-evaluation-suites.html; styled-backlog-report.html.</p></section>
+
+    <section class="section" id="statuses" aria-labelledby="statuses-title"><div class="section-heading"><h2 id="statuses-title">Badges, Tags, And Statuses</h2><p>Compact labels classify content or show state. They are not navigation controls. The text must carry the meaning because color alone is insufficient.</p></div>
+      <div class="status-row"><span class="status status--pass">Pass</span><span class="status status--fail">Fail</span><span class="status status--blocked">Blocked</span><span class="badge badge--purple">User action required</span><span class="tag">Methodology</span><span class="badge">Neutral</span></div>
+      <div class="callout callout--warning" style="margin-top:1rem"><p>The source has three naming systems: <code>.status--*</code>, <code>.badge*</code>, and <code>.tag</code>. Some labels describe verdicts, some describe work-item states, and some describe taxonomy. Pill-shaped links belong to <a href="page-shell.html#suite-navigation">Suite Navigation</a>, even when they look similar to badges.</p></div>
+    </section>
+
+    <section class="section" id="catalogs" aria-labelledby="catalogs-title"><div class="section-heading"><h2 id="catalogs-title">Catalog Cards</h2><p>Catalog cards group repeated records that need more narrative content than a table cell can hold.</p></div>
+      <div class="card-grid"><article class="card"><span class="card-kicker">Agent</span><h3>dev-coder</h3><p>Produces a verified candidate for a scoped source change.</p><div class="badge-row"><span class="badge badge--green">Current</span><span class="badge">3 scenarios</span></div></article><article class="card"><span class="card-kicker">Skill</span><h3>careful-coding</h3><p>Applies scoped implementation and verification discipline.</p><div class="badge-row"><span class="badge badge--amber">Indirect evidence</span></div></article><article class="card"><span class="card-kicker">Report item</span><h3>Reconcile source drift</h3><p>One self-contained backlog entry with metadata, status, and source.</p><div class="badge-row"><span class="badge badge--purple">User action</span></div></article></div>
+    </section>
+
+    <section class="section" id="definitions" aria-labelledby="definitions-title"><div class="section-heading"><h2 id="definitions-title">Structured Metadata</h2><p>Description lists present term-value metadata without forcing prose into a table.</p></div><dl class="definition-list panel"><div><dt>Evidence source</dt><dd><code>evals/results/example.json</code></dd></div><div><dt>Verdict</dt><dd>PASS after deterministic and semantic gates.</dd></div><div><dt>Limitation</dt><dd>No hostile-code containment claim.</dd></div></dl></section>
+  </main><footer class="ds-footer"><p><span class="ds-version">Design system v0.1.0</span> · Data display concern · Repeated mappings use tables; independent narrative records use cards.</p></footer>
+</body></html>

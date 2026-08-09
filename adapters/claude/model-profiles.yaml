@@ -9,6 +9,13 @@ profiles:
     contextCapacityEvidence:
     - https://platform.claude.com/docs/en/about-claude/models/introducing-claude-fable-5-and-claude-mythos-5
     contextBudgetMechanismEvidence: https://code.claude.com/docs/en/sub-agents
+  coordination:
+    model: sonnet-5
+    contextCapacityTokens: 1000000
+    contextBudgetMechanism: instruction
+    contextCapacityEvidence:
+    - https://platform.claude.com/docs/en/about-claude/models/whats-new-sonnet-5
+    contextBudgetMechanismEvidence: https://code.claude.com/docs/en/sub-agents
   default:
     model: sonnet-5
     contextCapacityTokens: 1000000

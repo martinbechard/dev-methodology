@@ -1,0 +1,305 @@
+<!doctype html>
+<!--
+Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+Artifact-ID: 79b88a62-d04b-43df-bed5-3c234b37a5d0
+Created-UTC: 2026-08-09T00:26:37Z
+Creating-Agent: Dev Coder
+Runtime: Codex
+Dispatched-Model: gpt-5.6-sol
+Reasoning-Effort: high
+Task-ID: 019fe3cd-577c-76b1-965c-06fb8793ae42
+Artifact-ID-Evidence: runtime-supplied
+Created-UTC-Evidence: runtime-supplied
+Creating-Agent-Evidence: runtime-supplied
+Runtime-Evidence: runtime-supplied
+Dispatched-Model-Evidence: runtime-supplied
+Reasoning-Effort-Evidence: runtime-supplied
+Task-ID-Evidence: runtime-supplied
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="design-system-version" content="0.1.0">
+  <title>Diagrams · Documentation Design System</title>
+  <link rel="stylesheet" href="assets/design-system.css">
+</head>
+<body id="top">
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <header class="ds-header">
+    <a class="site-brand" href="index.html">
+      <img class="site-logo" src="assets/dev-methodology-logo.png" alt="DevConsult Canada logo">
+      <span>Documentation Design System</span>
+    </a>
+  </header>
+  <nav class="suite-nav" aria-label="Design system pages">
+    <a href="index.html">Index</a><a href="foundations.html">Foundations</a><a href="page-shell.html">Page shell</a><a href="content.html">Content</a><a href="data-display.html">Data display</a><a href="forms-and-actions.html">Forms</a><a href="diagrams.html" aria-current="page">Diagrams</a><a href="accessibility.html">Accessibility</a><a href="variations.html">Variations</a><a href="source-inventory.html">Inventory</a>
+  </nav>
+  <main id="main-content">
+    <nav class="document-nav" aria-label="Documentation navigation">
+      <div class="document-sequence"><a href="forms-and-actions.html" rel="prev">← Previous: Forms</a><a href="accessibility.html" rel="next">Next: Accessibility →</a></div>
+    </nav>
+
+    <section class="hero" aria-labelledby="page-title">
+      <span class="eyebrow">Concern 06</span>
+      <h1 id="page-title">Diagrams</h1>
+      <p class="lede">Diagrams clarify relationships that prose alone makes difficult to scan. Technical SVG diagrams use a separate connector and block-entry arrow so every arrowhead meets a block cleanly.</p>
+    </section>
+    <nav class="page-nav" aria-label="Page sections">
+      <a href="#top">Top</a><a href="#flow">Flow</a><a href="#lifecycle">Lifecycle</a><a href="#connector-standard">Connector standard</a><a href="#geometry">Geometry</a><a href="#fan-out">Fan-out</a><a href="#fan-in">Fan-in</a><a href="#quality">Quality</a><a href="#tree">Trees</a><a href="#semantics">Semantics</a>
+    </nav>
+
+    <svg class="svg-definition-sprite" width="0" height="0" aria-hidden="true" focusable="false">
+      <defs>
+        <symbol id="blockEntryArrow" viewBox="0 0 14 18">
+          <path d="M7 0 V9" fill="none" stroke="currentColor" stroke-width="3"/>
+          <path d="M0 9 H14 L7 18 Z" fill="currentColor"/>
+        </symbol>
+        <symbol id="strongBlockEntryArrow" viewBox="0 0 28 18">
+          <path d="M14 0 V9" fill="none" stroke="currentColor" stroke-width="6"/>
+          <path d="M0 9 H28 L14 18 Z" fill="currentColor"/>
+        </symbol>
+        <marker id="dontMarker" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L9,3 Z" fill="#a8173d"/>
+        </marker>
+      </defs>
+    </svg>
+
+    <section class="section" id="flow" aria-labelledby="flow-title">
+      <div class="section-heading"><h2 id="flow-title">Horizontal Flow</h2><p>A flow shows ordered stages and the direction between them. On narrow screens, the same structure stacks vertically.</p></div>
+      <figure class="diagram">
+        <figcaption><span class="eyebrow">Canonical generation</span><strong>Source to rendered documentation</strong></figcaption>
+        <div class="flow-row" role="img" aria-label="A skill source produces generated data, which produces an HTML catalog.">
+          <div class="flow-step"><strong>SKILL.md</strong><p>Canonical source</p></div><div class="flow-arrow" aria-hidden="true">→</div><div class="flow-step"><strong>Generated data</strong><p>Intermediate file</p></div><div class="flow-arrow" aria-hidden="true">→</div><div class="flow-step"><strong>HTML</strong><p>Rendered catalog</p></div>
+        </div>
+      </figure>
+      <p class="source-path">Flow sources: generic-agent-definitions-source.html; skills-modularization.html; wiki-skills-and-project-context.html.</p>
+    </section>
+
+    <section class="section" id="lifecycle" aria-labelledby="lifecycle-title">
+      <div class="section-heading"><h2 id="lifecycle-title">Lifecycle Rail</h2><p>A lifecycle rail presents a fixed ordered process. Each station has a number, a label, and a short outcome.</p></div>
+      <figure class="diagram lifecycle-rail">
+        <figcaption><span class="eyebrow">Read left to right</span><strong>Development lifecycle</strong></figcaption>
+        <ol><li><span class="station">01</span><strong>Intake</strong><small>Define work</small></li><li><span class="station">02</span><strong>Select</strong><small>Choose work</small></li><li><span class="station">03</span><strong>Implement</strong><small>Private lane</small></li><li><span class="station">04</span><strong>Review</strong><small>Independent check</small></li><li><span class="station">05</span><strong>Deliver</strong><small>Main or PR</small></li><li><span class="station">06</span><strong>Close</strong><small>Archive evidence</small></li></ol>
+      </figure>
+      <p class="source-path">Source: orchestrated-development-lifecycle.html.</p>
+    </section>
+
+    <section class="section" id="connector-standard" aria-labelledby="connector-standard-title">
+      <div class="section-heading">
+        <h2 id="connector-standard-title">SVG Block-Entry Connector Standard</h2>
+        <p>A block-entry connector has two elements: a routed connector and a short-stem arrow. The connector stops before the block, and the separate arrow completes the entrance.</p>
+      </div>
+      <div class="callout">
+        <h3>Core rule</h3>
+        <p>Do not place <code>marker-end</code> on a connector that enters a block. End the connector at the short stem, then place the reusable arrow on the same centerline.</p>
+      </div>
+      <div class="two-column" style="margin-top:1rem">
+        <article class="panel">
+          <h3>Ordinary block-entry arrow</h3>
+          <pre><code>&lt;symbol id="blockEntryArrow" viewBox="0 0 14 18"&gt;
+  &lt;path d="M7 0 V9"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="3" /&gt;
+  &lt;path d="M0 9 H14 L7 18 Z"
+    fill="currentColor" /&gt;
+&lt;/symbol&gt;</code></pre>
+        </article>
+        <article class="panel">
+          <h3>Strong combined-flow arrow</h3>
+          <pre><code>&lt;symbol id="strongBlockEntryArrow"
+  viewBox="0 0 28 18"&gt;
+  &lt;path d="M14 0 V9"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="6" /&gt;
+  &lt;path d="M0 9 H28 L14 18 Z"
+    fill="currentColor" /&gt;
+&lt;/symbol&gt;</code></pre>
+        </article>
+      </div>
+      <p class="source-path">Provenance: design/agent-owned-evaluation-suites.html, especially the supervisor fan-out and evidence fan-in figures.</p>
+    </section>
+
+    <section class="section" id="geometry" aria-labelledby="geometry-title">
+      <div class="section-heading">
+        <h2 id="geometry-title">Reproducible Entrance Geometry</h2>
+        <p>The block boundary determines every entrance coordinate. Authors can calculate the connector end and symbol placement instead of adjusting unexplained coordinates.</p>
+      </div>
+      <div class="two-column">
+        <figure class="diagram diagram-example diagram-example--do">
+          <figcaption><span class="example-label">Do</span><strong>Equal stem and arrowhead depth</strong><p>The connector, stem, arrowhead, and block entrance use the centerline at x = 210.</p></figcaption>
+          <svg viewBox="0 0 420 240" role="img" aria-labelledby="geometry-svg-title geometry-svg-desc">
+            <title id="geometry-svg-title">Calculated block-entry arrow geometry</title>
+            <desc id="geometry-svg-desc">A connector ends 18 units above a destination block. A 9-unit stem and a 9-unit arrowhead continue on the same centerline until the arrow tip touches the block boundary.</desc>
+            <path d="M105 42 C105 92 210 84 210 132" fill="none" stroke="#17406d" stroke-width="3" stroke-linecap="round"/>
+            <use href="#blockEntryArrow" x="203" y="132" width="14" height="18" style="color:#17406d"/>
+            <rect x="110" y="150" width="200" height="64" rx="12" fill="#e8f0ff" stroke="#17406d"/>
+            <text x="210" y="187" text-anchor="middle" fill="#172033" font-size="15" font-weight="800">Destination block</text>
+            <g fill="none" stroke="#9a4f00" stroke-width="1.5" stroke-dasharray="4 4">
+              <path d="M245 132 H285"/><path d="M245 141 H285"/><path d="M245 150 H285"/>
+            </g>
+            <g fill="#9a4f00" font-size="11" font-weight="750">
+              <text x="292" y="136">connector end</text><text x="292" y="145">9-unit stem</text><text x="292" y="154">9-unit head</text>
+            </g>
+          </svg>
+        </figure>
+        <article class="panel">
+          <h3>Coordinate calculation</h3>
+          <p>Let <code>B</code> be the destination block’s top boundary and <code>C</code> be the entrance centerline.</p>
+          <ol>
+            <li>Set the arrowhead depth to <code>d = 9</code>.</li>
+            <li>Set the stem length to the same value, <code>d</code>.</li>
+            <li>End the connector at <code>(C, B - 2d)</code>, which is connector end <code>B - 18</code>.</li>
+            <li>Place the ordinary symbol at <code>x = C - 7</code> and <code>y = B - 18</code>.</li>
+            <li>Place the strong symbol at <code>x = C - 14</code> and the same y coordinate, with the tip at <code>B</code>.</li>
+          </ol>
+          <pre><code>&lt;path
+  d="M100 80 C100 120 200 110 200 132"
+  fill="none" stroke="#17406d"
+  stroke-width="3" stroke-linecap="round" /&gt;
+
+&lt;use href="#blockEntryArrow"
+  x="193" y="132" width="14" height="18"
+  style="color:#17406d" /&gt;</code></pre>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="fan-out" aria-labelledby="fan-out-title">
+      <div class="section-heading">
+        <h2 id="fan-out-title">Fan-Out Layout</h2>
+        <p>A fan-out starts at one source and enters several destination blocks. Each route owns one curve and one short-stem arrow.</p>
+      </div>
+      <div class="diagram-comparison">
+        <figure class="diagram diagram-example diagram-example--do">
+          <figcaption><span class="example-label">Do</span><strong>Independent routes and entries</strong><p>Each curve stops at its own stem. The three arrow tips touch the destination boundaries.</p></figcaption>
+          <svg viewBox="0 0 720 330" role="img" aria-labelledby="fanout-do-title fanout-do-desc">
+            <title id="fanout-do-title">Correct fan-out connector layout</title>
+            <desc id="fanout-do-desc">One source block routes three independent curved connectors to three separate short-stem arrows. Each arrow enters one destination block without crossing another arrow.</desc>
+            <rect x="260" y="20" width="200" height="64" rx="12" fill="#e8f0ff" stroke="#17406d"/>
+            <text x="360" y="58" text-anchor="middle" fill="#172033" font-size="16" font-weight="800">Source</text>
+            <g fill="none" stroke="#17406d" stroke-width="3" stroke-linecap="round">
+              <path d="M300 84 C300 150 120 154 120 228"/>
+              <path d="M360 84 V228"/>
+              <path d="M420 84 C420 150 600 154 600 228"/>
+            </g>
+            <g style="color:#17406d">
+              <use href="#blockEntryArrow" x="113" y="228" width="14" height="18"/>
+              <use href="#blockEntryArrow" x="353" y="228" width="14" height="18"/>
+              <use href="#blockEntryArrow" x="593" y="228" width="14" height="18"/>
+            </g>
+            <g fill="#f8fbff" stroke="#0f766e">
+              <rect x="20" y="246" width="200" height="64" rx="12"/><rect x="260" y="246" width="200" height="64" rx="12"/><rect x="500" y="246" width="200" height="64" rx="12"/>
+            </g>
+            <g fill="#172033" font-size="14" font-weight="800" text-anchor="middle">
+              <text x="120" y="284">Destination A</text><text x="360" y="284">Destination B</text><text x="600" y="284">Destination C</text>
+            </g>
+          </svg>
+        </figure>
+        <figure class="diagram diagram-example diagram-example--dont">
+          <figcaption><span class="example-label">Don’t</span><strong>Markers carried into blocks</strong><p>Curves cross and terminate through marker geometry at the block boundaries.</p></figcaption>
+          <svg viewBox="0 0 720 330" role="img" aria-labelledby="fanout-dont-title fanout-dont-desc">
+            <title id="fanout-dont-title">Incorrect fan-out connector layout</title>
+            <desc id="fanout-dont-desc">Three crossing curves carry marker-end arrowheads directly into destination blocks. Two curves visually connect near the center arrowhead.</desc>
+            <rect x="260" y="20" width="200" height="64" rx="12" fill="#fdebed" stroke="#a8173d"/>
+            <text x="360" y="58" text-anchor="middle" fill="#172033" font-size="16" font-weight="800">Source</text>
+            <g fill="none" stroke="#a8173d" stroke-width="3" marker-end="url(#dontMarker)">
+              <path d="M300 84 C300 184 600 156 600 252"/>
+              <path d="M360 84 C360 176 120 160 120 252"/>
+              <path d="M420 84 C420 170 350 166 360 252"/>
+            </g>
+            <g fill="#fff7f8" stroke="#a8173d">
+              <rect x="20" y="246" width="200" height="64" rx="12"/><rect x="260" y="246" width="200" height="64" rx="12"/><rect x="500" y="246" width="200" height="64" rx="12"/>
+            </g>
+            <g fill="#172033" font-size="14" font-weight="800" text-anchor="middle">
+              <text x="120" y="284">Destination A</text><text x="360" y="284">Destination B</text><text x="600" y="284">Destination C</text>
+            </g>
+          </svg>
+        </figure>
+      </div>
+      <div class="callout"><p>Choose a source anchor for each branch. Route each Bézier curve directly to <code>(C, B - 18)</code> for its destination. Do not terminate a curve at another branch’s arrowhead.</p></div>
+    </section>
+
+    <section class="section" id="fan-in" aria-labelledby="fan-in-title">
+      <div class="section-heading">
+        <h2 id="fan-in-title">Fan-In Layout</h2>
+        <p>A fan-in combines several inputs into one destination. Every connector ends at one convergence point, and one strong arrow completes the combined entrance.</p>
+      </div>
+      <div class="diagram-comparison">
+        <figure class="diagram diagram-example diagram-example--do">
+          <figcaption><span class="example-label">Do</span><strong>One convergence point and strong entry</strong><p>The curves meet directly at the stem start. No collector rail sits below the curves.</p></figcaption>
+          <svg viewBox="0 0 720 320" role="img" aria-labelledby="fanin-do-title fanin-do-desc">
+            <title id="fanin-do-title">Correct fan-in connector layout</title>
+            <desc id="fanin-do-desc">Three source blocks route smooth connectors to one convergence point. A single double-width short-stem arrow carries the combined evidence into one destination block.</desc>
+            <g fill="#f8fbff" stroke="#17406d">
+              <rect x="20" y="20" width="200" height="64" rx="12"/><rect x="260" y="20" width="200" height="64" rx="12"/><rect x="500" y="20" width="200" height="64" rx="12"/>
+            </g>
+            <g fill="#172033" font-size="14" font-weight="800" text-anchor="middle">
+              <text x="120" y="58">Input A</text><text x="360" y="58">Input B</text><text x="600" y="58">Input C</text>
+            </g>
+            <g fill="none" stroke="#0f766e" stroke-width="3" stroke-linecap="round">
+              <path d="M120 84 C120 154 250 166 360 210"/>
+              <path d="M360 84 V210"/>
+              <path d="M600 84 C600 154 470 166 360 210"/>
+            </g>
+            <use href="#strongBlockEntryArrow" x="346" y="210" width="28" height="18" style="color:#0f766e"/>
+            <rect x="220" y="228" width="280" height="70" rx="12" fill="#e4f7f4" stroke="#0f766e"/>
+            <text x="360" y="269" text-anchor="middle" fill="#172033" font-size="16" font-weight="800">Combined result</text>
+          </svg>
+        </figure>
+        <figure class="diagram diagram-example diagram-example--dont">
+          <figcaption><span class="example-label">Don’t</span><strong>Collector rail and ordinary marker</strong><p>A horizontal rail creates accidental intersections and weakens the combined-flow entrance.</p></figcaption>
+          <svg viewBox="0 0 720 320" role="img" aria-labelledby="fanin-dont-title fanin-dont-desc">
+            <title id="fanin-dont-title">Incorrect fan-in connector layout</title>
+            <desc id="fanin-dont-desc">Three inputs drop onto a horizontal collector rail. A thin line with a marker-end arrowhead enters the destination block and creates an ambiguous doubled segment.</desc>
+            <g fill="#fff7f8" stroke="#a8173d">
+              <rect x="20" y="20" width="200" height="64" rx="12"/><rect x="260" y="20" width="200" height="64" rx="12"/><rect x="500" y="20" width="200" height="64" rx="12"/>
+            </g>
+            <g fill="#172033" font-size="14" font-weight="800" text-anchor="middle">
+              <text x="120" y="58">Input A</text><text x="360" y="58">Input B</text><text x="600" y="58">Input C</text>
+            </g>
+            <g fill="none" stroke="#a8173d" stroke-width="3">
+              <path d="M120 84 V180"/><path d="M360 84 V180"/><path d="M600 84 V180"/><path d="M120 180 H600"/>
+              <path d="M360 180 V234" marker-end="url(#dontMarker)"/>
+            </g>
+            <text x="510" y="172" fill="#a8173d" font-size="12" font-weight="800">accidental collector rail</text>
+            <rect x="220" y="228" width="280" height="70" rx="12" fill="#fdebed" stroke="#a8173d"/>
+            <text x="360" y="269" text-anchor="middle" fill="#172033" font-size="16" font-weight="800">Combined result</text>
+          </svg>
+        </figure>
+      </div>
+      <div class="callout"><p>The convergence point is the start of the strong stem. The strong symbol keeps the same 9-unit stem and 9-unit arrowhead depth while doubling the shaft and arrowhead width.</p></div>
+    </section>
+
+    <section class="section" id="quality" aria-labelledby="quality-title">
+      <div class="section-heading"><h2 id="quality-title">Connector Quality And Verification</h2><p>A technically correct path can still fail visually. Review the final browser rendering at desktop and narrow widths.</p></div>
+      <div class="two-column">
+        <article class="panel"><h3>Authoring rules</h3><ul><li>Use rounded line caps and smooth Bézier curves.</li><li>Avoid intersections except at intentional convergence points.</li><li>Keep arrowheads outside block interiors.</li><li>Preserve whitespace around labels and connectors.</li><li>Use consistent color and line weight for related connectors.</li><li>Keep every connector and arrow on the block entrance centerline.</li></ul></article>
+        <article class="panel"><h3>Rendered checks</h3><ul><li>Check for detached arrowheads and doubled segments.</li><li>Check for accidental horizontal collector rails.</li><li>Check for overlapping labels and connectors.</li><li>Check for clipped arrowheads or blocks.</li><li>Check for horizontal page overflow.</li><li>Repeat the checks at desktop and narrow widths.</li></ul></article>
+      </div>
+      <div class="callout callout--warning" style="margin-top:1rem"><p>Do not approve an SVG from source inspection alone. Browser rendering determines whether the stem meets the connector and whether the arrow tip touches the block boundary.</p></div>
+    </section>
+
+    <section class="section" id="tree" aria-labelledby="tree-title">
+      <div class="section-heading"><h2 id="tree-title">Folder Tree</h2><p>A folder tree represents containment more directly than a path table or repeated bullet list.</p></div>
+      <pre class="folder-tree" aria-label="Design system folder tree">docs/
+└── design-system/
+    ├── index.html
+    ├── variations.html
+    └── assets/
+        ├── design-system.css
+        └── design-system.js</pre>
+      <p class="source-path">Folder-tree source: orchestrated-development-lifecycle.html.</p>
+    </section>
+
+    <section class="section" id="semantics" aria-labelledby="semantics-title">
+      <div class="section-heading"><h2 id="semantics-title">Diagram Semantics</h2><p>Every meaningful diagram needs an adjacent visible caption and an accessible text equivalent that explains its meaning.</p></div>
+      <div class="callout"><ul><li>Use <code>figure</code> and <code>figcaption</code> for a self-contained visual.</li><li>Use SVG <code>title</code> and <code>desc</code> for each meaningful SVG.</li><li>Describe the relationship or process, not only the shapes and colors.</li><li>Use <code>role="img"</code> and an <code>aria-label</code> for CSS-built visual groups.</li><li>Keep ordered data in semantic <code>ol</code> markup when the visual is a sequence.</li><li>Define reusable geometry with <code>symbol</code> and place it with <code>use</code>.</li></ul></div>
+      <div class="panel" style="margin-top:1rem"><h3>Embedded object with fallback</h3><object data="assets/dev-methodology-logo.png" type="image/png" width="144" height="96" aria-label="Embedded DevConsult Canada logo"><a href="assets/dev-methodology-logo.png">Open the DevConsult Canada logo</a></object><p>An <code>object</code> can embed a maintained image and retain fallback content.</p></div>
+    </section>
+  </main>
+  <footer class="ds-footer"><p><span class="ds-version">Design system v0.1.0</span> · Diagrams concern · Connector standard based on <code>design/agent-owned-evaluation-suites.html</code> · Editable HTML and SVG remain authoritative.</p></footer>
+</body>
+</html>
