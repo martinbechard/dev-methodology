@@ -1,10 +1,10 @@
 # Respect Optional Resource Coordination In Workflow Skills
 
-Status: Starting
+Status: Running
 
-Owner: Unowned
+Owner: Dev Orchestrator task `019fe4e7-95c9-7372-bd9f-aa983c5c7237`
 
-Phase: Starting — Four-path governed correction approved
+Phase: Running — Private four-definition source lane
 
 Type: Defect
 
@@ -153,3 +153,29 @@ Scheduling Evidence: Two independent provider items are Running. Neither active 
 Preservation Boundary: Do not create another governed definition or absorb unrelated baselines. No source mutation is authorized until the new canonical Root Dev Orchestrator independently records Starting -> Running with fresh bounded Active Execution Evidence and an exact activity=work claim.
 
 Next Reconciliation At: 2026-08-09T05:18:00Z
+
+## Active Execution Evidence
+
+Condition Type: root-execution
+
+Owner: Dev Orchestrator task 019fe4e7-95c9-7372-bd9f-aa983c5c7237
+
+Evidence: Codex task 019fe4e7-95c9-7372-bd9f-aa983c5c7237 is active in the clean isolated worktree /Users/martinbechard/.codex/worktrees/e01d/dev-methodology on branch codex/respect-optional-resource-coordination-019fe4e7 at Starting baseline ebff99898ae6c297813bc165b1625375b1ea8469. Exact Work Item bootstrap activity=work claim respect-optional-resource-coordination-019fe4e7-bootstrap-work acquired with outcome SHARED_CHECKOUT_ACQUIRED in journal event 0b21b5b5-7fc1-4e4a-885f-8a2970cdba33 and released with disposition handoff in journal event 376145cf-a334-4d45-9e6a-84891a742fd6 after branch establishment. The serialized Starting -> Running provider transaction is protected by exact Work Item activity=update claim respect-optional-resource-coordination-019fe4e7-running-update, journal event f5077de3-3dea-4219-8249-cacfaf98bf43, and exact provider-path claim respect-optional-resource-coordination-019fe4e7-running-path, journal event 6afeea76-921b-4876-8813-6ba4a54c82cc. Current live claim inventory confirms the terminology and tournament owners retain only their recorded scopes; neither owns the four approved canonical definition paths. The private source lane excludes evals/skill-probes.yaml, generated definitions and adapters, shared review or installation, and main integration until direct owner reconciliation. The Blocked documentation-design-system candidate remains untouched.
+
+Observed At: 2026-08-09T05:10:35Z
+
+Started At: 2026-08-09T05:08:03Z
+
+Deadline or Expires At: 2026-08-09T07:10:35Z
+
+Next Action: Commit this atomic Running transition, release its update and provider-path claims, reacquire the exact Work Item activity=work claim, run work-item-native authorization checks for each approved canonical path, and implement only the private four-definition lane with directly affected focused tests
+
+Next Reconciliation At: 2026-08-09T05:25:35Z
+
+## Running Resource Claim Evidence
+
+Bootstrap Work Claim: respect-optional-resource-coordination-019fe4e7-bootstrap-work; Work Item ID respect-optional-resource-coordination-in-workflow-skills; activity work; outcome SHARED_CHECKOUT_ACQUIRED; acquired at 2026-08-09T05:08:03.052960Z; journal event 0b21b5b5-7fc1-4e4a-885f-8a2970cdba33; released with disposition handoff after branch establishment in journal event 376145cf-a334-4d45-9e6a-84891a742fd6
+
+Provider Update Claim: respect-optional-resource-coordination-019fe4e7-running-update; Work Item ID respect-optional-resource-coordination-in-workflow-skills; activity update; outcome SHARED_CHECKOUT_ACQUIRED; acquired at 2026-08-09T05:08:46.990260Z; journal event f5077de3-3dea-4219-8249-cacfaf98bf43; release immediately after the Running provider transaction
+
+Provider Path Claim: respect-optional-resource-coordination-019fe4e7-running-path; path backlog/defect-backlog/respect-optional-resource-coordination-in-workflow-skills.md; outcome SHARED_CHECKOUT_ACQUIRED; acquired at 2026-08-09T05:09:28.189604Z; journal event 6afeea76-921b-4876-8813-6ba4a54c82cc; release immediately after the Running provider transaction
