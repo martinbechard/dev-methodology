@@ -10,7 +10,7 @@ Branch: codex/add-portable-agent-tournament-skill
 
 Worktree: /Users/martinbechard/.codex/worktrees/1bbe/dev-methodology
 
-Phase: Waiting for Claim — Private candidate preserved
+Phase: Reviewing — Exact private candidate
 
 Status: Running
 
@@ -181,21 +181,21 @@ Next Reconciliation At: 2026-08-09T04:47:00Z
 
 ## Active Execution Evidence
 
-Condition Type: owned-wait
+Condition Type: delegated-work
 
-Owner: Dev Orchestrator task 019fe4cb-b4f3-7563-8ece-a60e567aae29
+Owner: Dev Code Reviewer execution /root/tournament_source_review and Methodology Artifact Reviewer execution /root/tournament_methodology_review under Dev Orchestrator task 019fe4cb-b4f3-7563-8ece-a60e567aae29
 
-Evidence: Clean private candidate fe2228e2140e4ed212917edfe240fb7001588813 contains only the four approved run-agent-tournament package paths on branch codex/add-portable-agent-tournament-skill in worktree /Users/martinbechard/.codex/worktrees/1bbe/dev-methodology. Repository skill validation, OpenAI metadata synchronization, exact provenance validation, supplemental YAML and Markdown-link checks, focused contract assertions, harness-boundary search, inline-code scan, and Git diff checks passed. Configured MCP validation correctly returned structured outside-configured-root rejections for this private worktree and remains pending from a configured project root; no fallback bypass was claimed. Terminology task 019fe3d6-2dd6-7322-a507-e8ca961e27d8 supplied direct exact-manifest narrowing commit ae70fda537537b2df45193447d73b0de6c1e9605 for seven non-overlapping evaluation-runner paths and confirmed its source worktree clean with 123 of 123 focused runner-module checks green. That notice is not a release: terminology retains review, shared catalogs, generated output, installation, live-model evaluation, and main integration. Coordinator task 019fb057-1767-7ef2-b5fa-41f4417b20b3 sent one event-driven clean-boundary status request to the terminology owner and directed this task to preserve the candidate without polling or beginning shared review or integration. Exact Work Item activity=work claim add-portable-agent-tournament-skill-019fe4cb-root-work remains live and received heartbeat event 4cfec6cb-87fe-480e-a33a-d01a1d3b175b at 2026-08-09T05:31:26.267720Z. This coordinator-wait refresh is protected by exact backlog-path claim add-portable-agent-tournament-skill-019fe4cb-coordinator-wait-refresh-3, outcome SHARED_CHECKOUT_ACQUIRED, journal event 3e684553-7db9-4742-9aa0-fcda265fcb13.
+Evidence: Terminology task 019fe3d6-2dd6-7322-a507-e8ca961e27d8 supplied one-time clean-boundary status at correction commit 2d7f5924c04473f03bf7faeed65c427d1b6143ba and directly released exact-manifest source review and focused private verification for clean tournament candidate fe2228e2140e4ed212917edfe240fb7001588813. Fresh read-only Dev Code Reviewer execution /root/tournament_source_review and Methodology Artifact Reviewer execution /root/tournament_methodology_review are live against exactly the four run-agent-tournament package paths with no mutation authority and finite 2026-08-09T06:05:00Z response deadlines. README, design, generated catalogs and projections, adapters, eval catalogs, scripts/test_bundle_content.py, shared installation, live-model evaluation, and main integration remain retained by terminology and excluded. Exact Work Item activity=work claim add-portable-agent-tournament-skill-019fe4cb-root-work remains live. This review-phase refresh is protected by exact backlog-path claim add-portable-agent-tournament-skill-019fe4cb-review-evidence-1, outcome SHARED_CHECKOUT_ACQUIRED, journal event 927a8344-ffcc-4491-90e0-d15aa77937d7.
 
-Observed At: 2026-08-09T05:31:34Z
+Observed At: 2026-08-09T05:39:27Z
 
-Started At: 2026-08-09T04:59:42Z
+Started At: 2026-08-09T05:39:00Z
 
-Deadline or Expires At: 2026-08-09T05:55:00Z
+Deadline or Expires At: 2026-08-09T06:05:00Z
 
-Next Action: Preserve candidate fe2228e2140e4ed212917edfe240fb7001588813 and await the later direct terminology-owner release or reconciliation receipt before dispatching review or entering any shared event
+Next Action: Collect both independent review verdicts for candidate fe2228e2140e4ed212917edfe240fb7001588813, route every confirmed finding to the original Dev Coder, or dispatch focused private verification only after both reviews pass
 
-Next Reconciliation At: 2026-08-09T05:45:00Z
+Next Reconciliation At: 2026-08-09T05:53:00Z
 
 ## Running Resource Claim Evidence
 
