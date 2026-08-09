@@ -1,6 +1,6 @@
 # Publish and Integrate the Terminology Standard
 
-Owner: Unowned
+Owner: Dev Orchestrator task 019fe3d6-2dd6-7322-a507-e8ca961e27d8
 
 Canonical Conversation: `019fe3d6-2dd6-7322-a507-e8ca961e27d8`
 
@@ -10,9 +10,9 @@ Branch: `codex/publish-and-integrate-terminology-standard-019fe3d6`
 
 Worktree: `/Users/martinbechard/.codex/worktrees/940b/dev-methodology`
 
-Phase: Starting — Approved provider-backed probe runner resumption
+Phase: Implementing — Approved treatment-only provider contract
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -266,3 +266,21 @@ Approved Resumption Scope: The exact seven-path approval recorded in commit `967
 Preservation Boundary: Retain the clean canonical worktree, branch, three preserved candidate commits, existing review evidence, and all prior exclusions. Do not repeat completed corrections or accepted gates. Do not mutate source before this same canonical task independently records Starting -> Running with fresh bounded evidence and an exact activity=work claim.
 
 Next Reconciliation At: 2026-08-09T04:40:00Z
+
+## Active Execution Evidence
+
+Condition Type: root-execution
+
+Owner: Dev Orchestrator task 019fe3d6-2dd6-7322-a507-e8ca961e27d8
+
+Evidence: The same canonical root execution is actively resuming the preserved clean candidate on branch codex/publish-and-integrate-terminology-standard-019fe3d6 in worktree /Users/martinbechard/.codex/worktrees/940b/dev-methodology at commit 2ee1d3968f710175810131c60d88def629e89d99. User approval for exactly the seven additional treatment-only provider paths is durable in commit 967cc228d5cee11f64eb1e9866482ec4a6bc0a54, and Ready -> Starting is durable in commit 8b4933479586ffe5295bd9c51907da0b03d7d3cb. The bounded resumption preserves the existing review evidence and completed corrections, limits new framework work to those seven paths, and retains every shared-user, unrelated-framework, governed-definition, baseline-absorption, catalog-overlap, shared-installation, live-model, and main-integration exclusion until its separate gate is satisfied.
+
+Observed At: 2026-08-09T04:28:02Z
+
+Started At: 2026-08-09T04:27:45Z
+
+Deadline or Expires At: 2026-08-09T06:27:45Z
+
+Next Action: Implement and focus-test the exact treatment-only provider contract, control stripping, receipt validation, evidence schema, and runner documentation on the seven newly approved paths, then reconcile the preserved candidate through fresh review without repeating accepted gates
+
+Next Reconciliation At: 2026-08-09T04:42:45Z
