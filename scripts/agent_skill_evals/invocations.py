@@ -73,12 +73,17 @@ class McpAgentOpsIdentity:
 
 @dataclass(frozen=True)
 class McpAgentOpsContext:
-    """Describe one isolated evaluator-owned mcp-agent-ops host configuration."""
+    """Describe one isolated evaluator-owned mcp-agent-ops host configuration.
+
+    Exactly one of ``skill_root`` and ``reference_root`` identifies the staged catalog
+    mode. The enabled tools, environment, and permission-profile flag bind the retained
+    configuration evidence to the effective host invocation.
+    """
 
     server_name: str
     identity: McpAgentOpsIdentity
-    skill_root: Path
-    detection_registry: Path
+    skill_root: Path | None
+    detection_registry: Path | None
     workspace_root: Path
     audit_log: Path
     audit_root: Path
@@ -89,6 +94,11 @@ class McpAgentOpsContext:
     catalog_evidence: Path
     evidence_directory: Path
     host_home: Path
+    enabled_tools: tuple[str, ...]
+    server_environment: tuple[tuple[str, str], ...]
+    codex_permission_profile: bool
+    reference_root: Path | None = None
+    reference_names: tuple[str, ...] = ()
     authorization_digest: str | None = None
     authorization_evidence: Path | None = None
     config_location: Path | None = None
@@ -101,28 +111,44 @@ def mcp_agent_ops_configuration_payload(
     workspace_root: Path | None = None,
     evidence_root: Path | None = None,
     host_home: Path | None = None,
+    enabled_tools: Sequence[str] = _CODEX_MCP_AGENT_OPS_ENABLED_TOOLS,
+    codex_permission_profile: bool = True,
 ) -> dict[str, object]:
-    """Return the complete canonical host configuration represented by one run."""
+    """Return the canonical isolated host configuration for one MCP run.
+
+    The harness selects the Codex or Junie host shape. Codex uses the custom Git-write
+    permission profile only when ``codex_permission_profile`` is true. The enabled tool
+    sequence is copied into the host allowlist. Invalid harnesses and incomplete custom
+    permission-profile roots raise ``ValueError``.
+    """
     if harness not in SUPPORTED_HARNESSES:
         raise ValueError(f"supported harness values are codex and junie, not {harness}")
     server = dict(server_config)
     if harness == "codex":
-        if workspace_root is None or evidence_root is None or host_home is None:
+        if codex_permission_profile and (
+            workspace_root is None or evidence_root is None or host_home is None
+        ):
             raise ValueError(
                 "Codex MCP configuration requires workspace, evidence, and host-home roots"
             )
         server.update({
             "enabled": True,
             "required": True,
-            "enabled_tools": list(_CODEX_MCP_AGENT_OPS_ENABLED_TOOLS),
+            "enabled_tools": list(enabled_tools),
             "default_tools_approval_mode": "approve",
             "startup_timeout_sec": _MCP_STARTUP_TIMEOUT_SECONDS,
             "tool_timeout_sec": _MCP_TOOL_TIMEOUT_SECONDS,
         })
-        return {
+        configuration: dict[str, object] = {
             "approval_policy": _CODEX_NONINTERACTIVE_APPROVAL_POLICY,
-            "default_permissions": _CODEX_EVAL_PERMISSION_PROFILE_NAME,
-            "permissions": {
+            "mcp_servers": {"mcp-agent-ops": server},
+        }
+        if codex_permission_profile:
+            assert workspace_root is not None
+            assert evidence_root is not None
+            assert host_home is not None
+            configuration["default_permissions"] = _CODEX_EVAL_PERMISSION_PROFILE_NAME
+            configuration["permissions"] = {
                 _CODEX_EVAL_PERMISSION_PROFILE_NAME: (
                     _codex_eval_permission_profile_payload(
                         workspace_root,
@@ -130,9 +156,8 @@ def mcp_agent_ops_configuration_payload(
                         host_home,
                     )
                 )
-            },
-            "mcp_servers": {"mcp-agent-ops": server},
-        }
+            }
+        return configuration
     return {"mcpServers": {"mcp-agent-ops": server}}
 
 
@@ -168,8 +193,10 @@ def _codex_eval_permission_profile_payload(
     }
 
 
-def junie_mcp_agent_ops_authorization_payload() -> dict[str, object]:
-    """Return the narrow noninteractive policy for the one staged Junie MCP server."""
+def junie_mcp_agent_ops_authorization_payload(
+    enabled_tools: Sequence[str] = _CODEX_MCP_AGENT_OPS_ENABLED_TOOLS,
+) -> dict[str, object]:
+    """Return the narrow Junie action policy for the enabled MCP tools."""
     return {
         "defaultBehavior": "ask",
         "allowReadonlyCommands": True,
@@ -187,7 +214,7 @@ def junie_mcp_agent_ops_authorization_payload() -> dict[str, object]:
                         "pattern": f"mcp-agent-ops:{tool}",
                         "action": "allow",
                     }
-                    for tool in _CODEX_MCP_AGENT_OPS_ENABLED_TOOLS
+                    for tool in enabled_tools
                 ]
             },
             "readOutsideProject": {"rules": []},
@@ -283,7 +310,7 @@ def build_harness_command(
             "exec",
             "--ignore-user-config",
         ]
-        if mcp_agent_ops is None:
+        if mcp_agent_ops is None or not mcp_agent_ops.codex_permission_profile:
             argv.extend((
                 "--sandbox",
                 "read-only" if read_only else "workspace-write",
@@ -1134,11 +1161,45 @@ def _validate_mcp_agent_ops_context(
         raise ValueError("MCP workspace root must be the disposable product workspace")
     if not re.fullmatch(r"[0-9a-f]{32}", context.audit_session_id):
         raise ValueError("MCP audit session identity must be 32 lowercase hexadecimal characters")
-    skill_root = context.skill_root.resolve()
-    if skill_root != isolated_config_root and isolated_config_root not in skill_root.parents:
-        raise ValueError("MCP skill root must stay inside the isolated context root")
-    if context.skill_root.is_symlink() or not skill_root.is_dir():
-        raise ValueError("MCP skill root must be an existing non-symlink directory")
+    if not context.enabled_tools or len(context.enabled_tools) != len(
+        set(context.enabled_tools)
+    ):
+        raise ValueError("MCP enabled tools must be a non-empty unique sequence")
+    skill_mode = context.skill_root is not None
+    reference_mode = context.reference_root is not None
+    if skill_mode == reference_mode:
+        raise ValueError("MCP context must select exactly one catalog mode")
+    if skill_mode:
+        assert context.skill_root is not None
+        skill_root = context.skill_root.resolve()
+        if skill_root != isolated_config_root and isolated_config_root not in skill_root.parents:
+            raise ValueError("MCP skill root must stay inside the isolated context root")
+        if context.skill_root.is_symlink() or not skill_root.is_dir():
+            raise ValueError("MCP skill root must be an existing non-symlink directory")
+        if context.reference_names:
+            raise ValueError("MCP skill catalog must not declare reference names")
+        catalog_manifest = skill_root.parent / "catalog-manifest.json"
+    else:
+        assert context.reference_root is not None
+        reference_root = context.reference_root.resolve()
+        if (
+            context.reference_root.is_symlink()
+            or not reference_root.is_dir()
+            or context.evidence_directory.resolve() not in reference_root.parents
+        ):
+            raise ValueError("MCP reference root must stay inside its evidence directory")
+        if not context.reference_names or len(context.reference_names) != len(
+            set(context.reference_names)
+        ):
+            raise ValueError("MCP reference names must be a non-empty unique sequence")
+        staged_names = {
+            path.name
+            for path in reference_root.iterdir()
+            if path.is_file() and not path.is_symlink()
+        }
+        if staged_names != set(context.reference_names):
+            raise ValueError("MCP reference root differs from the declared reference names")
+        catalog_manifest = reference_root.parent / "reference-manifest.json"
     for label, digest in (
         ("launcher", context.identity.launcher_digest),
         ("runtime", context.identity.runtime_digest),
@@ -1148,9 +1209,8 @@ def _validate_mcp_agent_ops_context(
     ):
         if not re.fullmatch(r"[0-9a-f]{64}", digest):
             raise ValueError(f"MCP {label} digest must be lowercase SHA-256")
-    catalog_manifest = skill_root.parent / "catalog-manifest.json"
     if catalog_manifest.is_symlink() or not catalog_manifest.is_file():
-        raise ValueError("MCP catalog manifest must stay beside the staged skill root")
+        raise ValueError("MCP catalog manifest must stay beside its staged context")
     try:
         catalog_value = json.loads(catalog_manifest.read_text(encoding="utf-8"))
     except (OSError, UnicodeError, json.JSONDecodeError) as error:
@@ -1160,9 +1220,68 @@ def _validate_mcp_agent_ops_context(
         or catalog_value.get("manifestDigest") != context.catalog_manifest_digest
     ):
         raise ValueError("MCP catalog manifest digest does not match its context")
-    registry = context.detection_registry.resolve()
-    if not registry.is_file() or skill_root not in registry.parents:
-        raise ValueError("MCP detection registry must stay inside the staged skill root")
+    if reference_mode:
+        assert context.reference_root is not None
+        records = catalog_value.get("files")
+        if (
+            set(catalog_value)
+            != {"schema", "version", "manifestDigest", "names", "files"}
+            or catalog_value.get("schema")
+            != "dev-methodology-eval-mcp-reference-catalog"
+            or catalog_value.get("version") != 1
+            or catalog_value.get("names") != list(context.reference_names)
+            or not isinstance(records, list)
+            or [
+                record.get("name")
+                for record in records
+                if isinstance(record, Mapping)
+            ]
+            != list(context.reference_names)
+        ):
+            raise ValueError("MCP reference manifest differs from its staged context")
+        for record in records:
+            if not isinstance(record, Mapping) or set(record) != {
+                "name",
+                "path",
+                "digest",
+                "size",
+            }:
+                raise ValueError("MCP reference manifest contains an invalid file record")
+            name = record.get("name")
+            reference = context.reference_root / str(name)
+            if (
+                not isinstance(name, str)
+                or record.get("path") != name
+                or reference.is_symlink()
+                or not reference.is_file()
+                or stat.S_IMODE(reference.stat().st_mode) & 0o277
+            ):
+                raise ValueError("MCP staged reference differs from its manifest")
+            try:
+                content = reference.read_bytes()
+            except OSError as error:
+                raise ValueError("MCP staged reference must remain readable") from error
+            if (
+                record.get("size") != len(content)
+                or record.get("digest") != hashlib.sha256(content).hexdigest()
+            ):
+                raise ValueError("MCP staged reference digest differs from its manifest")
+        computed_manifest_digest = hashlib.sha256(
+            json.dumps(records, sort_keys=True, separators=(",", ":")).encode(
+                "utf-8"
+            )
+        ).hexdigest()
+        if computed_manifest_digest != context.catalog_manifest_digest:
+            raise ValueError("MCP reference manifest records do not match their digest")
+    if skill_mode:
+        if context.detection_registry is None:
+            raise ValueError("MCP skill catalog requires a detection registry")
+        registry = context.detection_registry.resolve()
+        assert context.skill_root is not None
+        if not registry.is_file() or context.skill_root.resolve() not in registry.parents:
+            raise ValueError("MCP detection registry must stay inside the staged skill root")
+    elif context.detection_registry is not None:
+        raise ValueError("MCP reference context must not stage a detection registry")
     audit_root = context.audit_root.resolve()
     audit_log = context.audit_log.resolve()
     if context.audit_root.is_symlink() or not audit_root.is_dir():
@@ -1211,19 +1330,39 @@ def _validate_mcp_agent_ops_context(
         != context.authorization_digest
     ):
         raise ValueError("MCP authorization evidence digest does not match its context")
-    server_config = {
-        "command": str(context.identity.executable),
-        "args": [],
-        "env": {
+    server_environment = dict(context.server_environment)
+    common_environment = {
+        "MCP_AGENT_OPS_AUDIT_LOG": str(context.audit_log),
+        "MCP_AGENT_OPS_AUDIT_ROOTS": str(context.audit_root),
+        "MCP_AGENT_OPS_AUDIT_SHARED": "true",
+        "MCP_AGENT_OPS_AUDIT_SESSION_ID": context.audit_session_id,
+        "MCP_AGENT_OPS_REQUIRED_RUNTIME_DIGEST": context.identity.runtime_digest,
+    }
+    if skill_mode:
+        assert context.skill_root is not None
+        assert context.detection_registry is not None
+        expected_environment = {
+            **common_environment,
             "MCP_AGENT_OPS_SKILL_ROOTS": str(context.skill_root),
             "MCP_AGENT_OPS_DETECTION_REGISTRY": str(context.detection_registry),
             "MCP_AGENT_OPS_WORKSPACE_ROOTS": str(context.workspace_root),
-            "MCP_AGENT_OPS_AUDIT_LOG": str(context.audit_log),
-            "MCP_AGENT_OPS_AUDIT_ROOTS": str(context.audit_root),
-            "MCP_AGENT_OPS_AUDIT_SHARED": "true",
-            "MCP_AGENT_OPS_AUDIT_SESSION_ID": context.audit_session_id,
-            "MCP_AGENT_OPS_REQUIRED_RUNTIME_DIGEST": context.identity.runtime_digest,
-        },
+        }
+    else:
+        assert context.reference_root is not None
+        expected_environment = {
+            **common_environment,
+            "MCP_AGENT_OPS_WORKSPACE_ROOTS": str(context.workspace_root),
+            "MCP_AGENT_OPS_REFERENCE_ROOTS": str(context.reference_root),
+            "MCP_AGENT_OPS_REFERENCE_NAMES": os.pathsep.join(
+                context.reference_names
+            ),
+        }
+    if server_environment != expected_environment:
+        raise ValueError("MCP server environment differs from the staged context")
+    server_config = {
+        "command": str(context.identity.executable),
+        "args": [],
+        "env": server_environment,
     }
     expected_configuration = mcp_agent_ops_configuration_payload(
         "junie" if context.config_location is not None else "codex",
@@ -1231,6 +1370,8 @@ def _validate_mcp_agent_ops_context(
         workspace_root=context.workspace_root,
         evidence_root=context.audit_root,
         host_home=context.host_home,
+        enabled_tools=context.enabled_tools,
+        codex_permission_profile=context.codex_permission_profile,
     )
     try:
         recorded_configuration = json.loads(
@@ -1258,7 +1399,9 @@ def _validate_mcp_agent_ops_context(
             )
         except (OSError, UnicodeError, json.JSONDecodeError) as error:
             raise ValueError("Junie MCP authorization evidence must be valid JSON") from error
-        expected_authorization = junie_mcp_agent_ops_authorization_payload()
+        expected_authorization = junie_mcp_agent_ops_authorization_payload(
+            context.enabled_tools
+        )
         if authorization != expected_authorization:
             raise ValueError("Junie MCP authorization evidence is not the narrow evaluator policy")
     elif context.authorization_evidence is not None:
@@ -1271,36 +1414,34 @@ def _append_codex_mcp_configuration(
 ) -> None:
     """Append one complete strict Codex stdio MCP configuration through CLI overrides."""
     prefix = f"mcp_servers.{context.server_name}"
-    values: tuple[tuple[str, object], ...] = (
+    values: list[tuple[str, object]] = [
         ("approval_policy", _CODEX_NONINTERACTIVE_APPROVAL_POLICY),
-        ("default_permissions", _CODEX_EVAL_PERMISSION_PROFILE_NAME),
-        (
-            f"permissions.{_CODEX_EVAL_PERMISSION_PROFILE_NAME}",
-            _codex_eval_permission_profile_payload(
-                context.workspace_root,
-                context.audit_root,
-                context.host_home,
+    ]
+    if context.codex_permission_profile:
+        values.extend((
+            ("default_permissions", _CODEX_EVAL_PERMISSION_PROFILE_NAME),
+            (
+                f"permissions.{_CODEX_EVAL_PERMISSION_PROFILE_NAME}",
+                _codex_eval_permission_profile_payload(
+                    context.workspace_root,
+                    context.audit_root,
+                    context.host_home,
+                ),
             ),
-        ),
+        ))
+    values.extend((
         (f"{prefix}.enabled", True),
         (f"{prefix}.required", True),
-        (f"{prefix}.enabled_tools", list(_CODEX_MCP_AGENT_OPS_ENABLED_TOOLS)),
+        (f"{prefix}.enabled_tools", list(context.enabled_tools)),
         (f"{prefix}.default_tools_approval_mode", "approve"),
         (f"{prefix}.command", str(context.identity.executable)),
         (f"{prefix}.args", []),
         (f"{prefix}.startup_timeout_sec", _MCP_STARTUP_TIMEOUT_SECONDS),
         (f"{prefix}.tool_timeout_sec", _MCP_TOOL_TIMEOUT_SECONDS),
-        (f"{prefix}.env.MCP_AGENT_OPS_SKILL_ROOTS", str(context.skill_root)),
-        (f"{prefix}.env.MCP_AGENT_OPS_DETECTION_REGISTRY", str(context.detection_registry)),
-        (f"{prefix}.env.MCP_AGENT_OPS_WORKSPACE_ROOTS", str(context.workspace_root)),
-        (f"{prefix}.env.MCP_AGENT_OPS_AUDIT_LOG", str(context.audit_log)),
-        (f"{prefix}.env.MCP_AGENT_OPS_AUDIT_ROOTS", str(context.audit_root)),
-        (f"{prefix}.env.MCP_AGENT_OPS_AUDIT_SHARED", "true"),
-        (f"{prefix}.env.MCP_AGENT_OPS_AUDIT_SESSION_ID", context.audit_session_id),
-        (
-            f"{prefix}.env.MCP_AGENT_OPS_REQUIRED_RUNTIME_DIGEST",
-            context.identity.runtime_digest,
-        ),
+    ))
+    values.extend(
+        (f"{prefix}.env.{name}", value)
+        for name, value in context.server_environment
     )
     for key, value in values:
         argv.extend(("-c", f"{key}={_toml_literal(value)}"))

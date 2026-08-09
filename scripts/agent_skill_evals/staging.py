@@ -16,6 +16,7 @@ from typing import Iterable, Mapping, Sequence
 
 from .invocations import (
     SUPPORTED_HARNESSES,
+    _CODEX_MCP_AGENT_OPS_ENABLED_TOOLS,
     McpAgentOpsContext,
     McpAgentOpsIdentity,
     junie_mcp_agent_ops_authorization_payload,
@@ -412,6 +413,8 @@ def stage_mcp_agent_ops_context(
         workspace_root=destination_root,
         evidence_root=audit_root,
         host_home=host_home,
+        enabled_tools=_CODEX_MCP_AGENT_OPS_ENABLED_TOOLS,
+        codex_permission_profile=True,
     )
     config_location: Path | None = None
     if harness == "junie":
@@ -430,7 +433,9 @@ def stage_mcp_agent_ops_context(
     authorization_digest: str | None = None
     authorization_evidence: Path | None = None
     if harness == "junie":
-        authorization_payload = junie_mcp_agent_ops_authorization_payload()
+        authorization_payload = junie_mcp_agent_ops_authorization_payload(
+            _CODEX_MCP_AGENT_OPS_ENABLED_TOOLS
+        )
         authorization_bytes = (
             json.dumps(authorization_payload, sort_keys=True, separators=(",", ":"))
             + "\n"
@@ -454,6 +459,196 @@ def stage_mcp_agent_ops_context(
         catalog_evidence=catalog_evidence,
         evidence_directory=evidence_directory,
         host_home=host_home,
+        enabled_tools=tuple(_CODEX_MCP_AGENT_OPS_ENABLED_TOOLS),
+        server_environment=tuple(environment.items()),
+        codex_permission_profile=True,
+        authorization_digest=authorization_digest,
+        authorization_evidence=authorization_evidence,
+        config_location=config_location,
+    )
+
+
+def stage_mcp_reference_context(
+    harness: str,
+    destination_root: Path,
+    identity: McpAgentOpsIdentity,
+    audit_log: Path,
+    audit_root: Path,
+    *,
+    reference_names: Sequence[str],
+    enabled_tools: Sequence[str],
+) -> McpAgentOpsContext:
+    """Stage one isolated reference-only MCP context for an evaluation treatment.
+
+    The destination is the disposable workspace. Each reference name must identify one
+    regular top-level workspace file. The function copies only those files, records their
+    digests, writes an isolated host configuration and audit identity, and returns their
+    runner-owned context. Invalid paths, duplicate names or tools, unsafe roots, and existing
+    destinations raise ``ValueError``.
+    """
+
+    if harness not in SUPPORTED_HARNESSES:
+        raise ValueError(f"supported harness values are codex and junie, not {harness}")
+    destination_root = destination_root.resolve()
+    audit_root = audit_root.resolve()
+    if audit_root.is_symlink() or not audit_root.is_dir():
+        raise ValueError("MCP audit root must be an existing non-symlink directory")
+    if (
+        audit_root == destination_root
+        or destination_root in audit_root.parents
+        or audit_root in destination_root.parents
+    ):
+        raise ValueError("MCP audit root must be disjoint from the product workspace")
+    names = tuple(reference_names)
+    tools = tuple(enabled_tools)
+    if (
+        not names
+        or len(names) != len(set(names))
+        or any(
+            PurePosixPath(name).name != name
+            or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]*", name)
+            for name in names
+        )
+    ):
+        raise ValueError("MCP reference names must be unique safe filenames")
+    if (
+        not tools
+        or len(tools) != len(set(tools))
+        or any(not re.fullmatch(r"[a-z][a-z0-9_]*", tool) for tool in tools)
+    ):
+        raise ValueError("MCP enabled tools must be unique normalized names")
+
+    evidence_directory = (
+        audit_root
+        / f".mcp-agent-ops-{harness}-{destination_root.name}-{secrets.token_hex(8)}"
+    )
+    evidence_directory.mkdir(mode=0o700)
+    reference_root = evidence_directory / "references"
+    if reference_root.exists() or reference_root.is_symlink():
+        raise ValueError("MCP reference destination must be unused")
+    reference_root.mkdir(mode=0o700)
+    reference_records: list[dict[str, object]] = []
+    for name in names:
+        source = destination_root / name
+        if source.is_symlink() or not source.is_file():
+            raise ValueError(f"MCP reference source is missing or unsafe: {name}")
+        _source, effective, sanitizations = selected_context_identity(
+            source,
+            "model-visible-input",
+        )
+        if sanitizations:
+            raise ValueError("MCP reference context must preserve exact source bytes")
+        destination = reference_root / name
+        destination.write_bytes(effective)
+        os.chmod(destination, 0o400)
+        reference_records.append({
+            "name": name,
+            "path": name,
+            "digest": hashlib.sha256(effective).hexdigest(),
+            "size": len(effective),
+        })
+    catalog_manifest_digest = hashlib.sha256(
+        json.dumps(
+            reference_records,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode("utf-8")
+    ).hexdigest()
+    manifest_path = reference_root.parent / "reference-manifest.json"
+    manifest_bytes = (
+        json.dumps(
+            {
+                "schema": "dev-methodology-eval-mcp-reference-catalog",
+                "version": 1,
+                "manifestDigest": catalog_manifest_digest,
+                "names": list(names),
+                "files": reference_records,
+            },
+            sort_keys=True,
+        )
+        + "\n"
+    ).encode("utf-8")
+    manifest_path.write_bytes(manifest_bytes)
+    catalog_evidence = manifest_path
+    os.chmod(catalog_evidence, 0o600)
+
+    audit_log = audit_log.resolve()
+    if audit_log == audit_root or audit_root not in audit_log.parents:
+        raise ValueError("MCP audit log must stay beneath the runner-owned audit root")
+    if audit_log.exists() or audit_log.is_symlink():
+        raise ValueError("MCP audit log must be an unused non-symlink path")
+    audit_session_id = secrets.token_hex(16)
+    environment = {
+        "MCP_AGENT_OPS_WORKSPACE_ROOTS": str(destination_root),
+        "MCP_AGENT_OPS_REFERENCE_ROOTS": str(reference_root),
+        "MCP_AGENT_OPS_REFERENCE_NAMES": os.pathsep.join(names),
+        "MCP_AGENT_OPS_AUDIT_LOG": str(audit_log),
+        "MCP_AGENT_OPS_AUDIT_ROOTS": str(audit_root),
+        "MCP_AGENT_OPS_AUDIT_SHARED": "true",
+        "MCP_AGENT_OPS_AUDIT_SESSION_ID": audit_session_id,
+        "MCP_AGENT_OPS_REQUIRED_RUNTIME_DIGEST": identity.runtime_digest,
+    }
+    server_config = {
+        "command": str(identity.executable),
+        "args": [],
+        "env": environment,
+    }
+    host_home = Path.home().resolve()
+    configuration_payload = mcp_agent_ops_configuration_payload(
+        harness,
+        server_config,
+        workspace_root=destination_root,
+        evidence_root=audit_root,
+        host_home=host_home,
+        enabled_tools=tools,
+        codex_permission_profile=False,
+    )
+    config_location: Path | None = None
+    if harness == "junie":
+        config_location = evidence_directory / "junie"
+        config_location.mkdir(mode=0o700)
+        configuration_evidence = config_location / "mcp.json"
+    else:
+        configuration_evidence = evidence_directory / "codex-mcp-config.json"
+    configuration_bytes = (
+        json.dumps(configuration_payload, sort_keys=True, separators=(",", ":"))
+        + "\n"
+    ).encode("utf-8")
+    configuration_evidence.write_bytes(configuration_bytes)
+    os.chmod(configuration_evidence, 0o600)
+    configuration_digest = hashlib.sha256(configuration_bytes).hexdigest()
+    authorization_digest: str | None = None
+    authorization_evidence: Path | None = None
+    if harness == "junie":
+        authorization_payload = junie_mcp_agent_ops_authorization_payload(tools)
+        authorization_bytes = (
+            json.dumps(authorization_payload, sort_keys=True, separators=(",", ":"))
+            + "\n"
+        ).encode("utf-8")
+        authorization_evidence = evidence_directory / "junie-allowlist.json"
+        authorization_evidence.write_bytes(authorization_bytes)
+        os.chmod(authorization_evidence, 0o600)
+        authorization_digest = hashlib.sha256(authorization_bytes).hexdigest()
+    return McpAgentOpsContext(
+        server_name="mcp-agent-ops",
+        identity=identity,
+        skill_root=None,
+        detection_registry=None,
+        workspace_root=destination_root,
+        audit_log=audit_log,
+        audit_root=audit_root,
+        audit_session_id=audit_session_id,
+        configuration_digest=configuration_digest,
+        catalog_manifest_digest=catalog_manifest_digest,
+        configuration_evidence=configuration_evidence,
+        catalog_evidence=catalog_evidence,
+        evidence_directory=evidence_directory,
+        host_home=host_home,
+        enabled_tools=tools,
+        server_environment=tuple(environment.items()),
+        codex_permission_profile=False,
+        reference_root=reference_root,
+        reference_names=names,
         authorization_digest=authorization_digest,
         authorization_evidence=authorization_evidence,
         config_location=config_location,

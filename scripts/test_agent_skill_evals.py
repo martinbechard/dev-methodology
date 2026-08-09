@@ -43,6 +43,27 @@ def digest(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def _reference_treatment_case(module: ModuleType) -> dict[str, object]:
+    case = yaml.safe_load(
+        yaml.safe_dump(module.load_cases()["terminology-standard-effect"])
+    )
+    case["mcpAgentOps"] = {
+        "schemaVersion": 5,
+        "enablement": "probe-treatment-only",
+        "serverName": "mcp-agent-ops",
+        "enabledTools": ["reference_load"],
+        "requiredVersion": "0.7.0",
+        "requiredRuntimeDigest": "d" * 64,
+        "referenceNames": ["terminology.md"],
+        "requiredToolSequences": [["reference_load"]],
+        "requiredToolOutcomes": {"reference_load": ["LOADED"]},
+        "requiredToolArguments": {
+            "reference_load": {"names": ["terminology.md"]},
+        },
+    }
+    return case
+
+
 def _calibration_samples() -> list[dict[str, object]]:
     classes = (
         "clear-pass",
@@ -2557,6 +2578,117 @@ class HarnessAndJudgeTests(unittest.TestCase):
         self.assertEqual(treatment["probeComparisonKey"], omitted["probeComparisonKey"])
         self.assertEqual(omitted["probeComparisonKey"], wrong["probeComparisonKey"])
 
+    def test_reference_provider_is_enabled_only_for_the_probe_treatment(self) -> None:
+        case = _reference_treatment_case(self.module)
+
+        treatment = self.module._apply_probe_variant(
+            case,
+            "probe-terminology-standard",
+            "treatment",
+        )
+        omitted = self.module._apply_probe_variant(
+            case,
+            "probe-terminology-standard",
+            "target-omitted",
+        )
+        wrong = self.module._apply_probe_variant(
+            case,
+            "probe-terminology-standard",
+            "wrong-skill",
+        )
+
+        self.assertEqual(case["mcpAgentOps"], treatment["mcpAgentOps"])
+        self.assertTrue(self.module._case_uses_mcp_agent_ops(treatment))
+        for control in (omitted, wrong):
+            with self.subTest(variant=control["probeVariant"]):
+                self.assertNotIn("mcpAgentOps", control)
+                self.assertFalse(self.module._case_uses_mcp_agent_ops(control))
+                self.assertIn("terminology-standard", control["forbiddenSkills"])
+        self.assertEqual(treatment["probeComparisonKey"], omitted["probeComparisonKey"])
+        self.assertEqual(omitted["probeComparisonKey"], wrong["probeComparisonKey"])
+
+    def test_reference_treatment_contract_is_exact_and_controls_forbid_mcp_evidence(self) -> None:
+        case = _reference_treatment_case(self.module)
+        validation_module = sys.modules[self.module.validate_evidence.__module__]
+        self.assertTrue(
+            {"reference_load", "reference_refresh"}.issubset(
+                validation_module._MCP_AGENT_OPS_TOOL_NAMES
+            )
+        )
+        self.assertEqual([], self.module.validate_case_definition(case))
+
+        for field, value, expected in (
+            ("enabledTools", ["reference_load", "reference_refresh"], "enabledTools"),
+            ("referenceNames", ["terminology.md", "other.md"], "referenceNames"),
+            ("requiredToolOutcomes", {"reference_load": ["REFERENCE_NOT_FOUND"]}, "requiredToolOutcomes"),
+        ):
+            invalid = yaml.safe_load(yaml.safe_dump(case))
+            invalid["mcpAgentOps"][field] = value
+            with self.subTest(field=field):
+                self.assertTrue(
+                    any(
+                        expected in error
+                        for error in self.module.validate_case_definition(invalid)
+                    )
+                )
+
+        git_profile = yaml.safe_load(yaml.safe_dump(case))
+        git_profile["sandboxProfiles"]["codex"] = (
+            "codex-permission-profile-git-write"
+        )
+        self.assertTrue(
+            any(
+                "ordinary Codex sandbox" in error
+                for error in self.module.validate_case_definition(git_profile)
+            )
+        )
+
+        omitted = self.module._apply_probe_variant(
+            case,
+            "probe-terminology-standard",
+            "target-omitted",
+        )
+        errors: list[str] = []
+        validation_module._validate_mcp_agent_ops_run(
+            omitted,
+            {"mcpAgentOps": {}},
+            ROOT / "unused-evidence.yaml",
+            errors,
+            [],
+        )
+        self.assertIn(
+            "evidence run.mcpAgentOps is forbidden for a non-MCP case",
+            errors,
+        )
+        skill_errors: list[str] = []
+        validation_module._validate_skills(
+            omitted,
+            "codex",
+            {"skills": []},
+            ROOT / "unused-evidence.yaml",
+            skill_errors,
+            [],
+        )
+        self.assertNotIn(
+            "evidence missing required skill: terminology-standard",
+            skill_errors,
+        )
+        wrong = self.module._apply_probe_variant(
+            case,
+            "probe-terminology-standard",
+            "wrong-skill",
+        )
+        wrong_skill_errors: list[str] = []
+        validation_module._validate_skills(
+            wrong,
+            "codex",
+            {"skills": []},
+            ROOT / "unused-evidence.yaml",
+            wrong_skill_errors,
+            [],
+        )
+        self.assertIn("evidence missing required skill: quartz", wrong_skill_errors)
+
     def test_context_pack_stages_only_allowlisted_files_and_records_digest(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -3336,6 +3468,302 @@ class HarnessAndJudgeTests(unittest.TestCase):
                     required_runtime_digest="b" * 64,
                 )
 
+    def test_reference_context_is_isolated_digest_bound_and_uses_the_ordinary_sandbox(self) -> None:
+        case = _reference_treatment_case(self.module)
+        contract = case["mcpAgentOps"]
+        identity = self.module.McpAgentOpsIdentity(
+            Path(sys.executable).resolve(),
+            contract["requiredVersion"],
+            "1" * 64,
+            contract["requiredRuntimeDigest"],
+            "2" * 64,
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            workspace = base / "workspace"
+            workspace.mkdir()
+            (workspace / "terminology.md").write_text(
+                "# Terminology Standard\n\n## Preferred Terms\n",
+                encoding="utf-8",
+            )
+            evidence = base / "evidence"
+            evidence.mkdir()
+            evidence = evidence.resolve()
+            context_pack = self.module.ContextPackBuilder(ROOT).stage(
+                "codex",
+                "dev-documentation-writer",
+                case["requiredSkills"],
+                workspace,
+                skill_files=case["skillResourceAllowlist"],
+            )
+            mcp = self.module.stage_mcp_reference_context(
+                "codex",
+                workspace,
+                identity,
+                evidence / "audit.jsonl",
+                evidence,
+                reference_names=contract["referenceNames"],
+                enabled_tools=contract["enabledTools"],
+            )
+
+            self.assertIsNone(mcp.skill_root)
+            self.assertIsNone(mcp.detection_registry)
+            self.assertEqual(("reference_load",), mcp.enabled_tools)
+            self.assertFalse(mcp.codex_permission_profile)
+            self.assertEqual(("terminology.md",), mcp.reference_names)
+            self.assertEqual(
+                (workspace / "terminology.md").read_bytes(),
+                (mcp.reference_root / "terminology.md").read_bytes(),
+            )
+            self.assertEqual(evidence, mcp.reference_root.parent.parent)
+            self.assertNotIn(workspace, mcp.reference_root.parents)
+            self.assertFalse(
+                (workspace / ".eval-context" / "mcp-agent-ops").exists()
+            )
+            manifest = json.loads(mcp.catalog_evidence.read_text(encoding="utf-8"))
+            self.assertEqual(
+                "dev-methodology-eval-mcp-reference-catalog",
+                manifest["schema"],
+            )
+            self.assertEqual(["terminology.md"], manifest["names"])
+            self.assertNotIn("skills", manifest)
+
+            configuration = json.loads(
+                mcp.configuration_evidence.read_text(encoding="utf-8")
+            )
+            self.assertEqual({"approval_policy", "mcp_servers"}, set(configuration))
+            server = configuration["mcp_servers"]["mcp-agent-ops"]
+            self.assertEqual(["reference_load"], server["enabled_tools"])
+            self.assertEqual(
+                {
+                    "MCP_AGENT_OPS_REFERENCE_ROOTS",
+                    "MCP_AGENT_OPS_REFERENCE_NAMES",
+                    "MCP_AGENT_OPS_WORKSPACE_ROOTS",
+                    "MCP_AGENT_OPS_AUDIT_LOG",
+                    "MCP_AGENT_OPS_AUDIT_ROOTS",
+                    "MCP_AGENT_OPS_AUDIT_SHARED",
+                    "MCP_AGENT_OPS_AUDIT_SESSION_ID",
+                    "MCP_AGENT_OPS_REQUIRED_RUNTIME_DIGEST",
+                },
+                set(server["env"]),
+            )
+            self.assertEqual(
+                str(mcp.reference_root),
+                server["env"]["MCP_AGENT_OPS_REFERENCE_ROOTS"],
+            )
+            self.assertEqual(
+                "terminology.md",
+                server["env"]["MCP_AGENT_OPS_REFERENCE_NAMES"],
+            )
+            self.assertEqual(
+                str(workspace.resolve()),
+                server["env"]["MCP_AGENT_OPS_WORKSPACE_ROOTS"],
+            )
+
+            command = self.module.build_harness_command(
+                "codex",
+                workspace,
+                "dev-documentation-writer",
+                "Apply the terminology standard.",
+                "configured-model",
+                read_only=False,
+                event_output=evidence / "events.jsonl",
+                evidence_root=evidence,
+                isolated_config_root=workspace,
+                skill_locations=[context_pack.skill_location],
+                agent_locations=[context_pack.agent_location],
+                harness_executable=Path(sys.executable),
+                mcp_agent_ops=mcp,
+            )
+            sandbox_index = command.argv.index("--sandbox")
+            self.assertEqual("workspace-write", command.argv[sandbox_index + 1])
+            self.assertIn("--ignore-user-config", command.argv)
+            self.assertFalse(
+                any("default_permissions" in argument for argument in command.argv)
+            )
+
+            validation_module = sys.modules[self.module.validate_evidence.__module__]
+            receipt_path = evidence / "receipt.yaml"
+            receipt_path.write_text("receipt\n", encoding="utf-8")
+            value = {
+                "configurationEvidence": (
+                    mcp.configuration_evidence.relative_to(evidence).as_posix()
+                    + "#approval_policy"
+                ),
+                "catalogEvidence": (
+                    mcp.catalog_evidence.relative_to(evidence).as_posix()
+                    + "#manifestDigest"
+                ),
+                "catalogManifestDigest": mcp.catalog_manifest_digest,
+                "permissionProfileHostHomeDigest": None,
+                "auditSessionId": mcp.audit_session_id,
+                "runtimeDigest": identity.runtime_digest,
+                "requiredToolArgumentDigests": {
+                    "reference_load": self.module.mcp_value_digest(
+                        {"names": ["terminology.md"]}
+                    )
+                },
+            }
+            errors: list[str] = []
+            validation_module._validate_mcp_configuration_artifact(
+                value,
+                {"harness": "codex"},
+                contract,
+                receipt_path,
+                errors,
+            )
+            validation_module._validate_mcp_catalog_artifact(
+                value,
+                contract,
+                receipt_path,
+                errors,
+            )
+            self.assertEqual([], errors)
+
+            (mcp.reference_root / "terminology.md").chmod(0o600)
+            (mcp.reference_root / "terminology.md").write_text(
+                "# Altered reference\n",
+                encoding="utf-8",
+            )
+            altered_errors: list[str] = []
+            validation_module._validate_mcp_catalog_artifact(
+                value,
+                contract,
+                receipt_path,
+                altered_errors,
+            )
+            self.assertTrue(
+                any("retained reference context" in error for error in altered_errors)
+            )
+            (mcp.reference_root / "terminology.md").write_text(
+                "# Terminology Standard\n\n## Preferred Terms\n",
+                encoding="utf-8",
+            )
+            (mcp.reference_root / "terminology.md").chmod(0o400)
+
+            invalid_configuration = yaml.safe_load(yaml.safe_dump(configuration))
+            invalid_configuration["mcp_servers"]["mcp-agent-ops"][
+                "enabled_tools"
+            ].append("reference_refresh")
+            invalid_path = evidence / "invalid-config.json"
+            invalid_path.write_text(
+                json.dumps(invalid_configuration, sort_keys=True) + "\n",
+                encoding="utf-8",
+            )
+            invalid_value = dict(value)
+            invalid_value["configurationEvidence"] = (
+                "invalid-config.json#approval_policy"
+            )
+            invalid_errors: list[str] = []
+            validation_module._validate_mcp_configuration_artifact(
+                invalid_value,
+                {"harness": "codex"},
+                contract,
+                receipt_path,
+                invalid_errors,
+            )
+            self.assertTrue(
+                any("strict execution policy" in error for error in invalid_errors)
+            )
+
+    def test_reference_treatment_handler_uses_only_reference_staging(self) -> None:
+        case = self.module._apply_probe_variant(
+            _reference_treatment_case(self.module),
+            "probe-terminology-standard",
+            "treatment",
+        )
+        case["modelVisiblePaths"] = ["TASK.md", "terminology.md"]
+        contract = case["mcpAgentOps"]
+        identity = self.module.McpAgentOpsIdentity(
+            Path(sys.executable).resolve(),
+            contract["requiredVersion"],
+            "1" * 64,
+            contract["requiredRuntimeDigest"],
+            "2" * 64,
+        )
+        harness_identity = self.module.HarnessIdentity(
+            "codex",
+            Path(sys.executable).resolve(),
+            "Codex test",
+            digest(Path(sys.executable)),
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            workspace = base / "workspace"
+            workspace.mkdir()
+            (workspace / "TASK.md").write_text(
+                "Apply the preferred terminology.\n",
+                encoding="utf-8",
+            )
+            (workspace / "terminology.md").write_text(
+                "# Terminology Standard\n\n## Preferred Terms\n",
+                encoding="utf-8",
+            )
+            (workspace / ".eval-workspace.json").write_text(
+                "{}\n",
+                encoding="utf-8",
+            )
+            args = self.module._argument_parser().parse_args([
+                "--case",
+                str(case["id"]),
+                "--harness",
+                "codex",
+                "--mcp-agent-ops-executable",
+                sys.executable,
+                "--print-invocation",
+            ])
+            staged: list[object] = []
+            real_stage = self.module.stage_mcp_reference_context
+
+            def stage(*stage_args: object, **stage_kwargs: object) -> object:
+                context = real_stage(*stage_args, **stage_kwargs)
+                staged.append(context)
+                return context
+
+            output = io.StringIO()
+            with mock.patch.object(
+                self.module.tempfile,
+                "gettempdir",
+                return_value=str(base),
+            ), mock.patch.object(
+                self.module,
+                "capture_mcp_agent_ops_identity",
+                return_value=identity,
+            ), mock.patch.object(
+                self.module,
+                "capture_harness_identity",
+                return_value=harness_identity,
+            ), mock.patch.object(
+                self.module,
+                "stage_mcp_reference_context",
+                side_effect=stage,
+            ), mock.patch.object(
+                self.module,
+                "stage_mcp_agent_ops_context",
+                side_effect=AssertionError("skill catalog staging ran"),
+            ), redirect_stdout(output):
+                error = self.module._handle_harness_invocation(
+                    args,
+                    case,
+                    workspace,
+                )
+
+            self.assertIsNone(error)
+            self.assertEqual(1, len(staged))
+            invocation = json.loads(output.getvalue())
+            self.assertEqual(
+                [["reference_load"]],
+                invocation["mcpAgentOps"]["requiredToolSequences"],
+            )
+            self.assertEqual(
+                {"reference_load": ["LOADED"]},
+                invocation["mcpAgentOps"]["requiredToolOutcomes"],
+            )
+            self.assertIsNone(
+                invocation["mcpAgentOps"]["permissionProfileHostHomeDigest"]
+            )
+            self.assertNotIn("skillRoot", invocation["mcpAgentOps"])
+
     def test_mcp_catalog_and_host_configuration_are_exact_and_isolated(self) -> None:
         case = self.module.load_cases()["project-configuration-routing"]
         fixture = ROOT / "evals" / "projects" / "project-configuration-routing"
@@ -3946,6 +4374,27 @@ class HarnessAndJudgeTests(unittest.TestCase):
             f"mcp-agent-ops {contract['requiredVersion']} through Codex and Junie.",
             documentation,
         )
+
+    def test_reference_treatment_exception_is_explicit_in_schema_and_documentation(self) -> None:
+        schema = yaml.safe_load(
+            (ROOT / "evals" / "evidence-schema.yaml").read_text(encoding="utf-8")
+        )
+        treatment_rule = schema["mcpAgentOpsReceiptPolicy"][
+            "probe-treatment-only"
+        ]
+        self.assertEqual(["treatment"], treatment_rule["allowedProbeVariants"])
+        self.assertEqual(
+            ["target-omitted", "wrong-skill"],
+            treatment_rule["forbiddenProbeVariants"],
+        )
+
+        documentation = (ROOT / "evals" / "README.md").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("probe-treatment-only", documentation)
+        self.assertIn("reference_load", documentation)
+        self.assertIn("reference_refresh remains disabled", documentation)
+        self.assertIn("target-omitted and wrong-skill controls", documentation)
 
     def test_completed_mcp_call_without_safe_outcome_is_not_semantic_evidence(self) -> None:
         records = [

@@ -21,8 +21,10 @@ import yaml
 
 try:
     from agent_skill_evals import *  # noqa: F403
+    from agent_skill_evals.staging import stage_mcp_reference_context
 except ModuleNotFoundError:
     from scripts.agent_skill_evals import *  # type: ignore[no-redef]  # noqa: F403
+    from scripts.agent_skill_evals.staging import stage_mcp_reference_context
 
 try:
     from agent_skill_judge_contract import canonical_judge_identity
@@ -148,7 +150,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.mcp_agent_ops_executable is not None and (
         len(selected) != 1 or not _case_uses_mcp_agent_ops(selected[0])
     ):
-        parser.error("--mcp-agent-ops-executable is valid only for an MCP-enabled base case")
+        parser.error("--mcp-agent-ops-executable is valid only for an MCP-enabled case")
     if (
         (args.print_invocation or args.invoke_harness)
         and len(selected) == 1
@@ -366,8 +368,17 @@ def _requires_external_containment(case: Mapping[str, object]) -> bool:
 
 
 def _case_uses_mcp_agent_ops(case: Mapping[str, object]) -> bool:
-    """Return whether the immutable base-case contract enables MCP operations."""
-    return "probeVariant" not in case and isinstance(case.get("mcpAgentOps"), Mapping)
+    """Return whether the selected base case or probe treatment enables MCP operations."""
+    contract = case.get("mcpAgentOps")
+    if not isinstance(contract, Mapping):
+        return False
+    enablement = contract.get("enablement")
+    if enablement == "base-case-only":
+        return "probeVariant" not in case
+    return (
+        enablement == "probe-treatment-only"
+        and case.get("probeVariant") == "treatment"
+    )
 
 
 @contextmanager
@@ -741,7 +752,18 @@ def _apply_probe_variant(
         "caseDefinitionDigest": case_definition_digest(case),  # noqa: F405
         "probe": probe_id,
     })
-    derived.pop("mcpAgentOps", None)
+    mcp_contract = derived.get("mcpAgentOps")
+    treatment_only_mcp = (
+        isinstance(mcp_contract, Mapping)
+        and mcp_contract.get("enablement") == "probe-treatment-only"
+    )
+    if variant != "treatment" or not treatment_only_mcp:
+        derived.pop("mcpAgentOps", None)
+    if variant in {"target-omitted", "wrong-skill"}:
+        forbidden_skills = list(derived.get("forbiddenSkills", []))
+        if target not in forbidden_skills:
+            forbidden_skills.append(target)
+        derived["forbiddenSkills"] = forbidden_skills
     return derived
 
 
@@ -898,11 +920,6 @@ def _handle_harness_invocation(
         if _case_uses_mcp_agent_ops(case):
             mcp_contract = case["mcpAgentOps"]
             assert isinstance(mcp_contract, Mapping)
-            available_skills = read_mcp_skill_catalog(  # noqa: F405
-                active_root,
-                str(mcp_contract["skillCatalogSource"]),
-                ROOT,  # noqa: F405
-            )
             required_tool_sequences = [
                 list(sequence)
                 for sequence in mcp_contract["requiredToolSequences"]
@@ -911,35 +928,55 @@ def _handle_harness_invocation(
                 str(tool): list(outcomes)
                 for tool, outcomes in mcp_contract["requiredToolOutcomes"].items()
             }
-            staged_mcp_skill_root = (
-                active_root / ".eval-context" / "mcp-agent-ops" / "skills"
-            )
-            required_tool_argument_digests = resolve_mcp_tool_argument_digests(  # noqa: F405
-                mcp_contract["requiredToolArguments"],
-                active_root,
-                skill_root=staged_mcp_skill_root,
-            )
             mcp_identity = capture_mcp_agent_ops_identity(  # noqa: F405
                 args.mcp_agent_ops_executable,
                 required_version=str(mcp_contract["requiredVersion"]),
                 required_runtime_digest=str(mcp_contract["requiredRuntimeDigest"]),
             )
-            mcp_context = stage_mcp_agent_ops_context(  # noqa: F405
-                args.harness,
-                active_root,
-                mcp_identity,
-                ROOT,  # noqa: F405
-                context_pack.skill_location,
-                available_skills,
-                list(case.get("executionSkills", case.get("requiredSkills", []))),
-                mcp_audit_output,
-                evidence_root,
-                catalog_resource_allowlist=mcp_contract[
-                    "catalogResourceAllowlist"
-                ],
-                mcp_only_skill_ids=mcp_contract["mcpOnlySkills"],
-            )
-            if args.harness == "codex":
+            if mcp_contract.get("schemaVersion") == 5:
+                required_tool_argument_digests = resolve_mcp_tool_argument_digests(  # noqa: F405
+                    mcp_contract["requiredToolArguments"],
+                    active_root,
+                )
+                mcp_context = stage_mcp_reference_context(  # noqa: F405
+                    args.harness,
+                    active_root,
+                    mcp_identity,
+                    mcp_audit_output,
+                    evidence_root,
+                    reference_names=mcp_contract["referenceNames"],
+                    enabled_tools=mcp_contract["enabledTools"],
+                )
+            else:
+                available_skills = read_mcp_skill_catalog(  # noqa: F405
+                    active_root,
+                    str(mcp_contract["skillCatalogSource"]),
+                    ROOT,  # noqa: F405
+                )
+                staged_mcp_skill_root = (
+                    active_root / ".eval-context" / "mcp-agent-ops" / "skills"
+                )
+                required_tool_argument_digests = resolve_mcp_tool_argument_digests(  # noqa: F405
+                    mcp_contract["requiredToolArguments"],
+                    active_root,
+                    skill_root=staged_mcp_skill_root,
+                )
+                mcp_context = stage_mcp_agent_ops_context(  # noqa: F405
+                    args.harness,
+                    active_root,
+                    mcp_identity,
+                    ROOT,  # noqa: F405
+                    context_pack.skill_location,
+                    available_skills,
+                    list(case.get("executionSkills", case.get("requiredSkills", []))),
+                    mcp_audit_output,
+                    evidence_root,
+                    catalog_resource_allowlist=mcp_contract[
+                        "catalogResourceAllowlist"
+                    ],
+                    mcp_only_skill_ids=mcp_contract["mcpOnlySkills"],
+                )
+            if args.harness == "codex" and mcp_context.codex_permission_profile:
                 permission_profile_host_home_digest = mcp_value_digest(  # noqa: F405
                     str(mcp_context.host_home)
                 )
@@ -1010,7 +1047,6 @@ def _handle_harness_invocation(
                 "configurationDigest": mcp_context.configuration_digest,
                 "catalogManifestDigest": mcp_context.catalog_manifest_digest,
                 "auditSessionId": mcp_context.audit_session_id,
-                "skillRoot": mcp_context.skill_root.relative_to(active_root).as_posix(),
                 "requiredToolSequences": required_tool_sequences,
                 "requiredToolOutcomes": required_tool_outcomes,
                 "requiredToolArgumentDigests": required_tool_argument_digests,
@@ -1019,6 +1055,10 @@ def _handle_harness_invocation(
                 ),
                 "toolEvidenceStatus": "pending-runtime",
             }
+            if mcp_context.skill_root is not None:
+                invocation_record["mcpAgentOps"]["skillRoot"] = (
+                    mcp_context.skill_root.relative_to(active_root).as_posix()
+                )
         sandbox_profiles = case.get("sandboxProfiles")
         if isinstance(sandbox_profiles, Mapping) and args.harness in sandbox_profiles:
             profile_id = sandbox_profiles[args.harness]

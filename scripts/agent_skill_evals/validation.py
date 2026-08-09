@@ -80,6 +80,8 @@ _MCP_AGENT_OPS_TOOL_NAMES = frozenset({
     "claim_reset",
     "claim_status",
     "detect_technology_skills",
+    "reference_load",
+    "reference_refresh",
     "skill_list",
     "skill_load",
     "skill_read",
@@ -349,7 +351,14 @@ def validate_case_definition(case: Mapping[str, object]) -> list[str]:
             _validate_string_list(paths, f"case.skillResourceAllowlist.{skill}", errors, required=True)
             if isinstance(paths, list) and "SKILL.md" not in paths:
                 errors.append(f"case.skillResourceAllowlist.{skill} must include SKILL.md")
-    overlap = set(_string_items(case.get("requiredSkills"))) & set(_string_items(case.get("forbiddenSkills")))
+    skill_scope = (
+        case.get("executionSkills")
+        if case.get("probeVariant") in {"treatment", "target-omitted", "wrong-skill"}
+        else case.get("requiredSkills")
+    )
+    overlap = set(_string_items(skill_scope)) & set(
+        _string_items(case.get("forbiddenSkills"))
+    )
     if overlap:
         errors.append(f"case skills cannot be both required and forbidden: {', '.join(sorted(overlap))}")
     if isinstance(case.get("judgePlan"), Mapping) and isinstance(resource_allowlist, Mapping):
@@ -370,6 +379,9 @@ def _validate_mcp_agent_ops_case(
         return
     if not isinstance(value, Mapping):
         errors.append("case.mcpAgentOps must be a mapping")
+        return
+    if value.get("schemaVersion") == 5:
+        _validate_reference_mcp_agent_ops_case(case, value, errors)
         return
     expected_fields = {
         "schemaVersion",
@@ -618,6 +630,82 @@ def _validate_mcp_agent_ops_case(
         )
 
 
+def _validate_reference_mcp_agent_ops_case(
+    case: Mapping[str, object],
+    value: Mapping[str, object],
+    errors: list[str],
+) -> None:
+    """Validate the exact reference-only contract for an ordinary probe treatment."""
+
+    expected_fields = {
+        "schemaVersion",
+        "enablement",
+        "serverName",
+        "enabledTools",
+        "requiredVersion",
+        "requiredRuntimeDigest",
+        "referenceNames",
+        "requiredToolSequences",
+        "requiredToolOutcomes",
+        "requiredToolArguments",
+    }
+    if set(value) != expected_fields:
+        errors.append(
+            "case.mcpAgentOps must define the complete version-five reference contract"
+        )
+    if value.get("enablement") != "probe-treatment-only":
+        errors.append(
+            "case.mcpAgentOps.enablement must be probe-treatment-only for version 5"
+        )
+    if value.get("serverName") != "mcp-agent-ops":
+        errors.append("case.mcpAgentOps.serverName must be mcp-agent-ops")
+    if value.get("enabledTools") != ["reference_load"]:
+        errors.append(
+            "case.mcpAgentOps.enabledTools must be exactly reference_load"
+        )
+    if value.get("requiredVersion") != "0.7.0":
+        errors.append("case.mcpAgentOps.requiredVersion must be 0.7.0")
+    _require_digest(
+        value.get("requiredRuntimeDigest"),
+        "case.mcpAgentOps.requiredRuntimeDigest",
+        errors,
+    )
+    if value.get("referenceNames") != ["terminology.md"]:
+        errors.append(
+            "case.mcpAgentOps.referenceNames must be exactly terminology.md"
+        )
+    if value.get("requiredToolSequences") != [["reference_load"]]:
+        errors.append(
+            "case.mcpAgentOps.requiredToolSequences must contain only reference_load"
+        )
+    if value.get("requiredToolOutcomes") != {"reference_load": ["LOADED"]}:
+        errors.append(
+            "case.mcpAgentOps.requiredToolOutcomes must require reference_load LOADED"
+        )
+    if value.get("requiredToolArguments") != {
+        "reference_load": {"names": ["terminology.md"]}
+    }:
+        errors.append(
+            "case.mcpAgentOps.requiredToolArguments must load only terminology.md"
+        )
+    if "terminology-standard" not in _string_items(case.get("requiredSkills")):
+        errors.append(
+            "case.mcpAgentOps version 5 requires terminology-standard"
+        )
+    if "probe-terminology-standard" not in _string_items(case.get("skillProbes")):
+        errors.append(
+            "case.mcpAgentOps version 5 requires probe-terminology-standard"
+        )
+    sandbox_profiles = case.get("sandboxProfiles")
+    if (
+        not isinstance(sandbox_profiles, Mapping)
+        or sandbox_profiles.get("codex") != "codex-workspace-write"
+    ):
+        errors.append(
+            "case.mcpAgentOps version 5 must retain the ordinary Codex sandbox"
+        )
+
+
 def _validate_mcp_argument_template(
     value: object,
     field: str,
@@ -773,12 +861,21 @@ def validate_framework_catalogs(
         for case in selected_cases.values()
         if case.get("mcpAgentOps") is not None
     )
-    if root == (ROOT / "evals").resolve() and mcp_cases != [
-        "project-configuration-routing"
-    ]:
-        errors.append(
-            "cases.yaml must enable mcp-agent-ops only for project-configuration-routing"
-        )
+    allowed_mcp_cases = {
+        "project-configuration-routing",
+        "terminology-standard-effect",
+    }
+    if root == (ROOT / "evals").resolve():
+        unexpected_mcp_cases = sorted(set(mcp_cases) - allowed_mcp_cases)
+        if unexpected_mcp_cases:
+            errors.append(
+                "cases.yaml enables mcp-agent-ops for unsupported cases: "
+                + ", ".join(unexpected_mcp_cases)
+            )
+        if "project-configuration-routing" not in mcp_cases:
+            errors.append(
+                "cases.yaml must retain mcp-agent-ops for project-configuration-routing"
+            )
     catalogs = load_framework_catalogs(root)
     for filename, data in catalogs.items():
         item_key, required = _CATALOG_SPECS[filename]
@@ -1501,6 +1598,17 @@ def _validate_mcp_agent_ops_run(
     """Validate conditional release identity and digest-only MCP audit evidence."""
     contract = case.get("mcpAgentOps")
     value = run.get("mcpAgentOps")
+    treatment_only_disabled = (
+        isinstance(contract, Mapping)
+        and contract.get("enablement") == "probe-treatment-only"
+        and case.get("probeVariant") != "treatment"
+    )
+    if treatment_only_disabled:
+        if value is not None:
+            errors.append(
+                "evidence run.mcpAgentOps is forbidden outside the declared probe treatment"
+            )
+        return
     if contract is None:
         if value is not None:
             errors.append("evidence run.mcpAgentOps is forbidden for a non-MCP case")
@@ -1586,7 +1694,10 @@ def _validate_mcp_agent_ops_run(
             errors,
         )
     host_home_digest = value.get("permissionProfileHostHomeDigest")
-    if run.get("harness") == "codex":
+    if (
+        run.get("harness") == "codex"
+        and contract.get("schemaVersion") == 4
+    ):
         _require_digest(
             host_home_digest,
             "run.mcpAgentOps.permissionProfileHostHomeDigest",
@@ -1594,7 +1705,7 @@ def _validate_mcp_agent_ops_run(
         )
     elif host_home_digest is not None:
         errors.append(
-            "evidence Junie MCP run must not claim a Codex permission-profile home digest"
+            "evidence MCP run must not claim an unused Codex permission-profile home digest"
         )
     completed = value.get("completedTools")
     if not isinstance(completed, list) or any(
@@ -1747,7 +1858,7 @@ def _validate_mcp_agent_ops_run(
         evidence_path,
         errors,
     )
-    _validate_mcp_catalog_artifact(value, evidence_path, errors)
+    _validate_mcp_catalog_artifact(value, contract, evidence_path, errors)
     _validate_mcp_output_manifest(value, case, evidence_path, errors)
     if run.get("harness") == "junie":
         _validate_junie_mcp_authorization(value, evidence_path, errors)
@@ -1790,9 +1901,14 @@ def _validate_mcp_configuration_artifact(
     if configuration is None:
         return
     harness = run.get("harness")
+    reference_contract = contract.get("schemaVersion") == 5
     root_key = "mcp_servers" if harness == "codex" else "mcpServers"
     expected_root_fields = (
-        {root_key, "approval_policy", "default_permissions", "permissions"}
+        (
+            {root_key, "approval_policy"}
+            if reference_contract
+            else {root_key, "approval_policy", "default_permissions", "permissions"}
+        )
         if harness == "codex"
         else {root_key}
     )
@@ -1801,7 +1917,7 @@ def _validate_mcp_configuration_artifact(
         return
     if harness == "codex" and configuration.get("approval_policy") != "never":
         errors.append("evidence Codex MCP configuration must use the noninteractive approval policy")
-    if harness == "codex":
+    if harness == "codex" and not reference_contract:
         _validate_codex_mcp_permission_profile(
             configuration,
             value.get("permissionProfileHostHomeDigest"),
@@ -1842,16 +1958,28 @@ def _validate_mcp_configuration_artifact(
     ):
         errors.append("evidence Codex MCP strict execution policy differs from the run contract")
     environment = server.get("env")
-    expected_environment = {
-        "MCP_AGENT_OPS_SKILL_ROOTS",
-        "MCP_AGENT_OPS_DETECTION_REGISTRY",
-        "MCP_AGENT_OPS_WORKSPACE_ROOTS",
+    common_environment = {
         "MCP_AGENT_OPS_AUDIT_LOG",
         "MCP_AGENT_OPS_AUDIT_ROOTS",
         "MCP_AGENT_OPS_AUDIT_SHARED",
         "MCP_AGENT_OPS_AUDIT_SESSION_ID",
         "MCP_AGENT_OPS_REQUIRED_RUNTIME_DIGEST",
     }
+    expected_environment = (
+        common_environment
+        | {
+            "MCP_AGENT_OPS_WORKSPACE_ROOTS",
+            "MCP_AGENT_OPS_REFERENCE_ROOTS",
+            "MCP_AGENT_OPS_REFERENCE_NAMES",
+        }
+        if reference_contract
+        else common_environment
+        | {
+            "MCP_AGENT_OPS_SKILL_ROOTS",
+            "MCP_AGENT_OPS_DETECTION_REGISTRY",
+            "MCP_AGENT_OPS_WORKSPACE_ROOTS",
+        }
+    )
     if not isinstance(environment, Mapping) or set(environment) != expected_environment:
         errors.append("evidence MCP server environment differs from the governed set")
         return
@@ -1864,7 +1992,71 @@ def _validate_mcp_configuration_artifact(
     workspace_root = environment.get("MCP_AGENT_OPS_WORKSPACE_ROOTS")
     skill_root = environment.get("MCP_AGENT_OPS_SKILL_ROOTS")
     required_arguments = contract.get("requiredToolArguments")
-    if (
+    if reference_contract:
+        workspace_root = environment.get("MCP_AGENT_OPS_WORKSPACE_ROOTS")
+        reference_root = environment.get("MCP_AGENT_OPS_REFERENCE_ROOTS")
+        reference_names = environment.get("MCP_AGENT_OPS_REFERENCE_NAMES")
+        audit_root = environment.get("MCP_AGENT_OPS_AUDIT_ROOTS")
+        reference_path = (
+            Path(reference_root) if isinstance(reference_root, str) else None
+        )
+        audit_path = Path(audit_root) if isinstance(audit_root, str) else None
+        try:
+            configuration_path, _configuration_marker = (
+                _resolve_evidence_reference(
+                    value.get("configurationEvidence"),
+                    evidence_path,
+                )
+            )
+            catalog_path, _catalog_marker = _resolve_evidence_reference(
+                value.get("catalogEvidence"),
+                evidence_path,
+            )
+        except ValueError:
+            configuration_path = None
+            catalog_path = None
+        if (
+            reference_path is None
+            or audit_path is None
+            or not reference_path.is_absolute()
+            or not audit_path.is_absolute()
+            or reference_path.name != "references"
+            or reference_path.parent.parent != audit_path
+            or not reference_path.parent.name.startswith(".mcp-agent-ops-")
+            or configuration_path is None
+            or catalog_path is None
+            or reference_path.parent != configuration_path.parent
+            or reference_path.parent != catalog_path.parent
+        ):
+            errors.append(
+                "evidence MCP reference root must be the runner-owned staged reference directory"
+            )
+        if reference_names != os.pathsep.join(
+            _string_items(contract.get("referenceNames"))
+        ):
+            errors.append(
+                "evidence MCP reference names differ from the run contract"
+            )
+        if not isinstance(workspace_root, str) or not Path(
+            workspace_root
+        ).is_absolute():
+            errors.append(
+                "evidence MCP workspace root must identify the disposable product workspace"
+            )
+        if isinstance(required_arguments, Mapping):
+            try:
+                expected_argument_digests = resolve_mcp_tool_argument_digests(
+                    required_arguments,
+                    Path(reference_root) if isinstance(reference_root, str) else Path("/"),
+                )
+            except ValueError as error:
+                errors.append(f"evidence MCP tool argument contract is invalid: {error}")
+            else:
+                if value.get("requiredToolArgumentDigests") != expected_argument_digests:
+                    errors.append(
+                        "evidence MCP tool argument digests do not match the reference contract"
+                    )
+    elif (
         isinstance(workspace_root, str)
         and isinstance(skill_root, str)
         and isinstance(required_arguments, Mapping)
@@ -1896,6 +2088,7 @@ def _validate_mcp_configuration_artifact(
         "MCP_AGENT_OPS_AUDIT_SHARED",
         "MCP_AGENT_OPS_AUDIT_SESSION_ID",
         "MCP_AGENT_OPS_REQUIRED_RUNTIME_DIGEST",
+        "MCP_AGENT_OPS_REFERENCE_NAMES",
     }:
         configured_path = environment.get(field)
         if not isinstance(configured_path, str) or not Path(configured_path).is_absolute():
@@ -1986,10 +2179,11 @@ def _validate_codex_mcp_permission_profile(
 
 def _validate_mcp_catalog_artifact(
     value: Mapping[str, object],
+    contract: Mapping[str, object],
     evidence_path: Path,
     errors: list[str],
 ) -> None:
-    """Validate the retained staged catalog manifest and its internal digest."""
+    """Validate the retained skill or reference catalog and its internal digest."""
     catalog = _load_mcp_json_artifact(
         value.get("catalogEvidence"),
         "run.mcpAgentOps.catalogEvidence",
@@ -1997,6 +2191,78 @@ def _validate_mcp_catalog_artifact(
         errors,
     )
     if catalog is None:
+        return
+    if contract.get("schemaVersion") == 5:
+        if (
+            set(catalog) != {"schema", "version", "manifestDigest", "names", "files"}
+            or catalog.get("schema")
+            != "dev-methodology-eval-mcp-reference-catalog"
+            or catalog.get("version") != 1
+            or catalog.get("names") != contract.get("referenceNames")
+        ):
+            errors.append("evidence MCP reference catalog has an invalid contract")
+            return
+        if catalog.get("manifestDigest") != value.get("catalogManifestDigest"):
+            errors.append(
+                "evidence MCP reference manifest digest differs from the receipt"
+            )
+        files = catalog.get("files")
+        expected_names = _string_items(contract.get("referenceNames"))
+        if (
+            not isinstance(files, list)
+            or len(files) != len(expected_names)
+            or any(
+                not isinstance(record, Mapping)
+                or set(record) != {"name", "path", "digest", "size"}
+                or record.get("name") not in expected_names
+                or record.get("path") != record.get("name")
+                or not isinstance(record.get("size"), int)
+                or not isinstance(record.get("digest"), str)
+                or re.fullmatch(r"[0-9a-f]{64}", str(record.get("digest"))) is None
+                for record in files
+            )
+        ):
+            errors.append("evidence MCP reference catalog files are invalid")
+            return
+        computed = hashlib.sha256(
+            json.dumps(files, sort_keys=True, separators=(",", ":")).encode(
+                "utf-8"
+            )
+        ).hexdigest()
+        if computed != catalog.get("manifestDigest"):
+            errors.append(
+                "evidence MCP reference file records do not match their manifest digest"
+            )
+        try:
+            catalog_path, _catalog_marker = _resolve_evidence_reference(
+                value.get("catalogEvidence"),
+                evidence_path,
+            )
+        except ValueError:
+            return
+        reference_root = catalog_path.parent / "references"
+        for record in files:
+            assert isinstance(record, Mapping)
+            reference = reference_root / str(record["name"])
+            if reference.is_symlink() or not reference.is_file():
+                errors.append(
+                    "evidence MCP retained reference context is missing or unsafe"
+                )
+                continue
+            try:
+                content = reference.read_bytes()
+            except OSError:
+                errors.append(
+                    "evidence MCP retained reference context is unreadable"
+                )
+                continue
+            if (
+                record.get("size") != len(content)
+                or record.get("digest") != hashlib.sha256(content).hexdigest()
+            ):
+                errors.append(
+                    "evidence MCP retained reference context differs from its manifest"
+                )
         return
     if (
         set(catalog) != {"schema", "version", "manifestDigest", "skills", "files"}
@@ -2172,6 +2438,15 @@ def _validate_skills(
     errors: list[str],
     stale_reasons: list[str],
 ) -> None:
+    selected_skills = _string_items(
+        case.get("executionSkills")
+        if case.get("probeVariant") in {
+            "treatment",
+            "target-omitted",
+            "wrong-skill",
+        }
+        else case.get("requiredSkills")
+    )
     receipt_skills: dict[str, Mapping[str, object]] = {}
     skills = evidence.get("skills")
     if not isinstance(skills, list):
@@ -2182,10 +2457,10 @@ def _validate_skills(
             errors.append("each evidence skill must be a mapping with id")
             continue
         receipt_skills[str(item["id"])] = item
-    extra_skills = sorted(set(receipt_skills) - set(_string_items(case.get("requiredSkills"))))
+    extra_skills = sorted(set(receipt_skills) - set(selected_skills))
     for skill in extra_skills:
-        errors.append(f"evidence includes a skill outside case.requiredSkills: {skill}")
-    for skill in _string_items(case.get("requiredSkills")):
+        errors.append(f"evidence includes a skill outside case execution: {skill}")
+    for skill in selected_skills:
         item = receipt_skills.get(skill)
         if item is None:
             errors.append(f"evidence missing required skill: {skill}")
@@ -2235,7 +2510,16 @@ def _validate_legacy_skills(
     if not isinstance(evidence.get("skills"), list):
         errors.append("evidence skills must be a list")
         return
-    for skill in _string_items(case.get("requiredSkills")):
+    selected_skills = (
+        case.get("executionSkills")
+        if case.get("probeVariant") in {
+            "treatment",
+            "target-omitted",
+            "wrong-skill",
+        }
+        else case.get("requiredSkills")
+    )
+    for skill in _string_items(selected_skills):
         item = receipt_skills.get(skill)
         if item is None:
             errors.append(f"evidence missing required skill: {skill}")

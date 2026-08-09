@@ -72,6 +72,13 @@ probeCompletionRule:
   requiredVariants: [treatment, target-omitted, wrong-skill]
   comparisonIdentity: probeComparisonKey
   singleVariantStatus: unverified-as-complete-probe
+mcpAgentOpsReceiptPolicy:
+  base-case-only:
+    allowedProbeVariants: []
+    forbiddenProbeVariants: [treatment, target-omitted, wrong-skill]
+  probe-treatment-only:
+    allowedProbeVariants: [treatment]
+    forbiddenProbeVariants: [target-omitted, wrong-skill]
 mcpAgentOpsRunRequiredWhenApplicable:
   - serverName
   - version
@@ -319,8 +326,8 @@ notes:
   - Version-two skill evidence binds unsanitized source, effective model-visible content, selected resources, and sanitization actions.
   - Prepared source and case-definition drift make a receipt stale, and the prepared key binds toolchain and controlled-environment identity.
   - A full skill probe requires comparable treatment, target-omitted, and wrong-skill receipts with one probeComparisonKey.
-  - An MCP-enabled base-case receipt binds release version, launcher and runtime identities, exact staged catalog and host configuration artifacts, a run session, one satisfying process stream, same-call argument digests and bounded outcomes, and retained allowed-output evidence.
-  - MCP evidence is forbidden for skill-probe variants so the complete availability catalog cannot reintroduce an omitted treatment skill.
+  - An MCP-enabled base-case or declared probe treatment receipt binds release version, launcher and runtime identities, exact staged context and host configuration artifacts, a run session, one satisfying process stream, same-call argument digests and bounded outcomes, and retained allowed-output evidence.
+  - MCP evidence is allowed for a probe variant only when a versioned contract declares probe-treatment-only and the receipt is for treatment; target-omitted and wrong-skill controls forbid it.
   - Deterministic Judges run first and only a critical deterministic failure skips the Model Judge.
   - A Model Judge result is current only while every calibration identity and digest remains unchanged.
   - A canonical Model Judge request binds the selected case, run, harness, candidate-output artifact, and every governed evidence artifact by digest.
