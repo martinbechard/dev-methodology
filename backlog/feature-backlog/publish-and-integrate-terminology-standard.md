@@ -273,14 +273,14 @@ Condition Type: root-execution
 
 Owner: Dev Orchestrator task 019fe3d6-2dd6-7322-a507-e8ca961e27d8
 
-Evidence: The same canonical root execution remains active on the preserved branch and worktree. Dev Coder commit ae70fda537537b2df45193447d73b0de6c1e9605 cleanly changes exactly the seven newly approved treatment-only provider paths; its full focused runner module passed 123 of 123 tests, focused reference and MCP regressions passed 13 of 13, post-commit new tests passed 5 of 5, catalogs validated, and all changed Python paths compile. One direct exact-manifest narrowing notice was sent to the independent add-portable-agent-tournament-skill task at this clean boundary while retaining future shared-surface reconciliation. A fresh Dev Code Reviewer is reviewing only the seven-path delta, and the original Dev Coder is separately correcting exactly the two previously unresolved generator-copy findings without touching generated HTML or another shared surface.
+Evidence: The same canonical root execution remains active on the preserved branch and worktree. Dev Coder commit ae70fda537537b2df45193447d73b0de6c1e9605 cleanly changes exactly the seven newly approved treatment-only provider paths; its full focused runner module passed 123 of 123 tests, focused reference and MCP regressions passed 13 of 13, post-commit new tests passed 5 of 5, catalogs validated, and all changed Python paths compile. Commit 2ba452fb5cb927a9d18e38346056e2af3340aa2a then corrects exactly the two accepted generator-copy findings without changing generated HTML or another shared surface; fresh independent non-security review returned GOOD after three focused tests, compilation, terminology review, and exact diff checks passed. The first seven-path reviewer stopped before source inspection under the Codex cybersecurity-routing safeguard; the Coordinator classified that receipt as a non-blocking review exclusion and authorized the already-running ordinary contract/code review and independent verification. The user-installed reference provider remains 0.5.1 while the development provider now identifies as 0.8.0, so no shared installation or catalog runtime identity has been inferred from the earlier 0.7.0 analysis.
 
-Observed At: 2026-08-09T05:08:40Z
+Observed At: 2026-08-09T05:19:38Z
 
 Started At: 2026-08-09T04:27:45Z
 
 Deadline or Expires At: 2026-08-09T06:27:45Z
 
-Next Action: Reconcile the fresh seven-path source review and the exact two-file generator-copy correction, then obtain independent source verification without repeating accepted fixture gates or entering deferred shared surfaces
+Next Action: Reconcile the fresh seven-path functional review, obtain independent source verification for the accepted private candidate, and reconcile the current provider runtime identity before entering any owner-deferred catalog, shared-installation, generated-output, live-model, or main-integration surface
 
-Next Reconciliation At: 2026-08-09T05:23:40Z
+Next Reconciliation At: 2026-08-09T05:34:38Z
