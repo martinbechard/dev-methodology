@@ -10,9 +10,9 @@ Branch: codex/add-portable-agent-tournament-skill
 
 Worktree: /Users/martinbechard/.codex/worktrees/1bbe/dev-methodology
 
-Phase: Blocked — Tournament Example Contract Drift
+Phase: Completed — Crisis Recovery
 
-Status: Blocked
+Status: Completed
 
 Type: Feature
 
@@ -218,3 +218,15 @@ Unblock Condition: Record one new explicit bounded recovery disposition authoriz
 Preserved Candidate: fddcf4d12a85109419656dab4800c16ecc2b3580 on branch codex/add-portable-agent-tournament-skill in clean worktree /Users/martinbechard/.codex/worktrees/1bbe/dev-methodology.
 
 Current Disposition: No source mutation, configured-root validation, shared review, installation, live-model evaluation, integration, or further correction is authorized while Blocked. Canonical identity, candidate history, prior GOOD reviews, failed verifier evidence, and final focused NEEDS_CORRECTION verdicts remain preserved.
+
+## Crisis Completion Evidence
+
+Completed At: 2026-08-09
+
+Coordinator: Dev Backlog Coordinator task `019fb057-1767-7ef2-b5fa-41f4417b20b3` operating in user-directed SOLO crisis mode.
+
+Recovery: Commit `91cfae89088dc36cbfc62a277f1d5a9ea5f8558f` synchronizes the example asset with the accepted retry contract. Main commits `5d0d739c`, `5c3a33fa`, `bd7b3f63`, `6c6bc75c`, and `3337305f` preserve the accepted package history; integration commit `a040c7da8dd3456acf90566bee7fea65f48d40dd` registers the skill and regenerates its projections.
+
+Verification: The package YAML contract assertions, repository Agent Skill validator, OpenAI metadata check, document provenance validation, Markdown links, catalog validation, focused bundle regression, generated freshness, and full combined bundle gates passed. The corrected contract and example now agree on immutable attempt identities, candidate/case/repeat and overall maxima, conditional retry identity, duplicate and gate-bypass rejection, prior-run linkage, and cumulative accounting.
+
+Boundaries: No user-level installation, live-model run, remote publication, or unrelated source change occurred.
