@@ -12,7 +12,7 @@ Branch: `codex/integrate-documentation-design-system-019fe3cd`
 
 Worktree: `/Users/martinbechard/.codex/worktrees/df8a/dev-methodology`
 
-Phase: Correcting — Integrate Documentation Design System
+Phase: Implementing — Integrate Documentation Design System
 
 Type: Feature
 
@@ -247,14 +247,14 @@ Condition Type: root-execution
 
 Owner: Dev Orchestrator task 019fe3cd-577c-76b1-965c-06fb8793ae42
 
-Evidence: Coordinator recovery disposition authorizes exactly one exceptional third bounded correction cycle under the original coder, and no fourth. Candidate `20a0b9bf8a05984571ef226961e323e256b1d5b8` is immutable before source mutation; prior correction commits are `74f91cae` and `20a0b9bf`. The four authorized source units are: runner suite-relative executable case; inclusive 115% cost-band equivalence; faithful/fail-closed Decimal extreme, overflow, and underflow JSON handling; and recursive nested object/array default/example validation in `build-skill-docs` plus its focused test. Require failing focused regressions first, smallest implementation, immutable replacement candidate, one fresh focused review, and verifier. Final maintained-document ACCEPT and static UX ACCEPT remain accepted; final code review remains CHANGES REQUIRED with the four material findings; verifier is BAD. The fifth stale support-checklist gate is reserved only for the owning generator at legitimate fresh-main combination; no hand edit/current-main now. Late methodology/prompt review packets remain unresolved outside this authorized correction (README evidence wording, public NOT TESTED description, non-Codex delegation/input/fixture portability concerns); those paths remain untouched. Existing prior focused GREEN evidence, baseline isolation, exclusions, and no browser/live model/install/publication/merge evidence remain preserved. Remaining scope is exactly the bounded third correction cycle and fresh focused review/verifier, with Coordinator disposition required before any fourth action; no new scope. No source mutation, gate rerun, dispatch, lifecycle change, or terminology disturbance has occurred.
+Evidence: Coordinator recovery plan commit `88337179` authorizes exactly one exceptional third bounded correction cycle under the original coder, and no fourth. Immutable candidate `20a0b9bf8a05984571ef226961e323e256b1d5b8` and prior correction commits `74f91cae` and `20a0b9bf` remain preserved. Original coder completed third-cycle discovery and confirmed all four defects plus approved suite-local fixture placement; only RED tests were added in `evals/agent-tests/methodology-design-system-checklist-runner/test_contract.py`, `evals/agent-tests/methodology-design-system-review-coordinator/test_coordination_simulator.py`, and `scripts/test_bundle_content.py`. The checklist staging regression demonstrably errors `FileNotFoundError`; other precise RED runs remain pending due truncated combined output. Coder paused safely at `2026-08-09T03:46:29Z`; no implementation, green result, or commit yet. Retain dirty test-only edits untouched and unstaged. Four authorized source units remain: runner suite-relative executable case; inclusive 115% cost-band equivalence; faithful/fail-closed Decimal extreme, overflow, and underflow JSON handling; and recursive nested object/array default/example validation in `build-skill-docs` plus focused test. Final maintained-document ACCEPT and static UX ACCEPT remain accepted; final code review remains CHANGES REQUIRED with the four material findings; verifier is BAD. The fifth stale support-checklist gate is reserved only for the owning generator at legitimate fresh-main combination; no hand edit/current-main now. Late methodology/prompt review packets remain unresolved outside this authorized correction and untouched. Existing prior focused GREEN evidence, baseline isolation, exclusions, and no browser/live model/install/publication/merge evidence remain preserved. Remaining scope is exactly concise RED capture for all four, minimal bounded implementation, focused green, immutable replacement candidate, and one fresh focused review/verifier; no new scope or fourth cycle. No source mutation, gate rerun, dispatch, lifecycle change, or terminology disturbance has occurred.
 
-Observed At: 2026-08-09T03:36:07Z
+Observed At: 2026-08-09T03:47:07Z
 
 Started At: 2026-08-08T23:57:32Z
 
 Deadline or Expires At: 2026-08-09T05:00:00Z
 
-Next Action: Original coder writes failing regressions for the exact four authorized units, implements minimal corrections, commits an immutable replacement candidate, then obtains one fresh focused review and verifier; no fourth cycle.
+Next Action: Reacquire the Work Item activity=work claim, then resume the original coder to capture concise RED for all four, implement the smallest bounded fixes, run focused green, and commit an immutable replacement candidate before one fresh focused review/verifier.
 
-Next Reconciliation At: 2026-08-09T03:48:00Z
+Next Reconciliation At: 2026-08-09T04:00:00Z
