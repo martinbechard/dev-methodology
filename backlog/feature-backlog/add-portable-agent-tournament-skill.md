@@ -10,7 +10,7 @@ Branch: codex/add-portable-agent-tournament-skill
 
 Worktree: /Users/martinbechard/.codex/worktrees/1bbe/dev-methodology
 
-Phase: Implementing — Exceptional verifier correction
+Phase: Blocker handoff — Exceptional review failure
 
 Status: Running
 
@@ -181,21 +181,21 @@ Next Reconciliation At: 2026-08-09T04:47:00Z
 
 ## Active Execution Evidence
 
-Condition Type: delegated-work
+Condition Type: owned-wait
 
-Owner: Dev Coder execution /root/tournament_skill_coder under Dev Orchestrator task 019fe4cb-b4f3-7563-8ece-a60e567aae29
+Owner: Dev Backlog Coordinator task 019fb057-1767-7ef2-b5fa-41f4417b20b3
 
-Evidence: Fresh read-only Dev Code Reviewer execution /root/tournament_source_review and Methodology Artifact Reviewer execution /root/tournament_methodology_review both returned GOOD for clean candidate e4391cf3907e94771b658e4a4ef819fb7c4eeb2c, but independent Dev Verifier execution /root/tournament_private_verification returned FAIL because references/tournament-contract.md lines 61 and 157 enumerate distinct candidate-case-repeat-attempt and conditional retry rows while line 229 says to rerun the invalid row, permitting duplicate attempt identity and bypass of the conditional retry gate, prior-run linkage, and cumulative call accounting; line 147 also phrases maxima per row although each row is one exact attempt. Every other focused deterministic check passed and the four-path candidate remains clean. Dev Backlog Coordinator task 019fb057-1767-7ef2-b5fa-41f4417b20b3 supplied an exceptional recovery disposition authorizing exactly one final bounded correction cycle against candidate e4391cf3907e94771b658e4a4ef819fb7c4eeb2c, with mutation authority limited to skills/run-agent-tournament/references/tournament-contract.md. Required semantics are: each row is one attempt and maxima live at the candidate/case/repeat or overall accounting boundary; an invalid attempt is never rerun under the same row or identity; resume enters the already-authorized conditional-retry row with fresh identity, explicit prior-run linkage, preserved authorization, and cumulative accounting continuity; duplicate identity and conditional-gate bypass are prohibited. Original Dev Coder execution /root/tournament_skill_coder owns that one-path correction after this durable refresh. Fresh focused source and methodology review plus independent verification are required for the replacement; no further correction cycle, new path, shared surface, retry type, catalog/generator, or integration action is authorized. Configured MCP outside-root and all terminology-retained shared surfaces remain deferred. Exact Work Item activity=work claim add-portable-agent-tournament-skill-019fe4cb-root-work remains live and was heartbeated at 2026-08-09T06:34:23.801869Z, journal event 3d4ad7b2-d85e-4884-919e-f7fe18c3b923. The exact provider-path claim add-portable-agent-tournament-skill-019fe4cb-blocker-evidence-1 was acquired before the Coordinator exception arrived and protects this single correction-evidence refresh, outcome SHARED_CHECKOUT_ACQUIRED, journal event 39bdc380-548e-45bc-b132-db2ec37e5dc6.
+Evidence: Original Dev Coder execution /root/tournament_skill_coder produced clean exceptional replacement candidate fddcf4d12a85109419656dab4800c16ecc2b3580 with a one-path contract delta that correctly establishes immutable attempt rows, candidate/case/repeat and overall maxima, conditional retry identity, prior-run linkage, preserved authorization, cumulative accounting, and duplicate-identity and retry-gate-bypass prohibition. Fresh read-only Dev Code Reviewer execution /root/tournament_source_review and Methodology Artifact Reviewer execution /root/tournament_methodology_review both returned NEEDS_CORRECTION because the unchanged normative assets/tournament.example.yaml contradicts that contract: it retains maximum_attempts_per_matrix_row and maximum_retries_per_matrix_row, per-row maximum_live_calls, no candidate-case-repeat combination maximum structure, and audit/report shapes that omit unique-attempt rejection, retry-gate-bypass rejection, combination limits, and cumulative accounting continuity. The example asset was outside the Coordinator-authorized exceptional mutation path. Exact one-path delta, full four-path manifest, provenance, YAML, links, both diff checks, and clean worktree pass, but the package is not ready. The exceptional recovery cycle is exhausted and no further correction, verification, configured-root validation, shared review, or integration is authorized. Candidate fddcf4d12a85109419656dab4800c16ecc2b3580, branch codex/add-portable-agent-tournament-skill, worktree /Users/martinbechard/.codex/worktrees/1bbe/dev-methodology, all prior GOOD review evidence, failed verifier evidence, and both final focused verdicts are preserved. Terminology release commit e18b08496a7b998daebdf8fb585110c8893b0758 remains preservation evidence only because shared review and main integration are retained. Configured MCP outside-root remains a separate deferred gate. Status remains Running only until Dev Backlog Coordinator task 019fb057-1767-7ef2-b5fa-41f4417b20b3 directly records Running to Blocked with Owner Unowned after claim cleanup. Exact Work Item activity=work claim add-portable-agent-tournament-skill-019fe4cb-root-work was heartbeated at 2026-08-09T06:42:16.358973Z, journal event d2b6cfe2-bddc-4b4f-84cb-8c5b7b55fb34, and will be released once with disposition blocked and blocker reference correction-authority-exhausted:tournament-example-contract-drift after this handoff transaction. This blocker handoff is protected by exact backlog-path claim add-portable-agent-tournament-skill-019fe4cb-exceptional-rereview-evidence-1, outcome SHARED_CHECKOUT_ACQUIRED, journal event bed681bc-e559-4a67-b896-209b03f85c9a.
 
-Observed At: 2026-08-09T06:35:39Z
+Observed At: 2026-08-09T06:44:07Z
 
-Started At: 2026-08-09T06:35:00Z
+Started At: 2026-08-09T06:44:00Z
 
-Deadline or Expires At: 2026-08-09T06:55:00Z
+Deadline or Expires At: 2026-08-09T07:00:00Z
 
-Next Action: Collect the one-path replacement candidate from original Dev Coder execution /root/tournament_skill_coder, then obtain fresh focused source and methodology verdicts and independent verification without opening another correction cycle
+Next Action: After exact blocked claim release, Dev Backlog Coordinator records Running to Blocked with Owner Unowned; unblock only after one new explicit bounded recovery disposition authorizes synchronization of skills/run-agent-tournament/assets/tournament.example.yaml with the accepted one-file contract semantics, exact focused acceptance assertions, and fresh review and verification
 
-Next Reconciliation At: 2026-08-09T06:49:00Z
+Next Reconciliation At: 2026-08-09T06:50:00Z
 
 ## Running Resource Claim Evidence
 
