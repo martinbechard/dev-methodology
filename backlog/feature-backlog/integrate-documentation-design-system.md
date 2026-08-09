@@ -244,14 +244,14 @@ Condition Type: root-execution
 
 Owner: Dev Orchestrator task 019fe3cd-577c-76b1-965c-06fb8793ae42
 
-Evidence: canonical root execution owns clean candidate commit `b45719f78c1dcd74f704998e4553a1bc973f140e` (unchanged branch/worktree, 73 authorized files); original coder is paused safely at 2026-08-09T01:49Z with no command running and unstaged/uncommitted corrections preserved. Correction attempt 1 is GREEN for runner contract plus coordinator simulator: 19 tests OK; exact assignment/report validation, seven-field coordinator output, retry/conflict/unavailable handling, Decimal cost/ranking/ties, suite-local contract skills, coordinator-only fixture/task, and adverse scenario wiring are implemented. Remaining are role nested schemas/NOT TESTED/read-only wording; generator schema parsing/rendering/eight adapters; review-skill invocation fix; CSS/new HTML/README static corrections; catalogs/evaluation docs; full verification and correction commit. The singleton `scripts/test_agent_skill_evaluation_docs.py` authorization remains durable, with five expectation corrections in scope and the Future Ideas failure excluded. Existing HTML and terminology remain excluded; all 15 governed receipts and four dependents remain reconciled; no source mutation has begun. The direct overlap boundary with `publish-and-integrate-terminology-standard` is acknowledged; both tasks defer shared overlap events and preserve each other.
+Evidence: canonical root execution owns clean candidate commit `b45719f78c1dcd74f704998e4553a1bc973f140e` (unchanged branch/worktree, 73 authorized files); coder is paused safely with no command running and corrections preserved. Schema-generation checkpoint: role-schema v8 and strict nested output schemas are implemented; generator validation/rendering passes for authorized skill/role JS, evaluation HTML, manifest, and exactly eight adapters; hierarchy is unchanged; three freshness checks are green; deterministic suite is 19/19. Static plus evaluation-doc run is 40: static checks green, with the preserved pre-existing Future Ideas failure and three newly surfaced expectation mismatches not authorized for editing (main probe 140 expected/141 actual, directProbe 140/141, agent cards 30/32), likely catalog topology or requiring further exact Coordinator disposition; coder did not change them. Supplied-checklist skill, docs/README corrections, and runtime-specific read-only truth are recorded. The singleton test-path authorization remains durable; existing HTML and terminology remain excluded; all 15 governed receipts and four dependents remain reconciled; no source mutation has begun. The direct overlap boundary with `publish-and-integrate-terminology-standard` is acknowledged; both tasks defer shared overlap events and preserve each other.
 
-Observed At: 2026-08-09T01:50:01Z
+Observed At: 2026-08-09T02:00:28Z
 
 Started At: 2026-08-08T23:57:32Z
 
 Deadline or Expires At: 2026-08-09T03:15:00Z
 
-Next Action: Reacquire the Work Item activity=work claim, then resume the same original coder for remaining schema/generator/review-skill/static/catalog corrections, generation, verification, and commit without widening scope.
+Next Action: Reacquire the Work Item activity=work claim, then resume bounded read-only catalog-authority investigation; use allowed source catalogs if correct, otherwise request exact Coordinator disposition before test mutation, then run bundle/full gates and commit without widening scope.
 
-Next Reconciliation At: 2026-08-09T02:05:00Z
+Next Reconciliation At: 2026-08-09T02:15:00Z
