@@ -247,14 +247,14 @@ Condition Type: root-execution
 
 Owner: Dev Orchestrator task 019fe3cd-577c-76b1-965c-06fb8793ae42
 
-Evidence: canonical root execution owns corrected clean candidate `74f91caefe815dddca503502a388668be6cb94df`; coder is paused after a long command with no command, staging, or commit, and corrections are preserved. Final-audit evidence is GREEN: runner/coordinator 22/22; static 13/13; schema plus authorized role-v8 2/2; fixture oracle PASS; two skill validators pass; technology detection, skill docs, hierarchy, evaluation docs, and catalogs are current/valid; diff check is clean. Eval-doc coverage is 28 tests with exactly one historical Future Ideas ID. Broad discovery scripts report 947 tests, 17 failures, 2 errors, and 2 skipped across unrelated or pre-existing resource claims/helper docs/support/technology renderer/watchdog/historical drift; output was truncated and is not accepted as a candidate pass/fail, requiring scoped baseline isolation. No focused in-scope failure. Remaining scope is exactly the scoped support-only bundle expectation, provenance audit, final diff/status, and commit; no new scope or blocker. Existing HTML, terminology, Future Ideas, and support remain excluded except the explicitly scoped support-only bundle expectation; all 15 governed receipts and five dependent paths remain reconciled; no source mutation has begun. The direct overlap boundary with `publish-and-integrate-terminology-standard` is acknowledged; both tasks defer shared overlap events and preserve each other.
+Evidence: correction attempt 2 is committed clean as candidate HEAD `20a0b9bf8a05984571ef226961e323e256b1d5b8` with commits `b45719f7`, `74f91cae`, and `20a0b9bf` on base `36f8c1be`; no command or mutation is in progress. Attempt-2 GREEN evidence: runner/coordinator 22/22; static 13/13; schema plus authorized role-v8 focused 2/2; full role mutation 17/17; fixture oracle PASS; source and Codex validators pass; technology detection, skill docs, hierarchy, evaluation docs current; catalogs valid; project provenance 5/5 with historical/runtime-envelope evidence retained; diff/check clean; worktree clean; support projection untouched. Baseline isolation records bundle 172/173 with only the excluded support projection, eval docs 27/28 due to one historical Future Ideas ID, eval/workflow 140/141 due to unrelated terminology harness, and broad discovery 947 with unrelated drift reported only. No browser/live model/install/publication/merge. Remaining scope is exactly fresh final code/methodology/prompt/docs-UX review plus verifier, then browser/current-main integration, post-combination verification, and dossier; no new scope or blocker. Existing HTML, terminology, Future Ideas, and support remain excluded; all 15 governed receipts and five dependent paths remain reconciled; no source mutation has begun. The direct overlap boundary with `publish-and-integrate-terminology-standard` is acknowledged; both tasks defer shared overlap events and preserve each other.
 
-Observed At: 2026-08-09T03:13:18Z
+Observed At: 2026-08-09T03:19:08Z
 
 Started At: 2026-08-08T23:57:32Z
 
 Deadline or Expires At: 2026-08-09T05:00:00Z
 
-Next Action: Reacquire the Work Item activity=work claim, then resume the original coder for scoped gates, provenance audit, final diff/status, and commit without widening scope.
+Next Action: Reacquire the Work Item activity=work claim, then start fresh final code/methodology/prompt/docs-UX review plus verifier, followed by browser/current-main integration, post-combination verification, and dossier without widening scope.
 
-Next Reconciliation At: 2026-08-09T03:28:00Z
+Next Reconciliation At: 2026-08-09T03:34:00Z
