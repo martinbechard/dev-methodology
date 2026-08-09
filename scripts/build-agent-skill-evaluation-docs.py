@@ -706,7 +706,7 @@ def build_model(root: Path = REPOSITORY_ROOT) -> dict[str, object]:
                 "latestGovernedOutcome": latest_outcome,
                 "limitation": (
                     "A probe declaration or linked agent-suite Evaluation result is not a skill-level pass. "
-                    "The selected Campaign publishes no skill-level Evaluation result or calibrated skill verdict."
+                    "The selected Test report publishes no skill-level Evaluation result or calibrated skill verdict."
                 ),
             }
         )
@@ -904,7 +904,7 @@ def render_skill_card(skill: dict[str, object]) -> str:
       <h4>Governed campaign links</h4>
       {governed_html}
       <dl class="compact-list">
-        <div><dt>Latest governed Evaluation result</dt><dd>{escape(skill['latestGovernedOutcome'])}</dd></div>
+        <div><dt>Linked governed Evaluation results</dt><dd>{escape(skill['latestGovernedOutcome'])}</dd></div>
         <div><dt>Evidence level</dt><dd>No skill-level Evaluation result; linked Evaluation results remain agent-scenario evidence</dd></div>
         <div><dt>Limitation</dt><dd>{escape(skill['limitation'])}</dd></div>
       </dl>
@@ -1170,7 +1170,7 @@ def render_page(model: dict[str, object]) -> str:
     <div class="grid">
       <article class="method-card"><h3>Evaluation layers</h3><ul><li>Structural validation checks catalogs, schemas, links, source digests, and harness policy.</li><li>Agent suites exercise responsibility, output, mutation, decision, delegation, and terminal-state contracts.</li><li>Skill probes diagnose activation, negative activation, expected behavior, ablation, and controls. They are not exhaustive skill verification.</li><li>Workflow evidence checks handoffs, claims, integration, verification, and completion across declared dependencies.</li></ul></article>
       <article class="method-card"><h3>Workspace and privacy</h3><ul><li>Ordinary cases use disposable workspaces with isolated harness state and synthetic inputs.</li><li>Inputs must exclude personal, customer, confidential, credential, and secret material.</li><li>Functional isolation compares complete before-and-after workspace manifests and allowed changes.</li><li>Security containment is a separate claim. Local reproducibility or a tool allowlist does not prove hostile-code containment.</li></ul></article>
-      <article class="method-card"><h3>Evaluation results and Judges</h3><ul><li><strong>PASS:</strong> A Test suite PASS means the Test suite accepted the target behavior against its gates. A target can correctly return BLOCKED inside a Test suite PASS when the scenario tests a governed boundary.</li><li><strong>FAIL:</strong> the Campaign recorded a reproducible target, skill, or test-contract defect.</li><li><strong>BLOCKED:</strong> the Campaign recorded a governed boundary or unavailable semantic acceptance; the Test suite was not left unexecuted.</li><li>A Judge pass is a separate semantic dimension and is not interchangeable with the Test suite Evaluation result.</li><li>A Deterministic critical skip means an exact critical boundary prevented Model Judge execution; it does not mean a Model Judge passed.</li><li>Human Judges create gold labels and adjudicate ambiguity. Calibration promotion is disabled, so the current state is <strong>Uncalibrated Model Judge</strong>.</li></ul></article>
+      <article class="method-card"><h3>Evaluation results and Judges</h3><ul><li><strong>PASS:</strong> A Test suite PASS means the Test suite accepted the target behavior against its gates. A target can correctly return BLOCKED inside a Test suite PASS when the scenario tests a governed boundary.</li><li><strong>FAIL:</strong> A FAIL Evaluation result records a reproducible target, skill, or test-contract defect.</li><li><strong>BLOCKED:</strong> A BLOCKED Evaluation result records a governed boundary or unavailable semantic acceptance; the Test suite was not left unexecuted.</li><li>A Judge pass is a separate semantic dimension and is not interchangeable with the Test suite Evaluation result.</li><li>A Deterministic critical skip means an exact critical boundary prevented Model Judge execution; it does not mean a Model Judge passed.</li><li>Human Judges create gold labels and adjudicate ambiguity. Calibration promotion is disabled, so the current state is <strong>Uncalibrated Model Judge</strong>.</li></ul></article>
     </div>
   </section>
 
@@ -1191,7 +1191,7 @@ def render_page(model: dict[str, object]) -> str:
       <article class="metric"><strong>{model['associationCatalogCounts']['workflowPacks']}</strong><span>Workflow packs</span></article>
     </div>
     <div class="grid" style="margin-top:1rem">
-      <article class="method-card"><h3>Skill catalog states</h3><ul><li>{summary['directGovernedSkillCount']} skills have a direct governed Evaluation result.</li><li>{summary['directProbeSkillCount']} skills have a direct diagnostic probe declaration but no direct Evaluation result.</li><li>{summary['indirectOnlySkillCount']} skills have only indirect current Test suite coverage without a direct probe or Evaluation result.</li><li>{summary['noRecordedEvidenceSkillCount']} skills have no recorded evaluation evidence.</li><li>{summary['skillsWithGovernedLinks']} skills are named by at least one selected-Campaign scenario; {summary['skillsWithoutGovernedLinks']} are not.</li></ul><p><strong>No skill-level Evaluation result:</strong> the selected Campaign publishes no skill-level Evaluation results, so linked PASS results remain agent-scenario evidence.</p></article>
+      <article class="method-card"><h3>Skill catalog states</h3><ul><li>{summary['directGovernedSkillCount']} skills have a direct governed Evaluation result.</li><li>{summary['directProbeSkillCount']} skills have a direct diagnostic probe declaration but no direct Evaluation result.</li><li>{summary['indirectOnlySkillCount']} skills have only indirect current Test suite coverage without a direct probe or Evaluation result.</li><li>{summary['noRecordedEvidenceSkillCount']} skills have no recorded evaluation evidence.</li><li>{summary['skillsWithGovernedLinks']} skills are named by at least one selected-Campaign scenario; {summary['skillsWithoutGovernedLinks']} are not.</li></ul><p><strong>No skill-level Evaluation result:</strong> the selected Test report publishes no skill-level Evaluation results, so linked PASS results remain agent-scenario evidence.</p></article>
     </div>
   </section>
 

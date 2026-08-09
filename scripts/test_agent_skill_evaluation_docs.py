@@ -450,8 +450,12 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
             "<th>Evaluation result</th>",
             "Campaign Test suites / current Test suites",
             "Campaign Evaluation results / current scenarios",
+            "Linked governed Evaluation results",
             "no skill-level Evaluation result or calibrated skill verdict",
-            "publishes no skill-level Evaluation results",
+            "The selected Test report publishes no skill-level Evaluation result or calibrated skill verdict",
+            "the selected Test report publishes no skill-level Evaluation results",
+            "A FAIL Evaluation result records a reproducible target, skill, or test-contract defect",
+            "A BLOCKED Evaluation result records a governed boundary or unavailable semantic acceptance",
             "Selected Campaign Test report",
         ):
             with self.subTest(text=text):
@@ -462,6 +466,10 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
             "skill receipts",
             "Campaign verdict results",
             "<th>Campaign verdict</th>",
+            "Latest governed Evaluation result",
+            "The selected Campaign publishes",
+            "the selected Campaign publishes",
+            "the Campaign recorded",
         ):
             with self.subTest(obsolete=obsolete):
                 self.assertNotIn(obsolete, self.page)
