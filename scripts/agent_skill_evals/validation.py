@@ -1711,6 +1711,7 @@ def _validate_model_visible_projection_run(
         "preparedSnapshotDigest",
         "sourceIdentityDigest",
         "postSyncSourceIdentityDigest",
+        "preparedEntries",
         "projectionManifestDigest",
         "projectionEvidence",
         "projectionEvidenceDigest",
@@ -1768,6 +1769,11 @@ def _validate_model_visible_projection_run(
                 "evidence projection source identity differs from the prepared full-fixture snapshot"
             )
 
+    prepared_entries = _validate_prepared_inventory_records(
+        value.get("preparedEntries"),
+        case,
+        errors,
+    )
     projected_inputs = _validate_projected_input_records(
         value.get("projectedInputs"),
         _string_items(case.get("modelVisiblePaths")),
@@ -1782,7 +1788,42 @@ def _validate_model_visible_projection_run(
     )
     created_directories = _validate_projection_directory_records(
         value.get("createdDirectories"),
-        sync_paths,
+        errors,
+    )
+    prepared_by_path = {
+        str(entry["path"]): entry
+        for entry in prepared_entries
+        if isinstance(entry.get("path"), str)
+    }
+    prepared_digest = _projection_inventory_digest(prepared_entries)
+    if prepared_digest is not None and (
+        value.get("preparedSnapshotDigest") != prepared_digest
+        or value.get("sourceIdentityDigest") != prepared_digest
+    ):
+        errors.append(
+            "evidence projection prepared inventory digest differs from its declared source identity"
+        )
+    selected_prepared = [
+        prepared_by_path[path]
+        for path in sorted(prepared_by_path)
+        if any(
+            _relative_path_contains(selected, path)
+            for selected in _string_items(case.get("modelVisiblePaths"))
+        )
+    ]
+    projected_core = [
+        {field: record.get(field) for field in ("path", "type", "mode", "digest", "size")}
+        for record in projected_inputs
+    ]
+    if projected_core != selected_prepared:
+        errors.append(
+            "evidence projectedInputs must be the exact selected prepared subset"
+        )
+    _validate_projection_post_inventory(
+        prepared_entries,
+        mutations,
+        created_directories,
+        value.get("postSyncSourceIdentityDigest"),
         errors,
     )
     projection_artifact = _load_projection_json_artifact(
@@ -1795,9 +1836,10 @@ def _validate_model_visible_projection_run(
     if projection_artifact is not None:
         expected_projection = {
             "schema": "dev-methodology-eval-model-visible-projection",
-            "version": 2,
+            "version": 3,
             "preparedSnapshotDigest": value.get("preparedSnapshotDigest"),
             "sourceIdentityDigest": value.get("sourceIdentityDigest"),
+            "preparedEntries": prepared_entries,
             "modelVisiblePaths": _string_items(case.get("modelVisiblePaths")),
             "evaluatorOnlyPaths": evaluator_only,
             "syncPaths": sync_paths,
@@ -1820,11 +1862,12 @@ def _validate_model_visible_projection_run(
     if sync_artifact is not None:
         expected_sync = {
             "schema": "dev-methodology-eval-model-visible-projection-sync",
-            "version": 2,
+            "version": 3,
             "preparedSnapshotDigest": value.get("preparedSnapshotDigest"),
             "sourceIdentityDigest": value.get("sourceIdentityDigest"),
             "postSyncSourceIdentityDigest": value.get("postSyncSourceIdentityDigest"),
             "projectionManifestDigest": value.get("projectionManifestDigest"),
+            "preparedEntries": prepared_entries,
             "modelVisiblePaths": _string_items(case.get("modelVisiblePaths")),
             "evaluatorOnlyPaths": evaluator_only,
             "projectedInputs": projected_inputs,
@@ -1898,6 +1941,187 @@ def _validate_projected_input_records(
     return records
 
 
+def _validate_prepared_inventory_records(
+    value: object,
+    case: Mapping[str, object],
+    errors: list[str],
+) -> list[dict[str, object]]:
+    """Validate the complete pre-run fixture inventory against current catalog bytes."""
+
+    if not isinstance(value, list) or not value:
+        errors.append("evidence preparedEntries must be a non-empty list")
+        return []
+    records: list[dict[str, object]] = []
+    observed: set[str] = set()
+    for index, item in enumerate(value):
+        if not isinstance(item, Mapping) or set(item) != {
+            "path", "type", "mode", "digest", "size",
+        }:
+            errors.append(f"evidence preparedEntries[{index}] has an invalid shape")
+            continue
+        path = item.get("path")
+        if not isinstance(path, str):
+            errors.append(f"evidence preparedEntries[{index}].path must be a string")
+            continue
+        _validate_case_relative_path(path, f"preparedEntries[{index}].path", errors)
+        if path in observed:
+            errors.append(f"evidence prepared inventory path is duplicated: {path}")
+        observed.add(path)
+        record = dict(item)
+        _validate_projection_entry_identity(
+            record,
+            f"preparedEntries[{index}]",
+            errors,
+        )
+        records.append(record)
+    if [str(record.get("path")) for record in records] != sorted(observed):
+        errors.append("evidence preparedEntries must use deterministic path order")
+
+    project = case.get("project")
+    expected: list[dict[str, object]] = []
+    if isinstance(project, str):
+        fixture_root = ROOT / project
+        if fixture_root.is_dir() and not fixture_root.is_symlink():
+            for relative, identity in sorted(
+                snapshot_tree(fixture_root, exclude_transient=True).items()
+            ):
+                kind, mode, *tail = identity.split(":", 2)
+                if kind == "dir":
+                    expected.append({
+                        "path": relative,
+                        "type": "directory",
+                        "mode": mode,
+                        "digest": None,
+                        "size": None,
+                    })
+                else:
+                    content = (fixture_root / relative).read_bytes()
+                    expected.append({
+                        "path": relative,
+                        "type": "file",
+                        "mode": mode,
+                        "digest": tail[0],
+                        "size": len(content),
+                    })
+    if not expected or records != expected:
+        errors.append(
+            "evidence preparedEntries differ from the current prepared fixture inventory"
+        )
+
+    visible = _string_items(case.get("modelVisiblePaths"))
+    contract = case.get("modelVisibleProjection")
+    evaluator = (
+        _string_items(contract.get("evaluatorOnlyPaths"))
+        if isinstance(contract, Mapping)
+        else []
+    )
+    for record in records:
+        path = str(record.get("path"))
+        memberships = (
+            any(_relative_path_contains(selected, path) for selected in visible),
+            any(_relative_path_contains(selected, path) for selected in evaluator),
+        )
+        if memberships.count(True) != 1:
+            errors.append(
+                "evidence preparedEntries do not form the exact model-visible and evaluator-only partition"
+            )
+            break
+    return records
+
+
+def _validate_projection_entry_identity(
+    item: Mapping[str, object],
+    field: str,
+    errors: list[str],
+) -> None:
+    entry_type = item.get("type")
+    mode = item.get("mode")
+    if entry_type not in {"file", "directory"}:
+        errors.append(f"evidence {field}.type must be file or directory")
+    if not isinstance(mode, str) or re.fullmatch(r"[0-7]{3,4}", mode) is None:
+        errors.append(f"evidence {field}.mode is invalid")
+    if entry_type == "directory":
+        if item.get("digest") is not None or item.get("size") is not None:
+            errors.append(f"evidence {field} directory must not claim file bytes")
+        return
+    _require_digest(item.get("digest"), f"{field}.digest", errors)
+    if not isinstance(item.get("size"), int) or item.get("size", -1) < 0:
+        errors.append(f"evidence {field}.size must be non-negative")
+
+
+def _projection_inventory_digest(
+    records: Sequence[Mapping[str, object]],
+) -> str | None:
+    if not records or any(not isinstance(record.get("path"), str) for record in records):
+        return None
+    snapshot: dict[str, str] = {}
+    for record in records:
+        path = str(record["path"])
+        if record.get("type") == "directory":
+            snapshot[path] = f"dir:{record.get('mode')}"
+        elif record.get("type") == "file":
+            snapshot[path] = f"file:{record.get('mode')}:{record.get('digest')}"
+        else:
+            return None
+    return snapshot_digest(snapshot)
+
+
+def _validate_projection_post_inventory(
+    prepared_entries: Sequence[Mapping[str, object]],
+    mutations: Sequence[Mapping[str, object]],
+    created_directories: Sequence[Mapping[str, str]],
+    declared_digest: object,
+    errors: list[str],
+) -> None:
+    """Derive the only valid post-sync inventory from the recorded pre-state and changes."""
+
+    expected = {str(entry.get("path")): dict(entry) for entry in prepared_entries}
+    mutation_paths = [
+        str(mutation.get("path"))
+        for mutation in mutations
+        if isinstance(mutation.get("path"), str)
+    ]
+    necessary_directories: set[str] = set()
+    for path in mutation_paths:
+        if path in expected:
+            errors.append("evidence projection mutation collides with the prepared inventory")
+        for parent in PurePosixPath(path).parents:
+            if parent.as_posix() != "." and parent.as_posix() not in expected:
+                necessary_directories.add(parent.as_posix())
+    observed_directories = {
+        str(record.get("path")) for record in created_directories
+    }
+    if observed_directories != necessary_directories:
+        errors.append(
+            "evidence createdDirectories must be the exact necessary post-sync ancestors"
+        )
+    for record in created_directories:
+        path = str(record.get("path"))
+        expected[path] = {
+            "path": path,
+            "type": "directory",
+            "mode": record.get("mode"),
+            "digest": None,
+            "size": None,
+        }
+    for mutation in mutations:
+        path = str(mutation.get("path"))
+        expected[path] = {
+            "path": path,
+            "type": "file",
+            "mode": mutation.get("mode"),
+            "digest": mutation.get("afterDigest"),
+            "size": mutation.get("size"),
+        }
+    derived = _projection_inventory_digest(
+        [expected[path] for path in sorted(expected)]
+    )
+    if derived is None or declared_digest != derived:
+        errors.append(
+            "evidence postSyncSourceIdentityDigest differs from the derived post-sync inventory"
+        )
+
+
 def _validate_projection_mutation_records(
     value: object,
     sync_paths: Sequence[str],
@@ -1966,7 +2190,6 @@ def _validate_projection_mutation_records(
 
 def _validate_projection_directory_records(
     value: object,
-    sync_paths: Sequence[str],
     errors: list[str],
 ) -> list[dict[str, str]]:
     if not isinstance(value, list):
@@ -1987,8 +2210,6 @@ def _validate_projection_directory_records(
         if path in observed:
             errors.append(f"evidence projection created directory is duplicated: {path}")
         observed.add(path)
-        if not any(_relative_path_contains(selected, path) for selected in sync_paths):
-            errors.append(f"evidence projection created directory is outside syncPaths: {path}")
         if not isinstance(mode, str) or re.fullmatch(r"[0-7]{3,4}", mode) is None:
             errors.append(f"evidence projection createdDirectories[{index}].mode is invalid")
         records.append({"path": path, "mode": str(mode)})
@@ -2140,7 +2361,7 @@ def _validate_projection_verifier_artifact(
         return
     expected_fields = {
         "schema", "version", "case", "argv", "commandContract",
-        "commandContractDigest", "exitCode", "passed", "outcome",
+        "commandContractDigest", "executionInputDigest", "exitCode", "passed", "outcome",
         "infrastructureFailure", "semanticResultDigest", "expectation",
         "expectedFixtureDigest", "fixtureDigestBefore", "fixtureDigestAfter",
         "fixtureUnchanged", "stdout", "stderr",
@@ -2157,10 +2378,13 @@ def _validate_projection_verifier_artifact(
         expected_argv = list(command_spec(case.get("verify")).argv)
     except ValueError:
         expected_argv = []
+    policy = _governed_projection_verifier_policy(case, errors)
+    semantic_field = policy[0] if policy is not None else None
+    semantic_red_exit = policy[1] if policy is not None else None
     outcome = artifact.get("outcome")
     if (
         artifact.get("schema") != "dev-methodology-eval-projection-verification"
-        or artifact.get("version") != 2
+        or artifact.get("version") != 3
         or artifact.get("case") != case.get("id")
         or artifact.get("argv") != expected_argv
         or artifact.get("expectation") != expected_expectation
@@ -2187,7 +2411,7 @@ def _validate_projection_verifier_artifact(
         errors.append("evidence projection verifier command digest differs from its artifact")
     for field in (
         "expectedFixtureDigest", "fixtureDigestBefore", "fixtureDigestAfter",
-        "commandContractDigest",
+        "commandContractDigest", "executionInputDigest",
     ):
         _require_digest(
             artifact.get(field),
@@ -2210,12 +2434,14 @@ def _validate_projection_verifier_artifact(
         errors,
     )
     semantic = _projection_semantic_result(artifact.get("stdout"))
-    semantic_field = (
-        artifact.get("commandContract", {}).get("semanticResultField")
-        if isinstance(artifact.get("commandContract"), Mapping)
-        else None
-    )
     semantic_value = semantic.get(semantic_field) if isinstance(semantic_field, str) and semantic else None
+    alternate_field = (
+        "exactBytesPreserved" if semantic_field == "passed" else "passed"
+    )
+    if semantic is not None and isinstance(semantic.get(alternate_field), bool):
+        errors.append(
+            "evidence projection verifier has a contradictory semantic result"
+        )
     semantic_digest = (
         hashlib.sha256(
             json.dumps(semantic, sort_keys=True, separators=(",", ":")).encode("utf-8")
@@ -2233,7 +2459,7 @@ def _validate_projection_verifier_artifact(
         errors.append("evidence projection verifier semantic-green outcome is invalid")
     if outcome == "semantic-red" and not (
         expected_expectation == "control-observation"
-        and artifact.get("exitCode") == 3
+        and artifact.get("exitCode") == semantic_red_exit
         and semantic_value is False
         and artifact.get("infrastructureFailure") is None
     ):
@@ -2257,20 +2483,29 @@ def _validate_projection_verifier_command_contract(
         "schema", "version", "case", "governedArgv", "interpreterName",
         "interpreterDigest", "sourceKind", "sourcePath", "sourceDigest",
         "sourceSize", "sourceEvidence", "executionScriptDigest",
-        "semanticResultField", "semanticRedExitCode",
+        "executionEvidence", "semanticResultField", "semanticRedExitCode",
     }
     if not isinstance(contract, Mapping) or set(contract) != expected_fields:
         errors.append("evidence projection verifier command contract has an invalid shape")
         return
     expected_argv = list(command_spec(case.get("verify")).argv)
+    policy = _governed_projection_verifier_policy(case, errors)
     if (
         contract.get("schema") != "dev-methodology-eval-projection-verifier-command"
-        or contract.get("version") != 1
+        or contract.get("version") != 2
         or contract.get("case") != case.get("id")
         or contract.get("governedArgv") != expected_argv
         or contract.get("interpreterName") != "python3"
     ):
         errors.append("evidence projection verifier command contract differs from the selected case")
+    if policy is not None and contract.get("semanticResultField") != policy[0]:
+        errors.append(
+            "evidence projection verifier command differs from the governed semantic result field"
+        )
+    if policy is not None and contract.get("semanticRedExitCode") != policy[1]:
+        errors.append(
+            "evidence projection verifier command differs from the governed semantic-red exit"
+        )
     for field in ("interpreterDigest", "sourceDigest", "executionScriptDigest"):
         _require_digest(contract.get(field), f"projection verifier command {field}", errors)
     computed_contract_digest = hashlib.sha256(
@@ -2278,6 +2513,55 @@ def _validate_projection_verifier_command_contract(
     ).hexdigest()
     if artifact.get("commandContractDigest") != computed_contract_digest:
         errors.append("evidence projection verifier command contract digest is stale")
+
+    execution_reference = contract.get("executionEvidence")
+    validate_reference(
+        execution_reference,
+        "projection verifier command executionEvidence",
+        evidence_path,
+        errors,
+    )
+    execution_artifact = _load_mcp_json_artifact(
+        execution_reference,
+        "projection verifier command executionEvidence",
+        evidence_path,
+        errors,
+    )
+    execution_bytes: bytes | None = None
+    if execution_artifact is not None:
+        if set(execution_artifact) != {
+            "schema", "version", "digest", "size", "contentBase64",
+        }:
+            errors.append(
+                "evidence projection verifier execution artifact has an invalid shape"
+            )
+        else:
+            try:
+                execution_bytes = base64.b64decode(
+                    str(execution_artifact.get("contentBase64")),
+                    validate=True,
+                )
+            except (ValueError, TypeError):
+                errors.append(
+                    "evidence projection verifier execution bytes are not canonical base64"
+                )
+            if execution_bytes is not None and (
+                execution_artifact.get("schema")
+                != "dev-methodology-eval-projection-verifier-execution"
+                or execution_artifact.get("version") != 1
+                or execution_artifact.get("digest")
+                != contract.get("executionScriptDigest")
+                or execution_artifact.get("size") != len(execution_bytes)
+                or hashlib.sha256(execution_bytes).hexdigest()
+                != contract.get("executionScriptDigest")
+            ):
+                errors.append(
+                    "evidence projection verifier execution bytes differ from the command contract"
+                )
+    if artifact.get("executionInputDigest") != contract.get("executionScriptDigest"):
+        errors.append(
+            "evidence projection verifier execution input differs from the command contract"
+        )
 
     source_reference = contract.get("sourceEvidence")
     validate_reference(
@@ -2346,9 +2630,11 @@ def _validate_projection_verifier_command_contract(
             expected_source = candidate.read_bytes()
             execution_content = (
                 "import sys\n"
+                f"_SOURCE = {expected_source!r}\n"
                 f"sys.argv = {json.dumps([source_path, *expected_argv[2:]])}\n"
-                f"__file__ = {json.dumps(source_path)}\n"
-            ).encode("utf-8") + expected_source
+                f"_NS = {{'__name__': '__main__', '__file__': {json.dumps(source_path)}}}\n"
+                f"exec(compile(_SOURCE, {json.dumps(source_path)}, 'exec'), _NS, _NS)\n"
+            ).encode("utf-8")
     if expected_source is None or execution_content is None:
         errors.append("evidence projection verifier source form is not governed")
         return
@@ -2356,6 +2642,35 @@ def _validate_projection_verifier_command_contract(
         errors.append("evidence projection verifier source differs from the governed evaluator source")
     if hashlib.sha256(execution_content).hexdigest() != contract.get("executionScriptDigest"):
         errors.append("evidence projection verifier execution script digest is stale")
+    if execution_bytes is not None and execution_bytes != execution_content:
+        errors.append(
+            "evidence projection verifier retained execution bytes differ from the governed form"
+        )
+
+
+def _governed_projection_verifier_policy(
+    case: Mapping[str, object],
+    errors: list[str],
+) -> tuple[str, int] | None:
+    """Derive semantic interpretation only from the selected governed case verifier."""
+
+    case_id = case.get("id")
+    catalog_case = load_cases().get(str(case_id))
+    policies = {
+        "terminology-standard-effect": ("passed", 3),
+        "terminology-standard-negative-activation": ("exactBytesPreserved", 3),
+    }
+    policy = policies.get(str(case_id))
+    if (
+        policy is None
+        or not isinstance(catalog_case, Mapping)
+        or case.get("verify") != catalog_case.get("verify")
+    ):
+        errors.append(
+            "selected case does not identify a supported governed projection verifier"
+        )
+        return None
+    return policy
 
 
 def _projection_semantic_result(stdout: object) -> Mapping[str, object] | None:

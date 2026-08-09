@@ -69,6 +69,7 @@ modelVisibleProjectionRunRequiredWhenApplicable:
   - preparedSnapshotDigest
   - sourceIdentityDigest
   - postSyncSourceIdentityDigest
+  - preparedEntries
   - projectionManifestDigest
   - projectionEvidence
   - projectionEvidenceDigest
@@ -88,14 +89,17 @@ modelVisibleProjectionRunRequiredWhenApplicable:
   - evaluatorVerificationCommandDigest
   - syncEvidenceStatus
 modelVisibleProjectionArtifactPolicy:
-  version: 2
+  version: 3
   receiptLocation: The receipt is stored in the owner-only artifact directory.
   references: Projection artifacts use normalized receipt-relative file-marker references.
   projectedEntries: Records include path, type, mode, digest, size, and retainedEvidence.
+  preparedEntries: The complete typed and mode-preserving non-runner prepared inventory is retained without evaluator-only bytes and must match the current catalog fixture.
   synchronizedMutations: Records include path, action, beforeDigest, afterDigest, size, mode, and retainedEvidence.
   retainedBytes: Projected input files and synchronized output files bind receipt-owned byte artifacts.
-  sourceBinding: The initial source identity equals preparedSnapshotDigest; verifier pre-state equals postSyncSourceIdentityDigest.
-  controlOutcome: A red control accepts only the declared semantic-red result; every other outcome blocks.
+  sourceBinding: The initial source identity is derived from preparedEntries and equals preparedSnapshotDigest; the post-sync identity is derived from that inventory plus exact created ancestors and mutations; verifier pre-state equals postSyncSourceIdentityDigest.
+  verifierExecution: Version-three verifier evidence binds the exact stdin digest to separately retained execution bytes, a resolved interpreter digest, and the governed evaluator source.
+  verifierSemantics: The selected governed verifier fixes its result field and semantic-red exit code; receipt-selected alternatives, contradictory booleans, and infrastructure failures block.
+  receiptAssembly: An explicit complete receipt template may opt into owner-only receipt assembly; the runner inserts only modelVisibleProjection and accepts the result only after direct classification.
 probeVariantValues:
   - treatment
   - target-omitted

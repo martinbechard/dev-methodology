@@ -158,6 +158,7 @@ class ProjectionManifestEvidence:
     evidence_path: Path
     content_digest: str
     manifest_digest: str
+    prepared_entries: tuple[dict[str, object], ...]
     projected_inputs: tuple[dict[str, object], ...]
 
 
@@ -931,9 +932,10 @@ def stage_model_visible_projection(
     )
     payload = {
         "schema": "dev-methodology-eval-model-visible-projection",
-        "version": 2,
+        "version": 3,
         "preparedSnapshotDigest": prepared_snapshot_digest,
         "sourceIdentityDigest": source_identity_digest,
+        "preparedEntries": [entry.__dict__ for entry in source_entries],
         "modelVisiblePaths": [path.as_posix() for path in visible],
         "evaluatorOnlyPaths": [path.as_posix() for path in evaluator_only],
         "syncPaths": [path.as_posix() for path in synchronized],
@@ -990,6 +992,28 @@ def create_projection_evidence_directory(
     directory.mkdir(mode=0o700)
     os.chmod(directory, 0o700)
     return ProjectionEvidenceDirectory(directory.resolve())
+
+
+def open_projection_evidence_directory(
+    directory: Path,
+    source_root: Path,
+    projection_root: Path,
+) -> ProjectionEvidenceDirectory:
+    """Open one existing owner-only artifact package outside both workspaces."""
+
+    if directory.is_symlink() or not directory.is_dir():
+        raise ValueError(
+            "projection evidence directory must be an existing non-symlink directory"
+        )
+    directory = directory.resolve()
+    if stat.S_IMODE(directory.stat().st_mode) != 0o700:
+        raise ValueError("projection evidence directory must have owner-only mode 0700")
+    if directory.stat().st_uid != os.getuid():
+        raise ValueError("projection evidence directory must be owned by the current user")
+    for workspace in (source_root.resolve(), projection_root.resolve()):
+        if directory == workspace or workspace in directory.parents or directory in workspace.parents:
+            raise ValueError("projection evidence directory must stay outside both workspaces")
+    return ProjectionEvidenceDirectory(directory)
 
 
 def synchronize_model_visible_projection(
@@ -1068,11 +1092,11 @@ def synchronize_model_visible_projection(
             raise ValueError(f"ambiguous sync state: {label} was modified: {relative}")
         if after is None or _is_runner_owned(Path(relative)):
             raise ValueError(f"unexpected model output in projected workspace: {relative}")
-        if not any(_path_is_selected(Path(relative), selected) for selected in synchronized):
-            raise ValueError(f"unexpected model output in projected workspace: {relative}")
         if after.type == "directory":
             added_directories.append(after)
             continue
+        if not any(_path_is_selected(Path(relative), selected) for selected in synchronized):
+            raise ValueError(f"unexpected model output in projected workspace: {relative}")
         if len(mutations) >= _MAX_PROJECTION_OUTPUT_FILES:
             raise ValueError("projected workspace exceeded the output file limit")
         assert after.size is not None and after.digest is not None
@@ -1093,11 +1117,22 @@ def synchronize_model_visible_projection(
         ))
         mutation_content[relative] = source_content
 
-    mutation_paths = tuple(PurePosixPath(item.path) for item in mutations)
-    for entry in added_directories:
-        directory = PurePosixPath(entry.path)
-        if not any(directory in path.parents for path in mutation_paths):
-            raise ValueError(f"unexpected model output directory in projected workspace: {entry.path}")
+    required_directories: set[str] = set()
+    for mutation in mutations:
+        for parent in PurePosixPath(mutation.path).parents:
+            if parent.as_posix() == ".":
+                continue
+            if parent.as_posix() not in original_source_entries:
+                required_directories.add(parent.as_posix())
+    observed_directories = {entry.path for entry in added_directories}
+    if observed_directories != required_directories:
+        unexplained = sorted(observed_directories - required_directories)
+        missing = sorted(required_directories - observed_directories)
+        detail = unexplained[0] if unexplained else missing[0]
+        raise ValueError(
+            "unexpected model output directory in projected workspace: "
+            f"{detail}"
+        )
 
     evidence_path = _validate_projection_evidence_path(
         evidence_path,
@@ -1113,6 +1148,11 @@ def synchronize_model_visible_projection(
         list(projection_manifest.projected_inputs)
         if projection_manifest is not None
         else [entry.__dict__ for entry in projection.files]
+    )
+    prepared_entries = (
+        list(projection_manifest.prepared_entries)
+        if projection_manifest is not None
+        else [entry.__dict__ for entry in projection.source_files]
     )
     retained_paths: list[Path] = []
     mutation_records: list[dict[str, object]] = []
@@ -1143,6 +1183,11 @@ def synchronize_model_visible_projection(
                     source_root,
                     destination.parent,
                     directory_modes,
+                    original_source_entries,
+                    {
+                        path.relative_to(source_root).as_posix()
+                        for path in created_directories
+                    },
                 )
             )
             try:
@@ -1157,18 +1202,49 @@ def synchronize_model_visible_projection(
                 ) from error
             created_files.append(destination)
 
-        post_sync_source_identity_digest = _projection_source_identity(source_root)
+        expected_post_entries = dict(original_source_entries)
+        expected_post_entries.update({entry.path: entry for entry in added_directories})
+        for mutation in mutation_values:
+            expected_post_entries[mutation.path] = ProjectedFile(
+                path=mutation.path,
+                type="file",
+                mode=mutation.mode,
+                digest=mutation.after_digest,
+                size=mutation.size,
+            )
+        actual_post_entries = {
+            entry.path: entry
+            for entry in _projection_product_entries(
+                source_root,
+                include_runner_owned=False,
+            )
+        }
+        if actual_post_entries != expected_post_entries:
+            changed = sorted(
+                relative
+                for relative in set(actual_post_entries) | set(expected_post_entries)
+                if actual_post_entries.get(relative) != expected_post_entries.get(relative)
+            )
+            detail = changed[0] if changed else "unknown"
+            raise ValueError(
+                "ambiguous sync state: concurrent fixture post-state change: "
+                f"{detail}"
+            )
+        post_sync_source_identity_digest = _projection_entries_digest(
+            tuple(expected_post_entries[path] for path in sorted(expected_post_entries))
+        )
         directory_payload = [
             {"path": entry.path, "mode": entry.mode}
             for entry in sorted(added_directories, key=lambda item: item.path)
         ]
         payload = {
             "schema": "dev-methodology-eval-model-visible-projection-sync",
-            "version": 2,
+            "version": 3,
             "preparedSnapshotDigest": projection.prepared_snapshot_digest,
             "sourceIdentityDigest": projection.source_identity_digest,
             "postSyncSourceIdentityDigest": post_sync_source_identity_digest,
             "projectionManifestDigest": projection_manifest_digest,
+            "preparedEntries": prepared_entries,
             "modelVisiblePaths": list(projection.model_visible_paths),
             "evaluatorOnlyPaths": list(projection.evaluator_only_paths),
             "projectedInputs": projected_inputs,
@@ -1236,9 +1312,10 @@ def write_model_visible_projection_manifest(
         projected_inputs.append(record)
     payload = {
         "schema": "dev-methodology-eval-model-visible-projection",
-        "version": 2,
+        "version": 3,
         "preparedSnapshotDigest": projection.prepared_snapshot_digest,
         "sourceIdentityDigest": projection.source_identity_digest,
+        "preparedEntries": [entry.__dict__ for entry in projection.source_files],
         "modelVisiblePaths": list(projection.model_visible_paths),
         "evaluatorOnlyPaths": list(projection.evaluator_only_paths),
         "syncPaths": list(projection.sync_paths),
@@ -1260,6 +1337,7 @@ def write_model_visible_projection_manifest(
         evidence_path=evidence_path,
         content_digest=hashlib.sha256(evidence_path.read_bytes()).hexdigest(),
         manifest_digest=manifest_digest,
+        prepared_entries=tuple(entry.__dict__ for entry in projection.source_files),
         projected_inputs=tuple(projected_inputs),
     )
 
@@ -1497,6 +1575,8 @@ def _create_safe_destination_parents(
     root: Path,
     destination_parent: Path,
     directory_modes: Mapping[str, str],
+    original_source_entries: Mapping[str, ProjectedFile],
+    task_created_directories: set[str],
 ) -> list[Path]:
     if destination_parent == root:
         return []
@@ -1508,13 +1588,31 @@ def _create_safe_destination_parents(
     created: list[Path] = []
     for part in relative.parts:
         current /= part
-        if current.is_symlink() or (current.exists() and not current.is_dir()):
-            raise ValueError("projection sync destination parent is unsafe")
-        if not current.exists():
-            relative_current = current.relative_to(root).as_posix()
-            current.mkdir(mode=int(directory_modes.get(relative_current, "700"), 8))
-            os.chmod(current, int(directory_modes.get(relative_current, "700"), 8))
-            created.append(current)
+        relative_current = current.relative_to(root).as_posix()
+        if relative_current in original_source_entries:
+            expected = original_source_entries[relative_current]
+            if (
+                current.is_symlink()
+                or not current.is_dir()
+                or expected.type != "directory"
+                or _projection_entry(current, root) != expected
+            ):
+                raise ValueError("projection sync destination parent is unsafe")
+            continue
+        if relative_current in task_created_directories:
+            if current.is_symlink() or not current.is_dir():
+                raise ValueError("projection sync destination parent is unsafe")
+            continue
+        try:
+            current.mkdir(mode=int(directory_modes[relative_current], 8))
+        except FileExistsError as error:
+            raise ValueError(
+                "ambiguous sync state: concurrent source parent appeared: "
+                f"{relative_current}"
+            ) from error
+        os.chmod(current, int(directory_modes[relative_current], 8))
+        created.append(current)
+        task_created_directories.add(relative_current)
     return created
 
 
