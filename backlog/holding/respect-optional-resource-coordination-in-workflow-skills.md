@@ -1,10 +1,10 @@
 # Respect Optional Resource Coordination In Workflow Skills
 
-Status: Running
+Status: Holding
 
-Owner: Dev Orchestrator task `019fe4e7-95c9-7372-bd9f-aa983c5c7237`
+Owner: Unowned
 
-Phase: Running — Owned wait for terminology shared-event release
+Phase: Holding — Await Terminology Shared-Event Release
 
 Type: Defect
 
@@ -154,23 +154,23 @@ Preservation Boundary: Do not create another governed definition or absorb unrel
 
 Next Reconciliation At: 2026-08-09T05:18:00Z
 
-## Active Execution Evidence
+## Preserved Held-Candidate Evidence
 
-Condition Type: root-execution
+Prior Condition Type: owned-wait
 
 Owner: Dev Orchestrator task 019fe4e7-95c9-7372-bd9f-aa983c5c7237
 
 Evidence: Canonical root task 019fe4e7-95c9-7372-bd9f-aa983c5c7237 remains active on branch codex/respect-optional-resource-coordination-019fe4e7 in worktree /Users/martinbechard/.codex/worktrees/e01d/dev-methodology. Accepted private candidate 28fb65a8b4d1f075e6b2f162c83d24b4e3e739b0 remains clean and unchanged with its exact five-path manifest; methodology ACCEPTED and verifier VERIFIED/PASS evidence remain retained and were not repeated. Terminology task 019fe3d6-2dd6-7322-a507-e8ca961e27d8 has not released the remaining shared event and is actively implementing its authorized projection, so no integration wake is valid. It retains evals/skill-probes.yaml, scripts/test_bundle_content.py, generated definitions and adapters, shared installation, live-model evaluation, and main integration. Release is event-driven: proceed only after a direct terminology-owner or parent Coordinator receipt names the exact released shared event and its applicable path or resource claim boundary. Until then, do not poll, redispatch, enter a retained shared surface, rerun the accepted private review or verification, or mutate candidate bytes. The Blocked documentation-design-system candidate remains untouched. Exact Work Item activity=work claim respect-optional-resource-coordination-019fe4e7-root-work-7 was confirmed live and heartbeated at 2026-08-09T07:17:21.116616Z in journal event 7b0a27b4-e1f8-4543-ad5d-b8c8d79ec5be, then released with disposition handoff solely for this serialized provider update in journal event f23dddcc-5531-44df-9eef-24a4f2202e7d; update claim respect-optional-resource-coordination-019fe4e7-evidence-update-7 and exact provider-path claim respect-optional-resource-coordination-019fe4e7-evidence-path-7 now protect this one provider-only replacement.
 
-Observed At: 2026-08-09T07:18:20Z
+Prior Observed At: 2026-08-09T07:18:20Z
 
-Started At: 2026-08-09T07:18:20Z
+Prior Started At: 2026-08-09T07:18:20Z
 
-Deadline or Expires At: 2026-08-09T08:03:20Z
+Prior Deadline or Expires At: 2026-08-09T08:03:20Z
 
-Next Action: Commit this provider-only owned-wait evidence replacement, release its update and provider-path claims, reacquire the exact Work Item activity=work claim, preserve candidate 28fb65a8b4d1f075e6b2f162c83d24b4e3e739b0 unchanged, and act only on a direct release receipt naming the exact shared event by first acquiring its applicable path or resource claim
+Prior Next Action: Act only on a direct release receipt naming the exact shared event by first acquiring its applicable path or resource claim
 
-Next Reconciliation At: 2026-08-09T07:32:20Z
+Prior Next Reconciliation At: 2026-08-09T07:32:20Z
 
 ## Running Resource Claim Evidence
 
@@ -221,3 +221,19 @@ Owned-Wait Work Claim: respect-optional-resource-coordination-019fe4e7-root-work
 Owned-Wait Update Claim: respect-optional-resource-coordination-019fe4e7-evidence-update-7; Work Item ID respect-optional-resource-coordination-in-workflow-skills; activity update; outcome SHARED_CHECKOUT_ACQUIRED; acquired at 2026-08-09T07:17:44.733022Z; journal event 636d3563-affb-48e3-b1e6-3c7fc73e0b0a; release immediately after this provider-only evidence commit
 
 Owned-Wait Path Claim: respect-optional-resource-coordination-019fe4e7-evidence-path-7; path backlog/defect-backlog/respect-optional-resource-coordination-in-workflow-skills.md; outcome SHARED_CHECKOUT_ACQUIRED; acquired at 2026-08-09T07:17:54.092781Z; journal event 985c1f1c-c570-430a-87ae-9ce469637f61; release immediately after this provider-only evidence commit
+
+## Holding Handoff Evidence
+
+Holding Recorded At: 2026-08-09T07:51:00Z
+
+Coordinator: Dev Backlog Coordinator task `019fb057-1767-7ef2-b5fa-41f4417b20b3`
+
+Reason: Accepted candidate `28fb65a8b4d1f075e6b2f162c83d24b4e3e739b0` is independently accepted and verified, but the terminology predecessor has not released the exact shared catalog, generated, installation, live-model, and main-integration event. Repeated idle owned-wait evidence is no longer an eligible Running condition.
+
+Preserved Execution: Canonical task `019fe4e7-95c9-7372-bd9f-aa983c5c7237`, branch `codex/respect-optional-resource-coordination-019fe4e7`, clean worktree `/Users/martinbechard/.codex/worktrees/e01d/dev-methodology`, exact five-path candidate, methodology ACCEPTED verdict, and verifier VERIFIED/PASS result.
+
+Claim Disposition: Exact activity=work claim `respect-optional-resource-coordination-019fe4e7-root-work-8` was released once with disposition handoff in journal event `f92ee891-6b82-4e79-b1e0-5b3c3160be22`. No claim remains for this work item.
+
+Resumption Condition: Receive one direct terminology completion or shared-event release receipt naming the exact released paths and resource boundary. Then record Holding -> Ready -> Starting for this same canonical task. The task must independently record Starting -> Running with fresh bounded evidence and exact claims before entering shared surfaces or delivery.
+
+Current Boundary: Do not poll, redispatch, reacquire a work claim, repeat accepted gates, mutate candidate bytes, or enter shared catalog, generated, installation, live-model, or integration surfaces while Holding.
