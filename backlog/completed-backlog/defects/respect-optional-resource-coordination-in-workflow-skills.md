@@ -1,10 +1,10 @@
 # Respect Optional Resource Coordination In Workflow Skills
 
-Status: Holding
+Status: Completed
 
 Owner: Unowned
 
-Phase: Holding — Await Terminology Shared-Event Release
+Phase: Completed — Crisis Recovery
 
 Type: Defect
 
@@ -237,3 +237,17 @@ Claim Disposition: Exact activity=work claim `respect-optional-resource-coordina
 Resumption Condition: Receive one direct terminology completion or shared-event release receipt naming the exact released paths and resource boundary. Then record Holding -> Ready -> Starting for this same canonical task. The task must independently record Starting -> Running with fresh bounded evidence and exact claims before entering shared surfaces or delivery.
 
 Current Boundary: Do not poll, redispatch, reacquire a work claim, repeat accepted gates, mutate candidate bytes, or enter shared catalog, generated, installation, live-model, or integration surfaces while Holding.
+
+## Crisis Completion Evidence
+
+Completed At: 2026-08-09
+
+Coordinator: Dev Backlog Coordinator task `019fb057-1767-7ef2-b5fa-41f4417b20b3` operating in user-directed SOLO crisis mode.
+
+Delivery: Accepted candidate commits `2e408116d3eff8e8f53767fc9c54c9ce84f0aa3b` and `28fb65a8b4d1f075e6b2f162c83d24b4e3e739b0` were replayed to main as `b829227c` and `3844bcd3`. Generated skill documentation was refreshed in `9fff438a`.
+
+Verification: The focused optional-resource-coordination regression ran 3/3, all four changed Agent Skills validated, skill documentation and hierarchy freshness passed, the support checklist was current, the full bundle ran 174/174, and `git diff --check` passed. The previously accepted methodology review and independent verifier PASS remain preserved.
+
+Outcome: Workflow skills now consume the AGENTS.md-selected coordination policy. Projects selecting `none` perform no claim procedure or claim-specific reporting; projects selecting `resource-claim` preserve the complete configured behavior.
+
+Boundaries: No user-level installation, live-model evaluation, remote publication, or unrelated baseline correction occurred.
