@@ -10,9 +10,9 @@ Branch: `codex/publish-and-integrate-terminology-standard-019fe3d6`
 
 Worktree: `/Users/martinbechard/.codex/worktrees/940b/dev-methodology`
 
-Phase: Holding — Evaluation Design Reconciliation
+Phase: Ready — Resume Preinstalled-Tool Evaluation
 
-Status: Holding
+Status: Ready
 
 Type: Feature
 
@@ -475,3 +475,15 @@ Preserved State: Main commit `8f09bcfb6fd0bb1fdaba4b6ecc45ae32a3c40915` contains
 Resumption Condition: Resume only after the user directs continuation following reconciliation of the evaluation design. Preserve the same Work Item ID and canonical task, move `Holding -> Ready -> Starting`, and require fresh Running evidence before invoking the evaluation harness. Do not infer resumption from the installed MCP version alone.
 
 Unattended Work Boundary: Do not invoke the terminology treatment or controls, launch Codex for this evaluation, install or construct another MCP runtime, mutate shared evaluation machinery, or complete/archive this item while it remains Holding. Read-only analysis and the separately requested Python portability work item may proceed independently.
+
+## SOLO Crisis Ready Recovery
+
+Ready Recorded At: 2026-08-09T23:06:56Z
+
+Authority: Direct user instruction in canonical parent task `019fb057-1767-7ef2-b5fa-41f4417b20b3`: “ok let's try to complete the item that was causing the security failure previously”.
+
+Blocker Reconciliation: The prior platform cybersecurity-risk system error did not identify a source defect or a user-owned security decision. The repository now requires evaluation tools to be preinstalled at their declared minimum version and forbids installing, building, downloading, upgrading, or downgrading tool runtimes during evaluation. The official user-level `mcp-agent-ops` v0.9.0 installation exceeds the terminology treatment minimum v0.8.0. The preserved correction commit is already ancestral to current main, the obsolete private worktree is absent, and no claim remains part of the user-directed SOLO crisis flow.
+
+Remaining Objective: Verify the preinstalled tool without starting its server, run the already-authorized single treatment evaluation against the corrected 36-term input, validate semantic-green output and retained provider evidence, then complete and archive the item if the focused completion contract passes.
+
+Preservation Boundary: Reuse current main and the existing canonical identity. Do not construct another MCP environment, install a tool during evaluation, widen the evaluation payload, add another case, publish remotely, release, deploy, or mutate shared user content.
