@@ -10,9 +10,9 @@ Branch: `codex/publish-and-integrate-terminology-standard-019fe3d6`
 
 Worktree: `/Users/martinbechard/.codex/worktrees/940b/dev-methodology`
 
-Phase: Ready — Normal terminology treatment recovery
+Phase: Starting — Normal terminology treatment recovery
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -555,3 +555,19 @@ Decision: The platform-transmission question was an incorrect authorization boun
 Preserved Evidence: Main contains the terminology implementation, the 36-term Provider boundary, deterministic gates, and prior control evidence. The configured claim registry remains empty and claim operations remain disabled during SOLO crisis recovery.
 
 Next Action: Resume the same canonical work-item identity through Ready -> Starting -> Running, execute the normal treatment, validate its retained result, and complete or record a concrete technical blocker.
+
+## SOLO Crisis Restart Handoff
+
+Starting Recorded At: 2026-08-09T23:59:32Z
+
+Coordinator: Dev Backlog Coordinator task `019fb057-1767-7ef2-b5fa-41f4417b20b3`
+
+Canonical Execution: `019fe3d6-2dd6-7322-a507-e8ca961e27d8`
+
+Launch Result: Existing canonical work-item identity resumed inside the Coordinator-owned SOLO crisis execution; no replacement task or secondary dispatch was created.
+
+Normalized Objective: Execute the normal terminology treatment using the generic Agent's harness-specific model and already-installed tools, validate the result, and close the item if the completion contract passes.
+
+Preservation Boundary: Preserve current main, prior accepted implementation and control evidence, the exact synthetic fixture, and all exclusions. Do not install tools, add evaluation cases, widen the payload, publish remotely, release, deploy, or mutate user-level content.
+
+Next Reconciliation At: 2026-08-10T00:14:32Z
