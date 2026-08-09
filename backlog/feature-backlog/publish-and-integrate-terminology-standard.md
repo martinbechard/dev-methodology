@@ -273,14 +273,14 @@ Condition Type: root-execution
 
 Owner: Dev Orchestrator task 019fe3d6-2dd6-7322-a507-e8ca961e27d8
 
-Evidence: The same canonical root execution is actively resuming the preserved clean candidate on branch codex/publish-and-integrate-terminology-standard-019fe3d6 in worktree /Users/martinbechard/.codex/worktrees/940b/dev-methodology at commit 2ee1d3968f710175810131c60d88def629e89d99. User approval for exactly the seven additional treatment-only provider paths is durable in commit 967cc228d5cee11f64eb1e9866482ec4a6bc0a54, and Ready -> Starting is durable in commit 8b4933479586ffe5295bd9c51907da0b03d7d3cb. The bounded resumption preserves the existing review evidence and completed corrections, limits new framework work to those seven paths, and retains every shared-user, unrelated-framework, governed-definition, baseline-absorption, catalog-overlap, shared-installation, live-model, and main-integration exclusion until its separate gate is satisfied.
+Evidence: The same canonical root execution remains active on the preserved branch and worktree while the original Dev Coder performs one red-green implementation bounded to the seven newly approved treatment-only provider paths. Read-only reconciliation confirmed those seven files were byte-identical between preserved candidate commit 2ee1d3968f710175810131c60d88def629e89d99 and current main before implementation, so no rebase or unrelated absorption was required. The new add-portable-agent-tournament-skill execution is independent and has explicitly deferred its shared documentation, evaluation-catalog, generated-projection, bundle-test, review, installation, and main-integration surfaces until this item sends one direct narrowing or release notice at the first clean committed boundary. No shared-user, unrelated-framework, additional governed-definition, catalog-overlap, shared-installation, live-model, or main-integration mutation has begun.
 
-Observed At: 2026-08-09T04:28:02Z
+Observed At: 2026-08-09T04:40:20Z
 
 Started At: 2026-08-09T04:27:45Z
 
 Deadline or Expires At: 2026-08-09T06:27:45Z
 
-Next Action: Implement and focus-test the exact treatment-only provider contract, control stripping, receipt validation, evidence schema, and runner documentation on the seven newly approved paths, then reconcile the preserved candidate through fresh review without repeating accepted gates
+Next Action: Receive the clean seven-path Dev Coder commit and focused red-green evidence, send the tournament task one direct exact-manifest narrowing notice, then obtain fresh review of the new framework delta without repeating accepted fixture gates
 
-Next Reconciliation At: 2026-08-09T04:42:45Z
+Next Reconciliation At: 2026-08-09T04:55:20Z
