@@ -1,6 +1,6 @@
 # Add A Portable Skill For Evidence-Based Agent Tournaments
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -146,3 +146,23 @@ Approved at creation on 2026-08-09. The user directly requested creation of this
 - Preserve the experiment's lessons: runner and coordinator attribution must remain separate, schema support must be validated before spending credits, cached-token corrections must be deterministically rescored, and five synthetic single-run cases support screening rather than a high-confidence claim.
 - Return the final skill name and trigger, authoritative and generated paths, clarification examples, verification outputs, portability rationale for optional artifacts, deviations with reasons, and the source-review commit hash before any user-level publication.
 - Do not absorb or mutate Work Item ID integrate-documentation-design-system as part of this feature.
+
+## Starting Handoff Evidence
+
+Starting Recorded At: 2026-08-09T04:32:00Z
+
+Coordinator: Dev Backlog Coordinator task `019fb057-1767-7ef2-b5fa-41f4417b20b3`
+
+Normalized Objective: Implement the approved portable `run-agent-tournament` skill and its exact optional reference, metadata, focused decision scenarios, and repository-owned projections while preserving domain ownership, clarification and data-safety gates, deterministic evidence reuse, ranking semantics, and the no-publication boundary.
+
+Launch Result: Requested after this durable reservation.
+
+Canonical Execution: None
+
+Intended Root Role: Dev Orchestrator
+
+Scheduling Evidence: Provider inventory has one Running item, `publish-and-integrate-terminology-standard`, one Blocked item, and no duplicate tournament task or claim. The tournament item has Dependencies: None and may begin the non-overlapping private `skills/run-agent-tournament/**` package and focused planning lane. Defer shared or overlapping mutation involving `README.md`, `design/agent-and-skill-evaluations.html`, `design/agent-skill-hierarchy.svg`, `design/agent-skill-test-coverage-checklist.md`, generated skill catalogs, `evals/skill-probes.yaml`, `evals/workflow-packs.yaml`, `scripts/test_bundle_content.py`, shared review, installation, or main integration until the active terminology owner provides direct release/reconciliation evidence. The Blocked documentation-design-system candidate is evidence only and must not be mutated or absorbed.
+
+Preservation Boundary: Use one new isolated canonical worktree and task. Do not reuse source task `019fe4be-9c87-7823-8594-80b432af6237`; it only notified the Coordinator that the backlog changed and has no provider reservation. No source mutation is authorized until the new canonical Root Dev Orchestrator independently records Starting -> Running with fresh bounded Active Execution Evidence and an exact activity=work claim.
+
+Next Reconciliation At: 2026-08-09T04:47:00Z
