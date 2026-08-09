@@ -12,6 +12,6 @@ The probe runner derives three variants from one frozen case:
 
 All variants retain the same Agent, prompt, source bytes, model profile, sandbox, and evaluator-owned verification command. The non-model-visible verifier checks preferred terms, semantic markers, and protected literals. It reports scratchpad candidates separately. Those observations do not become normative Avoid rules without retained reinforcement evidence.
 
-The negative-activation fixture requires a byte-faithful copy of raw evidence. It proves that exact identifiers, commands, quotations, and source-native evidence remain outside terminology rewriting.
+The negative-activation fixture defines the expected byte-faithful copy behavior for raw evidence. A linked execution can use its deterministic verifier to prove whether exact identifiers, commands, quotations, and source-native evidence remained outside terminology rewriting.
 
 The retained [experiment results](evidence/experiment-results.md) record the red control, positive-only treatment, and reinforced treatment. The accepted standard keeps exactly one evidence-backed Avoid rule for Campaign under Test suite. The concise JSON summaries preserve the deterministic outcomes without promoting the local harness captures to full Judge-passed probe evidence.

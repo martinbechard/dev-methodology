@@ -26,6 +26,8 @@ _ROOT = (
     / "terminology-standard-effect"
 )
 _NEGATIVE_ROOT = _ROOT / "negative-activation"
+_NEGATIVE_SOURCE = _NEGATIVE_ROOT / "source-evidence.md"
+_NEGATIVE_VERIFIER = _NEGATIVE_ROOT / "verify.py"
 _SOURCE = _ROOT / "source-document.md"
 _STANDARD = _ROOT / "terminology.md"
 _CASES = _REPOSITORY_ROOT / "evals" / "cases.yaml"
@@ -91,6 +93,22 @@ def _run_verifier(artifact_text: str) -> subprocess.CompletedProcess[str]:
         return subprocess.run(
             [sys.executable, *command[1:]],
             cwd=directory,
+            capture_output=True,
+            text=True,
+            check=False,
+            timeout=10,
+        )
+
+
+def _run_negative_verifier(
+    artifact_bytes: bytes,
+) -> subprocess.CompletedProcess[str]:
+    with tempfile.TemporaryDirectory() as directory:
+        artifact = Path(directory) / "preserved-evidence.md"
+        artifact.write_bytes(artifact_bytes)
+        return subprocess.run(
+            [sys.executable, str(_NEGATIVE_VERIFIER), str(artifact)],
+            cwd=_NEGATIVE_ROOT,
             capture_output=True,
             text=True,
             check=False,
@@ -179,18 +197,27 @@ class TerminologyEffectVerifierTests(unittest.TestCase):
         self.assertNotIn(target_skill, staged_by_variant["wrong-skill"])
         self.assertIn(wrong_skill, staged_by_variant["wrong-skill"])
 
-    def test_negative_activation_fixture_preserves_raw_evidence_contract(self) -> None:
-        task = (_NEGATIVE_ROOT / "TASK.md").read_text(encoding="utf-8")
-        source = (_NEGATIVE_ROOT / "source-evidence.md").read_text(encoding="utf-8")
+    def test_negative_activation_verifier_accepts_an_exact_byte_copy(self) -> None:
+        completed = _run_negative_verifier(_NEGATIVE_SOURCE.read_bytes())
 
-        self.assertIn("preserved-evidence.md", task)
-        self.assertIn("without rewriting", task)
-        for exact_value in (
-            "campaign_receipt_rollout",
-            "python3 tools/export.py --label campaign --receipt rollout.json",
-            '"Campaign receipt rollout"',
-        ):
-            self.assertIn(exact_value, source)
+        self.assertEqual(0, completed.returncode, completed.stdout + completed.stderr)
+        evidence = json.loads(completed.stdout)
+        self.assertTrue(evidence["exactBytesPreserved"])
+        self.assertEqual(evidence["sourceSha256"], evidence["artifactSha256"])
+        self.assertEqual(evidence["sourceByteCount"], evidence["artifactByteCount"])
+
+    def test_negative_activation_verifier_rejects_rewritten_evidence(self) -> None:
+        rewritten = _NEGATIVE_SOURCE.read_bytes().replace(
+            b"Campaign receipt rollout",
+            b"Test suite Evaluation result Test run",
+            1,
+        )
+        completed = _run_negative_verifier(rewritten)
+
+        self.assertEqual(3, completed.returncode, completed.stdout + completed.stderr)
+        evidence = json.loads(completed.stdout)
+        self.assertFalse(evidence["exactBytesPreserved"])
+        self.assertNotEqual(evidence["sourceSha256"], evidence["artifactSha256"])
 
     def test_standard_contains_every_preferred_term_and_only_evidenced_avoid_rule(self) -> None:
         standard = _STANDARD.read_text(encoding="utf-8")

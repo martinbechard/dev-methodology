@@ -40,4 +40,4 @@ The captures emitted one rejected initial full-history custom-Agent fork before 
 
 ## Decision
 
-Keep the Terminology Standard compact and positive-first. Retain exactly one evidence-backed Avoid rule for Campaign under Test suite. This evidence supports project publication and production routing through the generated Agent and staged skill. Formal probe evidence must use that production route without fixture-level Agent guidance.
+Keep the Terminology Standard compact and positive-first. Retain exactly one evidence-backed Avoid rule for Campaign under Test suite. This historical fixture-level guidance experiment supports project publication and that one retained Campaign rule. It does not prove production routing. Formal probe evidence must use the production route without fixture-level Agent guidance.
