@@ -10,7 +10,7 @@ Branch: `codex/publish-and-integrate-terminology-standard-019fe3d6`
 
 Worktree: `/Users/martinbechard/.codex/worktrees/940b/dev-methodology`
 
-Phase: Implementing — Approved treatment-only provider contract
+Phase: Implementing — Production catalog migration
 
 Status: Running
 
@@ -273,14 +273,14 @@ Condition Type: root-execution
 
 Owner: Dev Orchestrator task 019fe3d6-2dd6-7322-a507-e8ca961e27d8
 
-Evidence: The same canonical root execution remains active on the preserved branch and worktree. Fresh Dev Verifier returned VERIFICATION: GOOD for the clean 18-path private candidate ending at 2d7f5924c04473f03bf7faeed65c427d1b6143ba. Independent checks passed 125 of 125 runner Tests, 10 of 10 terminology-fixture Tests, the exact accepted three evaluation-copy Tests, compilation of all nine changed Python paths, candidate and worktree diff checks, pre-migration catalog validation, the 35-term and one-Campaign-rule terminology structure, exact-copy success and altered-byte rejection for the negative verifier, and isolated checksum-verified mcp-agent-ops v0.8.0 reference_refresh and reference_load with matching revision fdd40a48ee69e216fa2af4fcfca4d9944343e307f51cd32e5b7cb1b92101c2b2 and digest 273834ed065ecc93dcd9fb337b8a9b00c69f038216da68744b413e62b7d7b733. The verifier left no Git, temporary-directory, MCP-process, or bytecode residue. Security review remains the Coordinator-authorized non-blocking exclusion. No catalog-owner release has arrived. Because integrate-documentation-design-system now names this Work Item as its sole predecessor while this Work Item is prohibited from the shared surfaces that task still owns, the exact coordination cycle has been escalated to the Dev Backlog Coordinator for owner release, narrowing, or lifecycle recovery before this bounded evidence expires.
+Evidence: The same canonical root execution remains active on the preserved branch and worktree. Fresh Dev Verifier returned VERIFICATION: GOOD for the clean 18-path private candidate ending at 2d7f5924c04473f03bf7faeed65c427d1b6143ba. Independent checks passed 125 of 125 runner Tests, 10 of 10 terminology-fixture Tests, the exact accepted three evaluation-copy Tests, compilation of all nine changed Python paths, candidate and worktree diff checks, pre-migration catalog validation, the 35-term and one-Campaign-rule terminology structure, exact-copy success and altered-byte rejection for the negative verifier, and isolated checksum-verified mcp-agent-ops v0.8.0 reference_refresh and reference_load with matching revision fdd40a48ee69e216fa2af4fcfca4d9944343e307f51cd32e5b7cb1b92101c2b2 and digest 273834ed065ecc93dcd9fb337b8a9b00c69f038216da68744b413e62b7d7b733. The verifier left no residue, and security review remains the Coordinator-authorized non-blocking exclusion. The Coordinator confirmed that the blocked design-system task owns no claim and cannot retain a circular gate against its predecessor, then released exactly evals/cases.yaml, evals/agent-scenarios.yaml, evals/skill-probes.yaml, design/agent-and-skill-evaluations.html through its generator, scripts/test_bundle_content.py, shared installation, live-model evaluation, and main integration for this approved terminology scope. The original Dev Coder is now applying only the exact production catalog migration in the private worktree; unrelated design-system paths remain excluded.
 
-Observed At: 2026-08-09T06:15:47Z
+Observed At: 2026-08-09T06:18:24Z
 
 Started At: 2026-08-09T04:27:45Z
 
-Deadline or Expires At: 2026-08-09T06:27:45Z
+Deadline or Expires At: 2026-08-09T07:18:24Z
 
-Next Action: Preserve the independently verified candidate and use the Coordinator's owner-to-owner reconciliation to obtain an exact catalog release or lifecycle recovery decision before entering any retained shared surface
+Next Action: Complete, freshly review, and independently verify the released catalog migration before acquiring the separately required shared-installation and live-model resource claims
 
-Next Reconciliation At: 2026-08-09T06:24:47Z
+Next Reconciliation At: 2026-08-09T06:33:24Z
