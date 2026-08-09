@@ -38,7 +38,7 @@ Record each field below in one versioned configuration. Store stable references 
 | Ranking | Ordered objectives, accuracy equivalence, cost-equivalence tolerance, speed tie-break boundary, final tie-breakers, and unpriced-candidate policy. |
 | Stages | Ordered stages, candidate source, cases, repeats, completion rule, advancement count, and tie handling. |
 | Retry | Eligible invalid categories, attempts and retries per row, digest invariants, prior-run linkage, authorization and budget treatment, stop behavior, and contract-version rule. |
-| Variance | Metric, aggregation, acceptable limit, maximum repeats, measurement state, and advance-or-stop dispositions. |
+| Variance | Frozen mode, metric, aggregation, acceptable limit, maximum repeats, screening advancement rule, observed-result schema, and advance-or-stop dispositions. |
 | Execution | Caller-owned call mechanism, live authorization, budget, stop conditions, availability result, and expected call count. |
 | Pricing | Usage-field meanings, pricing unit, authoritative source, source date or version, per-category rates, and unpriced state. |
 | Safety | Allowed data classification, prohibited data, approved sensitive-data use, candidate exposure, retention boundary, and redaction rules. |
@@ -58,7 +58,7 @@ Runner and coordinator behavior are different factors. Use separate tournaments 
 
 ## Dry-Run Matrix
 
-Before each live authorization, enumerate every invocation that the authorization covers. Use one row for each candidate, case, and repeat combination.
+Before each live authorization, enumerate every invocation that the authorization covers. Use one row for each candidate, case, repeat, and attempt combination. Use a separate row for each live preflight invocation. A retry row is conditional. Freeze all required row fields before authorization.
 
 Each row records:
 
@@ -66,16 +66,17 @@ Each row records:
 - invocation kind as candidate run or live preflight;
 - candidate label and configuration digest;
 - case identifier, exact input digest, schema digest, and ground-truth digest;
-- repeat and attempt numbers plus seed or nondeterminism control when applicable;
-- prior-evidence state;
+- repeat and attempt numbers;
+- a required nondeterminism control as a fixed seed or setting, or an explicit unsupported disposition tied to the variance policy;
+- the attempt condition, retry eligibility, prior-run row, and prior-evidence state;
 - intended action as execute or reuse;
-- expected live calls as zero or one;
+- expected and maximum live calls as zero or one;
 - estimated usage and cost, each marked unknown when no credible estimate exists;
 - execution authorization, budget debit, and retry-policy reference;
 - data-safety classification and authorization reference;
 - evidence destination for the invocation.
 
-Sum base candidate calls, enumerated live-preflight calls, and every retry allowed by the frozen retry policy. The result is the maximum live-call count for that authorization scope. Actual live calls must not exceed it. Stop before the next call when authorization or budget cannot cover it.
+Sum maximum live calls across every matrix row. A conditional retry row can have zero expected calls and one maximum call. The authorization arithmetic uses the maximum. The result is the maximum live-call count for that authorization scope. Actual live calls must not exceed it. Stop before the next call when authorization or budget cannot cover it.
 
 State future-stage formulas separately when advancing candidate identities are not yet known. Include their maximum retry allowance and live-preflight allowance. Freeze a new exact matrix after advancement and before authorizing that stage.
 
@@ -93,6 +94,16 @@ Validate tournament infrastructure independently from candidate quality before s
 6. Verify evidence paths, write authority, usage capture, clocks, and stop behavior.
 7. Verify candidate availability, accepted pricing state, budget, live authorization, and data-safety authority.
 8. For a coordinator tournament, validate every frozen runner hash before any coordinator call.
+
+Prove zero live calls at the caller-owned execution boundary. The proof records:
+
+- the method;
+- the bounded preflight window;
+- the mechanism identity;
+- the evidence reference;
+- the evidence digest.
+
+Accept a disabled live-call mechanism with an enforcement receipt. A complete invocation ledger or telemetry source that records zero calls for the window is also acceptable. Unchanged fixture or configuration digests support the proof but do not replace it.
 
 If transport or capture cannot be validated without a live model call, treat that preflight as a tournament invocation. Add each live preflight invocation to the dry-run matrix with its count, authorization, budget debit, safety boundary, and evidence destination. Never make an unlisted live preflight call.
 
@@ -143,7 +154,7 @@ The policy records:
 
 A no-retry policy is valid. It sets maximum attempts to one, maximum retries to zero, and eligible categories to none. Its authorized call maximum contains no retry allowance.
 
-When retries are allowed, enumerate the maximum retry calls in authorization arithmetic before execution. Preserve every attempt. Never overwrite or relabel an invalid attempt, and never let actual calls exceed the authorized maximum.
+When retries are allowed, add one conditional matrix row for every permitted candidate-case-repeat-attempt combination. Each conditional row satisfies every field in Dry-Run Matrix. It identifies the prior attempt and eligible invalid category. Include all conditional rows in authorization arithmetic. Preserve every attempt. Never overwrite or relabel an invalid attempt, and never let actual calls exceed the authorized maximum.
 
 ## Advancement, Repeats, And Variance
 
@@ -154,7 +165,7 @@ For each stage, preserve:
 - the eligible candidates and required matrix rows;
 - excluded or invalid runs and their disposition;
 - aggregate metric inputs and results;
-- the complete stage ranking;
+- complete candidate coverage as a total order or explicit partial order;
 - the frozen rule that selected each advancing candidate;
 - an independent audit result when the decision is material.
 
@@ -162,17 +173,21 @@ A wide round, smaller semifinal, and multi-case final are a useful optional shap
 
 Use repeated leading-candidate trials when variance can affect the decision. Freeze repeat counts before that stage. A single run per case is screening evidence. Its report must say that variance is unmeasured and must not claim statistical proof.
 
-Freeze a variance policy with:
+Freeze the variance policy before execution. Its mode is screening-only or measure-variance. Keep the policy mode separate from the observed variance result.
 
+The frozen policy records:
+
+- the mode;
 - the metric used to measure variance;
 - the aggregation across repeats, cases, and candidates;
 - the acceptable variance limit and comparison rule;
 - the maximum repeats allowed for each candidate-case row;
 - the rule for scheduling another repeat within that maximum;
+- the screening-evidence stage-advancement rule;
 - the disposition when variance is acceptable;
 - the stop or no-winner disposition when variance is unmeasured or remains unstable at the maximum.
 
-The caller may freeze a screening-only state. That state permits a screening ranking but forbids definitive advancement or a definitive winner when variance is unmeasured. If the decision requires stability and the metric exceeds its accepted limit at the maximum repeats, stop without a definitive winner.
+Record the observed result state as unmeasured, within-limit, or unstable-at-maximum. Any screening result is unmeasured. It permits only provisional stage advancement through the frozen ranking rules and forbids a definitive winner. A screening-only tournament never changes that provisional status. Measure-variance permits definitive advancement or a definitive winner only for a within-limit result. If the result remains unstable-at-maximum, stop without advancement or a winner.
 
 ## Default Ranking And Cost
 
@@ -203,7 +218,7 @@ Apply the source's divisor or unit conversion exactly once. Never charge cached 
 
 Never infer a price from another candidate, provider, model family, or token proxy. Keep an unpriced candidate in the accuracy results with its usage evidence. Do not assert cost superiority between priced and unpriced candidates.
 
-If an unpriced candidate shares an accuracy tier and cost is the next ranking objective, that tier has an unresolved partial order. Report the ordered accuracy tiers and the unresolved candidate set. Stop any advancement or winner decision that crosses the unresolved set until the caller supplies a price or freezes another accepted rule. A tentative selection from that set is provisional and cannot be reported as cost-superior.
+If an unpriced candidate shares an accuracy tier and cost is the next ranking objective, that tier has an unresolved partial order. Report the ordered accuracy tiers and the unresolved candidate set. Do not report any candidate from that set as the winner or advance that candidate. Resume the affected decision only after the caller supplies a price or freezes another accepted rule.
 
 If an unpriced candidate has uniquely higher exact accuracy, it is the definitive accuracy leader under the default policy. Missing price does not make that accuracy lead provisional because cost cannot override the higher accuracy tier.
 
@@ -255,14 +270,15 @@ Verify:
 - one-factor control or the declared multi-factor limitation;
 - byte-equivalent case inputs and candidate configuration identity;
 - independent fixture, ground-truth, schema, runtime-support, transport, and capture preflight;
-- zero-call transport and capture preflight, or complete matrix coverage for every authorized live preflight invocation;
+- caller-owned proof of zero live calls during preflight, or complete matrix coverage for every authorized live preflight invocation;
 - dry-run row coverage and planned versus actual live-call counts;
 - retry eligibility, attempt limits, digest invariants, prior-run links, authorization, budget, and call-maximum arithmetic;
+- fixed nondeterminism controls or unsupported dispositions linked to the frozen variance policy;
 - per-run validity and exclusion of invalid runs from accuracy scoring;
 - resume reuse of only matching completed schema-valid runs;
 - caller-owned proof of zero live calls during deterministic rescore;
 - scorer arithmetic, usage semantics, cached-input subtraction, prices, cost bands, and tie-breakers;
-- stage completeness, rankings, partial unresolved tiers, advancement, variance policy, repeats, and frozen runner proof;
+- stage completeness, total or explicit partial orders, unpriced-tie stops, advancement, variance policy mode, observed variance state, repeats, and frozen runner proof;
 - authorization, budget, stop conditions, data safety, and evidence retention;
 - report claims against raw evidence and declared limitations.
 
@@ -274,17 +290,19 @@ The report contains:
 
 - tournament identifier, contract version, mode, decision, role under test, and varied factors;
 - constants, candidates, cases, schema, scorer, stages, repeats, and actual live-call count;
-- winner or no-winner disposition, complete or partial final ranking, unresolved sets, stage rankings, advancement evidence, and selection rationale;
+- winner or no-winner disposition, complete candidate coverage as a total order or explicit partial order, unresolved sets, stage orders, advancement evidence, and selection rationale;
 - accuracy and other declared metrics with misses and case-level evidence;
-- raw usage, pricing state, pricing sources, estimated cost arithmetic, cost bands, and provisional status;
+- raw usage, pricing state, pricing sources, estimated cost arithmetic, cost bands, and any provisional stage-advancement status;
 - elapsed time and the boundary within which speed affected ranking;
 - invalid runs, retries, exclusions, infrastructure findings, and missing evidence;
+- attempt conditions, prior-run links, and nondeterminism controls;
 - base, preflight, retry, actual, and authorized-maximum live-call counts;
+- caller-owned zero-call preflight proof, or evidence for every enumerated live preflight call;
 - resume or rescore reuse evidence and caller-owned zero-call proof when applicable;
 - runner dossier identity and hashes for a coordinator tournament;
 - data-safety disposition and retained-evidence location;
 - independent audit result;
-- limitations, representative-use boundary, variance metric and disposition, confidence, and unresolved uncertainty;
+- limitations, representative-use boundary, frozen variance mode, observed variance state, confidence, and unresolved uncertainty;
 - selected runtime configuration and its mapping to a semantic model profile.
 
 Provider identifiers may appear in runtime evidence and adapter mappings. Keep reusable conceptual agent definitions provider-neutral.

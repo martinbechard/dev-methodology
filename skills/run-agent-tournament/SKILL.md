@@ -52,7 +52,7 @@ Concise clarification examples include:
 
 - Are we selecting the runner or the coordinator? Holding the other role constant is necessary for attribution.
 - No reviewed ground truth is available. Should planning propose synthetic fixtures for approval, or should it use designated real tasks?
-- One candidate is unpriced. Should its cost-dependent result remain provisional, or does an accepted comparison rule apply?
+- One candidate is unpriced. Should the affected ranking tier stop for a price, or does an accepted comparison rule apply?
 
 Separate runner and coordinator tournaments when they are distinct roles. For a coordinator comparison, freeze the runner reports and their hashes before any coordinator call.
 
@@ -62,14 +62,14 @@ Planning may use explicit non-blocking assumptions. Never carry an assumption si
 
 1. Select the mode and state the decision that the tournament will support.
 2. Resolve material gaps or stop before live calls.
-3. Freeze the complete contract, including retry and variance policies. Enumerate every authorized invocation in a dry-run matrix.
+3. Freeze the complete contract, including retry and variance policies. Enumerate each authorized base attempt and conditional retry attempt in a dry-run matrix.
 4. State a live-call maximum that includes live preflight and allowed retries. Obtain explicit authority for consequential execution.
-5. Validate fixtures, ground truth, runtime schema support, transport, and output capture independently from candidate output quality. Make transport and capture preflight with zero live model calls, or enumerate and authorize each live preflight invocation in the matrix.
+5. Validate fixtures, ground truth, runtime schema support, transport, and output capture independently from candidate output quality. Prove zero-call transport and capture preflight at the caller-owned execution boundary, or enumerate and authorize each live preflight invocation in the matrix.
 6. Hold each case input byte-equivalent across candidates. Vary one factor at a time unless the contract declares each varying factor and the attribution limitation.
 7. Execute or resume the frozen matrix within its authorization, budget, retry limits, and call maximum. Preserve exact configuration, raw output, usage, transport evidence, timing, validity, and score evidence.
-8. Rank and advance candidates only through the frozen rules. Repeat leading candidates when variance matters.
+8. Rank and advance candidates only through the frozen rules. Apply the frozen variance mode and record the observed variance state.
 9. Obtain an independent audit when the selection is material.
-10. Report the decision, complete ranking, invalid runs, evidence limits, confidence, and any provisional status.
+10. Report the decision, complete candidate coverage as a total order or explicit partial order, invalid runs, evidence limits, and confidence.
 
 ## Default Ranking
 
@@ -86,9 +86,9 @@ Calculate usage cost without charging cached input twice:
 uncached input = max(total input - cached input, 0)
 ```
 
-Price uncached input, cached input, and output separately. Never invent a missing price. Keep an unpriced candidate visible with its accuracy and usage evidence. Mark a winner or ordering as provisional when it depends on an unavailable price and no accepted comparison rule resolves it.
+Price uncached input, cached input, and output separately. Never invent a missing price. Keep an unpriced candidate visible with its accuracy and usage evidence. Express cost-dependent unknown ordering as an explicit partial order.
 
-If unknown cost prevents ordering a tied accuracy tier, report a partial unresolved ranking. Stop affected advancement or winner selection until the caller accepts a rule or supplies the price. A uniquely higher-accuracy unpriced candidate remains the accuracy leader because that lead does not depend on cost.
+If unknown cost prevents ordering a tied accuracy tier, report the unresolved candidate set. Do not report a candidate from that set as a winner or advance that candidate. Resume the affected decision only after the caller accepts a rule or supplies the price. A uniquely higher-accuracy unpriced candidate remains the accuracy leader because that lead does not depend on cost.
 
 ## Validity And Evidence
 
@@ -96,7 +96,9 @@ Classify infrastructure, transport, schema, and missing-artifact failures as inv
 
 Retain enough evidence to reproduce validity, scoring, cost arithmetic, stage ranking, advancement, and selection. Keep invalid evidence instead of hiding it. A one-run-per-case result is screening evidence with unmeasured variance, not statistical proof.
 
-Require a frozen variance metric, aggregation, acceptable limit, maximum repeats, and advance-or-stop disposition. A screening-only policy forbids a definitive winner while variance is unmeasured or remains unstable.
+Freeze the variance policy mode as screening-only or measure-variance. Keep the observed result state separate as unmeasured, within-limit, or unstable-at-maximum. Screening-only permits provisional stage advancement through the frozen ranking rules, but it forbids a definitive winner. Measure-variance permits definitive advancement or selection only after the observed result is within the frozen limit.
+
+For zero-call transport and capture preflight, retain caller-owned proof with a method, bounded window, mechanism identity, evidence reference, and evidence digest. Use a disabled call mechanism or complete invocation ledger or telemetry. Unchanged evidence digests support this proof but do not replace it.
 
 For deterministic rescore, retain proof from the caller-owned execution boundary. Use a disabled call mechanism or complete invocation ledger or telemetry for the rescore window. Unchanged evidence digests support this proof but do not replace it.
 
@@ -108,10 +110,10 @@ Return:
 
 - the frozen contract and dry-run call count;
 - per-run validity, scores, usage, cost, and elapsed time;
-- per-stage rankings and advancement evidence;
-- the winner and complete or explicitly partial ranking, including unresolved unpriced ties;
-- misses, invalid runs, limitations, variance evidence, confidence, and provisional status;
-- retry attempts, live-preflight calls, actual calls, the authorized maximum, and zero-call rescore proof;
+- per-stage candidate coverage as a total order or explicit partial order, plus advancement evidence;
+- the winner or no-winner disposition, with every unresolved candidate set;
+- misses, invalid runs, limitations, nondeterminism controls, the variance policy mode, observed variance state, confidence, and provisional stage status;
+- retry attempts, live-preflight calls, actual calls, the authorized maximum, zero-call preflight proof or enumerated live-preflight evidence, and zero-call rescore proof;
 - independent audit evidence for a material decision;
 - a semantic model-profile handoff for the selected configuration.
 

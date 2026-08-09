@@ -150,7 +150,8 @@ ranking:
     tied_accuracy_unknown_cost: "partial-unresolved-stop-for-price-or-accepted-rule"
     unique_higher_accuracy: "definitive-accuracy-leader"
     report_shape: "ordered-accuracy-tiers-with-unresolved-candidate-sets"
-    provisional_when: "selection-depends-on-missing-price"
+    winner_or_advancement_when_tied_cost_unknown: "prohibited"
+    provisional_status_use: "not-a-substitute-for-resolving-an-unpriced-tie"
 
 pricing:
   state: "incomplete"
@@ -203,16 +204,20 @@ stages:
     completion_rule: "all-required-runs-valid"
     advance: 2
     tie_handling: "<accepted stage tie rule>"
+    unresolved_partial_order_disposition: "stop-before-advancement"
+    variance_requirement: "screening-evidence-provisional-advancement-only"
   - id: "semifinal"
-    candidate_source: "wide-top-2"
+    candidate_source: "wide-provisional-advancers"
     cases:
       - "case-b"
     repeats_per_candidate_case: 1
     completion_rule: "all-required-runs-valid"
     advance: 2
     tie_handling: "<accepted stage tie rule>"
+    unresolved_partial_order_disposition: "stop-before-advancement"
+    variance_requirement: "screening-evidence-provisional-advancement-only"
   - id: "final"
-    candidate_source: "semifinal-top-2"
+    candidate_source: "semifinal-provisional-advancers"
     cases:
       - "case-b"
       - "clean-control"
@@ -220,6 +225,8 @@ stages:
     completion_rule: "all-required-runs-valid"
     advance: 1
     tie_handling: "<accepted final tie rule>"
+    unresolved_partial_order_disposition: "stop-without-winner"
+    variance_requirement: "within-limit-required-for-definitive-winner"
 
 retry_policy:
   id: "no-retries-v1"
@@ -247,15 +254,27 @@ retry_policy:
   contract_version_rule: "any-retry-or-frozen-input-change-requires-new-contract-version"
 
 variance_policy:
-  state: "<measured-or-screening-only>"
+  id: "variance-policy-v1"
+  mode: "measure-variance"
   metric: "<variance metric>"
   aggregation: "<aggregation across repeats cases and candidates>"
   acceptable_limit: "<inclusive numeric limit and comparison rule>"
   maximum_repeats_per_candidate_case: 3
   additional_repeat_rule: "<when another frozen repeat is scheduled>"
+  screening_stage_advancement: "provisional-under-frozen-ranking-only"
+  screening_only_winner: "prohibited"
   acceptable_disposition: "advance-under-frozen-ranking-policy"
-  unmeasured_disposition: "screening-only-no-definitive-winner"
-  unstable_at_maximum_disposition: "stop-without-definitive-winner"
+  unmeasured_disposition: "no-definitive-winner"
+  unstable_at_maximum_disposition: "stop-without-advancement-or-winner"
+
+variance_result:
+  state: "unmeasured"
+  observed_value: null
+  repeats_observed_per_candidate_case: 0
+  stage_advancement_status: "pending-evidence"
+  winner_status: "prohibited-until-within-limit"
+  evidence_ref: "<variance result evidence>"
+  evidence_sha256: "<sha256>"
 
 dry_run:
   authorization_scope: "wide"
@@ -271,9 +290,18 @@ dry_run:
       ground_truth_sha256: "<case-a ground-truth sha256>"
       repeat: 1
       attempt: 1
+      attempt_condition: "base-attempt-required"
+      prior_run_row: null
+      retry_eligibility: "not-applicable-base-attempt"
       prior_evidence_state: "none"
       intended_action: "execute"
       expected_live_calls: 1
+      maximum_live_calls: 1
+      nondeterminism_control:
+        mode: "unsupported"
+        value: null
+        unsupported_disposition: "measure-through-frozen-variance-policy"
+        variance_policy_id: "variance-policy-v1"
       estimated_usage:
         total_input: "<estimated tokens or unknown>"
         cached_input: "<estimated tokens or unknown>"
@@ -303,9 +331,18 @@ dry_run:
       ground_truth_sha256: "<case-a ground-truth sha256>"
       repeat: 1
       attempt: 1
+      attempt_condition: "base-attempt-required"
+      prior_run_row: null
+      retry_eligibility: "not-applicable-base-attempt"
       prior_evidence_state: "none"
       intended_action: "execute"
       expected_live_calls: 1
+      maximum_live_calls: 1
+      nondeterminism_control:
+        mode: "unsupported"
+        value: null
+        unsupported_disposition: "measure-through-frozen-variance-policy"
+        variance_policy_id: "variance-policy-v1"
       estimated_usage:
         total_input: "<estimated tokens or unknown>"
         cached_input: "<estimated tokens or unknown>"
@@ -335,9 +372,18 @@ dry_run:
       ground_truth_sha256: "<case-a ground-truth sha256>"
       repeat: 1
       attempt: 1
+      attempt_condition: "base-attempt-required"
+      prior_run_row: null
+      retry_eligibility: "not-applicable-base-attempt"
       prior_evidence_state: "none"
       intended_action: "execute"
       expected_live_calls: 1
+      maximum_live_calls: 1
+      nondeterminism_control:
+        mode: "unsupported"
+        value: null
+        unsupported_disposition: "measure-through-frozen-variance-policy"
+        variance_policy_id: "variance-policy-v1"
       estimated_usage:
         total_input: "<estimated tokens or unknown>"
         cached_input: "<estimated tokens or unknown>"
@@ -415,6 +461,9 @@ evidence:
     - "stage-ranking-and-advancement"
     - "pricing-arithmetic"
     - "authorization-and-data-classification"
+    - "attempt-conditions-prior-run-links-and-nondeterminism-controls"
+    - "variance-policy-and-observed-result"
+    - "zero-call-preflight-proof-or-live-preflight-evidence"
   invalid_run_categories:
     - "infrastructure"
     - "transport"
@@ -441,6 +490,13 @@ preflight:
     live_model_calls: 0
     evidence_ref: "<transport and capture preflight evidence>"
     evidence_sha256: "<sha256>"
+    zero_call_proof:
+      method: "<disabled-call-mechanism-or-complete-invocation-ledger>"
+      preflight_window: "<bounded start and end>"
+      mechanism_identity: "<caller-owned enforcement or telemetry identity>"
+      evidence_ref: "<zero-call preflight proof artifact>"
+      evidence_sha256: "<sha256>"
+      unchanged_evidence_digests_are_supporting_only: true
     live_preflight_if_required: "enumerate-authorize-budget-and-count-in-dry-run-matrix"
   candidate_availability: "pending"
   pricing_and_unpriced_policy: "pending"
@@ -456,24 +512,31 @@ verification:
     - "one-factor-control"
     - "byte-equivalent-inputs"
     - "independent-fixture-ground-truth-schema-transport-validation"
+    - "caller-owned-zero-call-preflight-proof-or-enumerated-live-preflight"
     - "invalid-runs-excluded-from-accuracy"
     - "completed-schema-valid-resume-reuse"
     - "frozen-retry-policy-and-authorized-call-maximum"
+    - "attempt-specific-conditional-retry-row-coverage"
+    - "nondeterminism-control-linked-to-variance-policy"
     - "caller-owned-zero-call-deterministic-rescore-proof"
     - "cached-input-not-double-counted"
     - "frozen-runner-hashes-identical"
     - "stage-advancement-repeat-and-variance-rules"
+    - "total-or-explicit-partial-order-and-unpriced-tie-stop"
+    - "variance-policy-mode-separate-from-observed-state"
     - "data-safety-and-authorization"
 
 report:
   required_fields:
-    - "winner-or-no-winner-and-complete-or-partial-ranking"
-    - "unresolved-candidate-sets-and-provisional-disposition"
-    - "stage-rankings-and-advancement"
+    - "winner-or-no-winner-and-total-order-or-explicit-partial-order"
+    - "complete-candidate-coverage-and-unresolved-candidate-sets"
+    - "stage-orders-and-provisional-or-definitive-advancement"
     - "accuracy-misses-and-invalid-runs"
-    - "usage-cost-timing-and-provisional-status"
+    - "usage-cost-timing-and-provisional-stage-status"
     - "resume-or-rescore-evidence"
     - "preflight-base-retry-actual-and-authorized-call-counts"
+    - "attempt-conditions-prior-run-links-and-nondeterminism-controls"
+    - "caller-owned-zero-call-preflight-proof-or-live-preflight-evidence"
     - "caller-owned-zero-call-rescore-proof"
     - "frozen-runner-proof"
     - "limitations-variance-confidence-and-uncertainty"
