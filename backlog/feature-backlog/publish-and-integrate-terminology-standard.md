@@ -285,15 +285,17 @@ Second Correction Execution: Dev Coder `/root/fixture_candidate` owns exact six-
 
 Second Correction Red Evidence: Only `scripts/test_agent_skill_evals.py` is dirty. The existing receipt-acceptance Test, upgraded to a version-three complete `preparedEntries` and current-fixture inventory contract, fails with the expected old-contract run, projection-manifest, and sync-manifest shape errors. Four staging regressions are red: the old manifest has no `preparedEntries`; a declared nested leaf rejects its necessary parent as unexpected; the concurrent-parent case stops at the same parent rejection; and an injected evaluator-only post-create change is not detected. Three launch and semantic regressions are red because `_run_projection_verifier` has no projection-bound launch parameter, proving no execution-bound identity revalidation path; direct negative verifier execution and contradictory semantic-field cases are included. A self-consistent full-state tamper table covers phantom descendants, invented bytes, missing prepared entries, arbitrary post-sync identity, type, and mode. Receipt-semantic, production-handler direct-classification, and isolated Test-cleanup red cases remain before implementation begins. No scope or excluded-resource issue exists. The root work claim was heartbeated in event `9a0a4070-0519-4f60-9097-19eb357a5751`.
 
-Observed At: 2026-08-09T09:56:18Z
+Second Correction Green Progress: The complete red gate now contains one version-three receipt-contract failure, four staging failures, three trusted-launch and semantic failures, five full-state tamper failures, three receipt-selected semantic failures, and a production assembler parser failure. Green implementation now passes all four staging regressions, replayable receipt acceptance, all five full-state tamper rejections, and all three receipt-selected semantic rejections. Current uncommitted work is exactly `scripts/agent_skill_evals/staging.py`, `scripts/agent_skill_evals/validation.py`, and `scripts/test_agent_skill_evals.py`. Trusted-stdin verifier execution and production receipt assembly remain next in the runner, followed by schema and guide alignment and full deterministic gates. No scope, overlap, or excluded-resource issue is present. The root work claim was heartbeated in event `a0db94d9-e59a-4989-b92f-9478786772c0`.
+
+Observed At: 2026-08-09T10:06:48Z
 
 Started At: 2026-08-09T04:27:45Z
 
 Deadline or Expires At: 2026-08-09T10:48:42Z
 
-Next Action: Complete the remaining receipt-semantic, production-handler direct-classification, and isolated-cleanup red cases, implement the version-three staging, launch, replay, parent-exclusivity, receipt-assembly, and cleanup contract only within the exact six claimed paths, then run deterministic gates and produce a clean candidate for fresh acceptance
+Next Action: Implement and prove trusted-stdin verifier execution plus the exclusive production receipt assembler in the runner, align the version-three evidence schema and guide, run focused compatibility and full deterministic gates, inspect the exact six-path diff, then commit and release a clean candidate for fresh acceptance
 
-Next Reconciliation At: 2026-08-09T10:10:00Z
+Next Reconciliation At: 2026-08-09T10:20:00Z
 
 ## Generated Checklist Scope Disposition
 
