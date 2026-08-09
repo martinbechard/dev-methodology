@@ -1057,7 +1057,7 @@ cases:
       serverName: mcp-agent-ops
       enabledTools: [reference_load]
       requiredVersion: 0.8.0
-      requiredRuntimeDigest: 21fe8d907e65de0a2e428d4d681eef427404cfc98fb260112467371c5e0b4156
+      requiredRuntimeDigest: 912980522356193c6bb06e8b29e9e0a9fe7c910a3ad48d273febf443d2c66aee
       referenceNames: [terminology.md]
       requiredToolSequences: [[reference_load]]
       requiredToolOutcomes:
