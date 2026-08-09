@@ -10,9 +10,9 @@ Branch: `codex/publish-and-integrate-terminology-standard-019fe3d6`
 
 Worktree: `/Users/martinbechard/.codex/worktrees/940b/dev-methodology`
 
-Phase: Blocked — Canonical task system error
+Phase: Waiting for User — Live Treatment Data Authorization
 
-Status: Blocked
+Status: User Action Required
 
 Type: Feature
 
@@ -377,3 +377,23 @@ Preserved Semantics: Treatment/control comparison keys, target-omitted and wrong
 Exclusions: No new path, generator mutation, retained-evidence exposure, baseline absorption, broader framework behavior, live-model acquisition, shared installation, or main integration is authorized before the replacement candidate receives fresh ordinary review and independent verification.
 
 Pre-mutation Evidence: The private candidate is clean at `08bd3a1c5f1c65785f16ad5448183b193dab1ad6`. Production `--print-invocation` stopped before any model execution because the complete disposable fixture contained retained evaluator evidence outside `modelVisiblePaths`; exposing that evidence would contaminate the treatment and controls. The exact provider-path claim for this disposition is `publish-and-integrate-terminology-standard-019fe3d6-preflight-scope-provider`, acquired in event `549c2b3c-7907-4989-bb28-621846b8681d`.
+
+## Crisis Recovery User Action Required
+
+Recorded At: 2026-08-09
+
+Coordinator: Dev Backlog Coordinator task `019fb057-1767-7ef2-b5fa-41f4417b20b3` operating in user-directed SOLO crisis mode.
+
+Completed Recovery: The preserved terminology candidate is integrated on main. Commit `e78ac365` removes `terminology.md` from both controls' model-visible workspace, retains it as evaluator-only source, stages the treatment reference from the disjoint full fixture, and makes the named-agent delegation contract explicit. Deterministic verification passes: runner 172/172, terminology fixture 11/11, bundle 174/174, catalogs, evaluation and support-checklist freshness, Ruff, Python compilation, and diff checks. Live `gpt-5.5` target-omitted and wrong-skill controls both completed with semantic-red verification and preserved functional isolation.
+
+External Authorization Boundary: The remaining treatment must send the project terminology standard to OpenAI's `gpt-5.5` through the isolated `mcp-agent-ops` `reference_load` route so the named writer can apply it. The platform rejected that data egress because direct user authorization for this exact payload and destination is not recorded. No workaround or indirect transfer is permitted.
+
+Question: Do you approve sending the contents of project `terminology.md` (5,160 bytes; SHA-256 `273834ed065ecc93dcd9fb337b8a9b00c69f038216da68744b413e62b7d7b733`) to OpenAI `gpt-5.5` through the isolated treatment-only `reference_load` evaluation, solely to complete the semantic-green treatment paired with the two completed semantic-red controls?
+
+Approval Boundary: Approval covers only that one isolated synthetic documentation evaluation. It does not authorize user-level installation, remote publication, release, deployment, unrelated repository data, PII, or company-confidential material.
+
+Resolution: Pending
+
+Approval Resolution: Pending
+
+Resumption: On approval, reuse canonical task `019fe3d6-2dd6-7322-a507-e8ca961e27d8`, perform the exact treatment once, verify its semantic-green result and provider evidence, then complete and archive this item. On refusal, preserve the deterministic implementation and close with the live treatment explicitly unverified.
