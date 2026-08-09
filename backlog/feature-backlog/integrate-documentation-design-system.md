@@ -241,14 +241,14 @@ Condition Type: root-execution
 
 Owner: Dev Orchestrator task 019fe3cd-577c-76b1-965c-06fb8793ae42
 
-Evidence: canonical root execution owns a completed clean candidate from bounded Dev Coder `/root/implement_documentation_design_system`: commit `b45719f78c1dcd74f704998e4553a1bc973f140e`, unchanged branch/worktree, 73 authorized files. All 15 isolated exact governed-path receipts remain terminal `ALLOWED_APPROVED_DEFINITION_CHANGE`, and the exact four dependent paths remain reconciled. Verification passes: 18 focused checks; 171/171 candidate-local bundle; 22 governed-doc provenance; 19 provenance regressions; skill/metadata/catalog/fixture; two-suite validate-only; generator freshness; diff/logo; and eight-adapter checks. The full 172 bundle has one deferred support-checklist assertion because the old candidate baseline `terminology-standard-effect` has `codex` while its generator requires `codex+junie`; support projection and unrelated provider/terminology paths remain unchanged for fresh-current-main reconciliation. No existing HTML was touched and no governed/source-candidate mutation has begun. The direct overlap boundary with `publish-and-integrate-terminology-standard` is acknowledged; both tasks defer shared overlap events and preserve each other.
+Evidence: canonical root execution owns clean candidate commit `b45719f78c1dcd74f704998e4553a1bc973f140e` (unchanged branch/worktree, 73 authorized files) and six fresh paused read-only lanes. UX and maintained-document reviews are complete `NEEDS_CORRECTION`; code, methodology, prompt, and verifier lanes are substantively complete and paused. Material findings require correction: runner one-supplied-checklist versus skill Shared+page-type contradiction; strict validator accepts wrong page/checklist, malformed limits, empty assignment, and can crash on `findings=None`; FAIL+NOT TESTED is incorrectly REJECTED instead of BLOCKED; +1e-12 ranking tolerance admits just-outside 115%; output schema/simulator mismatch and underspecified generated nested schema; suite-specific skill/eval wiring and empty-field issues. Independent verifier has 24 focused passes, 22/22 provenance with Root envelope, and freshness passes; full bundle has one deferred support assertion; `scripts.test_agent_skill_evaluation_docs` has six failures (five candidate-induced count updates, one pre-existing future-ideas mismatch). Docs/UX findings include printable controls, snapshot/current wording and stale metrics, duplicate h1 specimen, abbreviated production nav class, one SVG title/desc, stale folder tree, and incomplete semantic-profile README documentation. Existing HTML pages remain an explicit no-edit boundary. All 15 governed receipts remain terminal `ALLOWED_APPROVED_DEFINITION_CHANGE`, and the exact four dependent paths remain reconciled. No source mutation has begun. The direct overlap boundary with `publish-and-integrate-terminology-standard` is acknowledged; both tasks defer shared overlap events and preserve each other.
 
-Observed At: 2026-08-09T01:12:26Z
+Observed At: 2026-08-09T01:26:55Z
 
 Started At: 2026-08-08T23:57:32Z
 
 Deadline or Expires At: 2026-08-09T03:15:00Z
 
-Next Action: Dispatch fresh code, methodology, prompt, and UX reviewers plus a verifier for the candidate, then perform current-main integration, post-combination gates, browser verification, and the confirmation dossier without widening scope.
+Next Action: Batch corrections through the original coder, reconcile exact dependent scope for any newly implicated existing test path before mutation, then obtain fresh re-review, re-verification, and browser checks without widening scope.
 
-Next Reconciliation At: 2026-08-09T01:27:00Z
+Next Reconciliation At: 2026-08-09T01:41:00Z
