@@ -22,7 +22,7 @@ Before merging a worktree:
   requires protection during integration. Preserve the complete behavior and evidence that the
   loaded procedure requires. When applicable project instructions select none and load no
   resource-coordination procedure, perform no claim procedure and no claim-specific evidence
-  handling. Do not discover, acquire, heartbeat, or release claims.
+  handling. In that none-selected case, do not discover, acquire, heartbeat, or release claims.
 - Confirm the source worktree has no uncommitted task changes unless the handoff explicitly says how to handle them.
 - Confirm the source branch has a meaningful commit for the completed unit.
 - Read the source agent status, final notes, verification results, and known risks.
@@ -102,8 +102,11 @@ After a source is merged and verified:
 
 Report:
 
+Include coordination evidence only when the loaded procedure requires it. In the none-selected
+case, omit claim-specific fields, placeholders, and not-applicable results.
+
 - Source branches or worktrees merged.
 - Commit hashes created.
 - Verification commands and outcomes.
-- Claim results or remaining blockers.
+- Remaining blockers.
 - Worktrees removed or intentionally kept.

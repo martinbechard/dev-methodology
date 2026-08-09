@@ -24,7 +24,7 @@ This Provider Skill realizes the deliver-work-item interface. It consumes the ac
   requires protection during publication. Preserve the complete behavior and evidence that the
   loaded procedure requires. When applicable project instructions select none and load no
   resource-coordination procedure, perform no claim procedure and no claim-specific evidence
-  handling. Do not discover, acquire, heartbeat, or release claims.
+  handling. In that none-selected case, do not discover, acquire, heartbeat, or release claims.
 - Apply [create-pull-request](../create-pull-request/SKILL.md) only for GitHub or another configured host whose contract accurately uses pull-request terminology.
 - Use the configured GitLab merge-request capability and GitLab tools for GitLab publication, review, pipeline, and merge evidence. If no accurate capability exists, return BLOCKED instead of substituting create-pull-request or GitHub-shaped evidence.
 - Prepare the final lifecycle update for the caller. This skill must not dispatch a provider manager, Dev Backlog Steward, or any Persistence mutation.
@@ -119,7 +119,7 @@ When the configured strategy rebases or squashes, record the provider-observed m
 
 A closed-unmerged, abandoned, replaced, or superseded publication cannot return READY. Follow an explicit replacement only after its relationship to the same work item and branch history is verified; otherwise return BLOCKED with both references.
 
-After the merge gate passes, prepare the work-item reference, completion disposition READY, branch and publication reference, final merged base commit, approvals, checks, dependencies, merge evidence, applicable claim results, and requested terminal lifecycle update. Return the prepared terminal handoff to the caller; the owning orchestrator decides whether and when to dispatch the selected provider manager. This skill neither performs that dispatch nor waits for its result. The provider-backed item remains nonterminal until the separate Persistence phase records lifecycle COMPLETED. When the selected provider is none, record lifecycle COMPLETED in the task-local result before returning READY, together with the complete terminal evidence.
+After the merge gate passes, prepare the work-item reference, completion disposition READY, branch and publication reference, final merged base commit, approvals, checks, dependencies, merge evidence, coordination evidence required by the loaded procedure, and requested terminal lifecycle update. Return the prepared terminal handoff to the caller; the owning orchestrator decides whether and when to dispatch the selected provider manager. This skill neither performs that dispatch nor waits for its result. The provider-backed item remains nonterminal until the separate Persistence phase records lifecycle COMPLETED. When the selected provider is none, record lifecycle COMPLETED in the task-local result before returning READY, together with the complete terminal evidence.
 
 A provider-backed Persistence recording failure happens after this skill returns. It does not change Commit READY into BLOCKED or erase the delivery evidence; the owning orchestrator reports and reconciles the Persistence failure separately.
 
@@ -127,8 +127,11 @@ A provider-backed Persistence recording failure happens after this skill returns
 
 Return exactly one disposition with deciding evidence:
 
+Include coordination evidence only when the loaded procedure requires it. In the none-selected
+case, omit claim-specific fields, placeholders, and not-applicable results.
+
 - AWAITING_REVIEW: Work Item ID and provider selector, branch, pushed commit, pull-request or merge-request URL, base and head, ready or draft state, review and dependency order, completed checks, and every outstanding review, check, dependency, or merge gate.
-- READY: all publication evidence plus required approvals and checks, merged state, final merge commit, configured base-branch reachability, applicable claim results, and the provider lifecycle update this evidence authorizes.
-- BLOCKED: preserved branch, commits, publication URL when one exists, provider-accurate state, applicable claim results, exact missing evidence or authority, and the next safe action.
+- READY: all publication evidence plus required approvals and checks, merged state, final merge commit, configured base-branch reachability, coordination evidence required by the loaded procedure, and the provider lifecycle update this evidence authorizes.
+- BLOCKED: preserved branch, commits, publication URL when one exists, provider-accurate state, coordination evidence required by the loaded procedure, exact missing evidence or authority, and the next safe action.
 
 Never report READY from branch publication alone. The owning orchestrator may later select a provider manager for Persistence; only that manager or the provider-none task result records lifecycle COMPLETED. This skill does not dispatch the manager.

@@ -26,11 +26,14 @@ procedure, if any. Apply the loaded resource-coordination procedure when its eve
 requires protection during verification. Preserve the complete behavior and evidence that the
 loaded procedure requires. When applicable project instructions select none and load no
 resource-coordination procedure, perform no claim procedure and no claim-specific evidence
-handling. Do not discover, acquire, heartbeat, or release claims.
+handling. In that none-selected case, do not discover, acquire, heartbeat, or release claims.
 
 ## Evidence Handoff And Commit Authority
 
 Verify End To End Workflow owns evidence capture and the verifier handoff. It does not own delivery integration, publication, or provider lifecycle mutation.
+
+Include coordination evidence only when the loaded procedure requires it. In the none-selected
+case, omit claim-specific fields, placeholders, and not-applicable results.
 
 - Only the delivery owner applies the effective Commit-selected skill.
 - For main-branch, the delivery owner applies deliver-work-item-main-branch.

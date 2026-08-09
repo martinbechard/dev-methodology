@@ -51,14 +51,14 @@ Before shared mutation:
 
 A branch name, pushed branch, patch file, detached checkout, pull request, merge request, or clean source worktree is not completion evidence.
 
-## Claims
+## Resource Coordination
 
 Applicable project instructions own resource-coordination selection. They load the selected
 procedure, if any. Apply the loaded resource-coordination procedure when its event contract
 requires protection during integration. Preserve the complete behavior and evidence that the
 loaded procedure requires. When applicable project instructions select none and load no
 resource-coordination procedure, perform no claim procedure and no claim-specific evidence
-handling. Do not discover, acquire, heartbeat, or release claims.
+handling. In that none-selected case, do not discover, acquire, heartbeat, or release claims.
 Provider closure remains a separate Persistence transaction.
 
 ## Main Reconciliation
@@ -133,14 +133,16 @@ When a provider is selected, prepare one terminal update containing:
 - review and source-check evidence;
 - post-integration checks and any scoped omissions;
 - required remote observation;
-- clean verification evidence, preserved unrelated-dirt evidence when applicable, absence of integration residue, and applicable claim results; and
+- clean verification evidence, preserved unrelated-dirt evidence when applicable, absence of integration residue, and coordination evidence required by the loaded procedure; and
 - completion disposition READY with requested lifecycle COMPLETED.
 
 Return the prepared terminal handoff to the caller after integration is complete. The owning orchestrator decides whether and when to dispatch the selected provider manager. This skill neither performs that dispatch nor waits for its result. The provider-backed item remains nonterminal until the separate Persistence update succeeds. Do not report a provider-backed item as completed before that succeeds.
 
 ## Result
 
-Return READY only when the complete main-branch delivery proof exists. Return:
+Return READY only when the complete main-branch delivery proof exists. Include coordination
+evidence only when the loaded procedure requires it. In the none-selected case, omit
+claim-specific fields, placeholders, and not-applicable results. Return:
 
 - Work Item ID and provider selector;
 - source and integration commits;
@@ -148,9 +150,9 @@ Return READY only when the complete main-branch delivery proof exists. Return:
 - exact reachability or integration-mapping evidence;
 - review, source-check, and post-integration verification evidence;
 - required local and remote observations;
-- clean-state or unrelated-dirty preservation evidence, exact source-to-integration mapping, applicable claim results; and
+- clean-state or unrelated-dirty preservation evidence, exact source-to-integration mapping, and coordination evidence required by the loaded procedure; and
 - the provider lifecycle update or provider-none terminal result.
 
-Return BLOCKED with the preserved source commit, failed check, relevant claim result, recovery evidence, and one next action when integration, conflict resolution, verification, publication, main observation, or a claim operation cannot finish safely. A later provider recording failure is a Persistence failure and does not change Commit READY into BLOCKED.
+Return BLOCKED with the preserved source commit, failed check, recovery evidence, and one next action when integration, conflict resolution, verification, publication, or main observation cannot finish safely. If the loaded resource-coordination procedure cannot finish safely, also return BLOCKED with the coordination evidence that procedure requires. A later provider recording failure is a Persistence failure and does not change Commit READY into BLOCKED.
 
 An unmerged temporary branch can never return READY or cause lifecycle COMPLETED.
