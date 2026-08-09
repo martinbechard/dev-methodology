@@ -244,14 +244,14 @@ Condition Type: root-execution
 
 Owner: Dev Orchestrator task 019fe3cd-577c-76b1-965c-06fb8793ae42
 
-Evidence: canonical root execution owns clean candidate commit `b45719f78c1dcd74f704998e4553a1bc973f140e` (unchanged branch/worktree, 73 authorized files); coder is paused safely at 2026-08-09T02:12Z with no command running and corrections preserved. Coordinator authorized six extra expectation values within the existing singleton test path; owner regression is 31/31 green. Bundle is 171/172 with only the excluded stale support projection; role-schema v8, strict nested schemas, freshness, and gates are clean. The historical Future Ideas baseline failure remains preserved. Final audit found one in-scope reverse-direction reconciliation edge: authoritative PASS does not yet override runner FAIL because the raw failure flag remains latched; the correction commit is deliberately deferred. Existing HTML, terminology, Future Ideas, and support projection remain excluded; all 15 governed receipts and four dependents remain reconciled; no source mutation has begun. The direct overlap boundary with `publish-and-integrate-terminology-standard` is acknowledged; both tasks defer shared overlap events and preserve each other.
+Evidence: canonical root execution owns corrected clean candidate range `36f8c1be..74f91caefe815dddca503502a388668be6cb94df`: initial candidate `b45719f78c1dcd74f704998e4553a1bc973f140e` plus correction `74f91caefe815dddca503502a388668be6cb94df`, unchanged branch/worktree, no commands or mutation running. Correction attempt 1 is complete with exact singleton and six-expectation disposition; runner/coordinator and reverse-authority edge are corrected; role-schema v8 and nested output schemas, generated adapters, suites/fixtures, and docs/UX corrections are present. Verification passes: focused 31/31, freshness, skill validation, metadata/provenance 18/18, catalogs, both fixtures, validate-only, provenance 22 new + 2 historical/generated, and diff. Preserved baselines are bundle 171/172 with only excluded support projection and evaluation-doc 27/28 with only the historical Future Ideas ID failure. No live model was run; non-Codex mappings remain untested. Existing HTML, terminology, Future Ideas, and support projection remain excluded; all 15 governed receipts and four dependents remain reconciled; no source mutation has begun. The direct overlap boundary with `publish-and-integrate-terminology-standard` is acknowledged; both tasks defer shared overlap events and preserve each other.
 
-Observed At: 2026-08-09T02:12:43Z
+Observed At: 2026-08-09T02:17:08Z
 
 Started At: 2026-08-08T23:57:32Z
 
 Deadline or Expires At: 2026-08-09T03:15:00Z
 
-Next Action: Reacquire the Work Item activity=work claim, then resume the same coder to add the reverse-direction test, compute integrated status from reconciled effective claims, rerun focused/bundle/freshness/diff checks, and commit without widening scope.
+Next Action: Reacquire the Work Item activity=work claim, then dispatch fresh code, methodology, prompt, and docs/UX re-review plus verifier, followed by browser verification and current-main integration without widening scope.
 
-Next Reconciliation At: 2026-08-09T02:27:00Z
+Next Reconciliation At: 2026-08-09T02:32:00Z
