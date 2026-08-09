@@ -10,9 +10,9 @@ Branch: `codex/publish-and-integrate-terminology-standard-019fe3d6`
 
 Worktree: `/Users/martinbechard/.codex/worktrees/940b/dev-methodology`
 
-Phase: Waiting for User — Live Treatment Data Authorization
+Phase: Ready — SOLO Crisis Treatment Resumption
 
-Status: User Action Required
+Status: Ready
 
 Type: Feature
 
@@ -392,8 +392,20 @@ Question: Do you approve sending the contents of project `terminology.md` (5,160
 
 Approval Boundary: Approval covers only that one isolated synthetic documentation evaluation. It does not authorize user-level installation, remote publication, release, deployment, unrelated repository data, PII, or company-confidential material.
 
-Resolution: Pending
+Resolution: Superseded as an incorrect authorization boundary. The user already authorized the red/green terminology evaluation, the work item already required the treatment and two controls against the same supported model profile, and the project glossary contains no PII, credentials, customer data, company-confidential information, or other material requiring separate approval.
 
-Approval Resolution: Pending
+Approval Resolution: Existing evaluation authority retained. On 2026-08-09 in canonical parent task `019fb057-1767-7ef2-b5fa-41f4417b20b3`, the Coordinator determined that transport through `reference_load` does not create a new user decision for this non-sensitive glossary and that the redundant User Action Required state must be removed.
 
-Resumption: On approval, reuse canonical task `019fe3d6-2dd6-7322-a507-e8ca961e27d8`, perform the exact treatment once, verify its semantic-green result and provider evidence, then complete and archive this item. On refusal, preserve the deterministic implementation and close with the live treatment explicitly unverified.
+Resumption: Reuse canonical task `019fe3d6-2dd6-7322-a507-e8ca961e27d8`, perform the exact treatment once, verify its semantic-green result and provider evidence, then complete and archive this item.
+
+## Crisis Authorization Reconciliation
+
+Reconciled At: 2026-08-09T21:42:26Z
+
+Authority: Dev Backlog Coordinator task `019fb057-1767-7ef2-b5fa-41f4417b20b3` operating under the user-directed SOLO crisis procedure.
+
+Decision: The glossary-specific approval request was invalid and redundant. The existing user-authorized terminology treatment already covers sending its synthetic, non-sensitive model input to the selected OpenAI model. The transport mechanism does not change that authority.
+
+Preserved Boundary: This decision does not authorize unrelated repository data, PII, company-confidential information, user-level installation, remote publication, release, or deployment.
+
+Next Action: Resume the same exact treatment-only evaluation, verify semantic-green output and provider evidence, then finish and archive this work item if the completion contract passes.
