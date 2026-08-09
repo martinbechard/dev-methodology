@@ -10,7 +10,7 @@ Branch: codex/add-portable-agent-tournament-skill
 
 Worktree: /Users/martinbechard/.codex/worktrees/1bbe/dev-methodology
 
-Phase: Reviewing — Corrected private candidate
+Phase: Implementing — Final review corrections
 
 Status: Running
 
@@ -183,19 +183,19 @@ Next Reconciliation At: 2026-08-09T04:47:00Z
 
 Condition Type: delegated-work
 
-Owner: Dev Code Reviewer execution /root/tournament_source_review and Methodology Artifact Reviewer execution /root/tournament_methodology_review under Dev Orchestrator task 019fe4cb-b4f3-7563-8ece-a60e567aae29
+Owner: Dev Coder execution /root/tournament_skill_coder under Dev Orchestrator task 019fe4cb-b4f3-7563-8ece-a60e567aae29
 
-Evidence: Original Dev Coder execution /root/tournament_skill_coder produced clean replacement candidate 310fd8b09c04004132d3c332f3c924d87af46a87 on codex/add-portable-agent-tournament-skill from accepted base f69f58690fd638563a24e9c93d242d707a5798bf. The full candidate remains exactly four new paths under skills/run-agent-tournament; correction delta fe2228e2140e4ed212917edfe240fb7001588813..310fd8b09c04004132d3c332f3c924d87af46a87 changes only SKILL.md, references/tournament-contract.md, and assets/tournament.example.yaml. Correction attempt 1 addresses all six prior findings, and focused contract assertions, repository skill validation, OpenAI metadata synchronization, exact document provenance, duplicate-key YAML parsing, Markdown links, external-reference digest audit, harness-boundary scan, inline-code scan, and git diff checks passed locally. Configured MCP validation still returns the known outside-configured-root rejection and remains deferred rather than counted as a pass. Fresh read-only Dev Code Reviewer execution /root/tournament_source_review and Methodology Artifact Reviewer execution /root/tournament_methodology_review are re-reviewing the complete corrected package with explicit disposition of every prior finding and no mutation authority. README, design, generated catalogs and projections, adapters, eval catalogs, scripts/test_bundle_content.py, shared installation, live-model evaluation, and main integration remain retained by terminology and excluded. Exact Work Item activity=work claim add-portable-agent-tournament-skill-019fe4cb-root-work remains live and was heartbeated at 2026-08-09T06:01:40.593110Z, journal event c3cc2182-32df-4653-839b-4061cf74b508. This re-review refresh is protected by exact backlog-path claim add-portable-agent-tournament-skill-019fe4cb-rereview-evidence-1, outcome SHARED_CHECKOUT_ACQUIRED, journal event 56868f4e-30eb-4981-8085-03d574812714.
+Evidence: Fresh read-only Dev Code Reviewer execution /root/tournament_source_review and Methodology Artifact Reviewer execution /root/tournament_methodology_review both returned NEEDS_CORRECTION for replacement candidate 310fd8b09c04004132d3c332f3c924d87af46a87. The original six review themes are substantially closed, but the independent verdicts identify five bounded consistency defects: retry attempts must be exactly enumerable and authorized; complete candidate coverage must consistently permit an explicit partial order and prohibit a cost-dependent unpriced tie from being reported as winner or advancement; frozen variance policy mode must be separated from observed state with aligned provisional-stage advancement semantics; zero-call transport preflight needs caller-owned proof equivalent to deterministic-rescore proof; and every example matrix row needs an explicit nondeterminism control. Original Dev Coder execution /root/tournament_skill_coder is applying correction attempt 2 of at most 2 to exactly skills/run-agent-tournament/SKILL.md, skills/run-agent-tournament/agents/openai.yaml, skills/run-agent-tournament/references/tournament-contract.md, and skills/run-agent-tournament/assets/tournament.example.yaml while preserving the accepted provenance envelope and adding focused assertions. Configured MCP validation remains the known outside-configured-root deferred gate and is not counted as a pass. README, design, generated catalogs and projections, adapters, eval catalogs, scripts/test_bundle_content.py, shared installation, live-model evaluation, and main integration remain retained by terminology and excluded. Exact Work Item activity=work claim add-portable-agent-tournament-skill-019fe4cb-root-work remains live and was heartbeated at 2026-08-09T06:07:00.618412Z, journal event c24fdd83-be42-4f02-b75e-640ccfb40290. This final-correction refresh is protected by exact backlog-path claim add-portable-agent-tournament-skill-019fe4cb-correction-evidence-2, outcome SHARED_CHECKOUT_ACQUIRED, journal event 1ce82b05-f7cc-4660-89ab-6806ff6cc37c.
 
-Observed At: 2026-08-09T06:01:46Z
+Observed At: 2026-08-09T06:07:07Z
 
-Started At: 2026-08-09T06:01:00Z
+Started At: 2026-08-09T06:06:00Z
 
-Deadline or Expires At: 2026-08-09T06:20:00Z
+Deadline or Expires At: 2026-08-09T06:35:00Z
 
-Next Action: Collect both independent re-review verdicts for corrected candidate 310fd8b09c04004132d3c332f3c924d87af46a87 and dispatch focused private verification only if both verdicts are GOOD
+Next Action: Collect the clean final correction commit from original Dev Coder execution /root/tournament_skill_coder, then dispatch both independent reviewers for the last exact-manifest re-review before any focused verifier work
 
-Next Reconciliation At: 2026-08-09T06:15:00Z
+Next Reconciliation At: 2026-08-09T06:21:00Z
 
 ## Running Resource Claim Evidence
 
