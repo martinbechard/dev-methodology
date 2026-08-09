@@ -1072,6 +1072,10 @@ cases:
       wholeRepositoryAllowed: false
       approvedSensitiveData: false
     modelVisiblePaths: [README.md, TASK.md, source-document.md, terminology.md]
+    modelVisibleProjection:
+      schemaVersion: 1
+      mode: isolated-harness-workspace
+      evaluatorOnlyPaths: [evidence, negative-activation]
     skillResourceAllowlist:
       effective-communication: [SKILL.md]
       ste-technical-writing: [SKILL.md]
@@ -1114,6 +1118,10 @@ cases:
       wholeRepositoryAllowed: false
       approvedSensitiveData: false
     modelVisiblePaths: [TASK.md, source-evidence.md]
+    modelVisibleProjection:
+      schemaVersion: 1
+      mode: isolated-harness-workspace
+      evaluatorOnlyPaths: [verify.py]
     skillResourceAllowlist:
       effective-communication: [SKILL.md]
       ste-technical-writing: [SKILL.md]

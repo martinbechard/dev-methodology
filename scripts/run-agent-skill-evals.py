@@ -21,10 +21,22 @@ import yaml
 
 try:
     from agent_skill_evals import *  # noqa: F403
-    from agent_skill_evals.staging import stage_mcp_reference_context
+    from agent_skill_evals.staging import (
+        ModelVisibleProjection,
+        stage_mcp_reference_context,
+        stage_model_visible_projection,
+        synchronize_model_visible_projection,
+        write_model_visible_projection_manifest,
+    )
 except ModuleNotFoundError:
     from scripts.agent_skill_evals import *  # type: ignore[no-redef]  # noqa: F403
-    from scripts.agent_skill_evals.staging import stage_mcp_reference_context
+    from scripts.agent_skill_evals.staging import (
+        ModelVisibleProjection,
+        stage_mcp_reference_context,
+        stage_model_visible_projection,
+        synchronize_model_visible_projection,
+        write_model_visible_projection_manifest,
+    )
 
 try:
     from agent_skill_judge_contract import canonical_judge_identity
@@ -838,19 +850,181 @@ def _trusted_output_schema(path: Path | None) -> Path | None:
     return validate_codex_output_schema(path)  # noqa: F405
 
 
+def _validate_projection_verifier_command(
+    specification: object,
+    projection: ModelVisibleProjection,
+) -> None:
+    """Reject a trusted verifier that would execute code from a model-write path."""
+
+    argv = tuple(specification.argv)
+    executable = Path(argv[0]).name.lower()
+    interpreter_names = {
+        "bash", "dash", "node", "nodejs", "python", "python3", "ruby", "sh", "zsh",
+    }
+    executed_candidates = [argv[0]]
+    if executable in interpreter_names:
+        for argument in argv[1:]:
+            if argument in {"-c", "-e", "-m"}:
+                break
+            if argument.startswith("-"):
+                continue
+            executed_candidates.append(argument)
+            break
+    for argument in executed_candidates:
+        if _projection_argument_is_model_write_path(argument, projection):
+            raise ValueError(
+                "trusted projection verifier cannot execute a model-write path: "
+                f"{argument}"
+            )
+
+
+def _projection_argument_is_model_write_path(
+    argument: str,
+    projection: ModelVisibleProjection,
+) -> bool:
+    candidate = Path(argument)
+    if candidate.is_absolute():
+        for root in (projection.source_root, projection.root):
+            try:
+                relative = candidate.resolve().relative_to(root)
+            except ValueError:
+                continue
+            candidate = relative
+            break
+        else:
+            return False
+    relative = PurePosixPath(candidate.as_posix())
+    if any(part in {"", ".", ".."} for part in relative.parts):
+        return False
+    return any(
+        relative == selected or selected in relative.parents
+        for selected in map(PurePosixPath, projection.sync_paths)
+    )
+
+
+def _run_projection_verifier(
+    case: Mapping[str, object],
+    active_root: Path,
+    specification: object,
+    evidence_path: Path,
+    redactions: Mapping[str, str],
+) -> tuple[dict[str, object], bool]:
+    """Run and retain one evaluator-owned verifier against the full disposable fixture."""
+
+    before = snapshot_product_tree(active_root)  # noqa: F405
+    result = run_command(specification, active_root)  # noqa: F405
+    after = snapshot_product_tree(active_root)  # noqa: F405
+    stdout = _redact_approved_environment(result.stdout, redactions)
+    stderr = _redact_approved_environment(result.stderr, redactions)
+    control_observation = case.get("probeVariant") in {
+        "target-omitted",
+        "wrong-skill",
+    }
+    payload = {
+        "schema": "dev-methodology-eval-projection-verification",
+        "version": 1,
+        "case": case["id"],
+        "argv": list(specification.argv),
+        "exitCode": result.exit_code,
+        "passed": result.passed,
+        "expectation": (
+            "control-observation" if control_observation else "success-required"
+        ),
+        "fixtureDigestBefore": snapshot_digest(before),  # noqa: F405
+        "fixtureDigestAfter": snapshot_digest(after),  # noqa: F405
+        "fixtureUnchanged": before == after,
+        "stdout": stdout,
+        "stderr": stderr,
+    }
+    evidence_path.write_text(
+        json.dumps(payload, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    os.chmod(evidence_path, 0o600)
+    return payload, (control_observation or result.passed) and before == after
+
+
 def _handle_harness_invocation(
     args: argparse.Namespace,
     case: Mapping[str, object],
     active_root: Path,
 ) -> str | None:
-    task_path = active_root / str(case["task"])
+    projection_contract = case.get("modelVisibleProjection")
+    if projection_contract is None:
+        return _handle_harness_invocation_in_workspace(
+            args,
+            case,
+            active_root,
+            active_root,
+            None,
+        )
+    if (
+        not isinstance(projection_contract, Mapping)
+        or set(projection_contract)
+        != {"schemaVersion", "mode", "evaluatorOnlyPaths"}
+        or projection_contract.get("schemaVersion") != 1
+        or projection_contract.get("mode") != "isolated-harness-workspace"
+        or not isinstance(projection_contract.get("evaluatorOnlyPaths"), list)
+        or any(
+            not isinstance(path, str)
+            for path in projection_contract.get("evaluatorOnlyPaths", [])
+        )
+    ):
+        return "case.modelVisibleProjection is not the supported exact opt-in contract"
+    model_visible_paths = case.get("modelVisiblePaths")
+    allowed_write_paths = case.get("allowedWritePaths", [])
+    ephemeral_write_paths = case.get("ephemeralWritePaths", [])
+    if (
+        not isinstance(model_visible_paths, list)
+        or any(not isinstance(path, str) for path in model_visible_paths)
+        or not isinstance(allowed_write_paths, list)
+        or any(not isinstance(path, str) for path in allowed_write_paths)
+        or not isinstance(ephemeral_write_paths, list)
+        or any(not isinstance(path, str) for path in ephemeral_write_paths)
+    ):
+        return "model-visible projection requires validated path lists"
+    try:
+        with tempfile.TemporaryDirectory(
+            prefix=f".{case['id']}-{args.harness}-model-visible-",
+            dir=active_root.parent,
+        ) as container:
+            projection = stage_model_visible_projection(
+                active_root,
+                Path(container) / "workspace",
+                model_visible_paths,
+                evaluator_only_paths=projection_contract["evaluatorOnlyPaths"],
+                sync_paths=[*allowed_write_paths, *ephemeral_write_paths],
+            )
+            marker = active_root / ".eval-workspace.json"
+            if not marker.is_file() or marker.is_symlink():
+                return "harness invocation requires a runner-owned disposable workspace"
+            shutil.copy2(marker, projection.root / marker.name)
+            return _handle_harness_invocation_in_workspace(
+                args,
+                case,
+                active_root,
+                projection.root,
+                projection,
+            )
+    except (OSError, RuntimeError, ValueError) as error:
+        return f"model-visible projection preflight failed: {error}"
+
+
+def _handle_harness_invocation_in_workspace(
+    args: argparse.Namespace,
+    case: Mapping[str, object],
+    active_root: Path,
+    harness_root: Path,
+    projection: ModelVisibleProjection | None,
+) -> str | None:
+    task_path = harness_root / str(case["task"])
     prompt = task_path.read_text(encoding="utf-8")
     agent_id = args.agent_id or next(iter(case.get("requiredAgents", [])), None)
     if not isinstance(agent_id, str):
         return "harness invocation requires an agent id"
-    if not (active_root / ".eval-workspace.json").is_file():
+    if not (harness_root / ".eval-workspace.json").is_file():
         return "harness invocation requires a runner-owned disposable workspace"
-    if (active_root / ".git").exists() and not is_evaluation_git_workspace(active_root):  # noqa: F405
+    if (harness_root / ".git").exists() and not is_evaluation_git_workspace(harness_root):  # noqa: F405
         return "harness invocation requires a disposable evaluation-owned Git workspace"
     default_evidence_root = Path(tempfile.gettempdir()).resolve() / "dev-methodology-evals" / "evidence"
     if default_evidence_root.is_symlink() or default_evidence_root.parent.is_symlink():
@@ -879,6 +1053,21 @@ def _handle_harness_invocation(
     mcp_identity_output = event_output.with_name(
         f"{event_output.stem}-mcp-identity.json"
     )
+    projection_sync_output = (
+        event_output.with_name(f"{event_output.stem}-projection-sync.json")
+        if projection is not None
+        else None
+    )
+    projection_manifest_output = (
+        event_output.with_name(f"{event_output.stem}-projection-manifest.json")
+        if projection is not None
+        else None
+    )
+    projection_verifier_output = (
+        event_output.with_name(f"{event_output.stem}-projection-verifier.json")
+        if projection is not None
+        else None
+    )
     cache_dir = (
         event_output.parent
         / f".{case['id']}-{args.harness}-{active_root.name}-cache"
@@ -895,8 +1084,17 @@ def _handle_harness_invocation(
         except ValueError as error:
             return f"Codex authentication preflight failed: {error}"
         codex_home = event_output.parent / f".codex-home-{active_root.name}"
+    projection_verifier_specification = None
     try:
         output_schema = _trusted_output_schema(args.output_schema)
+        if projection is not None:
+            projection_verifier_specification = command_spec(case.get("verify"))  # noqa: F405
+            if projection_verifier_specification.inherit_environment:
+                return "trusted projection verifier cannot inherit the host environment"
+            _validate_projection_verifier_command(
+                projection_verifier_specification,
+                projection,
+            )
         resource_allowlist = case.get("skillResourceAllowlist", {})
         if not isinstance(resource_allowlist, dict) or any(
             not isinstance(skill, str)
@@ -909,7 +1107,7 @@ def _handle_harness_invocation(
             args.harness,
             agent_id,
             list(case.get("executionSkills", case.get("requiredSkills", []))),
-            active_root,
+            harness_root,
             skill_files=resource_allowlist,
         )
         mcp_context = None
@@ -936,11 +1134,11 @@ def _handle_harness_invocation(
             if mcp_contract.get("schemaVersion") == 5:
                 required_tool_argument_digests = resolve_mcp_tool_argument_digests(  # noqa: F405
                     mcp_contract["requiredToolArguments"],
-                    active_root,
+                    harness_root,
                 )
                 mcp_context = stage_mcp_reference_context(  # noqa: F405
                     args.harness,
-                    active_root,
+                    harness_root,
                     mcp_identity,
                     mcp_audit_output,
                     evidence_root,
@@ -949,21 +1147,21 @@ def _handle_harness_invocation(
                 )
             else:
                 available_skills = read_mcp_skill_catalog(  # noqa: F405
-                    active_root,
+                    harness_root,
                     str(mcp_contract["skillCatalogSource"]),
                     ROOT,  # noqa: F405
                 )
                 staged_mcp_skill_root = (
-                    active_root / ".eval-context" / "mcp-agent-ops" / "skills"
+                    harness_root / ".eval-context" / "mcp-agent-ops" / "skills"
                 )
                 required_tool_argument_digests = resolve_mcp_tool_argument_digests(  # noqa: F405
                     mcp_contract["requiredToolArguments"],
-                    active_root,
+                    harness_root,
                     skill_root=staged_mcp_skill_root,
                 )
                 mcp_context = stage_mcp_agent_ops_context(  # noqa: F405
                     args.harness,
-                    active_root,
+                    harness_root,
                     mcp_identity,
                     ROOT,  # noqa: F405
                     context_pack.skill_location,
@@ -984,21 +1182,21 @@ def _handle_harness_invocation(
         allowed_paths = case.get("modelVisiblePaths", ["."])
         if not isinstance(allowed_paths, list) or any(not isinstance(path, str) for path in allowed_paths):
             return "case.modelVisiblePaths must be a list of relative paths"
-        input_manifest = build_input_manifest(active_root, allowed_paths)  # noqa: F405
-        initialize_git_workspace(active_root)  # noqa: F405
+        input_manifest = build_input_manifest(harness_root, allowed_paths)  # noqa: F405
+        initialize_git_workspace(harness_root)  # noqa: F405
         harness_identity = capture_harness_identity(args.harness)  # noqa: F405
     except (RuntimeError, ValueError) as error:
         return f"model-visible context preflight failed: {error}"
     command = build_harness_command(  # noqa: F405
         args.harness,
-        active_root,
+        harness_root,
         agent_id,
         prompt,
         args.model,
         read_only=bool(case.get("readOnly")),
         event_output=event_output,
         evidence_root=evidence_root,
-        isolated_config_root=active_root,
+        isolated_config_root=harness_root,
         output_schema=output_schema,
         last_message_output=args.result,
         cache_dir=cache_dir,
@@ -1010,6 +1208,15 @@ def _handle_harness_invocation(
         codex_home=codex_home,
     )
     execution_command = command
+    projection_manifest_evidence = None
+    if projection is not None and projection_manifest_output is not None:
+        try:
+            projection_manifest_evidence = write_model_visible_projection_manifest(
+                projection,
+                projection_manifest_output,
+            )
+        except (OSError, ValueError) as error:
+            return f"model-visible projection evidence preflight failed: {error}"
     if args.print_invocation:
         invocation_record = {
             "harness": args.harness,
@@ -1031,6 +1238,24 @@ def _handle_harness_invocation(
             "containmentLevel": "containment-unverified",
             "approvedEnvironmentNames": list(execution_command.host_environment_allowlist),
         }
+        if projection is not None:
+            invocation_record["modelVisibleProjection"] = {
+                "mode": "isolated-harness-workspace",
+                "sourceIdentityDigest": projection.source_identity_digest,
+                "projectionManifestDigest": projection.manifest_digest,
+                "projectionEvidence": str(
+                    projection_manifest_evidence.evidence_path
+                ),
+                "projectionEvidenceDigest": (
+                    projection_manifest_evidence.content_digest
+                ),
+                "projectedInputs": [file.__dict__ for file in projection.files],
+                "evaluatorOnlyPaths": list(projection.evaluator_only_paths),
+                "syncPaths": list(projection.sync_paths),
+                "syncEvidenceStatus": (
+                    "pending-runtime" if args.invoke_harness else "preflight-only"
+                ),
+            }
         if isinstance(case.get("probeId"), str):
             invocation_record["probeId"] = case["probeId"]
             invocation_record["probeVariant"] = case.get("probeVariant")
@@ -1057,7 +1282,7 @@ def _handle_harness_invocation(
             }
             if mcp_context.skill_root is not None:
                 invocation_record["mcpAgentOps"]["skillRoot"] = (
-                    mcp_context.skill_root.relative_to(active_root).as_posix()
+                    mcp_context.skill_root.relative_to(harness_root).as_posix()
                 )
         sandbox_profiles = case.get("sandboxProfiles")
         if isinstance(sandbox_profiles, Mapping) and args.harness in sandbox_profiles:
@@ -1096,6 +1321,10 @@ def _handle_harness_invocation(
         capture_paths.append(result_output)
     if mcp_context is not None:
         capture_paths.extend((mcp_context.audit_log, mcp_identity_output))
+    if projection_sync_output is not None:
+        capture_paths.append(projection_sync_output)
+    if projection_verifier_output is not None:
+        capture_paths.append(projection_verifier_output)
     junie_attribution_status: str | None = None
     junie_attribution_path: Path | None = None
     junie_attribution_digest: str | None = None
@@ -1155,7 +1384,7 @@ def _handle_harness_invocation(
                 auth_destination.write_bytes(codex_auth_content)
                 os.chmod(auth_destination, 0o600)
             try:
-                result = run_command(execution_command, active_root)  # noqa: F405
+                result = run_command(execution_command, harness_root)  # noqa: F405
                 if junie_home is not None and mcp_context is not None:
                     (
                         junie_attribution_status,
@@ -1191,8 +1420,80 @@ def _handle_harness_invocation(
                     file=sys.stderr,
                     end="" if stderr.endswith("\n") else "\n",
                 )
+            if projection is not None and projection_sync_output is not None:
+                projection_sync = synchronize_model_visible_projection(
+                    projection,
+                    projection_sync_output,
+                )
             if not result.passed:
                 return f"{args.harness} invocation failed with exit code {result.exit_code}"
+            if (
+                projection is not None
+                and projection_verifier_output is not None
+                and projection_verifier_specification is not None
+            ):
+                verifier_record, verifier_acceptable = _run_projection_verifier(
+                    case,
+                    active_root,
+                    projection_verifier_specification,
+                    projection_verifier_output,
+                    redactions,
+                )
+                assert projection_sync is not None
+                projection_record = {
+                    "mode": "isolated-harness-workspace",
+                    "sourceIdentityDigest": projection.source_identity_digest,
+                    "projectionManifestDigest": projection.manifest_digest,
+                    "projectionEvidence": str(
+                        projection_manifest_evidence.evidence_path
+                    ),
+                    "projectionEvidenceDigest": (
+                        projection_manifest_evidence.content_digest
+                    ),
+                    "projectedInputs": [file.__dict__ for file in projection.files],
+                    "evaluatorOnlyPaths": list(projection.evaluator_only_paths),
+                    "syncPaths": list(projection.sync_paths),
+                    "syncEvidence": str(projection_sync.evidence_path),
+                    "syncEvidenceDigest": hashlib.sha256(
+                        projection_sync.evidence_path.read_bytes()
+                    ).hexdigest(),
+                    "syncManifestDigest": projection_sync.manifest_digest,
+                    "mutations": [
+                        {
+                            "path": mutation.path,
+                            "action": mutation.action,
+                            "beforeDigest": mutation.before_digest,
+                            "afterDigest": mutation.after_digest,
+                            "size": mutation.size,
+                        }
+                        for mutation in projection_sync.mutations
+                    ],
+                    "evaluatorVerificationEvidence": str(
+                        projection_verifier_output
+                    ),
+                    "evaluatorVerificationEvidenceDigest": hashlib.sha256(
+                        projection_verifier_output.read_bytes()
+                    ).hexdigest(),
+                    "evaluatorVerificationStatus": (
+                        "passed" if verifier_record["passed"] else "failed"
+                    ),
+                    "evaluatorVerificationExitCode": verifier_record["exitCode"],
+                    "evaluatorVerificationExpectation": verifier_record[
+                        "expectation"
+                    ],
+                    "syncEvidenceStatus": "applied-and-recorded",
+                }
+                print(json.dumps({
+                    "case": case["id"],
+                    "modelVisibleProjection": projection_record,
+                }, sort_keys=True))
+                if not verifier_acceptable:
+                    if verifier_record["fixtureUnchanged"] is not True:
+                        return "trusted full-fixture verifier changed the fixture"
+                    return (
+                        "trusted full-fixture verifier failed with exit code "
+                        f"{verifier_record['exitCode']}"
+                    )
             if (
                 args.harness == "codex"
                 and result_output is not None
@@ -1209,7 +1510,7 @@ def _handle_harness_invocation(
                     result_output.write_text(final_response, encoding="utf-8")
             if mcp_context is not None:
                 output_manifest, output_manifest_digest = _preserve_allowed_outputs(
-                    active_root,
+                    harness_root,
                     case.get("allowedWritePaths", []),
                     mcp_context.evidence_directory,
                 )

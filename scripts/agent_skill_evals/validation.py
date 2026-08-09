@@ -340,6 +340,7 @@ def validate_case_definition(case: Mapping[str, object]) -> list[str]:
             if unsupported:
                 errors.append(f"case.{field} uses unsupported harnesses: {', '.join(unsupported)}")
     _validate_string_list(case.get("modelVisiblePaths", ["."]), "case.modelVisiblePaths", errors, required=True)
+    _validate_model_visible_projection(case, errors)
     resource_allowlist = case.get("skillResourceAllowlist", {})
     if not isinstance(resource_allowlist, Mapping):
         errors.append("case.skillResourceAllowlist must be a mapping")
@@ -367,6 +368,59 @@ def validate_case_definition(case: Mapping[str, object]) -> list[str]:
                 errors.append(f"case.skillResourceAllowlist is missing required skill resources: {skill}")
     _validate_mcp_agent_ops_case(case, errors)
     return errors
+
+
+def _validate_model_visible_projection(
+    case: Mapping[str, object],
+    errors: list[str],
+) -> None:
+    contract = case.get("modelVisibleProjection")
+    if contract is None:
+        return
+    if not isinstance(contract, Mapping):
+        errors.append("case.modelVisibleProjection must be a mapping")
+        return
+    expected_fields = {"schemaVersion", "mode", "evaluatorOnlyPaths"}
+    if set(contract) != expected_fields:
+        errors.append(
+            "case.modelVisibleProjection must define exactly schemaVersion, mode, "
+            "and evaluatorOnlyPaths"
+        )
+    if contract.get("schemaVersion") != 1:
+        errors.append("case.modelVisibleProjection.schemaVersion must be 1")
+    if contract.get("mode") != "isolated-harness-workspace":
+        errors.append(
+            "case.modelVisibleProjection.mode must be isolated-harness-workspace"
+        )
+    evaluator_only = contract.get("evaluatorOnlyPaths")
+    _validate_string_list(
+        evaluator_only,
+        "case.modelVisibleProjection.evaluatorOnlyPaths",
+        errors,
+        required=True,
+    )
+    for path in _string_items(evaluator_only):
+        _validate_case_relative_path(
+            path,
+            "case.modelVisibleProjection.evaluatorOnlyPaths",
+            errors,
+        )
+    visible_paths = _string_items(case.get("modelVisiblePaths", ["."]))
+    output_paths = (
+        _string_items(case.get("allowedWritePaths"))
+        + _string_items(case.get("ephemeralWritePaths"))
+    )
+    for path in _string_items(evaluator_only):
+        if any(_relative_paths_overlap(path, other) for other in visible_paths):
+            errors.append(
+                "case.modelVisibleProjection.evaluatorOnlyPaths overlaps "
+                f"modelVisiblePaths: {path}"
+            )
+        if any(_relative_paths_overlap(path, other) for other in output_paths):
+            errors.append(
+                "case.modelVisibleProjection.evaluatorOnlyPaths overlaps output paths: "
+                f"{path}"
+            )
 
 
 def _validate_mcp_agent_ops_case(
@@ -1569,6 +1623,14 @@ def _validate_version_two(
     _validate_skills(case, harness, evidence, evidence_path, errors, stale_reasons)
     _validate_budgets(evidence.get("budgets"), errors)
     _validate_prepared_fixture(case, evidence.get("preparedFixture"), evidence_path, errors, stale_reasons)
+    _validate_model_visible_projection_run(
+        case,
+        run,
+        evidence.get("preparedFixture"),
+        evidence_path,
+        errors,
+        stale_reasons,
+    )
     _validate_isolation(
         case,
         harness,
@@ -1615,6 +1677,360 @@ def _validate_version_two(
                 errors.append(
                     "independent Judge input manifest must match the canonical Model Judge request"
                 )
+
+
+def _validate_model_visible_projection_run(
+    case: Mapping[str, object],
+    run: Mapping[str, object],
+    prepared_fixture: object,
+    evidence_path: Path,
+    errors: list[str],
+    stale_reasons: list[str],
+) -> None:
+    """Replay the conditional source-projection, mutation-sync, and trusted verifier evidence."""
+
+    contract = case.get("modelVisibleProjection")
+    value = run.get("modelVisibleProjection")
+    if contract is None:
+        if value is not None:
+            errors.append(
+                "evidence run.modelVisibleProjection is forbidden for a non-projection case"
+            )
+        return
+    if not isinstance(contract, Mapping):
+        errors.append("selected case has an invalid modelVisibleProjection contract")
+        return
+    if not isinstance(value, Mapping):
+        errors.append(
+            "evidence run.modelVisibleProjection must be a mapping for a projection case"
+        )
+        return
+    required_fields = {
+        "mode",
+        "sourceIdentityDigest",
+        "projectionManifestDigest",
+        "projectionEvidence",
+        "projectionEvidenceDigest",
+        "projectedInputs",
+        "evaluatorOnlyPaths",
+        "syncPaths",
+        "syncManifestDigest",
+        "syncEvidence",
+        "syncEvidenceDigest",
+        "mutations",
+        "evaluatorVerificationEvidence",
+        "evaluatorVerificationEvidenceDigest",
+        "evaluatorVerificationStatus",
+        "evaluatorVerificationExitCode",
+        "evaluatorVerificationExpectation",
+        "syncEvidenceStatus",
+    }
+    if set(value) != required_fields:
+        errors.append(
+            "evidence run.modelVisibleProjection must define the complete projection evidence contract"
+        )
+    for field in (
+        "sourceIdentityDigest",
+        "projectionManifestDigest",
+        "projectionEvidenceDigest",
+        "syncManifestDigest",
+        "syncEvidenceDigest",
+        "evaluatorVerificationEvidenceDigest",
+    ):
+        _require_digest(value.get(field), f"run.modelVisibleProjection.{field}", errors)
+    if value.get("mode") != contract.get("mode"):
+        errors.append("evidence projection mode differs from the selected case")
+    evaluator_only = _string_items(contract.get("evaluatorOnlyPaths"))
+    sync_paths = [
+        *_string_items(case.get("allowedWritePaths")),
+        *_string_items(case.get("ephemeralWritePaths")),
+    ]
+    if value.get("evaluatorOnlyPaths") != evaluator_only:
+        errors.append("evidence evaluator-only paths differ from the selected case")
+    if value.get("syncPaths") != sync_paths:
+        errors.append("evidence projection sync paths differ from the selected case")
+    if isinstance(prepared_fixture, Mapping):
+        prepared_source_digest = prepared_fixture.get("sourceDigest")
+        if value.get("sourceIdentityDigest") != prepared_source_digest:
+            stale_reasons.append(
+                "evidence projection source identity differs from the prepared fixture"
+            )
+
+    projected_inputs = _validate_projected_input_records(
+        value.get("projectedInputs"),
+        _string_items(case.get("modelVisiblePaths")),
+        errors,
+    )
+    mutations = _validate_projection_mutation_records(
+        value.get("mutations"),
+        sync_paths,
+        errors,
+    )
+    projection_artifact = _load_projection_json_artifact(
+        value.get("projectionEvidence"),
+        value.get("projectionEvidenceDigest"),
+        "run.modelVisibleProjection.projectionEvidence",
+        evidence_path,
+        errors,
+    )
+    if projection_artifact is not None:
+        expected_projection = {
+            "schema": "dev-methodology-eval-model-visible-projection",
+            "version": 1,
+            "sourceIdentityDigest": value.get("sourceIdentityDigest"),
+            "modelVisiblePaths": _string_items(case.get("modelVisiblePaths")),
+            "evaluatorOnlyPaths": evaluator_only,
+            "syncPaths": sync_paths,
+            "projectedInputs": projected_inputs,
+        }
+        _validate_projection_manifest_artifact(
+            projection_artifact,
+            expected_projection,
+            value.get("projectionManifestDigest"),
+            "projection",
+            errors,
+        )
+    sync_artifact = _load_projection_json_artifact(
+        value.get("syncEvidence"),
+        value.get("syncEvidenceDigest"),
+        "run.modelVisibleProjection.syncEvidence",
+        evidence_path,
+        errors,
+    )
+    if sync_artifact is not None:
+        expected_sync = {
+            "schema": "dev-methodology-eval-model-visible-projection-sync",
+            "version": 1,
+            "sourceIdentityDigest": value.get("sourceIdentityDigest"),
+            "projectionManifestDigest": value.get("projectionManifestDigest"),
+            "modelVisiblePaths": _string_items(case.get("modelVisiblePaths")),
+            "evaluatorOnlyPaths": evaluator_only,
+            "projectedInputs": projected_inputs,
+            "syncPaths": sync_paths,
+            "mutations": mutations,
+        }
+        _validate_projection_manifest_artifact(
+            sync_artifact,
+            expected_sync,
+            value.get("syncManifestDigest"),
+            "sync",
+            errors,
+        )
+    _validate_projection_verifier_artifact(
+        case,
+        value,
+        evidence_path,
+        errors,
+    )
+    if value.get("syncEvidenceStatus") != "applied-and-recorded":
+        errors.append("evidence projection sync status must be applied-and-recorded")
+
+
+def _validate_projected_input_records(
+    value: object,
+    model_visible_paths: Sequence[str],
+    errors: list[str],
+) -> list[dict[str, object]]:
+    if not isinstance(value, list) or not value:
+        errors.append("evidence projectedInputs must be a non-empty list")
+        return []
+    records: list[dict[str, object]] = []
+    observed_paths: set[str] = set()
+    for index, item in enumerate(value):
+        if not isinstance(item, Mapping) or set(item) != {"path", "digest", "size"}:
+            errors.append(f"evidence projectedInputs[{index}] has an invalid shape")
+            continue
+        path = item.get("path")
+        if not isinstance(path, str):
+            errors.append(f"evidence projectedInputs[{index}].path must be a string")
+            continue
+        _validate_case_relative_path(path, f"projectedInputs[{index}].path", errors)
+        if path in observed_paths:
+            errors.append(f"evidence projected input path is duplicated: {path}")
+        observed_paths.add(path)
+        if not any(_relative_path_contains(selected, path) for selected in model_visible_paths):
+            errors.append(f"evidence projected input is outside modelVisiblePaths: {path}")
+        _require_digest(item.get("digest"), f"projectedInputs[{index}].digest", errors)
+        if not isinstance(item.get("size"), int) or item.get("size", -1) < 0:
+            errors.append(f"evidence projectedInputs[{index}].size must be non-negative")
+        records.append(dict(item))
+    for selected in model_visible_paths:
+        if not any(
+            isinstance(record.get("path"), str)
+            and _relative_path_contains(selected, str(record["path"]))
+            for record in records
+        ):
+            errors.append(
+                f"evidence projectedInputs does not cover modelVisiblePaths entry: {selected}"
+            )
+    if [str(record.get("path")) for record in records] != sorted(observed_paths):
+        errors.append("evidence projectedInputs must use deterministic path order")
+    return records
+
+
+def _validate_projection_mutation_records(
+    value: object,
+    sync_paths: Sequence[str],
+    errors: list[str],
+) -> list[dict[str, object]]:
+    if not isinstance(value, list):
+        errors.append("evidence projection mutations must be a list")
+        return []
+    if len(value) > 512:
+        errors.append("evidence projection mutations exceed the output file limit")
+    records: list[dict[str, object]] = []
+    observed_paths: set[str] = set()
+    for index, item in enumerate(value):
+        if not isinstance(item, Mapping) or set(item) != {
+            "path", "action", "beforeDigest", "afterDigest", "size"
+        }:
+            errors.append(f"evidence projection mutations[{index}] has an invalid shape")
+            continue
+        path = item.get("path")
+        if not isinstance(path, str):
+            errors.append(f"evidence projection mutations[{index}].path must be a string")
+            continue
+        _validate_case_relative_path(path, f"projection mutations[{index}].path", errors)
+        if path in observed_paths:
+            errors.append(f"evidence projection mutation path is duplicated: {path}")
+        observed_paths.add(path)
+        if not any(_relative_path_contains(selected, path) for selected in sync_paths):
+            errors.append(f"evidence projection mutation is outside syncPaths: {path}")
+        if item.get("action") != "create" or item.get("beforeDigest") is not None:
+            errors.append(
+                f"evidence projection mutation must be an unambiguous create: {path}"
+            )
+        _require_digest(
+            item.get("afterDigest"),
+            f"projection mutations[{index}].afterDigest",
+            errors,
+        )
+        if not isinstance(item.get("size"), int) or item.get("size", -1) < 0:
+            errors.append(f"evidence projection mutations[{index}].size must be non-negative")
+        records.append(dict(item))
+    if [str(record.get("path")) for record in records] != sorted(observed_paths):
+        errors.append("evidence projection mutations must use deterministic path order")
+    total_size = sum(
+        int(record["size"])
+        for record in records
+        if isinstance(record.get("size"), int) and record.get("size", -1) >= 0
+    )
+    if total_size > 20 * 1024 * 1024:
+        errors.append("evidence projection mutations exceed the output byte limit")
+    return records
+
+
+def _relative_path_contains(selected: str, path: str) -> bool:
+    selected_path = PurePosixPath(selected)
+    path_value = PurePosixPath(path)
+    return selected_path.as_posix() == "." or selected_path == path_value or selected_path in path_value.parents
+
+
+def _load_projection_json_artifact(
+    reference: object,
+    expected_content_digest: object,
+    field: str,
+    evidence_path: Path,
+    errors: list[str],
+) -> Mapping[str, object] | None:
+    _validate_reference_digest(
+        reference,
+        expected_content_digest,
+        field,
+        evidence_path,
+        errors,
+    )
+    return _load_mcp_json_artifact(reference, field, evidence_path, errors)
+
+
+def _validate_projection_manifest_artifact(
+    artifact: Mapping[str, object],
+    expected: Mapping[str, object],
+    receipt_manifest_digest: object,
+    label: str,
+    errors: list[str],
+) -> None:
+    if set(artifact) != {*expected, "manifestDigest"}:
+        errors.append(f"evidence {label} manifest has an invalid shape")
+        return
+    for field, expected_value in expected.items():
+        if artifact.get(field) != expected_value:
+            errors.append(f"evidence {label} manifest {field} differs from the receipt")
+    computed_digest = hashlib.sha256(
+        json.dumps(expected, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    ).hexdigest()
+    if artifact.get("manifestDigest") != computed_digest:
+        errors.append(f"evidence {label} manifest internal digest is stale")
+    if receipt_manifest_digest != computed_digest:
+        errors.append(f"evidence {label} manifest digest differs from the receipt")
+
+
+def _validate_projection_verifier_artifact(
+    case: Mapping[str, object],
+    value: Mapping[str, object],
+    evidence_path: Path,
+    errors: list[str],
+) -> None:
+    artifact = _load_projection_json_artifact(
+        value.get("evaluatorVerificationEvidence"),
+        value.get("evaluatorVerificationEvidenceDigest"),
+        "run.modelVisibleProjection.evaluatorVerificationEvidence",
+        evidence_path,
+        errors,
+    )
+    if artifact is None:
+        return
+    expected_fields = {
+        "schema", "version", "case", "argv", "exitCode", "passed",
+        "expectation", "fixtureDigestBefore", "fixtureDigestAfter",
+        "fixtureUnchanged", "stdout", "stderr",
+    }
+    if set(artifact) != expected_fields:
+        errors.append("evidence projection verifier artifact has an invalid shape")
+        return
+    expected_expectation = (
+        "control-observation"
+        if case.get("probeVariant") in {"target-omitted", "wrong-skill"}
+        else "success-required"
+    )
+    try:
+        expected_argv = list(command_spec(case.get("verify")).argv)
+    except ValueError:
+        expected_argv = []
+    expected_status = "passed" if artifact.get("passed") is True else "failed"
+    if (
+        artifact.get("schema") != "dev-methodology-eval-projection-verification"
+        or artifact.get("version") != 1
+        or artifact.get("case") != case.get("id")
+        or artifact.get("argv") != expected_argv
+        or artifact.get("expectation") != expected_expectation
+        or not isinstance(artifact.get("exitCode"), int)
+        or not isinstance(artifact.get("passed"), bool)
+        or artifact.get("passed") != (artifact.get("exitCode") == 0)
+        or not isinstance(artifact.get("fixtureUnchanged"), bool)
+        or not isinstance(artifact.get("stdout"), str)
+        or not isinstance(artifact.get("stderr"), str)
+    ):
+        errors.append("evidence projection verifier artifact differs from the selected case")
+    if value.get("evaluatorVerificationStatus") != expected_status:
+        errors.append("evidence projection verifier status differs from its artifact")
+    if value.get("evaluatorVerificationExitCode") != artifact.get("exitCode"):
+        errors.append("evidence projection verifier exit code differs from its artifact")
+    if value.get("evaluatorVerificationExpectation") != expected_expectation:
+        errors.append("evidence projection verifier expectation differs from the selected case")
+    for field in ("fixtureDigestBefore", "fixtureDigestAfter"):
+        _require_digest(
+            artifact.get(field),
+            f"projection verifier artifact {field}",
+            errors,
+        )
+    if (
+        artifact.get("fixtureUnchanged") is not True
+        or artifact.get("fixtureDigestBefore") != artifact.get("fixtureDigestAfter")
+    ):
+        errors.append("evidence projection evaluator verification changed the fixture")
+    if expected_expectation == "success-required" and artifact.get("passed") is not True:
+        errors.append("evidence projection evaluator verification must pass")
 
 
 def _validate_mcp_agent_ops_run(

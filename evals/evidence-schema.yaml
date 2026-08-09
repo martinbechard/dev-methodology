@@ -64,6 +64,25 @@ probeRunRequiredWhenApplicable:
   - probeId
   - probeVariant
   - probeComparisonKey
+modelVisibleProjectionRunRequiredWhenApplicable:
+  - mode
+  - sourceIdentityDigest
+  - projectionManifestDigest
+  - projectionEvidence
+  - projectionEvidenceDigest
+  - projectedInputs
+  - evaluatorOnlyPaths
+  - syncPaths
+  - syncManifestDigest
+  - syncEvidence
+  - syncEvidenceDigest
+  - mutations
+  - evaluatorVerificationEvidence
+  - evaluatorVerificationEvidenceDigest
+  - evaluatorVerificationStatus
+  - evaluatorVerificationExitCode
+  - evaluatorVerificationExpectation
+  - syncEvidenceStatus
 probeVariantValues:
   - treatment
   - target-omitted
