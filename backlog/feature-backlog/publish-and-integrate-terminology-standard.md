@@ -1,6 +1,6 @@
 # Publish and Integrate the Terminology Standard
 
-Owner: Dev Orchestrator task 019fe3d6-2dd6-7322-a507-e8ca961e27d8
+Owner: Unowned
 
 Canonical Conversation: `019fe3d6-2dd6-7322-a507-e8ca961e27d8`
 
@@ -10,9 +10,9 @@ Branch: `codex/publish-and-integrate-terminology-standard-019fe3d6`
 
 Worktree: `/Users/martinbechard/.codex/worktrees/940b/dev-methodology`
 
-Phase: Recovering — Canonical task system error
+Phase: Blocked — Canonical task system error
 
-Status: Running
+Status: Blocked
 
 Type: Feature
 
@@ -292,6 +292,26 @@ Deadline or Expires At: 2026-08-09T12:11:54Z
 Next Action: Allow the already-active Dev Coder only to finish its current focused gate and reach the clean candidate or preservation boundary without duplicate dispatch. Then preserve exact bytes and release the child claim. If the canonical task cannot be safely resumed as ordinary non-security work, release the root claim with blocker `canonical-root-system-error` and record `Running -> Blocked` with Owner Unowned; do not launch a replacement implicitly.
 
 Next Reconciliation At: 2026-08-09T11:28:00Z
+
+## Blocked Handoff Evidence
+
+Blocked At: 2026-08-09T11:34:00Z
+
+Coordinator: Dev Backlog Coordinator task `019fb057-1767-7ef2-b5fa-41f4417b20b3`
+
+Blocker: Canonical Dev Orchestrator task `019fe3d6-2dd6-7322-a507-e8ca961e27d8` remains unavailable after its turn failed with a platform cybersecurity-risk `systemError`. The system-error task cannot truthfully own a Running provider item or the remaining root activity=work claim. No retry, security-work split, replacement task, or implicit correction resumption is authorized.
+
+Blocker Owner: Unowned. Recovery requires a supported runtime decision for the same canonical task and an explicit Coordinator lifecycle sequence.
+
+Unblock Condition: Prove canonical task `019fe3d6-2dd6-7322-a507-e8ca961e27d8` can safely resume this ordinary non-security delivery, then record `Blocked -> Ready -> Starting` for the same canonical identity. The task must independently record `Starting -> Running` with fresh bounded evidence and new exact claims before review, verification, live-model evaluation, installation, publication, or integration. Do not launch a replacement or resume correction implicitly.
+
+Preserved Candidate: Dev Coder `/root/fixture_candidate` completed the bounded six-path correction and committed immutable candidate `e6e24ce193730848c07b671a7a89506b25b25c49` on baseline `18f56037c18223574775541d7445197cda59443c`. Branch `codex/publish-and-integrate-terminology-standard-019fe3d6` and worktree `/Users/martinbechard/.codex/worktrees/940b/dev-methodology` are clean. Exactly the six authorized correction paths changed; no shared integration, live-model, installation, main mutation, or out-of-scope file occurred.
+
+Preserved Verification: Runner suite 172 of 172 passed; bundle and terminology suites 182 of 182 passed; catalog validation, Ruff, compilation, YAML parsing, and diff checks passed. The red phase captured the expected pre-fix failures. These producer gates are preserved but do not replace the fresh independent review and verification still required after resumption.
+
+Resource Disposition: Exact six-path claim `publish-and-integrate-terminology-standard-019fe3d6-projection-third-review-corrections-linked` was released in event `590a4a78-41b8-4b81-8dd9-2297d5caefd5`. Stale root claim `publish-and-integrate-terminology-standard-019fe3d6-root-work-harness-authorized` was released with disposition `blocked` and blocker reference `canonical-root-system-error` in event `400ced35-592b-440b-85e9-b0530d4c74a4`. No task-owned claim remains.
+
+Next Action After Resumption: Run fresh ordinary review and independent deterministic verification against immutable candidate `e6e24ce193730848c07b671a7a89506b25b25c49`; only after acceptance may the separately claimed live-model, installation, publication, and main-integration gates proceed.
 
 ## Generated Checklist Scope Disposition
 
