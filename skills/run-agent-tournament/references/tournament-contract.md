@@ -37,7 +37,7 @@ Record each field below in one versioned configuration. Store stable references 
 | Scoring | Domain-owned scorer and version, exact matching keys, metrics, aggregation, metric direction, and handling of missing or invalid evidence. |
 | Ranking | Ordered objectives, accuracy equivalence, cost-equivalence tolerance, speed tie-break boundary, final tie-breakers, and unpriced-candidate policy. |
 | Stages | Ordered stages, candidate source, cases, repeats, completion rule, advancement count, and tie handling. |
-| Retry | Eligible invalid categories, attempts and retries per row, digest invariants, prior-run linkage, authorization and budget treatment, stop behavior, and contract-version rule. |
+| Retry | Eligible invalid categories, attempts and retries per candidate-case-repeat combination, digest invariants, prior-run linkage, authorization and budget treatment, stop behavior, and contract-version rule. |
 | Variance | Frozen mode, metric, aggregation, acceptable limit, maximum repeats, screening advancement rule, observed-result schema, and advance-or-stop dispositions. |
 | Execution | Caller-owned call mechanism, live authorization, budget, stop conditions, availability result, and expected call count. |
 | Pricing | Usage-field meanings, pricing unit, authoritative source, source date or version, per-category rates, and unpriced state. |
@@ -58,7 +58,9 @@ Runner and coordinator behavior are different factors. Use separate tournaments 
 
 ## Dry-Run Matrix
 
-Before each live authorization, enumerate every invocation that the authorization covers. Use one row for each candidate, case, repeat, and attempt combination. Use a separate row for each live preflight invocation. A retry row is conditional. Freeze all required row fields before authorization.
+Before each live authorization, enumerate every invocation that the authorization covers. Each matrix row represents exactly one attempt. Use one row for each candidate, case, repeat, and attempt combination. Use a separate row for each live preflight invocation. A retry row is conditional. Freeze all required row fields before authorization.
+
+Keep each matrix-row identifier and attempt identity unique within the contract version. Do not reuse an identity for another invocation.
 
 Each row records:
 
@@ -70,13 +72,15 @@ Each row records:
 - a required nondeterminism control as a fixed seed or setting, or an explicit unsupported disposition tied to the variance policy;
 - the attempt condition, retry eligibility, prior-run row, and prior-evidence state;
 - intended action as execute or reuse;
-- expected and maximum live calls as zero or one;
+- expected live calls as zero or one;
 - estimated usage and cost, each marked unknown when no credible estimate exists;
 - execution authorization, budget debit, and retry-policy reference;
 - data-safety classification and authorization reference;
 - evidence destination for the invocation.
 
-Sum maximum live calls across every matrix row. A conditional retry row can have zero expected calls and one maximum call. The authorization arithmetic uses the maximum. The result is the maximum live-call count for that authorization scope. Actual live calls must not exceed it. Stop before the next call when authorization or budget cannot cover it.
+Define call maxima at each candidate-case-repeat combination and at the overall authorization scope. Do not define a per-row maximum. The combination maximum counts its base-attempt row and every authorized conditional-retry row. The overall maximum adds all combination maxima and authorized live-preflight calls.
+
+Track actual calls, usage, cost, and budget debit cumulatively across attempt rows. Stop before the next call when cumulative accounting would exceed its preserved authorization, budget, or overall call maximum.
 
 State future-stage formulas separately when advancing candidate identities are not yet known. Include their maximum retry allowance and live-preflight allowance. Freeze a new exact matrix after advancement and before authorizing that stage.
 
@@ -144,7 +148,7 @@ Freeze one retry policy before authorization. Resume depends on this policy and 
 The policy records:
 
 - invalid categories eligible for retry and categories that are never eligible;
-- maximum attempts and maximum retries for each matrix row;
+- maximum attempts and maximum retries for each candidate-case-repeat combination;
 - whether configuration, case input, prompt, schema, ground truth, frozen dependencies, and their digests must remain unchanged;
 - the required link from each retry to its prior run and invalid reason;
 - whether the original authorization and budget cover retries or fresh authority is required;
@@ -152,9 +156,11 @@ The policy records:
 - stop behavior after an ineligible failure or exhausted retry limit;
 - whether a retry-policy, input, configuration, or digest change requires a new contract version.
 
-A no-retry policy is valid. It sets maximum attempts to one, maximum retries to zero, and eligible categories to none. Its authorized call maximum contains no retry allowance.
+A no-retry policy is valid. It sets the combination maximum to one attempt, sets maximum retries to zero, and sets eligible categories to none. Its authorized call maximum contains no retry allowance.
 
-When retries are allowed, add one conditional matrix row for every permitted candidate-case-repeat-attempt combination. Each conditional row satisfies every field in Dry-Run Matrix. It identifies the prior attempt and eligible invalid category. Include all conditional rows in authorization arithmetic. Preserve every attempt. Never overwrite or relabel an invalid attempt, and never let actual calls exceed the authorized maximum.
+When retries are allowed, add one conditional matrix row for every permitted candidate-case-repeat-attempt combination. Each conditional row satisfies every field in Dry-Run Matrix. It identifies the prior attempt and eligible invalid category. Include all conditional rows in authorization arithmetic.
+
+An invalid attempt is final for its row and attempt identity. Never rerun, overwrite, or relabel it. Activate its conditional retry row only after the linked invalid category satisfies the frozen retry gate. Prohibit duplicate attempt identity and conditional-retry-gate bypass.
 
 ## Advancement, Repeats, And Variance
 
@@ -226,9 +232,11 @@ Speed never overrides a higher accuracy tier or a cheaper non-equivalent cost ba
 
 ## Resume And Deterministic Rescore
 
-Resume evaluates the dry-run matrix against retained evidence and the frozen retry policy. Reuse only a completed schema-valid run that matches every frozen digest. A completed invalid run does not satisfy its matrix row. Rerun that row only when its invalid category is eligible, an attempt remains, every required digest is unchanged, prior-run linkage is recorded, and authorization, budget, stop conditions, and call maximum permit it.
+Resume evaluates the dry-run matrix against retained evidence and the frozen retry policy. Reuse only a completed schema-valid attempt that matches every frozen digest. A completed invalid attempt remains final evidence for its row and identity.
 
-Never overwrite an earlier run. Link a retry to the original run and retain both validity decisions.
+Resume enters the already-authorized conditional retry row with a fresh attempt identity. The row records explicit prior-run linkage and the eligible invalid category. It uses its preserved authorization and continues the cumulative call and accounting continuity from every prior attempt. Enter the row only when its retry gate, digest invariants, budget, stop conditions, and overall call maximum permit it.
+
+Never overwrite an earlier attempt. Reject duplicate attempt identity and conditional-retry-gate bypass.
 
 Deterministic rescore uses retained raw responses, usage, timing, ground truth, schemas, and scorer inputs. It makes zero live calls. Record the scorer, ranking policy, or price-card revision that changed and preserve the earlier result.
 
@@ -272,7 +280,8 @@ Verify:
 - independent fixture, ground-truth, schema, runtime-support, transport, and capture preflight;
 - caller-owned proof of zero live calls during preflight, or complete matrix coverage for every authorized live preflight invocation;
 - dry-run row coverage and planned versus actual live-call counts;
-- retry eligibility, attempt limits, digest invariants, prior-run links, authorization, budget, and call-maximum arithmetic;
+- one-attempt-per-row identity, retry eligibility, combination attempt limits, digest invariants, prior-run links, preserved authorization, cumulative accounting, and overall call-maximum arithmetic;
+- rejection of duplicate attempt identity and conditional-retry-gate bypass;
 - fixed nondeterminism controls or unsupported dispositions linked to the frozen variance policy;
 - per-run validity and exclusion of invalid runs from accuracy scoring;
 - resume reuse of only matching completed schema-valid runs;
@@ -295,7 +304,7 @@ The report contains:
 - raw usage, pricing state, pricing sources, estimated cost arithmetic, cost bands, and any provisional stage-advancement status;
 - elapsed time and the boundary within which speed affected ranking;
 - invalid runs, retries, exclusions, infrastructure findings, and missing evidence;
-- attempt conditions, prior-run links, and nondeterminism controls;
+- unique attempt identities, attempt conditions, prior-run links, cumulative accounting, and nondeterminism controls;
 - base, preflight, retry, actual, and authorized-maximum live-call counts;
 - caller-owned zero-call preflight proof, or evidence for every enumerated live preflight call;
 - resume or rescore reuse evidence and caller-owned zero-call proof when applicable;
