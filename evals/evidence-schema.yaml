@@ -95,11 +95,14 @@ modelVisibleProjectionArtifactPolicy:
   projectedEntries: Records include path, type, mode, digest, size, and retainedEvidence.
   preparedEntries: The complete typed and mode-preserving non-runner prepared inventory is retained without evaluator-only bytes and must match the current catalog fixture.
   synchronizedMutations: Records include path, action, beforeDigest, afterDigest, size, mode, and retainedEvidence.
+  outputEntryLimit: A projected run may create at most 512 total entries, counting synchronized files and their created directories together; the runner enforces the limit before retention and apply, and the receipt validator enforces it before inspecting retained bytes.
+  outputTopology: Mutation paths cannot be ancestors or descendants of other mutation paths, one path cannot be both a mutation and created directory, and every prepared mutation parent must be a directory.
   retainedBytes: Projected input files and synchronized output files bind receipt-owned byte artifacts.
+  artifactMarkers: Every projection manifest, sync manifest, retained-byte artifact, verifier artifact, verifier source, and verifier execution reference uses its canonical schema marker.
   sourceBinding: The initial source identity is derived from preparedEntries and equals preparedSnapshotDigest; the post-sync identity is derived from that inventory plus exact created ancestors and mutations; verifier pre-state equals postSyncSourceIdentityDigest.
   verifierExecution: Version-three verifier evidence binds the exact stdin digest to separately retained execution bytes, a resolved interpreter digest, and the governed evaluator source.
   verifierSemantics: The selected governed verifier fixes its result field and semantic-red exit code; receipt-selected alternatives, contradictory booleans, and infrastructure failures block.
-  receiptAssembly: An explicit complete receipt template may opt into owner-only receipt assembly; the runner inserts only modelVisibleProjection and accepts the result only after direct classification.
+  receiptAssembly: An explicit complete version-two receipt template may opt into owner-only receipt assembly; the runner identity-binds the original non-symlink template and its reserved event references, inserts only modelVisibleProjection, waits for current event, result, MCP, verifier, and functional-isolation gates, and reports only a verified classification. Template mode does not emit a separate projection fragment and never replaces or removes another owner's receipt.yaml.
 probeVariantValues:
   - treatment
   - target-omitted

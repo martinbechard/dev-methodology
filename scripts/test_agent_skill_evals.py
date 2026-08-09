@@ -1515,6 +1515,42 @@ class EvidenceVersionTwoTests(unittest.TestCase):
             files["projection-verifier.json"].encode("utf-8")
         ).hexdigest()
 
+    def refresh_projection_post_identity(
+        self,
+        receipt: dict[str, object],
+    ) -> None:
+        """Bind a deliberately adversarial projection topology to its claimed inventory."""
+
+        value = receipt["run"]["modelVisibleProjection"]
+        inventory = {
+            str(entry["path"]): dict(entry)
+            for entry in value["preparedEntries"]
+        }
+        for directory in value["createdDirectories"]:
+            inventory[str(directory["path"])] = {
+                "path": directory["path"],
+                "type": "directory",
+                "mode": directory["mode"],
+                "digest": None,
+                "size": None,
+            }
+        for mutation in value["mutations"]:
+            inventory[str(mutation["path"])] = {
+                "path": mutation["path"],
+                "type": "file",
+                "mode": mutation["mode"],
+                "digest": mutation["afterDigest"],
+                "size": mutation["size"],
+            }
+        value["postSyncSourceIdentityDigest"] = self.module.snapshot_digest({
+            path: (
+                f"dir:{entry['mode']}"
+                if entry["type"] == "directory"
+                else f"file:{entry['mode']}:{entry['digest']}"
+            )
+            for path, entry in inventory.items()
+        })
+
     def test_projection_receipt_accepts_replayable_matching_manifests(self) -> None:
         case, receipt, files = self.projection_receipt_fixture()
 
@@ -1522,6 +1558,158 @@ class EvidenceVersionTwoTests(unittest.TestCase):
 
         self.assertEqual((), classification.errors)
         self.assertEqual((), classification.stale_reasons)
+
+    def test_projection_receipt_rejects_self_consistent_impossible_output_topologies(self) -> None:
+        scenarios = (
+            "mutation-ancestor",
+            "mutation-directory-collision",
+            "prepared-file-parent",
+        )
+        marker = "dev-methodology-eval-projection-retained-bytes"
+        for scenario in scenarios:
+            with self.subTest(scenario=scenario):
+                case, receipt, files = self.projection_receipt_fixture()
+                value = receipt["run"]["modelVisibleProjection"]
+                if scenario == "mutation-ancestor":
+                    content = b"descendant output\n"
+                    path = "output.md/child"
+                    reference_path = "retained-bytes/output-child.json"
+                    value["mutations"].append({
+                        "path": path,
+                        "action": "create",
+                        "beforeDigest": None,
+                        "afterDigest": hashlib.sha256(content).hexdigest(),
+                        "size": len(content),
+                        "mode": "644",
+                        "retainedEvidence": f"{reference_path}#{marker}",
+                    })
+                elif scenario == "mutation-directory-collision":
+                    content = None
+                    path = "output.md"
+                    reference_path = ""
+                    value["createdDirectories"] = [{"path": path, "mode": "755"}]
+                else:
+                    content = b"descendant output\n"
+                    path = "TASK.md/child"
+                    reference_path = "retained-bytes/task-child.json"
+                    mutation = value["mutations"][0]
+                    mutation.update({
+                        "path": path,
+                        "afterDigest": hashlib.sha256(content).hexdigest(),
+                        "size": len(content),
+                        "retainedEvidence": f"{reference_path}#{marker}",
+                    })
+                    files.pop("retained-bytes/output.json")
+                    case["allowedWritePaths"] = ["TASK.md"]
+                    value["syncPaths"] = ["TASK.md"]
+                    receipt["isolation"]["functional"].update({
+                        "allowedWritePaths": ["TASK.md"],
+                        "changedPaths": [path],
+                    })
+                    receipt["run"]["caseDefinitionDigest"] = (
+                        self.module.case_definition_digest(case)
+                    )
+                if content is not None:
+                    files[reference_path] = json.dumps({
+                        "schema": marker,
+                        "version": 1,
+                        "kind": "synchronized-output",
+                        "path": path,
+                        "mode": "644",
+                        "digest": hashlib.sha256(content).hexdigest(),
+                        "size": len(content),
+                        "contentBase64": base64.b64encode(content).decode("ascii"),
+                    }, indent=2, sort_keys=True) + "\n"
+                value["mutations"] = sorted(
+                    value["mutations"], key=lambda item: str(item["path"])
+                )
+                self.refresh_projection_post_identity(receipt)
+                self.refresh_projection_receipt_artifacts(case, receipt, files)
+
+                classification = self.classify(
+                    receipt,
+                    case=case,
+                    extra_files=files,
+                )
+
+                expected = {
+                    "mutation-ancestor": "ancestor and descendant",
+                    "mutation-directory-collision": "both a file and directory",
+                    "prepared-file-parent": "prepared parent must be a directory",
+                }[scenario]
+                self.assertTrue(any(
+                    expected in error for error in classification.errors
+                ), classification.errors)
+
+    def test_projection_receipt_total_entry_limit_has_one_inclusive_boundary(self) -> None:
+        validation_module = sys.modules[self.module.classify_evidence.__module__]
+        for count, rejected in ((512, False), (513, True)):
+            with self.subTest(count=count):
+                errors: list[str] = []
+                validation_module._validate_projection_output_entry_limit(
+                    [],
+                    [{"path": f"directory-{index}", "mode": "700"}
+                     for index in range(count)],
+                    errors,
+                )
+                self.assertEqual(
+                    rejected,
+                    any("total output entry limit" in error for error in errors),
+                )
+
+    def test_projection_receipt_requires_canonical_projection_reference_markers(self) -> None:
+        scenarios = {
+            "projection": ("projectionEvidence", None),
+            "sync": ("syncEvidence", None),
+            "verifier": ("evaluatorVerificationEvidence", None),
+            "retained": ("mutations", "retainedEvidence"),
+            "verifier-source": ("commandContract", "sourceEvidence"),
+            "verifier-execution": ("commandContract", "executionEvidence"),
+        }
+        for scenario, (field, nested) in scenarios.items():
+            with self.subTest(scenario=scenario):
+                case, receipt, files = self.projection_receipt_fixture()
+                value = receipt["run"]["modelVisibleProjection"]
+                if field == "mutations":
+                    target = value["mutations"][0]
+                elif field == "commandContract":
+                    verifier = json.loads(files["projection-verifier.json"])
+                    target = verifier["commandContract"]
+                    target[nested] = str(target[nested]).rsplit("#", 1)[0] + "#schema"
+                    verifier["commandContractDigest"] = hashlib.sha256(
+                        json.dumps(
+                            target,
+                            sort_keys=True,
+                            separators=(",", ":"),
+                        ).encode("utf-8")
+                    ).hexdigest()
+                    files["projection-verifier.json"] = (
+                        json.dumps(verifier, indent=2, sort_keys=True) + "\n"
+                    )
+                    value["evaluatorVerificationCommandDigest"] = verifier[
+                        "commandContractDigest"
+                    ]
+                    value["evaluatorVerificationEvidenceDigest"] = hashlib.sha256(
+                        files["projection-verifier.json"].encode("utf-8")
+                    ).hexdigest()
+                    target = None
+                else:
+                    target = value
+                    nested = field
+                if target is not None:
+                    target[nested] = str(target[nested]).rsplit("#", 1)[0] + "#schema"
+                if field == "mutations":
+                    self.refresh_projection_receipt_artifacts(case, receipt, files)
+
+                classification = self.classify(
+                    receipt,
+                    case=case,
+                    extra_files=files,
+                )
+
+                self.assertTrue(any(
+                    "canonical marker" in error for error in classification.errors
+                ), classification.errors)
 
     def test_projection_receipt_rejects_invented_or_incomplete_full_state(self) -> None:
         scenarios = (
@@ -3940,10 +4128,15 @@ class HarnessAndJudgeTests(unittest.TestCase):
             destination = source / "output.md"
             real_os_open = os.open
 
-            def inject_collision(path: object, flags: int, mode: int = 0o777) -> int:
+            def inject_collision(
+                path: object,
+                flags: int,
+                mode: int = 0o777,
+                **kwargs: object,
+            ) -> int:
                 if Path(path).resolve() == destination.resolve() and not destination.exists():
                     destination.write_text("racing owner\n", encoding="utf-8")
-                return real_os_open(path, flags, mode)
+                return real_os_open(path, flags, mode, **kwargs)
 
             staging_module = sys.modules[
                 self.module.synchronize_model_visible_projection.__module__
@@ -3988,6 +4181,61 @@ class HarnessAndJudgeTests(unittest.TestCase):
                     "dev-methodology-eval-model-visible-projection",
                 ),
             )
+
+    def test_precreated_projection_package_rejects_symlinked_descendants(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            source = base / "fixture"
+            projection_root = base / "projection"
+            package_root = base / "receipt-artifacts"
+            outside = base / "outside"
+            source.mkdir()
+            projection_root.mkdir()
+            package_root.mkdir(mode=0o700)
+            outside.mkdir()
+            (package_root / "linked").symlink_to(outside, target_is_directory=True)
+
+            with self.assertRaisesRegex(ValueError, "symlinked descendant"):
+                self.module.open_projection_evidence_directory(
+                    package_root,
+                    source,
+                    projection_root,
+                )
+
+    def test_retained_projection_bytes_never_follow_a_late_directory_symlink(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            source = base / "fixture"
+            source.mkdir()
+            (source / "TASK.md").write_text("Synthetic task.\n", encoding="utf-8")
+            projection = self.module.stage_model_visible_projection(
+                source,
+                base / "projection",
+                ["TASK.md"],
+                evaluator_only_paths=[],
+                sync_paths=["output.md"],
+            )
+            package_root = base / "receipt-artifacts"
+            package_root.mkdir(mode=0o700)
+            package = self.module.open_projection_evidence_directory(
+                package_root,
+                source,
+                projection.root,
+            )
+            outside = base / "outside"
+            outside.mkdir()
+            (package.root / "retained-bytes").symlink_to(
+                outside,
+                target_is_directory=True,
+            )
+
+            with self.assertRaisesRegex(ValueError, "symlink"):
+                self.module.write_model_visible_projection_manifest(
+                    projection,
+                    package.path("projection-manifest.json"),
+                )
+
+            self.assertEqual([], list(outside.iterdir()))
 
     def test_projection_manifests_retain_independent_input_and_output_bytes(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -4221,6 +4469,104 @@ class HarnessAndJudgeTests(unittest.TestCase):
             self.assertFalse((evidence_root / "projection-sync.json").exists())
             retained_root = evidence_root / "retained-bytes"
             self.assertFalse(retained_root.exists() and any(retained_root.iterdir()))
+
+    def test_projection_sync_rollback_preserves_a_concurrent_exact_path_replacement(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            source = base / "fixture"
+            source.mkdir()
+            (source / "TASK.md").write_text("Write output.md.\n", encoding="utf-8")
+            evaluator = source / "evaluator-only.json"
+            evaluator.write_text('{"control": true}\n', encoding="utf-8")
+            projection = self.module.stage_model_visible_projection(
+                source,
+                base / "projection",
+                ["TASK.md"],
+                evaluator_only_paths=["evaluator-only.json"],
+                sync_paths=["output.md"],
+            )
+            projection = self.module.seal_model_visible_projection(projection)
+            (projection.root / "output.md").write_text("model output\n", encoding="utf-8")
+            staging_module = sys.modules[
+                self.module.synchronize_model_visible_projection.__module__
+            ]
+            real_write = staging_module._write_projection_output_exclusive
+
+            def replace_task_output(destination: Path, *args: object) -> object:
+                created_identity = real_write(destination, *args)
+                replacement = source / "concurrent-replacement"
+                replacement.write_text("concurrent owner\n", encoding="utf-8")
+                os.replace(replacement, destination)
+                evaluator.write_text('{"control": false}\n', encoding="utf-8")
+                return created_identity
+
+            with mock.patch.object(
+                staging_module,
+                "_write_projection_output_exclusive",
+                side_effect=replace_task_output,
+            ), self.assertRaisesRegex(
+                ValueError,
+                "preserved concurrent exact-path replacement",
+            ):
+                self.module.synchronize_model_visible_projection(
+                    projection,
+                    base / "evidence" / "projection-sync.json",
+                )
+
+            self.assertEqual(
+                "concurrent owner\n",
+                (source / "output.md").read_text(encoding="utf-8"),
+            )
+
+    def test_projection_sync_applies_one_total_output_entry_cap_before_retention(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            source = base / "fixture"
+            source.mkdir()
+            (source / "TASK.md").write_text("Write nested output.\n", encoding="utf-8")
+            staging_module = sys.modules[
+                self.module.synchronize_model_visible_projection.__module__
+            ]
+            for extra_file, rejected in ((False, False), (True, True)):
+                with self.subTest(extra_file=extra_file):
+                    projection = self.module.stage_model_visible_projection(
+                        source,
+                        base / f"projection-{extra_file}",
+                        ["TASK.md"],
+                        evaluator_only_paths=[],
+                        sync_paths=["reports"],
+                    )
+                    projection = self.module.seal_model_visible_projection(projection)
+                    reports = projection.root / "reports"
+                    reports.mkdir()
+                    (reports / "first.md").write_text("first\n", encoding="utf-8")
+                    if extra_file:
+                        (reports / "second.md").write_text("second\n", encoding="utf-8")
+                    evidence_root = base / f"evidence-{extra_file}"
+                    if rejected:
+                        with mock.patch.object(
+                            staging_module,
+                            "_MAX_PROJECTION_OUTPUT_ENTRIES",
+                            2,
+                        ), self.assertRaisesRegex(ValueError, "total output entry limit"):
+                            self.module.synchronize_model_visible_projection(
+                                projection,
+                                evidence_root / "projection-sync.json",
+                            )
+                        self.assertFalse((source / "reports").exists())
+                        self.assertFalse((evidence_root / "retained-bytes").exists())
+                    else:
+                        with mock.patch.object(
+                            staging_module,
+                            "_MAX_PROJECTION_OUTPUT_ENTRIES",
+                            2,
+                        ):
+                            sync = self.module.synchronize_model_visible_projection(
+                                projection,
+                                evidence_root / "projection-sync.json",
+                            )
+                        self.assertEqual(2, len(sync.mutations) + len(sync.created_directories))
+                        shutil.rmtree(source / "reports")
 
     def test_projection_fails_closed_at_each_path_and_sync_boundary(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -4721,6 +5067,7 @@ class HarnessAndJudgeTests(unittest.TestCase):
                 encoding="utf-8",
             )
             event_path = package / "events.jsonl"
+            result_path = package / "result.md"
             args = self.module._argument_parser().parse_args([
                 "--case",
                 case["id"],
@@ -4731,6 +5078,8 @@ class HarnessAndJudgeTests(unittest.TestCase):
                 "--invoke-harness",
                 "--event-output",
                 str(event_path),
+                "--result",
+                str(result_path),
                 "--receipt-artifact-directory",
                 str(package),
                 "--projection-receipt-template",
@@ -4777,6 +5126,7 @@ class HarnessAndJudgeTests(unittest.TestCase):
             def execute(command: object, cwd: Path) -> object:
                 if cwd.resolve() != source.resolve():
                     (cwd / "output.md").write_text("model output\n", encoding="utf-8")
+                    result_path.write_text("synthetic final response\n", encoding="utf-8")
                     return self.module.CommandResult(command.argv, 0, event_text, "")
                 return self.module.CommandResult(
                     command.argv,
@@ -4786,6 +5136,27 @@ class HarnessAndJudgeTests(unittest.TestCase):
                 )
 
             output = io.StringIO()
+            terminal_order: list[str] = []
+            real_read_events = self.module.read_harness_event_stream
+            real_audit = self.module.audit_functional_isolation
+            real_assemble = self.module._assemble_projection_receipt
+
+            def read_events(*read_args: object, **read_kwargs: object) -> object:
+                self.assertEqual(
+                    "synthetic final response\n",
+                    result_path.read_text(encoding="utf-8"),
+                )
+                terminal_order.append("events")
+                return real_read_events(*read_args, **read_kwargs)
+
+            def audit(*audit_args: object, **audit_kwargs: object) -> object:
+                terminal_order.append("functional-isolation")
+                return real_audit(*audit_args, **audit_kwargs)
+
+            def assemble(*assembly_args: object, **assembly_kwargs: object) -> object:
+                terminal_order.append("receipt-assembly")
+                return real_assemble(*assembly_args, **assembly_kwargs)
+
             with mock.patch.object(
                 self.module.tempfile,
                 "gettempdir",
@@ -4807,6 +5178,18 @@ class HarnessAndJudgeTests(unittest.TestCase):
                     json.dumps({"passed": True}) + "\n",
                     "",
                 ),
+            ), mock.patch.object(
+                self.module,
+                "read_harness_event_stream",
+                side_effect=read_events,
+            ), mock.patch.object(
+                self.module,
+                "audit_functional_isolation",
+                side_effect=audit,
+            ), mock.patch.object(
+                self.module,
+                "_assemble_projection_receipt",
+                side_effect=assemble,
             ), redirect_stdout(output):
                 error = self.module._handle_harness_invocation(args, case, source)
 
@@ -4825,6 +5208,242 @@ class HarnessAndJudgeTests(unittest.TestCase):
                 "receipt.yaml#dev-methodology-eval-evidence",
                 wrapper["receiptEvidence"],
             )
+            records = [
+                json.loads(line)
+                for line in output.getvalue().splitlines()
+                if line.startswith("{")
+            ]
+            self.assertFalse(any(
+                "modelVisibleProjection" in record for record in records
+            ))
+            functional_index = next(
+                index for index, record in enumerate(records)
+                if "functionalIsolation" in record
+            )
+            receipt_index = next(
+                index for index, record in enumerate(records)
+                if "receiptEvidence" in record
+            )
+            self.assertLess(functional_index, receipt_index)
+            self.assertEqual(
+                ["events", "functional-isolation", "receipt-assembly"],
+                terminal_order,
+            )
+
+    def test_projection_receipt_template_is_identity_bound_and_never_owns_receipt_yaml(self) -> None:
+        fixture_helper = EvidenceVersionTwoTests()
+        fixture_helper.module = self.module
+        fixture_helper.case = dict(
+            self.module.load_cases()["typescript-order-pricing"]
+        )
+        fixture_helper.case["id"] = "synthetic-deterministic-receipt"
+        fixture_helper.case["judgePlan"] = {
+            "deterministicChecks": ["required-command-outcome"],
+            "modelRubric": None,
+        }
+        case, complete_receipt, _files = fixture_helper.projection_receipt_fixture()
+        template = yaml.safe_load(yaml.safe_dump(complete_receipt))
+        template["run"].pop("modelVisibleProjection")
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            source = base / "fixture"
+            projection_root = base / "projection"
+            source.mkdir()
+            projection_root.mkdir()
+            package_root = base / "receipt-artifacts"
+            package_root.mkdir(mode=0o700)
+            package = self.module.open_projection_evidence_directory(
+                package_root,
+                source,
+                projection_root,
+            )
+            event_output = package.path("events.jsonl")
+            template_path = package.path("receipt-template.yaml")
+            template_path.write_text(
+                yaml.safe_dump(template, sort_keys=False),
+                encoding="utf-8",
+            )
+            trusted = self.module._load_projection_receipt_template(
+                template_path,
+                package,
+                case,
+                event_output,
+                harness="codex",
+                model=str(template["run"]["model"]),
+                agent_id=str(template["run"]["agentId"]),
+            )
+
+            replacement = package.path("replacement-template.yaml")
+            replacement.write_text(
+                yaml.safe_dump(template, sort_keys=False),
+                encoding="utf-8",
+            )
+            template_path.unlink()
+            template_path.symlink_to(replacement)
+            error = self.module._assemble_projection_receipt(
+                trusted,
+                package,
+                case,
+                {},
+            )
+            self.assertIn("identity changed", str(error))
+            self.assertFalse(package.path("receipt.yaml").exists())
+
+            alias = package.path("receipt.yaml")
+            alias.write_text(
+                yaml.safe_dump(template, sort_keys=False),
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(ValueError, "must not alias receipt.yaml"):
+                self.module._load_projection_receipt_template(
+                    alias,
+                    package,
+                    case,
+                    event_output,
+                    harness="codex",
+                    model=str(template["run"]["model"]),
+                    agent_id=str(template["run"]["agentId"]),
+                )
+            self.assertEqual(
+                yaml.safe_dump(template, sort_keys=False),
+                alias.read_text(encoding="utf-8"),
+            )
+
+    def test_projection_receipt_assembly_requires_current_verified_classification(self) -> None:
+        fixture_helper = EvidenceVersionTwoTests()
+        fixture_helper.module = self.module
+        fixture_helper.case = dict(
+            self.module.load_cases()["typescript-order-pricing"]
+        )
+        fixture_helper.case["id"] = "synthetic-deterministic-receipt"
+        fixture_helper.case["judgePlan"] = {
+            "deterministicChecks": ["required-command-outcome"],
+            "modelRubric": None,
+        }
+        case, complete_receipt, _files = fixture_helper.projection_receipt_fixture()
+        for scenario in ("version-one", "unverified", "existing-receipt"):
+            with self.subTest(scenario=scenario), tempfile.TemporaryDirectory() as directory:
+                base = Path(directory)
+                source = base / "fixture"
+                projection_root = base / "projection"
+                source.mkdir()
+                projection_root.mkdir()
+                package_root = base / "receipt-artifacts"
+                package_root.mkdir(mode=0o700)
+                package = self.module.open_projection_evidence_directory(
+                    package_root,
+                    source,
+                    projection_root,
+                )
+                template = yaml.safe_load(yaml.safe_dump(complete_receipt))
+                template["run"].pop("modelVisibleProjection")
+                if scenario == "version-one":
+                    template["version"] = 1
+                template_path = package.path("receipt-template.yaml")
+                template_path.write_text(
+                    yaml.safe_dump(template, sort_keys=False),
+                    encoding="utf-8",
+                )
+                event_output = package.path("events.jsonl")
+                if scenario == "version-one":
+                    with self.assertRaisesRegex(ValueError, "schema version 2"):
+                        self.module._load_projection_receipt_template(
+                            template_path,
+                            package,
+                            case,
+                            event_output,
+                            harness="codex",
+                            model=str(template["run"]["model"]),
+                            agent_id=str(template["run"]["agentId"]),
+                        )
+                    continue
+                trusted = self.module._load_projection_receipt_template(
+                    template_path,
+                    package,
+                    case,
+                    event_output,
+                    harness="codex",
+                    model=str(template["run"]["model"]),
+                    agent_id=str(template["run"]["agentId"]),
+                )
+                receipt_path = package.path("receipt.yaml")
+                if scenario == "existing-receipt":
+                    receipt_path.write_bytes(b"concurrent owner bytes\n")
+                    error = self.module._assemble_projection_receipt(
+                        trusted,
+                        package,
+                        case,
+                        {},
+                    )
+                    self.assertIn("already exists", str(error))
+                    self.assertEqual(
+                        b"concurrent owner bytes\n",
+                        receipt_path.read_bytes(),
+                    )
+                    continue
+                classification = mock.Mock(
+                    errors=(),
+                    stale_reasons=(),
+                    verified=False,
+                )
+                with mock.patch.object(
+                    self.module,
+                    "classify_evidence",
+                    return_value=classification,
+                ):
+                    error = self.module._assemble_projection_receipt(
+                        trusted,
+                        package,
+                        case,
+                        {},
+                    )
+                self.assertIn("verified classification", str(error))
+                self.assertFalse(receipt_path.exists())
+
+    def test_projection_receipt_template_binds_event_references_to_reserved_capture(self) -> None:
+        fixture_helper = EvidenceVersionTwoTests()
+        fixture_helper.module = self.module
+        fixture_helper.case = dict(
+            self.module.load_cases()["typescript-order-pricing"]
+        )
+        fixture_helper.case["id"] = "synthetic-deterministic-receipt"
+        fixture_helper.case["judgePlan"] = {
+            "deterministicChecks": ["required-command-outcome"],
+            "modelRubric": None,
+        }
+        case, complete_receipt, _files = fixture_helper.projection_receipt_fixture()
+        template = yaml.safe_load(yaml.safe_dump(complete_receipt))
+        template["run"].pop("modelVisibleProjection")
+        template["run"]["invocationEvidence"] = "unreserved.jsonl#invocation"
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            source = base / "fixture"
+            projection_root = base / "projection"
+            source.mkdir()
+            projection_root.mkdir()
+            package_root = base / "receipt-artifacts"
+            package_root.mkdir(mode=0o700)
+            package = self.module.open_projection_evidence_directory(
+                package_root,
+                source,
+                projection_root,
+            )
+            template_path = package.path("receipt-template.yaml")
+            template_path.write_text(
+                yaml.safe_dump(template, sort_keys=False),
+                encoding="utf-8",
+            )
+
+            with self.assertRaisesRegex(ValueError, "reserved event capture"):
+                self.module._load_projection_receipt_template(
+                    template_path,
+                    package,
+                    case,
+                    package.path("events.jsonl"),
+                    harness="codex",
+                    model=str(template["run"]["model"]),
+                    agent_id=str(template["run"]["agentId"]),
+                )
 
     def test_projection_verifier_records_an_expected_red_control_without_infrastructure_failure(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

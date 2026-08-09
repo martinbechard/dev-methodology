@@ -70,6 +70,7 @@ _RECOGNIZED_EPHEMERAL_OUTPUT_LEAVES = frozenset({
     "out",
     "target",
 })
+_MAX_PROJECTION_OUTPUT_ENTRIES = 512
 _MCP_AGENT_OPS_TOOL_NAMES = frozenset({
     "claim_acquire",
     "claim_extend",
@@ -1780,14 +1781,27 @@ def _validate_model_visible_projection_run(
         evidence_path,
         errors,
     )
+    raw_mutations = value.get("mutations")
+    raw_created_directories = value.get("createdDirectories")
+    if _validate_projection_output_entry_limit(
+        raw_mutations,
+        raw_created_directories,
+        errors,
+    ):
+        return
     mutations = _validate_projection_mutation_records(
-        value.get("mutations"),
+        raw_mutations,
         sync_paths,
         evidence_path,
         errors,
     )
     created_directories = _validate_projection_directory_records(
-        value.get("createdDirectories"),
+        raw_created_directories,
+        errors,
+    )
+    _validate_projection_output_topology(
+        mutations,
+        created_directories,
         errors,
     )
     prepared_by_path = {
@@ -1832,6 +1846,7 @@ def _validate_model_visible_projection_run(
         "run.modelVisibleProjection.projectionEvidence",
         evidence_path,
         errors,
+        expected_marker="dev-methodology-eval-model-visible-projection",
     )
     if projection_artifact is not None:
         expected_projection = {
@@ -1858,6 +1873,7 @@ def _validate_model_visible_projection_run(
         "run.modelVisibleProjection.syncEvidence",
         evidence_path,
         errors,
+        expected_marker="dev-methodology-eval-model-visible-projection-sync",
     )
     if sync_artifact is not None:
         expected_sync = {
@@ -2086,8 +2102,18 @@ def _validate_projection_post_inventory(
         if path in expected:
             errors.append("evidence projection mutation collides with the prepared inventory")
         for parent in PurePosixPath(path).parents:
-            if parent.as_posix() != "." and parent.as_posix() not in expected:
-                necessary_directories.add(parent.as_posix())
+            parent_path = parent.as_posix()
+            if parent_path == ".":
+                continue
+            prepared_parent = expected.get(parent_path)
+            if prepared_parent is not None:
+                if prepared_parent.get("type") != "directory":
+                    errors.append(
+                        "evidence projection mutation prepared parent must be a directory: "
+                        f"{parent_path}"
+                    )
+                continue
+            necessary_directories.add(parent_path)
     observed_directories = {
         str(record.get("path")) for record in created_directories
     }
@@ -2122,6 +2148,64 @@ def _validate_projection_post_inventory(
         )
 
 
+def _validate_projection_output_entry_limit(
+    mutations: object,
+    created_directories: object,
+    errors: list[str],
+) -> bool:
+    """Apply one inclusive cap to all entries created by projection sync."""
+
+    if (
+        isinstance(mutations, list)
+        and isinstance(created_directories, list)
+        and len(mutations) + len(created_directories)
+        > _MAX_PROJECTION_OUTPUT_ENTRIES
+    ):
+        errors.append("evidence projection exceeds the total output entry limit")
+        return True
+    return False
+
+
+def _validate_projection_output_topology(
+    mutations: Sequence[Mapping[str, object]],
+    created_directories: Sequence[Mapping[str, str]],
+    errors: list[str],
+) -> None:
+    """Reject path sets that cannot represent one filesystem inventory."""
+
+    mutation_paths = {
+        str(record.get("path"))
+        for record in mutations
+        if isinstance(record.get("path"), str)
+    }
+    directory_paths = {
+        str(record.get("path"))
+        for record in created_directories
+        if isinstance(record.get("path"), str)
+    }
+    collisions = sorted(mutation_paths & directory_paths)
+    if collisions:
+        errors.append(
+            "evidence projection output cannot be both a file and directory: "
+            f"{collisions[0]}"
+        )
+    for path in sorted(mutation_paths):
+        ancestors = sorted(
+            mutation_paths
+            & {
+                parent.as_posix()
+                for parent in PurePosixPath(path).parents
+                if parent.as_posix() != "."
+            }
+        )
+        if ancestors:
+            errors.append(
+                "evidence projection mutations cannot contain an ancestor and descendant: "
+                f"{ancestors[0]} and {path}"
+            )
+            break
+
+
 def _validate_projection_mutation_records(
     value: object,
     sync_paths: Sequence[str],
@@ -2131,8 +2215,6 @@ def _validate_projection_mutation_records(
     if not isinstance(value, list):
         errors.append("evidence projection mutations must be a list")
         return []
-    if len(value) > 512:
-        errors.append("evidence projection mutations exceed the output file limit")
     records: list[dict[str, object]] = []
     observed_paths: set[str] = set()
     for index, item in enumerate(value):
@@ -2256,6 +2338,12 @@ def _validate_retained_projection_bytes(
     evidence_path: Path,
     errors: list[str],
 ) -> None:
+    _validate_projection_reference_marker(
+        reference,
+        "dev-methodology-eval-projection-retained-bytes",
+        field,
+        errors,
+    )
     validate_reference(reference, field, evidence_path, errors)
     artifact = _load_mcp_json_artifact(reference, field, evidence_path, errors)
     if artifact is None:
@@ -2311,7 +2399,15 @@ def _load_projection_json_artifact(
     field: str,
     evidence_path: Path,
     errors: list[str],
+    *,
+    expected_marker: str,
 ) -> Mapping[str, object] | None:
+    _validate_projection_reference_marker(
+        reference,
+        expected_marker,
+        field,
+        errors,
+    )
     _validate_reference_digest(
         reference,
         expected_content_digest,
@@ -2320,6 +2416,20 @@ def _load_projection_json_artifact(
         errors,
     )
     return _load_mcp_json_artifact(reference, field, evidence_path, errors)
+
+
+def _validate_projection_reference_marker(
+    reference: object,
+    expected_marker: str,
+    field: str,
+    errors: list[str],
+) -> None:
+    """Require the canonical semantic marker for a projection-owned artifact."""
+
+    if not isinstance(reference, str) or reference.rsplit("#", 1)[-1] != expected_marker:
+        errors.append(
+            f"evidence {field} must use the canonical marker: {expected_marker}"
+        )
 
 
 def _validate_projection_manifest_artifact(
@@ -2356,6 +2466,7 @@ def _validate_projection_verifier_artifact(
         "run.modelVisibleProjection.evaluatorVerificationEvidence",
         evidence_path,
         errors,
+        expected_marker="dev-methodology-eval-projection-verification",
     )
     if artifact is None:
         return
@@ -2515,6 +2626,12 @@ def _validate_projection_verifier_command_contract(
         errors.append("evidence projection verifier command contract digest is stale")
 
     execution_reference = contract.get("executionEvidence")
+    _validate_projection_reference_marker(
+        execution_reference,
+        "dev-methodology-eval-projection-verifier-execution",
+        "projection verifier command executionEvidence",
+        errors,
+    )
     validate_reference(
         execution_reference,
         "projection verifier command executionEvidence",
@@ -2564,6 +2681,12 @@ def _validate_projection_verifier_command_contract(
         )
 
     source_reference = contract.get("sourceEvidence")
+    _validate_projection_reference_marker(
+        source_reference,
+        "dev-methodology-eval-projection-verifier-source",
+        "projection verifier command sourceEvidence",
+        errors,
+    )
     validate_reference(
         source_reference,
         "projection verifier command sourceEvidence",

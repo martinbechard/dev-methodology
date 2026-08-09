@@ -53,7 +53,7 @@ _RUNNER_OWNED_ROOTS = frozenset({
     ".junie",
 })
 _RUNNER_OWNED_FILES = frozenset({".eval-prepared.json", ".eval-workspace.json"})
-_MAX_PROJECTION_OUTPUT_FILES = 512
+_MAX_PROJECTION_OUTPUT_ENTRIES = 512
 _MAX_PROJECTION_OUTPUT_BYTES = 20 * 1024 * 1024
 
 
@@ -167,14 +167,22 @@ class ProjectionEvidenceDirectory:
     """Own one private directory whose artifacts remain relative to a future receipt."""
 
     root: Path
+    device: int
+    inode: int
 
     def path(self, name: str) -> Path:
         """Resolve one normalized artifact name beneath the private directory."""
 
+        _validate_projection_evidence_directory_identity(self)
         relative = _safe_relative_path(name)
         candidate = self.root.joinpath(*relative.parts)
         if candidate == self.root or self.root not in candidate.parents:
             raise ValueError("projection evidence artifact escapes its private directory")
+        _reject_existing_symlink_components(
+            self.root,
+            relative,
+            "projection evidence artifact",
+        )
         return candidate
 
     def reference(self, artifact: Path, marker: str) -> str:
@@ -182,10 +190,27 @@ class ProjectionEvidenceDirectory:
 
         if not marker or "#" in marker or "\n" in marker:
             raise ValueError("projection evidence marker must be a non-empty single-line value")
-        resolved = artifact.resolve()
-        if self.root not in resolved.parents or not resolved.is_file():
+        _validate_projection_evidence_directory_identity(self)
+        try:
+            relative = artifact.relative_to(self.root)
+        except ValueError as error:
+            raise ValueError(
+                "projection evidence reference must identify a retained artifact"
+            ) from error
+        _reject_existing_symlink_components(
+            self.root,
+            PurePosixPath(relative.as_posix()),
+            "projection evidence reference",
+        )
+        try:
+            identity = artifact.lstat()
+        except OSError as error:
+            raise ValueError(
+                "projection evidence reference must identify a retained artifact"
+            ) from error
+        if artifact.is_symlink() or not stat.S_ISREG(identity.st_mode):
             raise ValueError("projection evidence reference must identify a retained artifact")
-        return f"{resolved.relative_to(self.root).as_posix()}#{marker}"
+        return f"{relative.as_posix()}#{marker}"
 
 
 class ContextPackBuilder:
@@ -991,7 +1016,9 @@ def create_projection_evidence_directory(
             raise ValueError("projection evidence directory must stay outside both workspaces")
     directory.mkdir(mode=0o700)
     os.chmod(directory, 0o700)
-    return ProjectionEvidenceDirectory(directory.resolve())
+    directory = directory.resolve()
+    identity = directory.stat()
+    return ProjectionEvidenceDirectory(directory, identity.st_dev, identity.st_ino)
 
 
 def open_projection_evidence_directory(
@@ -1013,7 +1040,76 @@ def open_projection_evidence_directory(
     for workspace in (source_root.resolve(), projection_root.resolve()):
         if directory == workspace or workspace in directory.parents or directory in workspace.parents:
             raise ValueError("projection evidence directory must stay outside both workspaces")
-    return ProjectionEvidenceDirectory(directory)
+    _reject_symlinked_evidence_descendants(directory)
+    identity = directory.stat()
+    return ProjectionEvidenceDirectory(directory, identity.st_dev, identity.st_ino)
+
+
+def _validate_projection_evidence_directory_identity(
+    directory: ProjectionEvidenceDirectory,
+) -> None:
+    """Reject replacement or symlink substitution of an opened evidence package."""
+
+    try:
+        identity = directory.root.lstat()
+    except OSError as error:
+        raise ValueError("projection evidence directory identity changed") from error
+    if (
+        stat.S_ISLNK(identity.st_mode)
+        or not stat.S_ISDIR(identity.st_mode)
+        or identity.st_dev != directory.device
+        or identity.st_ino != directory.inode
+    ):
+        raise ValueError("projection evidence directory identity changed")
+
+
+def _reject_symlinked_evidence_descendants(root: Path) -> None:
+    """Validate every existing package descendant without following links."""
+
+    pending = [root]
+    while pending:
+        directory = pending.pop()
+        try:
+            entries = list(os.scandir(directory))
+        except OSError as error:
+            raise ValueError("projection evidence package could not be traversed safely") from error
+        for entry in entries:
+            try:
+                identity = entry.stat(follow_symlinks=False)
+            except OSError as error:
+                raise ValueError(
+                    "projection evidence package descendant changed during validation"
+                ) from error
+            if stat.S_ISLNK(identity.st_mode):
+                raise ValueError(
+                    "projection evidence package contains a symlinked descendant: "
+                    f"{Path(entry.path).relative_to(root).as_posix()}"
+                )
+            if stat.S_ISDIR(identity.st_mode):
+                pending.append(Path(entry.path))
+
+
+def _reject_existing_symlink_components(
+    root: Path,
+    relative: PurePosixPath,
+    label: str,
+) -> None:
+    """Reject any existing symlink or non-directory ancestor beneath one trusted root."""
+
+    current = root
+    parts = relative.parts
+    for index, part in enumerate(parts):
+        current /= part
+        try:
+            identity = current.lstat()
+        except FileNotFoundError:
+            return
+        except OSError as error:
+            raise ValueError(f"{label} could not be inspected safely") from error
+        if stat.S_ISLNK(identity.st_mode):
+            raise ValueError(f"{label} must not traverse a symlink")
+        if index < len(parts) - 1 and not stat.S_ISDIR(identity.st_mode):
+            raise ValueError(f"{label} has a non-directory ancestor")
 
 
 def synchronize_model_visible_projection(
@@ -1097,8 +1193,6 @@ def synchronize_model_visible_projection(
             continue
         if not any(_path_is_selected(Path(relative), selected) for selected in synchronized):
             raise ValueError(f"unexpected model output in projected workspace: {relative}")
-        if len(mutations) >= _MAX_PROJECTION_OUTPUT_FILES:
-            raise ValueError("projected workspace exceeded the output file limit")
         assert after.size is not None and after.digest is not None
         mutation_bytes += after.size
         if mutation_bytes > _MAX_PROJECTION_OUTPUT_BYTES:
@@ -1133,6 +1227,13 @@ def synchronize_model_visible_projection(
             "unexpected model output directory in projected workspace: "
             f"{detail}"
         )
+    _validate_projection_output_topology(
+        mutations,
+        observed_directories,
+        original_source_entries,
+    )
+    if len(mutations) + len(added_directories) > _MAX_PROJECTION_OUTPUT_ENTRIES:
+        raise ValueError("projected workspace exceeded the total output entry limit")
 
     evidence_path = _validate_projection_evidence_path(
         evidence_path,
@@ -1170,28 +1271,30 @@ def synchronize_model_visible_projection(
         mutation_values.append(retained_mutation)
         mutation_records.append(_projection_mutation_record(retained_mutation))
 
-    created_files: list[Path] = []
-    created_directories: list[Path] = []
+    created_files: list[tuple[Path, tuple[int, int, int, str]]] = []
+    created_directories: list[tuple[Path, tuple[int, int, int]]] = []
     try:
         directory_modes = {
             entry.path: entry.mode for entry in added_directories
         }
         for mutation in mutation_values:
             destination = source_root / mutation.path
+            new_directories = _create_safe_destination_parents(
+                source_root,
+                destination.parent,
+                directory_modes,
+                original_source_entries,
+                {
+                    path.relative_to(source_root).as_posix()
+                    for path, _identity in created_directories
+                },
+            )
             created_directories.extend(
-                _create_safe_destination_parents(
-                    source_root,
-                    destination.parent,
-                    directory_modes,
-                    original_source_entries,
-                    {
-                        path.relative_to(source_root).as_posix()
-                        for path in created_directories
-                    },
-                )
+                (path, _created_directory_identity(path))
+                for path in new_directories
             )
             try:
-                _write_projection_output_exclusive(
+                created_identity = _write_projection_output_exclusive(
                     destination,
                     mutation_content[mutation.path],
                     mutation.mode,
@@ -1200,7 +1303,7 @@ def synchronize_model_visible_projection(
                 raise ValueError(
                     f"ambiguous sync state: source changed at destination: {mutation.path}"
                 ) from error
-            created_files.append(destination)
+            created_files.append((destination, created_identity))
 
         expected_post_entries = dict(original_source_entries)
         expected_post_entries.update({entry.path: entry for entry in added_directories})
@@ -1259,18 +1362,28 @@ def synchronize_model_visible_projection(
             evidence_path,
             {**payload, "manifestDigest": manifest_digest},
         )
-    except Exception:
-        for created in reversed(created_files):
-            if created.is_file() and not created.is_symlink():
-                created.unlink()
-        for created in reversed(created_directories):
-            try:
-                created.rmdir()
-            except OSError:
-                pass
+    except Exception as error:
+        preserved_replacements: list[str] = []
+        for created, identity in reversed(created_files):
+            rollback = _rollback_created_file(created, identity)
+            if rollback == "changed":
+                preserved_replacements.append(
+                    created.relative_to(source_root).as_posix()
+                )
+        for created, identity in reversed(created_directories):
+            rollback = _rollback_created_directory(created, identity)
+            if rollback == "changed":
+                preserved_replacements.append(
+                    created.relative_to(source_root).as_posix()
+                )
         evidence_path.unlink(missing_ok=True)
         for retained in retained_paths:
             retained.unlink(missing_ok=True)
+        if preserved_replacements:
+            raise ValueError(
+                f"{error}; rollback preserved concurrent exact-path replacement: "
+                + ", ".join(sorted(set(preserved_replacements)))
+            ) from error
         raise
 
     return ProjectionSyncManifest(
@@ -1549,6 +1662,113 @@ def _projection_entries_digest(entries: Sequence[ProjectedFile]) -> str:
     return snapshot_digest(snapshot)
 
 
+def _validate_projection_output_topology(
+    mutations: Sequence[ProjectionMutation],
+    created_directories: set[str],
+    prepared_entries: Mapping[str, ProjectedFile],
+) -> None:
+    """Reject output inventories that cannot exist as one filesystem tree."""
+
+    mutation_paths = {mutation.path for mutation in mutations}
+    for path in sorted(mutation_paths):
+        parents = {
+            parent.as_posix()
+            for parent in PurePosixPath(path).parents
+            if parent.as_posix() != "."
+        }
+        ancestor_mutations = parents & mutation_paths
+        if ancestor_mutations:
+            raise ValueError(
+                "projected output mutations cannot contain an ancestor and descendant: "
+                f"{sorted(ancestor_mutations)[0]} and {path}"
+            )
+        collisions = {path} & created_directories
+        if collisions:
+            raise ValueError(
+                f"projected output cannot be both a file and directory: {path}"
+            )
+        for parent in parents:
+            prepared = prepared_entries.get(parent)
+            if prepared is not None and prepared.type != "directory":
+                raise ValueError(
+                    "projected output prepared parent must be a directory: "
+                    f"{parent}"
+                )
+
+
+def _created_directory_identity(path: Path) -> tuple[int, int, int]:
+    identity = path.lstat()
+    if stat.S_ISLNK(identity.st_mode) or not stat.S_ISDIR(identity.st_mode):
+        raise ValueError("projection sync created-directory identity is unsafe")
+    return identity.st_dev, identity.st_ino, stat.S_IMODE(identity.st_mode)
+
+
+def _read_regular_file_no_follow(path: Path) -> bytes:
+    flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0)
+    descriptor = os.open(path, flags)
+    try:
+        identity = os.fstat(descriptor)
+        if not stat.S_ISREG(identity.st_mode):
+            raise ValueError("path is not a regular file")
+        with os.fdopen(descriptor, "rb") as stream:
+            descriptor = -1
+            return stream.read()
+    finally:
+        if descriptor >= 0:
+            os.close(descriptor)
+
+
+def _rollback_created_file(
+    path: Path,
+    expected: tuple[int, int, int, str],
+) -> str:
+    try:
+        identity = path.lstat()
+    except FileNotFoundError:
+        return "missing"
+    except OSError:
+        return "changed"
+    if (
+        stat.S_ISLNK(identity.st_mode)
+        or not stat.S_ISREG(identity.st_mode)
+        or (identity.st_dev, identity.st_ino, stat.S_IMODE(identity.st_mode))
+        != expected[:3]
+    ):
+        return "changed"
+    try:
+        digest = hashlib.sha256(_read_regular_file_no_follow(path)).hexdigest()
+    except (OSError, ValueError):
+        return "changed"
+    if digest != expected[3]:
+        return "changed"
+    path.unlink()
+    return "removed"
+
+
+def _rollback_created_directory(
+    path: Path,
+    expected: tuple[int, int, int],
+) -> str:
+    try:
+        identity = path.lstat()
+    except FileNotFoundError:
+        return "missing"
+    except OSError:
+        return "changed"
+    if (
+        stat.S_ISLNK(identity.st_mode)
+        or not stat.S_ISDIR(identity.st_mode)
+        or (identity.st_dev, identity.st_ino, stat.S_IMODE(identity.st_mode))
+        != expected
+    ):
+        return "changed"
+    try:
+        path.rmdir()
+    except OSError:
+        return "changed"
+    return "removed"
+
+
 def _validate_projection_evidence_path(
     evidence_path: Path,
     source_root: Path,
@@ -1556,11 +1776,9 @@ def _validate_projection_evidence_path(
 ) -> Path:
     if evidence_path.exists() or evidence_path.is_symlink():
         raise ValueError("projection sync evidence destination must be unused")
-    if evidence_path.parent.is_symlink():
-        raise ValueError("projection sync evidence parent must not be a symlink")
-    evidence_path.parent.mkdir(parents=True, mode=0o700, exist_ok=True)
+    evidence_path = Path(os.path.abspath(evidence_path))
+    _create_directory_chain_without_symlinks(evidence_path.parent)
     os.chmod(evidence_path.parent, 0o700)
-    evidence_path = evidence_path.resolve()
     if (
         evidence_path == source_root
         or source_root in evidence_path.parents
@@ -1569,6 +1787,36 @@ def _validate_projection_evidence_path(
     ):
         raise ValueError("projection sync evidence must stay outside both workspaces")
     return evidence_path
+
+
+def _create_directory_chain_without_symlinks(directory: Path) -> None:
+    """Create missing ancestors while rejecting every existing symbolic link."""
+
+    directory = Path(os.path.abspath(directory))
+    missing: list[str] = []
+    current = directory
+    while True:
+        try:
+            identity = current.lstat()
+        except FileNotFoundError:
+            missing.append(current.name)
+            current = current.parent
+            continue
+        except OSError as error:
+            raise ValueError(
+                "projection sync evidence path could not be inspected safely"
+            ) from error
+        if stat.S_ISLNK(identity.st_mode) or not stat.S_ISDIR(identity.st_mode):
+            raise ValueError("projection sync evidence path has an unsafe ancestor")
+        break
+    for part in reversed(missing):
+        current /= part
+        try:
+            current.mkdir(mode=0o700)
+        except FileExistsError:
+            identity = current.lstat()
+            if stat.S_ISLNK(identity.st_mode) or not stat.S_ISDIR(identity.st_mode):
+                raise ValueError("projection sync evidence path has an unsafe ancestor")
 
 
 def _create_safe_destination_parents(
@@ -1620,21 +1868,49 @@ def _write_projection_output_exclusive(
     destination: Path,
     content: bytes,
     mode: str,
-) -> None:
+) -> tuple[int, int, int, str]:
     flags = os.O_CREAT | os.O_EXCL | os.O_WRONLY | getattr(os, "O_NOFOLLOW", 0)
     descriptor = os.open(destination, flags, int(mode, 8))
+    opened_identity = os.fstat(descriptor)
+    created_identity: tuple[int, int, int, str] | None = None
     try:
         with os.fdopen(descriptor, "wb") as stream:
             descriptor = -1
             stream.write(content)
             stream.flush()
             os.fsync(stream.fileno())
-        os.chmod(destination, int(mode, 8))
+            os.fchmod(stream.fileno(), int(mode, 8))
+            identity = os.fstat(stream.fileno())
+            created_identity = (
+                identity.st_dev,
+                identity.st_ino,
+                stat.S_IMODE(identity.st_mode),
+                hashlib.sha256(content).hexdigest(),
+            )
     except Exception:
         if descriptor >= 0:
             os.close(descriptor)
-        destination.unlink(missing_ok=True)
+        _unlink_path_if_inode(
+            destination,
+            opened_identity.st_dev,
+            opened_identity.st_ino,
+        )
         raise
+    assert created_identity is not None
+    return created_identity
+
+
+def _unlink_path_if_inode(path: Path, device: int, inode: int) -> bool:
+    try:
+        identity = path.lstat()
+    except FileNotFoundError:
+        return True
+    except OSError:
+        return False
+    if identity.st_dev != device or identity.st_ino != inode:
+        return False
+    path.unlink()
+    return True
 
 
 def _retain_projection_bytes(
@@ -1644,28 +1920,96 @@ def _retain_projection_bytes(
     mode: str,
     content: bytes,
 ) -> tuple[Path, str]:
+    directory_flags = (
+        os.O_RDONLY
+        | getattr(os, "O_DIRECTORY", 0)
+        | getattr(os, "O_NOFOLLOW", 0)
+    )
+    try:
+        evidence_descriptor = os.open(evidence_root, directory_flags)
+    except OSError as error:
+        raise ValueError("projection evidence root must be a non-symlink directory") from error
+    retained_descriptor = -1
     retained_root = evidence_root / "retained-bytes"
-    retained_root.mkdir(mode=0o700, exist_ok=True)
-    os.chmod(retained_root, 0o700)
     identity = hashlib.sha256(f"{kind}\0{relative}".encode("utf-8")).hexdigest()
     artifact = retained_root / f"{identity}.json"
     digest = hashlib.sha256(content).hexdigest()
     marker = "dev-methodology-eval-projection-retained-bytes"
-    _write_json_exclusive(
-        artifact,
-        {
-            "schema": marker,
-            "version": 1,
-            "kind": kind,
-            "path": relative,
-            "mode": mode,
-            "digest": digest,
-            "size": len(content),
-            "contentBase64": base64.b64encode(content).decode("ascii"),
-        },
-    )
+    payload = {
+        "schema": marker,
+        "version": 1,
+        "kind": kind,
+        "path": relative,
+        "mode": mode,
+        "digest": digest,
+        "size": len(content),
+        "contentBase64": base64.b64encode(content).decode("ascii"),
+    }
+    try:
+        try:
+            os.mkdir("retained-bytes", mode=0o700, dir_fd=evidence_descriptor)
+        except FileExistsError:
+            pass
+        try:
+            retained_descriptor = os.open(
+                "retained-bytes",
+                directory_flags,
+                dir_fd=evidence_descriptor,
+            )
+        except OSError as error:
+            raise ValueError(
+                "projection retained-byte directory must not be a symlink"
+            ) from error
+        retained_identity = os.fstat(retained_descriptor)
+        if not stat.S_ISDIR(retained_identity.st_mode):
+            raise ValueError("projection retained-byte path must be a directory")
+        os.fchmod(retained_descriptor, 0o700)
+        _write_json_exclusive_at(
+            retained_descriptor,
+            artifact.name,
+            payload,
+        )
+    finally:
+        if retained_descriptor >= 0:
+            os.close(retained_descriptor)
+        os.close(evidence_descriptor)
     reference = f"{artifact.relative_to(evidence_root).as_posix()}#{marker}"
     return artifact, reference
+
+
+def _write_json_exclusive_at(
+    directory_descriptor: int,
+    name: str,
+    value: Mapping[str, object],
+) -> None:
+    content = (json.dumps(value, indent=2, sort_keys=True) + "\n").encode("utf-8")
+    flags = os.O_CREAT | os.O_EXCL | os.O_WRONLY | getattr(os, "O_NOFOLLOW", 0)
+    descriptor = os.open(name, flags, 0o600, dir_fd=directory_descriptor)
+    opened_identity = os.fstat(descriptor)
+    try:
+        with os.fdopen(descriptor, "wb") as stream:
+            descriptor = -1
+            stream.write(content)
+            stream.flush()
+            os.fsync(stream.fileno())
+    except Exception:
+        if descriptor >= 0:
+            os.close(descriptor)
+        try:
+            identity = os.stat(
+                name,
+                dir_fd=directory_descriptor,
+                follow_symlinks=False,
+            )
+        except FileNotFoundError:
+            identity = None
+        if (
+            identity is not None
+            and identity.st_dev == opened_identity.st_dev
+            and identity.st_ino == opened_identity.st_ino
+        ):
+            os.unlink(name, dir_fd=directory_descriptor)
+        raise
 
 
 def _projection_mutation_record(mutation: ProjectionMutation) -> dict[str, object]:

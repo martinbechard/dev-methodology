@@ -13,6 +13,7 @@ import os
 import re
 import signal
 import shutil
+import stat
 import subprocess
 import sys
 import tempfile
@@ -80,6 +81,16 @@ class TrustedProjectionVerifier(NamedTuple):
     contract_digest: str
     semantic_result_field: str
     semantic_red_exit_code: int | None
+
+
+class TrustedProjectionReceiptTemplate(NamedTuple):
+    """Bind one receipt template to immutable bytes and its original file identity."""
+
+    path: Path
+    content: bytes
+    device: int
+    inode: int
+    content_digest: str
 
 
 def run(command: object, cwd: Path) -> bool:
@@ -297,7 +308,12 @@ def main(argv: list[str] | None = None) -> int:
                     invocation_error = _handle_harness_invocation(args, case, active_root)
                     if invocation_error is not None:
                         case_errors.append(invocation_error)
-            if args.invoke_harness and invocation_attempted and before_product is not None:
+            if (
+                args.invoke_harness
+                and invocation_attempted
+                and before_product is not None
+                and args.projection_receipt_template is None
+            ):
                 allowed_write_paths = case.get("allowedWritePaths", [])
                 ephemeral_write_paths = case.get("ephemeralWritePaths", [])
                 if not isinstance(allowed_write_paths, list) or any(
@@ -1390,18 +1406,28 @@ def _projection_verifier_contract_record(
 def _write_owner_only_bytes(path: Path, content: bytes) -> None:
     flags = os.O_CREAT | os.O_EXCL | os.O_WRONLY | getattr(os, "O_NOFOLLOW", 0)
     descriptor = os.open(path, flags, 0o600)
+    opened_identity = os.fstat(descriptor)
     try:
         with os.fdopen(descriptor, "wb") as stream:
             descriptor = -1
             stream.write(content)
             stream.flush()
             os.fsync(stream.fileno())
+            os.fchmod(stream.fileno(), 0o600)
     except Exception:
         if descriptor >= 0:
             os.close(descriptor)
-        path.unlink(missing_ok=True)
+        try:
+            current_identity = path.lstat()
+        except FileNotFoundError:
+            current_identity = None
+        if (
+            current_identity is not None
+            and current_identity.st_dev == opened_identity.st_dev
+            and current_identity.st_ino == opened_identity.st_ino
+        ):
+            path.unlink()
         raise
-    os.chmod(path, 0o600)
 
 
 def _write_owner_only_json(path: Path, value: Mapping[str, object]) -> None:
@@ -1411,53 +1437,218 @@ def _write_owner_only_json(path: Path, value: Mapping[str, object]) -> None:
     )
 
 
-def _assemble_projection_receipt(
+def _read_regular_file_no_follow(
+    path: Path,
+) -> tuple[bytes, os.stat_result]:
+    """Read one exact regular file without following a final-component link."""
+
+    flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0)
+    descriptor = os.open(path, flags)
+    try:
+        identity = os.fstat(descriptor)
+        if not stat.S_ISREG(identity.st_mode):
+            raise ValueError("receipt template must be a regular file")
+        with os.fdopen(descriptor, "rb") as stream:
+            descriptor = -1
+            return stream.read(), identity
+    finally:
+        if descriptor >= 0:
+            os.close(descriptor)
+
+
+def _receipt_reference_path(
+    reference: object,
+    package: ProjectionEvidenceDirectory,
+) -> Path:
+    if not isinstance(reference, str) or reference.count("#") != 1:
+        raise ValueError("projection receipt template has an invalid event reference")
+    relative, marker = reference.split("#", 1)
+    if not relative or not marker:
+        raise ValueError("projection receipt template has an invalid event reference")
+    return package.path(relative)
+
+
+def _load_projection_receipt_template(
     template_path: Path,
+    package: ProjectionEvidenceDirectory,
+    case: Mapping[str, object],
+    event_output: Path,
+    *,
+    harness: str,
+    model: str,
+    agent_id: str,
+) -> TrustedProjectionReceiptTemplate:
+    """Preflight and identity-bind one current-version projection receipt template."""
+
+    template_path = template_path.parent.resolve() / template_path.name
+    try:
+        relative = template_path.relative_to(package.root)
+    except ValueError as error:
+        raise ValueError(
+            "projection receipt template must stay inside the owner-only artifact package"
+        ) from error
+    template_path = package.path(relative.as_posix())
+    receipt_path = package.path("receipt.yaml")
+    if template_path == receipt_path:
+        raise ValueError("projection receipt template must not alias receipt.yaml")
+    try:
+        content, identity = _read_regular_file_no_follow(template_path)
+        template = yaml.safe_load(content.decode("utf-8"))
+    except (OSError, UnicodeError, yaml.YAMLError) as error:
+        raise ValueError(f"projection receipt template could not be loaded: {error}") from error
+    if not isinstance(template, Mapping):
+        raise ValueError("projection receipt template must be a complete evidence mapping")
+    run = template.get("run")
+    if (
+        template.get("schema") != "dev-methodology-eval-evidence"
+        or template.get("version") != 2
+    ):
+        raise ValueError("projection receipt template must use current schema version 2")
+    if (
+        template.get("case") != case.get("id")
+        or not isinstance(run, Mapping)
+        or "modelVisibleProjection" in run
+    ):
+        raise ValueError(
+            "projection receipt template must match the selected case and omit only "
+            "run.modelVisibleProjection"
+        )
+    if (
+        run.get("harness") != harness
+        or run.get("model") != model
+        or run.get("agentId") != agent_id
+    ):
+        raise ValueError(
+            "projection receipt template invocation identity differs from the staged run"
+        )
+    event_output = Path(os.path.abspath(event_output))
+    try:
+        event_relative = event_output.relative_to(package.root)
+    except ValueError as error:
+        raise ValueError(
+            "projection receipt event capture must stay inside the artifact package"
+        ) from error
+    reserved_event = package.path(event_relative.as_posix())
+    event_references: list[object] = [
+        run.get("invocationEvidence"),
+        run.get("agentStartEvidence"),
+        run.get("eventLedger"),
+    ]
+    skills = template.get("skills")
+    if isinstance(skills, list):
+        for skill in skills:
+            if not isinstance(skill, Mapping):
+                continue
+            reads = skill.get("readEvidence")
+            if isinstance(reads, list):
+                event_references.extend(
+                    read.get("reference")
+                    for read in reads
+                    if isinstance(read, Mapping)
+                )
+    if not event_references or any(
+        _receipt_reference_path(reference, package) != reserved_event
+        for reference in event_references
+    ):
+        raise ValueError(
+            "projection receipt template event references must bind to the reserved event capture"
+        )
+    return TrustedProjectionReceiptTemplate(
+        path=template_path,
+        content=content,
+        device=identity.st_dev,
+        inode=identity.st_ino,
+        content_digest=hashlib.sha256(content).hexdigest(),
+    )
+
+
+def _revalidate_projection_receipt_template(
+    template: TrustedProjectionReceiptTemplate,
+) -> None:
+    try:
+        content, identity = _read_regular_file_no_follow(template.path)
+    except (OSError, ValueError) as error:
+        raise ValueError("projection receipt template identity changed") from error
+    if (
+        identity.st_dev != template.device
+        or identity.st_ino != template.inode
+        or hashlib.sha256(content).hexdigest() != template.content_digest
+        or content != template.content
+    ):
+        raise ValueError("projection receipt template identity changed")
+
+
+def _captured_regular_file_identity(path: Path) -> tuple[int, int, str]:
+    content, identity = _read_regular_file_no_follow(path)
+    return identity.st_dev, identity.st_ino, hashlib.sha256(content).hexdigest()
+
+
+def _remove_unchanged_created_file(
+    path: Path,
+    identity: tuple[int, int, str],
+) -> bool:
+    try:
+        current = _captured_regular_file_identity(path)
+    except FileNotFoundError:
+        return True
+    except (OSError, ValueError):
+        return False
+    if current != identity:
+        return False
+    path.unlink()
+    return True
+
+
+def _assemble_projection_receipt(
+    template: TrustedProjectionReceiptTemplate,
     package: ProjectionEvidenceDirectory,
     case: Mapping[str, object],
     projection_record: Mapping[str, object],
 ) -> str | None:
     """Write and classify one opt-in complete receipt beside its owner-only artifacts."""
 
-    template_path = template_path.resolve()
-    if (
-        template_path.is_symlink()
-        or not template_path.is_file()
-        or package.root not in template_path.parents
-    ):
-        return "projection receipt template is outside the owner-only artifact package"
     try:
-        template = yaml.safe_load(template_path.read_text(encoding="utf-8"))
-    except (OSError, UnicodeError, yaml.YAMLError) as error:
-        return f"projection receipt template could not be loaded: {error}"
-    if not isinstance(template, Mapping):
-        return "projection receipt template must be a complete evidence mapping"
-    receipt = dict(template)
+        _revalidate_projection_receipt_template(template)
+        template_value = yaml.safe_load(template.content.decode("utf-8"))
+    except (ValueError, UnicodeError, yaml.YAMLError) as error:
+        return str(error)
+    assert isinstance(template_value, Mapping)
+    receipt = dict(template_value)
     run = receipt.get("run")
-    if (
-        receipt.get("case") != case.get("id")
-        or not isinstance(run, Mapping)
-        or "modelVisibleProjection" in run
-    ):
-        return (
-            "projection receipt template must match the selected case and omit only "
-            "run.modelVisibleProjection"
-        )
+    assert isinstance(run, Mapping)
     receipt["run"] = {**run, "modelVisibleProjection": dict(projection_record)}
     receipt_path = package.path("receipt.yaml")
+    created_identity: tuple[int, int, str] | None = None
     try:
         _write_owner_only_bytes(
             receipt_path,
             yaml.safe_dump(receipt, sort_keys=False).encode("utf-8"),
         )
+        created_identity = _captured_regular_file_identity(receipt_path)
         classification = classify_evidence(case, receipt_path)  # noqa: F405
+    except FileExistsError:
+        return "projection receipt assembly failed: receipt.yaml already exists"
     except (OSError, ValueError, yaml.YAMLError) as error:
-        receipt_path.unlink(missing_ok=True)
+        if created_identity is not None:
+            _remove_unchanged_created_file(receipt_path, created_identity)
         return f"projection receipt assembly failed: {error}"
-    if classification.errors or classification.stale_reasons:
-        receipt_path.unlink(missing_ok=True)
+    if (
+        classification.errors
+        or classification.stale_reasons
+        or classification.verified is not True
+    ):
+        removed = _remove_unchanged_created_file(receipt_path, created_identity)
+        if not removed:
+            return (
+                "projection receipt classification failed and preserved a concurrent "
+                "receipt.yaml replacement"
+            )
         diagnostics = [*classification.errors, *classification.stale_reasons]
+        if classification.verified is not True:
+            diagnostics.append("current schema version 2 did not earn verified classification")
         return "projection receipt classification failed: " + "; ".join(diagnostics)
+    if _captured_regular_file_identity(receipt_path) != created_identity:
+        return "projection receipt identity changed before reporting"
     marker = "dev-methodology-eval-evidence"
     print(json.dumps({
         "case": case["id"],
@@ -1480,6 +1671,7 @@ def _handle_harness_invocation(
             case,
             active_root,
             active_root,
+            None,
             None,
         )
     if (
@@ -1508,6 +1700,11 @@ def _handle_harness_invocation(
     ):
         return "model-visible projection requires validated path lists"
     try:
+        functional_before = (
+            snapshot_product_tree(active_root)  # noqa: F405
+            if args.projection_receipt_template is not None
+            else None
+        )
         marker = active_root / ".eval-workspace.json"
         if not marker.is_file() or marker.is_symlink():
             return "harness invocation requires a runner-owned disposable workspace"
@@ -1541,6 +1738,7 @@ def _handle_harness_invocation(
                 active_root,
                 projection.root,
                 projection,
+                functional_before,
             )
     except (OSError, RuntimeError, ValueError) as error:
         return f"model-visible projection preflight failed: {error}"
@@ -1552,6 +1750,7 @@ def _handle_harness_invocation_in_workspace(
     active_root: Path,
     harness_root: Path,
     projection: ModelVisibleProjection | None,
+    functional_before: Mapping[str, str] | None,
 ) -> str | None:
     task_path = harness_root / str(case["task"])
     prompt = task_path.read_text(encoding="utf-8")
@@ -1584,6 +1783,7 @@ def _handle_harness_invocation_in_workspace(
     )
     event_output = event_output.resolve()
     projection_evidence_directory = None
+    trusted_receipt_template: TrustedProjectionReceiptTemplate | None = None
     if projection is not None:
         package_path = (
             args.receipt_artifact_directory
@@ -1601,23 +1801,22 @@ def _handle_harness_invocation_in_workspace(
                     active_root,
                     harness_root,
                 )
-                template_path = args.projection_receipt_template.resolve()
-                if (
-                    args.projection_receipt_template.is_symlink()
-                    or not template_path.is_file()
-                    or projection_evidence_directory.root not in template_path.parents
-                ):
-                    return (
-                        "projection receipt template must be an existing non-symlink "
-                        "file inside the owner-only artifact directory"
-                    )
+                trusted_receipt_template = _load_projection_receipt_template(
+                    args.projection_receipt_template,
+                    projection_evidence_directory,
+                    case,
+                    event_output,
+                    harness=args.harness,
+                    model=args.model,
+                    agent_id=agent_id,
+                )
             else:
                 projection_evidence_directory = create_projection_evidence_directory(
                     package_path,
                     active_root,
                     harness_root,
                 )
-        except ValueError as error:
+        except (OSError, ValueError) as error:
             return f"projection receipt artifact packaging failed: {error}"
     mcp_audit_output = event_output.with_name(
         f"{event_output.stem}-mcp-audit.jsonl"
@@ -1912,6 +2111,7 @@ def _handle_harness_invocation_in_workspace(
     junie_attribution_status: str | None = None
     junie_attribution_path: Path | None = None
     junie_attribution_digest: str | None = None
+    projection_record: Mapping[str, object] | None = None
     try:
         with _reserve_capture_paths(capture_paths):
             if mcp_context is not None:
@@ -2081,13 +2281,14 @@ def _handle_harness_invocation_in_workspace(
                     ),
                     "syncEvidenceStatus": "applied-and-recorded",
                 }
-                print(json.dumps({
-                    "case": case["id"],
-                    "receiptArtifactDirectory": str(
-                        projection_evidence_directory.root
-                    ),
-                    "modelVisibleProjection": projection_record,
-                }, sort_keys=True))
+                if trusted_receipt_template is None:
+                    print(json.dumps({
+                        "case": case["id"],
+                        "receiptArtifactDirectory": str(
+                            projection_evidence_directory.root
+                        ),
+                        "modelVisibleProjection": projection_record,
+                    }, sort_keys=True))
                 if not verifier_acceptable:
                     if verifier_record["fixtureUnchanged"] is not True:
                         return "trusted full-fixture verifier changed the fixture"
@@ -2095,15 +2296,6 @@ def _handle_harness_invocation_in_workspace(
                         "trusted full-fixture verifier did not produce an acceptable "
                         f"semantic outcome: {verifier_record['outcome']}"
                     )
-                if args.projection_receipt_template is not None:
-                    receipt_error = _assemble_projection_receipt(
-                        args.projection_receipt_template,
-                        projection_evidence_directory,
-                        case,
-                        projection_record,
-                    )
-                    if receipt_error is not None:
-                        return receipt_error
             if (
                 args.harness == "codex"
                 and result_output is not None
@@ -2195,6 +2387,53 @@ def _handle_harness_invocation_in_workspace(
                         "toolEvidenceStatus": "verified",
                     },
                 }, sort_keys=True))
+            if trusted_receipt_template is not None:
+                if functional_before is None:
+                    return "projection receipt assembly lacks a pre-invocation isolation identity"
+                allowed_write_paths = case.get("allowedWritePaths", [])
+                ephemeral_write_paths = case.get("ephemeralWritePaths", [])
+                if (
+                    not isinstance(allowed_write_paths, list)
+                    or any(not isinstance(path, str) for path in allowed_write_paths)
+                    or not isinstance(ephemeral_write_paths, list)
+                    or any(not isinstance(path, str) for path in ephemeral_write_paths)
+                ):
+                    return "projection receipt assembly requires validated isolation paths"
+                isolation_audit = audit_functional_isolation(  # noqa: F405
+                    functional_before,
+                    snapshot_product_tree(active_root),  # noqa: F405
+                    read_only=bool(case.get("readOnly")),
+                    allowed_write_paths=allowed_write_paths,
+                    ephemeral_write_paths=ephemeral_write_paths,
+                )
+                print(json.dumps({
+                    "case": case["id"],
+                    "functionalIsolation": {
+                        "status": isolation_audit.status,
+                        "beforeDigest": isolation_audit.before_digest,
+                        "afterDigest": isolation_audit.after_digest,
+                        "workspaceBeforeDigest": isolation_audit.workspace_before_digest,
+                        "workspaceAfterDigest": isolation_audit.workspace_after_digest,
+                        "changedPaths": list(isolation_audit.changed_paths),
+                        "ephemeralChangedPaths": list(
+                            isolation_audit.ephemeral_changed_paths
+                        ),
+                        "allowedWritePaths": allowed_write_paths,
+                        "ephemeralWritePaths": ephemeral_write_paths,
+                    },
+                }, sort_keys=True))
+                if isolation_audit.status != "verified":
+                    return "functional isolation audit detected out-of-contract mutation"
+                if projection_record is None or projection_evidence_directory is None:
+                    return "projection receipt assembly lacks terminal projection evidence"
+                receipt_error = _assemble_projection_receipt(
+                    trusted_receipt_template,
+                    projection_evidence_directory,
+                    case,
+                    projection_record,
+                )
+                if receipt_error is not None:
+                    return receipt_error
     except ValueError as error:
         return str(error)
     return None
