@@ -244,14 +244,14 @@ Condition Type: root-execution
 
 Owner: Dev Orchestrator task 019fe3cd-577c-76b1-965c-06fb8793ae42
 
-Evidence: canonical root execution owns corrected clean candidate range `36f8c1be..74f91caefe815dddca503502a388668be6cb94df`: initial candidate `b45719f78c1dcd74f704998e4553a1bc973f140e` plus correction `74f91caefe815dddca503502a388668be6cb94df`, unchanged branch/worktree, no commands or mutation running. Correction attempt 1 is complete with exact singleton and six-expectation disposition; runner/coordinator and reverse-authority edge are corrected; role-schema v8 and nested output schemas, generated adapters, suites/fixtures, and docs/UX corrections are present. Verification passes: focused 31/31, freshness, skill validation, metadata/provenance 18/18, catalogs, both fixtures, validate-only, provenance 22 new + 2 historical/generated, and diff. Preserved baselines are bundle 171/172 with only excluded support projection and evaluation-doc 27/28 with only the historical Future Ideas ID failure. No live model was run; non-Codex mappings remain untested. Existing HTML, terminology, Future Ideas, and support projection remain excluded; all 15 governed receipts and four dependents remain reconciled; no source mutation has begun. The direct overlap boundary with `publish-and-integrate-terminology-standard` is acknowledged; both tasks defer shared overlap events and preserve each other.
+Evidence: canonical root execution owns clean candidate commit `74f91caefe815dddca503502a388668be6cb94df` after initial `b45719f78c1dcd74f704998e4553a1bc973f140e`, with all active re-review/verifier lanes paused safely and no commands running. Second-pass baseline isolation passes: focused 31/31, targeted strict 5/5, bundle 171/172 support-only reproduced at baseline, evaluation-doc 27/28 Future Ideas-only reproduced, freshness/skill/metadata/fixtures/provenance/diff pass. Material candidate findings require final correction attempt 2: malformed nested results/assignment IDs/null assignments/report_attempts crash rather than bounded BLOCKED; authoritative PASS/FAIL override leaves stale or missing reconciled findings; Decimal ranking output is not JSON serializable; coordinator live fixture/scenario/verifier overclaims cases; suite-local skills are staged but supervisor/judge report shared-only; schema validator silently drops incompatible keywords/type-enum mismatches; mutation-audit claim lacks scenario flags; agent-scenario FAIL/NOT TESTED precedence is reversed; print hides result container, specimen-nav selector mismatches, and folder tree is incompletely labelled. Existing HTML, terminology, Future Ideas, and support remain excluded; all 15 governed receipts and four dependents remain reconciled; no source mutation has begun. The direct overlap boundary with `publish-and-integrate-terminology-standard` is acknowledged; both tasks defer shared overlap events and preserve each other.
 
-Observed At: 2026-08-09T02:17:08Z
+Observed At: 2026-08-09T02:28:49Z
 
 Started At: 2026-08-08T23:57:32Z
 
-Deadline or Expires At: 2026-08-09T03:15:00Z
+Deadline or Expires At: 2026-08-09T05:00:00Z
 
-Next Action: Reacquire the Work Item activity=work claim, then dispatch fresh code, methodology, prompt, and docs/UX re-review plus verifier, followed by browser verification and current-main integration without widening scope.
+Next Action: Reacquire the Work Item activity=work claim, then resume the original coder for final correction attempt 2, fresh re-review/verifier, browser verification, current-main integration, post-combination gates, and dossier without widening scope.
 
-Next Reconciliation At: 2026-08-09T02:32:00Z
+Next Reconciliation At: 2026-08-09T02:43:00Z
