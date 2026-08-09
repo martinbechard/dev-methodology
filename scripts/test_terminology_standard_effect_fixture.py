@@ -180,6 +180,13 @@ class TerminologyEffectVerifierTests(unittest.TestCase):
         self.assertNotIn("AGENTS.md", case["contextPack"]["include"])
         self.assertNotIn("AGENTS.md", case["modelVisiblePaths"])
         self.assertEqual(_REFERENCE_CONTRACT, case["mcpAgentOps"])
+        self.assertEqual(
+            {
+                "codex": "codex-workspace-write",
+                "junie": "junie-workspace-write",
+            },
+            case["sandboxProfiles"],
+        )
         self.assertEqual(["dev-documentation-writer"], case["requiredAgents"])
         self.assertIn("terminology-standard", treatment["executionSkills"])
         self.assertNotIn("terminology-standard", omitted["executionSkills"])
@@ -281,7 +288,10 @@ class TerminologyEffectVerifierTests(unittest.TestCase):
         self.assertNotIn("terminology-standard", negative["requiredSkills"])
         self.assertNotIn("mcpAgentOps", negative)
         self.assertEqual(
-            {"codex": "codex-workspace-write"},
+            {
+                "codex": "codex-workspace-write",
+                "junie": "junie-workspace-write",
+            },
             negative["sandboxProfiles"],
         )
         self.assertEqual("boundary-failure", scenario["kind"])
