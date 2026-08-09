@@ -1,10 +1,10 @@
 # Respect Optional Resource Coordination In Workflow Skills
 
-Status: Ready
+Status: Starting
 
 Owner: Unowned
 
-Phase: Ready — Four-path governed correction approved
+Phase: Starting — Four-path governed correction approved
 
 Type: Defect
 
@@ -133,3 +133,23 @@ Approved Governed Paths:
 Approval Boundary: Correct these four definitions so they consume the resource-coordination policy selected through `AGENTS.md`, perform no claim procedure when selection is `none`, and preserve the complete configured `resource-claim` behavior. Only the already listed directly affected non-governed dependents are included. No other governed source or unrelated correction is approved.
 
 Canonical Execution Reconciliation: No current or archived canonical task was found for this Work Item ID. Ready remains unowned until the Coordinator records a new Starting reservation. No source mutation is authorized in Ready.
+
+## Starting Handoff Evidence
+
+Starting Recorded At: 2026-08-09T05:03:00Z
+
+Coordinator: Dev Backlog Coordinator task `019fb057-1767-7ef2-b5fa-41f4417b20b3`
+
+Normalized Objective: Correct exactly four governed workflow skills so they consume the `AGENTS.md`-selected resource-coordination policy, perform no claim procedure when selection is `none`, and preserve complete configured `resource-claim` behavior, together with only directly affected approved tests and generated projections.
+
+Launch Result: Requested after this durable reservation.
+
+Canonical Execution: None
+
+Intended Root Role: Dev Orchestrator
+
+Scheduling Evidence: Two independent provider items are Running. Neither active task owns the four governed workflow skill paths. Begin in one isolated worktree with exact-path authorization checks and the four-definition private source lane. Defer shared mutation involving `evals/skill-probes.yaml`, generated skill definitions or adapters, shared review, installation, or main integration until direct reconciliation with the active terminology and tournament owners. The Blocked documentation-design-system item remains untouched.
+
+Preservation Boundary: Do not create another governed definition or absorb unrelated baselines. No source mutation is authorized until the new canonical Root Dev Orchestrator independently records Starting -> Running with fresh bounded Active Execution Evidence and an exact activity=work claim.
+
+Next Reconciliation At: 2026-08-09T05:18:00Z
