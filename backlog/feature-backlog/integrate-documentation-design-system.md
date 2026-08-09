@@ -182,6 +182,7 @@ README.md
 scripts/build-skill-docs.py
 scripts/install-skills.py
 scripts/test_bundle_content.py
+scripts/test_agent_skill_evaluation_docs.py
 design/generated/skill-definitions.js
 design/generated/role-definitions.js
 generated/adapters/agent-generation-manifest.json
@@ -198,6 +199,8 @@ generated/adapters/junie/agents/methodology-design-system-review-coordinator.md
 ### Coordinator Dependent-Scope Disposition
 
 The Coordinator authorizes these exact four non-governed dependent paths because new conceptual roles require `evals/agent-tests/suite-index.yaml` registration, while approved sources and generators own `design/agent-skill-hierarchy.svg`, `design/agent-skill-test-coverage-checklist.md`, and `design/agent-and-skill-evaluations.html` projections. Generated outputs remain generator-owned and must not be hand-edited. This authorizes no fifth path, no additional governed definition, and no absorption of unrelated baseline support-checklist or evaluation-HTML stale defects.
+
+The Coordinator authorizes the exact singleton dependent path `scripts/test_agent_skill_evaluation_docs.py` for approved evaluation-document generation and focused regression. Corrections are limited to the five expectations directly changed by the approved new skill, two roles, probes/scenarios, and regenerated evaluation HTML; the sixth Future Ideas failure is pre-existing and excluded. This authorizes no second path, governed definition, unrelated baseline correction, or edit to `design/generic-agent-definitions-source.html`.
 
 Focused test and evaluation fixture files may be added in established locations when directly traceable to acceptance criteria. Generated files remain generator-owned. Any additional governed skill or conceptual-role definition path requires separate approval.
 
@@ -241,14 +244,14 @@ Condition Type: root-execution
 
 Owner: Dev Orchestrator task 019fe3cd-577c-76b1-965c-06fb8793ae42
 
-Evidence: canonical root execution owns clean candidate commit `b45719f78c1dcd74f704998e4553a1bc973f140e` (unchanged branch/worktree, 73 authorized files) and six fresh paused read-only lanes. UX and maintained-document reviews are complete `NEEDS_CORRECTION`; code, methodology, prompt, and verifier lanes are substantively complete and paused. Material findings require correction: runner one-supplied-checklist versus skill Shared+page-type contradiction; strict validator accepts wrong page/checklist, malformed limits, empty assignment, and can crash on `findings=None`; FAIL+NOT TESTED is incorrectly REJECTED instead of BLOCKED; +1e-12 ranking tolerance admits just-outside 115%; output schema/simulator mismatch and underspecified generated nested schema; suite-specific skill/eval wiring and empty-field issues. Independent verifier has 24 focused passes, 22/22 provenance with Root envelope, and freshness passes; full bundle has one deferred support assertion; `scripts.test_agent_skill_evaluation_docs` has six failures (five candidate-induced count updates, one pre-existing future-ideas mismatch). Docs/UX findings include printable controls, snapshot/current wording and stale metrics, duplicate h1 specimen, abbreviated production nav class, one SVG title/desc, stale folder tree, and incomplete semantic-profile README documentation. Existing HTML pages remain an explicit no-edit boundary. All 15 governed receipts remain terminal `ALLOWED_APPROVED_DEFINITION_CHANGE`, and the exact four dependent paths remain reconciled. No source mutation has begun. The direct overlap boundary with `publish-and-integrate-terminology-standard` is acknowledged; both tasks defer shared overlap events and preserve each other.
+Evidence: canonical root execution owns clean candidate commit `b45719f78c1dcd74f704998e4553a1bc973f140e` (unchanged branch/worktree, 73 authorized files) with current review/verifier evidence preserved: UX and maintained-document reviews are `NEEDS_CORRECTION`; code, methodology, prompt, and verifier lanes are substantively complete and paused. Material findings remain the runner checklist contradiction, strict-validator acceptance/crash boundaries, FAIL+NOT TESTED disposition, +1e-12 ranking tolerance, output schema/simulator mismatch, underspecified generated nested schema, suite-specific wiring/empty fields, printable and stale-content docs issues, duplicate h1, abbreviated nav class, SVG title/desc, stale folder tree, and incomplete semantic-profile README. Independent verifier has 24 focused passes, 22/22 provenance with Root envelope, and freshness passes; full bundle has one deferred support assertion; evaluation-doc tests have five candidate-induced count failures plus one pre-existing Future Ideas mismatch. The exact singleton dependent scope is recorded: `scripts/test_agent_skill_evaluation_docs.py` is authorized for evaluation-document generation/focused regression, limited to five directly changed expectations; the sixth Future Ideas failure is excluded. No second path, governed definition, unrelated baseline correction, or `design/generic-agent-definitions-source.html` edit is authorized. All 15 governed receipts and four prior dependents remain reconciled; no source mutation has begun. Existing HTML remains an explicit no-edit boundary. The direct overlap boundary with `publish-and-integrate-terminology-standard` is acknowledged; both tasks defer shared overlap events and preserve each other.
 
-Observed At: 2026-08-09T01:26:55Z
+Observed At: 2026-08-09T01:29:55Z
 
 Started At: 2026-08-08T23:57:32Z
 
 Deadline or Expires At: 2026-08-09T03:15:00Z
 
-Next Action: Batch corrections through the original coder, reconcile exact dependent scope for any newly implicated existing test path before mutation, then obtain fresh re-review, re-verification, and browser checks without widening scope.
+Next Action: Batch corrections through the original coder, reconcile this exact singleton dependent scope before mutation, then obtain fresh re-review, re-verification, and browser checks without widening scope.
 
-Next Reconciliation At: 2026-08-09T01:41:00Z
+Next Reconciliation At: 2026-08-09T01:44:00Z
