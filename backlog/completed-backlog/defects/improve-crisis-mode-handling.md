@@ -1,10 +1,10 @@
 # Improve Crisis Mode Handling
 
-Status: Ready
+Status: Completed
 
 Type: Defect
 
-Owner: Unowned
+Owner: Dev Backlog Coordinator SOLO crisis task
 
 Provider: file
 
@@ -112,3 +112,11 @@ Approved at creation. User wording on 2026-08-09 explicitly requires regular SOL
 - The reset targets live ownership, not historical audit evidence.
 - This item does not weaken ordinary MULTITASK resource coordination outside a declared crisis epoch.
 - This item and `improve-blocked-item-handling` overlap in the Coordinator role and related generated artifacts, so their implementation should be sequenced or deliberately integrated even though neither is a hard prerequisite for the other.
+
+## Completion Evidence
+
+- Delivered on authoritative main in commit `02fc4883`.
+- Added automatic crisis detection, explicit no-takeover precedence, regular SOLO entry, safe preservation of other mutators, one audit-preserving registry reset, a complete no-claim epoch, direct sequential delivery, terminal-only membership removal, and gated MULTITASK exit.
+- Deterministic crisis tests prove one reset, no claim operations after entry, repeated-observation idempotence, and rejection of premature exit. The command-helper test proves reset empties live claims while retaining acquire and reset journal events.
+- Coordinator tests passed 28/28; Watchdog tests passed 31/31; bundle tests passed 174/174; the focused reset test, four affected skill validators, generated freshness, Python compilation, Ruff, and `git diff --check` passed.
+- Two unrelated pre-existing checks remain outside this delivery: the missing Skill Group Registry heading in the object-oriented model and optional-resource wording expectations in the role-mutation suite.
