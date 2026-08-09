@@ -7951,9 +7951,20 @@ Visible after.
                     self.assertEqual([], harness_skills)
                 for agent in adapter_manifest["agents"]:
                     generated_agent_path = REPOSITORY_ROOT / agent["output"]
+                    generated_agent_text = generated_agent_path.read_text(
+                        encoding="utf-8"
+                    )
                     self.assertEqual(
                         agent["sha256"],
                         hashlib.sha256(generated_agent_path.read_bytes()).hexdigest(),
+                    )
+                    self.assertIn(
+                        "Never send PII or company II to an LLM, unless specifically instructed.",
+                        generated_agent_text,
+                    )
+                    self.assertIn(
+                        "If a required tool or function is unavailable, stop and report the missing capability as an error.",
+                        generated_agent_text,
                     )
                     self.assertEqual(
                         list(build_skill_docs._referenced_fixed_role_skills(

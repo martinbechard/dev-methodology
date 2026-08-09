@@ -203,17 +203,6 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("read-only harness execution requires --result outside the product workspace")
     if (args.print_invocation or args.invoke_harness) and (len(selected) != 1 or not args.harness):
         parser.error("harness invocation requires one selected case and --harness")
-    if args.mcp_agent_ops_executable is not None and (
-        len(selected) != 1 or not _case_uses_mcp_agent_ops(selected[0])
-    ):
-        parser.error("--mcp-agent-ops-executable is valid only for an MCP-enabled case")
-    if (
-        (args.print_invocation or args.invoke_harness)
-        and len(selected) == 1
-        and _case_uses_mcp_agent_ops(selected[0])
-        and args.mcp_agent_ops_executable is None
-    ):
-        parser.error("MCP-enabled harness invocation requires --mcp-agent-ops-executable")
     if args.codex_auth_file is not None and (
         not args.invoke_harness or args.harness != "codex"
     ):
@@ -415,11 +404,9 @@ def _argument_parser() -> argparse.ArgumentParser:
     parser.add_argument("--evidence", type=Path)
     parser.add_argument("--harness", choices=sorted(SUPPORTED_HARNESSES))  # noqa: F405
     parser.add_argument("--agent-id")
-    parser.add_argument("--model", default="configured-model")
     parser.add_argument("--event-output", type=Path)
     parser.add_argument("--receipt-artifact-directory", type=Path)
     parser.add_argument("--projection-receipt-template", type=Path)
-    parser.add_argument("--mcp-agent-ops-executable", type=Path)
     parser.add_argument("--codex-auth-file", type=Path)
     parser.add_argument("--output-schema", type=Path)
     parser.add_argument("--print-invocation", action="store_true")
@@ -1763,6 +1750,32 @@ def _case_prompt(case: Mapping[str, object], prompt: str) -> str:
     )
 
 
+def _configured_agent_model(agent_id: str, harness: str) -> str:
+    """Resolve a harness model from one generic agent definition and model profile."""
+
+    role_paths = list((ROOT / "agents" / "roles").rglob(f"{agent_id}.role.yaml"))  # noqa: F405
+    if len(role_paths) != 1:
+        raise ValueError(
+            f"agent {agent_id} must resolve to exactly one generic definition"
+        )
+    role = yaml.safe_load(role_paths[0].read_text(encoding="utf-8"))
+    if not isinstance(role, Mapping) or role.get("name") != agent_id:
+        raise ValueError(f"generic agent definition does not match {agent_id}")
+    profile_id = role.get("modelProfile")
+    if not isinstance(profile_id, str) or not profile_id:
+        raise ValueError(f"generic agent {agent_id} has no modelProfile")
+    profile_path = ROOT / "adapters" / harness / "model-profiles.yaml"  # noqa: F405
+    profile_document = yaml.safe_load(profile_path.read_text(encoding="utf-8"))
+    profiles = profile_document.get("profiles") if isinstance(profile_document, Mapping) else None
+    profile = profiles.get(profile_id) if isinstance(profiles, Mapping) else None
+    model = profile.get("model") if isinstance(profile, Mapping) else None
+    if not isinstance(model, str) or not model.strip():
+        raise ValueError(
+            f"harness {harness} has no model for agent profile {profile_id}"
+        )
+    return model.strip()
+
+
 def _handle_harness_invocation_in_workspace(
     args: argparse.Namespace,
     case: Mapping[str, object],
@@ -1776,6 +1789,10 @@ def _handle_harness_invocation_in_workspace(
     agent_id = args.agent_id or next(iter(case.get("requiredAgents", [])), None)
     if not isinstance(agent_id, str):
         return "harness invocation requires an agent id"
+    try:
+        model = _configured_agent_model(agent_id, args.harness)
+    except (OSError, ValueError, yaml.YAMLError) as error:
+        return f"agent model resolution failed: {error}"
     if not (harness_root / ".eval-workspace.json").is_file():
         return "harness invocation requires a runner-owned disposable workspace"
     if (harness_root / ".git").exists() and not is_evaluation_git_workspace(harness_root):  # noqa: F405
@@ -1826,7 +1843,7 @@ def _handle_harness_invocation_in_workspace(
                     case,
                     event_output,
                     harness=args.harness,
-                    model=args.model,
+                    model=model,
                     agent_id=agent_id,
                 )
             else:
@@ -1918,7 +1935,6 @@ def _handle_harness_invocation_in_workspace(
                 for tool, outcomes in mcp_contract["requiredToolOutcomes"].items()
             }
             mcp_identity = capture_mcp_agent_ops_identity(  # noqa: F405
-                args.mcp_agent_ops_executable,
                 minimum_version=str(mcp_contract["minimumVersion"]),
             )
             if mcp_contract.get("schemaVersion") == 5:
@@ -1983,7 +1999,7 @@ def _handle_harness_invocation_in_workspace(
         harness_root,
         agent_id,
         prompt,
-        args.model,
+        model,
         read_only=bool(case.get("readOnly")),
         event_output=event_output,
         evidence_root=evidence_root,
@@ -2015,7 +2031,7 @@ def _handle_harness_invocation_in_workspace(
             "harness": args.harness,
             "harnessVersion": harness_identity.version,
             "harnessDigest": harness_identity.content_digest,
-            "modelDigest": mapping_digest({"harness": args.harness, "model": args.model}),  # noqa: F405
+            "modelDigest": mapping_digest({"harness": args.harness, "model": model}),  # noqa: F405
             "argv": list(execution_command.argv),
             "contextManifestDigest": context_pack.manifest_digest,
             "approvedInputManifestDigest": input_manifest.manifest_digest,

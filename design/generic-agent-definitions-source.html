@@ -680,7 +680,7 @@
 
     <section class="section" aria-labelledby="defaulted-properties-title">
       <h2 id="defaulted-properties-title">Schema Constraints: Behavior We Default</h2>
-      <p class="lede"><code>agents/role-schema.yaml</code> owns the overridable context-budget default and the fixed declarations. <code>scripts/build-skill-docs.py</code> resolves the default before rendering each adapter. It also consumes <code>fixedBehavior.sharedSkills</code> when it builds each role's effective skill set. <code>target</code>, <code>userInvocable</code>, and <code>automaticDelegation</code> remain fixed declarations with the documented adapter treatment below.</p>
+      <p class="lede"><code>agents/role-schema.yaml</code> owns the overridable context-budget default and the fixed declarations. <code>scripts/build-skill-docs.py</code> resolves the default before rendering each adapter. It also consumes <code>fixedBehavior.sharedSkills</code> when it builds each role's effective skill set. <code>target</code>, <code>userInvocable</code>, <code>automaticDelegation</code>, information-disclosure policy, and unavailable-tool policy remain fixed declarations with the documented adapter treatment below.</p>
       <table>
         <thead><tr><th>Behavior</th><th>Methodology Default</th><th>Adapter Rule</th></tr></thead>
         <tbody>
@@ -688,6 +688,8 @@
           <tr><td><code>fixedBehavior.target</code></td><td>Every conceptual agent definition targets local development.</td><td>Do not emit a remote or cloud execution target unless a future schema version adds one.</td></tr>
           <tr><td><code>fixedBehavior.userInvocable</code></td><td>The schema declares every conceptual agent eligible for user invocation.</td><td>Emit the runtime's normal invocation metadata where supported.</td></tr>
           <tr><td><code>fixedBehavior.automaticDelegation</code></td><td>The schema declares every conceptual agent eligible for automatic delegation.</td><td>Use descriptions and runtime invocation fields to preserve automatic selection.</td></tr>
+          <tr><td><code>fixedBehavior.informationDisclosurePolicy</code></td><td>Every conceptual agent must not send PII or company II to an LLM unless specifically instructed.</td><td>Render the exact policy in every native agent's instructions.</td></tr>
+          <tr><td><code>fixedBehavior.unavailableToolPolicy</code></td><td>Every conceptual agent stops with an error when a required tool or function is unavailable.</td><td>Render the policy in every native agent; do not install, emulate, bypass, or substitute for the missing capability.</td></tr>
           <tr><td><code>fixedBehavior.sharedSkills</code></td><td>Every conceptual agent uses the listed communication or operating skills.</td><td><code>scripts/build-skill-docs.py</code> adds each schema-owned shared skill to the effective role before rendering native agents, without repeating it in every role source.</td></tr>
         </tbody>
       </table>

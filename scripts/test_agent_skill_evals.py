@@ -5070,6 +5070,11 @@ class HarnessAndJudgeTests(unittest.TestCase):
             package.chmod(0o700)
             template = yaml.safe_load(yaml.safe_dump(complete_receipt))
             template["run"].pop("modelVisibleProjection")
+            configured_model = self.module._configured_agent_model(
+                str(template["run"]["agentId"]),
+                "codex",
+            )
+            template["run"]["model"] = configured_model
             _write_version_two_receipt_support(package, template, case)
             (package / "events.jsonl").unlink()
             template_path = package / "receipt-template.yaml"
@@ -5084,8 +5089,6 @@ class HarnessAndJudgeTests(unittest.TestCase):
                 case["id"],
                 "--harness",
                 "codex",
-                "--model",
-                "test-model",
                 "--invoke-harness",
                 "--event-output",
                 str(event_path),
@@ -5111,7 +5114,7 @@ class HarnessAndJudgeTests(unittest.TestCase):
                         "type": "invocation",
                         "agent": template["run"]["agentId"],
                         "harness": "codex",
-                        "model": "test-model",
+                        "model": configured_model,
                     },
                     {
                         "id": "agent-start",
@@ -6587,19 +6590,24 @@ class HarnessAndJudgeTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             executable = Path(directory) / "mcp-agent-ops"
             self._write_fake_mcp_agent_ops(executable, runtime_digest)
-            identity = self.module.capture_mcp_agent_ops_identity(
-                executable,
-                minimum_version="0.2.0",
-            )
+            with mock.patch.object(
+                self.module.shutil,
+                "which",
+                return_value=str(executable),
+            ):
+                identity = self.module.capture_mcp_agent_ops_identity(
+                    minimum_version="0.2.0",
+                )
             self.assertEqual(executable.resolve(), identity.executable)
             self.assertEqual(digest(executable), identity.launcher_digest)
             self.assertEqual(runtime_digest, identity.runtime_digest)
             self.assertRegex(identity.identity_digest, r"^[0-9a-f]{64}$")
-            with self.assertRaisesRegex(RuntimeError, "below the evaluation minimum"):
-                self.module.capture_mcp_agent_ops_identity(
-                    executable,
-                    minimum_version="0.3.0",
-                )
+            with mock.patch.object(
+                self.module.shutil,
+                "which",
+                return_value=str(executable),
+            ), self.assertRaisesRegex(RuntimeError, "below the evaluation minimum"):
+                self.module.capture_mcp_agent_ops_identity(minimum_version="0.3.0")
 
     def test_mcp_identity_stops_when_the_required_tool_is_not_installed(self) -> None:
         with mock.patch.object(self.module.shutil, "which", return_value=None):
@@ -6845,8 +6853,6 @@ class HarnessAndJudgeTests(unittest.TestCase):
                 str(case["id"]),
                 "--harness",
                 "codex",
-                "--mcp-agent-ops-executable",
-                sys.executable,
                 "--print-invocation",
             ])
             staged: list[object] = []
@@ -7949,37 +7955,27 @@ class HarnessAndJudgeTests(unittest.TestCase):
         self.assertNotIn("mcpAgentOps", derived)
         self.assertFalse(self.module._case_uses_mcp_agent_ops(derived))
 
-    def test_mcp_cli_requires_explicit_executable_only_for_the_base_case(self) -> None:
+    def test_runner_rejects_caller_selected_models_and_mcp_executables(self) -> None:
         with redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
-            self.module.main([
-                "--case",
-                "project-configuration-routing",
-                "--harness",
-                "codex",
-                "--print-invocation",
+            self.module._argument_parser().parse_args([
+                "--model",
+                "caller-selected-model",
             ])
         with redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
-            self.module.main([
-                "--case",
-                "typescript-order-pricing",
-                "--harness",
-                "codex",
+            self.module._argument_parser().parse_args([
                 "--mcp-agent-ops-executable",
                 sys.executable,
-                "--print-invocation",
             ])
-        with redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
-            self.module.main([
-                "--skill-probe",
-                "probe-create-project-configuration",
-                "--probe-variant",
-                "treatment",
-                "--harness",
-                "codex",
-                "--mcp-agent-ops-executable",
-                sys.executable,
-                "--print-invocation",
-            ])
+
+    def test_runner_resolves_models_from_generic_agent_profiles_per_harness(self) -> None:
+        self.assertEqual(
+            "gpt-5.5",
+            self.module._configured_agent_model("dev-documentation-writer", "codex"),
+        )
+        self.assertEqual(
+            "gpt-5.6-sol",
+            self.module._configured_agent_model("dev-documentation-writer", "junie"),
+        )
 
     def test_mcp_receipt_evidence_replays_identity_and_audit_contract(self) -> None:
         case = self.module.load_cases()["project-configuration-routing"]

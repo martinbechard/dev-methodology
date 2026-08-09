@@ -88,9 +88,13 @@ For an existing Codex ChatGPT login, a live Codex run may instead name one tight
 
 Codex runs with ignored user configuration, JSON event output, and the disposable workspace root. Ordinary cases select the native read-only or workspace-write sandbox. The MCP Git-lifecycle case instead uses an exact custom permission profile because the legacy workspace-write sandbox always protects Git metadata as read-only. The profile is retained in the configuration digest, denies the host home and evidence root, disables network access, preserves staged agent and configuration trees as read-only, and grants writes only to the disposable workspace, its Git metadata, and the unique temporary directory. Custom-agent delegation requires session state, so the runner does not use the CLI ephemeral flag; instead it confines session state to the isolated HOME or auth-only CODEX_HOME and removes that complete location after the run. The selected project agent and skills are staged under the project Codex and shared skill locations. When structured final output is requested, the command builder accepts only the digest-bound codex-agent-output-schema.json JSON Schema; arbitrary files under evals and workspace-controlled schemas are rejected.
 
+The runner does not accept a caller-selected model. It resolves the selected agent's modelProfile from the generic definition under agents/roles, then resolves that profile through the selected harness's adapters/<harness>/model-profiles.yaml file. This preserves harness-specific model configuration instead of duplicating it in an evaluation command.
+
 Junie runs with default configuration, model, MCP, skill, agent, and command locations disabled. The selected project agent and skills are supplied through explicit locations. The runner pins the installed version-specific executable before replacing user state, supplies a unique JUNIE_HOME, HOME, cache, temporary directory, and JSON event path, and stages an owner-only action policy. The MCP case permits ordinary read-only commands, Git add and Git commit, and fifteen exact mcp-agent-ops operations; every unmatched action retains the ask behavior. It requires a non-empty terminal result event and removes transient state afterward. Junie exposes no native filesystem sandbox flag, so an ordinary local Junie run reports no security-containment claim. This does not block local execution.
 
 Tool-dependent evaluations use only executables already installed and discoverable in the evaluation environment. Each case declares the minimum package version that provides its required tools. Preflight resolves the existing executable, runs non-server identity probes, and stops before server startup or model execution when the executable is absent, too old, inconsistent, or malformed. Evaluation code must not download, build, install, upgrade, downgrade, or create a replacement tool runtime. Launcher and runtime SHA-256 values are observed and retained as evidence of what ran; they are not inputs that the evaluator must reproduce. An exact digest may be required only by a separately declared immutable-runtime reproducibility test, not by an ordinary capability evaluation.
+
+The same fail-closed rule applies during ordinary agent runtime, not only evaluation preflight: if an agent reaches a required tool or function and it is unavailable, the agent stops and reports the missing capability as an error. It must not install, emulate, bypass, or substitute for the missing capability.
 
 The project-configuration-routing base case additionally evaluates mcp-agent-ops 0.5.1 or newer through Codex and Junie. The minimum version supplies the canonical claim result schema version 2 and the declared MCP operations. The runner checks the installed executable before stdio starts. It stages an exact separate availability catalog beneath the disposable evaluation context: execution skills expose their effective instructions plus explicitly approved MCP resources, while other available skills expose frontmatter only so the catalog cannot inject unrelated instructions. The project template is deliberately absent from harness-preloaded skill content and available only through the required skill_resource_load call. Exact host configuration, catalog, authorization policy, audit identity, and allowed candidate outputs are retained in a runner-owned evidence directory outside the disposable workspace. Codex receives CLI-only server and permission-profile configuration with a noninteractive fifteen-operation allowlist. Junie receives one explicit external configuration folder while all default MCP locations remain disabled.
 
@@ -104,7 +108,6 @@ Print the MCP-enabled Codex or Junie base-case invocation without starting the s
 python3 scripts/run-agent-skill-evals.py \
   --case project-configuration-routing \
   --harness codex \
-  --mcp-agent-ops-executable /absolute/path/to/mcp-agent-ops \
   --print-invocation
 ```
 
@@ -114,7 +117,6 @@ Print a safe dry-run invocation without executing a paid harness or running fixt
 python3 scripts/run-agent-skill-evals.py \
   --case typescript-order-pricing \
   --harness codex \
-  --model configured-model \
   --print-invocation
 ```
 

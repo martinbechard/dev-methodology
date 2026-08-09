@@ -74,6 +74,8 @@ ROLE_SCHEMA_GROUPS_KEY = "roleGroups"
 ROLE_SCHEMA_DEFAULTS_KEY = "defaults"
 ROLE_SCHEMA_FIXED_BEHAVIOR_KEY = "fixedBehavior"
 ROLE_SCHEMA_SHARED_SKILLS_KEY = "sharedSkills"
+ROLE_SCHEMA_INFORMATION_DISCLOSURE_POLICY_KEY = "informationDisclosurePolicy"
+ROLE_SCHEMA_UNAVAILABLE_TOOL_POLICY_KEY = "unavailableToolPolicy"
 ROLE_NAME_FIELD_NAME = "name"
 ROLE_FILENAME_FIELD_NAME = "filename"
 ROLE_DESCRIPTION_FIELD_NAME = "description"
@@ -1870,7 +1872,23 @@ def render_inlined_core_skills(
 def role_identity_instruction(role: RoleDefinition) -> str:
     """Return the generated identity statement shared by every native adapter."""
 
-    return f"You are the {role.display_name}."
+    schema = read_yaml_object(ROLE_SCHEMA_PATH)
+    fixed_behavior = schema.get(ROLE_SCHEMA_FIXED_BEHAVIOR_KEY)
+    if not isinstance(fixed_behavior, dict):
+        raise ValueError("role-schema.yaml must define fixedBehavior.")
+    policy_fields = (
+        ROLE_SCHEMA_INFORMATION_DISCLOSURE_POLICY_KEY,
+        ROLE_SCHEMA_UNAVAILABLE_TOOL_POLICY_KEY,
+    )
+    policies: list[str] = []
+    for field in policy_fields:
+        policy = fixed_behavior.get(field)
+        if not isinstance(policy, str) or not policy.strip():
+            raise ValueError(
+                f"role-schema.yaml fixedBehavior must define {field}."
+            )
+        policies.append(policy.strip())
+    return f"You are the {role.display_name}.\n\n" + "\n\n".join(policies)
 
 
 def derive_context_budget(context_capacity_tokens: int, context_budget_percent: int) -> int:

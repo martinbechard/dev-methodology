@@ -975,12 +975,11 @@ def capture_harness_identity(harness: str) -> HarnessIdentity:
 
 
 def capture_mcp_agent_ops_identity(
-    executable: Path | None = None,
     *,
     minimum_version: str | None = None,
 ) -> McpAgentOpsIdentity:
     """Capture identity and enforce that an existing installation is new enough."""
-    discovered = executable or (
+    discovered = (
         Path(value) if (value := shutil.which("mcp-agent-ops")) is not None else None
     )
     if discovered is None:
