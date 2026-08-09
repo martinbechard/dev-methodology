@@ -572,6 +572,93 @@ def project_with_helper(selected: str, availability: str = "AVAILABLE") -> dict[
 class ResourceClaimHelperTests(unittest.TestCase):
     """Protect standalone claim-helper composition and failure behavior."""
 
+    def test_reset_clears_live_claims_and_preserves_audit_event(self) -> None:
+        """Prove crisis entry can empty ownership without erasing history."""
+
+        with tempfile.TemporaryDirectory() as directory:
+            repository = Path(directory)
+            subprocess.run(
+                ["git", "init", "-q", str(repository)],
+                check=True,
+                text=True,
+                capture_output=True,
+            )
+            (repository / "seed.txt").write_text("seed\n", encoding="utf-8")
+            subprocess.run(
+                ["git", "-C", str(repository), "add", "seed.txt"],
+                check=True,
+                text=True,
+                capture_output=True,
+            )
+            subprocess.run(
+                [
+                    "git",
+                    "-C",
+                    str(repository),
+                    "-c",
+                    "user.name=Fixture",
+                    "-c",
+                    "user.email=fixture@example.invalid",
+                    "commit",
+                    "-q",
+                    "-m",
+                    "seed",
+                ],
+                check=True,
+                text=True,
+                capture_output=True,
+            )
+            base = [sys.executable, str(COMMAND_SCRIPT), "--repo", str(repository)]
+            acquire = _command_result(
+                subprocess.run(
+                    base
+                    + [
+                        "acquire",
+                        "--claim-id",
+                        "crisis-entry-fixture",
+                        "--agent",
+                        "coordinator",
+                        "--task",
+                        "crisis-entry-fixture",
+                        "--root-task-id",
+                        "crisis-entry-fixture",
+                        "--work-item-id",
+                        "crisis-entry-fixture",
+                        "--activity",
+                        "work",
+                    ],
+                    check=False,
+                    text=True,
+                    capture_output=True,
+                )
+            )
+            reset = _command_result(
+                subprocess.run(
+                    base + ["reset"],
+                    check=False,
+                    text=True,
+                    capture_output=True,
+                )
+            )
+            status = _command_result(
+                subprocess.run(
+                    base + ["status"],
+                    check=False,
+                    text=True,
+                    capture_output=True,
+                )
+            )
+
+            self.assertEqual("SHARED_CHECKOUT_ACQUIRED", acquire["outcome"])
+            self.assertEqual("RESET", reset["outcome"])
+            self.assertEqual([], status["claims"])
+            journals = list(
+                (repository / ".codex" / "agent-claim" / "agent-claim-events").rglob("*.jsonl")
+            )
+            history = "".join(path.read_text(encoding="utf-8") for path in journals)
+            self.assertIn('"action":"acquire"', history)
+            self.assertIn('"action":"reset"', history)
+
     def test_renderer_inlines_only_selected_claim_helper_provider(self) -> None:
         """Compose shared role semantics with exactly one setup-selected provider."""
 

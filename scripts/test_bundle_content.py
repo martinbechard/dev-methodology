@@ -1887,8 +1887,9 @@ class BundleContentTests(unittest.TestCase):
             (SKILLS_ROOT / "backlog-crisis-mode" / "agents" / "openai.yaml").exists()
         )
         for phrase in (
-            "Stop claim operations.",
-            "Process one blockage item at a time.",
+            "invoke the configured claim helper's reset operation exactly once",
+            "do not perform any claim status, acquire, extend, deadline extension, heartbeat, release, wait, retry, report, maintenance, or additional reset operation",
+            "Process exactly one blockage item at a time without claims or delegated delivery.",
             "Commit the current item before starting another item.",
             "Moving an item to Ready does not resolve it.",
             "When the same blockage state and recovery result are observed again, return the existing result without repeating lifecycle mutation.",
@@ -1949,6 +1950,10 @@ class BundleContentTests(unittest.TestCase):
         self.assertNotIn("set-multitask-mode", watchdog_skills)
 
         coordinator_contract = json.dumps(coordinator, sort_keys=True)
+        self.assertIn("Mandatory Ordinary Blocked Recovery", coordination_skill := (SKILLS_ROOT / "coordinate-work-items" / "SKILL.md").read_text(encoding="utf-8"))
+        self.assertIn("Blocked -> Ready, then Ready -> Starting", coordination_skill)
+        self.assertIn("reset the configured live claim registry exactly once", coordinator_contract)
+        self.assertIn("prohibit every claim operation including status and release", coordinator_contract)
         self.assertIn(
             "when a secondary-thread dispatch mechanism is configured",
             coordinator_contract,

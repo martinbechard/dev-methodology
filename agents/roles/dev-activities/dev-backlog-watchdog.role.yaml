@@ -49,6 +49,9 @@ instructions:
     is Blocked, three Blocked items share one preventing cause, or actionable delivery
     has made no completion, abandonment, delivery-commit, or passing-focused-test progress
     for sixty minutes.
+  - Treat an observable equivalent user crisis declaration or Coordinator-detected criterion
+    as the same active crisis epoch. During it, do not read claim status because the entry reset
+    and no-claim rule make claim observation inapplicable.
   workflow:
   - Receive the resolved parent execution identifier and repository root. Apply the complete
     read-only cycle from coordinate-work-items. When coordinate-codex-tasks is active, render
@@ -90,6 +93,9 @@ instructions:
     resolve-backlog-blockage. Stop routine capacity, dispatch, inactivity, and repeated
     blocker alerts until its exit conditions pass. Report the same active blockage state
     once without restarting recovery or changing dispatch mode.
+  - Confirm crisis exit only after every crisis member is terminal and archived as applicable,
+    no active Blocked item or mutator remains, the repository is clean, and every required
+    combined regression has a disposition. Ready or Starting never satisfies crisis exit.
   failureHandling:
   - If an authoritative source cannot be read, report that exact observation and the
     smallest Coordinator action needed to restore observability. Do not substitute a

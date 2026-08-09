@@ -18,6 +18,7 @@ from coordination_simulator import (
     TaskCleanupEvidence,
     TaskCandidate,
     WorkItem,
+    crisis_epoch_transition,
     dispatch_mode_transition,
 )
 
@@ -114,6 +115,85 @@ class CoordinationSimulatorTests(unittest.TestCase):
         self.assertTrue(already_resumed.dispatch_enabled)
         self.assertIsNone(absent.dispatch_enabled)
         self.assertFalse(absent.mutated)
+
+    def test_crisis_epoch_resets_once_forbids_claims_and_requires_terminal_exit(self) -> None:
+        """Model SOLO crisis entry, repeat observation, and terminal-only exit."""
+
+        entered = crisis_epoch_transition(
+            active=True,
+            entry_already_recorded=False,
+            preserved_mutators=True,
+            reset_preserved_history=True,
+            crisis_members=("blocked-a", "blocked-b"),
+        )
+        repeated = crisis_epoch_transition(
+            active=True,
+            entry_already_recorded=True,
+            preserved_mutators=True,
+            reset_preserved_history=True,
+            crisis_members=("blocked-a", "blocked-b"),
+        )
+        premature = crisis_epoch_transition(
+            active=False,
+            entry_already_recorded=True,
+            preserved_mutators=True,
+            reset_preserved_history=True,
+            crisis_members=("blocked-a", "blocked-b"),
+            terminal_members=("blocked-a",),
+            repository_clean=True,
+            combined_regression_disposition=True,
+        )
+        exited = crisis_epoch_transition(
+            active=False,
+            entry_already_recorded=True,
+            preserved_mutators=True,
+            reset_preserved_history=True,
+            crisis_members=("blocked-a", "blocked-b"),
+            terminal_members=("blocked-a", "blocked-b"),
+            repository_clean=True,
+            combined_regression_disposition=True,
+        )
+
+        self.assertEqual(("ENTERED", 1, False), (entered.result, entered.reset_count, entered.claim_operations_allowed))
+        self.assertEqual(("ACTIVE_UNCHANGED", 0), (repeated.result, repeated.reset_count))
+        self.assertEqual("EXIT_BLOCKED", premature.result)
+        self.assertEqual(("EXITED", True), (exited.result, exited.claim_operations_allowed))
+
+    def test_ordinary_blocked_recovery_preserves_task_and_serializes_restart(self) -> None:
+        """Reject direct Running and let the preserved root accept independently."""
+
+        item = WorkItem("blocked", "Blocked", canonical_task_id="task-original")
+        simulator = CoordinationSimulator((item,))
+
+        result = simulator.restart_blocked_item(
+            "blocked",
+            canonical_task_id="task-original",
+            diagnosis="stale fixture contradicts accepted contract",
+            corrections=("correct fixture", "refresh provider blocker"),
+            root_accepts=True,
+        )
+
+        self.assertEqual(("Blocked", "Ready", "Starting", "Running"), result.statuses)
+        self.assertEqual("task-original", result.canonical_task_id)
+        self.assertIn("stale fixture", result.recovery_receipt)
+
+    def test_failed_blocked_resumption_returns_current_blocker(self) -> None:
+        """A root that cannot accept returns Blocked with current evidence."""
+
+        item = WorkItem("blocked", "Blocked", canonical_task_id="task-original")
+        simulator = CoordinationSimulator((item,))
+        result = simulator.restart_blocked_item(
+            "blocked",
+            canonical_task_id="task-original",
+            diagnosis="runtime unavailable",
+            corrections=("repair runtime mapping",),
+            root_accepts=False,
+            renewed_blocker="runtime mapping still rejects the canonical task",
+        )
+
+        self.assertEqual(("Blocked", "Ready", "Starting", "Blocked"), result.statuses)
+        self.assertEqual("Blocked", item.status)
+        self.assertIn("runtime mapping", item.open_issues[-1])
 
     def test_user_action_resumes_same_task_and_preserves_early_work(self) -> None:
         """Adopt the answered canonical task and reconcile rather than reject its work."""

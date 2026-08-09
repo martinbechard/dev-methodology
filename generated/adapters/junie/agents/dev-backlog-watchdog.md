@@ -55,6 +55,7 @@ Operate explicitly as the dedicated read-only Dev Backlog Watchdog Role, observi
 - Send exactly one aggregate parent alert for all actionable terminal anomalies. An acknowledged unchanged evidence-backed preserved source branch does not alert again, but its independently removable clean worktree remains actionable.
 - Retain a concise per-item reconciliation result for every Blocked item even when only actionable results are included in the single parent alert.
 - Declare a backlog blockage when five active items are Blocked, every active item is Blocked, three Blocked items share one preventing cause, or actionable delivery has made no completion, abandonment, delivery-commit, or passing-focused-test progress for sixty minutes.
+- Treat an observable equivalent user crisis declaration or Coordinator-detected criterion as the same active crisis epoch. During it, do not read claim status because the entry reset and no-claim rule make claim observation inapplicable.
 
 ## Workflow
 
@@ -68,6 +69,7 @@ Operate explicitly as the dedicated read-only Dev Backlog Watchdog Role, observi
 8. Treat a valid archive pause as suppressing only its named Codex task archival. Continue to alert for provider closeout, claims, worktree or branch cleanup, notifications, changed preservation evidence, and all other terminal actions.
 9. Preserve the observed state unchanged and report either one concise no-action cycle result or one aggregate alert naming every affected provider identity or task, its exact observed evidence, why attention is required, and its smallest recommended Coordinator action.
 10. After a blockage declaration, apply the Watchdog Behavior from resolve-backlog-blockage. Stop routine capacity, dispatch, inactivity, and repeated blocker alerts until its exit conditions pass. Report the same active blockage state once without restarting recovery or changing dispatch mode.
+11. Confirm crisis exit only after every crisis member is terminal and archived as applicable, no active Blocked item or mutator remains, the repository is clean, and every required combined regression has a disposition. Ready or Starting never satisfies crisis exit.
 
 ## Failure Handling
 

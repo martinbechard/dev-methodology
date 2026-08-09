@@ -178,6 +178,26 @@ class DispatchModeTransition:
     mutated: bool
 
 
+@dataclass(frozen=True)
+class CrisisEpochTransition:
+    """Describe one fail-closed crisis entry or exit result."""
+
+    result: str
+    solo: bool
+    reset_count: int
+    claim_operations_allowed: bool
+    crisis_members: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class BlockedRecoveryResult:
+    """Describe the mandatory same-task ordinary Blocked restart sequence."""
+
+    statuses: tuple[str, ...]
+    canonical_task_id: str
+    recovery_receipt: str
+
+
 def dispatch_mode_transition(
     *,
     mechanism_configured: bool,
@@ -204,6 +224,44 @@ def dispatch_mode_transition(
     if dispatch_enabled:
         return DispatchModeTransition("ALREADY_MULTITASK", True, False)
     return DispatchModeTransition("ENABLED", True, True)
+
+
+def crisis_epoch_transition(
+    *,
+    active: bool,
+    entry_already_recorded: bool,
+    preserved_mutators: bool,
+    reset_preserved_history: bool,
+    crisis_members: Sequence[str],
+    terminal_members: Sequence[str] = (),
+    repository_clean: bool = False,
+    mutators_active: bool = False,
+    combined_regression_disposition: bool = False,
+) -> CrisisEpochTransition:
+    """Enter once or exit only after every crisis gate is satisfied."""
+
+    members = tuple(dict.fromkeys(crisis_members))
+    if active:
+        if not members:
+            raise ValueError("crisis entry requires an observable crisis set")
+        if not preserved_mutators or not reset_preserved_history:
+            raise ValueError("crisis entry requires preservation and audit-safe reset")
+        return CrisisEpochTransition(
+            "ACTIVE_UNCHANGED" if entry_already_recorded else "ENTERED",
+            True,
+            0 if entry_already_recorded else 1,
+            False,
+            members,
+        )
+    exit_ready = (
+        set(members) == set(terminal_members)
+        and repository_clean
+        and not mutators_active
+        and combined_regression_disposition
+    )
+    if not exit_ready:
+        return CrisisEpochTransition("EXIT_BLOCKED", True, 0, False, members)
+    return CrisisEpochTransition("EXITED", False, 0, True, members)
 
 
 @dataclass(frozen=True)
@@ -746,7 +804,7 @@ class CoordinationSimulator:
         if applied.outcome == "USER_ACTION_REQUIRED":
             item.status = "User Action Required"
         elif applied.outcome in {"RECOVERY_ACTION", "BOUNDED_RETRY"}:
-            item.status = "Running"
+            item.status = "Ready"
         self.events.append(
             {
                 "event": "steward-applied-blocked-disposition",
@@ -755,6 +813,48 @@ class CoordinationSimulator:
             }
         )
         return applied
+
+    def restart_blocked_item(
+        self,
+        item_id: str,
+        *,
+        canonical_task_id: str,
+        diagnosis: str,
+        corrections: Sequence[str],
+        root_accepts: bool,
+        renewed_blocker: str = "",
+    ) -> BlockedRecoveryResult:
+        """Apply Blocked -> Ready -> Starting before root acceptance."""
+
+        item = self._item(item_id)
+        if item.status != "Blocked":
+            raise ValueError("ordinary recovery starts from Blocked")
+        if item.canonical_task_id != canonical_task_id:
+            raise ValueError("ordinary recovery cannot replace the canonical task")
+        if not diagnosis.strip() or not tuple(value for value in corrections if value.strip()):
+            raise ValueError("recovery requires diagnosis and an authorized correction")
+        receipt = f"diagnosis={diagnosis.strip()}; corrections={', '.join(corrections)}"
+        statuses = ["Blocked", "Ready", "Starting"]
+        item.status = "Starting"
+        if root_accepts:
+            item.status = "Running"
+            statuses.append("Running")
+        else:
+            if not renewed_blocker.strip():
+                raise ValueError("failed resumption requires a current exact blocker")
+            item.status = "Blocked"
+            item.open_issues.append(renewed_blocker.strip())
+            statuses.append("Blocked")
+        self.events.append(
+            {
+                "event": "ordinary-blocked-recovery",
+                "item": item_id,
+                "task": canonical_task_id,
+                "statuses": tuple(statuses),
+                "receipt": receipt,
+            }
+        )
+        return BlockedRecoveryResult(tuple(statuses), canonical_task_id, receipt)
 
     def finish_bounded_retry(self, item_id: str, *, resolved: bool) -> None:
         """Consume the single extra retry and reopen reconciliation only on failure."""
@@ -771,7 +871,7 @@ class CoordinationSimulator:
         item.disposition_history[-1] = consumed
         item.blocked_disposition = None
         item.bounded_retry_used = True
-        item.status = "Running" if resolved else "Blocked"
+        item.status = "Ready" if resolved else "Blocked"
         self.events.append(
             {
                 "event": "bounded-retry-finished",

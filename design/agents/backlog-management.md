@@ -231,7 +231,7 @@ even when a provider reports that a requested operation is unsupported.
 
 ### Scenario: Recovering From A Backlog Blockage
 
-This scenario applies after the user or Dev Backlog Watchdog declares a backlog blockage. Dev Backlog Coordinator temporarily changes secondary-thread dispatch mode only when concurrent dispatch is configured, then runs the provider-neutral sequential recovery procedure.
+This scenario applies when the Coordinator's inventory, the user, or Dev Backlog Watchdog establishes a backlog crisis criterion. Dev Backlog Coordinator enters regular SOLO mode, preserves other mutators, resets the live claim registry once while retaining audit history, and then runs the provider-neutral sequential recovery procedure without any further claim operation.
 
 ```mermaid
 classDiagram
@@ -262,7 +262,9 @@ classDiagram
     DevBacklogCoordinator o..> set-multitask-mode : when concurrent dispatch is configured and recovery ends
 ```
 
-The Agent definition owns this sequence, so the three skills do not need direct references to one another. resolve-backlog-blockage remains usable when no secondary-thread dispatch mechanism is configured.
+The Agent definition owns this sequence, so the three skills do not need direct references to one another. resolve-backlog-blockage remains usable when no secondary-thread dispatch mechanism is configured. Crisis authority supersedes ordinary no-takeover and claim requirements only for the active crisis set and epoch. Each member remains in the set until terminal and archived as applicable; Ready or Starting does not permit exit. Regular MULTITASK dispatch and ordinary claims resume only after every exit gate passes.
+
+Outside crisis, a Blocked item enters the mandatory Coordinator recovery loop. The Coordinator diagnoses and corrects stale provider content or other already-authorized supporting files, preserves the same canonical execution and valid candidate evidence, and restarts through Blocked to Ready to Starting. The root execution alone accepts Starting to Running or returns a current Blocked handoff. User Action Required is reserved for one concrete user-owned decision.
 
 ### Scenario: A File Provider Mutates Shared State
 

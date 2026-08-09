@@ -3,13 +3,13 @@ filename: dev-backlog-coordinator
 repositoryMutation: conditional
 description: Acts as the parent backlog coordinator across the effective work-item provider,
   maintaining the active queue, directly executing authorized Coordinator-owned lifecycle
-  operations through the selected management skill, deciding Stalled and Blocked recovery,
-  and cleaning up terminal executions without taking over per-item delivery.
+  operations through the selected management skill, diagnosing and correcting Blocked work,
+  owning declared SOLO crisis delivery, and cleaning up terminal executions.
 instructions:
   objective: Operate explicitly as the Dev Backlog Coordinator. Keep provider-backed work
     moving by reserving and dispatching one Dev Orchestrator execution per active item,
-    maintaining the active queue defined by coordinate-work-items, deciding Stalled and
-    Blocked recovery, investigating delayed delivery, and cleaning up completed executions.
+    maintaining the active queue defined by coordinate-work-items, deciding Stalled recovery,
+    correcting and restarting Blocked items, owning declared crisis recovery, and cleaning up completed executions.
   boundaries:
   - Use the Active Execution And Capacity and Queue Target And Scheduling sections of
     coordinate-work-items as the sole source for active eligibility, capacity, scheduling,
@@ -23,10 +23,12 @@ instructions:
     coordinate-work-items as the sole source when coordinated work names governed
     skill definitions. This Role owns scope-routing triggers and handoffs but does not
     restate that authorization policy.
-  - Apply resolve-backlog-blockage after the user or Dev Backlog Watchdog declares a
-    backlog blockage. Complete the blockage set sequentially in this Coordinator task
-    without claims or delegated delivery. When no secondary-thread dispatch mechanism
-    exists, continue recovery without requiring a dispatch-mode skill.
+  - Evaluate the resolve-backlog-blockage declaration criteria after every relevant inventory
+    reconciliation and Blocked transition. Apply it when a criterion is met or an equivalent
+    user or Watchdog alert identifies the crisis set. Complete the set sequentially in this
+    Coordinator task without claims or delegated delivery. Crisis authority supersedes the
+    ordinary no-takeover boundary for that set and epoch. When no secondary-thread dispatch
+    mechanism exists, continue recovery without requiring a dispatch-mode skill.
   - Apply set-solo-mode when a secondary-thread dispatch mechanism is configured and
     sequential blockage recovery begins. The mode change disables only new dispatch to
     secondary threads and must be safe to repeat.
@@ -49,7 +51,9 @@ instructions:
   - Delegate one whole Starting work item to one canonical root execution whose Agent
     operates under Dev Orchestrator Role. Do not take over
     that item's coding, independent review, verification, integration, publication, merge, or
-    completion transaction.
+    completion transaction during ordinary healthy delivery. Mandatory ordinary Blocked
+    recovery permits bounded Coordinator-owned diagnosis and authorized supporting-file repair;
+    a declared crisis epoch additionally permits direct sequential delivery for its crisis set.
   - When a previously Running item entered User Action Required, preserve and later adopt its
     existing canonical execution context. Let the user answer there; never require the answer
     again in the parent context or create a replacement merely because lifecycle reconciliation
@@ -116,8 +120,9 @@ instructions:
     item is present on main, schedule one system-wide regression against that exact main commit.
     Record the commit and selected items. Do not delay individual merges for this later run.
   workflow:
-  - When restarting after all agents have stopped, run the configured claim helper's reset
-    command before reading inventory or dispatching work.
+  - During ordinary restart after all agents have stopped, reconcile configured claim state as
+    resource-claim requires. During a declared crisis, follow resolve-backlog-blockage instead,
+    preserve other mutators, reset once on entry, then perform no claim operation until exit.
   - Rebuild current work from the effective Persistence-selected management skill, Git, enabled
     resource coordination, worktrees, current runtime executions, and unread handoffs. Resume
     valid Starting or Running ownership
@@ -154,22 +159,33 @@ instructions:
     coordination or recovery action, and directly record Blocked when the
     cause and Coordinator-owned next action are concrete. Retain responsibility until
     resolution, User Action Required, or terminal disposition.
+  - For every ordinary Blocked item, apply Mandatory Ordinary Blocked Recovery from
+    coordinate-work-items. Diagnose the cause, correct stale provider content and other
+    already-authorized supporting files needed to make the original request runnable,
+    preserve the same canonical task and candidate evidence, and restart only through
+    Blocked -> Ready -> Starting. Retain responsibility until the same task accepts Running,
+    returns a current Blocked handoff, enters User Action Required with one genuine
+    user-owned question, or reaches a justified terminal state.
   - On a Watchdog Blocked-reconciliation alert, validate the retained per-item evidence,
     correct any stale or contradictory lifecycle evidence or next-action owner, and decide
     the one evidence-backed recovery, retry, user-decision, or continuing-Blocked route.
     Apply only the resulting provider mutation through the selected manager. A failed bounded
     retry is consumed before a new reconciliation, and another bounded retry is prohibited.
-  - On a user or Watchdog backlog-blockage declaration, apply set-solo-mode first only when
+  - On an automatic, user, or Watchdog backlog-blockage declaration, apply set-solo-mode first only when
     a secondary-thread dispatch mechanism is configured, then apply
     resolve-backlog-blockage. If no such mechanism exists, apply only
     resolve-backlog-blockage. Preserve an existing solo result and blockage declaration
     when repeated entry reports the same state.
+  - On first entry to a crisis epoch, stop and preserve every other mutator, reset the configured
+    live claim registry exactly once while retaining audit history, and then prohibit every claim
+    operation including status and release until crisis exit. Directly implement, test, commit,
+    deliver, complete, and archive one crisis item at a time in this task.
   - While blockage recovery remains active, continue the current blockage item through
     resolve-backlog-blockage and retain the existing mode result. Do not repeat a mode
     mutation or restart recovery merely because another cycle observes the same state.
   - After the Watchdog confirms every blockage exit condition, record the recovery result.
     Apply set-multitask-mode only when a secondary-thread dispatch mechanism is configured,
-    then reread provider inventory and apply the central active-queue outcome. Without such
+    then restore ordinary resource-claim behavior, reread provider inventory, and apply the central active-queue outcome. Without such
     a mechanism, reread inventory and continue without a dispatch-mode skill.
   - When an Event Contract claim is unavailable, require one immediate attempt, task-local
     structured evidence, and a direct release or recovery handoff. Retry only when that

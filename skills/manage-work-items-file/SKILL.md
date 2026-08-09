@@ -293,22 +293,26 @@ because an item is quiet, slow, or suspected to be stalled.
 Resume blocked work through the same provider and startup boundaries as new work:
 
 1. Read and retain the complete pre-attempt Blocked item bytes.
-2. Reconcile the blocker and confirm that the recorded unblock condition is satisfied.
-3. Re-resolve every declared hard dependency against current provider state. Continue only
+2. Require the Coordinator's bounded diagnosis and recovery receipt. It names the confirmed
+   blocker, exact work-item or other authorized supporting-file corrections, preserved
+   candidate and gate evidence, remaining risk, and restart decision. Correct stale,
+   contradictory, over-scoped, or incomplete provider content before resumption.
+3. Reconcile the blocker and confirm that the recorded unblock condition is satisfied.
+4. Re-resolve every declared hard dependency against current provider state. Continue only
    when each recorded hard prerequisite has a terminal successful disposition and the exact
    unblock condition is satisfied. Otherwise leave Blocked unchanged.
-4. In one short provider transaction, restore Status: Ready with Owner: Unowned while retaining
+5. In one short provider transaction, restore Status: Ready with Owner: Unowned while retaining
    the blocker, unblock condition, evidence, and acceptance criteria as recovery history. If
    this transaction fails, restore the byte-for-byte pre-attempt Blocked item and do not infer
    execution ownership.
-5. When the parent Dev Backlog Coordinator authorizes Ready -> Starting, claim the exact
+6. When the parent Dev Backlog Coordinator authorizes Ready -> Starting, claim the exact
    provider path, atomically record and commit its supplied reservation and dispatch
    evidence, then release the claim. This provider transaction does not grant execution
    ownership.
-6. If the new task fails to start or cannot claim the provider, leave the item Starting.
+7. If the preserved canonical task fails to start or cannot claim the provider, leave the item Starting.
    Record a recovery transition only after the Coordinator supplies its Watchdog-informed
    decision. Do not inspect runtime conversations or choose that disposition here.
-7. When the root Dev Orchestrator authorizes Starting -> Running, claim the exact provider
+8. When the root Dev Orchestrator authorizes Starting -> Running for the preserved canonical task, claim the exact provider
    path, atomically record and commit its
    supplied canonical conversation identifier, root Agent Task id when applicable, owner,
    branch, worktree, and accepted execution evidence, then release the claim.

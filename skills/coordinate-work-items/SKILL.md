@@ -251,6 +251,21 @@ When Dev Orchestrator recognizes a concrete blocker, it stops unsafe work, prese
 
 On every Watchdog cycle, reconcile every Blocked item against its blocker, unblock condition, next-action owner, dependencies, candidate, review and verification, runtime state, Git state, live claims, and correction history. Retain one concise result for every Blocked item. The Watchdog never chooses a lifecycle outcome.
 
+### Mandatory Ordinary Blocked Recovery
+
+Outside a declared backlog crisis, Dev Backlog Coordinator owns the complete recovery loop for every Blocked item. Blocked is an instruction to diagnose and act, not a storage destination.
+
+1. Read current provider, canonical execution, candidate, worktree, review, verification, dependency, acceptance-criteria, Git, and resource-coordination evidence.
+2. Reproduce or otherwise confirm the preventing condition. Correct stale, contradictory, over-scoped, or incomplete work-item content before changing implementation.
+3. Complete bounded technical investigation and mechanical recovery. The Coordinator may directly correct other files already authorized by the original request and standing directives when those corrections are necessary to make the item runnable. Do not widen the requested outcome or governed-definition authority.
+4. Reuse preserved candidates and accepted gates where their bytes and assumptions remain valid. Record a compact recovery receipt containing the blocker diagnosis, exact corrections, retained evidence, remaining risks, and restart decision.
+5. Use User Action Required only when bounded diagnosis isolates one concrete user-owned decision, authority grant, action, risk acceptance, or fact. Record one exact question and synchronize the canonical task to a Waiting for User title. Technical uncertainty or Coordinator inexperience is not user work.
+6. When recovery makes dispatch safe, preserve the same canonical execution and record Blocked -> Ready, then Ready -> Starting as two serialized provider transitions. A direct Blocked -> Running transition is prohibited.
+7. The preserved root Dev Orchestrator independently records Starting -> Running when capable of proceeding. If it still cannot proceed, it records a new Blocked handoff with the current exact cause, owner, evidence, and observable unblock condition.
+8. The Coordinator remains responsible until the item has accepted Running, returned a new truthful Blocked handoff, entered User Action Required, or reached a justified terminal disposition.
+
+Lifecycle-only churn, a replacement canonical task, an unchanged vague blocker, or another retry without a finding-linked recovery plan does not satisfy this procedure. Declared backlog-crisis recovery follows resolve-backlog-blockage instead of this ordinary restart loop.
+
 Alert the Coordinator when evidence shows a satisfied unblock condition, agent-actionable recovery, exhausted corrections without a disposition, malformed or inconsistent evidence, or an incorrect next-action owner. After exhausted corrections, the Coordinator records exactly one outcome:
 
 1. A concrete recovery action, owner, evidence, and links to unresolved findings.

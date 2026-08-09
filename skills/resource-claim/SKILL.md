@@ -35,6 +35,10 @@ Git provides one primary worktree for a repository. The primary worktree owns th
 
 ## Project Configuration Gate
 
+### Declared Backlog-Crisis Exception
+
+When resolve-backlog-blockage records an active crisis epoch, its sole Coordinator uses regular SOLO mode and this skill is temporarily NOT_APPLICABLE for the entire crisis epoch. After the one required entry reset, do not load or invoke a claim helper and do not perform even read-only claim status, report, or journal-maintenance operations. The Coordinator may directly mutate the current crisis item without a claim. This exception ends only after every crisis-set item is terminal and resolve-backlog-blockage records crisis exit and restoration of regular MULTITASK mode. Ordinary configured claim behavior then resumes; never reconstruct crisis-era live claims.
+
 Before loading a claim helper or reading claim state, require a valid PROJECT.yaml at the repository root that explicitly selects resource-claim.
 
 When the root file is absent, resource coordination is NOT_APPLICABLE. Do not load or invoke resource-claim-helper, a configured resource-claim-helper-* Provider Skill, or a claim registry. Do not read claim state, create claim state, or mutate claim state.
