@@ -273,17 +273,17 @@ Condition Type: root-execution
 
 Owner: Dev Orchestrator task 019fe3d6-2dd6-7322-a507-e8ca961e27d8
 
-Evidence: The same canonical root execution remains active on the preserved branch and worktree. Dev Coder commit 8b2ee945bac4ac202bf355e2901b9aad56de628e durably migrates the authorized production catalogs and generated evaluation page across exactly eight paths. The clean candidate passes 125 of 125 runner Tests, 11 of 11 terminology-fixture Tests, catalog validation, evaluation-page freshness, and diff checks. The documentation suite passes 28 of 29 with one independently reproduced baseline historical-inventory failure. The mandatory bundle suite passes 170 of 171; its sole failure proves that the generated support checklist still reports 14 cases while the authorized positive and independently linked negative terminology cases require 16. The Coordinator therefore authorized exactly one additional non-governed generated output, design/agent-skill-test-coverage-checklist.md, to be mutated only through existing scripts/build-support-checklist.py without changing that generator, weakening the bundle Test, absorbing another baseline, or adding a second path. This exact dependent-scope disposition is now durable before generation. Security review remains the Coordinator-authorized non-blocking exclusion.
+Evidence: The same canonical root execution remains active on the preserved branch and worktree. Dev Coder commit 8b2ee945bac4ac202bf355e2901b9aad56de628e durably migrates the authorized production catalogs and generated evaluation page across exactly eight paths. The clean candidate passes 125 of 125 runner Tests, 11 of 11 terminology-fixture Tests, catalog validation, evaluation-page freshness, and diff checks. The documentation suite passes 28 of 29 with one independently reproduced baseline historical-inventory failure. The mandatory bundle suite passes 170 of 171; its sole failure proves that the generated support checklist still reports 14 cases while the authorized positive and independently linked negative terminology cases require 16. The Coordinator authorized exactly one additional non-governed generated output, design/agent-skill-test-coverage-checklist.md, through unchanged scripts/build-support-checklist.py. Its first invocation stopped before writing because both terminology-owned cases declare codex-only harnesses while already declaring codex and junie runnable. The Coordinator now authorizes only a same-path correction in already-approved evals/cases.yaml for those two terminology entries to match the existing codex-and-junie generator contract, plus same-path Junie sandbox or reference normalization only if the unchanged generator's next invariant requires it. No other case, path, generator, hand-edited projection, weakened Test, or unrelated baseline is authorized. Security review remains the Coordinator-authorized non-blocking exclusion.
 
-Observed At: 2026-08-09T06:31:21Z
+Observed At: 2026-08-09T06:34:40Z
 
 Started At: 2026-08-09T04:27:45Z
 
 Deadline or Expires At: 2026-08-09T07:18:24Z
 
-Next Action: Generate only design/agent-skill-test-coverage-checklist.md through its unchanged owning generator, confirm the one-path diff, rerun the directly implicated freshness and bundle gates, then continue fresh review and independent verification
+Next Action: Normalize only the two terminology case declarations in evals/cases.yaml, rerun the unchanged checklist generator, accept same-path Junie sandbox or reference normalization only if its next invariant requires it, confirm the exact changed-path set, and rerun only the directly implicated catalog, generator, and bundle gates
 
-Next Reconciliation At: 2026-08-09T06:46:21Z
+Next Reconciliation At: 2026-08-09T06:49:40Z
 
 ## Generated Checklist Scope Disposition
 
@@ -300,3 +300,19 @@ Boundary: The existing generator is invocation-only and is not an added changed 
 Reason: The already-authorized production terminology positive and independently linked negative Evaluation cases make the owning bundle assertion expect 16 cases while the stale generated projection reports 14.
 
 Pre-generation Evidence: The authorization was recorded while the private candidate remained clean at `8b2ee945bac4ac202bf355e2901b9aad56de628e`; no checklist bytes had been generated or changed.
+
+## Terminology Case Harness Consistency Disposition
+
+Authorized At: 2026-08-09T06:34:40Z
+
+Authority: Dev Backlog Coordinator task `019fb057-1767-7ef2-b5fa-41f4417b20b3`
+
+Authorized Existing Path: `evals/cases.yaml`
+
+Authorized Entries: `terminology-standard-effect` and `terminology-standard-negative-activation`
+
+Correction: Normalize each entry's `harnesses` declaration from codex-only to the existing generator contract codex plus junie because each already truthfully declares `harnessExecutionStatus` with codex and junie runnable.
+
+Conditional Same-path Boundary: If and only if the unchanged generator next requires matching Junie sandbox or reference fields, normalize those fields in the same two entries to the existing adjacent runnable-case schema. Stop for another path or a materially different semantic change.
+
+Exclusions: Do not change the generator, hand-edit the checklist, change the bundle Test, change another case, add another path, or absorb an unrelated catalog baseline.
