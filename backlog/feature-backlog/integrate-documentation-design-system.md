@@ -156,6 +156,9 @@ adapters/gemini/model-profiles.yaml
 adapters/junie/model-profiles.yaml
 design/skill-categories.yaml
 design/role-catalog-groups.yaml
+design/agent-skill-hierarchy.svg
+design/agent-skill-test-coverage-checklist.md
+design/agent-and-skill-evaluations.html
 design/documentation-design-system/VERSION
 design/documentation-design-system/index.html
 design/documentation-design-system/page-shell.html
@@ -171,6 +174,7 @@ design/documentation-design-system/assets/design-system.css
 design/documentation-design-system/assets/design-system.js
 design/documentation-design-system/assets/dev-methodology-logo.png
 evals/agent-scenarios.yaml
+evals/agent-tests/suite-index.yaml
 evals/cases.yaml
 evals/skill-probes.yaml
 evals/workflow-packs.yaml
@@ -190,6 +194,10 @@ generated/adapters/gemini/agents/methodology-design-system-review-coordinator.md
 generated/adapters/junie/agents/methodology-design-system-checklist-runner.md
 generated/adapters/junie/agents/methodology-design-system-review-coordinator.md
 ```
+
+### Coordinator Dependent-Scope Disposition
+
+The Coordinator authorizes these exact four non-governed dependent paths because new conceptual roles require `evals/agent-tests/suite-index.yaml` registration, while approved sources and generators own `design/agent-skill-hierarchy.svg`, `design/agent-skill-test-coverage-checklist.md`, and `design/agent-and-skill-evaluations.html` projections. Generated outputs remain generator-owned and must not be hand-edited. This authorizes no fifth path, no additional governed definition, and no absorption of unrelated baseline support-checklist or evaluation-HTML stale defects.
 
 Focused test and evaluation fixture files may be added in established locations when directly traceable to acceptance criteria. Generated files remain generator-owned. Any additional governed skill or conceptual-role definition path requires separate approval.
 
@@ -233,14 +241,14 @@ Condition Type: root-execution
 
 Owner: Dev Orchestrator task 019fe3cd-577c-76b1-965c-06fb8793ae42
 
-Evidence: canonical root execution is active; all 15 isolated exact governed-path receipts are terminal `ALLOWED_APPROVED_DEFINITION_CHANGE`, and prototype and repository-native analyses are complete enough for bounded Dev Coder handoff. No governed source mutation has begun. The direct overlap boundary with `publish-and-integrate-terminology-standard` is acknowledged; both tasks defer shared overlap events and preserve each other.
+Evidence: canonical root execution is active; all 15 isolated exact governed-path receipts are terminal `ALLOWED_APPROVED_DEFINITION_CHANGE`, and prototype and repository-native analyses are complete enough for bounded Dev Coder handoff. The exact four-path dependent reconciliation is recorded: `evals/agent-tests/suite-index.yaml` for conceptual-role registration, plus generator-owned projections `design/agent-skill-hierarchy.svg`, `design/agent-skill-test-coverage-checklist.md`, and `design/agent-and-skill-evaluations.html`. No governed or source-candidate mutation has begun. The direct overlap boundary with `publish-and-integrate-terminology-standard` is acknowledged; both tasks defer shared overlap events and preserve each other.
 
-Observed At: 2026-08-09T00:24:36Z
+Observed At: 2026-08-09T00:29:21Z
 
 Started At: 2026-08-08T23:57:32Z
 
 Deadline or Expires At: 2026-08-09T01:57:32Z
 
-Next Action: Fast-forward the private branch to current main, then dispatch the bounded Dev Coder source lane without widening scope.
+Next Action: Fast-forward the private branch to reconciled main, then dispatch the bounded Dev Coder source lane without widening scope.
 
-Next Reconciliation At: 2026-08-09T00:39:00Z
+Next Reconciliation At: 2026-08-09T00:44:00Z
