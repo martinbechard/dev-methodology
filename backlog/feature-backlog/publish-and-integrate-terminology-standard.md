@@ -10,7 +10,7 @@ Branch: `codex/publish-and-integrate-terminology-standard-019fe3d6`
 
 Worktree: `/Users/martinbechard/.codex/worktrees/940b/dev-methodology`
 
-Phase: Verifying — Final private candidate
+Phase: Implementing — Isolated model-visible terminology projection
 
 Status: Running
 
@@ -316,3 +316,36 @@ Correction: Normalize each entry's `harnesses` declaration from codex-only to th
 Conditional Same-path Boundary: If and only if the unchanged generator next requires matching Junie sandbox or reference fields, normalize those fields in the same two entries to the existing adjacent runnable-case schema. Stop for another path or a materially different semantic change.
 
 Exclusions: Do not change the generator, hand-edit the checklist, change the bundle Test, change another case, add another path, or absorb an unrelated catalog baseline.
+
+## Terminology Model-Visible Projection Disposition
+
+Authorized At: 2026-08-09T07:10:00Z
+
+Authority: Dev Backlog Coordinator task `019fb057-1767-7ef2-b5fa-41f4417b20b3`
+
+Authorized Case Entries:
+
+- `terminology-standard-effect`
+- `terminology-standard-negative-activation`
+
+Authorized Implementation Paths:
+
+- `scripts/run-agent-skill-evals.py`
+- `scripts/agent_skill_evals/invocations.py`
+- `scripts/agent_skill_evals/staging.py`
+- `scripts/agent_skill_evals/validation.py`
+- `scripts/test_agent_skill_evals.py`
+- `evals/evidence-schema.yaml`
+- `evals/README.md`
+
+Correction: Add an opt-in, fail-closed second harness workspace containing only each authorized case's declared `modelVisiblePaths` plus runner-owned staged context. Keep the full disposable fixture separate for source identity, functional-isolation audit, and evaluator-only verification. Sync back only observed model mutations through an explicit recorded manifest.
+
+Required Exclusions: Never copy retained experiment evidence, retained result JSON, the positive case's independent negative-activation subtree, or evaluator-only `verify.py` into either projected model workspace.
+
+Required Failure Boundaries: Fail closed on undeclared source paths, missing declared paths, destination collisions, path escape or symlink escape, unexpected output paths, and ambiguous sync state. Focused Tests must prove projection contents, exclusions, opt-in isolation, sync-back allowlisting, and each failure boundary.
+
+Preserved Semantics: Treatment/control comparison keys, target-omitted and wrong-skill stripping, provider evidence boundaries, sandbox behavior, full-fixture audit semantics, and unrelated cases remain unchanged.
+
+Exclusions: No new path, generator mutation, retained-evidence exposure, baseline absorption, broader framework behavior, live-model acquisition, shared installation, or main integration is authorized before the replacement candidate receives fresh ordinary review and independent verification.
+
+Pre-mutation Evidence: The private candidate is clean at `08bd3a1c5f1c65785f16ad5448183b193dab1ad6`. Production `--print-invocation` stopped before any model execution because the complete disposable fixture contained retained evaluator evidence outside `modelVisiblePaths`; exposing that evidence would contaminate the treatment and controls. The exact provider-path claim for this disposition is `publish-and-integrate-terminology-standard-019fe3d6-preflight-scope-provider`, acquired in event `549c2b3c-7907-4989-bb28-621846b8681d`.
