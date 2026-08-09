@@ -247,14 +247,14 @@ Condition Type: root-execution
 
 Owner: Dev Orchestrator task 019fe3cd-577c-76b1-965c-06fb8793ae42
 
-Evidence: canonical root execution owns corrected clean candidate `74f91caefe815dddca503502a388668be6cb94df`; coder is paused safely at 2026-08-09T03:03:20Z with no command, staging, or commit, and unstaged corrections are preserved. Attempt-2 focused GREEN evidence: static docs 13/13; schema-hardening plus authorized role-v8 2/2; runner/coordinator 22/22; executable v2 fixture oracle PASS. Source-aligned regeneration is complete for skill/role JS, the exact eight adapters plus manifest, hierarchy with no diff, and evaluation HTML; diff check is clean. Remaining scope is exactly deeper final audit including authority-input validation, generator `--checks`, catalogs, broader/baseline isolation, provenance, commit, and no new scope or blocker. Existing HTML, terminology, Future Ideas, and support remain excluded; all 15 governed receipts and five dependent paths remain reconciled; no source mutation has begun. The direct overlap boundary with `publish-and-integrate-terminology-standard` is acknowledged; both tasks defer shared overlap events and preserve each other.
+Evidence: canonical root execution owns corrected clean candidate `74f91caefe815dddca503502a388668be6cb94df`; coder is paused after a long command with no command, staging, or commit, and corrections are preserved. Final-audit evidence is GREEN: runner/coordinator 22/22; static 13/13; schema plus authorized role-v8 2/2; fixture oracle PASS; two skill validators pass; technology detection, skill docs, hierarchy, evaluation docs, and catalogs are current/valid; diff check is clean. Eval-doc coverage is 28 tests with exactly one historical Future Ideas ID. Broad discovery scripts report 947 tests, 17 failures, 2 errors, and 2 skipped across unrelated or pre-existing resource claims/helper docs/support/technology renderer/watchdog/historical drift; output was truncated and is not accepted as a candidate pass/fail, requiring scoped baseline isolation. No focused in-scope failure. Remaining scope is exactly the scoped support-only bundle expectation, provenance audit, final diff/status, and commit; no new scope or blocker. Existing HTML, terminology, Future Ideas, and support remain excluded except the explicitly scoped support-only bundle expectation; all 15 governed receipts and five dependent paths remain reconciled; no source mutation has begun. The direct overlap boundary with `publish-and-integrate-terminology-standard` is acknowledged; both tasks defer shared overlap events and preserve each other.
 
-Observed At: 2026-08-09T03:03:50Z
+Observed At: 2026-08-09T03:13:18Z
 
 Started At: 2026-08-08T23:57:32Z
 
 Deadline or Expires At: 2026-08-09T05:00:00Z
 
-Next Action: Reacquire the Work Item activity=work claim, then resume the original coder for the final audit, gates, and commit without widening scope.
+Next Action: Reacquire the Work Item activity=work claim, then resume the original coder for scoped gates, provenance audit, final diff/status, and commit without widening scope.
 
-Next Reconciliation At: 2026-08-09T03:18:00Z
+Next Reconciliation At: 2026-08-09T03:28:00Z
