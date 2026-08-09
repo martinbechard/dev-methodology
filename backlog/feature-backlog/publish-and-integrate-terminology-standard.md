@@ -10,7 +10,7 @@ Branch: `codex/publish-and-integrate-terminology-standard-019fe3d6`
 
 Worktree: `/Users/martinbechard/.codex/worktrees/940b/dev-methodology`
 
-Phase: Implementing — Production catalog migration
+Phase: Implementing — Generated support projection
 
 Status: Running
 
@@ -273,14 +273,30 @@ Condition Type: root-execution
 
 Owner: Dev Orchestrator task 019fe3d6-2dd6-7322-a507-e8ca961e27d8
 
-Evidence: The same canonical root execution remains active on the preserved branch and worktree. Fresh Dev Verifier returned VERIFICATION: GOOD for the clean 18-path private candidate ending at 2d7f5924c04473f03bf7faeed65c427d1b6143ba. Independent checks passed 125 of 125 runner Tests, 10 of 10 terminology-fixture Tests, the exact accepted three evaluation-copy Tests, compilation of all nine changed Python paths, candidate and worktree diff checks, pre-migration catalog validation, the 35-term and one-Campaign-rule terminology structure, exact-copy success and altered-byte rejection for the negative verifier, and isolated checksum-verified mcp-agent-ops v0.8.0 reference_refresh and reference_load with matching revision fdd40a48ee69e216fa2af4fcfca4d9944343e307f51cd32e5b7cb1b92101c2b2 and digest 273834ed065ecc93dcd9fb337b8a9b00c69f038216da68744b413e62b7d7b733. The verifier left no residue, and security review remains the Coordinator-authorized non-blocking exclusion. The Coordinator confirmed that the blocked design-system task owns no claim and cannot retain a circular gate against its predecessor, then released exactly evals/cases.yaml, evals/agent-scenarios.yaml, evals/skill-probes.yaml, design/agent-and-skill-evaluations.html through its generator, scripts/test_bundle_content.py, shared installation, live-model evaluation, and main integration for this approved terminology scope. The original Dev Coder is now applying only the exact production catalog migration in the private worktree; unrelated design-system paths remain excluded.
+Evidence: The same canonical root execution remains active on the preserved branch and worktree. Dev Coder commit 8b2ee945bac4ac202bf355e2901b9aad56de628e durably migrates the authorized production catalogs and generated evaluation page across exactly eight paths. The clean candidate passes 125 of 125 runner Tests, 11 of 11 terminology-fixture Tests, catalog validation, evaluation-page freshness, and diff checks. The documentation suite passes 28 of 29 with one independently reproduced baseline historical-inventory failure. The mandatory bundle suite passes 170 of 171; its sole failure proves that the generated support checklist still reports 14 cases while the authorized positive and independently linked negative terminology cases require 16. The Coordinator therefore authorized exactly one additional non-governed generated output, design/agent-skill-test-coverage-checklist.md, to be mutated only through existing scripts/build-support-checklist.py without changing that generator, weakening the bundle Test, absorbing another baseline, or adding a second path. This exact dependent-scope disposition is now durable before generation. Security review remains the Coordinator-authorized non-blocking exclusion.
 
-Observed At: 2026-08-09T06:18:24Z
+Observed At: 2026-08-09T06:31:21Z
 
 Started At: 2026-08-09T04:27:45Z
 
 Deadline or Expires At: 2026-08-09T07:18:24Z
 
-Next Action: Complete, freshly review, and independently verify the released catalog migration before acquiring the separately required shared-installation and live-model resource claims
+Next Action: Generate only design/agent-skill-test-coverage-checklist.md through its unchanged owning generator, confirm the one-path diff, rerun the directly implicated freshness and bundle gates, then continue fresh review and independent verification
 
-Next Reconciliation At: 2026-08-09T06:33:24Z
+Next Reconciliation At: 2026-08-09T06:46:21Z
+
+## Generated Checklist Scope Disposition
+
+Authorized At: 2026-08-09T06:31:21Z
+
+Authority: Dev Backlog Coordinator task `019fb057-1767-7ef2-b5fa-41f4417b20b3`
+
+Authorized Changed Path: `design/agent-skill-test-coverage-checklist.md`
+
+Owning Invocation: `python3 scripts/build-support-checklist.py`
+
+Boundary: The existing generator is invocation-only and is not an added changed path. Do not hand-edit the checklist, change `scripts/build-support-checklist.py`, change or weaken `scripts/test_bundle_content.py`, absorb another stale baseline, or add a second path.
+
+Reason: The already-authorized production terminology positive and independently linked negative Evaluation cases make the owning bundle assertion expect 16 cases while the stale generated projection reports 14.
+
+Pre-generation Evidence: The authorization was recorded while the private candidate remained clean at `8b2ee945bac4ac202bf355e2901b9aad56de628e`; no checklist bytes had been generated or changed.
