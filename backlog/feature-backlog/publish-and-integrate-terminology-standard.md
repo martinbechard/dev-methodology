@@ -10,7 +10,7 @@ Branch: `codex/publish-and-integrate-terminology-standard-019fe3d6`
 
 Worktree: `/Users/martinbechard/.codex/worktrees/940b/dev-methodology`
 
-Phase: Implementing — Isolated model-visible terminology projection
+Phase: Recovering — Canonical task system error
 
 Status: Running
 
@@ -171,9 +171,9 @@ Scheduling Evidence: One other provider item, `integrate-documentation-design-sy
 
 ## Preserved Running Execution Evidence
 
-Condition Type: root-execution
+Condition Type: delegated-work-recovery
 
-Owner: Dev Orchestrator task 019fe3d6-2dd6-7322-a507-e8ca961e27d8
+Owner: Dev Backlog Coordinator task 019fb057-1767-7ef2-b5fa-41f4417b20b3 monitoring preserved Dev Coder task `/root/fixture_candidate`
 
 Evidence: canonical combined Codex task/thread surface 019fe3d6-2dd6-7322-a507-e8ca961e27d8 remains the current active root execution in branch codex/publish-and-integrate-terminology-standard-019fe3d6 and worktree /Users/martinbechard/.codex/worktrees/940b/dev-methodology; all 16 exact approved governed-definition paths returned ALLOWED_APPROVED_DEFINITION_CHANGE and all 13 approved Agent definitions conform without mutation. Dev Coder commits ec35759032051479bda3518cd892a4480119c41b, 38825214eaee66433ae50c7cbafd3f6af407a2da, and 2ee1d3968f710175810131c60d88def629e89d99 remove the fixture-only AGENTS.md injection, define a byte-preserving negative fixture, and begin correcting evaluation-document terminology. Fresh follow-up review confirms the premature proof claims and tautological negative check are corrected but identifies two remaining generated-copy corrections. Read-only production-routing analysis also proves that provider-backed treatment cannot run through the current probe runner without changing runner and evidence-contract paths outside the exact Allowed Dependent Artifacts; those paths remain unmutated pending explicit scope reconciliation. The configured mcp-agent-ops 0.5.1 provider still lacks reference_refresh and reference_load, and the acknowledged overlap owner has not released shared catalogs, generated output, installation, live-model evaluation, or main integration, so terminology.md publication remains correctly unmutated.
 
@@ -273,9 +273,9 @@ Condition Type: root-execution
 
 Owner: Dev Orchestrator task 019fe3d6-2dd6-7322-a507-e8ca961e27d8
 
-Implementation State: Dev Coder task `/root/fixture_candidate` is active on clean immutable baseline `18f56037c18223574775541d7445197cda59443c`, tree `f18e5e3e2f1dfb74c3c42cff9701461d39289d12`, in canonical branch `codex/publish-and-integrate-terminology-standard-019fe3d6` and worktree `/Users/martinbechard/.codex/worktrees/940b/dev-methodology`. The producer is designing the exact red regressions for the converged fresh `NEEDS CORRECTION` findings before implementation.
+Implementation State: Canonical Dev Orchestrator task `019fe3d6-2dd6-7322-a507-e8ca961e27d8` entered platform `systemError` after a cybersecurity-risk flag. No retry, replacement dispatch, or security-work split was attempted. Existing Dev Coder task `/root/fixture_candidate` remains active on immutable baseline `18f56037c18223574775541d7445197cda59443c` in canonical branch `codex/publish-and-integrate-terminology-standard-019fe3d6` and worktree `/Users/martinbechard/.codex/worktrees/940b/dev-methodology`. Read-only recovery inspection found exactly three currently modified authorized paths: `scripts/agent_skill_evals/staging.py`, `scripts/agent_skill_evals/validation.py`, and `scripts/test_agent_skill_evals.py`; the worktree remains at HEAD `18f56037c18223574775541d7445197cda59443c`, with 1,063 inserted and 53 deleted lines preserved and no out-of-scope path observed.
 
-Evidence: Lifecycle remains `Running` with canonical task `019fe3d6-2dd6-7322-a507-e8ca961e27d8`. Exact Work Item ID `publish-and-integrate-terminology-standard` activity=work claim `publish-and-integrate-terminology-standard-019fe3d6-root-work-harness-authorized` remains live for this owner, incarnation `365248ae-ddfa-47a7-a57e-30c5f4a0fb56`, acquired in event `454c1436-5a82-40bf-9c3d-a3f54308d19a` and most recently heartbeated in event `33068607-e059-47b6-a0cb-c5402c2396d5`. Candidate ancestry is preserved as `ec35759032051479bda3518cd892a4480119c41b`, `38825214eaee66433ae50c7cbafd3f6af407a2da`, `2ee1d3968f710175810131c60d88def629e89d99`, `ae70fda537537b2df45193447d73b0de6c1e9605`, `2ba452fb5cb927a9d18e38346056e2af3340aa2a`, `6281b7c03d58e71995870952510aa19f5da1606c`, `2d7f5924c04473f03bf7faeed65c427d1b6143ba`, `8b2ee945bac4ac202bf355e2901b9aad56de628e`, `e18b08496a7b998daebdf8fb585110c8893b0758`, `2e7b76e97c1899c0623a625a82f585647dc145eb`, implementation base `08bd3a1c5f1c65785f16ad5448183b193dab1ad6`, projection candidate `c692a0d96b41aa739aa273950ecfc4270e4eebd3`, corrected candidate `16db676eb655a281d9c88e855b04bd28b16693f9`, and current candidate `18f56037c18223574775541d7445197cda59443c`. The exact approved projection boundary remains `evals/cases.yaml` plus the seven user-approved paths `scripts/run-agent-skill-evals.py`, `scripts/agent_skill_evals/invocations.py`, `scripts/agent_skill_evals/staging.py`, `scripts/agent_skill_evals/validation.py`, `scripts/test_agent_skill_evals.py`, `evals/evidence-schema.yaml`, and `evals/README.md`; the current correction commit changes exactly the six in-scope paths other than unchanged `evals/cases.yaml` and `scripts/agent_skill_evals/invocations.py`. All source claims are durably released, including the latest correction release event `3a11f9ff-5335-483f-9895-b294dc5ae073`.
+Evidence: Lifecycle remains `Running` only for this finite recovery interval. The canonical root activity=work claim `publish-and-integrate-terminology-standard-019fe3d6-root-work-harness-authorized`, incarnation `365248ae-ddfa-47a7-a57e-30c5f4a0fb56`, remains live but its owner task is in `systemError`; latest recorded heartbeat is `2026-08-09T10:48:53.954047Z`. Exact six-path child claim `publish-and-integrate-terminology-standard-019fe3d6-projection-third-review-corrections-linked`, incarnation `3f059883-4912-46e6-9f19-be3952567788`, remains live for `/root/fixture_candidate`; latest recorded heartbeat is `2026-08-09T10:59:13.686698Z`. Candidate ancestry and all accepted gates through immutable `18f56037c18223574775541d7445197cda59443c` remain preserved. No duplicate task, live-model evaluation, installation, publication, main integration, or source widening occurred. Coordinator update-claim acquisition was correctly rejected in event `20d4a9bc-5148-4a49-9020-9265bb9af02c` because the root work claim remains live; exact provider-path recovery claim `publish-and-integrate-terminology-standard-coordinator-recovery-path-1107` was acquired in event `05079114-dca0-472c-99ad-fac7bbe3a60e` for this evidence-only transaction.
 
 Accepted Gates: Accepted pre-implementation evidence remains 125 of 125 runner Tests, 11 of 11 terminology-fixture Tests, catalog validation, evaluation-page and support-checklist freshness, 171 of 171 bundle Tests, diff checks, and fresh ordinary correction review GOOD; the documentation suite's sole unchanged historical-inventory failure remains excluded. Candidate `18f56037c18223574775541d7445197cda59443c` retains 162 of 162 focused runner Tests twice, 171 of 171 bundle Tests, 11 of 11 terminology-fixture Tests, operational catalog validation, Ruff, Python compilation, diff checks, focused staging, trusted-launch, receipt, replay, synchronization, semantic-control, cleanup, and tamper groups, plus five non-live production print preflights covering ordinary non-opt-in routing, explicit treatment identity from `/Users/martinbechard/dev/mcp-agent-ops/.venv/bin/mcp-agent-ops` v0.8.0 with runtime digest `21fe8d907e65de0a2e428d4d681eef427404cfc98fb260112467371c5e0b4156`, target omission, wrong-skill stripping, and independent negative activation. Treatment and controls retain their comparison key; the treatment projection contains only declared model-visible paths and runner-owned context, while retained experiment evidence, result JSON, the independent negative subtree, and evaluator-only `verify.py` remain excluded as required. Repository-wide discovery remains classified as 983 Tests with 17 failures, two errors, and two skips wholly on baseline or shared-state paths outside this exact boundary.
 
@@ -283,15 +283,15 @@ Current Acceptance State: The converged fresh verdict is `NEEDS CORRECTION`. Sup
 
 Correction Execution: Exact six-path claim `publish-and-integrate-terminology-standard-019fe3d6-projection-third-review-corrections-linked`, incarnation `3f059883-4912-46e6-9f19-be3952567788`, was acquired for Dev Coder task `/root/fixture_candidate` at baseline `18f56037c18223574775541d7445197cda59443c` in event `877c1d7b-139f-4c55-8aab-6a61e9ac2f5a`. It contains only `scripts/agent_skill_evals/staging.py`, `scripts/agent_skill_evals/validation.py`, `scripts/run-agent-skill-evals.py`, `scripts/test_agent_skill_evals.py`, `evals/evidence-schema.yaml`, and `evals/README.md`. `evals/cases.yaml`, `scripts/agent_skill_evals/invocations.py`, new paths, live-model evaluation, installation, and main integration remain untouched.
 
-Observed At: 2026-08-09T10:52:01Z
+Observed At: 2026-08-09T11:07:17Z
 
 Started At: 2026-08-09T04:27:45Z
 
 Deadline or Expires At: 2026-08-09T12:11:54Z
 
-Next Action: Capture the exact red regressions, implement only the nine reconciled fail-closed corrections within the active six-path claim, and produce one clean committed replacement candidate. Then release the source claim and dispatch fresh ordinary review and independent verification before any live-model, installation, or integration resource.
+Next Action: Allow the already-active Dev Coder only to reach its next safe preservation boundary without duplicate dispatch. At that boundary, preserve exact bytes and release the child claim. If the canonical task cannot be safely resumed as ordinary non-security work, release the root claim with blocker `canonical-root-system-error` and record `Running -> Blocked` with Owner Unowned; do not launch a replacement implicitly.
 
-Next Reconciliation At: 2026-08-09T11:02:01Z
+Next Reconciliation At: 2026-08-09T11:17:00Z
 
 ## Generated Checklist Scope Disposition
 
