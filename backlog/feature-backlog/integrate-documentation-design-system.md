@@ -247,14 +247,14 @@ Condition Type: root-execution
 
 Owner: Dev Orchestrator task 019fe3cd-577c-76b1-965c-06fb8793ae42
 
-Evidence: canonical root execution owns corrected clean candidate `74f91caefe815dddca503502a388668be6cb94df`; coder is paused safely at 2026-08-09T02:45Z with no command, staging, or commit, and unstaged attempt-2 RED is preserved. The exact role-schema test path remains authorized. Attempt-2 RED evidence: runner 9 tests with 4 errors; coordinator 13 tests with 4 failures and 18 errors; static 13 tests with 6 failures; schema subset 1 error; authorized role-v8 test 1/1 green. Changed attempt-2 paths are limited to runner/coordinator/static/bundle/role-mutation tests plus the first fail-closed runner-contract slice (safe ID validation, early assignment errors, typed result). Remaining scope is exactly the second-pass findings plus ambiguous predispatch/output fallback/README; no new scope. Existing HTML, terminology, Future Ideas, and support remain excluded; all 15 governed receipts and five dependent paths remain reconciled; no source mutation has begun. The direct overlap boundary with `publish-and-integrate-terminology-standard` is acknowledged; both tasks defer shared overlap events and preserve each other.
+Evidence: canonical root execution owns corrected clean candidate `74f91caefe815dddca503502a388668be6cb94df`; coder is paused safely at 2026-08-09T02:54:13Z with no command, staging, or commit, and unstaged corrections are preserved. Fail-closed nested validation and effective claims in both directions, unresolved cases, and JSON-safe output pass. Six scenarios now require workspace inventory plus no detected mutation. Focused runner+coordinator evidence is 22 tests: 20 pass, with exactly 2 failures for the suite-specific contract skill missing in runner/coordinator supervisor and judge configs. Changed attempt-2 paths are limited to runner contract/scenarios/test, coordinator simulator/scenarios/test, bundle/static/authorized role-mutation tests. Remaining scope is exactly schema hardening, executable fixture/oracle expansion, suite config skill binding, docs/CSS/static alignment, regeneration, full verification, and commit; no new scope or blocker. Existing HTML, terminology, Future Ideas, and support remain excluded; all 15 governed receipts and five dependent paths remain reconciled; no source mutation has begun. The direct overlap boundary with `publish-and-integrate-terminology-standard` is acknowledged; both tasks defer shared overlap events and preserve each other.
 
-Observed At: 2026-08-09T02:45:43Z
+Observed At: 2026-08-09T02:55:00Z
 
 Started At: 2026-08-08T23:57:32Z
 
 Deadline or Expires At: 2026-08-09T05:00:00Z
 
-Next Action: Reacquire the Work Item activity=work claim, then resume the original coder for grouped attempt-2 implementation, green/generation/verification, and commit without widening scope.
+Next Action: Reacquire the Work Item activity=work claim, then resume the original coder for grouped attempt-2 behavior implementation, green/generation/verification, and commit without widening scope.
 
-Next Reconciliation At: 2026-08-09T03:00:00Z
+Next Reconciliation At: 2026-08-09T03:10:00Z
