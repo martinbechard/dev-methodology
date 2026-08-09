@@ -1,6 +1,6 @@
 # Publish and Integrate the Terminology Standard
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -134,3 +134,23 @@ Approved at creation. On 2026-08-08, user message provenance task `019fe2b3-4bcd
 ## Notes
 
 The experiment is evidence for compactness: positive definitions corrected 33 of the 34 initially nonpreferred concepts without negative rules. The single `Campaign` rule corrected the remaining persistent substitution. Keep this evidence-to-rule threshold as the maintenance default.
+
+## Starting Handoff Evidence
+
+Starting Recorded At: 2026-08-09T00:04:08Z
+
+Coordinator: Dev Backlog Coordinator task `019fb057-1767-7ef2-b5fa-41f4417b20b3`
+
+Normalized Objective: Publish the accepted software-development Terminology Standard as the official project standard, integrate its approved application and review routing into production methodology sources, remove temporary evaluation injection, and verify treatment, target-omitted, and wrong-skill controls without inferring shared user publication.
+
+Launch Result: Not attempted
+
+Canonical Execution: None
+
+Last Contact At: None
+
+Next Reconciliation At: 2026-08-09T00:19:08Z
+
+Intended Root Role: Dev Orchestrator
+
+Scheduling Evidence: One other provider item, `integrate-documentation-design-system`, is Running in an independent private worktree. This item may begin private terminology publication, exact governed-path prechecks, production-routing analysis, and fixture work. Defer exact overlapping edits or shared events involving `README.md`, evaluation catalogs, `scripts/test_bundle_content.py`, generated adapters, live-model evaluation, shared installation, or main integration until the active owners exchange a direct release/reconciliation notification. Do not poll, overwrite, absorb, or duplicate the documentation-design-system work.
