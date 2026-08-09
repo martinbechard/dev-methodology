@@ -95,7 +95,9 @@ The attached Prompt for the dev-methodology Owner authorizes source implementati
 
 ## Dependencies
 
-None.
+`publish-and-integrate-terminology-standard`
+
+This dependency is limited to fresh-main reconciliation and owning-generator regeneration of the support checklist. Completion of that work item, clean-main evidence, and release of its overlapping shared surfaces satisfy the predecessor gate. The Coordinator may then transition this same work item from Blocked to Ready without another user decision or a replacement canonical task.
 
 ## Verification
 
@@ -286,3 +288,31 @@ Runtime And Git State: Every child is stopped or completed. The canonical task i
 Resource Disposition: Exact activity=work claim `integrate-documentation-design-system-work-019fe3cd`, incarnation `f1251b7e-317b-483b-b5e3-ab818f646cfa`, was released with disposition `blocked` and blocker reference `correction-cycle-exhausted:scenario-fixture-semantic-fidelity` in event `d155c957-c3d0-4bf9-ada2-937b574dbd75`. Post-release claim status was empty.
 
 Acceptance Criteria For Recovery: A replacement candidate must give each runner scenario a semantically faithful staged packet; the two unavailable-interaction scenarios must not receive interaction evidence and must produce the required `NOT TESTED` behavior. Fresh focused review and independent verification must accept the corrected candidate. The generator-owned support checklist must be regenerated through its owner and pass freshness after its separate terminology dependency is resolved. Existing scope exclusions, publication boundaries, and unrelated baselines remain unchanged.
+
+## Coordinator Recovery Disposition
+
+Recorded At: 2026-08-09T05:08:00Z
+
+Coordinator: Dev Backlog Coordinator task `019fb057-1767-7ef2-b5fa-41f4417b20b3`
+
+Disposition: Authorize one distinct bounded recovery cycle after the predecessor gate above is satisfied. This is a new recovery disposition for the remaining semantic-fixture defect; it does not reopen or extend the exhausted third correction cycle.
+
+Canonical Execution: Reuse task `019fe3cd-577c-76b1-965c-06fb8793ae42`, branch `codex/integrate-documentation-design-system-019fe3cd`, clean worktree `/Users/martinbechard/.codex/worktrees/df8a/dev-methodology`, and preserved candidate `7959f59e288575dbcb702590e503a26d53f6a28e`. Do not create a replacement task.
+
+Required Lifecycle Sequence: After predecessor completion and clean-main release evidence, record Blocked -> Ready, then Ready -> Starting for the same canonical task. That task must independently record Starting -> Running with fresh bounded Active Execution Evidence and exact claims before source mutation resumes.
+
+Exact Correction Manifest:
+
+```text
+evals/agent-tests/methodology-design-system-checklist-runner/scenarios.yaml
+evals/agent-tests/methodology-design-system-checklist-runner/test_contract.py
+evals/agent-tests/methodology-design-system-checklist-runner/fixtures/documentation-design-system-review/TASK.md
+evals/agent-tests/methodology-design-system-checklist-runner/fixtures/documentation-design-system-review/interaction-evidence.md
+evals/agent-tests/methodology-design-system-checklist-runner/fixtures/documentation-design-system-review/suite-inputs.yaml
+```
+
+Directly traceable new suite-local fixture files may be added only when necessary to separate the complete-evidence packet from the two unavailable-interaction packets. No governed definition, existing HTML page, unrelated baseline, publication surface, or additional production path is authorized by this recovery.
+
+Recovery Outcome: The complete-evidence scenario receives and may request interaction evidence. The two unavailable-interaction scenarios neither receive nor request that evidence and produce the required `NOT TESTED` results. Focused tests must assert semantic packet contents and outcomes, not only successful staging or path existence.
+
+Finish Lane: After the corrected candidate passes fresh focused review and independent verification, reconcile once against fresh main, regenerate `design/agent-skill-test-coverage-checklist.md` through its owning generator, verify the current role and skill counts and freshness, reconcile preserved methodology and prompt findings, then run the remaining integration-sensitive and browser checks before delivery. Do not hand-edit the generated checklist or absorb unrelated failures.
