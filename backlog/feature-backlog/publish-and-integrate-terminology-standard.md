@@ -175,14 +175,14 @@ Condition Type: root-execution
 
 Owner: Dev Orchestrator task 019fe3d6-2dd6-7322-a507-e8ca961e27d8
 
-Evidence: canonical combined Codex task/thread surface 019fe3d6-2dd6-7322-a507-e8ca961e27d8 is the current active root execution in branch codex/publish-and-integrate-terminology-standard-019fe3d6 and worktree /Users/martinbechard/.codex/worktrees/940b/dev-methodology; all 16 exact approved governed-definition paths returned ALLOWED_APPROVED_DEFINITION_CHANGE and all 13 approved Agent definitions conform without mutation. Fresh review of fixture commit ec35759032051479bda3518cd892a4480119c41b returned NEEDS CORRECTION because full preflight still depends on deferred catalog reconciliation, the negative case is not yet linked or executable, and two evidence statements were premature. The same Dev Coder is correcting the independently owned byte-verifier and prose gaps while a read-only evaluation-provider analysis resolves the smallest production-routed live-control path. The configured mcp-agent-ops 0.5.1 provider still lacks reference_refresh and reference_load, so terminology.md publication remains correctly unmutated until the acknowledged overlap owner releases shared installation and reconciliation surfaces.
+Evidence: canonical combined Codex task/thread surface 019fe3d6-2dd6-7322-a507-e8ca961e27d8 remains the current active root execution in branch codex/publish-and-integrate-terminology-standard-019fe3d6 and worktree /Users/martinbechard/.codex/worktrees/940b/dev-methodology; all 16 exact approved governed-definition paths returned ALLOWED_APPROVED_DEFINITION_CHANGE and all 13 approved Agent definitions conform without mutation. Dev Coder commits ec35759032051479bda3518cd892a4480119c41b, 38825214eaee66433ae50c7cbafd3f6af407a2da, and 2ee1d3968f710175810131c60d88def629e89d99 remove the fixture-only AGENTS.md injection, define a byte-preserving negative fixture, and begin correcting evaluation-document terminology. Fresh follow-up review confirms the premature proof claims and tautological negative check are corrected but identifies two remaining generated-copy corrections. Read-only production-routing analysis also proves that provider-backed treatment cannot run through the current probe runner without changing runner and evidence-contract paths outside the exact Allowed Dependent Artifacts; those paths remain unmutated pending explicit scope reconciliation. The configured mcp-agent-ops 0.5.1 provider still lacks reference_refresh and reference_load, and the acknowledged overlap owner has not released shared catalogs, generated output, installation, live-model evaluation, or main integration, so terminology.md publication remains correctly unmutated.
 
-Observed At: 2026-08-09T00:43:33Z
+Observed At: 2026-08-09T00:57:02Z
 
 Started At: 2026-08-09T00:09:34Z
 
 Deadline or Expires At: 2026-08-09T02:09:34Z
 
-Next Action: Complete the bounded fixture and evaluation-copy corrections, then use the direct owner release to reconcile catalogs, resolve supported negative-case and provider-backed probe routing, restore the configured reference provider, publish the project standard, and run the bounded controls
+Next Action: Complete the two bounded evaluation-copy corrections and fresh review, obtain explicit reconciliation for the out-of-scope provider-backed probe paths, then use the direct owner release to reconcile shared catalogs and generated output, restore the configured reference provider, publish the project standard, and run the bounded controls
 
-Next Reconciliation At: 2026-08-09T00:58:33Z
+Next Reconciliation At: 2026-08-09T01:12:02Z
