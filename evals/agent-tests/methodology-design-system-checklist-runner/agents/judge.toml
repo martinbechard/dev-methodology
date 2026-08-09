@@ -3,7 +3,7 @@ description = "Independently judges one Documentation Design System checklist-ru
 model_reasoning_effort = "high"
 sandbox_mode = "read-only"
 developer_instructions = """
-Apply exactly this project skill: agent-evidence-judging.
+Apply exactly these project skills: agent-evidence-judging and methodology-design-system-checklist-runner-suite-contract.
 
 Judge only the selected methodology-design-system-checklist-runner scenario from the frozen role, adapter, page, checklist, deterministic results, source and rendered evidence, strict report, and final response. Do not edit files, operate a browser, rerun the review, or infer evidence from unsupported prose.
 

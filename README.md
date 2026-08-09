@@ -71,7 +71,7 @@ Project-specific evaluation skills may freeze inputs and compare completed candi
 - Keep Codex openai.yaml metadata beside each source SKILL.md when a skill needs Codex app metadata, invocation policy, or tool dependencies.
 - scripts/install-skills.py installs the bundled skills through adapter profiles for generic Agent Skills, Codex, Gemini CLI, Claude Code, and JetBrains Junie CLI.
 - agents/role-schema.yaml defines the customer-independent conceptual agent definition schema and owns the default 75% contextBudgetPercent allocation.
-- agents/model-profiles.yaml defines semantic simple, default, documentation, advanced, and advanced-long model profiles without provider identifiers.
+- agents/model-profiles.yaml defines semantic simple, coordination, default, documentation, advanced, and advanced-long model profiles without provider identifiers.
 - adapters/[runtime]/model-profiles.yaml maps semantic profiles to concrete models, reasoning effort, verified contextCapacityTokens, contextBudgetMechanism, and evidence for each harness.
 - adapters/[runtime]/skills/[skill-name]/SKILL.md contains directives that belong only to that runtime. The installer includes these skills only with the matching adapter.
 - agents/roles contains conceptual agent definition sources grouped by Dev Activities, Wiki Activities, Project Setup, and Methodology Maintenance.

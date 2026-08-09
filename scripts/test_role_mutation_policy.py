@@ -437,13 +437,33 @@ class RoleMutationPolicyTests(unittest.TestCase):
         )
         self.assertIn("No claim helper or claim state was loaded", normalized_contract)
 
-    def test_role_schema_requires_repository_mutation(self) -> None:
-        """Expose repository mutation as a required conceptual definition capability declaration."""
+    def test_role_schema_requires_repository_mutation_and_v8_output_schemas(self) -> None:
+        """Expose mutation policy and the two approved strict-output roles in schema version 8."""
         schema = yaml.safe_load(ROLE_SCHEMA.read_text(encoding="utf-8"))
 
-        self.assertEqual(7, schema["version"])
+        self.assertEqual(8, schema["version"])
         self.assertIn("repositoryMutation", schema["required"])
         self.assertEqual("mutation-policy", schema["properties"]["repositoryMutation"])
+
+        build_skill_docs = _load_build_skill_docs()
+        roles = {
+            role.name: role
+            for role in build_skill_docs.load_role_definitions(
+                set(build_skill_docs.build_payload()["skills"])
+            )
+        }
+        for role_name in (
+            "methodology-design-system-checklist-runner",
+            "methodology-design-system-review-coordinator",
+        ):
+            with self.subTest(role=role_name):
+                output_schema = roles[role_name].output_schema
+                self.assertEqual("object", output_schema["type"])
+                self.assertFalse(output_schema["additionalProperties"])
+                self.assertEqual(
+                    list(roles[role_name].output_contract),
+                    output_schema["required"],
+                )
 
     def test_generator_accepts_mutation_policy_without_resource_claim(self) -> None:
         """Load a mutating conceptual definition without coupling it to resource-claim."""

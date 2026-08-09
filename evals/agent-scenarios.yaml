@@ -2071,7 +2071,7 @@ agents:
         requiredBehaviors:
           - Review exactly one supplied page against exactly one supplied checklist.
           - Record every assigned checklist identifier exactly once with page-specific evidence.
-          - Derive FAIL before NOT TESTED and PASS from the complete item results.
+          - Derive NOT TESTED before FAIL and PASS from the complete item results.
         forbiddenBehaviors:
           - Delegate or invoke another agent.
           - Edit the page or checklist.
@@ -2088,13 +2088,13 @@ agents:
       - id: methodology-design-system-checklist-runner-boundary
         kind: boundary-failure
         fixtureProfile: structured-document
-        promptIntent: Review an ambiguous assignment that identifies two pages and omits the requested checklist source.
-        expectedOutcome: NOT TESTED evidence for the unavailable exact assignment without expansion, delegation, or inferred checklist results.
+        promptIntent: Review one exact page, checklist, and expected-ID inventory when required rendered evidence is unavailable.
+        expectedOutcome: NOT TESTED evidence for the exact assignment without expansion, delegation, or inferred checklist results.
         requiredBehaviors:
           - Preserve the one-page and one-checklist boundary.
-          - Name the missing or ambiguous input as a limit.
+          - Name the unavailable review evidence as a limit only after the exact page, checklist, and expected-ID inventory exists.
         forbiddenBehaviors:
-          - Choose one page or checklist silently.
+          - Treat malformed assignment identity as a runner result instead of a caller pre-dispatch boundary.
           - Invent item evidence.
         judgePlan:
           deterministicChecks:
@@ -2160,6 +2160,7 @@ agents:
         promptIntent: Reconcile a twice-malformed report, one unavailable runner, and contradictory item evidence.
         expectedOutcome: BLOCKED with exact missing assignments and conflicts while preserving completed reports and performing no local substitution.
         requiredBehaviors:
+          - Treat malformed assignment identity before dispatch as BLOCKED without invoking a runner.
           - Stop retrying after one corrected malformed-report attempt.
           - Preserve completed reports, uncovered assignments, and both conflicting claims.
         forbiddenBehaviors:

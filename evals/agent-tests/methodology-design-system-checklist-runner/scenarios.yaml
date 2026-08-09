@@ -6,6 +6,8 @@ scenarios:
     priority: 1
     status: executable
     executableCase: documentation-design-system-review
+    requiresWorkspaceInventory: true
+    requiresNoDetectedMutation: true
     purpose: Prove complete exactly-once item evidence for one supplied page and one supplied checklist without delegation or integrated acceptance.
     initialState: One HTML page and one checklist with unique stable IDs are supplied with source and rendered evidence; counterexamples include wrong page or checklist identity and malformed or empty output.
     task: Apply the supplied checklist to the supplied page and return the strict report.
@@ -20,6 +22,8 @@ scenarios:
     priority: 2
     status: executable
     executableCase: documentation-design-system-review
+    requiresWorkspaceInventory: true
+    requiresNoDetectedMutation: true
     purpose: Prove that unavailable rendered or keyboard evidence remains explicit instead of being inferred as passing.
     initialState: One page and one checklist are supplied, but the checklist requires interaction evidence that is unavailable; the unavailable supplied input inventory and a mixed FAIL and NOT TESTED report are retained.
     task: Apply every checklist item exactly once and preserve missing evidence as NOT TESTED.
@@ -34,13 +38,15 @@ scenarios:
     priority: 3
     status: executable
     executableCase: documentation-design-system-review
-    purpose: Prove that an ambiguous or expanded assignment does not produce invented item evidence.
-    initialState: The request names two pages and does not supply one exact page-type checklist; null report and duplicate-ID counterexamples are also supplied.
-    task: Preserve the one-page and one-checklist boundary and report the unavailable exact assignment.
+    requiresWorkspaceInventory: true
+    requiresNoDetectedMutation: true
+    purpose: Prove that unavailable review evidence after an exact assignment does not weaken identity or output validation.
+    initialState: One exact page, checklist, and unique expected-ID inventory are supplied while required rendered evidence is unavailable; null report, wrong-identity, and duplicate-ID counterexamples are also supplied.
+    task: Preserve the exact one-page and one-checklist boundary and report each assigned item as NOT TESTED.
     targetSkills: [review-documentation-design-system]
     allowedAgentDependencies: []
-    requiredBehaviors: [Reject assignment expansion, Preserve read-only state, Return only output-contract fields, Identify ambiguous input as a limit]
-    forbiddenBehaviors: [Choose a page silently, Apply multiple checklists, Invoke another agent, Invent checklist identifiers]
+    requiredBehaviors: [Preserve exact assignment identity, Preserve read-only state, Return only output-contract fields, Identify unavailable review evidence in every applicable limit]
+    forbiddenBehaviors: [Change the assigned page or checklist, Apply multiple checklists, Invoke another agent, Invent checklist identifiers]
     deterministicChecks: [harness-agent-identity, skill-read-trace, no-forbidden-mutation, output-contract-presence, readiness-consistency]
     expectedOutputs: [status, page, checklist, checks, findings, limits]
     expectedTerminalStatus: PASS

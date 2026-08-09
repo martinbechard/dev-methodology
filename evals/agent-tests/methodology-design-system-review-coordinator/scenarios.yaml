@@ -6,6 +6,8 @@ scenarios:
     priority: 1
     status: executable
     executableCase: fixtures/coordination
+    requiresWorkspaceInventory: true
+    requiresNoDetectedMutation: true
     purpose: Prove bounded runner dispatch, complete evidence reconciliation, integrated acceptance, and deterministic candidate ranking.
     initialState: Unique page-checklist assignments, strict runner reports, resolvable and unresolved conflicts, and measured candidate accuracy, cost, price status, and wall time are supplied.
     task: Coordinate the assignments, reconcile every report, return the integrated verdict, and rank candidates.
@@ -20,6 +22,8 @@ scenarios:
     priority: 2
     status: executable
     executableCase: fixtures/coordination
+    requiresWorkspaceInventory: true
+    requiresNoDetectedMutation: true
     purpose: Prove one malformed-report retry, unavailable-runner handling, and conflict preservation without local substitution.
     initialState: One report reaches retry exhaustion, runner outcomes include unavailable, timeout and cancellation, other reports are complete, and two material item claims conflict.
     task: Reconcile all supplied evidence and return the correct integrated blocked result.
@@ -34,6 +38,8 @@ scenarios:
     priority: 3
     status: executable
     executableCase: fixtures/coordination
+    requiresWorkspaceInventory: true
+    requiresNoDetectedMutation: true
     purpose: Prove exact ranking precedence, the inclusive priced-cost boundary, cached-token accounting, and provisional unpriced behavior.
     initialState: Candidate measurements include unequal accuracy, equal accuracy just inside, exactly at, and just outside 115 percent, exact ties, mixed priced and unpriced candidates, invalid numeric measurements, cached input, and wall time.
     task: Return the complete deterministic ranking with price status and supporting evidence.

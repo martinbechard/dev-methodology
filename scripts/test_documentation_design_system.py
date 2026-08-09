@@ -166,6 +166,10 @@ class DocumentationDesignSystemTests(unittest.TestCase):
         self.assertEqual(91, len(set(all_ids)))
         self.assertIn("Open exactly the checklist supplied for this invocation", skill_text)
         self.assertIn("caller schedules separate invocations", skill_text)
+        self.assertIn("caller supplies a strict output contract", skill_text)
+        self.assertIn("standalone fallback", skill_text)
+        self.assertIn("caller-owned pre-dispatch BLOCKED condition", skill_text)
+        self.assertIn("NOT TESTED only after", skill_text)
         self.assertNotIn("and the one page-type checklist", skill_text)
 
     def test_forms_expose_result_count_and_complete_dialog_keyboard_contract(self) -> None:
@@ -189,18 +193,33 @@ class DocumentationDesignSystemTests(unittest.TestCase):
         """Printed documentation omits interactive specimens while retaining explanations and results."""
 
         css = (DESIGN_ROOT / "assets" / "design-system.css").read_text(encoding="utf-8")
-        print_rules = css.split("@media print", 1)[1]
+        print_rules = css.split("@media print", 1)[1].split("{", 1)[1]
+        hidden_selectors = {
+            selector.strip()
+            for selector in print_rules.split("{", 1)[0].split(",")
+        }
         for selector in (
             ".filters",
-            "form",
+            ".field",
+            ".check-field",
             "input",
             "select",
             "button",
             ".dialog-backdrop",
         ):
-            self.assertRegex(print_rules, rf"(?s){re.escape(selector)}.*?display:\s*none")
-        self.assertNotRegex(print_rules, r"(?s)\.demo-status.*?display:\s*none")
-        self.assertNotRegex(print_rules, r"(?s)\[data-result-count\].*?display:\s*none")
+            self.assertIn(selector, hidden_selectors)
+        for preserved in (
+            "form",
+            "[data-demo-form]",
+            ".demo-status",
+            ".demo-alert",
+            "[data-result-count]",
+        ):
+            self.assertNotIn(preserved, hidden_selectors)
+        forms_text = (DESIGN_ROOT / "forms-and-actions.html").read_text(encoding="utf-8")
+        self.assertIn('form class="panel" data-demo-form', forms_text)
+        self.assertIn('class="demo-alert" role="alert"', forms_text)
+        self.assertIn('class="demo-status" role="status"', forms_text)
 
     def test_every_variation_has_visible_status_and_source_attribution(self) -> None:
         """All 21 comparisons must expose one inline standardization status and source evidence."""
@@ -294,14 +313,35 @@ class DocumentationDesignSystemTests(unittest.TestCase):
         """Only real suite navigation carries all ten stable links."""
 
         text = (DESIGN_ROOT / "page-shell.html").read_text(encoding="utf-8")
-        self.assertIn('class="suite-nav suite-nav--non-production-specimen"', text)
+        self.assertIn(
+            '<div class="suite-nav suite-nav--non-production-specimen"',
+            text,
+        )
+        self.assertNotIn(
+            '<nav class="suite-nav suite-nav--non-production-specimen"',
+            text,
+        )
         self.assertEqual(1, text.count('class="suite-nav" aria-label="Design system pages"'))
+        css = (DESIGN_ROOT / "assets" / "design-system.css").read_text(encoding="utf-8")
+        compact_rule = css.split(".suite-nav--non-production-specimen {", 1)[1].split("}", 1)[0]
+        self.assertIn("width: 100%", compact_rule)
+        self.assertIn("margin: 0", compact_rule)
+        self.assertIn("padding-top: 0", compact_rule)
 
     def test_diagram_tree_uses_the_adopted_design_system_path(self) -> None:
-        """The folder-tree specimen must point to the actual adopted tree."""
+        """The folder-tree specimen must enumerate the complete adopted source tree."""
 
         text = (DESIGN_ROOT / "diagrams.html").read_text(encoding="utf-8")
-        self.assertIn("design/\n└── documentation-design-system/", text)
+        tree = text.split('<pre class="folder-tree"', 1)[1].split("</pre>", 1)[0]
+        for path_name in (
+            "VERSION",
+            *PAGE_NAMES,
+            "assets/",
+            "design-system.css",
+            "design-system.js",
+            "dev-methodology-logo.png",
+        ):
+            self.assertIn(path_name, tree)
 
     def test_readme_states_bounded_coordination_and_portability_evidence(self) -> None:
         """README scope must distinguish tested Codex coordination from untested mappings."""
@@ -312,8 +352,31 @@ class DocumentationDesignSystemTests(unittest.TestCase):
             "Codex tournament-backed evidence",
             "non-Codex portability mappings remain untested",
             "Existing hand-authored HTML pages were not migrated",
+            "simple, coordination, default, documentation, advanced, and advanced-long",
         ):
             self.assertIn(phrase, text)
+
+    def test_catalog_precedence_and_predispatch_identity_boundary_are_consistent(self) -> None:
+        """Incomplete evidence precedes failure, while malformed identity blocks before dispatch."""
+
+        catalog = (
+            REPOSITORY_ROOT / "evals" / "agent-scenarios.yaml"
+        ).read_text(encoding="utf-8")
+        runner = catalog.split(
+            "  - id: methodology-design-system-checklist-runner\n",
+            1,
+        )[1].split(
+            "  - id: methodology-design-system-review-coordinator\n",
+            1,
+        )[0]
+        coordinator = catalog.split(
+            "  - id: methodology-design-system-review-coordinator\n",
+            1,
+        )[1]
+        self.assertIn("Derive NOT TESTED before FAIL", runner)
+        self.assertIn("exact page, checklist, and expected-ID inventory", runner)
+        self.assertIn("malformed assignment identity before dispatch", coordinator)
+        self.assertIn("BLOCKED", coordinator)
 
 
 if __name__ == "__main__":

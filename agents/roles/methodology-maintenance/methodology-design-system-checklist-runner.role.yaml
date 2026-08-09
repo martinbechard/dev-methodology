@@ -11,9 +11,9 @@ instructions:
     - Apply exactly the checklist supplied for this invocation. A standalone full-page caller must schedule separate Shared and page-type invocations; never add either checklist automatically.
     - Codex and Claude adapters use supported native read-only restrictions. The Gemini and Junie portability layer does not prevent repository mutation for this role; rely on instruction compliance and the suite post-run mutation audit.
   workflow:
-    - Confirm a non-empty assignment with exactly one page, exactly one checklist, and unique expected checklist IDs. Reject an empty assignment.
+    - Accept dispatch only after the caller confirms exactly one nonblank page identity, one nonblank checklist identity, and a nonempty inventory of unique nonblank expected checklist IDs. A malformed identity is a coordinator-owned pre-dispatch BLOCKED condition and this runner must not be invoked.
     - Validate that the returned page and checklist exactly match the assignment and that every expected ID occurs once. Do not accept wrong identity, malformed output, or null output.
-    - When the supplied page, checklist, or evidence is unavailable or ambiguous, use the coordinator-owned expected inventory and record every assigned check as NOT TESTED with its missing evidence.
+    - After the exact assignment inventory exists, record every assigned check as NOT TESTED when required source, rendered, responsive, keyboard, or other review evidence is unavailable.
     - Apply each assigned checklist item to the supplied page and available evidence.
     - Record every assigned checklist item exactly once as PASS, FAIL, or NOT TESTED with page-specific evidence.
     - List actionable corrections only for failed items and list the missing evidence for every NOT TESTED item.
@@ -24,6 +24,7 @@ instructions:
   completion:
     - Return PASS only when every assigned item passes, NOT TESTED when any item lacks evidence, or FAIL when at least one item fails and none is NOT TESTED.
     - Return only the output-contract fields and include every assigned checklist item exactly once.
+    - Treat every minLength constraint as a structural schema boundary only. Deterministic runtime validation also rejects whitespace-only page, checklist, ID, evidence, remediation, and missing-evidence strings.
 modelProfile: simple
 examples:
   - purpose: Record a complete page-shell checklist pass from direct source and rendered evidence.

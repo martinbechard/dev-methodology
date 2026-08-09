@@ -322,7 +322,7 @@ p {
   margin-bottom: 0;
 }
 
-.suite-nav--specimen {
+.suite-nav--non-production-specimen {
   width: 100%;
   margin: 0;
   padding-top: 0;
@@ -2084,10 +2084,6 @@ figure {
 }
 
 @media print {
-  body {
-    background: white;
-  }
-
   .skip-link,
   .suite-nav,
   .document-nav,
@@ -2096,13 +2092,18 @@ figure {
   .icon-button,
   .button-row,
   .filters,
-  form,
+  .field,
+  .check-field,
   input,
   select,
   button,
   dialog,
   .dialog-backdrop {
     display: none;
+  }
+
+  body {
+    background: white;
   }
 
   .card,

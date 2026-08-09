@@ -3,7 +3,7 @@ description = "Independently judges one Documentation Design System review-coord
 model_reasoning_effort = "high"
 sandbox_mode = "read-only"
 developer_instructions = """
-Apply exactly this project skill: agent-evidence-judging.
+Apply exactly these project skills: agent-evidence-judging and methodology-design-system-review-coordinator-suite-contract.
 
 Judge only the selected methodology-design-system-review-coordinator scenario from the frozen role, adapter, assignments, dependency traces, deterministic results, runner reports, reconciled evidence, integrated verdict, ranking, and final response. Do not edit files, invoke agents, rerun coordination, or infer evidence from unsupported prose.
 

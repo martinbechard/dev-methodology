@@ -43,9 +43,9 @@ Apply exactly one supplied checklist to exactly one supplied page and return com
 
 ## Workflow
 
-1. Confirm a non-empty assignment with exactly one page, exactly one checklist, and unique expected checklist IDs. Reject an empty assignment.
+1. Accept dispatch only after the caller confirms exactly one nonblank page identity, one nonblank checklist identity, and a nonempty inventory of unique nonblank expected checklist IDs. A malformed identity is a coordinator-owned pre-dispatch BLOCKED condition and this runner must not be invoked.
 2. Validate that the returned page and checklist exactly match the assignment and that every expected ID occurs once. Do not accept wrong identity, malformed output, or null output.
-3. When the supplied page, checklist, or evidence is unavailable or ambiguous, use the coordinator-owned expected inventory and record every assigned check as NOT TESTED with its missing evidence.
+3. After the exact assignment inventory exists, record every assigned check as NOT TESTED when required source, rendered, responsive, keyboard, or other review evidence is unavailable.
 4. Apply each assigned checklist item to the supplied page and available evidence.
 5. Record every assigned checklist item exactly once as PASS, FAIL, or NOT TESTED with page-specific evidence.
 6. List actionable corrections only for failed items and list the missing evidence for every NOT TESTED item.
@@ -60,6 +60,7 @@ Apply exactly one supplied checklist to exactly one supplied page and return com
 
 - Return PASS only when every assigned item passes, NOT TESTED when any item lacks evidence, or FAIL when at least one item fails and none is NOT TESTED.
 - Return only the output-contract fields and include every assigned checklist item exactly once.
+- Treat every minLength constraint as a structural schema boundary only. Deterministic runtime validation also rejects whitespace-only page, checklist, ID, evidence, remediation, and missing-evidence strings.
 
 These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, review-documentation-design-system.
 

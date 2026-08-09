@@ -1,29 +1,106 @@
 schema: dev-methodology-documentation-design-system-coordination-inputs
-version: 1
-assignments:
-  - page: page-shell.html
-    checklist: Shared
-    checklistIds: [DDS-COM-001, DDS-COM-002]
-  - page: forms-and-actions.html
-    checklist: Accessibility
-    checklistIds: [DDS-ACC-001]
-runnerOutcomes:
-  page-shell.html:Shared: malformed-then-complete
-  forms-and-actions.html:Accessibility: timeout
-conflicts:
-  resolvable:
-    page: page-shell.html
-    checklist: Shared
-    id: DDS-COM-001
-    claims: [PASS, FAIL]
-    authoritativeResult: PASS
+version: 2
+assignment:
+  page: page-shell.html
+  checklist: Shared
+  checklistIds: [DDS-COM-001, DDS-COM-002]
+
+coordinationCases:
+  malformedThenComplete:
+    attemptKinds: [malformed, complete]
+    expectedStatus: ACCEPTED
+    expectedAttempts: 2
+  retryExhaustion:
+    attemptKinds: [malformed, malformed]
+    expectedStatus: BLOCKED
+    expectedMissingReason: malformed after one retry
+  malformedAssignment:
+    assignment: [page-shell.html, Shared, null]
+    expectedStatus: BLOCKED
+    expectedRationale: The assignment inventory contains malformed identity before dispatch.
+  unavailable:
+    reason: unavailable
+    expectedStatus: BLOCKED
+  timeout:
+    reason: timeout
+    expectedStatus: BLOCKED
+  cancelled:
+    reason: cancelled
+    expectedStatus: BLOCKED
+
+conflictCases:
+  authoritativePass:
+    runnerResults: [FAIL, PASS]
+    extraClaims:
+      - {page: page-shell.html, checklist: Shared, id: DDS-COM-001, result: PASS, evidence: contrary source, source: secondary}
+    authoritativeEvidence:
+      page-shell.html:Shared:DDS-COM-001:
+        result: PASS
+        evidence: authoritative rendered audit
+        source: authoritative-audit
+    expectedStatus: ACCEPTED
+    expectedFindings: 0
+    expectedResolution: resolved
+  authoritativeFail:
+    runnerResults: [PASS, PASS]
+    extraClaims:
+      - {page: page-shell.html, checklist: Shared, id: DDS-COM-001, result: FAIL, evidence: contrary source, source: secondary}
+    authoritativeEvidence:
+      page-shell.html:Shared:DDS-COM-001:
+        result: FAIL
+        evidence: authoritative rendered audit
+        source: authoritative-audit
+        remediation: Correct the authoritative defect.
+    expectedStatus: REJECTED
+    expectedFindings: 1
+    expectedResolution: resolved
   unresolved:
-    page: page-shell.html
-    checklist: Shared
-    id: DDS-COM-002
-    claims: [PASS, FAIL]
-candidates:
-  - {id: cheapest, accuracy: '1', estimatedCost: '100', wallSeconds: '10'}
-  - {id: exact-boundary, accuracy: '1', estimatedCost: '115', wallSeconds: '2'}
-  - {id: outside-boundary, accuracy: '1', estimatedCost: '115.000000000000000001', wallSeconds: '1'}
-  - {id: unpriced, accuracy: '1', estimatedCost: null, wallSeconds: '0.5'}
+    runnerResults: [PASS, PASS]
+    extraClaims:
+      - {page: page-shell.html, checklist: Shared, id: DDS-COM-001, result: FAIL, evidence: contrary source, source: secondary}
+    expectedStatus: BLOCKED
+    expectedFindings: 0
+    expectedResolution: unresolved
+
+rankingCases:
+  unequalAccuracy:
+    candidates:
+      - {id: more-accurate, accuracy: '1', estimatedCost: null, wallSeconds: '5'}
+      - {id: less-accurate, accuracy: '0.99', estimatedCost: '0.01', wallSeconds: '1'}
+    expectedOrder: [more-accurate, less-accurate]
+    expectedWinnerProvisional: true
+  costBoundary:
+    candidates:
+      - {id: cheapest, accuracy: '1', estimatedCost: '100', wallSeconds: '10'}
+      - {id: inside-boundary, accuracy: '1', estimatedCost: '114.999999999999999999', wallSeconds: '3'}
+      - {id: exact-boundary, accuracy: '1', estimatedCost: '115', wallSeconds: '2'}
+      - {id: outside-boundary, accuracy: '1', estimatedCost: '115.000000000000000001', wallSeconds: '1'}
+    expectedOrder: [exact-boundary, inside-boundary, cheapest, outside-boundary]
+  exactTiesAndUnpriced:
+    candidates:
+      - {id: exact-tie-b, accuracy: '1', estimatedCost: '2', wallSeconds: '3'}
+      - {id: exact-tie-a, accuracy: '1', estimatedCost: '2', wallSeconds: '3'}
+      - {id: unpriced, accuracy: '1', estimatedCost: null, wallSeconds: '1'}
+    expectedOrder: [exact-tie-a, exact-tie-b, unpriced]
+    expectedTieIds: [exact-tie-a, exact-tie-b]
+
+invalidMeasurements:
+  candidates:
+    - {id: nan-accuracy, accuracy: NaN, estimatedCost: '1', wallSeconds: '1'}
+    - {id: negative-cost, accuracy: '1', estimatedCost: '-1', wallSeconds: '1'}
+    - {id: infinite-time, accuracy: '1', estimatedCost: '1', wallSeconds: Infinity}
+  cachedUsage:
+    input_tokens: 1
+    cached_input_tokens: 2
+    output_tokens: 0
+
+cachedAccounting:
+  usage:
+    input_tokens: 1000000
+    cached_input_tokens: 400000
+    output_tokens: 0
+  rates:
+    input_tokens: 25
+    cached_input_tokens: 2.5
+    output_tokens: 150
+  expectedCost: '16'

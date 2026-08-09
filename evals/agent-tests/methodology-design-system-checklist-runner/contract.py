@@ -20,7 +20,7 @@ REQUIRED_FIELDS = frozenset({"status", "page", "checklist", "checks", "findings"
 def _assignment_errors(
     expected_page: object,
     expected_checklist: object,
-    checklist_ids: Sequence[str],
+    checklist_ids: object,
 ) -> list[str]:
     """Return errors in the coordinator-owned assignment inventory."""
 
@@ -33,9 +33,13 @@ def _assignment_errors(
         return [*errors, "assigned checklist identifiers must be a sequence"]
     if not checklist_ids:
         errors.append("assigned checklist identifiers must not be empty")
-    if any(not isinstance(check_id, str) or not check_id.strip() for check_id in checklist_ids):
+    valid_identifiers = all(
+        isinstance(check_id, str) and bool(check_id.strip())
+        for check_id in checklist_ids
+    )
+    if not valid_identifiers:
         errors.append("assigned checklist identifiers must be non-empty strings")
-    if len(checklist_ids) != len(set(checklist_ids)):
+    elif len(checklist_ids) != len(set(checklist_ids)):
         errors.append("assigned checklist identifiers must be unique")
     return errors
 
@@ -46,7 +50,7 @@ def build_not_tested_report(
     checklist_ids: Sequence[str],
     missing_evidence: str,
 ) -> dict[str, object]:
-    """Represent unavailable or ambiguous input without losing expected inventory."""
+    """Represent unavailable review evidence after preserving exact expected inventory."""
 
     errors = _assignment_errors(expected_page, expected_checklist, checklist_ids)
     if errors:
@@ -107,6 +111,8 @@ def validate_report(
     """Return deterministic errors for one exact page-checklist report."""
 
     errors = _assignment_errors(expected_page, expected_checklist, checklist_ids)
+    if errors:
+        return tuple(errors)
     if not isinstance(report, dict):
         return (*errors, "report must be an object")
     if set(report) != REQUIRED_FIELDS:
@@ -134,7 +140,7 @@ def validate_report(
             errors.append("check id must be a non-empty string")
             continue
         observed_ids.append(check_id)
-        if result not in ALLOWED_RESULTS:
+        if not isinstance(result, str) or result not in ALLOWED_RESULTS:
             errors.append(f"{check_id} has an invalid result")
         else:
             result_by_id[check_id] = result

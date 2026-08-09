@@ -11,6 +11,7 @@ import argparse
 import hashlib
 import html
 import json
+import math
 import re
 import sys
 from dataclasses import dataclass
@@ -880,6 +881,8 @@ def validate_json_schema(value: object, field_path: str, source_path: Path) -> d
         "minItems",
         "minLength",
         "minimum",
+        "default",
+        "examples",
     }
     unknown = sorted(set(value) - allowed_keywords)
     if unknown:
@@ -903,16 +906,35 @@ def validate_json_schema(value: object, field_path: str, source_path: Path) -> d
         )
     normalized: dict[str, object] = {"type": list(schema_types) if isinstance(raw_type, list) else raw_type}
 
+    keyword_types = {
+        "properties": {"object"},
+        "required": {"object"},
+        "additionalProperties": {"object"},
+        "items": {"array"},
+        "minItems": {"array"},
+        "minLength": {"string"},
+        "minimum": {"integer", "number"},
+    }
+    for keyword, compatible_types in keyword_types.items():
+        if keyword in value and not compatible_types.intersection(schema_types):
+            raise ValueError(
+                f"Conceptual agent definition {field_path}.{keyword} is incompatible with type {raw_type!r}: {source_path}"
+            )
+
     if "object" in schema_types:
         properties = value.get("properties")
         required = value.get("required")
-        if not isinstance(properties, dict) or not properties:
+        if (
+            not isinstance(properties, dict)
+            or not properties
+            or any(not isinstance(name, str) or not name.strip() for name in properties)
+        ):
             raise ValueError(
-                f"Conceptual agent definition {field_path}.properties must be a non-empty mapping: {source_path}"
+                f"Conceptual agent definition {field_path}.properties must be a non-empty mapping with nonblank string names: {source_path}"
             )
         if (
             not isinstance(required, list)
-            or any(not isinstance(item, str) or not item for item in required)
+            or any(not isinstance(item, str) or not item.strip() for item in required)
             or len(required) != len(set(required))
             or set(required) != set(properties)
         ):
@@ -944,20 +966,115 @@ def validate_json_schema(value: object, field_path: str, source_path: Path) -> d
             normalized["minItems"] = min_items
     if "enum" in value:
         enum = value["enum"]
-        if not isinstance(enum, list) or not enum or len({json.dumps(item, sort_keys=True) for item in enum}) != len(enum):
+        if not isinstance(enum, list) or not enum:
+            raise ValueError(
+                f"Conceptual agent definition {field_path}.enum must contain unique values: {source_path}"
+            )
+        try:
+            encoded_enum = [json.dumps(item, allow_nan=False, sort_keys=True) for item in enum]
+        except (TypeError, ValueError) as error:
+            raise ValueError(
+                f"Conceptual agent definition {field_path}.enum must contain JSON values: {source_path}"
+            ) from error
+        if len(set(encoded_enum)) != len(enum):
             raise ValueError(
                 f"Conceptual agent definition {field_path}.enum must contain unique values: {source_path}"
             )
         normalized["enum"] = list(enum)
-    for keyword in ("minLength", "minimum"):
-        if keyword not in value:
-            continue
-        threshold = value[keyword]
-        if not isinstance(threshold, (int, float)) or isinstance(threshold, bool) or threshold < 0:
+
+    if "minLength" in value:
+        min_length = value["minLength"]
+        if not isinstance(min_length, int) or isinstance(min_length, bool) or min_length < 0:
             raise ValueError(
-                f"Conceptual agent definition {field_path}.{keyword} must be nonnegative: {source_path}"
+                f"Conceptual agent definition {field_path}.minLength must be a nonnegative integer: {source_path}"
             )
-        normalized[keyword] = threshold
+        normalized["minLength"] = min_length
+    if "minimum" in value:
+        minimum = value["minimum"]
+        if (
+            not isinstance(minimum, (int, float))
+            or isinstance(minimum, bool)
+            or (isinstance(minimum, float) and not math.isfinite(minimum))
+        ):
+            raise ValueError(
+                f"Conceptual agent definition {field_path}.minimum must be a finite number: {source_path}"
+            )
+        normalized["minimum"] = minimum
+
+    def matches_declared_type(instance: object) -> bool:
+        for schema_type in schema_types:
+            if schema_type == "null" and instance is None:
+                return True
+            if schema_type == "boolean" and isinstance(instance, bool):
+                return True
+            if schema_type == "string" and isinstance(instance, str):
+                return True
+            if schema_type == "integer" and isinstance(instance, int) and not isinstance(instance, bool):
+                return True
+            if (
+                schema_type == "number"
+                and isinstance(instance, (int, float))
+                and not isinstance(instance, bool)
+                and (isinstance(instance, int) or math.isfinite(instance))
+            ):
+                return True
+            if schema_type == "array" and isinstance(instance, list):
+                return True
+            if schema_type == "object" and isinstance(instance, dict):
+                return True
+        return False
+
+    def validate_annotated_instance(instance: object, annotation_path: str) -> None:
+        try:
+            encoded = json.dumps(instance, allow_nan=False, sort_keys=True)
+        except (TypeError, ValueError) as error:
+            raise ValueError(
+                f"Conceptual agent definition {annotation_path} must be a JSON value: {source_path}"
+            ) from error
+        if not matches_declared_type(instance):
+            raise ValueError(
+                f"Conceptual agent definition {annotation_path} must match a declared type: {source_path}"
+            )
+        if "enum" in value and encoded not in encoded_enum:
+            raise ValueError(
+                f"Conceptual agent definition {annotation_path} must match an enum value: {source_path}"
+            )
+        if isinstance(instance, str) and "minLength" in value and len(instance) < value["minLength"]:
+            raise ValueError(
+                f"Conceptual agent definition {annotation_path} violates minLength: {source_path}"
+            )
+        if (
+            isinstance(instance, (int, float))
+            and not isinstance(instance, bool)
+            and "minimum" in value
+            and instance < value["minimum"]
+        ):
+            raise ValueError(
+                f"Conceptual agent definition {annotation_path} violates minimum: {source_path}"
+            )
+        if isinstance(instance, list) and "minItems" in value and len(instance) < value["minItems"]:
+            raise ValueError(
+                f"Conceptual agent definition {annotation_path} violates minItems: {source_path}"
+            )
+
+    if "enum" in value:
+        for index, enum_value in enumerate(value["enum"]):
+            if not matches_declared_type(enum_value):
+                raise ValueError(
+                    f"Conceptual agent definition {field_path}.enum[{index}] must match a declared type: {source_path}"
+                )
+    if "default" in value:
+        validate_annotated_instance(value["default"], f"{field_path}.default")
+        normalized["default"] = value["default"]
+    if "examples" in value:
+        examples = value["examples"]
+        if not isinstance(examples, list) or not examples:
+            raise ValueError(
+                f"Conceptual agent definition {field_path}.examples must be a non-empty list: {source_path}"
+            )
+        for index, example in enumerate(examples):
+            validate_annotated_instance(example, f"{field_path}.examples[{index}]")
+        normalized["examples"] = list(examples)
     return normalized
 
 

@@ -11417,6 +11417,51 @@ Visible after.
         self.assertEqual(91, len(checklist_ids))
         self.assertEqual(91, len(set(checklist_ids)))
 
+    def test_role_output_json_schema_subset_fails_closed(self) -> None:
+        """Reject incompatible, type-mismatched, or silently discarded schema content."""
+
+        build_skill_docs = load_build_skill_docs_module()
+        source_path = (
+            ROLES_ROOT
+            / "methodology-maintenance"
+            / "methodology-design-system-review-coordinator.role.yaml"
+        )
+        valid = {
+            "type": ["string", "null"],
+            "enum": ["PASS", None],
+            "minLength": 1,
+            "default": None,
+            "examples": ["PASS", None],
+        }
+        self.assertEqual(
+            valid,
+            build_skill_docs.validate_json_schema(valid, "output", source_path),
+        )
+
+        invalid_schemas = (
+            {
+                "type": "string",
+                "properties": {"value": {"type": "string"}},
+                "required": ["value"],
+                "additionalProperties": False,
+            },
+            {"type": "array", "items": {"type": "string"}, "minLength": 1},
+            {"type": "object", "items": {"type": "string"}},
+            {"type": "string", "enum": [1]},
+            {"type": "number", "default": "1"},
+            {"type": "integer", "examples": [True]},
+            {
+                "type": "object",
+                "properties": {"value": []},
+                "required": ["value"],
+                "additionalProperties": False,
+            },
+            {"type": "array", "items": []},
+        )
+        for schema in invalid_schemas:
+            with self.subTest(schema=schema), self.assertRaises(ValueError):
+                build_skill_docs.validate_json_schema(schema, "output", source_path)
+
     def test_context_budget_percent_defaults_overrides_and_validation(self) -> None:
         build_skill_docs = load_build_skill_docs_module()
         skill_names = set(build_skill_docs.build_payload()["skills"])

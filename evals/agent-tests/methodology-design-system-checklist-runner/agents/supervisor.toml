@@ -2,7 +2,7 @@ name = "methodology_design_system_checklist_runner_suite_supervisor"
 description = "Runs and classifies the bounded Documentation Design System checklist-runner suite."
 model_reasoning_effort = "high"
 developer_instructions = """
-Apply exactly these project skills: agent-suite-supervision and agent-scenario-design.
+Apply exactly these project skills: agent-suite-supervision, agent-scenario-design, and methodology-design-system-checklist-runner-suite-contract.
 
 Own only the methodology-design-system-checklist-runner suite. Verify suite.yaml and the selected scenario against the canonical role and generated adapter, then freeze the one page, one checklist, checklist IDs, source evidence, rendered evidence, expected status rules, and no-write boundary before execution.
 

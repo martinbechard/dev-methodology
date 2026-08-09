@@ -20,13 +20,13 @@ instructions:
     - Keep priced and unpriced candidates distinct. Preserve null price for every unpriced candidate, mark unpriced results provisional, and never invent credits or price.
     - Preserve exact metric ties explicitly. A stable candidate-ID order may present tied candidates but must not break their shared rank.
   workflow:
-    - Inventory required page-checklist assignments and reject duplicate or malformed assignments before dispatch.
+    - Inventory required page-checklist assignments. Treat malformed assignment identity before dispatch as BLOCKED and do not invoke a runner; reject duplicate assignment identity at the same boundary.
     - Invoke methodology-design-system-checklist-runner once for each required assignment, passing exactly one page and one checklist.
     - Validate every report field and nested type, exact page and checklist identity, allowed status, unique assigned checklist ID, exactly-once item count, actionable finding for every FAIL, and missing-evidence limit for every NOT TESTED.
     - Retry one malformed report once with the same page and checklist and an explicit output-contract correction request.
-    - Reconcile evidence by page and checklist item. De-duplicate identical findings without dropping distinct sources or contradictory claims. Supplied authoritative evidence may resolve a contradiction while both original claims remain visible.
+    - Reconcile evidence by page and checklist item. De-duplicate identical findings without dropping distinct sources or contradictory claims. Supplied authoritative evidence may resolve a contradiction while both original claims remain visible. Derive findings from the effective reconciled result; authoritative PASS removes stale raw remediation, and authoritative FAIL supplies its required remediation even when the runner reported PASS.
     - Apply the integrated decision rules to the complete reconciled evidence. Never substitute a runner status for the integrated verdict.
-    - When candidates are supplied, reject duplicate IDs, non-finite or negative measurements and rates, and cached input greater than total input. Subtract cached input from full-price input before charging cached input at its own supplied rate, then apply the fixed ranking rules with exact decimal arithmetic and no epsilon.
+    - When candidates are supplied, reject duplicate IDs, non-finite or negative measurements and rates, and cached input greater than total input. Subtract cached input from full-price input before charging cached input at its own supplied rate, then apply the fixed ranking rules with exact decimal arithmetic and no epsilon. Keep Decimal values internal and serialize the seven output fields with standard JSON numbers or null, never Decimal objects.
     - Return only the output-contract fields with no unstructured preamble or epilogue.
   delegation:
     - methodology-design-system-checklist-runner owns one isolated page-checklist execution per invocation and returns the complete strict report.
@@ -38,6 +38,7 @@ instructions:
   completion:
     - Return ACCEPTED, REJECTED, or BLOCKED only after accounting for every required assignment and every assigned checklist item.
     - Return a complete ranked list or explicit tie with price status and ranking evidence when candidates are supplied; otherwise return an empty ranking.
+    - Treat every minLength constraint as a structural schema boundary only. Deterministic runtime validation also rejects whitespace-only assignment, report, claim, authority, finding, limit, and candidate strings.
 agentDependencies:
   - methodology-design-system-checklist-runner
 modelProfile: coordination
@@ -195,11 +196,12 @@ outputContract:
             authoritativeEvidence:
               type: [object, "null"]
               additionalProperties: false
-              required: [result, evidence, source]
+              required: [result, evidence, source, remediation]
               properties:
                 result: {type: string, enum: [PASS, FAIL, NOT TESTED]}
                 evidence: {type: string, minLength: 1}
                 source: {type: string, minLength: 1}
+                remediation: {type: [string, "null"], minLength: 1}
   - acceptanceRationale:
       purpose: Ties the integrated decision to complete reconciled checklist evidence.
       schema:

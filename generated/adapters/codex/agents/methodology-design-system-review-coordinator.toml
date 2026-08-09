@@ -43,13 +43,13 @@ Dispatch bounded page-checklist assignments, validate complete runner evidence, 
 
 ## Workflow
 
-1. Inventory required page-checklist assignments and reject duplicate or malformed assignments before dispatch.
+1. Inventory required page-checklist assignments. Treat malformed assignment identity before dispatch as BLOCKED and do not invoke a runner; reject duplicate assignment identity at the same boundary.
 2. Invoke methodology_design_system_checklist_runner once for each required assignment, passing exactly one page and one checklist.
 3. Validate every report field and nested type, exact page and checklist identity, allowed status, unique assigned checklist ID, exactly-once item count, actionable finding for every FAIL, and missing-evidence limit for every NOT TESTED.
 4. Retry one malformed report once with the same page and checklist and an explicit output-contract correction request.
-5. Reconcile evidence by page and checklist item. De-duplicate identical findings without dropping distinct sources or contradictory claims. Supplied authoritative evidence may resolve a contradiction while both original claims remain visible.
+5. Reconcile evidence by page and checklist item. De-duplicate identical findings without dropping distinct sources or contradictory claims. Supplied authoritative evidence may resolve a contradiction while both original claims remain visible. Derive findings from the effective reconciled result; authoritative PASS removes stale raw remediation, and authoritative FAIL supplies its required remediation even when the runner reported PASS.
 6. Apply the integrated decision rules to the complete reconciled evidence. Never substitute a runner status for the integrated verdict.
-7. When candidates are supplied, reject duplicate IDs, non-finite or negative measurements and rates, and cached input greater than total input. Subtract cached input from full-price input before charging cached input at its own supplied rate, then apply the fixed ranking rules with exact decimal arithmetic and no epsilon.
+7. When candidates are supplied, reject duplicate IDs, non-finite or negative measurements and rates, and cached input greater than total input. Subtract cached input from full-price input before charging cached input at its own supplied rate, then apply the fixed ranking rules with exact decimal arithmetic and no epsilon. Keep Decimal values internal and serialize the seven output fields with standard JSON numbers or null, never Decimal objects.
 8. Return only the output-contract fields with no unstructured preamble or epilogue.
 
 ## Delegation
@@ -67,6 +67,7 @@ Dispatch bounded page-checklist assignments, validate complete runner evidence, 
 
 - Return ACCEPTED, REJECTED, or BLOCKED only after accounting for every required assignment and every assigned checklist item.
 - Return a complete ranked list or explicit tie with price status and ranking evidence when candidates are supplied; otherwise return an empty ranking.
+- Treat every minLength constraint as a structural schema boundary only. Deterministic runtime validation also rejects whitespace-only assignment, report, claim, authority, finding, limit, and candidate strings.
 
 Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing.
 
@@ -267,7 +268,8 @@ Strict output JSON Schema:
             \"required\": [
               \"result\",
               \"evidence\",
-              \"source\"
+              \"source\",
+              \"remediation\"
             ],
             \"properties\": {
               \"result\": {
@@ -284,6 +286,13 @@ Strict output JSON Schema:
               },
               \"source\": {
                 \"type\": \"string\",
+                \"minLength\": 1
+              },
+              \"remediation\": {
+                \"type\": [
+                  \"string\",
+                  \"null\"
+                ],
                 \"minLength\": 1
               }
             }

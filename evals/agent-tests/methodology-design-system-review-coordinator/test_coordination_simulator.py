@@ -8,8 +8,11 @@ Tests: evals/agent-tests/methodology-design-system-review-coordinator/test_coord
 
 from __future__ import annotations
 
+import json
 import importlib.util
 from pathlib import Path
+import subprocess
+import sys
 import unittest
 from decimal import Decimal
 
@@ -17,6 +20,7 @@ import yaml
 
 
 MODULE_PATH = Path(__file__).with_name("coordination_simulator.py")
+ROOT = Path(__file__).resolve().parents[3]
 SPEC = importlib.util.spec_from_file_location("design_system_coordination_simulator", MODULE_PATH)
 assert SPEC and SPEC.loader
 subject = importlib.util.module_from_spec(SPEC)
@@ -27,6 +31,37 @@ class DesignSystemCoordinatorTests(unittest.TestCase):
     """Exercise every required coordinator decision without a live model call."""
 
     assignment = ("page.html", "Shared", ("DDS-COM-001", "DDS-COM-002"))
+
+    def _assert_matches_schema(self, value: object, schema: dict[str, object]) -> None:
+        """Validate one instance against the role generator's supported schema subset."""
+
+        raw_types = schema["type"]
+        schema_types = raw_types if isinstance(raw_types, list) else [raw_types]
+        type_matches = {
+            "object": isinstance(value, dict),
+            "array": isinstance(value, list),
+            "string": isinstance(value, str),
+            "integer": isinstance(value, int) and not isinstance(value, bool),
+            "number": isinstance(value, (int, float)) and not isinstance(value, bool),
+            "boolean": isinstance(value, bool),
+            "null": value is None,
+        }
+        self.assertTrue(any(type_matches[schema_type] for schema_type in schema_types))
+        if "enum" in schema:
+            self.assertIn(value, schema["enum"])
+        if isinstance(value, dict):
+            properties = schema["properties"]
+            self.assertEqual(set(properties), set(value))
+            for name, property_schema in properties.items():
+                self._assert_matches_schema(value[name], property_schema)
+        if isinstance(value, list):
+            self.assertGreaterEqual(len(value), schema.get("minItems", 0))
+            for item in value:
+                self._assert_matches_schema(item, schema["items"])
+        if isinstance(value, str):
+            self.assertGreaterEqual(len(value), schema.get("minLength", 0))
+        if isinstance(value, (int, float)) and not isinstance(value, bool):
+            self.assertGreaterEqual(value, schema.get("minimum", value))
 
     def _report(self, results: tuple[str, str] = ("PASS", "PASS")) -> dict[str, object]:
         """Build one strict runner report for the class assignment."""
@@ -102,6 +137,111 @@ class DesignSystemCoordinatorTests(unittest.TestCase):
         )
         self.assertEqual("BLOCKED", wrong_identity_blocked["status"])
 
+    def test_malformed_assignment_and_attempt_shapes_block_without_crashing(self) -> None:
+        """Untrusted assignment and report-attempt containers fail before unpacking or iteration."""
+
+        malformed_assignments = (
+            None,
+            [],
+            [None],
+            [("page.html",)],
+            [("page.html", "Shared", None)],
+            [("page.html", "Shared", ("DDS-COM-001", []))],
+            [("  ", "Shared", ("DDS-COM-001",))],
+        )
+        for assignments in malformed_assignments:
+            with self.subTest(assignments=assignments):
+                result = subject.coordinate(assignments, {})
+                self.assertEqual("BLOCKED", result["status"])
+                json.dumps(result, allow_nan=False)
+
+        key = subject.assignment_key(self.assignment)
+        malformed_attempt_inventories = (
+            None,
+            [],
+            "attempts",
+            {key: None},
+            {key: "report"},
+            {key: {}},
+            {key: [self._report(), self._report(), self._report()]},
+            {"unknown.html:Shared": [self._report()]},
+            {key: [{**self._report(), "checks": [{"id": "DDS-COM-001", "result": [], "evidence": "bad"}]}]},
+        )
+        for attempts in malformed_attempt_inventories:
+            with self.subTest(attempts=attempts):
+                result = subject.coordinate((self.assignment,), attempts)
+                self.assertEqual("BLOCKED", result["status"])
+                json.dumps(result, allow_nan=False)
+
+        malformed_nested_inputs = (
+            {"unavailable": None},
+            {"unavailable": {key: []}},
+            {"extra_claims": None},
+            {"extra_claims": [None]},
+            {"authoritative_evidence": []},
+            {"authoritative_evidence": {"page.html:Shared:DDS-COM-001": None}},
+            {
+                "authoritative_evidence": {
+                    "page.html:Shared:DDS-COM-001": {
+                        "result": [],
+                        "evidence": "evidence",
+                        "source": "authority",
+                    }
+                }
+            },
+            {
+                "authoritative_evidence": {
+                    "page.html:Shared:DDS-COM-001": {
+                        "result": "FAIL",
+                        "evidence": "evidence",
+                        "source": "authority",
+                    }
+                }
+            },
+            {
+                "authoritative_evidence": {
+                    "page.html:Shared:DDS-COM-001": {
+                        "result": "PASS",
+                        "evidence": "   ",
+                        "source": "authority",
+                    }
+                }
+            },
+            {
+                "extra_claims": [
+                    {
+                        "page": "unassigned.html",
+                        "checklist": "Shared",
+                        "id": "DDS-COM-001",
+                        "result": "FAIL",
+                        "evidence": "out of scope",
+                        "source": "secondary",
+                    }
+                ]
+            },
+            {"candidates": None},
+            {"candidates": [None]},
+            {
+                "candidates": [
+                    {
+                        "id": "invalid",
+                        "accuracy": "NaN",
+                        "estimated_cost": "1",
+                        "wall_seconds": "1",
+                    }
+                ]
+            },
+        )
+        for keyword_arguments in malformed_nested_inputs:
+            with self.subTest(keyword_arguments=keyword_arguments):
+                result = subject.coordinate(
+                    (self.assignment,),
+                    {key: [self._report()]},
+                    **keyword_arguments,
+                )
+                self.assertEqual("BLOCKED", result["status"])
+                json.dumps(result, allow_nan=False)
+
     def test_duplicate_findings_are_deduplicated_and_conflicts_are_preserved(self) -> None:
         """Identical findings collapse while contradictory material item results block."""
 
@@ -167,6 +307,60 @@ class DesignSystemCoordinatorTests(unittest.TestCase):
             2,
             len(reverse_resolved["evidenceConflicts"][0]["claims"]),
         )
+        self.assertEqual([], reverse_resolved["reconciledFindings"])
+
+        fail_resolved = subject.coordinate(
+            (self.assignment,),
+            {key: [self._report()]},
+            extra_claims=(
+                {
+                    "page": "page.html",
+                    "checklist": "Shared",
+                    "id": "DDS-COM-001",
+                    "result": "FAIL",
+                    "evidence": "contrary source",
+                    "source": "secondary",
+                },
+            ),
+            authoritative_evidence={
+                "page.html:Shared:DDS-COM-001": {
+                    "result": "FAIL",
+                    "evidence": "authoritative rendered audit",
+                    "source": "authoritative-audit",
+                    "remediation": "Correct the authoritative defect.",
+                }
+            },
+        )
+        self.assertEqual("REJECTED", fail_resolved["status"])
+        self.assertEqual(
+            [
+                {
+                    "page": "page.html",
+                    "checklist": "Shared",
+                    "id": "DDS-COM-001",
+                    "remediation": "Correct the authoritative defect.",
+                    "sources": ["authoritative-audit"],
+                }
+            ],
+            fail_resolved["reconciledFindings"],
+        )
+
+        unresolved_with_raw_finding = subject.coordinate(
+            (self.assignment,),
+            {key: [self._report(("FAIL", "PASS"))]},
+            extra_claims=(
+                {
+                    "page": "page.html",
+                    "checklist": "Shared",
+                    "id": "DDS-COM-001",
+                    "result": "PASS",
+                    "evidence": "contrary source",
+                    "source": "secondary",
+                },
+            ),
+        )
+        self.assertEqual("BLOCKED", unresolved_with_raw_finding["status"])
+        self.assertEqual([], unresolved_with_raw_finding["reconciledFindings"])
 
     def test_timeout_and_cancellation_preserve_missing_assignments(self) -> None:
         """Unavailable runner outcomes remain explicit coverage gaps."""
@@ -228,6 +422,92 @@ class DesignSystemCoordinatorTests(unittest.TestCase):
         self.assertTrue(ranking[1]["tie"])
         self.assertFalse(ranking[2]["tie"])
 
+    def test_coordinator_output_is_standard_json_and_matches_source_schema(self) -> None:
+        """Exact Decimal comparisons must not leak Decimal objects into the seven-field output."""
+
+        key = subject.assignment_key(self.assignment)
+        output = subject.coordinate(
+            (self.assignment,),
+            {key: [self._report()]},
+            candidates=(
+                {
+                    "id": "candidate-a",
+                    "accuracy": "0.999999999999999999",
+                    "estimated_cost": "1.000000000000000001",
+                    "wall_seconds": "2.5",
+                },
+                {
+                    "id": "candidate-b",
+                    "accuracy": "0.999999999999999999",
+                    "estimated_cost": None,
+                    "wall_seconds": "1",
+                },
+            ),
+        )
+        json.dumps(output, allow_nan=False)
+        role = yaml.safe_load(
+            (
+                ROOT
+                / "agents"
+                / "roles"
+                / "methodology-maintenance"
+                / "methodology-design-system-review-coordinator.role.yaml"
+            ).read_text(encoding="utf-8")
+        )
+        properties = {
+            next(iter(entry)): next(iter(entry.values()))["schema"]
+            for entry in role["outputContract"]
+        }
+        output_schema = {
+            "type": "object",
+            "additionalProperties": False,
+            "required": list(properties),
+            "properties": properties,
+        }
+        self._assert_matches_schema(output, output_schema)
+
+        for runner_results, extra_result, authority in (
+            (
+                ("FAIL", "PASS"),
+                "PASS",
+                {
+                    "result": "PASS",
+                    "evidence": "authoritative pass evidence",
+                    "source": "authoritative-audit",
+                },
+            ),
+            (
+                ("PASS", "PASS"),
+                "FAIL",
+                {
+                    "result": "FAIL",
+                    "evidence": "authoritative fail evidence",
+                    "source": "authoritative-audit",
+                    "remediation": "Correct the authoritative defect.",
+                },
+            ),
+        ):
+            with self.subTest(authoritative_result=authority["result"]):
+                conflict_output = subject.coordinate(
+                    (self.assignment,),
+                    {key: [self._report(runner_results)]},
+                    extra_claims=(
+                        {
+                            "page": "page.html",
+                            "checklist": "Shared",
+                            "id": "DDS-COM-001",
+                            "result": extra_result,
+                            "evidence": "contrary evidence",
+                            "source": "secondary",
+                        },
+                    ),
+                    authoritative_evidence={
+                        "page.html:Shared:DDS-COM-001": authority
+                    },
+                )
+                json.dumps(conflict_output, allow_nan=False)
+                self._assert_matches_schema(conflict_output, output_schema)
+
     def test_cached_input_is_subtracted_before_cached_charge(self) -> None:
         """Cached tokens must not also receive the full input rate."""
 
@@ -244,6 +524,9 @@ class DesignSystemCoordinatorTests(unittest.TestCase):
                 {"input_tokens": 1, "cached_input_tokens": 2, "output_tokens": 0},
                 {"input_tokens": 1, "cached_input_tokens": 1, "output_tokens": 1},
             )
+        for usage, rates in (([], {}), ({}, []), (None, {})):
+            with self.subTest(usage=usage, rates=rates), self.assertRaises(ValueError):
+                subject.estimated_cost(usage, rates)
         invalid_candidates = (
             ({"id": "x", "accuracy": "NaN", "estimated_cost": "1", "wall_seconds": "1"},),
             ({"id": "x", "accuracy": "1", "estimated_cost": "-1", "wall_seconds": "1"},),
@@ -272,6 +555,9 @@ class DesignSystemCoordinatorTests(unittest.TestCase):
             {"fixtures/coordination"},
             {item["executableCase"] for item in scenarios["scenarios"]},
         )
+        for scenario in scenarios["scenarios"]:
+            self.assertIs(True, scenario["requiresWorkspaceInventory"])
+            self.assertIs(True, scenario["requiresNoDetectedMutation"])
         task = (
             suite_root
             / "fixtures"
@@ -289,6 +575,41 @@ class DesignSystemCoordinatorTests(unittest.TestCase):
             "invalid numeric measurements",
         ):
             self.assertIn(phrase, scenario_text)
+
+        suite_skill = "methodology-design-system-review-coordinator-suite-contract"
+        for agent_name in ("supervisor.toml", "judge.toml"):
+            agent_text = (suite_root / "agents" / agent_name).read_text(encoding="utf-8")
+            self.assertIn(suite_skill, agent_text)
+
+        fixture_root = suite_root / "fixtures" / "coordination"
+        completed = subprocess.run(
+            [sys.executable, "verify.py"],
+            cwd=fixture_root,
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(0, completed.returncode, completed.stdout + completed.stderr)
+        inputs = (fixture_root / "coordination-inputs.yaml").read_text(encoding="utf-8")
+        for marker in (
+            "malformedThenComplete",
+            "retryExhaustion",
+            "unavailable",
+            "timeout",
+            "cancelled",
+            "authoritativePass",
+            "authoritativeFail",
+            "unresolved",
+            "inside-boundary",
+            "exact-boundary",
+            "outside-boundary",
+            "exact-tie-a",
+            "exact-tie-b",
+            "unpriced",
+            "invalidMeasurements",
+            "cachedAccounting",
+        ):
+            self.assertIn(marker, inputs)
 
 
 if __name__ == "__main__":

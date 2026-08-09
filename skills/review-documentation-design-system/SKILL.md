@@ -34,7 +34,9 @@ Review one rendered HTML page and its source. Do not treat the audit examples in
 - The design-system version it claims.
 - Browser access when behavior or responsive rendering is in scope.
 
-If the page, checklist, or claimed version is unavailable or ambiguous, report that as missing evidence; do not infer conformance or choose another checklist.
+The caller must supply one nonblank page identity, one nonblank checklist identity, and the exact unique expected-ID inventory. A missing, ambiguous, malformed, or whitespace-only identity is a caller-owned pre-dispatch BLOCKED condition; do not invoke the checklist runner or choose an identity silently.
+
+Use NOT TESTED only after the exact page, checklist, and expected-ID inventory exists and required source, rendered, responsive, keyboard, or other review evidence cannot be obtained. Name that missing evidence; do not infer conformance.
 
 ## Workflow
 
@@ -63,4 +65,6 @@ For a standalone full-page review, the caller schedules separate invocations for
 
 ## Result Format
 
-Report the page, claimed version, overall result, and a table with ID, Result, Evidence, and Remediation. Keep remediation specific to failed criteria. End with untested evidence and remaining uncertainty.
+When the caller supplies a strict output contract, return only that contract's fields and nested shapes. Do not add the prose or table below to a role-owned strict response.
+
+As the standalone fallback when no strict caller contract applies, report the page, claimed version, overall result, and a table with ID, Result, Evidence, and Remediation. Keep remediation specific to failed criteria. End with untested evidence and remaining uncertainty.

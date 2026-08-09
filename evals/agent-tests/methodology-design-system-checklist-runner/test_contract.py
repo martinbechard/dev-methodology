@@ -98,12 +98,55 @@ class ChecklistRunnerContractTests(unittest.TestCase):
     def test_malformed_or_null_reports_return_errors_without_crashing(self) -> None:
         """Untrusted output shape errors are bounded contract failures."""
 
-        for report in (None, [], {}, {"checks": None}):
+        malformed_reports = (
+            None,
+            [],
+            {},
+            {"checks": None},
+            {**self._report(["PASS"]), "status": []},
+            {
+                **self._report(["PASS"]),
+                "checks": [
+                    {"id": "DDS-TST-001", "result": [], "evidence": "evidence"}
+                ],
+            },
+            {**self._report(["PASS"]), "checks": [None]},
+            {**self._report(["PASS"]), "findings": [[]]},
+            {**self._report(["PASS"]), "limits": {"id": "DDS-TST-001"}},
+        )
+        for report in malformed_reports:
             with self.subTest(report=report):
                 errors = contract.validate_report(
                     "page.html",
                     "Shared",
                     ("DDS-TST-001",),
+                    report,
+                )
+                self.assertTrue(errors)
+
+    def test_malformed_assignment_shapes_return_errors_without_crashing(self) -> None:
+        """Null, whitespace, mixed-type, and unhashable assignment values fail closed."""
+
+        report = self._report(["PASS"])
+        malformed_assignments = (
+            (None, "Shared", ("DDS-TST-001",)),
+            ("page.html", [], ("DDS-TST-001",)),
+            ("   ", "Shared", ("DDS-TST-001",)),
+            ("page.html", "Shared", None),
+            ("page.html", "Shared", "DDS-TST-001"),
+            ("page.html", "Shared", ("DDS-TST-001", [])),
+            ("page.html", "Shared", ("DDS-TST-001", "  ")),
+        )
+        for page, checklist, checklist_ids in malformed_assignments:
+            with self.subTest(
+                page=page,
+                checklist=checklist,
+                checklist_ids=checklist_ids,
+            ):
+                errors = contract.validate_report(
+                    page,
+                    checklist,
+                    checklist_ids,
                     report,
                 )
                 self.assertTrue(errors)
@@ -164,6 +207,12 @@ class ChecklistRunnerContractTests(unittest.TestCase):
             suite["projectSkills"]["suite"],
         )
         self.assertTrue((suite_root / suite["projectSkills"]["suite"][0]).is_file())
+        scenario_document = yaml.safe_load(
+            (suite_root / "scenarios.yaml").read_text(encoding="utf-8")
+        )
+        for scenario in scenario_document["scenarios"]:
+            self.assertIs(True, scenario["requiresWorkspaceInventory"])
+            self.assertIs(True, scenario["requiresNoDetectedMutation"])
         scenarios = (suite_root / "scenarios.yaml").read_text(encoding="utf-8")
         for phrase in (
             "wrong page or checklist identity",
@@ -172,6 +221,11 @@ class ChecklistRunnerContractTests(unittest.TestCase):
             "FAIL and NOT TESTED",
         ):
             self.assertIn(phrase, scenarios)
+
+        suite_skill = "methodology-design-system-checklist-runner-suite-contract"
+        for agent_name in ("supervisor.toml", "judge.toml"):
+            agent_text = (suite_root / "agents" / agent_name).read_text(encoding="utf-8")
+            self.assertIn(suite_skill, agent_text)
 
 
 if __name__ == "__main__":
