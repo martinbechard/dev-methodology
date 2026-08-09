@@ -185,17 +185,17 @@ Condition Type: owned-wait
 
 Owner: Dev Orchestrator task 019fe4cb-b4f3-7563-8ece-a60e567aae29
 
-Evidence: Clean private candidate fe2228e2140e4ed212917edfe240fb7001588813 contains only the four approved run-agent-tournament package paths on branch codex/add-portable-agent-tournament-skill in worktree /Users/martinbechard/.codex/worktrees/1bbe/dev-methodology. Repository skill validation, OpenAI metadata synchronization, exact provenance validation, supplemental YAML and Markdown-link checks, focused contract assertions, harness-boundary search, inline-code scan, and Git diff checks passed. Configured MCP validation correctly returned structured outside-configured-root rejections for this private worktree and remains pending from a configured project root; no fallback bypass was claimed. The Coordinator confirmed that terminology still owns review, shared catalogs, generated output, installation, publication, and main integration and queued an event-driven direct release notification. Exact Work Item activity=work claim add-portable-agent-tournament-skill-019fe4cb-root-work remains live from journal event 8ed3dca6-9a12-40a7-ac10-8f2b6bb5e4b4. This wait-state refresh is protected by exact backlog-path claim add-portable-agent-tournament-skill-019fe4cb-candidate-wait-1, outcome SHARED_CHECKOUT_ACQUIRED, journal event f9a32bf3-2809-4482-9ecd-ce447eef8314.
+Evidence: Clean private candidate fe2228e2140e4ed212917edfe240fb7001588813 contains only the four approved run-agent-tournament package paths on branch codex/add-portable-agent-tournament-skill in worktree /Users/martinbechard/.codex/worktrees/1bbe/dev-methodology. Repository skill validation, OpenAI metadata synchronization, exact provenance validation, supplemental YAML and Markdown-link checks, focused contract assertions, harness-boundary search, inline-code scan, and Git diff checks passed. Configured MCP validation correctly returned structured outside-configured-root rejections for this private worktree and remains pending from a configured project root; no fallback bypass was claimed. Terminology task 019fe3d6-2dd6-7322-a507-e8ca961e27d8 supplied direct exact-manifest narrowing commit ae70fda537537b2df45193447d73b0de6c1e9605 for seven non-overlapping evaluation-runner paths and confirmed its source worktree clean with 123 of 123 focused runner-module checks green. That notice is not a release: terminology retains review, shared catalogs, generated output, installation, live-model evaluation, and main integration. Exact Work Item activity=work claim add-portable-agent-tournament-skill-019fe4cb-root-work remains live from journal event 8ed3dca6-9a12-40a7-ac10-8f2b6bb5e4b4. This narrowing refresh is protected by exact backlog-path claim add-portable-agent-tournament-skill-019fe4cb-narrowing-evidence-1, outcome SHARED_CHECKOUT_ACQUIRED, journal event 9916cad5-fd84-4d99-8242-1fa6e03e8172.
 
-Observed At: 2026-08-09T04:59:57Z
+Observed At: 2026-08-09T05:06:44Z
 
 Started At: 2026-08-09T04:59:42Z
 
 Deadline or Expires At: 2026-08-09T05:27:00Z
 
-Next Action: On the Coordinator's direct terminology-owner release event, dispatch fresh independent source and methodology review for candidate fe2228e2140e4ed212917edfe240fb7001588813; otherwise preserve the clean candidate and reconcile the same owned wait at the next parent review
+Next Action: Preserve candidate fe2228e2140e4ed212917edfe240fb7001588813 and await the later direct terminology-owner release or reconciliation receipt before dispatching review or entering any shared event
 
-Next Reconciliation At: 2026-08-09T05:10:00Z
+Next Reconciliation At: 2026-08-09T05:20:00Z
 
 ## Running Resource Claim Evidence
 
