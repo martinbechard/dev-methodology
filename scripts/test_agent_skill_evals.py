@@ -4650,6 +4650,20 @@ class HarnessAndJudgeTests(unittest.TestCase):
         self.assertIn("reference_load", documentation)
         self.assertIn("reference_refresh remains disabled", documentation)
         self.assertIn("target-omitted and wrong-skill controls", documentation)
+        self.assertIn(
+            "The current catalog links `terminology-standard-negative-activation` "
+            "through its Agent scenario and documentation-methodology Workflow "
+            "relationships while keeping "
+            "`probe-terminology-standard.executableCases` positive-only.",
+            documentation,
+        )
+        self.assertIn(
+            "Catalog linkage alone does not promote negative-case or full-probe "
+            "coverage; current valid receipts and paired treatment, target-omitted, "
+            "and wrong-skill controls remain required.",
+            documentation,
+        )
+        self.assertNotIn("no negative-activation fixtures", documentation)
 
     def test_completed_mcp_call_without_safe_outcome_is_not_semantic_evidence(self) -> None:
         records = [
