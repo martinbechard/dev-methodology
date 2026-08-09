@@ -139,8 +139,8 @@ Task-ID-Evidence: historical-unknown
     <div class="section-heading"><h2 id="coverage-title">Coverage and case catalogs</h2><p>Current catalog inventory remains separate from historical Campaign Evaluation results. Probe records retain their executable case, agent-scenario, and workflow associations without turning declarations into verified runs.</p></div>
     <h3>Current catalog inventory</h3>
     <div class="grid" style="margin-top:1rem">
-      <article class="metric"><strong>142</strong><span>Bundled skills</span></article>
-      <article class="metric"><strong>140</strong><span>Diagnostic probe records</span></article>
+      <article class="metric"><strong>143</strong><span>Bundled skills</span></article>
+      <article class="metric"><strong>141</strong><span>Diagnostic probe records</span></article>
       <article class="metric"><strong>30</strong><span>Conceptual agents</span></article>
       <article class="metric"><strong>30</strong><span>Current Test suites</span></article>
       <article class="metric"><strong>114</strong><span>Current Test suite scenarios</span></article>
@@ -152,7 +152,7 @@ Task-ID-Evidence: historical-unknown
       <article class="metric"><strong>5</strong><span>Workflow packs</span></article>
     </div>
     <div class="grid" style="margin-top:1rem">
-      <article class="method-card"><h3>Skill catalog states</h3><ul><li>0 skills have a direct governed Evaluation result.</li><li>140 skills have a direct diagnostic probe declaration but no direct Evaluation result.</li><li>1 skills have only indirect current Test suite coverage without a direct probe or Evaluation result.</li><li>1 skills have no recorded evaluation evidence.</li><li>56 skills are named by at least one selected-Campaign scenario; 86 are not.</li></ul><p><strong>No skill-level Evaluation result:</strong> the selected Test report publishes no skill-level Evaluation results, so linked PASS results remain agent-scenario evidence.</p></article>
+      <article class="method-card"><h3>Skill catalog states</h3><ul><li>0 skills have a direct governed Evaluation result.</li><li>141 skills have a direct diagnostic probe declaration but no direct Evaluation result.</li><li>1 skills have only indirect current Test suite coverage without a direct probe or Evaluation result.</li><li>1 skills have no recorded evaluation evidence.</li><li>56 skills are named by at least one selected-Campaign scenario; 87 are not.</li></ul><p><strong>No skill-level Evaluation result:</strong> the selected Test report publishes no skill-level Evaluation results, so linked PASS results remain agent-scenario evidence.</p></article>
     </div>
   </section>
 
@@ -167,7 +167,7 @@ Task-ID-Evidence: historical-unknown
       <div><dt>Evidence level</dt><dd>Governed agent-suite campaign</dd></div>
       <div><dt>Documentation snapshot mode</dt><dd>Deterministic source snapshot</dd></div>
       <div><dt>Wall-clock build time</dt><dd>Not retained; deterministic output does not claim an unsupported generation timestamp</dd></div>
-      <div><dt>Current source snapshot</dt><dd><code>e8aa2032eb5e6b3414455baf154b4047a266302502c4c3c84bf0cc6a24a00e8d</code>; regenerated and compared by the focused check</dd></div>
+      <div><dt>Current source snapshot</dt><dd><code>39fa6edb5fe83e40fe4d284e1b003585fb467034d08ba465f87dfb93e57ed45b</code>; regenerated and compared by the focused check</dd></div>
     </dl>
     <div style="margin-top:2rem"><h3>Evaluation results</h3></div>
     <div class="grid" style="margin-top:1rem">
@@ -2204,7 +2204,7 @@ Task-ID-Evidence: historical-unknown
       <label class="field" for="skill-status">Coverage status<select id="skill-status" data-filter-status="skill"><option value="all">All statuses</option><option value="direct-governed">Direct governed Evaluation result</option><option value="direct-probe">Direct diagnostic probe</option><option value="indirect-only">Indirect Test suite only</option><option value="none">No recorded evidence</option></select></label>
       <button type="button" data-filter-clear="skill">Clear skill filters</button>
     </div>
-    <p class="result-count" id="skill-result-count" aria-live="polite">Showing all 142 skills.</p>
+    <p class="result-count" id="skill-result-count" aria-live="polite">Showing all 143 skills.</p>
     <noscript><p class="scope-note">JavaScript is disabled. All skill entries remain visible; text and status filtering are optional enhancements.</p></noscript>
     <div class="catalog" id="skill-catalog">
     <article class="evaluation-card skill-card" id="skill-agent-harness"
@@ -5560,6 +5560,36 @@ available.
       <ul class="link-list"><li><a href="../evals/agent-tests/project-bootstrapper/scenarios.yaml">project-bootstrapper / valid-configuration-direct-path</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/project-bootstrapper/scenarios.yaml">project-bootstrapper / missing-configuration-multi-contribution</a> &mdash; <span class="status status--fail">FAIL</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/project-bootstrapper/scenarios.yaml">project-bootstrapper / invalid-configuration-no-authority</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/project-configurator/scenarios.yaml">project-configurator / valid-configuration-reuse</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/project-configurator/scenarios.yaml">project-configurator / technology-routing</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/project-configurator/scenarios.yaml">project-configurator / invalid-configuration</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-documentation-writer/scenarios.yaml">dev-documentation-writer / routed-authoring</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-documentation-writer/scenarios.yaml">dev-documentation-writer / source-gaps</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-documentation-writer/scenarios.yaml">dev-documentation-writer / verification-correction</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/methodology-maintainer/scenarios.yaml">methodology-maintainer / coherent-skill-catalog-change</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/methodology-maintainer/scenarios.yaml">methodology-maintainer / generated-adapter-drift-repair</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/methodology-maintainer/scenarios.yaml">methodology-maintainer / blocked-schema-expansion</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/methodology-artifact-reviewer/scenarios.yaml">methodology-artifact-reviewer / accepted-aligned-change</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/methodology-artifact-reviewer/scenarios.yaml">methodology-artifact-reviewer / catalog-and-adapter-drift</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/methodology-artifact-reviewer/scenarios.yaml">methodology-artifact-reviewer / incomplete-verification-evidence</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li></ul>
       <dl class="compact-list">
         <div><dt>Linked governed Evaluation results</dt><dd>Linked agent-suite outcomes only: PASS, BLOCKED, FAIL</dd></div>
+        <div><dt>Evidence level</dt><dd>No skill-level Evaluation result; linked Evaluation results remain agent-scenario evidence</dd></div>
+        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite Evaluation result is not a skill-level pass. The selected Test report publishes no skill-level Evaluation result or calibrated skill verdict.</dd></div>
+      </dl>
+    </article>
+
+    <article class="evaluation-card skill-card" id="skill-run-agent-tournament"
+      data-kind="skill" data-status="direct-probe" data-search="run-agent-tournament plan, run, resume, rescore, audit, and report controlled tournaments among agent definitions, semantic model profiles, provider models, reasoning efforts, or prompts under one fixed task contract. use for comparative selection from repeatable evidence; do not use for ordinary single-model testing. development-practice probe-run-agent-tournament no governed campaign link">
+      <div class="card-heading">
+        <div><span class="card-kicker">Skill</span><h3>run-agent-tournament</h3></div>
+        <span class="status status--direct-probe">Direct diagnostic probe</span>
+      </div>
+      <p>Plan, run, resume, rescore, audit, and report controlled tournaments among agent definitions, semantic model profiles, provider models, reasoning efforts, or prompts under one fixed task contract. Use for comparative selection from repeatable evidence; do not use for ordinary single-model testing.</p>
+      <p class="source-row"><a href="../skills/run-agent-tournament/SKILL.md">Skill source</a></p>
+      <h4>Direct diagnostic probe</h4>
+
+        <dl class="compact-list">
+          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-run-agent-tournament</a></dd></div>
+          <div><dt>Coverage state</dt><dd>declared: catalog declaration, not a verified run</dd></div>
+          <div><dt>Kind</dt><dd>activation-and-behavior</dd></div>
+          <div><dt>Executable cases</dt><dd>None declared</dd></div>
+          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-orchestrator-boundary</a></dd></div>
+          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">code-delivery</a></dd></div>
+          <div><dt>Deterministic checks</dt><dd>skill-read-trace, operation-coverage, no-forbidden-mutation, output-contract-presence</dd></div>
+          <div><dt>Model rubric</dt><dd>workflow-quality</dd></div>
+        </dl>
+
+      <h4>Governed campaign links</h4>
+      <p><span class="status status--missing">No governed campaign link</span></p><p>No selected-campaign scenario currently names this skill as a target skill.</p>
+      <dl class="compact-list">
+        <div><dt>Linked governed Evaluation results</dt><dd>No governed campaign link</dd></div>
         <div><dt>Evidence level</dt><dd>No skill-level Evaluation result; linked Evaluation results remain agent-scenario evidence</dd></div>
         <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite Evaluation result is not a skill-level pass. The selected Test report publishes no skill-level Evaluation result or calibrated skill verdict.</dd></div>
       </dl>

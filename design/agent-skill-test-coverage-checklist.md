@@ -20,8 +20,8 @@ This page is generated from the live conceptual agent and skill inventories, all
 
 ## Summary
 
-- [x] 30 conceptual agents and 142 bundled skills have structural coverage.
-- [x] 29 agents are scenario-declared and 140 skills are probe-declared.
+- [x] 30 conceptual agents and 143 bundled skills have structural coverage.
+- [x] 29 agents are scenario-declared and 141 skills are probe-declared.
 - Agents missing scenario declarations: dev-skill-lint-reviewer.
 - Skills missing probe declarations: analyze-document-topics, revise-document-topics.
 - [x] 68 agent scenarios and 5 workflow packs are declared.
@@ -33,7 +33,7 @@ This page is generated from the live conceptual agent and skill inventories, all
 - 32 skills have positive-case support, 0 have negative-activation cases, 0 have executable paired controls, and 0 satisfy the full probe contract.
 - 2 agents and 0 skills have executable full fixtures.
 - 0 agents and 0 skills have calibrated Model Judge status.
-- 29 agents and 116 skills have pending Model Judge status.
+- 29 agents and 117 skills have pending Model Judge status.
 - 0 agents and 24 skills use Deterministic Judges only and do not require Model Judge calibration.
 - 0 agents and 0 skills have classified executions.
 - 0 agents and 0 skills have Judge-passed evidence.
@@ -188,6 +188,7 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | resource-claim-helper-mcp | [x] | [x] probe-resource-claim-helper-mcp | [x] project-configuration-routing | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
 | review-code-with-evidence | [x] | [x] probe-review-code-with-evidence | [x] typescript-code-review | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | review-prompt-contracts | [x] | [x] probe-review-prompt-contracts | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| run-agent-tournament | [x] | [x] probe-run-agent-tournament | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | set-multitask-mode | [x] | [x] probe-set-multitask-mode | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | set-solo-mode | [x] | [x] probe-set-solo-mode | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | structured-design | [x] | [x] probe-structured-design | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
