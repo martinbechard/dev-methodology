@@ -10,9 +10,9 @@ Branch: `codex/publish-and-integrate-terminology-standard-019fe3d6`
 
 Worktree: `/Users/martinbechard/.codex/worktrees/940b/dev-methodology`
 
-Phase: Awaiting explicit approval for shared provider-backed probe runner scope
+Phase: Ready — Approved provider-backed probe runner resumption
 
-Status: User Action Required
+Status: Ready
 
 Type: Feature
 
@@ -201,9 +201,9 @@ Decline Consequence: Declining leaves the provider-backed production treatment u
 
 Unattended Work Boundary: Stop all source mutation, generator-copy correction, catalog reconciliation, shared installation, live-model evaluation, provider publication, review completion, main integration, and provider completion for this item. Preserve the clean candidate and review evidence. The independent documentation-design-system item may continue.
 
-Resolution: Pending
+Resolution: Approved. Resume the same canonical task through Ready -> Starting -> Running before any source mutation.
 
-Approval Resolution: Pending
+Approval Resolution: On 2026-08-09, the user answered `approved` in parent task `019fe2b3-4bcd-7f00-88aa-90e281b8f8bf`, approving exactly the seven paths named in the question. This approval authorizes only the treatment-only provider contract, control stripping, evidence validation, focused tests, and runner documentation on those paths. It does not authorize shared-user publication, unrelated framework scope, another governed definition, or baseline absorption.
 
 ## Scope Decision Preservation Evidence
 
@@ -230,3 +230,23 @@ Explicit Exclusions: `README.md`, `design/agentic-configuration.html`, `evals/ag
 ## Provider Transaction Recovery Evidence
 
 The initial exact commit attempt stopped before creating a commit because the moved source path no longer matched a worktree pathspec. Recovery then staged the claimed destination only. Commit `0e32c034` durably created the complete User Action Required destination but, because `git commit --only` selected only that destination, left the already-staged source deletion pending. The immediately following recovery commit records this evidence and removes only the claimed active source path. No unrelated file was staged or committed, and the final provider state has one unique Work Item ID at this User Action Required path.
+
+## Approval Resumption Evidence
+
+Approval Recorded At: 2026-08-09T04:24:00Z
+
+Approval Provenance: Direct user answer `approved` in parent task `019fe2b3-4bcd-7f00-88aa-90e281b8f8bf` on 2026-08-09, answering the exact pending seven-path question.
+
+Approved Additional Dependent Paths:
+
+- `scripts/run-agent-skill-evals.py`
+- `scripts/agent_skill_evals/invocations.py`
+- `scripts/agent_skill_evals/staging.py`
+- `scripts/agent_skill_evals/validation.py`
+- `scripts/test_agent_skill_evals.py`
+- `evals/evidence-schema.yaml`
+- `evals/README.md`
+
+Approval Boundary: Preserve all prior candidate commits, exact governed approvals, existing exclusions, and deferred overlap evidence. This answer does not authorize shared-user publication, unrelated framework changes, additional governed definitions, or absorption of baseline failures.
+
+Canonical Resumption: Preserve canonical task `019fe3d6-2dd6-7322-a507-e8ca961e27d8`, branch `codex/publish-and-integrate-terminology-standard-019fe3d6`, worktree `/Users/martinbechard/.codex/worktrees/940b/dev-methodology`, and commits `ec35759032051479bda3518cd892a4480119c41b`, `38825214eaee66433ae50c7cbafd3f6af407a2da`, and `2ee1d3968f710175810131c60d88def629e89d99`. Ready does not authorize source mutation; the same task must pass Ready -> Starting -> Running first.
