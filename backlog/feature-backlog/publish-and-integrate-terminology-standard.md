@@ -10,7 +10,7 @@ Branch: `codex/publish-and-integrate-terminology-standard-019fe3d6`
 
 Worktree: `/Users/martinbechard/.codex/worktrees/940b/dev-methodology`
 
-Phase: Implementing — Generated support projection
+Phase: Verifying — Final private candidate
 
 Status: Running
 
@@ -273,17 +273,17 @@ Condition Type: root-execution
 
 Owner: Dev Orchestrator task 019fe3d6-2dd6-7322-a507-e8ca961e27d8
 
-Evidence: The same canonical root execution remains active on the preserved branch and worktree. Dev Coder commit 8b2ee945bac4ac202bf355e2901b9aad56de628e durably migrates the authorized production catalogs and generated evaluation page across exactly eight paths. The clean candidate passes 125 of 125 runner Tests, 11 of 11 terminology-fixture Tests, catalog validation, evaluation-page freshness, and diff checks. The documentation suite passes 28 of 29 with one independently reproduced baseline historical-inventory failure. The mandatory bundle suite passes 170 of 171; its sole failure proves that the generated support checklist still reports 14 cases while the authorized positive and independently linked negative terminology cases require 16. The Coordinator authorized exactly one additional non-governed generated output, design/agent-skill-test-coverage-checklist.md, through unchanged scripts/build-support-checklist.py. Its first invocation stopped before writing because both terminology-owned cases declare codex-only harnesses while already declaring codex and junie runnable. The Coordinator now authorizes only a same-path correction in already-approved evals/cases.yaml for those two terminology entries to match the existing codex-and-junie generator contract, plus same-path Junie sandbox or reference normalization only if the unchanged generator's next invariant requires it. No other case, path, generator, hand-edited projection, weakened Test, or unrelated baseline is authorized. Security review remains the Coordinator-authorized non-blocking exclusion.
+Evidence: The same canonical root execution remains active on the preserved branch and worktree under exact Work Item activity=work claim publish-and-integrate-terminology-standard-019fe3d6-root-work-harness-authorized. Dev Coder commits 8b2ee945bac4ac202bf355e2901b9aad56de628e, e18b08496a7b998daebdf8fb585110c8893b0758, and 2e7b76e97c1899c0623a625a82f585647dc145eb durably complete the released production catalog migration, the Coordinator-authorized Codex-and-Junie case normalization, reciprocal documentation workflow-pack entry, generator-owned 16-case support projection, and truthful negative-link guide regression. The clean candidate passes 125 of 125 runner Tests, 11 of 11 terminology-fixture Tests, catalog validation, evaluation-page freshness, support-checklist freshness, all 171 bundle Tests, and diff checks. The documentation suite's sole historical-inventory failure is independently reproduced at the unchanged base and is not absorbed. Fresh review of immutable 8b2ee945 found the harness, workflow-pack, and guide defects; the first two are corrected by e18b0849 and the guide correction by 2e7b76e9. Fresh immutable re-review of those corrections and independent final deterministic verification are now running before any live-model resource acquisition. Security review remains the Coordinator-authorized non-blocking exclusion; shared installation, live-model execution, and main integration remain untouched.
 
-Observed At: 2026-08-09T06:34:40Z
+Observed At: 2026-08-09T06:48:42Z
 
 Started At: 2026-08-09T04:27:45Z
 
-Deadline or Expires At: 2026-08-09T07:18:24Z
+Deadline or Expires At: 2026-08-09T10:48:42Z
 
-Next Action: Normalize only the two terminology case declarations in evals/cases.yaml, rerun the unchanged checklist generator, accept same-path Junie sandbox or reference normalization only if its next invariant requires it, confirm the exact changed-path set, and rerun only the directly implicated catalog, generator, and bundle gates
+Next Action: Accept a fresh GOOD correction review and final deterministic verification, then acquire the bounded live-model resource and execute the production-routed treatment, target-omitted, wrong-skill, and independently linked negative case with frozen Codex model and sandbox boundaries
 
-Next Reconciliation At: 2026-08-09T06:49:40Z
+Next Reconciliation At: 2026-08-09T07:03:42Z
 
 ## Generated Checklist Scope Disposition
 
