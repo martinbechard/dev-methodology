@@ -30,11 +30,11 @@ An agent tournament compares two or more candidates under one fixed task contrac
 
 - Plan-only defines the decision, controls, candidate matrix, stages, and dry-run matrix. It needs no live-run authorization. Mark every unresolved planning assumption.
 - Live execution runs an authorized frozen contract and preserves the complete evidence for each invocation.
-- Resume reuses only completed schema-valid runs. It executes only frozen matrix rows that still require valid evidence.
-- Deterministic rescore recomputes validity, scores, costs, rankings, or reports from retained evidence. It makes zero live calls.
+- Resume reuses only completed schema-valid runs. It executes another attempt only through the frozen retry policy.
+- Deterministic rescore recomputes validity, scores, costs, rankings, or reports from retained evidence. It makes zero live calls and preserves auditable caller-owned proof of that fact.
 - Audit and report verify an existing tournament and communicate its result. They do not add live calls without a separate authorized execution mode.
 
-Read [Tournament Contract](references/tournament-contract.md) completely when you freeze, execute, resume, deterministically rescore, or audit a tournament. Do not load the reference only to decide whether this skill applies or to outline an unfrozen plan.
+Read [Tournament Contract](references/tournament-contract.md) completely when you freeze, execute, resume, deterministically rescore, audit, or report a tournament. Do not load the reference only to decide whether this skill applies or to outline an unfrozen plan.
 
 ## Clarify Material Gaps
 
@@ -44,7 +44,7 @@ Material gaps include:
 
 - the decision, role under test, varied factor, or held constants;
 - the candidates, availability, fixtures, reviewed ground truth, output schema, or scoring semantics;
-- the ranking policy, equivalence tolerances, tie-breakers, stages, repeats, or advancement rules;
+- the ranking policy, equivalence tolerances, tie-breakers, stages, retry policy, variance policy, repeats, or advancement rules;
 - live-run authority, budget, pricing treatment, evidence location, or stop conditions;
 - the data-safety boundary for candidate inputs.
 
@@ -62,11 +62,11 @@ Planning may use explicit non-blocking assumptions. Never carry an assumption si
 
 1. Select the mode and state the decision that the tournament will support.
 2. Resolve material gaps or stop before live calls.
-3. Freeze the complete contract and enumerate every authorized candidate-case-repeat invocation in a dry-run matrix.
-4. State the expected live-call count and obtain explicit authority for consequential execution.
-5. Validate fixtures, ground truth, runtime schema support, transport, and output capture independently from candidate output quality.
+3. Freeze the complete contract, including retry and variance policies. Enumerate every authorized invocation in a dry-run matrix.
+4. State a live-call maximum that includes live preflight and allowed retries. Obtain explicit authority for consequential execution.
+5. Validate fixtures, ground truth, runtime schema support, transport, and output capture independently from candidate output quality. Make transport and capture preflight with zero live model calls, or enumerate and authorize each live preflight invocation in the matrix.
 6. Hold each case input byte-equivalent across candidates. Vary one factor at a time unless the contract declares each varying factor and the attribution limitation.
-7. Execute or resume the frozen matrix. Preserve exact configuration, raw output, usage, transport evidence, timing, validity, and score evidence.
+7. Execute or resume the frozen matrix within its authorization, budget, retry limits, and call maximum. Preserve exact configuration, raw output, usage, transport evidence, timing, validity, and score evidence.
 8. Rank and advance candidates only through the frozen rules. Repeat leading candidates when variance matters.
 9. Obtain an independent audit when the selection is material.
 10. Report the decision, complete ranking, invalid runs, evidence limits, confidence, and any provisional status.
@@ -88,11 +88,17 @@ uncached input = max(total input - cached input, 0)
 
 Price uncached input, cached input, and output separately. Never invent a missing price. Keep an unpriced candidate visible with its accuracy and usage evidence. Mark a winner or ordering as provisional when it depends on an unavailable price and no accepted comparison rule resolves it.
 
+If unknown cost prevents ordering a tied accuracy tier, report a partial unresolved ranking. Stop affected advancement or winner selection until the caller accepts a rule or supplies the price. A uniquely higher-accuracy unpriced candidate remains the accuracy leader because that lead does not depend on cost.
+
 ## Validity And Evidence
 
 Classify infrastructure, transport, schema, and missing-artifact failures as invalid runs. Do not score them as candidate inaccuracy unless the frozen task contract explicitly assigns that failure to the candidate.
 
 Retain enough evidence to reproduce validity, scoring, cost arithmetic, stage ranking, advancement, and selection. Keep invalid evidence instead of hiding it. A one-run-per-case result is screening evidence with unmeasured variance, not statistical proof.
+
+Require a frozen variance metric, aggregation, acceptable limit, maximum repeats, and advance-or-stop disposition. A screening-only policy forbids a definitive winner while variance is unmeasured or remains unstable.
+
+For deterministic rescore, retain proof from the caller-owned execution boundary. Use a disabled call mechanism or complete invocation ledger or telemetry for the rescore window. Unchanged evidence digests support this proof but do not replace it.
 
 Before a model call, confirm that no fixture contains unauthorized PII or company-confidential information. If sensitive material is necessary, require explicit authority for its use and candidate exposure.
 
@@ -103,8 +109,9 @@ Return:
 - the frozen contract and dry-run call count;
 - per-run validity, scores, usage, cost, and elapsed time;
 - per-stage rankings and advancement evidence;
-- the winner and complete ranking, including unpriced candidates;
+- the winner and complete or explicitly partial ranking, including unresolved unpriced ties;
 - misses, invalid runs, limitations, variance evidence, confidence, and provisional status;
+- retry attempts, live-preflight calls, actual calls, the authorized maximum, and zero-call rescore proof;
 - independent audit evidence for a material decision;
 - a semantic model-profile handoff for the selected configuration.
 

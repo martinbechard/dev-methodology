@@ -5,6 +5,8 @@ tournament:
   contract_version: "<version>"
   mode: "plan-only"
   decision: "<coordinator selection decision>"
+  owner: "<tournament owner>"
+  created_at_utc: "<ISO-8601 UTC timestamp>"
   role_under_test: "coordinator"
   separate_from_runner_tournament: true
   evidence_location: "<durable evidence directory>"
@@ -15,40 +17,56 @@ attribution:
     - "semantic_model_profile"
   multi_factor_limitation: null
   constants:
-    task_contract_ref: "<caller-owned task contract>"
-    task_contract_sha256: "<sha256>"
     agent_definition_ref: "<fixed coordinator definition>"
     agent_definition_sha256: "<sha256>"
     prompt_ref: "<fixed prompt>"
     prompt_sha256: "<sha256>"
     reasoning_effort: "<fixed reasoning effort>"
     runtime_settings_ref: "<fixed runtime settings>"
+    runtime_settings_sha256: "<sha256>"
+
+task_contract:
+  contract_ref: "<caller-owned task contract>"
+  contract_sha256: "<sha256>"
+  success_conditions:
+    - "<observable success condition>"
+  candidate_responsibility_boundary:
+    includes:
+      - "<candidate-owned outcome or failure>"
+    excludes:
+      - "infrastructure"
+      - "transport"
+      - "schema-runtime-support"
+      - "missing-output-artifact"
 
 candidates:
   - id: "candidate-a"
     semantic_model_profile: "<profile-a>"
     runtime_configuration_ref: "<caller-owned configuration-a>"
-    configuration_sha256: "<sha256>"
+    runtime_configuration_sha256: "<candidate-a configuration sha256>"
     availability: "<confirmed-or-pending>"
-    pricing_ref: "price-a"
+    pricing_record_id: "price-a"
   - id: "candidate-b"
     semantic_model_profile: "<profile-b>"
     runtime_configuration_ref: "<caller-owned configuration-b>"
-    configuration_sha256: "<sha256>"
+    runtime_configuration_sha256: "<candidate-b configuration sha256>"
     availability: "<confirmed-or-pending>"
-    pricing_ref: "price-b"
+    pricing_record_id: "price-b"
   - id: "candidate-c"
     semantic_model_profile: "<profile-c>"
     runtime_configuration_ref: "<caller-owned configuration-c>"
-    configuration_sha256: "<sha256>"
+    runtime_configuration_sha256: "<candidate-c configuration sha256>"
     availability: "<confirmed-or-pending>"
-    pricing_ref: "price-c"
+    pricing_record_id: "price-c"
 
 frozen_runner:
   runner_profile: "<fixed semantic runner profile>"
   runner_configuration_ref: "<caller-owned runner configuration>"
   runner_configuration_sha256: "<sha256>"
   report_manifest_ref: "<frozen runner manifest>"
+  report_manifest_sha256: "<sha256>"
+  manifest_validator_ref: "<frozen runner manifest validator>"
+  manifest_validator_sha256: "<sha256>"
   hash_algorithm: "sha256"
   verification_timing:
     - "before-each-coordinator-run"
@@ -70,38 +88,44 @@ cases:
   fixtures:
     - id: "case-a"
       input_ref: "<case-a input>"
-      input_sha256: "<sha256>"
+      input_sha256: "<case-a input sha256>"
       ground_truth_ref: "<reviewed case-a ground truth>"
-      ground_truth_sha256: "<sha256>"
+      ground_truth_sha256: "<case-a ground-truth sha256>"
       reviewed_by: "<domain ground-truth owner>"
       data_classification: "<approved classification>"
+      representative_use_limitation: "<what this case does not establish>"
     - id: "case-b"
       input_ref: "<case-b input>"
-      input_sha256: "<sha256>"
+      input_sha256: "<case-b input sha256>"
       ground_truth_ref: "<reviewed case-b ground truth>"
-      ground_truth_sha256: "<sha256>"
+      ground_truth_sha256: "<case-b ground-truth sha256>"
       reviewed_by: "<domain ground-truth owner>"
       data_classification: "<approved classification>"
+      representative_use_limitation: "<what this case does not establish>"
     - id: "clean-control"
       input_ref: "<clean control input>"
-      input_sha256: "<sha256>"
+      input_sha256: "<clean-control input sha256>"
       ground_truth_ref: "<reviewed clean-control ground truth>"
-      ground_truth_sha256: "<sha256>"
+      ground_truth_sha256: "<clean-control ground-truth sha256>"
       reviewed_by: "<domain ground-truth owner>"
       data_classification: "<approved classification>"
+      representative_use_limitation: "<what this control does not establish>"
 
 output_contract:
   strict_schema_ref: "<caller-owned output schema>"
-  strict_schema_sha256: "<sha256>"
+  strict_schema_sha256: "<output schema sha256>"
   schema_validator_ref: "<independent schema validator>"
+  schema_validator_sha256: "<sha256>"
   runtime_schema_support: "<validated-or-pending>"
   transport_contract_ref: "<caller-owned transport contract>"
-  output_capture_ref: "<caller-owned capture location>"
+  transport_contract_sha256: "<sha256>"
+  output_capture_location: "<caller-owned capture location>"
 
 scoring:
   owner: "<domain evaluation package>"
   scorer_ref: "<deterministic scorer>"
   scorer_sha256: "<sha256>"
+  scorer_version: "<version>"
   exact_matching_keys:
     - "<domain key one>"
     - "<domain key two>"
@@ -110,6 +134,7 @@ scoring:
       direction: "higher-is-better"
       aggregation: "<exact domain rule>"
   invalid_runs_are_scores: false
+  missing_evidence_disposition: "invalid-run"
   candidate_responsibility_exception: "none"
 
 ranking:
@@ -121,12 +146,20 @@ ranking:
   accuracy_equivalence: "none"
   cost_equivalence_fraction: 0.15
   final_tie_breaker: "<accepted deterministic tie-breaker>"
-  unpriced_candidate_policy: "visible-and-cost-dependent-result-provisional"
+  unpriced_candidate_policy:
+    tied_accuracy_unknown_cost: "partial-unresolved-stop-for-price-or-accepted-rule"
+    unique_higher_accuracy: "definitive-accuracy-leader"
+    report_shape: "ordered-accuracy-tiers-with-unresolved-candidate-sets"
+    provisional_when: "selection-depends-on-missing-price"
 
 pricing:
   state: "incomplete"
   unit: "<currency-or-credit-unit>"
   usage_unit_divisor: "<source-declared divisor>"
+  usage_field_semantics:
+    total_input: "includes-cached-input"
+    cached_input: "subset-of-total-input"
+    output: "separate-output-usage"
   uncached_input_formula: "max(total input - cached input, 0)"
   separate_usage_categories:
     - "uncached-input"
@@ -135,7 +168,8 @@ pricing:
   records:
     - id: "price-a"
       status: "priced"
-      authoritative_source: "<pricing source>"
+      authoritative_source_ref: "<pricing source>"
+      authoritative_source_sha256: "<sha256>"
       source_version_or_date: "<version-or-date>"
       rates:
         uncached_input: "<rate>"
@@ -143,7 +177,8 @@ pricing:
         output: "<rate>"
     - id: "price-b"
       status: "priced"
-      authoritative_source: "<pricing source>"
+      authoritative_source_ref: "<pricing source>"
+      authoritative_source_sha256: "<sha256>"
       source_version_or_date: "<version-or-date>"
       rates:
         uncached_input: "<rate>"
@@ -151,7 +186,8 @@ pricing:
         output: "<rate>"
     - id: "price-c"
       status: "unpriced"
-      authoritative_source: null
+      authoritative_source_ref: null
+      authoritative_source_sha256: null
       source_version_or_date: null
       rates:
         uncached_input: null
@@ -166,6 +202,7 @@ stages:
     repeats_per_candidate_case: 1
     completion_rule: "all-required-runs-valid"
     advance: 2
+    tie_handling: "<accepted stage tie rule>"
   - id: "semifinal"
     candidate_source: "wide-top-2"
     cases:
@@ -173,6 +210,7 @@ stages:
     repeats_per_candidate_case: 1
     completion_rule: "all-required-runs-valid"
     advance: 2
+    tie_handling: "<accepted stage tie rule>"
   - id: "final"
     candidate_source: "semifinal-top-2"
     cases:
@@ -181,39 +219,167 @@ stages:
     repeats_per_candidate_case: 3
     completion_rule: "all-required-runs-valid"
     advance: 1
+    tie_handling: "<accepted final tie rule>"
+
+retry_policy:
+  id: "no-retries-v1"
+  mode: "prohibited"
+  eligible_invalid_categories: []
+  ineligible_invalid_categories:
+    - "infrastructure"
+    - "transport"
+    - "schema"
+    - "missing-artifact"
+  maximum_attempts_per_matrix_row: 1
+  maximum_retries_per_matrix_row: 0
+  unchanged_between_attempts:
+    - "candidate-configuration-and-digest"
+    - "case-input-and-digest"
+    - "prompt-and-digest"
+    - "schema-and-digest"
+    - "ground-truth-and-digest"
+    - "frozen-runner-dossier-and-digest"
+  prior_run_link_required: true
+  authorization_reuse: "not-permitted"
+  budget_reuse: "not-permitted"
+  fresh_authorization_if_policy_changes: true
+  stop_behavior: "stop-row-after-first-invalid-attempt"
+  contract_version_rule: "any-retry-or-frozen-input-change-requires-new-contract-version"
+
+variance_policy:
+  state: "<measured-or-screening-only>"
+  metric: "<variance metric>"
+  aggregation: "<aggregation across repeats cases and candidates>"
+  acceptable_limit: "<inclusive numeric limit and comparison rule>"
+  maximum_repeats_per_candidate_case: 3
+  additional_repeat_rule: "<when another frozen repeat is scheduled>"
+  acceptable_disposition: "advance-under-frozen-ranking-policy"
+  unmeasured_disposition: "screening-only-no-definitive-winner"
+  unstable_at_maximum_disposition: "stop-without-definitive-winner"
 
 dry_run:
   authorization_scope: "wide"
   matrix:
     - row: "wide-candidate-a-case-a-repeat-1"
+      stage: "wide"
+      invocation_kind: "candidate-run"
       candidate: "candidate-a"
+      configuration_sha256: "<candidate-a configuration sha256>"
       case: "case-a"
+      input_sha256: "<case-a input sha256>"
+      schema_sha256: "<output schema sha256>"
+      ground_truth_sha256: "<case-a ground-truth sha256>"
       repeat: 1
+      attempt: 1
+      prior_evidence_state: "none"
       intended_action: "execute"
       expected_live_calls: 1
+      estimated_usage:
+        total_input: "<estimated tokens or unknown>"
+        cached_input: "<estimated tokens or unknown>"
+        output: "<estimated tokens or unknown>"
+      estimated_cost:
+        state: "<estimated-or-unknown>"
+        amount: "<amount or null>"
+        unit: "<currency-or-credit-unit>"
+      authorization_ref: "<wide live-run authorization>"
+      authorization_sha256: "<sha256>"
+      budget_debit:
+        amount: "<estimated amount>"
+        unit: "<currency-credit-or-call-unit>"
+      data_safety_classification: "<approved classification>"
+      data_safety_authorization_ref: "<data-safety authorization>"
+      data_safety_authorization_sha256: "<sha256>"
+      retry_policy_id: "no-retries-v1"
+      evidence_destination: "<candidate-a case-a evidence directory>"
     - row: "wide-candidate-b-case-a-repeat-1"
+      stage: "wide"
+      invocation_kind: "candidate-run"
       candidate: "candidate-b"
+      configuration_sha256: "<candidate-b configuration sha256>"
       case: "case-a"
+      input_sha256: "<case-a input sha256>"
+      schema_sha256: "<output schema sha256>"
+      ground_truth_sha256: "<case-a ground-truth sha256>"
       repeat: 1
+      attempt: 1
+      prior_evidence_state: "none"
       intended_action: "execute"
       expected_live_calls: 1
+      estimated_usage:
+        total_input: "<estimated tokens or unknown>"
+        cached_input: "<estimated tokens or unknown>"
+        output: "<estimated tokens or unknown>"
+      estimated_cost:
+        state: "<estimated-or-unknown>"
+        amount: "<amount or null>"
+        unit: "<currency-or-credit-unit>"
+      authorization_ref: "<wide live-run authorization>"
+      authorization_sha256: "<sha256>"
+      budget_debit:
+        amount: "<estimated amount>"
+        unit: "<currency-credit-or-call-unit>"
+      data_safety_classification: "<approved classification>"
+      data_safety_authorization_ref: "<data-safety authorization>"
+      data_safety_authorization_sha256: "<sha256>"
+      retry_policy_id: "no-retries-v1"
+      evidence_destination: "<candidate-b case-a evidence directory>"
     - row: "wide-candidate-c-case-a-repeat-1"
+      stage: "wide"
+      invocation_kind: "candidate-run"
       candidate: "candidate-c"
+      configuration_sha256: "<candidate-c configuration sha256>"
       case: "case-a"
+      input_sha256: "<case-a input sha256>"
+      schema_sha256: "<output schema sha256>"
+      ground_truth_sha256: "<case-a ground-truth sha256>"
       repeat: 1
+      attempt: 1
+      prior_evidence_state: "none"
       intended_action: "execute"
       expected_live_calls: 1
+      estimated_usage:
+        total_input: "<estimated tokens or unknown>"
+        cached_input: "<estimated tokens or unknown>"
+        output: "<estimated tokens or unknown>"
+      estimated_cost:
+        state: "<estimated-or-unknown>"
+        amount: "<amount or null>"
+        unit: "<currency-or-credit-unit>"
+      authorization_ref: "<wide live-run authorization>"
+      authorization_sha256: "<sha256>"
+      budget_debit:
+        amount: "<estimated amount>"
+        unit: "<currency-credit-or-call-unit>"
+      data_safety_classification: "<approved classification>"
+      data_safety_authorization_ref: "<data-safety authorization>"
+      data_safety_authorization_sha256: "<sha256>"
+      retry_policy_id: "no-retries-v1"
+      evidence_destination: "<candidate-c case-a evidence directory>"
   expected_live_calls: 3
+  call_arithmetic:
+    base_candidate_calls: 3
+    live_preflight_calls: 0
+    maximum_retry_calls: 0
+    authorized_maximum_live_calls: 3
   future_stage_formulas:
     semifinal: "2 advancing candidates * 1 case * 1 repeat = 2 calls"
     final: "2 advancing candidates * 2 cases * 3 repeats = 12 calls"
-  maximum_tournament_live_calls: 17
+  maximum_tournament_live_calls:
+    base_candidate_calls: 17
+    live_preflight_calls: 0
+    maximum_retry_calls: 0
+    total: 17
   future_stages_require_new_exact_matrix_and_authorization: true
 
 execution:
   live_call_mechanism_owner: "caller"
   live_authorized: false
-  authorization_ref: null
+  authorization_ref: "<live-run authorization after approval>"
+  authorization_sha256: "<sha256 after approval>"
+  authorized_maximum_live_calls: 3
+  actual_live_calls: 0
+  call_limit_enforcement: "stop-before-call-that-would-exceed-authorization-or-budget"
   budget:
     unit: "<currency-credit-or-call-unit>"
     limit: "<maximum>"
@@ -225,11 +391,14 @@ execution:
     - "evidence-capture-failure"
 
 data_safety:
+  allowed_data_classifications:
+    - "<approved non-sensitive classification>"
   prohibited_without_explicit_authority:
     - "PII"
     - "company-confidential-information"
   sensitive_data_authorized: false
-  authorization_ref: null
+  authorization_ref: "<data-safety authorization>"
+  authorization_sha256: "<sha256>"
   candidate_exposure: "<approved candidates and boundaries>"
   retention_rule: "<approved retention and deletion rule>"
   redaction_rule: "<redaction rule>"
@@ -252,13 +421,27 @@ evidence:
     - "schema"
     - "missing-artifact"
   resume_reuse_rule: "completed-schema-valid-matching-digests-only"
+  resume_retry_policy_id: "no-retries-v1"
   deterministic_rescore_live_calls: 0
+  deterministic_rescore_proof:
+    method: "<disabled-call-mechanism-or-complete-invocation-ledger>"
+    rescore_window: "<bounded start and end>"
+    mechanism_identity: "<caller-owned enforcement or telemetry identity>"
+    evidence_ref: "<zero-call proof artifact>"
+    evidence_sha256: "<sha256>"
+    unchanged_evidence_digests_are_supporting_only: true
 
 preflight:
   fixtures_and_digests: "pending"
   reviewed_ground_truth: "pending"
   schema_valid_and_runtime_supported: "pending"
-  transport_and_capture: "pending"
+  transport_and_capture:
+    state: "pending"
+    mode: "zero-live-model-calls"
+    live_model_calls: 0
+    evidence_ref: "<transport and capture preflight evidence>"
+    evidence_sha256: "<sha256>"
+    live_preflight_if_required: "enumerate-authorize-budget-and-count-in-dry-run-matrix"
   candidate_availability: "pending"
   pricing_and_unpriced_policy: "pending"
   budget_and_live_authority: "pending"
@@ -267,25 +450,31 @@ preflight:
 
 verification:
   material_decision_auditor: "<independent reviewer or deterministic verifier>"
+  audit_procedure_ref: "<audit procedure>"
+  audit_procedure_sha256: "<sha256>"
   required_checks:
     - "one-factor-control"
     - "byte-equivalent-inputs"
     - "independent-fixture-ground-truth-schema-transport-validation"
     - "invalid-runs-excluded-from-accuracy"
     - "completed-schema-valid-resume-reuse"
-    - "zero-call-deterministic-rescore"
+    - "frozen-retry-policy-and-authorized-call-maximum"
+    - "caller-owned-zero-call-deterministic-rescore-proof"
     - "cached-input-not-double-counted"
     - "frozen-runner-hashes-identical"
-    - "stage-advancement-and-repeat-rules"
+    - "stage-advancement-repeat-and-variance-rules"
     - "data-safety-and-authorization"
 
 report:
   required_fields:
-    - "winner-and-complete-ranking"
+    - "winner-or-no-winner-and-complete-or-partial-ranking"
+    - "unresolved-candidate-sets-and-provisional-disposition"
     - "stage-rankings-and-advancement"
     - "accuracy-misses-and-invalid-runs"
     - "usage-cost-timing-and-provisional-status"
     - "resume-or-rescore-evidence"
+    - "preflight-base-retry-actual-and-authorized-call-counts"
+    - "caller-owned-zero-call-rescore-proof"
     - "frozen-runner-proof"
     - "limitations-variance-confidence-and-uncertainty"
     - "independent-audit"
