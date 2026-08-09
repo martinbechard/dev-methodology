@@ -1,6 +1,6 @@
 # Publish and Integrate the Terminology Standard
 
-Owner: Unowned
+Owner: Dev Backlog Coordinator task `019fb057-1767-7ef2-b5fa-41f4417b20b3`
 
 Canonical Conversation: `019fe3d6-2dd6-7322-a507-e8ca961e27d8`
 
@@ -10,9 +10,9 @@ Branch: `codex/publish-and-integrate-terminology-standard-019fe3d6`
 
 Worktree: `/Users/martinbechard/.codex/worktrees/940b/dev-methodology`
 
-Phase: Ready — SOLO Crisis Treatment Resumption
+Phase: Starting — SOLO Crisis Terminology Treatment
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -409,3 +409,19 @@ Decision: The glossary-specific approval request was invalid and redundant. The 
 Preserved Boundary: This decision does not authorize unrelated repository data, PII, company-confidential information, user-level installation, remote publication, release, or deployment.
 
 Next Action: Resume the same exact treatment-only evaluation, verify semantic-green output and provider evidence, then finish and archive this work item if the completion contract passes.
+
+## SOLO Crisis Starting Handoff
+
+Starting Recorded At: 2026-08-09T21:43:11Z
+
+Coordinator: Dev Backlog Coordinator task `019fb057-1767-7ef2-b5fa-41f4417b20b3`
+
+Canonical Execution: `019fe3d6-2dd6-7322-a507-e8ca961e27d8`
+
+Launch Result: Existing canonical delivery resumed inside the user-directed SOLO crisis flow without secondary dispatch.
+
+Normalized Objective: Run the already-authorized terminology treatment once against OpenAI `gpt-5.5`, verify semantic-green output and provider evidence alongside the completed controls, then complete and archive the work item.
+
+Preservation Boundary: Retain integrated commit `e78ac365`, completed deterministic gates, completed target-omitted and wrong-skill controls, all existing exclusions, and the non-sensitive glossary digest. Do not add another evaluation case, change treatment data, install user-level content, publish remotely, release, or deploy.
+
+Next Action: Record accepted SOLO execution ownership, run the exact treatment once, and reconcile its retained result with the completion contract.
