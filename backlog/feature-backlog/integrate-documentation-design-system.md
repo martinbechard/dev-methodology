@@ -12,7 +12,7 @@ Branch: `codex/integrate-documentation-design-system-019fe3cd`
 
 Worktree: `/Users/martinbechard/.codex/worktrees/df8a/dev-methodology`
 
-Phase: Prototype analysis and exact-path planning
+Phase: Correcting — Integrate Documentation Design System
 
 Type: Feature
 
@@ -247,14 +247,14 @@ Condition Type: root-execution
 
 Owner: Dev Orchestrator task 019fe3cd-577c-76b1-965c-06fb8793ae42
 
-Evidence: correction attempt 2 is committed clean as candidate HEAD `20a0b9bf8a05984571ef226961e323e256b1d5b8` with commits `b45719f7`, `74f91cae`, and `20a0b9bf` on base `36f8c1be`; no command or mutation is in progress. Final maintained-document ACCEPT and static UX ACCEPT are recorded. Final code review found CHANGES REQUIRED on candidate `20a0b9bf`: checklist-runner scenarios point `requiresWorkspaceInventory`/`executableCase` to an absent suite-relative directory; 115% cost-band equivalence ranking is broken; schema default/example validation is shallow; extreme/underflow decimal boundary is not fail-closed. Other final reviewers and verifier were paused safely for this provider transaction. Two correction attempts are already committed (`74f91cae`, `20a0b9bf`); no third source correction has started. Existing prior focused GREEN evidence remains: runner/coordinator 22/22; static 13/13; schema plus authorized role-v8 focused 2/2; full role mutation 17/17; fixture oracle PASS; source and Codex validators pass; technology detection, skill docs, hierarchy, evaluation docs current; catalogs valid; project provenance 5/5 with historical/runtime-envelope evidence retained; diff/check clean; worktree clean; support projection untouched. Baseline isolation records bundle 172/173 with only the excluded support projection, eval docs 27/28 due to one historical Future Ideas ID, eval/workflow 140/141 due to unrelated terminology harness, and broad discovery 947 with unrelated drift reported only. No browser/live model/install/publication/merge. Remaining scope is exactly finish/collect paused final evidence, independently reconcile candidate-scoped materiality and scope, then request Coordinator disposition before any third correction if findings remain material; no new scope or blocker. Existing HTML, terminology, Future Ideas, and support remain excluded; all 15 governed receipts and five dependent paths remain reconciled; no source mutation has begun. The direct overlap boundary with `publish-and-integrate-terminology-standard` is acknowledged; both tasks defer shared overlap events and preserve each other.
+Evidence: Coordinator recovery disposition authorizes exactly one exceptional third bounded correction cycle under the original coder, and no fourth. Candidate `20a0b9bf8a05984571ef226961e323e256b1d5b8` is immutable before source mutation; prior correction commits are `74f91cae` and `20a0b9bf`. The four authorized source units are: runner suite-relative executable case; inclusive 115% cost-band equivalence; faithful/fail-closed Decimal extreme, overflow, and underflow JSON handling; and recursive nested object/array default/example validation in `build-skill-docs` plus its focused test. Require failing focused regressions first, smallest implementation, immutable replacement candidate, one fresh focused review, and verifier. Final maintained-document ACCEPT and static UX ACCEPT remain accepted; final code review remains CHANGES REQUIRED with the four material findings; verifier is BAD. The fifth stale support-checklist gate is reserved only for the owning generator at legitimate fresh-main combination; no hand edit/current-main now. Late methodology/prompt review packets remain unresolved outside this authorized correction (README evidence wording, public NOT TESTED description, non-Codex delegation/input/fixture portability concerns); those paths remain untouched. Existing prior focused GREEN evidence, baseline isolation, exclusions, and no browser/live model/install/publication/merge evidence remain preserved. Remaining scope is exactly the bounded third correction cycle and fresh focused review/verifier, with Coordinator disposition required before any fourth action; no new scope. No source mutation, gate rerun, dispatch, lifecycle change, or terminology disturbance has occurred.
 
-Observed At: 2026-08-09T03:32:08Z
+Observed At: 2026-08-09T03:36:07Z
 
 Started At: 2026-08-08T23:57:32Z
 
 Deadline or Expires At: 2026-08-09T05:00:00Z
 
-Next Action: Finish/collect the paused final evidence, independently reconcile candidate-scoped materiality and scope, then request Coordinator disposition before any third correction if findings remain material; do not mutate source or rerun gates in this transaction.
+Next Action: Original coder writes failing regressions for the exact four authorized units, implements minimal corrections, commits an immutable replacement candidate, then obtains one fresh focused review and verifier; no fourth cycle.
 
-Next Reconciliation At: 2026-08-09T03:45:00Z
+Next Reconciliation At: 2026-08-09T03:48:00Z
