@@ -183,6 +183,7 @@ scripts/build-skill-docs.py
 scripts/install-skills.py
 scripts/test_bundle_content.py
 scripts/test_agent_skill_evaluation_docs.py
+scripts/test_role_mutation_policy.py
 design/generated/skill-definitions.js
 design/generated/role-definitions.js
 generated/adapters/agent-generation-manifest.json
@@ -201,6 +202,8 @@ generated/adapters/junie/agents/methodology-design-system-review-coordinator.md
 The Coordinator authorizes these exact four non-governed dependent paths because new conceptual roles require `evals/agent-tests/suite-index.yaml` registration, while approved sources and generators own `design/agent-skill-hierarchy.svg`, `design/agent-skill-test-coverage-checklist.md`, and `design/agent-and-skill-evaluations.html` projections. Generated outputs remain generator-owned and must not be hand-edited. This authorizes no fifth path, no additional governed definition, and no absorption of unrelated baseline support-checklist or evaluation-HTML stale defects.
 
 The Coordinator authorizes the exact singleton dependent path `scripts/test_agent_skill_evaluation_docs.py` for approved evaluation-document generation and focused regression. Corrections are limited to the five expectations directly changed by the approved new skill, two roles, probes/scenarios, and regenerated evaluation HTML; the sixth Future Ideas failure is pre-existing and excluded. This authorizes no second path, governed definition, unrelated baseline correction, or edit to `design/generic-agent-definitions-source.html`.
+
+The Coordinator authorizes the exact singleton dependent path `scripts/test_role_mutation_policy.py` as one non-governed dependent required by approved `agents/role-schema.yaml` v8. Changes are limited to the v7-to-v8 owning assertion and focused v8 output-schema compatibility coverage directly traceable to the two approved roles. No other expectation or path, governed definition, Future Ideas item, existing HTML, or baseline correction is authorized.
 
 Focused test and evaluation fixture files may be added in established locations when directly traceable to acceptance criteria. Generated files remain generator-owned. Any additional governed skill or conceptual-role definition path requires separate approval.
 
@@ -244,14 +247,14 @@ Condition Type: root-execution
 
 Owner: Dev Orchestrator task 019fe3cd-577c-76b1-965c-06fb8793ae42
 
-Evidence: canonical root execution owns clean candidate commit `74f91caefe815dddca503502a388668be6cb94df` after initial `b45719f78c1dcd74f704998e4553a1bc973f140e`, with all active re-review/verifier lanes paused safely and no commands running. Second-pass baseline isolation passes: focused 31/31, targeted strict 5/5, bundle 171/172 support-only reproduced at baseline, evaluation-doc 27/28 Future Ideas-only reproduced, freshness/skill/metadata/fixtures/provenance/diff pass. Material candidate findings require final correction attempt 2: malformed nested results/assignment IDs/null assignments/report_attempts crash rather than bounded BLOCKED; authoritative PASS/FAIL override leaves stale or missing reconciled findings; Decimal ranking output is not JSON serializable; coordinator live fixture/scenario/verifier overclaims cases; suite-local skills are staged but supervisor/judge report shared-only; schema validator silently drops incompatible keywords/type-enum mismatches; mutation-audit claim lacks scenario flags; agent-scenario FAIL/NOT TESTED precedence is reversed; print hides result container, specimen-nav selector mismatches, and folder tree is incompletely labelled. Existing HTML, terminology, Future Ideas, and support remain excluded; all 15 governed receipts and four dependents remain reconciled; no source mutation has begun. The direct overlap boundary with `publish-and-integrate-terminology-standard` is acknowledged; both tasks defer shared overlap events and preserve each other.
+Evidence: canonical root execution owns corrected clean candidate `74f91caefe815dddca503502a388668be6cb94df`; coder is safely paused with no attempt-2 edits, staging, or commit, and `scripts/test_role_mutation_policy.py` remains untouched. The exact role-schema dependent disposition is recorded: one non-governed path required by approved `agents/role-schema.yaml` v8, limited to its v7-to-v8 owning assertion and focused v8 output-schema compatibility coverage for the two approved roles; no other expectation/path/governed definition/Future Ideas/existing HTML/baseline correction. Second-pass findings and correction attempt 2 remain bounded to malformed nested results/assignment IDs/null assignments/report_attempts crash, stale/missing reconciled findings, Decimal non-JSON ranking, coordinator fixture overclaims, suite-local skill supervisor/judge mismatch, schema validator keyword/type-enum drops, mutation-audit flags, FAIL/NOT TESTED precedence, print/specimen-nav/folder-tree issues. Existing HTML and terminology remain excluded; all 15 governed receipts and five dependent paths remain reconciled; no source mutation has begun. The direct overlap boundary with `publish-and-integrate-terminology-standard` is acknowledged; both tasks defer shared overlap events and preserve each other.
 
-Observed At: 2026-08-09T02:28:49Z
+Observed At: 2026-08-09T02:34:00Z
 
 Started At: 2026-08-08T23:57:32Z
 
 Deadline or Expires At: 2026-08-09T05:00:00Z
 
-Next Action: Reacquire the Work Item activity=work claim, then resume the original coder for final correction attempt 2, fresh re-review/verifier, browser verification, current-main integration, post-combination gates, and dossier without widening scope.
+Next Action: Reacquire the Work Item activity=work claim, then resume the same coder for correction attempt 2 including the exact v8 test, followed by fresh review/verifier, browser verification, current-main integration, post-combination gates, and dossier without widening scope.
 
-Next Reconciliation At: 2026-08-09T02:43:00Z
+Next Reconciliation At: 2026-08-09T02:49:00Z
