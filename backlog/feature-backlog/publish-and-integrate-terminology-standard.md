@@ -10,9 +10,9 @@ Branch: `codex/publish-and-integrate-terminology-standard-019fe3d6`
 
 Worktree: `/Users/martinbechard/.codex/worktrees/940b/dev-methodology`
 
-Phase: Ready — Resume Preinstalled-Tool Evaluation
+Phase: Starting — Resume Preinstalled-Tool Evaluation
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -487,3 +487,19 @@ Blocker Reconciliation: The prior platform cybersecurity-risk system error did n
 Remaining Objective: Verify the preinstalled tool without starting its server, run the already-authorized single treatment evaluation against the corrected 36-term input, validate semantic-green output and retained provider evidence, then complete and archive the item if the focused completion contract passes.
 
 Preservation Boundary: Reuse current main and the existing canonical identity. Do not construct another MCP environment, install a tool during evaluation, widen the evaluation payload, add another case, publish remotely, release, deploy, or mutate shared user content.
+
+## SOLO Crisis Starting Recovery
+
+Starting Recorded At: 2026-08-09T23:07:46Z
+
+Coordinator: Dev Backlog Coordinator task `019fb057-1767-7ef2-b5fa-41f4417b20b3`
+
+Normalized Objective: Complete the already-authorized terminology treatment using only the preinstalled toolchain, validate the treatment result and provider evidence, and close the work item when focused completion checks pass.
+
+Launch Result: Started in the existing user-directed SOLO crisis execution; no secondary task or replacement canonical task was created.
+
+Canonical Execution: `019fe3d6-2dd6-7322-a507-e8ca961e27d8`
+
+Last Contact At: 2026-08-09T23:07:46Z
+
+Next Reconciliation At: 2026-08-09T23:22:46Z
