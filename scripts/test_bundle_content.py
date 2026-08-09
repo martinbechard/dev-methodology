@@ -7810,7 +7810,7 @@ Visible after.
 
         self.assertTrue(ROLE_SCHEMA_PATH.is_file())
         role_schema = load_yaml_object(ROLE_SCHEMA_PATH)
-        self.assertEqual(7, role_schema["version"])
+        self.assertEqual(8, role_schema["version"])
         self.assertEqual(
             "instruction-content",
             role_schema["properties"]["instructions"],
@@ -7941,7 +7941,8 @@ Visible after.
                 ))
                 self.assertTrue(
                     all(
-                        set(next(iter(entry.values()))) == {"purpose"}
+                        set(next(iter(entry.values())))
+                        in ({"purpose"}, {"purpose", "schema"})
                         for entry in role_source["outputContract"]
                     )
                 )
@@ -7970,6 +7971,10 @@ Visible after.
                 self.assertEqual(
                     set(role.output_contract),
                     set(role_payload["roles"][role.name]["outputPurposes"]),
+                )
+                self.assertEqual(
+                    role.output_schema,
+                    role_payload["roles"][role.name]["outputSchema"],
                 )
                 for example in role_payload["roles"][role.name]["examples"]:
                     self.assertEqual(
@@ -11339,6 +11344,64 @@ Visible after.
             "coordination",
             loaded_roles[coordinator_source["name"]].model_profile,
         )
+
+        for source, role_name in (
+            (runner_source, runner_source["name"]),
+            (coordinator_source, coordinator_source["name"]),
+        ):
+            with self.subTest(schema_role=role_name):
+                metadata = [next(iter(entry.values())) for entry in source["outputContract"]]
+                self.assertTrue(all(set(item) == {"purpose", "schema"} for item in metadata))
+                output_schema = loaded_roles[role_name].output_schema
+                self.assertEqual("object", output_schema["type"])
+                self.assertFalse(output_schema["additionalProperties"])
+                self.assertEqual(
+                    [next(iter(entry)) for entry in source["outputContract"]],
+                    output_schema["required"],
+                )
+                for adapter, suffix in (
+                    ("codex", ".toml"),
+                    ("claude", ".md"),
+                    ("gemini", ".md"),
+                    ("junie", ".md"),
+                ):
+                    adapter_text = (
+                        GENERATED_ADAPTERS_ROOT
+                        / adapter
+                        / "agents"
+                        / f"{role_name}{suffix}"
+                    ).read_text(encoding="utf-8")
+                    schema_text = (
+                        tomllib.loads(adapter_text)["developer_instructions"]
+                        if adapter == "codex"
+                        else adapter_text
+                    )
+                    self.assertIn("Strict output JSON Schema:", schema_text)
+                    self.assertIn('"additionalProperties": false', schema_text)
+
+        for role_name in (runner_source["name"], coordinator_source["name"]):
+            codex_payload = tomllib.loads(
+                (
+                    GENERATED_ADAPTERS_ROOT
+                    / "codex"
+                    / "agents"
+                    / f"{role_name}.toml"
+                ).read_text(encoding="utf-8")
+            )
+            self.assertEqual("read-only", codex_payload["sandbox_mode"])
+            claude_text = (
+                GENERATED_ADAPTERS_ROOT / "claude" / "agents" / f"{role_name}.md"
+            ).read_text(encoding="utf-8")
+            claude_frontmatter = yaml.safe_load(claude_text.split("---", 2)[1])
+            self.assertEqual(["Read", "Grep", "Glob"], claude_frontmatter["tools"])
+            for adapter in ("gemini", "junie"):
+                text = (
+                    GENERATED_ADAPTERS_ROOT / adapter / "agents" / f"{role_name}.md"
+                ).read_text(encoding="utf-8")
+                self.assertIn(
+                    "does not prevent repository mutation for this role",
+                    text,
+                )
 
         references = sorted(
             (SKILLS_ROOT / "review-documentation-design-system" / "references").glob(

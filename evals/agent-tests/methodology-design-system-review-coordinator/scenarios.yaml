@@ -5,9 +5,9 @@ scenarios:
   - id: complete-reconciliation-and-ranking
     priority: 1
     status: executable
-    executableCase: documentation-design-system-review
+    executableCase: fixtures/coordination
     purpose: Prove bounded runner dispatch, complete evidence reconciliation, integrated acceptance, and deterministic candidate ranking.
-    initialState: Unique page-checklist assignments, strict runner reports, and measured candidate accuracy, cost, price status, and wall time are supplied.
+    initialState: Unique page-checklist assignments, strict runner reports, resolvable and unresolved conflicts, and measured candidate accuracy, cost, price status, and wall time are supplied.
     task: Coordinate the assignments, reconcile every report, return the integrated verdict, and rank candidates.
     targetSkills: []
     allowedAgentDependencies: [methodology-design-system-checklist-runner]
@@ -19,9 +19,9 @@ scenarios:
   - id: malformed-unavailable-and-conflicting-evidence
     priority: 2
     status: executable
-    executableCase: documentation-design-system-review
+    executableCase: fixtures/coordination
     purpose: Prove one malformed-report retry, unavailable-runner handling, and conflict preservation without local substitution.
-    initialState: One report is malformed twice, one runner is unavailable, other reports are complete, and two material item claims conflict.
+    initialState: One report reaches retry exhaustion, runner outcomes include unavailable, timeout and cancellation, other reports are complete, and two material item claims conflict.
     task: Reconcile all supplied evidence and return the correct integrated blocked result.
     targetSkills: []
     allowedAgentDependencies: [methodology-design-system-checklist-runner]
@@ -33,9 +33,9 @@ scenarios:
   - id: accuracy-cost-band-speed-and-unpriced-ranking
     priority: 3
     status: executable
-    executableCase: documentation-design-system-review
+    executableCase: fixtures/coordination
     purpose: Prove exact ranking precedence, the inclusive priced-cost boundary, cached-token accounting, and provisional unpriced behavior.
-    initialState: Candidate measurements include unequal accuracy, equal accuracy at and just outside 115 percent of the cheapest priced cost, cached input, wall time, and one unpriced candidate.
+    initialState: Candidate measurements include unequal accuracy, equal accuracy just inside, exactly at, and just outside 115 percent, exact ties, mixed priced and unpriced candidates, invalid numeric measurements, cached input, and wall time.
     task: Return the complete deterministic ranking with price status and supporting evidence.
     targetSkills: []
     allowedAgentDependencies: [methodology-design-system-checklist-runner]

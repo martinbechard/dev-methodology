@@ -2094,7 +2094,14 @@ figure {
   .page-nav,
   .chapter-nav,
   .icon-button,
-  .button-row {
+  .button-row,
+  .filters,
+  form,
+  input,
+  select,
+  button,
+  dialog,
+  .dialog-backdrop {
     display: none;
   }
 

@@ -30,23 +30,26 @@ Review one rendered HTML page and its source. Do not treat the audit examples in
 ## Inputs
 
 - The HTML file or rendered URL under review.
-- Its intended page type.
+- Exactly one supplied checklist from this skill's references.
 - The design-system version it claims.
 - Browser access when behavior or responsive rendering is in scope.
 
-If the page type or claimed version is unavailable, report that as missing evidence; do not infer conformance.
+If the page, checklist, or claimed version is unavailable or ambiguous, report that as missing evidence; do not infer conformance or choose another checklist.
 
 ## Workflow
 
-1. Open [review-checklist-documentation-design-system-shared.md](references/review-checklist-documentation-design-system-shared.md) and the one page-type checklist listed below.
+1. Open exactly the checklist supplied for this invocation. Do not add the Shared checklist or a page-type checklist automatically.
 2. Inspect source for semantic, metadata, link, and text requirements.
 3. Inspect the rendered page at desktop and narrow width for visual and behavioral requirements. Exercise keyboard interactions when the page contains controls.
 4. Record every checklist ID as PASS, FAIL, or NOT TESTED. Use NOT TESTED only when required evidence cannot be obtained, and name the missing evidence.
 5. For each result, cite concrete evidence: file and line, DOM selector or snippet, browser viewport, interaction performed, screenshot, or audit command and output.
-6. Return an overall PASS only when every applicable item passes. Any FAIL or NOT TESTED prevents an overall pass.
+6. Return NOT TESTED when any assigned item lacks evidence, including when another item fails. Otherwise return FAIL when any item fails, and PASS only when every assigned item passes.
+
+For a standalone full-page review, the caller schedules separate invocations for the Shared checklist and the applicable page-type checklist. Each invocation remains one page and one checklist.
 
 ## Page Checklists
 
+- [Shared](references/review-checklist-documentation-design-system-shared.md)
 - [Index](references/review-checklist-documentation-design-system-index.md)
 - [Foundations](references/review-checklist-documentation-design-system-foundations.md)
 - [Page shell](references/review-checklist-documentation-design-system-page-shell.md)

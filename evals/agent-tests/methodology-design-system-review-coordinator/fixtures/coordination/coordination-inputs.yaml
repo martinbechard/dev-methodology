@@ -1,0 +1,29 @@
+schema: dev-methodology-documentation-design-system-coordination-inputs
+version: 1
+assignments:
+  - page: page-shell.html
+    checklist: Shared
+    checklistIds: [DDS-COM-001, DDS-COM-002]
+  - page: forms-and-actions.html
+    checklist: Accessibility
+    checklistIds: [DDS-ACC-001]
+runnerOutcomes:
+  page-shell.html:Shared: malformed-then-complete
+  forms-and-actions.html:Accessibility: timeout
+conflicts:
+  resolvable:
+    page: page-shell.html
+    checklist: Shared
+    id: DDS-COM-001
+    claims: [PASS, FAIL]
+    authoritativeResult: PASS
+  unresolved:
+    page: page-shell.html
+    checklist: Shared
+    id: DDS-COM-002
+    claims: [PASS, FAIL]
+candidates:
+  - {id: cheapest, accuracy: '1', estimatedCost: '100', wallSeconds: '10'}
+  - {id: exact-boundary, accuracy: '1', estimatedCost: '115', wallSeconds: '2'}
+  - {id: outside-boundary, accuracy: '1', estimatedCost: '115.000000000000000001', wallSeconds: '1'}
+  - {id: unpriced, accuracy: '1', estimatedCost: null, wallSeconds: '0.5'}

@@ -62,6 +62,7 @@ class _PageParser(HTMLParser):
         self.version_meta: list[str] = []
         self.stylesheets: list[str] = []
         self.scripts: list[str] = []
+        self.h1_count = 0
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         """Record relevant attributes while preserving the parser's current nav scope."""
@@ -88,6 +89,8 @@ class _PageParser(HTMLParser):
             self.stylesheets.append(href or "")
         if tag == "script" and attributes.get("src"):
             self.scripts.append(attributes["src"] or "")
+        if tag == "h1":
+            self.h1_count += 1
 
     def handle_startendtag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         """Process a self-closing tag without changing the element stack."""
@@ -126,6 +129,7 @@ class DocumentationDesignSystemTests(unittest.TestCase):
                 self.assertEqual([VERSION], parser.version_meta)
                 self.assertEqual(["assets/design-system.css"], parser.stylesheets)
                 self.assertEqual(expected_navigation, parser.suite_hrefs)
+                self.assertEqual(1, parser.h1_count)
                 self.assertEqual(len(parser.ids), len(set(parser.ids)))
                 self.assertIn(f"Design system v{VERSION}", text)
                 for href in parser.hrefs:
@@ -160,6 +164,9 @@ class DocumentationDesignSystemTests(unittest.TestCase):
             all_ids.extend(CHECKLIST_ID_PATTERN.findall(checklist_path.read_text(encoding="utf-8")))
         self.assertEqual(91, len(all_ids))
         self.assertEqual(91, len(set(all_ids)))
+        self.assertIn("Open exactly the checklist supplied for this invocation", skill_text)
+        self.assertIn("caller schedules separate invocations", skill_text)
+        self.assertNotIn("and the one page-type checklist", skill_text)
 
     def test_forms_expose_result_count_and_complete_dialog_keyboard_contract(self) -> None:
         """Form demonstrations must expose results and a real modal focus loop."""
@@ -177,6 +184,23 @@ class DocumentationDesignSystemTests(unittest.TestCase):
             "activeTrigger.focus()",
         ):
             self.assertIn(token, script_text)
+
+    def test_print_css_hides_demo_controls_but_not_results(self) -> None:
+        """Printed documentation omits interactive specimens while retaining explanations and results."""
+
+        css = (DESIGN_ROOT / "assets" / "design-system.css").read_text(encoding="utf-8")
+        print_rules = css.split("@media print", 1)[1]
+        for selector in (
+            ".filters",
+            "form",
+            "input",
+            "select",
+            "button",
+            ".dialog-backdrop",
+        ):
+            self.assertRegex(print_rules, rf"(?s){re.escape(selector)}.*?display:\s*none")
+        self.assertNotRegex(print_rules, r"(?s)\.demo-status.*?display:\s*none")
+        self.assertNotRegex(print_rules, r"(?s)\[data-result-count\].*?display:\s*none")
 
     def test_every_variation_has_visible_status_and_source_attribution(self) -> None:
         """All 21 comparisons must expose one inline standardization status and source evidence."""
@@ -206,6 +230,13 @@ class DocumentationDesignSystemTests(unittest.TestCase):
                     expected_status = "Unresolved source variation"
                 self.assertEqual(expected_status, status.group(1) if status else None)
                 self.assertIn('class="variant-source"', article)
+
+        meaningful_svg = re.search(r"<svg[^>]*role=\"img\"[^>]*>.*?</svg>", text, flags=re.DOTALL)
+        self.assertIsNotNone(meaningful_svg)
+        svg_text = meaningful_svg.group(0) if meaningful_svg else ""
+        self.assertIn('aria-labelledby="variation-hero-svg-title variation-hero-svg-desc"', svg_text)
+        self.assertIn('<title id="variation-hero-svg-title">', svg_text)
+        self.assertIn('<desc id="variation-hero-svg-desc">', svg_text)
 
     def test_foundations_spacing_specimen_covers_every_documented_step(self) -> None:
         """The visible specimen must contain all seven documented spacing values."""
@@ -252,6 +283,35 @@ class DocumentationDesignSystemTests(unittest.TestCase):
             "skills/document-provenance/fixtures/valid/maintained.html",
             "excluded",
             "36f8c1be6d04c865c4e718917c5812dc3fdf0363",
+        ):
+            self.assertIn(phrase, text)
+
+        self.assertIn("audited snapshot", text.lower())
+        self.assertIn("were not migrated", text)
+        self.assertIn("Generated evaluation data was refreshed", text)
+
+    def test_page_shell_separates_abbreviated_specimen_from_production_navigation(self) -> None:
+        """Only real suite navigation carries all ten stable links."""
+
+        text = (DESIGN_ROOT / "page-shell.html").read_text(encoding="utf-8")
+        self.assertIn('class="suite-nav suite-nav--non-production-specimen"', text)
+        self.assertEqual(1, text.count('class="suite-nav" aria-label="Design system pages"'))
+
+    def test_diagram_tree_uses_the_adopted_design_system_path(self) -> None:
+        """The folder-tree specimen must point to the actual adopted tree."""
+
+        text = (DESIGN_ROOT / "diagrams.html").read_text(encoding="utf-8")
+        self.assertIn("design/\n└── documentation-design-system/", text)
+
+    def test_readme_states_bounded_coordination_and_portability_evidence(self) -> None:
+        """README scope must distinguish tested Codex coordination from untested mappings."""
+
+        text = (REPOSITORY_ROOT / "README.md").read_text(encoding="utf-8")
+        for phrase in (
+            "bounded page-checklist coordination",
+            "Codex tournament-backed evidence",
+            "non-Codex portability mappings remain untested",
+            "Existing hand-authored HTML pages were not migrated",
         ):
             self.assertIn(phrase, text)
 

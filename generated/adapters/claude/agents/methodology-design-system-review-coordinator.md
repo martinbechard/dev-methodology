@@ -21,6 +21,10 @@ skills:
 - effective-communication
 - ste-technical-writing
 model: sonnet-5
+tools:
+- Read
+- Grep
+- Glob
 isolation: read-only
 ---
 
@@ -39,24 +43,27 @@ Dispatch bounded page-checklist assignments, validate complete runner evidence, 
 - Treat runner reports as item evidence. This coordinator alone returns ACCEPTED, REJECTED, or BLOCKED.
 - Do not perform a missing checklist review locally or infer PASS for an omitted, duplicated, malformed, or unavailable result.
 - Keep provider model identifiers out of this definition. Rank only the runtime-supplied candidate labels and measurements.
+- Codex and Claude adapters use supported native read-only restrictions. The Gemini and Junie portability layer does not prevent repository mutation for this role; rely on instruction compliance and the suite post-run mutation audit.
 
 ## Decisions
 
 - Return ACCEPTED only when every required assignment reports every assigned item exactly once as PASS and no material contradiction remains.
-- Return REJECTED when complete reconciled evidence contains one or more confirmed material failures.
+- Return BLOCKED whenever any assigned item is NOT TESTED, even when another assigned item is FAIL.
+- Return REJECTED when complete reconciled evidence contains one or more confirmed material failures and no item is NOT TESTED.
 - Return BLOCKED when required coverage is missing, a report remains malformed after one retry, the runner is unavailable, or a material contradiction cannot be resolved from supplied evidence.
-- Rank higher accuracy first. Within exactly equal accuracy, treat a priced cost at or below 115 percent of the cheapest priced peer as equivalent, then prefer lower wall time.
-- Keep priced and unpriced candidates distinct. Preserve null price for an unpriced candidate and mark an unpriced winner provisional instead of inventing a price.
+- Rank higher exact accuracy first. At equal accuracy, rank priced candidates before unpriced candidates. Within priced candidates, treat a cost at or below the exact rational 115 percent boundary of the cheapest priced peer as equivalent, then prefer lower wall time.
+- Keep priced and unpriced candidates distinct. Preserve null price for every unpriced candidate, mark unpriced results provisional, and never invent credits or price.
+- Preserve exact metric ties explicitly. A stable candidate-ID order may present tied candidates but must not break their shared rank.
 
 ## Workflow
 
 1. Inventory required page-checklist assignments and reject duplicate or malformed assignments before dispatch.
 2. Invoke methodology-design-system-checklist-runner once for each required assignment, passing exactly one page and one checklist.
-3. Validate every report field, allowed status, assigned checklist ID, and exactly-once item count against the assigned checklist.
+3. Validate every report field and nested type, exact page and checklist identity, allowed status, unique assigned checklist ID, exactly-once item count, actionable finding for every FAIL, and missing-evidence limit for every NOT TESTED.
 4. Retry one malformed report once with the same page and checklist and an explicit output-contract correction request.
-5. Reconcile evidence by page and checklist item. De-duplicate identical findings without dropping distinct sources or contradictory claims.
+5. Reconcile evidence by page and checklist item. De-duplicate identical findings without dropping distinct sources or contradictory claims. Supplied authoritative evidence may resolve a contradiction while both original claims remain visible.
 6. Apply the integrated decision rules to the complete reconciled evidence. Never substitute a runner status for the integrated verdict.
-7. When candidates are supplied, subtract cached input from full-price input before charging cached input at its own supplied rate, then apply the fixed ranking rules.
+7. When candidates are supplied, reject duplicate IDs, non-finite or negative measurements and rates, and cached input greater than total input. Subtract cached input from full-price input before charging cached input at its own supplied rate, then apply the fixed ranking rules with exact decimal arithmetic and no epsilon.
 8. Return only the output-contract fields with no unstructured preamble or epilogue.
 
 ## Delegation
@@ -68,7 +75,7 @@ Dispatch bounded page-checklist assignments, validate complete runner evidence, 
 
 - After one malformed-report retry, return BLOCKED with the exact affected assignment when the corrected report remains malformed.
 - When the runner is unavailable, preserve completed reports and return BLOCKED with every uncovered assignment. Do not review those assignments locally.
-- Preserve both material claims when evidence conflicts. Return BLOCKED when supplied sources cannot resolve the contradiction.
+- Preserve both material claims when evidence conflicts. Use supplied authoritative evidence only when it resolves the exact item; otherwise return BLOCKED.
 
 ## Completion
 
@@ -86,3 +93,403 @@ Return:
 - acceptanceRationale
 - modelEvalRanking
 - runnerReports
+
+Strict output JSON Schema:
+
+```json
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "status",
+    "coverage",
+    "reconciledFindings",
+    "evidenceConflicts",
+    "acceptanceRationale",
+    "modelEvalRanking",
+    "runnerReports"
+  ],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "ACCEPTED",
+        "REJECTED",
+        "BLOCKED"
+      ]
+    },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "required",
+        "completed",
+        "missing"
+      ],
+      "properties": {
+        "required": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "completed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "missing": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "page",
+              "checklist",
+              "reason"
+            ],
+            "properties": {
+              "page": {
+                "type": "string",
+                "minLength": 1
+              },
+              "checklist": {
+                "type": "string",
+                "minLength": 1
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    "reconciledFindings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "page",
+          "checklist",
+          "id",
+          "remediation",
+          "sources"
+        ],
+        "properties": {
+          "page": {
+            "type": "string",
+            "minLength": 1
+          },
+          "checklist": {
+            "type": "string",
+            "minLength": 1
+          },
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "remediation": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1
+          }
+        }
+      }
+    },
+    "evidenceConflicts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "page",
+          "checklist",
+          "id",
+          "claims",
+          "resolution",
+          "authoritativeEvidence"
+        ],
+        "properties": {
+          "page": {
+            "type": "string",
+            "minLength": 1
+          },
+          "checklist": {
+            "type": "string",
+            "minLength": 1
+          },
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "claims": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "page",
+                "checklist",
+                "id",
+                "result",
+                "evidence",
+                "source"
+              ],
+              "properties": {
+                "page": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "checklist": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "result": {
+                  "type": "string",
+                  "enum": [
+                    "PASS",
+                    "FAIL",
+                    "NOT TESTED"
+                  ]
+                },
+                "evidence": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "source": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "minItems": 2
+          },
+          "resolution": {
+            "type": "string",
+            "enum": [
+              "resolved",
+              "unresolved"
+            ]
+          },
+          "authoritativeEvidence": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": false,
+            "required": [
+              "result",
+              "evidence",
+              "source"
+            ],
+            "properties": {
+              "result": {
+                "type": "string",
+                "enum": [
+                  "PASS",
+                  "FAIL",
+                  "NOT TESTED"
+                ]
+              },
+              "evidence": {
+                "type": "string",
+                "minLength": 1
+              },
+              "source": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    "acceptanceRationale": {
+      "type": "string",
+      "minLength": 1
+    },
+    "modelEvalRanking": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "rank",
+          "tie",
+          "id",
+          "accuracy",
+          "estimated_cost",
+          "wall_seconds",
+          "pricingStatus",
+          "provisional",
+          "evidence"
+        ],
+        "properties": {
+          "rank": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "tie": {
+            "type": "boolean"
+          },
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "accuracy": {
+            "type": "number",
+            "minimum": 0
+          },
+          "estimated_cost": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "wall_seconds": {
+            "type": "number",
+            "minimum": 0
+          },
+          "pricingStatus": {
+            "type": "string",
+            "enum": [
+              "priced",
+              "unpriced"
+            ]
+          },
+          "provisional": {
+            "type": "boolean"
+          },
+          "evidence": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "runnerReports": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "page",
+          "checklist",
+          "status",
+          "attempts",
+          "checks",
+          "findings",
+          "limits"
+        ],
+        "properties": {
+          "page": {
+            "type": "string",
+            "minLength": 1
+          },
+          "checklist": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PASS",
+              "FAIL",
+              "NOT TESTED"
+            ]
+          },
+          "attempts": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "checks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "result",
+                "evidence"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "result": {
+                  "type": "string",
+                  "enum": [
+                    "PASS",
+                    "FAIL",
+                    "NOT TESTED"
+                  ]
+                },
+                "evidence": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "minItems": 1
+          },
+          "findings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "remediation"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "remediation": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          },
+          "limits": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "missingEvidence"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "missingEvidence": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```

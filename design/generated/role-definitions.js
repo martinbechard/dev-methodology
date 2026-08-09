@@ -83,6 +83,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "findings and corrections": "Gives the artifact owner prioritized, concrete changes to make before acceptance so review evidence leads to actionable improvement.",
         "verifier assessment": "Communicates the independent quality-gate result so the requester knows whether the artifact is ready to rely on after the focused review."
       },
+      "outputSchema": null,
       "outputs": [
         "completed review checklist",
         "verifier assessment",
@@ -329,6 +330,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "stalled delivery actions": "Reports wait ages, blocker owners, structured outcomes, release or recovery notifications, exhausted-correction evidence, preserved attempt history, and the one resulting route or disposition.",
         "status": "States READY or BLOCKED and names the evidence or unavailable condition."
       },
+      "outputSchema": null,
       "outputs": [
         "status",
         "provider lifecycle snapshot",
@@ -445,6 +447,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "blocked summary": "Identifies the exact unsafe condition, preserved evidence, owner, and next recovery action.",
         "provider maintenance result": "Reports the exact inventory, normalization, audit, or recovery outcome and affected Work Item IDs."
       },
+      "outputSchema": null,
       "outputs": [
         "provider maintenance result",
         "backlog item, Future Idea, or status update",
@@ -569,6 +572,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "blocked reconciliation results": "Retains one concise result for every Blocked item covering blocker, owner, unblock condition, dependencies, delivery evidence, canonical execution, Git, claims, correction-attempt history, current structured disposition receipt, and actionable reason without choosing a lifecycle outcome.",
         "cycle result": "Records one concise healthy-cycle outcome when no actionable condition exists without interrupting the parent or creating durable coordination state."
       },
+      "outputSchema": null,
       "outputs": [
         "cycle result",
         "blocked reconciliation results",
@@ -637,6 +641,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "browser-state notes": "Preserves server, browser, and authenticated-session context so the observed result can be reproduced under equivalent runtime conditions.",
         "reproduction steps": "Gives another agent or human an exact path through the user flow so the observation can be confirmed or a failure investigated independently."
       },
+      "outputSchema": null,
       "outputs": [
         "browser-state notes",
         "E2E evidence",
@@ -702,6 +707,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "prioritized findings": "Orders confirmed defects by impact so the change owner can address the most consequential problems first.",
         "residual risk": "Records material risk that remains after review so acceptance and follow-up decisions account for what was not fully verified."
       },
+      "outputSchema": null,
       "outputs": [
         "completed code evidence packet",
         "prioritized findings",
@@ -809,6 +815,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "source patch": "Provides the requested behavior change in a reviewable form that can be integrated into the repository.",
         "test and build evidence": "Demonstrates that the changed behavior and its surrounding contracts passed the applicable checks before the requester relies on the patch."
       },
+      "outputSchema": null,
       "outputs": [
         "source patch",
         "test and build evidence",
@@ -898,6 +905,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "terminal status": "Distinguishes accepted analysis or revision evidence from a blocked authority or preservation boundary.",
         "topic analysis": "Provides the source-grounded hierarchy, scores, and editorial findings without mutating the document."
       },
+      "outputSchema": null,
       "outputs": [
         "topic analysis",
         "revision result",
@@ -967,6 +975,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "source-backed artifact": "Provides the durable documentation requested by the user while keeping its claims traceable to authoritative project evidence.",
         "verification evidence": "Gives reviewers confidence that the artifact satisfies its applicable checks and exposes any remaining gaps before the documentation is relied upon."
       },
+      "outputSchema": null,
       "outputs": [
         "selected documentation route",
         "source-backed artifact",
@@ -1084,6 +1093,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "integrated changes": "Provides the reconciled contribution set as one reviewable result that downstream work can verify and adopt.",
         "verification evidence": "Shows that the integrated result passed its applicable checks so the requester can distinguish successful merging from verified compatibility."
       },
+      "outputSchema": null,
       "outputs": [
         "integrated changes",
         "conflict resolution record",
@@ -1291,6 +1301,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "task breakdown": "Makes bounded responsibilities, dependencies, and sequencing explicit so contributors can work independently toward the same outcome.",
         "work-item delivery": "Records candidate commits, independent acceptance, each effective Commit binding, AWAITING_REVIEW resumption state, final delivery disposition, delivered commit evidence, and subsequent Persistence lifecycle update so temporal ordering is explicit."
       },
+      "outputSchema": null,
       "outputs": [
         "status",
         "task breakdown",
@@ -1370,6 +1381,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "prompt contract findings": "Gives maintainers evidence-backed defects and corrections they can use to make the model-facing protocol reliable.",
         "schema and tool-call risks": "Makes boundary-specific failure modes visible so schema and tool owners can address them separately from general prompt concerns."
       },
+      "outputSchema": null,
       "outputs": [
         "prompt contract findings",
         "schema and tool-call risks",
@@ -1436,6 +1448,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "reproduction": "Gives maintainers a repeatable failure case against which the diagnosis and any eventual fix can be tested.",
         "verification result": "States whether the proposed resolution path changes the reproduced failure as expected so unverified advice is not mistaken for a confirmed fix."
       },
+      "outputSchema": null,
       "outputs": [
         "reproduction",
         "logs and suspected boundary",
@@ -1509,6 +1522,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "prioritized security findings": "Directs remediation effort toward the most exploitable and consequential confirmed risks first.",
         "residual risk": "Makes remaining exposure explicit so decision-makers can accept, mitigate, or escalate it with informed ownership."
       },
+      "outputSchema": null,
       "outputs": [
         "prioritized security findings",
         "affected files and evidence",
@@ -1595,6 +1609,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "no-critical-findings result": "States that the scoped skills were reviewed and no issue met the criticality threshold.",
         "review limits": "Identifies unreadable references, ambiguous scope, or evidence gaps that prevent a stronger conclusion."
       },
+      "outputSchema": null,
       "outputs": [
         "critical skill findings",
         "no-critical-findings result",
@@ -1656,6 +1671,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "usability and accessibility findings": "Identifies barriers in the observed workflow so teams can improve task completion, clarity, recovery, and inclusive access.",
         "visual verification evidence": "Preserves observable proof for each finding so reviewers can validate the recommendation against the actual interface states."
       },
+      "outputSchema": null,
       "outputs": [
         "design recommendation",
         "usability and accessibility findings",
@@ -1724,6 +1740,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "coverage notes": "Shows which changed behaviors and acceptance criteria were proven and where evidence remains incomplete.",
         "skipped-check rationale": "Makes omitted validation and its consequences explicit so the requester can decide whether additional work is required."
       },
+      "outputSchema": null,
       "outputs": [
         "command results",
         "coverage notes",
@@ -1804,6 +1821,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "required corrections": "Makes the changes necessary for contract compliance explicit and separates them from optional improvements.",
         "residual risk": "Preserves visibility into important uncertainty or exposure that remains after the identified corrections are addressed."
       },
+      "outputSchema": null,
       "outputs": [
         "finding-first review",
         "required corrections",
@@ -1855,7 +1873,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
           }
         },
         {
-          "plausibleResponse": "status: NOT TESTED\npage: forms-and-actions.html\nchecklist: Forms And Actions\nchecks:\n  - id: DDS-FRM-006\n    result: NOT TESTED\n    evidence: No keyboard-interaction trace was supplied for the dialog.\nfindings: []\nlimits:\n  - Dialog focus containment and return focus were not tested.",
+          "plausibleResponse": "status: NOT TESTED\npage: forms-and-actions.html\nchecklist: Forms And Actions\nchecks:\n  - id: DDS-FRM-006\n    result: NOT TESTED\n    evidence: No keyboard-interaction trace was supplied for the dialog.\nfindings: []\nlimits:\n  - id: DDS-FRM-006\n    missingEvidence: Dialog focus containment and return focus were not tested.",
           "purpose": "Preserve unavailable interaction evidence as NOT TESTED without turning it into an integrated verdict.",
           "runtimeInvocations": {
             "claude-code": "@agent-methodology-design-system-checklist-runner Review forms-and-actions.html against the supplied Forms And Actions checklist using source evidence only.",
@@ -1870,26 +1888,30 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "boundaries": [
           "Remain read-only. Do not edit the page, checklist, repository, or evidence sources.",
           "Use only the supplied page, the supplied checklist, and the review-documentation-design-system method.",
-          "Do not expand the assignment, delegate work, invoke another agent, or make an integrated design-system acceptance decision."
+          "Do not expand the assignment, delegate work, invoke another agent, or make an integrated design-system acceptance decision.",
+          "Apply exactly the checklist supplied for this invocation. A standalone full-page caller must schedule separate Shared and page-type invocations; never add either checklist automatically.",
+          "Codex and Claude adapters use supported native read-only restrictions. The Gemini and Junie portability layer does not prevent repository mutation for this role; rely on instruction compliance and the suite post-run mutation audit."
         ],
         "completion": [
-          "Return PASS only when every assigned item passes, FAIL when any item fails, or NOT TESTED when evidence is incomplete and no item fails.",
+          "Return PASS only when every assigned item passes, NOT TESTED when any item lacks evidence, or FAIL when at least one item fails and none is NOT TESTED.",
           "Return only the output-contract fields and include every assigned checklist item exactly once."
         ],
         "failureHandling": [
-          "Return FAIL when at least one assigned item fails.",
-          "Return NOT TESTED when no assigned item fails and at least one item lacks required evidence.",
+          "Return NOT TESTED when at least one assigned item lacks required evidence, including when another item fails.",
+          "Return FAIL only when at least one assigned item fails and no item is NOT TESTED.",
           "Do not infer, omit, duplicate, or silently repair an item when evidence is incomplete."
         ],
         "objective": "Apply exactly one supplied checklist to exactly one supplied page and return complete item-level evidence.",
         "workflow": [
-          "Confirm that the input identifies exactly one page and exactly one checklist. Return NOT TESTED evidence when either input is unavailable or ambiguous.",
+          "Confirm a non-empty assignment with exactly one page, exactly one checklist, and unique expected checklist IDs. Reject an empty assignment.",
+          "Validate that the returned page and checklist exactly match the assignment and that every expected ID occurs once. Do not accept wrong identity, malformed output, or null output.",
+          "When the supplied page, checklist, or evidence is unavailable or ambiguous, use the coordinator-owned expected inventory and record every assigned check as NOT TESTED with its missing evidence.",
           "Apply each assigned checklist item to the supplied page and available evidence.",
           "Record every assigned checklist item exactly once as PASS, FAIL, or NOT TESTED with page-specific evidence.",
           "List actionable corrections only for failed items and list the missing evidence for every NOT TESTED item."
         ]
       },
-      "instructions": "## Objective\n\nApply exactly one supplied checklist to exactly one supplied page and return complete item-level evidence.\n\n## Boundaries\n\n- Remain read-only. Do not edit the page, checklist, repository, or evidence sources.\n- Use only the supplied page, the supplied checklist, and the review-documentation-design-system method.\n- Do not expand the assignment, delegate work, invoke another agent, or make an integrated design-system acceptance decision.\n\n## Workflow\n\n1. Confirm that the input identifies exactly one page and exactly one checklist. Return NOT TESTED evidence when either input is unavailable or ambiguous.\n2. Apply each assigned checklist item to the supplied page and available evidence.\n3. Record every assigned checklist item exactly once as PASS, FAIL, or NOT TESTED with page-specific evidence.\n4. List actionable corrections only for failed items and list the missing evidence for every NOT TESTED item.\n\n## Failure Handling\n\n- Return FAIL when at least one assigned item fails.\n- Return NOT TESTED when no assigned item fails and at least one item lacks required evidence.\n- Do not infer, omit, duplicate, or silently repair an item when evidence is incomplete.\n\n## Completion\n\n- Return PASS only when every assigned item passes, FAIL when any item fails, or NOT TESTED when evidence is incomplete and no item fails.\n- Return only the output-contract fields and include every assigned checklist item exactly once.",
+      "instructions": "## Objective\n\nApply exactly one supplied checklist to exactly one supplied page and return complete item-level evidence.\n\n## Boundaries\n\n- Remain read-only. Do not edit the page, checklist, repository, or evidence sources.\n- Use only the supplied page, the supplied checklist, and the review-documentation-design-system method.\n- Do not expand the assignment, delegate work, invoke another agent, or make an integrated design-system acceptance decision.\n- Apply exactly the checklist supplied for this invocation. A standalone full-page caller must schedule separate Shared and page-type invocations; never add either checklist automatically.\n- Codex and Claude adapters use supported native read-only restrictions. The Gemini and Junie portability layer does not prevent repository mutation for this role; rely on instruction compliance and the suite post-run mutation audit.\n\n## Workflow\n\n1. Confirm a non-empty assignment with exactly one page, exactly one checklist, and unique expected checklist IDs. Reject an empty assignment.\n2. Validate that the returned page and checklist exactly match the assignment and that every expected ID occurs once. Do not accept wrong identity, malformed output, or null output.\n3. When the supplied page, checklist, or evidence is unavailable or ambiguous, use the coordinator-owned expected inventory and record every assigned check as NOT TESTED with its missing evidence.\n4. Apply each assigned checklist item to the supplied page and available evidence.\n5. Record every assigned checklist item exactly once as PASS, FAIL, or NOT TESTED with page-specific evidence.\n6. List actionable corrections only for failed items and list the missing evidence for every NOT TESTED item.\n\n## Failure Handling\n\n- Return NOT TESTED when at least one assigned item lacks required evidence, including when another item fails.\n- Return FAIL only when at least one assigned item fails and no item is NOT TESTED.\n- Do not infer, omit, duplicate, or silently repair an item when evidence is incomplete.\n\n## Completion\n\n- Return PASS only when every assigned item passes, NOT TESTED when any item lacks evidence, or FAIL when at least one item fails and none is NOT TESTED.\n- Return only the output-contract fields and include every assigned checklist item exactly once.",
       "isolation": "read-only",
       "modelProfile": "simple",
       "modelStages": {},
@@ -1901,6 +1923,109 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "limits": "Lists missing evidence for NOT TESTED items, or an empty list.",
         "page": "Identifies the one reviewed page.",
         "status": "Returns exactly PASS, FAIL, or NOT TESTED for the supplied checklist without claiming integrated acceptance."
+      },
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "checklist": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "checks": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "evidence": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "id": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "result": {
+                  "enum": [
+                    "PASS",
+                    "FAIL",
+                    "NOT TESTED"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "result",
+                "evidence"
+              ],
+              "type": "object"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "findings": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "remediation": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "remediation"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "limits": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "missingEvidence": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "missingEvidence"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "page": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "PASS",
+              "FAIL",
+              "NOT TESTED"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "page",
+          "checklist",
+          "checks",
+          "findings",
+          "limits"
+        ],
+        "type": "object"
       },
       "outputs": [
         "status",
@@ -1923,7 +2048,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "review-documentation-design-system"
       ],
       "sourcePath": "agents/roles/methodology-maintenance/methodology-design-system-checklist-runner.role.yaml",
-      "yaml": "name: methodology-design-system-checklist-runner\nfilename: methodology-design-system-checklist-runner\nrepositoryMutation: never\ndescription: Applies one supplied Documentation Design System checklist to one supplied page and returns complete item-level evidence without an integrated verdict.\ninstructions:\n  objective: Apply exactly one supplied checklist to exactly one supplied page and return complete item-level evidence.\n  boundaries:\n    - Remain read-only. Do not edit the page, checklist, repository, or evidence sources.\n    - Use only the supplied page, the supplied checklist, and the review-documentation-design-system method.\n    - Do not expand the assignment, delegate work, invoke another agent, or make an integrated design-system acceptance decision.\n  workflow:\n    - Confirm that the input identifies exactly one page and exactly one checklist. Return NOT TESTED evidence when either input is unavailable or ambiguous.\n    - Apply each assigned checklist item to the supplied page and available evidence.\n    - Record every assigned checklist item exactly once as PASS, FAIL, or NOT TESTED with page-specific evidence.\n    - List actionable corrections only for failed items and list the missing evidence for every NOT TESTED item.\n  failureHandling:\n    - Return FAIL when at least one assigned item fails.\n    - Return NOT TESTED when no assigned item fails and at least one item lacks required evidence.\n    - Do not infer, omit, duplicate, or silently repair an item when evidence is incomplete.\n  completion:\n    - Return PASS only when every assigned item passes, FAIL when any item fails, or NOT TESTED when evidence is incomplete and no item fails.\n    - Return only the output-contract fields and include every assigned checklist item exactly once.\nmodelProfile: simple\nexamples:\n  - purpose: Record a complete page-shell checklist pass from direct source and rendered evidence.\n    runtimeInvocations:\n      codex: \"$methodology_design_system_checklist_runner Review page-shell.html against the supplied Page Shell checklist.\"\n      claude-code: \"@agent-methodology-design-system-checklist-runner Review page-shell.html against the supplied Page Shell checklist.\"\n    plausibleResponse: |-\n      status: PASS\n      page: page-shell.html\n      checklist: Page Shell\n      checks:\n        - id: DDS-SHL-001\n          result: PASS\n          evidence: The supplied anatomy example contains each required shell element in order.\n      findings: []\n      limits: []\n  - purpose: Preserve unavailable interaction evidence as NOT TESTED without turning it into an integrated verdict.\n    runtimeInvocations:\n      codex: \"$methodology_design_system_checklist_runner Review forms-and-actions.html against the supplied Forms And Actions checklist using source evidence only.\"\n      claude-code: \"@agent-methodology-design-system-checklist-runner Review forms-and-actions.html against the supplied Forms And Actions checklist using source evidence only.\"\n    plausibleResponse: |-\n      status: NOT TESTED\n      page: forms-and-actions.html\n      checklist: Forms And Actions\n      checks:\n        - id: DDS-FRM-006\n          result: NOT TESTED\n          evidence: No keyboard-interaction trace was supplied for the dialog.\n      findings: []\n      limits:\n        - Dialog focus containment and return focus were not tested.\nskills:\n  - review-documentation-design-system:\n      justification: This is the single authoritative method for applying one Documentation Design System checklist and recording page-specific evidence.\nisolation: read-only\noutputContract:\n  - status:\n      purpose: Returns exactly PASS, FAIL, or NOT TESTED for the supplied checklist without claiming integrated acceptance.\n  - page:\n      purpose: Identifies the one reviewed page.\n  - checklist:\n      purpose: Identifies the one applied checklist.\n  - checks:\n      purpose: Records every assigned checklist item exactly once with its identifier, allowed result, and page-specific evidence.\n  - findings:\n      purpose: Lists only actionable corrections for failed items, or an empty list.\n  - limits:\n      purpose: Lists missing evidence for NOT TESTED items, or an empty list.\n"
+      "yaml": "name: methodology-design-system-checklist-runner\nfilename: methodology-design-system-checklist-runner\nrepositoryMutation: never\ndescription: Applies one supplied Documentation Design System checklist to one supplied page and returns complete item-level evidence without an integrated verdict.\ninstructions:\n  objective: Apply exactly one supplied checklist to exactly one supplied page and return complete item-level evidence.\n  boundaries:\n    - Remain read-only. Do not edit the page, checklist, repository, or evidence sources.\n    - Use only the supplied page, the supplied checklist, and the review-documentation-design-system method.\n    - Do not expand the assignment, delegate work, invoke another agent, or make an integrated design-system acceptance decision.\n    - Apply exactly the checklist supplied for this invocation. A standalone full-page caller must schedule separate Shared and page-type invocations; never add either checklist automatically.\n    - Codex and Claude adapters use supported native read-only restrictions. The Gemini and Junie portability layer does not prevent repository mutation for this role; rely on instruction compliance and the suite post-run mutation audit.\n  workflow:\n    - Confirm a non-empty assignment with exactly one page, exactly one checklist, and unique expected checklist IDs. Reject an empty assignment.\n    - Validate that the returned page and checklist exactly match the assignment and that every expected ID occurs once. Do not accept wrong identity, malformed output, or null output.\n    - When the supplied page, checklist, or evidence is unavailable or ambiguous, use the coordinator-owned expected inventory and record every assigned check as NOT TESTED with its missing evidence.\n    - Apply each assigned checklist item to the supplied page and available evidence.\n    - Record every assigned checklist item exactly once as PASS, FAIL, or NOT TESTED with page-specific evidence.\n    - List actionable corrections only for failed items and list the missing evidence for every NOT TESTED item.\n  failureHandling:\n    - Return NOT TESTED when at least one assigned item lacks required evidence, including when another item fails.\n    - Return FAIL only when at least one assigned item fails and no item is NOT TESTED.\n    - Do not infer, omit, duplicate, or silently repair an item when evidence is incomplete.\n  completion:\n    - Return PASS only when every assigned item passes, NOT TESTED when any item lacks evidence, or FAIL when at least one item fails and none is NOT TESTED.\n    - Return only the output-contract fields and include every assigned checklist item exactly once.\nmodelProfile: simple\nexamples:\n  - purpose: Record a complete page-shell checklist pass from direct source and rendered evidence.\n    runtimeInvocations:\n      codex: \"$methodology_design_system_checklist_runner Review page-shell.html against the supplied Page Shell checklist.\"\n      claude-code: \"@agent-methodology-design-system-checklist-runner Review page-shell.html against the supplied Page Shell checklist.\"\n    plausibleResponse: |-\n      status: PASS\n      page: page-shell.html\n      checklist: Page Shell\n      checks:\n        - id: DDS-SHL-001\n          result: PASS\n          evidence: The supplied anatomy example contains each required shell element in order.\n      findings: []\n      limits: []\n  - purpose: Preserve unavailable interaction evidence as NOT TESTED without turning it into an integrated verdict.\n    runtimeInvocations:\n      codex: \"$methodology_design_system_checklist_runner Review forms-and-actions.html against the supplied Forms And Actions checklist using source evidence only.\"\n      claude-code: \"@agent-methodology-design-system-checklist-runner Review forms-and-actions.html against the supplied Forms And Actions checklist using source evidence only.\"\n    plausibleResponse: |-\n      status: NOT TESTED\n      page: forms-and-actions.html\n      checklist: Forms And Actions\n      checks:\n        - id: DDS-FRM-006\n          result: NOT TESTED\n          evidence: No keyboard-interaction trace was supplied for the dialog.\n      findings: []\n      limits:\n        - id: DDS-FRM-006\n          missingEvidence: Dialog focus containment and return focus were not tested.\nskills:\n  - review-documentation-design-system:\n      justification: This is the single authoritative method for applying one Documentation Design System checklist and recording page-specific evidence.\nisolation: read-only\noutputContract:\n  - status:\n      purpose: Returns exactly PASS, FAIL, or NOT TESTED for the supplied checklist without claiming integrated acceptance.\n      schema:\n        type: string\n        enum: [PASS, FAIL, NOT TESTED]\n  - page:\n      purpose: Identifies the one reviewed page.\n      schema:\n        type: string\n        minLength: 1\n  - checklist:\n      purpose: Identifies the one applied checklist.\n      schema:\n        type: string\n        minLength: 1\n  - checks:\n      purpose: Records every assigned checklist item exactly once with its identifier, allowed result, and page-specific evidence.\n      schema:\n        type: array\n        minItems: 1\n        items:\n          type: object\n          additionalProperties: false\n          required: [id, result, evidence]\n          properties:\n            id: {type: string, minLength: 1}\n            result: {type: string, enum: [PASS, FAIL, NOT TESTED]}\n            evidence: {type: string, minLength: 1}\n  - findings:\n      purpose: Lists only actionable corrections for failed items, or an empty list.\n      schema:\n        type: array\n        items:\n          type: object\n          additionalProperties: false\n          required: [id, remediation]\n          properties:\n            id: {type: string, minLength: 1}\n            remediation: {type: string, minLength: 1}\n  - limits:\n      purpose: Lists missing evidence for NOT TESTED items, or an empty list.\n      schema:\n        type: array\n        items:\n          type: object\n          additionalProperties: false\n          required: [id, missingEvidence]\n          properties:\n            id: {type: string, minLength: 1}\n            missingEvidence: {type: string, minLength: 1}\n"
     },
     "methodology-design-system-review-coordinator": {
       "agentDependencies": [
@@ -1936,7 +2061,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
       "displayName": "Methodology Design System Review Coordinator",
       "examples": [
         {
-          "plausibleResponse": "status: ACCEPTED\ncoverage:\n  required: 2\n  completed: 2\n  missing: []\nreconciledFindings: []\nevidenceConflicts: []\nacceptanceRationale: Every required item has reconciled PASS evidence.\nmodelEvalRanking:\n  - rank: 1\n    candidates: [fast-within-band]\n    pricingStatus: priced\n    provisional: false\n    evidence: Accuracy is equal and cost is exactly 115 percent of the cheapest peer, so lower wall time decides.\n  - rank: 2\n    candidates: [slow-cheapest]\n    pricingStatus: priced\n    provisional: false\n    evidence: Accuracy is equal; cost is in the same inclusive band; wall time is higher.\nrunnerReports:\n  - page: page-shell.html\n    checklist: Shared\n    status: PASS\n  - page: page-shell.html\n    checklist: Page Shell\n    status: PASS",
+          "plausibleResponse": "status: ACCEPTED\ncoverage:\n  required: 2\n  completed: 2\n  missing: []\nreconciledFindings: []\nevidenceConflicts: []\nacceptanceRationale: Every required item has reconciled PASS evidence.\nmodelEvalRanking:\n  - rank: 1\n    tie: false\n    id: fast-within-band\n    accuracy: 1.0\n    estimated_cost: 115.0\n    wall_seconds: 2.0\n    pricingStatus: priced\n    provisional: false\n    evidence: Accuracy is equal and cost is exactly 115 percent of the cheapest peer, so lower wall time decides.\n  - rank: 2\n    tie: false\n    id: slow-cheapest\n    accuracy: 1.0\n    estimated_cost: 100.0\n    wall_seconds: 10.0\n    pricingStatus: priced\n    provisional: false\n    evidence: Accuracy is equal; cost is in the same inclusive band; wall time is higher.\nrunnerReports:\n  - page: page-shell.html\n    checklist: Shared\n    status: PASS\n    attempts: 1\n    checks: [{id: DDS-COM-001, result: PASS, evidence: The version is consistent.}]\n    findings: []\n    limits: []\n  - page: page-shell.html\n    checklist: Page Shell\n    status: PASS\n    attempts: 1\n    checks: [{id: DDS-SHL-001, result: PASS, evidence: The shell anatomy is complete.}]\n    findings: []\n    limits: []",
           "purpose": "Accept complete coverage and rank equal-accuracy priced candidates within the inclusive cost band by speed.",
           "runtimeInvocations": {
             "claude-code": "@agent-methodology-design-system-review-coordinator Reconcile the supplied complete reports and rank the supplied equal-accuracy candidates.",
@@ -1944,7 +2069,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
           }
         },
         {
-          "plausibleResponse": "status: BLOCKED\ncoverage:\n  required: 3\n  completed: 2\n  missing:\n    - page: forms-and-actions.html\n      checklist: Accessibility\nreconciledFindings: []\nevidenceConflicts: []\nacceptanceRationale: Required Accessibility evidence is unavailable.\nmodelEvalRanking: []\nrunnerReports:\n  - page: forms-and-actions.html\n    checklist: Shared\n    status: PASS\n  - page: forms-and-actions.html\n    checklist: Forms And Actions\n    status: PASS",
+          "plausibleResponse": "status: BLOCKED\ncoverage:\n  required: 3\n  completed: 2\n  missing:\n    - page: forms-and-actions.html\n      checklist: Accessibility\n      reason: runner unavailable\nreconciledFindings: []\nevidenceConflicts: []\nacceptanceRationale: Required Accessibility evidence is unavailable.\nmodelEvalRanking: []\nrunnerReports:\n  - page: forms-and-actions.html\n    checklist: Shared\n    status: PASS\n    attempts: 1\n    checks: [{id: DDS-COM-001, result: PASS, evidence: Shared evidence is complete.}]\n    findings: []\n    limits: []\n  - page: forms-and-actions.html\n    checklist: Forms And Actions\n    status: PASS\n    attempts: 1\n    checks: [{id: DDS-FRM-001, result: PASS, evidence: Form labels are explicit.}]\n    findings: []\n    limits: []",
           "purpose": "Stop without self-review when a runner is unavailable and preserve completed evidence.",
           "runtimeInvocations": {
             "claude-code": "@agent-methodology-design-system-review-coordinator Reconcile Forms, Shared, and Accessibility assignments; the Accessibility runner is unavailable.",
@@ -1961,7 +2086,8 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
           "Give each methodology-design-system-checklist-runner invocation exactly one page and one checklist. Never assign multiple page-checklist pairs to one invocation.",
           "Treat runner reports as item evidence. This coordinator alone returns ACCEPTED, REJECTED, or BLOCKED.",
           "Do not perform a missing checklist review locally or infer PASS for an omitted, duplicated, malformed, or unavailable result.",
-          "Keep provider model identifiers out of this definition. Rank only the runtime-supplied candidate labels and measurements."
+          "Keep provider model identifiers out of this definition. Rank only the runtime-supplied candidate labels and measurements.",
+          "Codex and Claude adapters use supported native read-only restrictions. The Gemini and Junie portability layer does not prevent repository mutation for this role; rely on instruction compliance and the suite post-run mutation audit."
         ],
         "completion": [
           "Return ACCEPTED, REJECTED, or BLOCKED only after accounting for every required assignment and every assigned checklist item.",
@@ -1969,10 +2095,12 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         ],
         "decisions": [
           "Return ACCEPTED only when every required assignment reports every assigned item exactly once as PASS and no material contradiction remains.",
-          "Return REJECTED when complete reconciled evidence contains one or more confirmed material failures.",
+          "Return BLOCKED whenever any assigned item is NOT TESTED, even when another assigned item is FAIL.",
+          "Return REJECTED when complete reconciled evidence contains one or more confirmed material failures and no item is NOT TESTED.",
           "Return BLOCKED when required coverage is missing, a report remains malformed after one retry, the runner is unavailable, or a material contradiction cannot be resolved from supplied evidence.",
-          "Rank higher accuracy first. Within exactly equal accuracy, treat a priced cost at or below 115 percent of the cheapest priced peer as equivalent, then prefer lower wall time.",
-          "Keep priced and unpriced candidates distinct. Preserve null price for an unpriced candidate and mark an unpriced winner provisional instead of inventing a price."
+          "Rank higher exact accuracy first. At equal accuracy, rank priced candidates before unpriced candidates. Within priced candidates, treat a cost at or below the exact rational 115 percent boundary of the cheapest priced peer as equivalent, then prefer lower wall time.",
+          "Keep priced and unpriced candidates distinct. Preserve null price for every unpriced candidate, mark unpriced results provisional, and never invent credits or price.",
+          "Preserve exact metric ties explicitly. A stable candidate-ID order may present tied candidates but must not break their shared rank."
         ],
         "delegation": [
           "methodology-design-system-checklist-runner owns one isolated page-checklist execution per invocation and returns the complete strict report.",
@@ -1981,21 +2109,21 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "failureHandling": [
           "After one malformed-report retry, return BLOCKED with the exact affected assignment when the corrected report remains malformed.",
           "When the runner is unavailable, preserve completed reports and return BLOCKED with every uncovered assignment. Do not review those assignments locally.",
-          "Preserve both material claims when evidence conflicts. Return BLOCKED when supplied sources cannot resolve the contradiction."
+          "Preserve both material claims when evidence conflicts. Use supplied authoritative evidence only when it resolves the exact item; otherwise return BLOCKED."
         ],
         "objective": "Dispatch bounded page-checklist assignments, validate complete runner evidence, reconcile findings, return the integrated verdict, and rank supplied evaluation candidates deterministically.",
         "workflow": [
           "Inventory required page-checklist assignments and reject duplicate or malformed assignments before dispatch.",
           "Invoke methodology-design-system-checklist-runner once for each required assignment, passing exactly one page and one checklist.",
-          "Validate every report field, allowed status, assigned checklist ID, and exactly-once item count against the assigned checklist.",
+          "Validate every report field and nested type, exact page and checklist identity, allowed status, unique assigned checklist ID, exactly-once item count, actionable finding for every FAIL, and missing-evidence limit for every NOT TESTED.",
           "Retry one malformed report once with the same page and checklist and an explicit output-contract correction request.",
-          "Reconcile evidence by page and checklist item. De-duplicate identical findings without dropping distinct sources or contradictory claims.",
+          "Reconcile evidence by page and checklist item. De-duplicate identical findings without dropping distinct sources or contradictory claims. Supplied authoritative evidence may resolve a contradiction while both original claims remain visible.",
           "Apply the integrated decision rules to the complete reconciled evidence. Never substitute a runner status for the integrated verdict.",
-          "When candidates are supplied, subtract cached input from full-price input before charging cached input at its own supplied rate, then apply the fixed ranking rules.",
+          "When candidates are supplied, reject duplicate IDs, non-finite or negative measurements and rates, and cached input greater than total input. Subtract cached input from full-price input before charging cached input at its own supplied rate, then apply the fixed ranking rules with exact decimal arithmetic and no epsilon.",
           "Return only the output-contract fields with no unstructured preamble or epilogue."
         ]
       },
-      "instructions": "## Objective\n\nDispatch bounded page-checklist assignments, validate complete runner evidence, reconcile findings, return the integrated verdict, and rank supplied evaluation candidates deterministically.\n\n## Boundaries\n\n- Remain read-only. Do not edit pages, checklists, role definitions, runner reports, or evaluation data.\n- Give each methodology-design-system-checklist-runner invocation exactly one page and one checklist. Never assign multiple page-checklist pairs to one invocation.\n- Treat runner reports as item evidence. This coordinator alone returns ACCEPTED, REJECTED, or BLOCKED.\n- Do not perform a missing checklist review locally or infer PASS for an omitted, duplicated, malformed, or unavailable result.\n- Keep provider model identifiers out of this definition. Rank only the runtime-supplied candidate labels and measurements.\n\n## Decisions\n\n- Return ACCEPTED only when every required assignment reports every assigned item exactly once as PASS and no material contradiction remains.\n- Return REJECTED when complete reconciled evidence contains one or more confirmed material failures.\n- Return BLOCKED when required coverage is missing, a report remains malformed after one retry, the runner is unavailable, or a material contradiction cannot be resolved from supplied evidence.\n- Rank higher accuracy first. Within exactly equal accuracy, treat a priced cost at or below 115 percent of the cheapest priced peer as equivalent, then prefer lower wall time.\n- Keep priced and unpriced candidates distinct. Preserve null price for an unpriced candidate and mark an unpriced winner provisional instead of inventing a price.\n\n## Workflow\n\n1. Inventory required page-checklist assignments and reject duplicate or malformed assignments before dispatch.\n2. Invoke methodology-design-system-checklist-runner once for each required assignment, passing exactly one page and one checklist.\n3. Validate every report field, allowed status, assigned checklist ID, and exactly-once item count against the assigned checklist.\n4. Retry one malformed report once with the same page and checklist and an explicit output-contract correction request.\n5. Reconcile evidence by page and checklist item. De-duplicate identical findings without dropping distinct sources or contradictory claims.\n6. Apply the integrated decision rules to the complete reconciled evidence. Never substitute a runner status for the integrated verdict.\n7. When candidates are supplied, subtract cached input from full-price input before charging cached input at its own supplied rate, then apply the fixed ranking rules.\n8. Return only the output-contract fields with no unstructured preamble or epilogue.\n\n## Delegation\n\n- methodology-design-system-checklist-runner owns one isolated page-checklist execution per invocation and returns the complete strict report.\n- This coordinator owns assignment coverage, report validation, retry, evidence reconciliation, integrated acceptance, and deterministic candidate ranking.\n\n## Failure Handling\n\n- After one malformed-report retry, return BLOCKED with the exact affected assignment when the corrected report remains malformed.\n- When the runner is unavailable, preserve completed reports and return BLOCKED with every uncovered assignment. Do not review those assignments locally.\n- Preserve both material claims when evidence conflicts. Return BLOCKED when supplied sources cannot resolve the contradiction.\n\n## Completion\n\n- Return ACCEPTED, REJECTED, or BLOCKED only after accounting for every required assignment and every assigned checklist item.\n- Return a complete ranked list or explicit tie with price status and ranking evidence when candidates are supplied; otherwise return an empty ranking.",
+      "instructions": "## Objective\n\nDispatch bounded page-checklist assignments, validate complete runner evidence, reconcile findings, return the integrated verdict, and rank supplied evaluation candidates deterministically.\n\n## Boundaries\n\n- Remain read-only. Do not edit pages, checklists, role definitions, runner reports, or evaluation data.\n- Give each methodology-design-system-checklist-runner invocation exactly one page and one checklist. Never assign multiple page-checklist pairs to one invocation.\n- Treat runner reports as item evidence. This coordinator alone returns ACCEPTED, REJECTED, or BLOCKED.\n- Do not perform a missing checklist review locally or infer PASS for an omitted, duplicated, malformed, or unavailable result.\n- Keep provider model identifiers out of this definition. Rank only the runtime-supplied candidate labels and measurements.\n- Codex and Claude adapters use supported native read-only restrictions. The Gemini and Junie portability layer does not prevent repository mutation for this role; rely on instruction compliance and the suite post-run mutation audit.\n\n## Decisions\n\n- Return ACCEPTED only when every required assignment reports every assigned item exactly once as PASS and no material contradiction remains.\n- Return BLOCKED whenever any assigned item is NOT TESTED, even when another assigned item is FAIL.\n- Return REJECTED when complete reconciled evidence contains one or more confirmed material failures and no item is NOT TESTED.\n- Return BLOCKED when required coverage is missing, a report remains malformed after one retry, the runner is unavailable, or a material contradiction cannot be resolved from supplied evidence.\n- Rank higher exact accuracy first. At equal accuracy, rank priced candidates before unpriced candidates. Within priced candidates, treat a cost at or below the exact rational 115 percent boundary of the cheapest priced peer as equivalent, then prefer lower wall time.\n- Keep priced and unpriced candidates distinct. Preserve null price for every unpriced candidate, mark unpriced results provisional, and never invent credits or price.\n- Preserve exact metric ties explicitly. A stable candidate-ID order may present tied candidates but must not break their shared rank.\n\n## Workflow\n\n1. Inventory required page-checklist assignments and reject duplicate or malformed assignments before dispatch.\n2. Invoke methodology-design-system-checklist-runner once for each required assignment, passing exactly one page and one checklist.\n3. Validate every report field and nested type, exact page and checklist identity, allowed status, unique assigned checklist ID, exactly-once item count, actionable finding for every FAIL, and missing-evidence limit for every NOT TESTED.\n4. Retry one malformed report once with the same page and checklist and an explicit output-contract correction request.\n5. Reconcile evidence by page and checklist item. De-duplicate identical findings without dropping distinct sources or contradictory claims. Supplied authoritative evidence may resolve a contradiction while both original claims remain visible.\n6. Apply the integrated decision rules to the complete reconciled evidence. Never substitute a runner status for the integrated verdict.\n7. When candidates are supplied, reject duplicate IDs, non-finite or negative measurements and rates, and cached input greater than total input. Subtract cached input from full-price input before charging cached input at its own supplied rate, then apply the fixed ranking rules with exact decimal arithmetic and no epsilon.\n8. Return only the output-contract fields with no unstructured preamble or epilogue.\n\n## Delegation\n\n- methodology-design-system-checklist-runner owns one isolated page-checklist execution per invocation and returns the complete strict report.\n- This coordinator owns assignment coverage, report validation, retry, evidence reconciliation, integrated acceptance, and deterministic candidate ranking.\n\n## Failure Handling\n\n- After one malformed-report retry, return BLOCKED with the exact affected assignment when the corrected report remains malformed.\n- When the runner is unavailable, preserve completed reports and return BLOCKED with every uncovered assignment. Do not review those assignments locally.\n- Preserve both material claims when evidence conflicts. Use supplied authoritative evidence only when it resolves the exact item; otherwise return BLOCKED.\n\n## Completion\n\n- Return ACCEPTED, REJECTED, or BLOCKED only after accounting for every required assignment and every assigned checklist item.\n- Return a complete ranked list or explicit tie with price status and ranking evidence when candidates are supplied; otherwise return an empty ranking.",
       "isolation": "read-only",
       "modelProfile": "coordination",
       "modelStages": {},
@@ -2008,6 +2136,401 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "reconciledFindings": "Lists de-duplicated material findings while preserving each distinct source.",
         "runnerReports": "Inventories every delegated page-checklist report and its checklist status.",
         "status": "Returns exactly ACCEPTED, REJECTED, or BLOCKED as the coordinator-owned integrated decision."
+      },
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "acceptanceRationale": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "coverage": {
+            "additionalProperties": false,
+            "properties": {
+              "completed": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "missing": {
+                "items": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "checklist": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "page": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "reason": {
+                      "minLength": 1,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "page",
+                    "checklist",
+                    "reason"
+                  ],
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "required": {
+                "minimum": 0,
+                "type": "integer"
+              }
+            },
+            "required": [
+              "required",
+              "completed",
+              "missing"
+            ],
+            "type": "object"
+          },
+          "evidenceConflicts": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "authoritativeEvidence": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "evidence": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "result": {
+                      "enum": [
+                        "PASS",
+                        "FAIL",
+                        "NOT TESTED"
+                      ],
+                      "type": "string"
+                    },
+                    "source": {
+                      "minLength": 1,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "result",
+                    "evidence",
+                    "source"
+                  ],
+                  "type": [
+                    "object",
+                    "null"
+                  ]
+                },
+                "checklist": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "claims": {
+                  "items": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "checklist": {
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "evidence": {
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "id": {
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "page": {
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "result": {
+                        "enum": [
+                          "PASS",
+                          "FAIL",
+                          "NOT TESTED"
+                        ],
+                        "type": "string"
+                      },
+                      "source": {
+                        "minLength": 1,
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "page",
+                      "checklist",
+                      "id",
+                      "result",
+                      "evidence",
+                      "source"
+                    ],
+                    "type": "object"
+                  },
+                  "minItems": 2,
+                  "type": "array"
+                },
+                "id": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "page": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "resolution": {
+                  "enum": [
+                    "resolved",
+                    "unresolved"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "page",
+                "checklist",
+                "id",
+                "claims",
+                "resolution",
+                "authoritativeEvidence"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "modelEvalRanking": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "accuracy": {
+                  "minimum": 0,
+                  "type": "number"
+                },
+                "estimated_cost": {
+                  "minimum": 0,
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "evidence": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "id": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "pricingStatus": {
+                  "enum": [
+                    "priced",
+                    "unpriced"
+                  ],
+                  "type": "string"
+                },
+                "provisional": {
+                  "type": "boolean"
+                },
+                "rank": {
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "tie": {
+                  "type": "boolean"
+                },
+                "wall_seconds": {
+                  "minimum": 0,
+                  "type": "number"
+                }
+              },
+              "required": [
+                "rank",
+                "tie",
+                "id",
+                "accuracy",
+                "estimated_cost",
+                "wall_seconds",
+                "pricingStatus",
+                "provisional",
+                "evidence"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "reconciledFindings": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "checklist": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "id": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "page": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "remediation": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "sources": {
+                  "items": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "minItems": 1,
+                  "type": "array"
+                }
+              },
+              "required": [
+                "page",
+                "checklist",
+                "id",
+                "remediation",
+                "sources"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "runnerReports": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "attempts": {
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "checklist": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "checks": {
+                  "items": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "evidence": {
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "id": {
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "result": {
+                        "enum": [
+                          "PASS",
+                          "FAIL",
+                          "NOT TESTED"
+                        ],
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "result",
+                      "evidence"
+                    ],
+                    "type": "object"
+                  },
+                  "minItems": 1,
+                  "type": "array"
+                },
+                "findings": {
+                  "items": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "id": {
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "remediation": {
+                        "minLength": 1,
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "remediation"
+                    ],
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                "limits": {
+                  "items": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "id": {
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "missingEvidence": {
+                        "minLength": 1,
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "missingEvidence"
+                    ],
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                "page": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "status": {
+                  "enum": [
+                    "PASS",
+                    "FAIL",
+                    "NOT TESTED"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "page",
+                "checklist",
+                "status",
+                "attempts",
+                "checks",
+                "findings",
+                "limits"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "status": {
+            "enum": [
+              "ACCEPTED",
+              "REJECTED",
+              "BLOCKED"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "coverage",
+          "reconciledFindings",
+          "evidenceConflicts",
+          "acceptanceRationale",
+          "modelEvalRanking",
+          "runnerReports"
+        ],
+        "type": "object"
       },
       "outputs": [
         "status",
@@ -2029,7 +2552,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "ste-technical-writing"
       ],
       "sourcePath": "agents/roles/methodology-maintenance/methodology-design-system-review-coordinator.role.yaml",
-      "yaml": "name: methodology-design-system-review-coordinator\nfilename: methodology-design-system-review-coordinator\nrepositoryMutation: never\ndescription: Coordinates bounded Documentation Design System checklist assignments, validates complete runner evidence, reconciles findings, and alone returns the integrated verdict.\ninstructions:\n  objective: Dispatch bounded page-checklist assignments, validate complete runner evidence, reconcile findings, return the integrated verdict, and rank supplied evaluation candidates deterministically.\n  boundaries:\n    - Remain read-only. Do not edit pages, checklists, role definitions, runner reports, or evaluation data.\n    - Give each methodology-design-system-checklist-runner invocation exactly one page and one checklist. Never assign multiple page-checklist pairs to one invocation.\n    - Treat runner reports as item evidence. This coordinator alone returns ACCEPTED, REJECTED, or BLOCKED.\n    - Do not perform a missing checklist review locally or infer PASS for an omitted, duplicated, malformed, or unavailable result.\n    - Keep provider model identifiers out of this definition. Rank only the runtime-supplied candidate labels and measurements.\n  decisions:\n    - Return ACCEPTED only when every required assignment reports every assigned item exactly once as PASS and no material contradiction remains.\n    - Return REJECTED when complete reconciled evidence contains one or more confirmed material failures.\n    - Return BLOCKED when required coverage is missing, a report remains malformed after one retry, the runner is unavailable, or a material contradiction cannot be resolved from supplied evidence.\n    - Rank higher accuracy first. Within exactly equal accuracy, treat a priced cost at or below 115 percent of the cheapest priced peer as equivalent, then prefer lower wall time.\n    - Keep priced and unpriced candidates distinct. Preserve null price for an unpriced candidate and mark an unpriced winner provisional instead of inventing a price.\n  workflow:\n    - Inventory required page-checklist assignments and reject duplicate or malformed assignments before dispatch.\n    - Invoke methodology-design-system-checklist-runner once for each required assignment, passing exactly one page and one checklist.\n    - Validate every report field, allowed status, assigned checklist ID, and exactly-once item count against the assigned checklist.\n    - Retry one malformed report once with the same page and checklist and an explicit output-contract correction request.\n    - Reconcile evidence by page and checklist item. De-duplicate identical findings without dropping distinct sources or contradictory claims.\n    - Apply the integrated decision rules to the complete reconciled evidence. Never substitute a runner status for the integrated verdict.\n    - When candidates are supplied, subtract cached input from full-price input before charging cached input at its own supplied rate, then apply the fixed ranking rules.\n    - Return only the output-contract fields with no unstructured preamble or epilogue.\n  delegation:\n    - methodology-design-system-checklist-runner owns one isolated page-checklist execution per invocation and returns the complete strict report.\n    - This coordinator owns assignment coverage, report validation, retry, evidence reconciliation, integrated acceptance, and deterministic candidate ranking.\n  failureHandling:\n    - After one malformed-report retry, return BLOCKED with the exact affected assignment when the corrected report remains malformed.\n    - When the runner is unavailable, preserve completed reports and return BLOCKED with every uncovered assignment. Do not review those assignments locally.\n    - Preserve both material claims when evidence conflicts. Return BLOCKED when supplied sources cannot resolve the contradiction.\n  completion:\n    - Return ACCEPTED, REJECTED, or BLOCKED only after accounting for every required assignment and every assigned checklist item.\n    - Return a complete ranked list or explicit tie with price status and ranking evidence when candidates are supplied; otherwise return an empty ranking.\nagentDependencies:\n  - methodology-design-system-checklist-runner\nmodelProfile: coordination\nexamples:\n  - purpose: Accept complete coverage and rank equal-accuracy priced candidates within the inclusive cost band by speed.\n    runtimeInvocations:\n      codex: \"$methodology_design_system_review_coordinator Reconcile the supplied complete reports and rank the supplied equal-accuracy candidates.\"\n      claude-code: \"@agent-methodology-design-system-review-coordinator Reconcile the supplied complete reports and rank the supplied equal-accuracy candidates.\"\n    plausibleResponse: |-\n      status: ACCEPTED\n      coverage:\n        required: 2\n        completed: 2\n        missing: []\n      reconciledFindings: []\n      evidenceConflicts: []\n      acceptanceRationale: Every required item has reconciled PASS evidence.\n      modelEvalRanking:\n        - rank: 1\n          candidates: [fast-within-band]\n          pricingStatus: priced\n          provisional: false\n          evidence: Accuracy is equal and cost is exactly 115 percent of the cheapest peer, so lower wall time decides.\n        - rank: 2\n          candidates: [slow-cheapest]\n          pricingStatus: priced\n          provisional: false\n          evidence: Accuracy is equal; cost is in the same inclusive band; wall time is higher.\n      runnerReports:\n        - page: page-shell.html\n          checklist: Shared\n          status: PASS\n        - page: page-shell.html\n          checklist: Page Shell\n          status: PASS\n  - purpose: Stop without self-review when a runner is unavailable and preserve completed evidence.\n    runtimeInvocations:\n      codex: \"$methodology_design_system_review_coordinator Reconcile Forms, Shared, and Accessibility assignments; the Accessibility runner is unavailable.\"\n      claude-code: \"@agent-methodology-design-system-review-coordinator Reconcile Forms, Shared, and Accessibility assignments; the Accessibility runner is unavailable.\"\n    plausibleResponse: |-\n      status: BLOCKED\n      coverage:\n        required: 3\n        completed: 2\n        missing:\n          - page: forms-and-actions.html\n            checklist: Accessibility\n      reconciledFindings: []\n      evidenceConflicts: []\n      acceptanceRationale: Required Accessibility evidence is unavailable.\n      modelEvalRanking: []\n      runnerReports:\n        - page: forms-and-actions.html\n          checklist: Shared\n          status: PASS\n        - page: forms-and-actions.html\n          checklist: Forms And Actions\n          status: PASS\nskills: []\nisolation: read-only\noutputContract:\n  - status:\n      purpose: Returns exactly ACCEPTED, REJECTED, or BLOCKED as the coordinator-owned integrated decision.\n  - coverage:\n      purpose: Records required, completed, and missing page-checklist assignments.\n  - reconciledFindings:\n      purpose: Lists de-duplicated material findings while preserving each distinct source.\n  - evidenceConflicts:\n      purpose: Preserves contradictory material claims and their sources, or an empty list.\n  - acceptanceRationale:\n      purpose: Ties the integrated decision to complete reconciled checklist evidence.\n  - modelEvalRanking:\n      purpose: Orders supplied candidates by accuracy, inclusive 15-percent priced-cost equivalence, and speed while preserving null and provisional unpriced behavior.\n  - runnerReports:\n      purpose: Inventories every delegated page-checklist report and its checklist status.\n"
+      "yaml": "name: methodology-design-system-review-coordinator\nfilename: methodology-design-system-review-coordinator\nrepositoryMutation: never\ndescription: Coordinates bounded Documentation Design System checklist assignments, validates complete runner evidence, reconciles findings, and alone returns the integrated verdict.\ninstructions:\n  objective: Dispatch bounded page-checklist assignments, validate complete runner evidence, reconcile findings, return the integrated verdict, and rank supplied evaluation candidates deterministically.\n  boundaries:\n    - Remain read-only. Do not edit pages, checklists, role definitions, runner reports, or evaluation data.\n    - Give each methodology-design-system-checklist-runner invocation exactly one page and one checklist. Never assign multiple page-checklist pairs to one invocation.\n    - Treat runner reports as item evidence. This coordinator alone returns ACCEPTED, REJECTED, or BLOCKED.\n    - Do not perform a missing checklist review locally or infer PASS for an omitted, duplicated, malformed, or unavailable result.\n    - Keep provider model identifiers out of this definition. Rank only the runtime-supplied candidate labels and measurements.\n    - Codex and Claude adapters use supported native read-only restrictions. The Gemini and Junie portability layer does not prevent repository mutation for this role; rely on instruction compliance and the suite post-run mutation audit.\n  decisions:\n    - Return ACCEPTED only when every required assignment reports every assigned item exactly once as PASS and no material contradiction remains.\n    - Return BLOCKED whenever any assigned item is NOT TESTED, even when another assigned item is FAIL.\n    - Return REJECTED when complete reconciled evidence contains one or more confirmed material failures and no item is NOT TESTED.\n    - Return BLOCKED when required coverage is missing, a report remains malformed after one retry, the runner is unavailable, or a material contradiction cannot be resolved from supplied evidence.\n    - Rank higher exact accuracy first. At equal accuracy, rank priced candidates before unpriced candidates. Within priced candidates, treat a cost at or below the exact rational 115 percent boundary of the cheapest priced peer as equivalent, then prefer lower wall time.\n    - Keep priced and unpriced candidates distinct. Preserve null price for every unpriced candidate, mark unpriced results provisional, and never invent credits or price.\n    - Preserve exact metric ties explicitly. A stable candidate-ID order may present tied candidates but must not break their shared rank.\n  workflow:\n    - Inventory required page-checklist assignments and reject duplicate or malformed assignments before dispatch.\n    - Invoke methodology-design-system-checklist-runner once for each required assignment, passing exactly one page and one checklist.\n    - Validate every report field and nested type, exact page and checklist identity, allowed status, unique assigned checklist ID, exactly-once item count, actionable finding for every FAIL, and missing-evidence limit for every NOT TESTED.\n    - Retry one malformed report once with the same page and checklist and an explicit output-contract correction request.\n    - Reconcile evidence by page and checklist item. De-duplicate identical findings without dropping distinct sources or contradictory claims. Supplied authoritative evidence may resolve a contradiction while both original claims remain visible.\n    - Apply the integrated decision rules to the complete reconciled evidence. Never substitute a runner status for the integrated verdict.\n    - When candidates are supplied, reject duplicate IDs, non-finite or negative measurements and rates, and cached input greater than total input. Subtract cached input from full-price input before charging cached input at its own supplied rate, then apply the fixed ranking rules with exact decimal arithmetic and no epsilon.\n    - Return only the output-contract fields with no unstructured preamble or epilogue.\n  delegation:\n    - methodology-design-system-checklist-runner owns one isolated page-checklist execution per invocation and returns the complete strict report.\n    - This coordinator owns assignment coverage, report validation, retry, evidence reconciliation, integrated acceptance, and deterministic candidate ranking.\n  failureHandling:\n    - After one malformed-report retry, return BLOCKED with the exact affected assignment when the corrected report remains malformed.\n    - When the runner is unavailable, preserve completed reports and return BLOCKED with every uncovered assignment. Do not review those assignments locally.\n    - Preserve both material claims when evidence conflicts. Use supplied authoritative evidence only when it resolves the exact item; otherwise return BLOCKED.\n  completion:\n    - Return ACCEPTED, REJECTED, or BLOCKED only after accounting for every required assignment and every assigned checklist item.\n    - Return a complete ranked list or explicit tie with price status and ranking evidence when candidates are supplied; otherwise return an empty ranking.\nagentDependencies:\n  - methodology-design-system-checklist-runner\nmodelProfile: coordination\nexamples:\n  - purpose: Accept complete coverage and rank equal-accuracy priced candidates within the inclusive cost band by speed.\n    runtimeInvocations:\n      codex: \"$methodology_design_system_review_coordinator Reconcile the supplied complete reports and rank the supplied equal-accuracy candidates.\"\n      claude-code: \"@agent-methodology-design-system-review-coordinator Reconcile the supplied complete reports and rank the supplied equal-accuracy candidates.\"\n    plausibleResponse: |-\n      status: ACCEPTED\n      coverage:\n        required: 2\n        completed: 2\n        missing: []\n      reconciledFindings: []\n      evidenceConflicts: []\n      acceptanceRationale: Every required item has reconciled PASS evidence.\n      modelEvalRanking:\n        - rank: 1\n          tie: false\n          id: fast-within-band\n          accuracy: 1.0\n          estimated_cost: 115.0\n          wall_seconds: 2.0\n          pricingStatus: priced\n          provisional: false\n          evidence: Accuracy is equal and cost is exactly 115 percent of the cheapest peer, so lower wall time decides.\n        - rank: 2\n          tie: false\n          id: slow-cheapest\n          accuracy: 1.0\n          estimated_cost: 100.0\n          wall_seconds: 10.0\n          pricingStatus: priced\n          provisional: false\n          evidence: Accuracy is equal; cost is in the same inclusive band; wall time is higher.\n      runnerReports:\n        - page: page-shell.html\n          checklist: Shared\n          status: PASS\n          attempts: 1\n          checks: [{id: DDS-COM-001, result: PASS, evidence: The version is consistent.}]\n          findings: []\n          limits: []\n        - page: page-shell.html\n          checklist: Page Shell\n          status: PASS\n          attempts: 1\n          checks: [{id: DDS-SHL-001, result: PASS, evidence: The shell anatomy is complete.}]\n          findings: []\n          limits: []\n  - purpose: Stop without self-review when a runner is unavailable and preserve completed evidence.\n    runtimeInvocations:\n      codex: \"$methodology_design_system_review_coordinator Reconcile Forms, Shared, and Accessibility assignments; the Accessibility runner is unavailable.\"\n      claude-code: \"@agent-methodology-design-system-review-coordinator Reconcile Forms, Shared, and Accessibility assignments; the Accessibility runner is unavailable.\"\n    plausibleResponse: |-\n      status: BLOCKED\n      coverage:\n        required: 3\n        completed: 2\n        missing:\n          - page: forms-and-actions.html\n            checklist: Accessibility\n            reason: runner unavailable\n      reconciledFindings: []\n      evidenceConflicts: []\n      acceptanceRationale: Required Accessibility evidence is unavailable.\n      modelEvalRanking: []\n      runnerReports:\n        - page: forms-and-actions.html\n          checklist: Shared\n          status: PASS\n          attempts: 1\n          checks: [{id: DDS-COM-001, result: PASS, evidence: Shared evidence is complete.}]\n          findings: []\n          limits: []\n        - page: forms-and-actions.html\n          checklist: Forms And Actions\n          status: PASS\n          attempts: 1\n          checks: [{id: DDS-FRM-001, result: PASS, evidence: Form labels are explicit.}]\n          findings: []\n          limits: []\nskills: []\nisolation: read-only\noutputContract:\n  - status:\n      purpose: Returns exactly ACCEPTED, REJECTED, or BLOCKED as the coordinator-owned integrated decision.\n      schema:\n        type: string\n        enum: [ACCEPTED, REJECTED, BLOCKED]\n  - coverage:\n      purpose: Records required, completed, and missing page-checklist assignments.\n      schema:\n        type: object\n        additionalProperties: false\n        required: [required, completed, missing]\n        properties:\n          required: {type: integer, minimum: 0}\n          completed: {type: integer, minimum: 0}\n          missing:\n            type: array\n            items:\n              type: object\n              additionalProperties: false\n              required: [page, checklist, reason]\n              properties:\n                page: {type: string, minLength: 1}\n                checklist: {type: string, minLength: 1}\n                reason: {type: string, minLength: 1}\n  - reconciledFindings:\n      purpose: Lists de-duplicated material findings while preserving each distinct source.\n      schema:\n        type: array\n        items:\n          type: object\n          additionalProperties: false\n          required: [page, checklist, id, remediation, sources]\n          properties:\n            page: {type: string, minLength: 1}\n            checklist: {type: string, minLength: 1}\n            id: {type: string, minLength: 1}\n            remediation: {type: string, minLength: 1}\n            sources:\n              type: array\n              minItems: 1\n              items: {type: string, minLength: 1}\n  - evidenceConflicts:\n      purpose: Preserves contradictory material claims and their sources, or an empty list.\n      schema:\n        type: array\n        items:\n          type: object\n          additionalProperties: false\n          required: [page, checklist, id, claims, resolution, authoritativeEvidence]\n          properties:\n            page: {type: string, minLength: 1}\n            checklist: {type: string, minLength: 1}\n            id: {type: string, minLength: 1}\n            claims:\n              type: array\n              minItems: 2\n              items:\n                type: object\n                additionalProperties: false\n                required: [page, checklist, id, result, evidence, source]\n                properties:\n                  page: {type: string, minLength: 1}\n                  checklist: {type: string, minLength: 1}\n                  id: {type: string, minLength: 1}\n                  result: {type: string, enum: [PASS, FAIL, NOT TESTED]}\n                  evidence: {type: string, minLength: 1}\n                  source: {type: string, minLength: 1}\n            resolution: {type: string, enum: [resolved, unresolved]}\n            authoritativeEvidence:\n              type: [object, \"null\"]\n              additionalProperties: false\n              required: [result, evidence, source]\n              properties:\n                result: {type: string, enum: [PASS, FAIL, NOT TESTED]}\n                evidence: {type: string, minLength: 1}\n                source: {type: string, minLength: 1}\n  - acceptanceRationale:\n      purpose: Ties the integrated decision to complete reconciled checklist evidence.\n      schema:\n        type: string\n        minLength: 1\n  - modelEvalRanking:\n      purpose: Orders supplied candidates by accuracy, inclusive 15-percent priced-cost equivalence, and speed while preserving null and provisional unpriced behavior.\n      schema:\n        type: array\n        items:\n          type: object\n          additionalProperties: false\n          required: [rank, tie, id, accuracy, estimated_cost, wall_seconds, pricingStatus, provisional, evidence]\n          properties:\n            rank: {type: integer, minimum: 1}\n            tie: {type: boolean}\n            id: {type: string, minLength: 1}\n            accuracy: {type: number, minimum: 0}\n            estimated_cost: {type: [number, \"null\"], minimum: 0}\n            wall_seconds: {type: number, minimum: 0}\n            pricingStatus: {type: string, enum: [priced, unpriced]}\n            provisional: {type: boolean}\n            evidence: {type: string, minLength: 1}\n  - runnerReports:\n      purpose: Inventories every delegated page-checklist report and its checklist status.\n      schema:\n        type: array\n        items:\n          type: object\n          additionalProperties: false\n          required: [page, checklist, status, attempts, checks, findings, limits]\n          properties:\n            page: {type: string, minLength: 1}\n            checklist: {type: string, minLength: 1}\n            status: {type: string, enum: [PASS, FAIL, NOT TESTED]}\n            attempts: {type: integer, minimum: 1}\n            checks:\n              type: array\n              minItems: 1\n              items:\n                type: object\n                additionalProperties: false\n                required: [id, result, evidence]\n                properties:\n                  id: {type: string, minLength: 1}\n                  result: {type: string, enum: [PASS, FAIL, NOT TESTED]}\n                  evidence: {type: string, minLength: 1}\n            findings:\n              type: array\n              items:\n                type: object\n                additionalProperties: false\n                required: [id, remediation]\n                properties:\n                  id: {type: string, minLength: 1}\n                  remediation: {type: string, minLength: 1}\n            limits:\n              type: array\n              items:\n                type: object\n                additionalProperties: false\n                required: [id, missingEvidence]\n                properties:\n                  id: {type: string, minLength: 1}\n                  missingEvidence: {type: string, minLength: 1}\n"
     },
     "methodology-maintainer": {
       "agentDependencies": [
@@ -2121,6 +2644,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "status": "States READY or BLOCKED and ties the terminal result to review, validation, commit, clean-worktree, and enabled resource-coordination release evidence.",
         "verification evidence": "Gives maintainers the independent command results, commit, clean status, enabled resource-coordination release evidence, and remaining risk needed to trust the coordinated change."
       },
+      "outputSchema": null,
       "outputs": [
         "status",
         "aligned source files",
@@ -2319,6 +2843,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "remaining questions": "Lists decisions or information still required from the user.",
         "status": "States READY or BLOCKED and gives the reason."
       },
+      "outputSchema": null,
       "outputs": [
         "status",
         "project setup files",
@@ -2386,6 +2911,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "validation evidence": "Gives reviewers confidence that conceptual agent definitions, skills, paths, and generated guidance were checked against both project evidence and bundle requirements.",
         "workflow selectors": "Records independent Persistence and Commit identifiers and deterministic legacy migration while generated guidance names only selected workflow skills."
       },
+      "outputSchema": null,
       "outputs": [
         "PROJECT.yaml",
         "technology detection skillsets",
@@ -2459,6 +2985,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "file-placement audit": "Confirms that the selected location follows the repository's actual structure and guidance before files are created or moved.",
         "placement rationale": "Explains the repository evidence and structural reasoning behind the destination so reviewers can assess and reuse the decision."
       },
+      "outputSchema": null,
       "outputs": [
         "approved path or placement blocker",
         "placement rationale",
@@ -2517,6 +3044,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "setup recommendation pack": "Gives the requester a concrete proposal for wiki purpose, roots, federation, workflows, automations, feeds, and operational folders before mappings are finalized.",
         "setup verification evidence": "Demonstrates that the initialized wiki passes the applicable status, lint, link, and OKF checks and identifies any remaining setup decision."
       },
+      "outputSchema": null,
       "outputs": [
         "setup recommendation pack",
         "initialized wiki contract",
@@ -2588,6 +3116,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "findings and corrections": "Gives the artifact owner prioritized, concrete changes required before the project-wiki contract can be accepted.",
         "verifier assessment": "Communicates the independent shared-page quality result after the wiki-specific review has established its evidence record."
       },
+      "outputSchema": null,
       "outputs": [
         "completed project-wiki checklist",
         "verifier assessment",
@@ -2732,6 +3261,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "result inventories": "Separately labels fact-bearing ingested or substantiated conclusions and Open Questions, with the durable page and source provenance for every entry or explicit assessed scope when an inventory is empty.",
         "status": "States READY, NEEDS_CORRECTION, or BLOCKED and ties ingest to its source gates or interruption, or a final evidence audit to exact artifact findings and existing owners."
       },
+      "outputSchema": null,
       "outputs": [
         "status",
         "result inventories",
@@ -2804,6 +3334,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "source verification notes": "Shows which material claims were confirmed against live authoritative sources so the requester can judge their current reliability.",
         "wiki-backed answer": "Gives the requester a direct answer grounded in the project's maintained knowledge rather than unsupported recall."
       },
+      "outputSchema": null,
       "outputs": [
         "wiki-backed answer",
         "source verification notes",
@@ -2862,6 +3393,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "ingest recommendation": "Names the likely durable destinations, cross-links, conflicts, and follow-up the Wiki Ingester should evaluate.",
         "raw research report": "Provides a source-backed, collision-safe artifact for later wiki ingest without bypassing the raw-source boundary."
       },
+      "outputSchema": null,
       "outputs": [
         "existing coverage assessment",
         "raw research report",
@@ -2923,6 +3455,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "raw-only source artifact": "Provides ingest-ready evidence while preserving the required separation between source collection and durable wiki synthesis.",
         "timestamp window": "Lets the requester audit that every included source falls within the requested collection period."
       },
+      "outputSchema": null,
       "outputs": [
         "raw-only source artifact",
         "timestamp window",
@@ -2988,6 +3521,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "reviewed-page inventory": "Identifies exactly which topic pages and evidence sources were evaluated so the verdict is bounded and auditable.",
         "verification verdict": "Returns the required GOOD or NEEDS_CORRECTION decision for the supplied topic pages so writers and ingesters have an independent acceptance gate."
       },
+      "outputSchema": null,
       "outputs": [
         "verification verdict",
         "reviewed-page inventory",
@@ -3101,6 +3635,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "source traceability": "Connects material wiki claims to authoritative sources and records unresolved conflicts instead of allowing the synthesis layer to replace source truth.",
         "status": "States READY or BLOCKED and ties the terminal result to the independent verdict and validation evidence."
       },
+      "outputSchema": null,
       "outputs": [
         "status",
         "durable wiki changes",

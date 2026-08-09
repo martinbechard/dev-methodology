@@ -85,6 +85,7 @@ ROLE_OUTPUT_CONTRACT_FIELD_NAME = "outputContract"
 ROLE_SKILL_JUSTIFICATION_FIELD_NAME = "justification"
 ROLE_SKILL_CONDITION_FIELD_NAME = "condition"
 ROLE_OUTPUT_PURPOSE_FIELD_NAME = "purpose"
+ROLE_OUTPUT_SCHEMA_FIELD_NAME = "schema"
 ROLE_EXAMPLES_FIELD_NAME = "examples"
 ROLE_MODEL_PROFILE_FIELD_NAME = "modelProfile"
 ROLE_MODEL_STAGES_FIELD_NAME = "modelStages"
@@ -248,6 +249,7 @@ class RoleDefinition:
     skill_conditions: dict[str, str]
     output_contract: tuple[str, ...]
     output_purposes: dict[str, str]
+    output_schema: dict[str, object] | None
     examples: tuple[dict[str, object], ...]
     group: str
     group_label: str
@@ -861,6 +863,159 @@ def validate_annotated_list(
     return tuple(names), annotations
 
 
+def validate_json_schema(value: object, field_path: str, source_path: Path) -> dict[str, object]:
+    """Validate the deterministic JSON Schema subset used by role outputs."""
+
+    if not isinstance(value, dict) or not value:
+        raise ValueError(
+            f"Conceptual agent definition {field_path} must be a non-empty JSON Schema mapping: {source_path}"
+        )
+    allowed_keywords = {
+        "type",
+        "enum",
+        "properties",
+        "required",
+        "additionalProperties",
+        "items",
+        "minItems",
+        "minLength",
+        "minimum",
+    }
+    unknown = sorted(set(value) - allowed_keywords)
+    if unknown:
+        raise ValueError(
+            f"Conceptual agent definition {field_path} has unsupported JSON Schema keywords {unknown}: {source_path}"
+        )
+    raw_type = value.get("type")
+    schema_types = (
+        raw_type
+        if isinstance(raw_type, list)
+        else [raw_type]
+    )
+    allowed_types = {"object", "array", "string", "integer", "number", "boolean", "null"}
+    if (
+        not schema_types
+        or any(not isinstance(item, str) or item not in allowed_types for item in schema_types)
+        or len(schema_types) != len(set(schema_types))
+    ):
+        raise ValueError(
+            f"Conceptual agent definition {field_path}.type is invalid: {source_path}"
+        )
+    normalized: dict[str, object] = {"type": list(schema_types) if isinstance(raw_type, list) else raw_type}
+
+    if "object" in schema_types:
+        properties = value.get("properties")
+        required = value.get("required")
+        if not isinstance(properties, dict) or not properties:
+            raise ValueError(
+                f"Conceptual agent definition {field_path}.properties must be a non-empty mapping: {source_path}"
+            )
+        if (
+            not isinstance(required, list)
+            or any(not isinstance(item, str) or not item for item in required)
+            or len(required) != len(set(required))
+            or set(required) != set(properties)
+        ):
+            raise ValueError(
+                f"Conceptual agent definition {field_path}.required must name every property exactly once: {source_path}"
+            )
+        if value.get("additionalProperties") is not False:
+            raise ValueError(
+                f"Conceptual agent definition {field_path}.additionalProperties must be false: {source_path}"
+            )
+        normalized["additionalProperties"] = False
+        normalized["required"] = list(required)
+        normalized["properties"] = {
+            name: validate_json_schema(schema, f"{field_path}.properties.{name}", source_path)
+            for name, schema in properties.items()
+        }
+    if "array" in schema_types:
+        if "items" not in value:
+            raise ValueError(
+                f"Conceptual agent definition {field_path}.items is required for an array: {source_path}"
+            )
+        normalized["items"] = validate_json_schema(value["items"], f"{field_path}.items", source_path)
+        if "minItems" in value:
+            min_items = value["minItems"]
+            if not isinstance(min_items, int) or isinstance(min_items, bool) or min_items < 0:
+                raise ValueError(
+                    f"Conceptual agent definition {field_path}.minItems must be a nonnegative integer: {source_path}"
+                )
+            normalized["minItems"] = min_items
+    if "enum" in value:
+        enum = value["enum"]
+        if not isinstance(enum, list) or not enum or len({json.dumps(item, sort_keys=True) for item in enum}) != len(enum):
+            raise ValueError(
+                f"Conceptual agent definition {field_path}.enum must contain unique values: {source_path}"
+            )
+        normalized["enum"] = list(enum)
+    for keyword in ("minLength", "minimum"):
+        if keyword not in value:
+            continue
+        threshold = value[keyword]
+        if not isinstance(threshold, (int, float)) or isinstance(threshold, bool) or threshold < 0:
+            raise ValueError(
+                f"Conceptual agent definition {field_path}.{keyword} must be nonnegative: {source_path}"
+            )
+        normalized[keyword] = threshold
+    return normalized
+
+
+def validate_output_contract(
+    value: object,
+    source_path: Path,
+) -> tuple[tuple[str, ...], dict[str, str], dict[str, object] | None]:
+    """Load output purposes and an optional complete strict nested JSON Schema."""
+
+    if not isinstance(value, list) or not value:
+        raise ValueError(f"Conceptual agent definition outputContract must be a non-empty list: {source_path}")
+    names: list[str] = []
+    purposes: dict[str, str] = {}
+    schemas: dict[str, dict[str, object]] = {}
+    for item in value:
+        if not isinstance(item, dict) or len(item) != 1:
+            raise ValueError(
+                f"Conceptual agent definition outputContract entries must contain exactly one named mapping: {source_path}"
+            )
+        name, metadata = next(iter(item.items()))
+        if not isinstance(name, str) or not name.strip() or name.strip() in purposes:
+            raise ValueError(f"Conceptual agent definition outputContract names must be unique non-empty strings: {source_path}")
+        normalized_name = name.strip()
+        if not isinstance(metadata, dict) or set(metadata) not in (
+            {ROLE_OUTPUT_PURPOSE_FIELD_NAME},
+            {ROLE_OUTPUT_PURPOSE_FIELD_NAME, ROLE_OUTPUT_SCHEMA_FIELD_NAME},
+        ):
+            raise ValueError(
+                f"Conceptual agent definition outputContract {normalized_name} must contain purpose and optional schema only: {source_path}"
+            )
+        purpose = metadata[ROLE_OUTPUT_PURPOSE_FIELD_NAME]
+        if not isinstance(purpose, str) or not purpose.strip():
+            raise ValueError(
+                f"Conceptual agent definition outputContract {normalized_name} purpose must be a non-empty string: {source_path}"
+            )
+        names.append(normalized_name)
+        purposes[normalized_name] = purpose.strip()
+        if ROLE_OUTPUT_SCHEMA_FIELD_NAME in metadata:
+            schemas[normalized_name] = validate_json_schema(
+                metadata[ROLE_OUTPUT_SCHEMA_FIELD_NAME],
+                f"outputContract.{normalized_name}.schema",
+                source_path,
+            )
+    if schemas and set(schemas) != set(names):
+        raise ValueError(
+            f"Conceptual agent definition outputContract must provide schemas for every output or none: {source_path}"
+        )
+    output_schema = None
+    if schemas:
+        output_schema = {
+            "type": "object",
+            "additionalProperties": False,
+            "required": list(names),
+            "properties": {name: schemas[name] for name in names},
+        }
+    return tuple(names), purposes, output_schema
+
+
 def validate_role_skills(
     value: object,
     source_path: Path,
@@ -1158,10 +1313,8 @@ def load_role_definition(
             f"repositoryMutation never: {source_path}"
         )
 
-    output_contract, output_purposes = validate_annotated_list(
+    output_contract, output_purposes, output_schema = validate_output_contract(
         parsed[ROLE_OUTPUT_CONTRACT_FIELD_NAME],
-        ROLE_OUTPUT_CONTRACT_FIELD_NAME,
-        ROLE_OUTPUT_PURPOSE_FIELD_NAME,
         source_path,
     )
 
@@ -1203,6 +1356,7 @@ def load_role_definition(
         skill_conditions=skill_conditions,
         output_contract=output_contract,
         output_purposes=output_purposes,
+        output_schema=output_schema,
         examples=examples,
         group=group,
         group_label=ROLE_GROUP_LABELS[group],
@@ -1347,6 +1501,7 @@ def build_role_payload(roles: Sequence[RoleDefinition]) -> dict[str, object]:
                 "skillConditions": role.skill_conditions,
                 "outputs": list(role.output_contract),
                 "outputPurposes": role.output_purposes,
+                "outputSchema": role.output_schema,
                 "examples": list(role.examples),
                 "group": role.group,
                 "groupLabel": role.group_label,
@@ -1697,6 +1852,11 @@ def role_instruction_text(
     if loading_instructions:
         sections.append(loading_instructions)
     sections.append(f"{ROLE_OUTPUT_INSTRUCTION_PREFIX} {output_text}.")
+    if role.output_schema is not None:
+        sections.append(
+            "Strict output JSON Schema:\n"
+            + json.dumps(role.output_schema, indent=2, ensure_ascii=False)
+        )
     if inline_core_skills:
         inlined_skills = render_inlined_core_skills(role, adapter_name)
         if inlined_skills:
@@ -1729,6 +1889,12 @@ def markdown_role_instruction_text(
         sections.append(loading_instructions)
     output_lines = "\n".join(f"- {item}" for item in role.output_contract)
     sections.append(f"Return:\n\n{output_lines}")
+    if role.output_schema is not None:
+        sections.append(
+            "Strict output JSON Schema:\n\n```json\n"
+            + json.dumps(role.output_schema, indent=2, ensure_ascii=False)
+            + "\n```"
+        )
     if inline_core_skills:
         inlined_skills = render_inlined_core_skills(role, adapter_name)
         if inlined_skills:
@@ -1769,6 +1935,14 @@ def codex_role_instruction_text(
         if loading_instructions:
             sections.append(loading_instructions)
         sections.append(f"{ROLE_OUTPUT_INSTRUCTION_PREFIX} {output_text}.")
+        if role.output_schema is not None:
+            sections.append(
+                "Strict output JSON Schema:\n"
+                + codex_role_reference_text(
+                    json.dumps(role.output_schema, indent=2, ensure_ascii=False),
+                    role_names,
+                )
+            )
         inlined_skills = render_inlined_core_skills(role, CODEX_ADAPTER_NAME)
         if inlined_skills:
             sections.append(inlined_skills)
@@ -1785,6 +1959,14 @@ def codex_role_instruction_text(
         if loading_instructions:
             sections.append(loading_instructions)
         sections.append(f"{ROLE_OUTPUT_INSTRUCTION_PREFIX} {output_text}.")
+        if role.output_schema is not None:
+            sections.append(
+                "Strict output JSON Schema:\n"
+                + codex_role_reference_text(
+                    json.dumps(role.output_schema, indent=2, ensure_ascii=False),
+                    role_names,
+                )
+            )
         return "\n\n".join(sections)
     harness_instruction = (
         f"Before acting, load the {CODEX_HARNESS_DIRECTIVES_SKILL_NAME} skill completely; "
@@ -1801,6 +1983,14 @@ def codex_role_instruction_text(
             f"{ROLE_OUTPUT_INSTRUCTION_PREFIX} {output_text}.",
         ]
     )
+    if role.output_schema is not None:
+        sections.append(
+            "Strict output JSON Schema:\n"
+            + codex_role_reference_text(
+                json.dumps(role.output_schema, indent=2, ensure_ascii=False),
+                role_names,
+            )
+        )
     return "\n\n".join(sections)
 
 
@@ -1933,6 +2123,12 @@ def render_claude_agent(
     if not inline_core_skills:
         frontmatter[ROLE_SKILLS_FIELD_NAME] = list(fixed_role_skills(role))
     frontmatter["model"] = adapter_profile.model
+    if (
+        role.optional_fields.get("isolation") == ROLE_READ_ONLY_ISOLATION
+        and role.output_schema is not None
+        and "tools" not in role.optional_fields
+    ):
+        frontmatter["tools"] = ["Read", "Grep", "Glob"]
     for field_name in (
         "tools",
         "disallowedTools",

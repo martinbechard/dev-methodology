@@ -15,7 +15,7 @@ projectAgents:
   judge: agents/judge.toml
 projectSkills:
   shared: [../skills/agent-suite-supervision/SKILL.md, ../skills/agent-scenario-design/SKILL.md, ../skills/agent-evidence-judging/SKILL.md]
-  suite: []
+  suite: [skills/methodology-design-system-checklist-runner-suite-contract/SKILL.md]
 execution:
   maximumActiveChildren: 1
   nestedAgentLimit: 0

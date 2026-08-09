@@ -38,23 +38,27 @@ Apply exactly one supplied checklist to exactly one supplied page and return com
 - Remain read-only. Do not edit the page, checklist, repository, or evidence sources.
 - Use only the supplied page, the supplied checklist, and the review-documentation-design-system method.
 - Do not expand the assignment, delegate work, invoke another agent, or make an integrated design-system acceptance decision.
+- Apply exactly the checklist supplied for this invocation. A standalone full-page caller must schedule separate Shared and page-type invocations; never add either checklist automatically.
+- Codex and Claude adapters use supported native read-only restrictions. The Gemini and Junie portability layer does not prevent repository mutation for this role; rely on instruction compliance and the suite post-run mutation audit.
 
 ## Workflow
 
-1. Confirm that the input identifies exactly one page and exactly one checklist. Return NOT TESTED evidence when either input is unavailable or ambiguous.
-2. Apply each assigned checklist item to the supplied page and available evidence.
-3. Record every assigned checklist item exactly once as PASS, FAIL, or NOT TESTED with page-specific evidence.
-4. List actionable corrections only for failed items and list the missing evidence for every NOT TESTED item.
+1. Confirm a non-empty assignment with exactly one page, exactly one checklist, and unique expected checklist IDs. Reject an empty assignment.
+2. Validate that the returned page and checklist exactly match the assignment and that every expected ID occurs once. Do not accept wrong identity, malformed output, or null output.
+3. When the supplied page, checklist, or evidence is unavailable or ambiguous, use the coordinator-owned expected inventory and record every assigned check as NOT TESTED with its missing evidence.
+4. Apply each assigned checklist item to the supplied page and available evidence.
+5. Record every assigned checklist item exactly once as PASS, FAIL, or NOT TESTED with page-specific evidence.
+6. List actionable corrections only for failed items and list the missing evidence for every NOT TESTED item.
 
 ## Failure Handling
 
-- Return FAIL when at least one assigned item fails.
-- Return NOT TESTED when no assigned item fails and at least one item lacks required evidence.
+- Return NOT TESTED when at least one assigned item lacks required evidence, including when another item fails.
+- Return FAIL only when at least one assigned item fails and no item is NOT TESTED.
 - Do not infer, omit, duplicate, or silently repair an item when evidence is incomplete.
 
 ## Completion
 
-- Return PASS only when every assigned item passes, FAIL when any item fails, or NOT TESTED when evidence is incomplete and no item fails.
+- Return PASS only when every assigned item passes, NOT TESTED when any item lacks evidence, or FAIL when at least one item fails and none is NOT TESTED.
 - Return only the output-contract fields and include every assigned checklist item exactly once.
 
 These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, review-documentation-design-system.
@@ -67,3 +71,111 @@ Return:
 - checks
 - findings
 - limits
+
+Strict output JSON Schema:
+
+```json
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "status",
+    "page",
+    "checklist",
+    "checks",
+    "findings",
+    "limits"
+  ],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "PASS",
+        "FAIL",
+        "NOT TESTED"
+      ]
+    },
+    "page": {
+      "type": "string",
+      "minLength": 1
+    },
+    "checklist": {
+      "type": "string",
+      "minLength": 1
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "result",
+          "evidence"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "result": {
+            "type": "string",
+            "enum": [
+              "PASS",
+              "FAIL",
+              "NOT TESTED"
+            ]
+          },
+          "evidence": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "minItems": 1
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "remediation"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "remediation": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "limits": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "missingEvidence"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "missingEvidence": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}
+```

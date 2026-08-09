@@ -684,7 +684,7 @@
             "ste-technical-writing",
             "review-documentation-design-system"
           ],
-          "sha256": "f0d49d20a9144d3b62b43a8bf3d518ecbdd6e396b97349c8bda2dd19a4fc65f1",
+          "sha256": "86694604c2df7a859aff8005d48487b39bc7f6c71545a2b8b72f3d75e1ca801d",
           "source": "agents/roles/methodology-maintenance/methodology-design-system-checklist-runner.role.yaml"
         },
         {
@@ -713,7 +713,7 @@
             "effective-communication",
             "ste-technical-writing"
           ],
-          "sha256": "6e819560509cee7ad032eadaba53ae35f8e8d1e3a9b573cd097e0c1441d44adb",
+          "sha256": "cff642f9aed77f235a45531fc760733ab98ec95727acc537cc64fa6f2a6eed61",
           "source": "agents/roles/methodology-maintenance/methodology-design-system-review-coordinator.role.yaml"
         },
         {
@@ -1845,7 +1845,7 @@
             "ste-technical-writing",
             "review-documentation-design-system"
           ],
-          "sha256": "f9ccc75bfc109854fa2970b48a1b422dd9360adaa5389ab5a86be508594f8c11",
+          "sha256": "65d82dde249a13192c7e60c4b6c775737e89fbe52831b51f879c94b64dc016c7",
           "source": "agents/roles/methodology-maintenance/methodology-design-system-checklist-runner.role.yaml"
         },
         {
@@ -1874,7 +1874,7 @@
             "effective-communication",
             "ste-technical-writing"
           ],
-          "sha256": "a5ee7902fe09996f59bd5e4c521fece9b612235817750a3f096a81aa0cf73b26",
+          "sha256": "12eca52473aab57ca62601928da4e9374d720de62866e47bafaec21cee607c26",
           "source": "agents/roles/methodology-maintenance/methodology-design-system-review-coordinator.role.yaml"
         },
         {
@@ -3031,7 +3031,7 @@
             "ste-technical-writing",
             "review-documentation-design-system"
           ],
-          "sha256": "4bff338c6ae9e2bb54d512a609e9d7f8f5ab14ff8916b04ccec4136b7ad681e0",
+          "sha256": "41bbf9eaef09e6f752a7a774b5ed9d84831823f510d375f71aeb890e21344761",
           "source": "agents/roles/methodology-maintenance/methodology-design-system-checklist-runner.role.yaml"
         },
         {
@@ -3061,7 +3061,7 @@
             "effective-communication",
             "ste-technical-writing"
           ],
-          "sha256": "aad08cb83ad0984bed67242ba315da2388454345acfe4178ad4caac4c090e048",
+          "sha256": "bba4793dd7e411969dd406884b44439ce40a95303e4338f9b44b23c64fdb864e",
           "source": "agents/roles/methodology-maintenance/methodology-design-system-review-coordinator.role.yaml"
         },
         {
@@ -4218,7 +4218,7 @@
             "ste-technical-writing",
             "review-documentation-design-system"
           ],
-          "sha256": "e51b8e8c600bd2976fc5d2bcf8c40871a37d0de3efe136428b53a65ca9b0c3c8",
+          "sha256": "61219295365598b32d2f391883b051ee40c6f18d8eaa155c9d23abbd9b41901e",
           "source": "agents/roles/methodology-maintenance/methodology-design-system-checklist-runner.role.yaml"
         },
         {
@@ -4248,7 +4248,7 @@
             "effective-communication",
             "ste-technical-writing"
           ],
-          "sha256": "db9dbec84e7e171a6f75a9e5a29be5290c854fdb4464e849db139e3180c2eb08",
+          "sha256": "31c5d5addb38c88170684257ec829995606c7d899713571308db10ee2a095351",
           "source": "agents/roles/methodology-maintenance/methodology-design-system-review-coordinator.role.yaml"
         },
         {
