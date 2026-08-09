@@ -53,7 +53,13 @@ A branch name, pushed branch, patch file, detached checkout, pull request, merge
 
 ## Claims
 
-Follow the Claim Events table in resource-claim during integration. Provider closure remains a separate Persistence transaction.
+Applicable project instructions own resource-coordination selection. They load the selected
+procedure, if any. Apply the loaded resource-coordination procedure when its event contract
+requires protection during integration. Preserve the complete behavior and evidence that the
+loaded procedure requires. When applicable project instructions select none and load no
+resource-coordination procedure, perform no claim procedure and no claim-specific evidence
+handling. Do not discover, acquire, heartbeat, or release claims.
+Provider closure remains a separate Persistence transaction.
 
 ## Main Reconciliation
 

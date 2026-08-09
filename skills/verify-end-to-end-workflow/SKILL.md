@@ -13,11 +13,20 @@ Prove the complete workflow with explicit environment ownership and observable a
 
 1. Identify the authoritative workflow, actors, starting state, dependencies, and expected result.
 2. Route specialized automation guidance when the project provides it.
-3. Make service, process, session, identity, data, and cleanup ownership explicit. Apply resource-claim when verification triggers a claim event.
+3. Make service, process, session, identity, data, and cleanup ownership explicit.
 4. Exercise success and material failure paths through real public boundaries.
 5. Prefer stable user-visible or contract-level observations over timing assumptions.
 6. Capture reproducible steps, assertions, runtime errors, and diagnostic artifacts.
 7. Distinguish product failures from environment, identity, data, or runtime setup blockers.
+
+## Resource Coordination
+
+Applicable project instructions own resource-coordination selection. They load the selected
+procedure, if any. Apply the loaded resource-coordination procedure when its event contract
+requires protection during verification. Preserve the complete behavior and evidence that the
+loaded procedure requires. When applicable project instructions select none and load no
+resource-coordination procedure, perform no claim procedure and no claim-specific evidence
+handling. Do not discover, acquire, heartbeat, or release claims.
 
 ## Evidence Handoff And Commit Authority
 

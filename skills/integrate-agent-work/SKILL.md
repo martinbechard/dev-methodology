@@ -17,7 +17,12 @@ Keep work separate during implementation. Merge only reviewed, verified, and com
 
 Before merging a worktree:
 
-- Follow the Claim Events table in resource-claim during integration.
+- Applicable project instructions own resource-coordination selection. They load the selected
+  procedure, if any. Apply the loaded resource-coordination procedure when its event contract
+  requires protection during integration. Preserve the complete behavior and evidence that the
+  loaded procedure requires. When applicable project instructions select none and load no
+  resource-coordination procedure, perform no claim procedure and no claim-specific evidence
+  handling. Do not discover, acquire, heartbeat, or release claims.
 - Confirm the source worktree has no uncommitted task changes unless the handoff explicitly says how to handle them.
 - Confirm the source branch has a meaningful commit for the completed unit.
 - Read the source agent status, final notes, verification results, and known risks.
