@@ -582,6 +582,7 @@ The development practice skills are:
 - trace-code-execution
 - analyze-root-cause
 - collect-runtime-evidence
+- run-agent-tournament
 - object-creation-patterns
 - singleton-pattern
 - interface-patterns

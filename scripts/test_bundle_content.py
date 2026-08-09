@@ -1215,6 +1215,61 @@ def _scan_stale_identities(
 
 
 class BundleContentTests(unittest.TestCase):
+    def test_run_agent_tournament_package_and_probe_are_aligned(self) -> None:
+        """Keep tournament activation, limits, retry identity, and reporting aligned."""
+
+        skill_root = SKILLS_ROOT / "run-agent-tournament"
+        skill_path = skill_root / "SKILL.md"
+        metadata_path = skill_root / "agents" / "openai.yaml"
+        contract_path = skill_root / "references" / "tournament-contract.md"
+        example_path = skill_root / "assets" / "tournament.example.yaml"
+        for path in (skill_path, metadata_path, contract_path, example_path):
+            with self.subTest(path=path.relative_to(REPOSITORY_ROOT)):
+                self.assertTrue(path.is_file())
+
+        frontmatter = load_yaml_object_from_frontmatter(skill_path)
+        metadata = load_yaml_object(metadata_path)
+        example = load_yaml_object(example_path)
+        self.assertEqual("run-agent-tournament", frontmatter["name"])
+        self.assertEqual("development-practice", frontmatter["metadata"]["category"])
+        self.assertIn("$run-agent-tournament", metadata["interface"]["default_prompt"])
+
+        probes = load_yaml_object(REPOSITORY_ROOT / "evals" / "skill-probes.yaml")
+        probe = next(
+            entry
+            for entry in probes["probes"]
+            if entry["id"] == "probe-run-agent-tournament"
+        )
+        self.assertEqual("run-agent-tournament", probe["skill"])
+        self.assertIn("multiple", probe["activationCondition"])
+        self.assertIn("one model", probe["negativeCondition"])
+        self.assertEqual("declared", probe["coverageStatus"])
+
+        retry_policy = example["retry_policy"]
+        self.assertNotIn("maximum_attempts_per_matrix_row", retry_policy)
+        self.assertEqual(
+            1,
+            retry_policy["maximum_attempts_per_candidate_case_repeat"],
+        )
+        self.assertEqual(
+            0,
+            retry_policy["maximum_retries_per_candidate_case_repeat"],
+        )
+        matrix = example["dry_run"]["matrix"]
+        self.assertTrue(all("maximum_live_calls" not in row for row in matrix))
+        combination_limits = example["dry_run"][
+            "candidate_case_repeat_combination_limits"
+        ]
+        self.assertEqual(len(matrix), len(combination_limits))
+        self.assertEqual(
+            example["dry_run"]["call_arithmetic"]["authorized_maximum_live_calls"],
+            sum(item["maximum_live_calls"] for item in combination_limits),
+        )
+        identity = example["execution"]["attempt_identity_enforcement"]
+        self.assertEqual("reject", identity["duplicate_attempt_identity"])
+        self.assertEqual("reject", identity["conditional_retry_gate_bypass"])
+        self.assertIn("cumulative_accounting", example["execution"])
+
     def test_document_provenance_package_templates_and_probe_are_aligned(self) -> None:
         """Keep provenance sources, templates, routing, and declared evaluation aligned."""
 

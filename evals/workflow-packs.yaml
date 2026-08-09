@@ -41,6 +41,7 @@ packs:
     skillProbes:
       - probe-resource-claim
       - probe-agent-harness
+      - probe-run-agent-tournament
       - probe-integrate-agent-work
       - probe-api-routes
       - probe-application-security

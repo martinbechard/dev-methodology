@@ -205,6 +205,20 @@ probes:
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
+  - id: probe-run-agent-tournament
+    skill: run-agent-tournament
+    source: skills/run-agent-tournament/SKILL.md
+    evaluationCategory: development-practice
+    evaluationKind: activation-and-behavior
+    activationCondition: An Agent must compare multiple agent, model, prompt, reasoning-effort, semantic-profile, or provider configurations against one frozen task contract.
+    negativeCondition: Ordinary execution or testing of one model or configuration does not activate a tournament.
+    expectedBehavior: Freeze the comparison contract, inputs, scoring, ranking, budget, authorization, evidence, retry identity, and data-safety boundary before live calls; keep runner and coordinator comparisons separate; preserve invalid attempts and cumulative accounting; and report a reviewed winner or an honest no-winner result.
+    judgePlan: {deterministicChecks: [skill-read-trace, operation-coverage, no-forbidden-mutation, output-contract-presence], modelRubric: workflow-quality}
+    scenarioAssociations: [dev-orchestrator-boundary]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
   - id: probe-agent-role-authoring
     skill: agent-role-authoring
     source: skills/agent-role-authoring/SKILL.md
