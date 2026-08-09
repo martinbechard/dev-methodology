@@ -1,6 +1,6 @@
 # Publish and Integrate the Terminology Standard
 
-Owner: Dev Backlog Coordinator task `019fb057-1767-7ef2-b5fa-41f4417b20b3`
+Owner: Unowned
 
 Canonical Conversation: `019fe3d6-2dd6-7322-a507-e8ca961e27d8`
 
@@ -10,9 +10,9 @@ Branch: `codex/publish-and-integrate-terminology-standard-019fe3d6`
 
 Worktree: `/Users/martinbechard/.codex/worktrees/940b/dev-methodology`
 
-Phase: Running — Preinstalled-Tool Treatment Evaluation
+Phase: User Action Required — OpenAI Evaluation Transmission
 
-Status: Running
+Status: User Action Required
 
 Type: Feature
 
@@ -523,3 +523,23 @@ Deadline or Expires At: 2026-08-10T00:08:04Z
 Next Action: Verify the already-installed evaluation tool meets the declared minimum without starting the MCP server, run deterministic treatment preflight, then execute the one authorized treatment and validate its retained evidence.
 
 Next Reconciliation At: 2026-08-09T23:23:04Z
+
+## Platform-Required User Action
+
+Recorded At: 2026-08-09T23:09:53Z
+
+Question: Do you explicitly approve this one command sending the synthetic terminology evaluation fixture and the contents of project `terminology.md` to OpenAI `gpt-5.5`, through the installed Codex CLI and installed `mcp-agent-ops` 0.9.0 `reference_load` tool, solely to finish the terminology treatment evaluation?
+
+Why User Input Is Required: The platform rejected the live terminal command before process launch with this reason: “This action would transmit the project terminology glossary and fixture-derived content to OpenAI via the Codex evaluation, but the user's latest approval only requested completing the item and did not specifically authorize that payload to that destination.” The platform requires explicit payload-and-destination authorization and prohibits a retry, workaround, or indirect execution without it.
+
+Approval Consequence: One treatment run may start. The repository Python runner will launch the already-installed Codex CLI and already-installed `mcp-agent-ops` 0.9.0 server; the treatment sends only the synthetic writing fixture and project glossary to OpenAI `gpt-5.5`. The retained output will be validated against the existing 36-term semantic contract.
+
+Decline Consequence: The treatment remains unrun and the work item cannot satisfy its current live-evaluation acceptance criterion. The implementation and deterministic green checks remain preserved.
+
+Unattended Work Boundary: Do not retry the live command, start Codex or the MCP server for this evaluation, transmit the glossary, install another tool runtime, or complete/archive this item until the user answers. Read-only inspection and unrelated crisis work may continue.
+
+Attempt Evidence: The preinstalled executable `/Users/martinbechard/.local/bin/mcp-agent-ops` reported version `0.9.0`, satisfying minimum `0.8.0`, and its local runtime identity was recorded. The treatment `--print-invocation` preflight passed. The later `--invoke-harness` terminal action was rejected by the platform before the shell, Python runner, Codex CLI, MCP server, or OpenAI request started; no evaluation content was transmitted.
+
+Resolution: Pending.
+
+Approval Resolution: Pending.
