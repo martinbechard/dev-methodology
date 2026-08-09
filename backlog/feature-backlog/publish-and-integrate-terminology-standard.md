@@ -283,15 +283,17 @@ Fresh Acceptance Progress: Fresh code review, prompt and evidence-contract revie
 
 Second Correction Execution: Dev Coder `/root/fixture_candidate` owns exact six-path claim `publish-and-integrate-terminology-standard-019fe3d6-projection-second-review-corrections`, incarnation `a06bf68d-7fb3-4f36-bd16-bce7b9ea2f9a`, acquired at clean candidate `16db676eb655a281d9c88e855b04bd28b16693f9` in event `fbbc4f2d-1374-4be5-90e1-0968baa04d95`. The clean worktree and branch are confirmed. Seven focused red groups are designed for launch-bound future-safe verifier execution; governed effect and negative semantic fields and exits; complete prepared-entry and post-state replay; concurrent full-fixture change rollback; nested output and parent exclusivity; production receipt assembly and direct classification; and isolated verifier Test artifact cleanup. No existing production receipt assembler exists in the six-path or caller search. The bounded design adds an explicit projected-run receipt-template option that injects the generated projection record and exclusively writes a complete classifier-consumable receipt beside owner-only relative evidence without exposing that directory to the model. No source path is dirty yet and no scope or excluded-resource issue is present. The root work claim was heartbeated in event `48156c25-9620-4c7e-a7c9-15ed140315e7`.
 
-Observed At: 2026-08-09T09:48:05Z
+Second Correction Red Evidence: Only `scripts/test_agent_skill_evals.py` is dirty. The existing receipt-acceptance Test, upgraded to a version-three complete `preparedEntries` and current-fixture inventory contract, fails with the expected old-contract run, projection-manifest, and sync-manifest shape errors. Four staging regressions are red: the old manifest has no `preparedEntries`; a declared nested leaf rejects its necessary parent as unexpected; the concurrent-parent case stops at the same parent rejection; and an injected evaluator-only post-create change is not detected. Three launch and semantic regressions are red because `_run_projection_verifier` has no projection-bound launch parameter, proving no execution-bound identity revalidation path; direct negative verifier execution and contradictory semantic-field cases are included. A self-consistent full-state tamper table covers phantom descendants, invented bytes, missing prepared entries, arbitrary post-sync identity, type, and mode. Receipt-semantic, production-handler direct-classification, and isolated Test-cleanup red cases remain before implementation begins. No scope or excluded-resource issue exists. The root work claim was heartbeated in event `9a0a4070-0519-4f60-9097-19eb357a5751`.
+
+Observed At: 2026-08-09T09:56:18Z
 
 Started At: 2026-08-09T04:27:45Z
 
 Deadline or Expires At: 2026-08-09T10:48:42Z
 
-Next Action: Establish the seven focused red Test groups, implement only within the exact six claimed paths, run the directly implicated deterministic checks, commit and release a clean second-correction candidate, then obtain fresh acceptance before any live-model, installation, or integration resource
+Next Action: Complete the remaining receipt-semantic, production-handler direct-classification, and isolated-cleanup red cases, implement the version-three staging, launch, replay, parent-exclusivity, receipt-assembly, and cleanup contract only within the exact six claimed paths, then run deterministic gates and produce a clean candidate for fresh acceptance
 
-Next Reconciliation At: 2026-08-09T10:02:00Z
+Next Reconciliation At: 2026-08-09T10:10:00Z
 
 ## Generated Checklist Scope Disposition
 
