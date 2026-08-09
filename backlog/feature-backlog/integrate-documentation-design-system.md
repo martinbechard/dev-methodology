@@ -247,14 +247,14 @@ Condition Type: root-execution
 
 Owner: Dev Orchestrator task 019fe3cd-577c-76b1-965c-06fb8793ae42
 
-Evidence: canonical root execution owns corrected clean candidate `74f91caefe815dddca503502a388668be6cb94df`; coder is safely paused with no attempt-2 edits, staging, or commit, and `scripts/test_role_mutation_policy.py` remains untouched. The exact role-schema dependent disposition is recorded: one non-governed path required by approved `agents/role-schema.yaml` v8, limited to its v7-to-v8 owning assertion and focused v8 output-schema compatibility coverage for the two approved roles; no other expectation/path/governed definition/Future Ideas/existing HTML/baseline correction. Second-pass findings and correction attempt 2 remain bounded to malformed nested results/assignment IDs/null assignments/report_attempts crash, stale/missing reconciled findings, Decimal non-JSON ranking, coordinator fixture overclaims, suite-local skill supervisor/judge mismatch, schema validator keyword/type-enum drops, mutation-audit flags, FAIL/NOT TESTED precedence, print/specimen-nav/folder-tree issues. Existing HTML and terminology remain excluded; all 15 governed receipts and five dependent paths remain reconciled; no source mutation has begun. The direct overlap boundary with `publish-and-integrate-terminology-standard` is acknowledged; both tasks defer shared overlap events and preserve each other.
+Evidence: canonical root execution owns corrected clean candidate `74f91caefe815dddca503502a388668be6cb94df`; coder is paused safely at 2026-08-09T02:45Z with no command, staging, or commit, and unstaged attempt-2 RED is preserved. The exact role-schema test path remains authorized. Attempt-2 RED evidence: runner 9 tests with 4 errors; coordinator 13 tests with 4 failures and 18 errors; static 13 tests with 6 failures; schema subset 1 error; authorized role-v8 test 1/1 green. Changed attempt-2 paths are limited to runner/coordinator/static/bundle/role-mutation tests plus the first fail-closed runner-contract slice (safe ID validation, early assignment errors, typed result). Remaining scope is exactly the second-pass findings plus ambiguous predispatch/output fallback/README; no new scope. Existing HTML, terminology, Future Ideas, and support remain excluded; all 15 governed receipts and five dependent paths remain reconciled; no source mutation has begun. The direct overlap boundary with `publish-and-integrate-terminology-standard` is acknowledged; both tasks defer shared overlap events and preserve each other.
 
-Observed At: 2026-08-09T02:34:00Z
+Observed At: 2026-08-09T02:45:43Z
 
 Started At: 2026-08-08T23:57:32Z
 
 Deadline or Expires At: 2026-08-09T05:00:00Z
 
-Next Action: Reacquire the Work Item activity=work claim, then resume the same coder for correction attempt 2 including the exact v8 test, followed by fresh review/verifier, browser verification, current-main integration, post-combination gates, and dossier without widening scope.
+Next Action: Reacquire the Work Item activity=work claim, then resume the original coder for grouped attempt-2 implementation, green/generation/verification, and commit without widening scope.
 
-Next Reconciliation At: 2026-08-09T02:49:00Z
+Next Reconciliation At: 2026-08-09T03:00:00Z
