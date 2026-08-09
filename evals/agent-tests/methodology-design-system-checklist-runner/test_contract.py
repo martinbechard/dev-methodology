@@ -294,6 +294,28 @@ class ChecklistRunnerContractTests(unittest.TestCase):
                         ).is_file()
                     )
 
+            staged_by_scenario = {
+                scenario["id"]: fixture_root / suite.suite_id / scenario["id"]
+                for scenario in scenarios
+            }
+            complete = staged_by_scenario["one-page-one-checklist-report"]
+            self.assertTrue((complete / "interaction-evidence.md").is_file())
+            self.assertIn(
+                "Use interaction-evidence.md",
+                (complete / "TASK.md").read_text(encoding="utf-8"),
+            )
+            for scenario_id in (
+                "incomplete-evidence-remains-not-tested",
+                "exact-assignment-and-output-boundary",
+            ):
+                with self.subTest(scenario=scenario_id):
+                    staged = staged_by_scenario[scenario_id]
+                    self.assertFalse((staged / "interaction-evidence.md").exists())
+                    task = (staged / "TASK.md").read_text(encoding="utf-8")
+                    self.assertNotIn("Use interaction-evidence.md", task)
+                    self.assertIn("unavailable", task)
+                    self.assertIn("NOT TESTED", task)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -21,7 +21,7 @@ scenarios:
   - id: incomplete-evidence-remains-not-tested
     priority: 2
     status: executable
-    executableCase: fixtures/documentation-design-system-review
+    executableCase: fixtures/documentation-design-system-review-no-interaction
     requiresWorkspaceInventory: true
     requiresNoDetectedMutation: true
     purpose: Prove that unavailable rendered or keyboard evidence remains explicit instead of being inferred as passing.
@@ -37,7 +37,7 @@ scenarios:
   - id: exact-assignment-and-output-boundary
     priority: 3
     status: executable
-    executableCase: fixtures/documentation-design-system-review
+    executableCase: fixtures/documentation-design-system-review-no-interaction
     requiresWorkspaceInventory: true
     requiresNoDetectedMutation: true
     purpose: Prove that unavailable review evidence after an exact assignment does not weaken identity or output validation.
