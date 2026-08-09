@@ -181,21 +181,21 @@ Next Reconciliation At: 2026-08-09T04:47:00Z
 
 ## Active Execution Evidence
 
-Condition Type: root-execution
+Condition Type: delegated-work
 
-Owner: Dev Orchestrator task 019fe4cb-b4f3-7563-8ece-a60e567aae29
+Owner: Dev Coder execution /root/tournament_skill_coder under Dev Orchestrator task 019fe4cb-b4f3-7563-8ece-a60e567aae29
 
-Evidence: The canonical root execution is actively coordinating the private run-agent-tournament package on branch codex/add-portable-agent-tournament-skill in worktree /Users/martinbechard/.codex/worktrees/1bbe/dev-methodology from reserved main commit f69f58690fd638563a24e9c93d242d707a5798bf. Exact Work Item activity=work claim add-portable-agent-tournament-skill-019fe4cb-root-work was acquired before source mutation with outcome SHARED_CHECKOUT_ACQUIRED and journal event 8ed3dca6-9a12-40a7-ac10-8f2b6bb5e4b4. Exact backlog-path claim add-portable-agent-tournament-skill-019fe4cb-running-backlog protects this atomic provider transition with outcome SHARED_CHECKOUT_ACQUIRED and journal event 7170bb08-1505-4da5-9961-3f9fa9646af1. Shared catalog, generated, review, installation, publication, and main-integration surfaces remain deferred until direct terminology-owner release or reconciliation evidence arrives.
+Evidence: Dev Coder execution /root/tournament_skill_coder is live with one bounded assignment to create only skills/run-agent-tournament/SKILL.md, agents/openai.yaml, references/tournament-contract.md, and assets/tournament.example.yaml on branch codex/add-portable-agent-tournament-skill in worktree /Users/martinbechard/.codex/worktrees/1bbe/dev-methodology. The assignment carries the three exact ALLOWED_APPROVED_DEFINITION_CHANGE outcomes, the runtime-supplied provenance envelope, focused validation requirements, and an explicit no-helper and no-shared-surface boundary. Exact Work Item activity=work claim add-portable-agent-tournament-skill-019fe4cb-root-work remains live from journal event 8ed3dca6-9a12-40a7-ac10-8f2b6bb5e4b4. This evidence refresh is protected by exact backlog-path claim add-portable-agent-tournament-skill-019fe4cb-delegated-evidence-1, outcome SHARED_CHECKOUT_ACQUIRED, journal event e401ff9b-54a5-4834-8924-02e90452847f. Shared catalog, generated, review, installation, publication, and main-integration surfaces remain deferred until direct terminology-owner release or reconciliation evidence arrives.
 
-Observed At: 2026-08-09T04:37:21Z
+Observed At: 2026-08-09T04:45:15Z
 
-Started At: 2026-08-09T04:37:15Z
+Started At: 2026-08-09T04:42:00Z
 
-Deadline or Expires At: 2026-08-09T06:37:15Z
+Deadline or Expires At: 2026-08-09T05:27:00Z
 
-Next Action: Plan, implement, and focus-test only the independently runnable private skills/run-agent-tournament package and non-overlapping fixtures, then reconcile direct terminology-owner release before any deferred shared mutation or integration
+Next Action: Dev Coder returns one clean focused candidate commit for the exact private package; the Root Dev Orchestrator then dispatches fresh independent methodology and source review before verification
 
-Next Reconciliation At: 2026-08-09T04:52:00Z
+Next Reconciliation At: 2026-08-09T04:59:00Z
 
 ## Running Resource Claim Evidence
 
