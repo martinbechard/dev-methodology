@@ -77,4 +77,3 @@ Blocked to Ready condition: review-skills-modularization-text is Completed with 
 
 - This item must not start before its page-specific text review is Completed.
 - Creation of this work item does not dispatch it while backlog crisis recovery remains active.
-

@@ -61,4 +61,3 @@ Pages may proceed independently. A design-alignment item may not start merely be
 - Generated pages are rebuilt from authoritative sources and pass freshness checks.
 - The root index and all detail pages retain coherent information ownership, sequence navigation, settings behavior, and source traceability.
 - Excluded fixtures, examples, and design-system reference pages remain unchanged unless a focused failure proves a direct dependency and receives separate scope.
-

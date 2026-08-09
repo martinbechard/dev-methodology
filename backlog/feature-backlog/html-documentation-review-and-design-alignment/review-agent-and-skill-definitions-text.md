@@ -74,4 +74,3 @@ None.
 
 - The dependent design item is align-agent-and-skill-definitions-with-documentation-design-system.
 - Creation of this work item does not dispatch it while backlog crisis recovery remains active.
-
