@@ -175,14 +175,14 @@ Condition Type: root-execution
 
 Owner: Dev Orchestrator task 019fe3d6-2dd6-7322-a507-e8ca961e27d8
 
-Evidence: canonical combined Codex task/thread surface 019fe3d6-2dd6-7322-a507-e8ca961e27d8 is the current active root execution in branch codex/publish-and-integrate-terminology-standard-019fe3d6 and worktree /Users/martinbechard/.codex/worktrees/940b/dev-methodology; all 16 exact approved governed-definition paths returned ALLOWED_APPROVED_DEFINITION_CHANGE, all 13 approved Agent definitions conform without mutation, the repository guidance audit is complete, and non-overlapping production-routing fixture work is the current bounded phase. The configured mcp-agent-ops 0.5.1 provider lacks reference_refresh and reference_load, so terminology.md publication remains correctly unmutated until the acknowledged overlap owner releases shared installation and reconciliation surfaces.
+Evidence: canonical combined Codex task/thread surface 019fe3d6-2dd6-7322-a507-e8ca961e27d8 is the current active root execution in branch codex/publish-and-integrate-terminology-standard-019fe3d6 and worktree /Users/martinbechard/.codex/worktrees/940b/dev-methodology; all 16 exact approved governed-definition paths returned ALLOWED_APPROVED_DEFINITION_CHANGE, all 13 approved Agent definitions conform without mutation, and the non-overlapping fixture candidate is committed at ec35759032051479bda3518cd892a4480119c41b with its exact source claims released after 9 focused tests passed. Fresh read-only review of that candidate is active. The configured mcp-agent-ops 0.5.1 provider lacks reference_refresh and reference_load, so terminology.md publication remains correctly unmutated until the acknowledged overlap owner releases shared installation and reconciliation surfaces.
 
-Observed At: 2026-08-09T00:20:56Z
+Observed At: 2026-08-09T00:30:50Z
 
 Started At: 2026-08-09T00:09:34Z
 
 Deadline or Expires At: 2026-08-09T02:09:34Z
 
-Next Action: Implement and test the non-overlapping fixture corrections, then use the released shared-installation boundary to restore the configured reference provider, refresh and load before project terminology publication, and reconcile the deferred catalogs and generated surfaces
+Next Action: Complete fresh fixture review, then use the direct owner release to reconcile catalogs and generated surfaces, restore the configured reference provider, refresh and load before project terminology publication, and run the bounded production-routed controls
 
-Next Reconciliation At: 2026-08-09T00:35:56Z
+Next Reconciliation At: 2026-08-09T00:45:50Z
