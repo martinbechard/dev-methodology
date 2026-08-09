@@ -226,3 +226,7 @@ Work Claim Release: Exact activity=work claim `publish-and-integrate-terminology
 Already Approved Related Paths: `evals/projects/terminology-standard-effect/README.md` and `design/agent-and-skill-evaluations.html` remain approved dependents. `evals/cases.yaml`, `evals/agent-scenarios.yaml`, and `evals/skill-probes.yaml` remain deferred until the documentation-design-system owner releases the overlapping shared boundary. No change to `evals/workflow-packs.yaml` is currently required.
 
 Explicit Exclusions: `README.md`, `design/agentic-configuration.html`, `evals/agent-tests/README.md`, `design/agent-skill-test-coverage-checklist.md`, `scripts/build-support-checklist.py`, runtime receipt paths, `scripts/test_bundle_content.py`, generated adapters, shared installation, live-model evaluation, catalogs, and main integration receive no new scope from this question.
+
+## Provider Transaction Recovery Evidence
+
+The initial exact commit attempt stopped before creating a commit because the moved source path no longer matched a worktree pathspec. Recovery then staged the claimed destination only. Commit `0e32c034` durably created the complete User Action Required destination but, because `git commit --only` selected only that destination, left the already-staged source deletion pending. The immediately following recovery commit records this evidence and removes only the claimed active source path. No unrelated file was staged or committed, and the final provider state has one unique Work Item ID at this User Action Required path.
