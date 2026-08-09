@@ -1,6 +1,18 @@
 # Publish and Integrate the Terminology Standard
 
-Status: Starting
+Owner: Dev Orchestrator task `019fe3d6-2dd6-7322-a507-e8ca961e27d8`
+
+Canonical Conversation: `019fe3d6-2dd6-7322-a507-e8ca961e27d8`
+
+Canonical Task: `019fe3d6-2dd6-7322-a507-e8ca961e27d8`
+
+Branch: `codex/publish-and-integrate-terminology-standard-019fe3d6`
+
+Worktree: `/Users/martinbechard/.codex/worktrees/940b/dev-methodology`
+
+Phase: Project terminology publication, exact approved-path prechecks, production-routing analysis, and non-overlapping fixture work
+
+Status: Running
 
 Type: Feature
 
@@ -156,3 +168,21 @@ Next Reconciliation At: 2026-08-09T00:19:58Z
 Intended Root Role: Dev Orchestrator
 
 Scheduling Evidence: One other provider item, `integrate-documentation-design-system`, is Running in an independent private worktree. This item may begin private terminology publication, exact governed-path prechecks, production-routing analysis, and fixture work. Defer exact overlapping edits or shared events involving `README.md`, evaluation catalogs, `scripts/test_bundle_content.py`, generated adapters, live-model evaluation, shared installation, or main integration until the active owners exchange a direct release/reconciliation notification. Do not poll, overwrite, absorb, or duplicate the documentation-design-system work.
+
+## Active Execution Evidence
+
+Condition Type: root-execution
+
+Owner: Dev Orchestrator task 019fe3d6-2dd6-7322-a507-e8ca961e27d8
+
+Evidence: canonical combined Codex task/thread surface 019fe3d6-2dd6-7322-a507-e8ca961e27d8 is the current active root execution in branch codex/publish-and-integrate-terminology-standard-019fe3d6 and worktree /Users/martinbechard/.codex/worktrees/940b/dev-methodology; first bounded phase: project terminology publication, exact approved-path prechecks, production-routing analysis, and non-overlapping fixture work.
+
+Observed At: 2026-08-09T00:09:34Z
+
+Started At: 2026-08-09T00:09:34Z
+
+Deadline or Expires At: 2026-08-09T02:09:34Z
+
+Next Action: Load the accepted project candidate through the configured reference provider, run every exact governed-path ALLOWED_APPROVED_DEFINITION_CHANGE precheck, and implement only non-overlapping approved gaps
+
+Next Reconciliation At: 2026-08-09T00:24:34Z
