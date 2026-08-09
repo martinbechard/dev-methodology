@@ -1,8 +1,8 @@
 # Integrate The Documentation Design System
 
-Status: Running
+Status: Blocked
 
-Owner: Dev Orchestrator task `019fe3cd-577c-76b1-965c-06fb8793ae42`
+Owner: Unowned
 
 Canonical Conversation: `019fe3cd-577c-76b1-965c-06fb8793ae42`
 
@@ -12,7 +12,7 @@ Branch: `codex/integrate-documentation-design-system-019fe3cd`
 
 Worktree: `/Users/martinbechard/.codex/worktrees/df8a/dev-methodology`
 
-Phase: Reviewing — Integrate Documentation Design System
+Phase: Blocked — Integrate Documentation Design System
 
 Type: Feature
 
@@ -241,7 +241,7 @@ Intended Root Role: Dev Orchestrator
 
 Scheduling Evidence: The older `default-unconfigured-projects-to-solo-mode` finish lane is Completed at provider commit `51aaf33d7122e8e70d2ff5ab4a3bbc23c35d7d58`; its claims are released, clean source and integration worktrees are removed, and its canonical task is archived. Primary main is clean and the resource-claim registry is empty. Begin with private-worktree prototype analysis and exact governed-path prechecks; defer any later shared installation or unrelated publication beyond the work item's explicit boundaries.
 
-## Active Execution Evidence
+## Preserved Execution Evidence
 
 Condition Type: root-execution
 
@@ -258,3 +258,31 @@ Deadline or Expires At: 2026-08-09T05:00:00Z
 Next Action: Reacquire the Work Item activity=work claim, then collect the paused reviewer final packet without new checks; stop/request Coordinator disposition for any remaining material findings and dependency/fresh-main routing.
 
 Next Reconciliation At: 2026-08-09T04:20:00Z
+
+## Blocked Handoff Evidence
+
+Blocked At: 2026-08-09T04:14:00Z
+
+Coordinator: Dev Backlog Coordinator task `019fb057-1767-7ef2-b5fa-41f4417b20b3`
+
+Blocker: The authorized exceptional third correction cycle is exhausted, and fresh focused review of immutable candidate `7959f59e288575dbcb702590e503a26d53f6a28e` still reports one HIGH candidate-introduced semantic-fixture defect. All three runner scenarios stage `fixtures/documentation-design-system-review`; the two scenarios that require unavailable interaction evidence and a `NOT TESTED` result nevertheless receive `interaction-evidence.md` through the shared staged `TASK.md`. The current regression proves only common-directory staging and does not prove scenario-specific fixture fidelity.
+
+Blocker Owner: Dev Backlog Coordinator task `019fb057-1767-7ef2-b5fa-41f4417b20b3`
+
+Unblock Condition: The Coordinator records one new explicit bounded recovery disposition linked to the remaining semantic-fixture finding, with an exact correction manifest, owner, acceptance evidence, and fresh lifecycle sequence. Any resumed execution must use this same canonical task and must pass Blocked -> Ready -> Starting before the task independently records Starting -> Running. No source mutation is authorized while this item remains Blocked.
+
+Requested Coordinator Action: Reconcile the preserved review, verifier, support-checklist, methodology, and prompt evidence; choose one concrete recovery or terminal disposition; and retain the no-fourth boundary for the exhausted third-cycle plan unless a distinct recovery is durably authorized.
+
+Preserved Candidate: `7959f59e288575dbcb702590e503a26d53f6a28e` on branch `codex/integrate-documentation-design-system-019fe3cd` in clean worktree `/Users/martinbechard/.codex/worktrees/df8a/dev-methodology`.
+
+Review Evidence: Fresh focused review returns CHANGES REQUIRED on the semantic-fixture defect above. The other three units in the exceptional third correction are ACCEPT. Late methodology and prompt findings remain preserved and unresolved.
+
+Verification Evidence: Independent verifier is GOOD for the four mechanistic correction gates but withholds overall PASS. The generator-owned support checklist is stale at 30 roles and 142 skills versus the candidate's 32 roles and 143 skills; its owning generator is blocked by the separately unresolved terminology baseline and must not be bypassed or hand-edited.
+
+Correction History: Two ordinary correction attempts and one explicitly authorized exceptional third bounded correction cycle are complete. No fourth correction occurred. The final candidate and all earlier immutable candidates remain preserved in Git history.
+
+Runtime And Git State: Every child is stopped or completed. The canonical task is preserved as `019fe3cd-577c-76b1-965c-06fb8793ae42`. Candidate HEAD is exactly `7959f59e288575dbcb702590e503a26d53f6a28e`; `git status --porcelain=v1` was empty before and after claim release.
+
+Resource Disposition: Exact activity=work claim `integrate-documentation-design-system-work-019fe3cd`, incarnation `f1251b7e-317b-483b-b5e3-ab818f646cfa`, was released with disposition `blocked` and blocker reference `correction-cycle-exhausted:scenario-fixture-semantic-fidelity` in event `d155c957-c3d0-4bf9-ada2-937b574dbd75`. Post-release claim status was empty.
+
+Acceptance Criteria For Recovery: A replacement candidate must give each runner scenario a semantically faithful staged packet; the two unavailable-interaction scenarios must not receive interaction evidence and must produce the required `NOT TESTED` behavior. Fresh focused review and independent verification must accept the corrected candidate. The generator-owned support checklist must be regenerated through its owner and pass freshness after its separate terminology dependency is resolved. Existing scope exclusions, publication boundaries, and unrelated baselines remain unchanged.
