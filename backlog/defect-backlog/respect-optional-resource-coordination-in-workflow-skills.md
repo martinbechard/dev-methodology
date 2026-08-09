@@ -1,6 +1,10 @@
 # Respect Optional Resource Coordination In Workflow Skills
 
-Status: User Action Required
+Status: Ready
+
+Owner: Unowned
+
+Phase: Ready — Four-path governed correction approved
 
 Type: Defect
 
@@ -83,7 +87,7 @@ Determine the precise shared phrase that tells a workflow skill to apply the sel
 
 ### Approval Resolution
 
-Pending. The user authorized the static documentation correction on 2026-08-05 but did not authorize mutation of these four governed skill-definition paths.
+Approved on 2026-08-09. In the Dev Backlog Coordinator task, the user stated: "I'm pretty sure I already approved the respect otional resource coordination - none of the active threads say \"Waiting for user\". Approve it now." This directly approves exactly the four governed skill-definition paths named in the pending question. It authorizes their directly affected focused evaluation fixtures and tests, the listed maintained design source, generator-owned skill projection, and supported generated adapters. It does not authorize another governed definition, unrelated framework work, or baseline absorption.
 
 ## User Action Required
 
@@ -103,7 +107,7 @@ The defect is confirmed, but correcting it changes four governed portable skill 
 
 ### Resolution
 
-Pending.
+Approved. Route this same Work Item through Ready -> Starting -> Running before source mutation.
 
 ### Question Reconciliation (2026-08-08)
 
@@ -112,3 +116,20 @@ The retired governed path skills/deliver-work-item-direct-main/SKILL.md was repl
 ### Unattended Work Boundary
 
 Do not mutate the four governed SKILL.md files or their generated mirrors before approval. Read-only source discovery and analysis may continue. The already-authorized correction to design/agents/work-item-dispatching-and-delivery.md remains independent and complete.
+
+## Approval Resumption Evidence
+
+Approval Recorded At: 2026-08-09T05:01:00Z
+
+Approval Provenance: Direct user message in Dev Backlog Coordinator task `019fb057-1767-7ef2-b5fa-41f4417b20b3` on 2026-08-09.
+
+Approved Governed Paths:
+
+- `skills/integrate-agent-work/SKILL.md`
+- `skills/deliver-work-item-feature-branch/SKILL.md`
+- `skills/deliver-work-item-main-branch/SKILL.md`
+- `skills/verify-end-to-end-workflow/SKILL.md`
+
+Approval Boundary: Correct these four definitions so they consume the resource-coordination policy selected through `AGENTS.md`, perform no claim procedure when selection is `none`, and preserve the complete configured `resource-claim` behavior. Only the already listed directly affected non-governed dependents are included. No other governed source or unrelated correction is approved.
+
+Canonical Execution Reconciliation: No current or archived canonical task was found for this Work Item ID. Ready remains unowned until the Coordinator records a new Starting reservation. No source mutation is authorized in Ready.
