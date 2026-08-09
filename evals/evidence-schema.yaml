@@ -64,6 +64,45 @@ probeRunRequiredWhenApplicable:
   - probeId
   - probeVariant
   - probeComparisonKey
+modelVisibleProjectionRunRequiredWhenApplicable:
+  - mode
+  - preparedSnapshotDigest
+  - sourceIdentityDigest
+  - postSyncSourceIdentityDigest
+  - preparedEntries
+  - projectionManifestDigest
+  - projectionEvidence
+  - projectionEvidenceDigest
+  - projectedInputs
+  - evaluatorOnlyPaths
+  - syncPaths
+  - syncManifestDigest
+  - syncEvidence
+  - syncEvidenceDigest
+  - mutations
+  - createdDirectories
+  - evaluatorVerificationEvidence
+  - evaluatorVerificationEvidenceDigest
+  - evaluatorVerificationStatus
+  - evaluatorVerificationExitCode
+  - evaluatorVerificationExpectation
+  - evaluatorVerificationCommandDigest
+  - syncEvidenceStatus
+modelVisibleProjectionArtifactPolicy:
+  version: 3
+  receiptLocation: The receipt is stored in the owner-only artifact directory.
+  references: Projection artifacts use normalized receipt-relative file-marker references.
+  projectedEntries: Records include path, type, mode, digest, size, and retainedEvidence.
+  preparedEntries: The complete typed and mode-preserving non-runner prepared inventory is retained without evaluator-only bytes and must match the current catalog fixture.
+  synchronizedMutations: Records include path, action, beforeDigest, afterDigest, size, mode, and retainedEvidence.
+  outputEntryLimit: A projected run may create at most 512 total entries, counting synchronized files and their created directories together; the runner enforces the limit before retention and apply, and the receipt validator enforces it before inspecting retained bytes.
+  outputTopology: Mutation paths cannot be ancestors or descendants of other mutation paths, one path cannot be both a mutation and created directory, and every prepared mutation parent must be a directory.
+  retainedBytes: Projected input files and synchronized output files bind receipt-owned byte artifacts.
+  artifactMarkers: Every projection manifest, sync manifest, retained-byte artifact, verifier artifact, verifier source, and verifier execution reference uses its canonical schema marker.
+  sourceBinding: The initial source identity is derived from preparedEntries and equals preparedSnapshotDigest; the post-sync identity is derived from that inventory plus exact created ancestors and mutations; verifier pre-state equals postSyncSourceIdentityDigest.
+  verifierExecution: Version-three verifier evidence binds the exact stdin digest to separately retained execution bytes, a resolved interpreter digest, and the governed evaluator source.
+  verifierSemantics: The selected governed verifier fixes its result field and semantic-red exit code; receipt-selected alternatives, contradictory booleans, and infrastructure failures block.
+  receiptAssembly: An explicit complete version-two receipt template may opt into owner-only receipt assembly; the runner identity-binds the original non-symlink template and its reserved event references, inserts only modelVisibleProjection, waits for current event, result, MCP, verifier, and functional-isolation gates, and reports only a verified classification. Template mode does not emit a separate projection fragment and never replaces or removes another owner's receipt.yaml.
 probeVariantValues:
   - treatment
   - target-omitted
@@ -72,6 +111,13 @@ probeCompletionRule:
   requiredVariants: [treatment, target-omitted, wrong-skill]
   comparisonIdentity: probeComparisonKey
   singleVariantStatus: unverified-as-complete-probe
+mcpAgentOpsReceiptPolicy:
+  base-case-only:
+    allowedProbeVariants: []
+    forbiddenProbeVariants: [treatment, target-omitted, wrong-skill]
+  probe-treatment-only:
+    allowedProbeVariants: [treatment]
+    forbiddenProbeVariants: [target-omitted, wrong-skill]
 mcpAgentOpsRunRequiredWhenApplicable:
   - serverName
   - version
@@ -319,8 +365,8 @@ notes:
   - Version-two skill evidence binds unsanitized source, effective model-visible content, selected resources, and sanitization actions.
   - Prepared source and case-definition drift make a receipt stale, and the prepared key binds toolchain and controlled-environment identity.
   - A full skill probe requires comparable treatment, target-omitted, and wrong-skill receipts with one probeComparisonKey.
-  - An MCP-enabled base-case receipt binds release version, launcher and runtime identities, exact staged catalog and host configuration artifacts, a run session, one satisfying process stream, same-call argument digests and bounded outcomes, and retained allowed-output evidence.
-  - MCP evidence is forbidden for skill-probe variants so the complete availability catalog cannot reintroduce an omitted treatment skill.
+  - An MCP-enabled base-case or declared probe treatment receipt binds release version, launcher and runtime identities, exact staged context and host configuration artifacts, a run session, one satisfying process stream, same-call argument digests and bounded outcomes, and retained allowed-output evidence.
+  - MCP evidence is allowed for a probe variant only when a versioned contract declares probe-treatment-only and the receipt is for treatment; target-omitted and wrong-skill controls forbid it.
   - Deterministic Judges run first and only a critical deterministic failure skips the Model Judge.
   - A Model Judge result is current only while every calibration identity and digest remains unchanged.
   - A canonical Model Judge request binds the selected case, run, harness, candidate-output artifact, and every governed evidence artifact by digest.

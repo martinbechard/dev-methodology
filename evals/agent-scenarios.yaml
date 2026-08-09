@@ -717,16 +717,16 @@ agents:
       - id: dev-documentation-writer-terminology-rewrite
         kind: happy-path
         fixtureProfile: structured-document
-        promptIntent: Rewrite one technical document for clarity without removing meaning while applying a positive-only project Terminology Standard.
-        expectedOutcome: A clearer custom document that preserves every semantic marker and protected literal while using the preferred term for every defined concept.
+        promptIntent: Rewrite one technical document for clarity without removing meaning while the production Dev Documentation Writer route applies a positive-first project Terminology Standard.
+        expectedOutcome: A clearer custom document that preserves every semantic marker and protected literal while the staged terminology-standard skill loads terminology.md through the configured reference provider and applies the preferred term for every defined concept.
         requiredBehaviors:
           - Preserve every source claim, semantic marker, exact identifier, command, number, and decision label.
-          - Apply the project Terminology Standard only through the temporarily injected terminology-standard skill.
+          - Use the production Agent and staged terminology-standard skill, then apply only the terminology.md snapshot returned by the configured reference provider.
           - Report possible negative-rule candidates separately without treating them as normative.
         forbiddenBehaviors:
           - Remove meaning to simplify the document.
-          - Read or apply terminology.md when the target skill is intentionally omitted.
-          - Add speculative Avoid rules to the positive-only standard.
+          - Read or apply terminology.md when the target skill is omitted or replaced by the wrong-skill control.
+          - Add speculative Avoid rules to the positive-first standard.
         judgePlan:
           deterministicChecks:
             - semantic-preservation
@@ -736,6 +736,29 @@ agents:
           modelRubric: documentation-quality
         executableCases:
           - terminology-standard-effect
+        coverageStatus: fixture-backed
+      - id: dev-documentation-writer-terminology-exclusion
+        kind: boundary-failure
+        fixtureProfile: structured-document
+        promptIntent: Preserve excluded raw evidence that contains terminology-like wording, an exact identifier, a command, and a quotation.
+        expectedOutcome: A byte-faithful evidence copy produced through the production Dev Documentation Writer Agent without activating terminology-standard or loading terminology.md.
+        requiredBehaviors:
+          - Treat raw evidence, exact identifiers, commands, and quotations as excluded from terminology preference.
+          - Preserve line order, spacing, punctuation, capitalization, and every source byte.
+          - Verify the output with the fixture-owned exact-byte command.
+        forbiddenBehaviors:
+          - Rewrite Campaign receipt rollout or any other source-native wording.
+          - Activate terminology-standard or invoke its reference-provider route.
+          - Replace exact identifiers, commands, or quotations with preferred terms.
+        judgePlan:
+          deterministicChecks:
+            - semantic-preservation
+            - required-command-outcome
+            - allowed-paths-only
+            - no-forbidden-mutation
+          modelRubric: documentation-quality
+        executableCases:
+          - terminology-standard-negative-activation
         coverageStatus: fixture-backed
     coverageStatus: fixture-backed
   - id: dev-merge-coordinator

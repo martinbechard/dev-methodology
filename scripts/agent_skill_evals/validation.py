@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import base64
 import hashlib
 import json
 import os
@@ -69,6 +70,7 @@ _RECOGNIZED_EPHEMERAL_OUTPUT_LEAVES = frozenset({
     "out",
     "target",
 })
+_MAX_PROJECTION_OUTPUT_ENTRIES = 512
 _MCP_AGENT_OPS_TOOL_NAMES = frozenset({
     "claim_acquire",
     "claim_extend",
@@ -80,6 +82,8 @@ _MCP_AGENT_OPS_TOOL_NAMES = frozenset({
     "claim_reset",
     "claim_status",
     "detect_technology_skills",
+    "reference_load",
+    "reference_refresh",
     "skill_list",
     "skill_load",
     "skill_read",
@@ -338,6 +342,7 @@ def validate_case_definition(case: Mapping[str, object]) -> list[str]:
             if unsupported:
                 errors.append(f"case.{field} uses unsupported harnesses: {', '.join(unsupported)}")
     _validate_string_list(case.get("modelVisiblePaths", ["."]), "case.modelVisiblePaths", errors, required=True)
+    _validate_model_visible_projection(case, errors)
     resource_allowlist = case.get("skillResourceAllowlist", {})
     if not isinstance(resource_allowlist, Mapping):
         errors.append("case.skillResourceAllowlist must be a mapping")
@@ -349,7 +354,14 @@ def validate_case_definition(case: Mapping[str, object]) -> list[str]:
             _validate_string_list(paths, f"case.skillResourceAllowlist.{skill}", errors, required=True)
             if isinstance(paths, list) and "SKILL.md" not in paths:
                 errors.append(f"case.skillResourceAllowlist.{skill} must include SKILL.md")
-    overlap = set(_string_items(case.get("requiredSkills"))) & set(_string_items(case.get("forbiddenSkills")))
+    skill_scope = (
+        case.get("executionSkills")
+        if case.get("probeVariant") in {"treatment", "target-omitted", "wrong-skill"}
+        else case.get("requiredSkills")
+    )
+    overlap = set(_string_items(skill_scope)) & set(
+        _string_items(case.get("forbiddenSkills"))
+    )
     if overlap:
         errors.append(f"case skills cannot be both required and forbidden: {', '.join(sorted(overlap))}")
     if isinstance(case.get("judgePlan"), Mapping) and isinstance(resource_allowlist, Mapping):
@@ -358,6 +370,59 @@ def validate_case_definition(case: Mapping[str, object]) -> list[str]:
                 errors.append(f"case.skillResourceAllowlist is missing required skill resources: {skill}")
     _validate_mcp_agent_ops_case(case, errors)
     return errors
+
+
+def _validate_model_visible_projection(
+    case: Mapping[str, object],
+    errors: list[str],
+) -> None:
+    contract = case.get("modelVisibleProjection")
+    if contract is None:
+        return
+    if not isinstance(contract, Mapping):
+        errors.append("case.modelVisibleProjection must be a mapping")
+        return
+    expected_fields = {"schemaVersion", "mode", "evaluatorOnlyPaths"}
+    if set(contract) != expected_fields:
+        errors.append(
+            "case.modelVisibleProjection must define exactly schemaVersion, mode, "
+            "and evaluatorOnlyPaths"
+        )
+    if contract.get("schemaVersion") != 1:
+        errors.append("case.modelVisibleProjection.schemaVersion must be 1")
+    if contract.get("mode") != "isolated-harness-workspace":
+        errors.append(
+            "case.modelVisibleProjection.mode must be isolated-harness-workspace"
+        )
+    evaluator_only = contract.get("evaluatorOnlyPaths")
+    _validate_string_list(
+        evaluator_only,
+        "case.modelVisibleProjection.evaluatorOnlyPaths",
+        errors,
+        required=True,
+    )
+    for path in _string_items(evaluator_only):
+        _validate_case_relative_path(
+            path,
+            "case.modelVisibleProjection.evaluatorOnlyPaths",
+            errors,
+        )
+    visible_paths = _string_items(case.get("modelVisiblePaths", ["."]))
+    output_paths = (
+        _string_items(case.get("allowedWritePaths"))
+        + _string_items(case.get("ephemeralWritePaths"))
+    )
+    for path in _string_items(evaluator_only):
+        if any(_relative_paths_overlap(path, other) for other in visible_paths):
+            errors.append(
+                "case.modelVisibleProjection.evaluatorOnlyPaths overlaps "
+                f"modelVisiblePaths: {path}"
+            )
+        if any(_relative_paths_overlap(path, other) for other in output_paths):
+            errors.append(
+                "case.modelVisibleProjection.evaluatorOnlyPaths overlaps output paths: "
+                f"{path}"
+            )
 
 
 def _validate_mcp_agent_ops_case(
@@ -370,6 +435,9 @@ def _validate_mcp_agent_ops_case(
         return
     if not isinstance(value, Mapping):
         errors.append("case.mcpAgentOps must be a mapping")
+        return
+    if value.get("schemaVersion") == 5:
+        _validate_reference_mcp_agent_ops_case(case, value, errors)
         return
     expected_fields = {
         "schemaVersion",
@@ -618,6 +686,82 @@ def _validate_mcp_agent_ops_case(
         )
 
 
+def _validate_reference_mcp_agent_ops_case(
+    case: Mapping[str, object],
+    value: Mapping[str, object],
+    errors: list[str],
+) -> None:
+    """Validate the exact reference-only contract for an ordinary probe treatment."""
+
+    expected_fields = {
+        "schemaVersion",
+        "enablement",
+        "serverName",
+        "enabledTools",
+        "requiredVersion",
+        "requiredRuntimeDigest",
+        "referenceNames",
+        "requiredToolSequences",
+        "requiredToolOutcomes",
+        "requiredToolArguments",
+    }
+    if set(value) != expected_fields:
+        errors.append(
+            "case.mcpAgentOps must define the complete version-five reference contract"
+        )
+    if value.get("enablement") != "probe-treatment-only":
+        errors.append(
+            "case.mcpAgentOps.enablement must be probe-treatment-only for version 5"
+        )
+    if value.get("serverName") != "mcp-agent-ops":
+        errors.append("case.mcpAgentOps.serverName must be mcp-agent-ops")
+    if value.get("enabledTools") != ["reference_load"]:
+        errors.append(
+            "case.mcpAgentOps.enabledTools must be exactly reference_load"
+        )
+    if value.get("requiredVersion") != "0.8.0":
+        errors.append("case.mcpAgentOps.requiredVersion must be 0.8.0")
+    _require_digest(
+        value.get("requiredRuntimeDigest"),
+        "case.mcpAgentOps.requiredRuntimeDigest",
+        errors,
+    )
+    if value.get("referenceNames") != ["terminology.md"]:
+        errors.append(
+            "case.mcpAgentOps.referenceNames must be exactly terminology.md"
+        )
+    if value.get("requiredToolSequences") != [["reference_load"]]:
+        errors.append(
+            "case.mcpAgentOps.requiredToolSequences must contain only reference_load"
+        )
+    if value.get("requiredToolOutcomes") != {"reference_load": ["LOADED"]}:
+        errors.append(
+            "case.mcpAgentOps.requiredToolOutcomes must require reference_load LOADED"
+        )
+    if value.get("requiredToolArguments") != {
+        "reference_load": {"names": ["terminology.md"]}
+    }:
+        errors.append(
+            "case.mcpAgentOps.requiredToolArguments must load only terminology.md"
+        )
+    if "terminology-standard" not in _string_items(case.get("requiredSkills")):
+        errors.append(
+            "case.mcpAgentOps version 5 requires terminology-standard"
+        )
+    if "probe-terminology-standard" not in _string_items(case.get("skillProbes")):
+        errors.append(
+            "case.mcpAgentOps version 5 requires probe-terminology-standard"
+        )
+    sandbox_profiles = case.get("sandboxProfiles")
+    if (
+        not isinstance(sandbox_profiles, Mapping)
+        or sandbox_profiles.get("codex") != "codex-workspace-write"
+    ):
+        errors.append(
+            "case.mcpAgentOps version 5 must retain the ordinary Codex sandbox"
+        )
+
+
 def _validate_mcp_argument_template(
     value: object,
     field: str,
@@ -773,12 +917,50 @@ def validate_framework_catalogs(
         for case in selected_cases.values()
         if case.get("mcpAgentOps") is not None
     )
-    if root == (ROOT / "evals").resolve() and mcp_cases != [
-        "project-configuration-routing"
-    ]:
-        errors.append(
-            "cases.yaml must enable mcp-agent-ops only for project-configuration-routing"
-        )
+    allowed_mcp_cases = {
+        "project-configuration-routing",
+        "terminology-standard-effect",
+    }
+    if root == (ROOT / "evals").resolve():
+        unexpected_mcp_cases = sorted(set(mcp_cases) - allowed_mcp_cases)
+        if unexpected_mcp_cases:
+            errors.append(
+                "cases.yaml enables mcp-agent-ops for unsupported cases: "
+                + ", ".join(unexpected_mcp_cases)
+            )
+        if "project-configuration-routing" not in mcp_cases:
+            errors.append(
+                "cases.yaml must retain mcp-agent-ops for project-configuration-routing"
+            )
+        terminology_case = selected_cases.get("terminology-standard-effect")
+        if isinstance(terminology_case, Mapping):
+            context_pack = terminology_case.get("contextPack")
+            context_paths = (
+                _string_items(context_pack.get("include"))
+                if isinstance(context_pack, Mapping)
+                else []
+            )
+            model_visible_paths = _string_items(
+                terminology_case.get("modelVisiblePaths")
+            )
+            fixture_guidance_active = "AGENTS.md" in {
+                *context_paths,
+                *model_visible_paths,
+            }
+            terminology_contract = terminology_case.get("mcpAgentOps")
+            exact_reference_activation = (
+                isinstance(terminology_contract, Mapping)
+                and terminology_contract.get("schemaVersion") == 5
+                and terminology_contract.get("enablement")
+                == "probe-treatment-only"
+                and terminology_contract.get("enabledTools")
+                == ["reference_load"]
+            )
+            if not fixture_guidance_active and not exact_reference_activation:
+                errors.append(
+                    "cases.yaml:terminology-standard-effect completed terminology routing "
+                    "requires the exact version-five probe-treatment-only reference_load contract"
+                )
     catalogs = load_framework_catalogs(root)
     for filename, data in catalogs.items():
         item_key, required = _CATALOG_SPECS[filename]
@@ -1443,6 +1625,14 @@ def _validate_version_two(
     _validate_skills(case, harness, evidence, evidence_path, errors, stale_reasons)
     _validate_budgets(evidence.get("budgets"), errors)
     _validate_prepared_fixture(case, evidence.get("preparedFixture"), evidence_path, errors, stale_reasons)
+    _validate_model_visible_projection_run(
+        case,
+        run,
+        evidence.get("preparedFixture"),
+        evidence_path,
+        errors,
+        stale_reasons,
+    )
     _validate_isolation(
         case,
         harness,
@@ -1491,6 +1681,1131 @@ def _validate_version_two(
                 )
 
 
+def _validate_model_visible_projection_run(
+    case: Mapping[str, object],
+    run: Mapping[str, object],
+    prepared_fixture: object,
+    evidence_path: Path,
+    errors: list[str],
+    stale_reasons: list[str],
+) -> None:
+    """Replay the conditional source-projection, mutation-sync, and trusted verifier evidence."""
+
+    contract = case.get("modelVisibleProjection")
+    value = run.get("modelVisibleProjection")
+    if contract is None:
+        if value is not None:
+            errors.append(
+                "evidence run.modelVisibleProjection is forbidden for a non-projection case"
+            )
+        return
+    if not isinstance(contract, Mapping):
+        errors.append("selected case has an invalid modelVisibleProjection contract")
+        return
+    if not isinstance(value, Mapping):
+        errors.append(
+            "evidence run.modelVisibleProjection must be a mapping for a projection case"
+        )
+        return
+    required_fields = {
+        "mode",
+        "preparedSnapshotDigest",
+        "sourceIdentityDigest",
+        "postSyncSourceIdentityDigest",
+        "preparedEntries",
+        "projectionManifestDigest",
+        "projectionEvidence",
+        "projectionEvidenceDigest",
+        "projectedInputs",
+        "evaluatorOnlyPaths",
+        "syncPaths",
+        "syncManifestDigest",
+        "syncEvidence",
+        "syncEvidenceDigest",
+        "mutations",
+        "createdDirectories",
+        "evaluatorVerificationEvidence",
+        "evaluatorVerificationEvidenceDigest",
+        "evaluatorVerificationStatus",
+        "evaluatorVerificationExitCode",
+        "evaluatorVerificationExpectation",
+        "evaluatorVerificationCommandDigest",
+        "syncEvidenceStatus",
+    }
+    if set(value) != required_fields:
+        errors.append(
+            "evidence run.modelVisibleProjection must define the complete projection evidence contract"
+        )
+    for field in (
+        "sourceIdentityDigest",
+        "preparedSnapshotDigest",
+        "postSyncSourceIdentityDigest",
+        "projectionManifestDigest",
+        "projectionEvidenceDigest",
+        "syncManifestDigest",
+        "syncEvidenceDigest",
+        "evaluatorVerificationEvidenceDigest",
+        "evaluatorVerificationCommandDigest",
+    ):
+        _require_digest(value.get(field), f"run.modelVisibleProjection.{field}", errors)
+    if value.get("mode") != contract.get("mode"):
+        errors.append("evidence projection mode differs from the selected case")
+    evaluator_only = _string_items(contract.get("evaluatorOnlyPaths"))
+    sync_paths = [
+        *_string_items(case.get("allowedWritePaths")),
+        *_string_items(case.get("ephemeralWritePaths")),
+    ]
+    if value.get("evaluatorOnlyPaths") != evaluator_only:
+        errors.append("evidence evaluator-only paths differ from the selected case")
+    if value.get("syncPaths") != sync_paths:
+        errors.append("evidence projection sync paths differ from the selected case")
+    if isinstance(prepared_fixture, Mapping):
+        prepared_snapshot_digest = prepared_fixture.get("preparedSnapshotDigest")
+        if value.get("preparedSnapshotDigest") != prepared_snapshot_digest:
+            stale_reasons.append(
+                "evidence projection prepared snapshot identity differs from the prepared fixture"
+            )
+        if value.get("sourceIdentityDigest") != prepared_snapshot_digest:
+            stale_reasons.append(
+                "evidence projection source identity differs from the prepared full-fixture snapshot"
+            )
+
+    prepared_entries = _validate_prepared_inventory_records(
+        value.get("preparedEntries"),
+        case,
+        errors,
+    )
+    projected_inputs = _validate_projected_input_records(
+        value.get("projectedInputs"),
+        _string_items(case.get("modelVisiblePaths")),
+        evidence_path,
+        errors,
+    )
+    raw_mutations = value.get("mutations")
+    raw_created_directories = value.get("createdDirectories")
+    if _validate_projection_output_entry_limit(
+        raw_mutations,
+        raw_created_directories,
+        errors,
+    ):
+        return
+    mutations = _validate_projection_mutation_records(
+        raw_mutations,
+        sync_paths,
+        evidence_path,
+        errors,
+    )
+    created_directories = _validate_projection_directory_records(
+        raw_created_directories,
+        errors,
+    )
+    _validate_projection_output_topology(
+        mutations,
+        created_directories,
+        errors,
+    )
+    prepared_by_path = {
+        str(entry["path"]): entry
+        for entry in prepared_entries
+        if isinstance(entry.get("path"), str)
+    }
+    prepared_digest = _projection_inventory_digest(prepared_entries)
+    if prepared_digest is not None and (
+        value.get("preparedSnapshotDigest") != prepared_digest
+        or value.get("sourceIdentityDigest") != prepared_digest
+    ):
+        errors.append(
+            "evidence projection prepared inventory digest differs from its declared source identity"
+        )
+    selected_prepared = [
+        prepared_by_path[path]
+        for path in sorted(prepared_by_path)
+        if any(
+            _relative_path_contains(selected, path)
+            for selected in _string_items(case.get("modelVisiblePaths"))
+        )
+    ]
+    projected_core = [
+        {field: record.get(field) for field in ("path", "type", "mode", "digest", "size")}
+        for record in projected_inputs
+    ]
+    if projected_core != selected_prepared:
+        errors.append(
+            "evidence projectedInputs must be the exact selected prepared subset"
+        )
+    _validate_projection_post_inventory(
+        prepared_entries,
+        mutations,
+        created_directories,
+        value.get("postSyncSourceIdentityDigest"),
+        errors,
+    )
+    projection_artifact = _load_projection_json_artifact(
+        value.get("projectionEvidence"),
+        value.get("projectionEvidenceDigest"),
+        "run.modelVisibleProjection.projectionEvidence",
+        evidence_path,
+        errors,
+        expected_marker="dev-methodology-eval-model-visible-projection",
+    )
+    if projection_artifact is not None:
+        expected_projection = {
+            "schema": "dev-methodology-eval-model-visible-projection",
+            "version": 3,
+            "preparedSnapshotDigest": value.get("preparedSnapshotDigest"),
+            "sourceIdentityDigest": value.get("sourceIdentityDigest"),
+            "preparedEntries": prepared_entries,
+            "modelVisiblePaths": _string_items(case.get("modelVisiblePaths")),
+            "evaluatorOnlyPaths": evaluator_only,
+            "syncPaths": sync_paths,
+            "projectedInputs": projected_inputs,
+        }
+        _validate_projection_manifest_artifact(
+            projection_artifact,
+            expected_projection,
+            value.get("projectionManifestDigest"),
+            "projection",
+            errors,
+        )
+    sync_artifact = _load_projection_json_artifact(
+        value.get("syncEvidence"),
+        value.get("syncEvidenceDigest"),
+        "run.modelVisibleProjection.syncEvidence",
+        evidence_path,
+        errors,
+        expected_marker="dev-methodology-eval-model-visible-projection-sync",
+    )
+    if sync_artifact is not None:
+        expected_sync = {
+            "schema": "dev-methodology-eval-model-visible-projection-sync",
+            "version": 3,
+            "preparedSnapshotDigest": value.get("preparedSnapshotDigest"),
+            "sourceIdentityDigest": value.get("sourceIdentityDigest"),
+            "postSyncSourceIdentityDigest": value.get("postSyncSourceIdentityDigest"),
+            "projectionManifestDigest": value.get("projectionManifestDigest"),
+            "preparedEntries": prepared_entries,
+            "modelVisiblePaths": _string_items(case.get("modelVisiblePaths")),
+            "evaluatorOnlyPaths": evaluator_only,
+            "projectedInputs": projected_inputs,
+            "syncPaths": sync_paths,
+            "createdDirectories": created_directories,
+            "mutations": mutations,
+        }
+        _validate_projection_manifest_artifact(
+            sync_artifact,
+            expected_sync,
+            value.get("syncManifestDigest"),
+            "sync",
+            errors,
+        )
+    _validate_projection_verifier_artifact(
+        case,
+        value,
+        evidence_path,
+        errors,
+    )
+    if value.get("syncEvidenceStatus") != "applied-and-recorded":
+        errors.append("evidence projection sync status must be applied-and-recorded")
+
+
+def _validate_projected_input_records(
+    value: object,
+    model_visible_paths: Sequence[str],
+    evidence_path: Path,
+    errors: list[str],
+) -> list[dict[str, object]]:
+    if not isinstance(value, list) or not value:
+        errors.append("evidence projectedInputs must be a non-empty list")
+        return []
+    records: list[dict[str, object]] = []
+    observed_paths: set[str] = set()
+    for index, item in enumerate(value):
+        if not isinstance(item, Mapping) or set(item) != {
+            "path", "type", "mode", "digest", "size", "retainedEvidence"
+        }:
+            errors.append(f"evidence projectedInputs[{index}] has an invalid shape")
+            continue
+        path = item.get("path")
+        if not isinstance(path, str):
+            errors.append(f"evidence projectedInputs[{index}].path must be a string")
+            continue
+        _validate_case_relative_path(path, f"projectedInputs[{index}].path", errors)
+        if path in observed_paths:
+            errors.append(f"evidence projected input path is duplicated: {path}")
+        observed_paths.add(path)
+        if not any(_relative_path_contains(selected, path) for selected in model_visible_paths):
+            errors.append(f"evidence projected input is outside modelVisiblePaths: {path}")
+        _validate_projection_entry_record(
+            item,
+            "projected-input",
+            f"projectedInputs[{index}]",
+            evidence_path,
+            errors,
+        )
+        records.append(dict(item))
+    for selected in model_visible_paths:
+        if not any(
+            isinstance(record.get("path"), str)
+            and _relative_path_contains(selected, str(record["path"]))
+            for record in records
+        ):
+            errors.append(
+                f"evidence projectedInputs does not cover modelVisiblePaths entry: {selected}"
+            )
+    if [str(record.get("path")) for record in records] != sorted(observed_paths):
+        errors.append("evidence projectedInputs must use deterministic path order")
+    return records
+
+
+def _validate_prepared_inventory_records(
+    value: object,
+    case: Mapping[str, object],
+    errors: list[str],
+) -> list[dict[str, object]]:
+    """Validate the complete pre-run fixture inventory against current catalog bytes."""
+
+    if not isinstance(value, list) or not value:
+        errors.append("evidence preparedEntries must be a non-empty list")
+        return []
+    records: list[dict[str, object]] = []
+    observed: set[str] = set()
+    for index, item in enumerate(value):
+        if not isinstance(item, Mapping) or set(item) != {
+            "path", "type", "mode", "digest", "size",
+        }:
+            errors.append(f"evidence preparedEntries[{index}] has an invalid shape")
+            continue
+        path = item.get("path")
+        if not isinstance(path, str):
+            errors.append(f"evidence preparedEntries[{index}].path must be a string")
+            continue
+        _validate_case_relative_path(path, f"preparedEntries[{index}].path", errors)
+        if path in observed:
+            errors.append(f"evidence prepared inventory path is duplicated: {path}")
+        observed.add(path)
+        record = dict(item)
+        _validate_projection_entry_identity(
+            record,
+            f"preparedEntries[{index}]",
+            errors,
+        )
+        records.append(record)
+    if [str(record.get("path")) for record in records] != sorted(observed):
+        errors.append("evidence preparedEntries must use deterministic path order")
+
+    project = case.get("project")
+    expected: list[dict[str, object]] = []
+    if isinstance(project, str):
+        fixture_root = ROOT / project
+        if fixture_root.is_dir() and not fixture_root.is_symlink():
+            for relative, identity in sorted(
+                snapshot_tree(fixture_root, exclude_transient=True).items()
+            ):
+                kind, mode, *tail = identity.split(":", 2)
+                if kind == "dir":
+                    expected.append({
+                        "path": relative,
+                        "type": "directory",
+                        "mode": mode,
+                        "digest": None,
+                        "size": None,
+                    })
+                else:
+                    content = (fixture_root / relative).read_bytes()
+                    expected.append({
+                        "path": relative,
+                        "type": "file",
+                        "mode": mode,
+                        "digest": tail[0],
+                        "size": len(content),
+                    })
+    if not expected or records != expected:
+        errors.append(
+            "evidence preparedEntries differ from the current prepared fixture inventory"
+        )
+
+    visible = _string_items(case.get("modelVisiblePaths"))
+    contract = case.get("modelVisibleProjection")
+    evaluator = (
+        _string_items(contract.get("evaluatorOnlyPaths"))
+        if isinstance(contract, Mapping)
+        else []
+    )
+    for record in records:
+        path = str(record.get("path"))
+        memberships = (
+            any(_relative_path_contains(selected, path) for selected in visible),
+            any(_relative_path_contains(selected, path) for selected in evaluator),
+        )
+        if memberships.count(True) != 1:
+            errors.append(
+                "evidence preparedEntries do not form the exact model-visible and evaluator-only partition"
+            )
+            break
+    return records
+
+
+def _validate_projection_entry_identity(
+    item: Mapping[str, object],
+    field: str,
+    errors: list[str],
+) -> None:
+    entry_type = item.get("type")
+    mode = item.get("mode")
+    if entry_type not in {"file", "directory"}:
+        errors.append(f"evidence {field}.type must be file or directory")
+    if not isinstance(mode, str) or re.fullmatch(r"[0-7]{3,4}", mode) is None:
+        errors.append(f"evidence {field}.mode is invalid")
+    if entry_type == "directory":
+        if item.get("digest") is not None or item.get("size") is not None:
+            errors.append(f"evidence {field} directory must not claim file bytes")
+        return
+    _require_digest(item.get("digest"), f"{field}.digest", errors)
+    if not isinstance(item.get("size"), int) or item.get("size", -1) < 0:
+        errors.append(f"evidence {field}.size must be non-negative")
+
+
+def _projection_inventory_digest(
+    records: Sequence[Mapping[str, object]],
+) -> str | None:
+    if not records or any(not isinstance(record.get("path"), str) for record in records):
+        return None
+    snapshot: dict[str, str] = {}
+    for record in records:
+        path = str(record["path"])
+        if record.get("type") == "directory":
+            snapshot[path] = f"dir:{record.get('mode')}"
+        elif record.get("type") == "file":
+            snapshot[path] = f"file:{record.get('mode')}:{record.get('digest')}"
+        else:
+            return None
+    return snapshot_digest(snapshot)
+
+
+def _validate_projection_post_inventory(
+    prepared_entries: Sequence[Mapping[str, object]],
+    mutations: Sequence[Mapping[str, object]],
+    created_directories: Sequence[Mapping[str, str]],
+    declared_digest: object,
+    errors: list[str],
+) -> None:
+    """Derive the only valid post-sync inventory from the recorded pre-state and changes."""
+
+    expected = {str(entry.get("path")): dict(entry) for entry in prepared_entries}
+    mutation_paths = [
+        str(mutation.get("path"))
+        for mutation in mutations
+        if isinstance(mutation.get("path"), str)
+    ]
+    necessary_directories: set[str] = set()
+    for path in mutation_paths:
+        if path in expected:
+            errors.append("evidence projection mutation collides with the prepared inventory")
+        for parent in PurePosixPath(path).parents:
+            parent_path = parent.as_posix()
+            if parent_path == ".":
+                continue
+            prepared_parent = expected.get(parent_path)
+            if prepared_parent is not None:
+                if prepared_parent.get("type") != "directory":
+                    errors.append(
+                        "evidence projection mutation prepared parent must be a directory: "
+                        f"{parent_path}"
+                    )
+                continue
+            necessary_directories.add(parent_path)
+    observed_directories = {
+        str(record.get("path")) for record in created_directories
+    }
+    if observed_directories != necessary_directories:
+        errors.append(
+            "evidence createdDirectories must be the exact necessary post-sync ancestors"
+        )
+    for record in created_directories:
+        path = str(record.get("path"))
+        expected[path] = {
+            "path": path,
+            "type": "directory",
+            "mode": record.get("mode"),
+            "digest": None,
+            "size": None,
+        }
+    for mutation in mutations:
+        path = str(mutation.get("path"))
+        expected[path] = {
+            "path": path,
+            "type": "file",
+            "mode": mutation.get("mode"),
+            "digest": mutation.get("afterDigest"),
+            "size": mutation.get("size"),
+        }
+    derived = _projection_inventory_digest(
+        [expected[path] for path in sorted(expected)]
+    )
+    if derived is None or declared_digest != derived:
+        errors.append(
+            "evidence postSyncSourceIdentityDigest differs from the derived post-sync inventory"
+        )
+
+
+def _validate_projection_output_entry_limit(
+    mutations: object,
+    created_directories: object,
+    errors: list[str],
+) -> bool:
+    """Apply one inclusive cap to all entries created by projection sync."""
+
+    if (
+        isinstance(mutations, list)
+        and isinstance(created_directories, list)
+        and len(mutations) + len(created_directories)
+        > _MAX_PROJECTION_OUTPUT_ENTRIES
+    ):
+        errors.append("evidence projection exceeds the total output entry limit")
+        return True
+    return False
+
+
+def _validate_projection_output_topology(
+    mutations: Sequence[Mapping[str, object]],
+    created_directories: Sequence[Mapping[str, str]],
+    errors: list[str],
+) -> None:
+    """Reject path sets that cannot represent one filesystem inventory."""
+
+    mutation_paths = {
+        str(record.get("path"))
+        for record in mutations
+        if isinstance(record.get("path"), str)
+    }
+    directory_paths = {
+        str(record.get("path"))
+        for record in created_directories
+        if isinstance(record.get("path"), str)
+    }
+    collisions = sorted(mutation_paths & directory_paths)
+    if collisions:
+        errors.append(
+            "evidence projection output cannot be both a file and directory: "
+            f"{collisions[0]}"
+        )
+    for path in sorted(mutation_paths):
+        ancestors = sorted(
+            mutation_paths
+            & {
+                parent.as_posix()
+                for parent in PurePosixPath(path).parents
+                if parent.as_posix() != "."
+            }
+        )
+        if ancestors:
+            errors.append(
+                "evidence projection mutations cannot contain an ancestor and descendant: "
+                f"{ancestors[0]} and {path}"
+            )
+            break
+
+
+def _validate_projection_mutation_records(
+    value: object,
+    sync_paths: Sequence[str],
+    evidence_path: Path,
+    errors: list[str],
+) -> list[dict[str, object]]:
+    if not isinstance(value, list):
+        errors.append("evidence projection mutations must be a list")
+        return []
+    records: list[dict[str, object]] = []
+    observed_paths: set[str] = set()
+    for index, item in enumerate(value):
+        if not isinstance(item, Mapping) or set(item) != {
+            "path", "action", "beforeDigest", "afterDigest", "size", "mode",
+            "retainedEvidence",
+        }:
+            errors.append(f"evidence projection mutations[{index}] has an invalid shape")
+            continue
+        path = item.get("path")
+        if not isinstance(path, str):
+            errors.append(f"evidence projection mutations[{index}].path must be a string")
+            continue
+        _validate_case_relative_path(path, f"projection mutations[{index}].path", errors)
+        if path in observed_paths:
+            errors.append(f"evidence projection mutation path is duplicated: {path}")
+        observed_paths.add(path)
+        if not any(_relative_path_contains(selected, path) for selected in sync_paths):
+            errors.append(f"evidence projection mutation is outside syncPaths: {path}")
+        if item.get("action") != "create" or item.get("beforeDigest") is not None:
+            errors.append(
+                f"evidence projection mutation must be an unambiguous create: {path}"
+            )
+        _require_digest(
+            item.get("afterDigest"),
+            f"projection mutations[{index}].afterDigest",
+            errors,
+        )
+        if not isinstance(item.get("size"), int) or item.get("size", -1) < 0:
+            errors.append(f"evidence projection mutations[{index}].size must be non-negative")
+        if not isinstance(item.get("mode"), str) or re.fullmatch(
+            r"[0-7]{3,4}", str(item.get("mode"))
+        ) is None:
+            errors.append(f"evidence projection mutations[{index}].mode is invalid")
+        _validate_retained_projection_bytes(
+            item.get("retainedEvidence"),
+            "synchronized-output",
+            item,
+            f"projection mutations[{index}] retained bytes",
+            evidence_path,
+            errors,
+        )
+        records.append(dict(item))
+    if [str(record.get("path")) for record in records] != sorted(observed_paths):
+        errors.append("evidence projection mutations must use deterministic path order")
+    total_size = sum(
+        int(record["size"])
+        for record in records
+        if isinstance(record.get("size"), int) and record.get("size", -1) >= 0
+    )
+    if total_size > 20 * 1024 * 1024:
+        errors.append("evidence projection mutations exceed the output byte limit")
+    return records
+
+
+def _validate_projection_directory_records(
+    value: object,
+    errors: list[str],
+) -> list[dict[str, str]]:
+    if not isinstance(value, list):
+        errors.append("evidence projection createdDirectories must be a list")
+        return []
+    records: list[dict[str, str]] = []
+    observed: set[str] = set()
+    for index, item in enumerate(value):
+        if not isinstance(item, Mapping) or set(item) != {"path", "mode"}:
+            errors.append(f"evidence projection createdDirectories[{index}] has an invalid shape")
+            continue
+        path = item.get("path")
+        mode = item.get("mode")
+        if not isinstance(path, str):
+            errors.append(f"evidence projection createdDirectories[{index}].path must be a string")
+            continue
+        _validate_case_relative_path(path, f"createdDirectories[{index}].path", errors)
+        if path in observed:
+            errors.append(f"evidence projection created directory is duplicated: {path}")
+        observed.add(path)
+        if not isinstance(mode, str) or re.fullmatch(r"[0-7]{3,4}", mode) is None:
+            errors.append(f"evidence projection createdDirectories[{index}].mode is invalid")
+        records.append({"path": path, "mode": str(mode)})
+    if [record["path"] for record in records] != sorted(observed):
+        errors.append("evidence projection createdDirectories must use deterministic path order")
+    return records
+
+
+def _validate_projection_entry_record(
+    item: Mapping[str, object],
+    retained_kind: str,
+    field: str,
+    evidence_path: Path,
+    errors: list[str],
+) -> None:
+    entry_type = item.get("type")
+    mode = item.get("mode")
+    if entry_type not in {"file", "directory"}:
+        errors.append(f"evidence {field}.type must be file or directory")
+    if not isinstance(mode, str) or re.fullmatch(r"[0-7]{3,4}", mode) is None:
+        errors.append(f"evidence {field}.mode is invalid")
+    if entry_type == "directory":
+        if any(item.get(name) is not None for name in ("digest", "size", "retainedEvidence")):
+            errors.append(f"evidence {field} directory must not claim file bytes")
+        return
+    _require_digest(item.get("digest"), f"{field}.digest", errors)
+    if not isinstance(item.get("size"), int) or item.get("size", -1) < 0:
+        errors.append(f"evidence {field}.size must be non-negative")
+    _validate_retained_projection_bytes(
+        item.get("retainedEvidence"),
+        retained_kind,
+        item,
+        f"{field} retained bytes",
+        evidence_path,
+        errors,
+    )
+
+
+def _validate_retained_projection_bytes(
+    reference: object,
+    kind: str,
+    expected: Mapping[str, object],
+    field: str,
+    evidence_path: Path,
+    errors: list[str],
+) -> None:
+    _validate_projection_reference_marker(
+        reference,
+        "dev-methodology-eval-projection-retained-bytes",
+        field,
+        errors,
+    )
+    validate_reference(reference, field, evidence_path, errors)
+    artifact = _load_mcp_json_artifact(reference, field, evidence_path, errors)
+    if artifact is None:
+        return
+    expected_fields = {
+        "schema", "version", "kind", "path", "mode", "digest", "size",
+        "contentBase64",
+    }
+    if set(artifact) != expected_fields:
+        errors.append(f"evidence {field} has an invalid retained-byte shape")
+        return
+    if (
+        artifact.get("schema") != "dev-methodology-eval-projection-retained-bytes"
+        or artifact.get("version") != 1
+        or artifact.get("kind") != kind
+        or artifact.get("path") != expected.get("path")
+        or artifact.get("mode") != expected.get("mode")
+        or artifact.get("digest") != (
+            expected.get("digest")
+            if kind == "projected-input"
+            else expected.get("afterDigest")
+        )
+        or artifact.get("size") != expected.get("size")
+        or not isinstance(artifact.get("contentBase64"), str)
+    ):
+        errors.append(f"evidence {field} differs from its receipt-owned byte identity")
+        return
+    try:
+        content = base64.b64decode(str(artifact["contentBase64"]), validate=True)
+    except (ValueError, TypeError):
+        errors.append(f"evidence {field} content is not canonical base64")
+        return
+    expected_digest = (
+        expected.get("digest")
+        if kind == "projected-input"
+        else expected.get("afterDigest")
+    )
+    if len(content) != expected.get("size"):
+        errors.append(f"evidence {field} retained size differs from the receipt")
+    if hashlib.sha256(content).hexdigest() != expected_digest:
+        errors.append(f"evidence {field} retained digest differs from the receipt")
+
+
+def _relative_path_contains(selected: str, path: str) -> bool:
+    selected_path = PurePosixPath(selected)
+    path_value = PurePosixPath(path)
+    return selected_path.as_posix() == "." or selected_path == path_value or selected_path in path_value.parents
+
+
+def _load_projection_json_artifact(
+    reference: object,
+    expected_content_digest: object,
+    field: str,
+    evidence_path: Path,
+    errors: list[str],
+    *,
+    expected_marker: str,
+) -> Mapping[str, object] | None:
+    _validate_projection_reference_marker(
+        reference,
+        expected_marker,
+        field,
+        errors,
+    )
+    _validate_reference_digest(
+        reference,
+        expected_content_digest,
+        field,
+        evidence_path,
+        errors,
+    )
+    return _load_mcp_json_artifact(reference, field, evidence_path, errors)
+
+
+def _validate_projection_reference_marker(
+    reference: object,
+    expected_marker: str,
+    field: str,
+    errors: list[str],
+) -> None:
+    """Require the canonical semantic marker for a projection-owned artifact."""
+
+    if not isinstance(reference, str) or reference.rsplit("#", 1)[-1] != expected_marker:
+        errors.append(
+            f"evidence {field} must use the canonical marker: {expected_marker}"
+        )
+
+
+def _validate_projection_manifest_artifact(
+    artifact: Mapping[str, object],
+    expected: Mapping[str, object],
+    receipt_manifest_digest: object,
+    label: str,
+    errors: list[str],
+) -> None:
+    if set(artifact) != {*expected, "manifestDigest"}:
+        errors.append(f"evidence {label} manifest has an invalid shape")
+        return
+    for field, expected_value in expected.items():
+        if artifact.get(field) != expected_value:
+            errors.append(f"evidence {label} manifest {field} differs from the receipt")
+    computed_digest = hashlib.sha256(
+        json.dumps(expected, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    ).hexdigest()
+    if artifact.get("manifestDigest") != computed_digest:
+        errors.append(f"evidence {label} manifest internal digest is stale")
+    if receipt_manifest_digest != computed_digest:
+        errors.append(f"evidence {label} manifest digest differs from the receipt")
+
+
+def _validate_projection_verifier_artifact(
+    case: Mapping[str, object],
+    value: Mapping[str, object],
+    evidence_path: Path,
+    errors: list[str],
+) -> None:
+    artifact = _load_projection_json_artifact(
+        value.get("evaluatorVerificationEvidence"),
+        value.get("evaluatorVerificationEvidenceDigest"),
+        "run.modelVisibleProjection.evaluatorVerificationEvidence",
+        evidence_path,
+        errors,
+        expected_marker="dev-methodology-eval-projection-verification",
+    )
+    if artifact is None:
+        return
+    expected_fields = {
+        "schema", "version", "case", "argv", "commandContract",
+        "commandContractDigest", "executionInputDigest", "exitCode", "passed", "outcome",
+        "infrastructureFailure", "semanticResultDigest", "expectation",
+        "expectedFixtureDigest", "fixtureDigestBefore", "fixtureDigestAfter",
+        "fixtureUnchanged", "stdout", "stderr",
+    }
+    if set(artifact) != expected_fields:
+        errors.append("evidence projection verifier artifact has an invalid shape")
+        return
+    expected_expectation = (
+        "control-observation"
+        if case.get("probeVariant") in {"target-omitted", "wrong-skill"}
+        else "success-required"
+    )
+    try:
+        expected_argv = list(command_spec(case.get("verify")).argv)
+    except ValueError:
+        expected_argv = []
+    policy = _governed_projection_verifier_policy(case, errors)
+    semantic_field = policy[0] if policy is not None else None
+    semantic_red_exit = policy[1] if policy is not None else None
+    outcome = artifact.get("outcome")
+    if (
+        artifact.get("schema") != "dev-methodology-eval-projection-verification"
+        or artifact.get("version") != 3
+        or artifact.get("case") != case.get("id")
+        or artifact.get("argv") != expected_argv
+        or artifact.get("expectation") != expected_expectation
+        or not isinstance(artifact.get("exitCode"), int)
+        or not isinstance(artifact.get("passed"), bool)
+        or outcome not in {
+            "semantic-green", "semantic-red", "infrastructure-failure"
+        }
+        or artifact.get("passed") != (outcome == "semantic-green")
+        or not isinstance(artifact.get("fixtureUnchanged"), bool)
+        or not isinstance(artifact.get("stdout"), str)
+        or not isinstance(artifact.get("stderr"), str)
+    ):
+        errors.append("evidence projection verifier artifact differs from the selected case")
+    if value.get("evaluatorVerificationStatus") != outcome:
+        errors.append("evidence projection verifier status differs from its artifact")
+    if value.get("evaluatorVerificationExitCode") != artifact.get("exitCode"):
+        errors.append("evidence projection verifier exit code differs from its artifact")
+    if value.get("evaluatorVerificationExpectation") != expected_expectation:
+        errors.append("evidence projection verifier expectation differs from the selected case")
+    if value.get("evaluatorVerificationCommandDigest") != artifact.get(
+        "commandContractDigest"
+    ):
+        errors.append("evidence projection verifier command digest differs from its artifact")
+    for field in (
+        "expectedFixtureDigest", "fixtureDigestBefore", "fixtureDigestAfter",
+        "commandContractDigest", "executionInputDigest",
+    ):
+        _require_digest(
+            artifact.get(field),
+            f"projection verifier artifact {field}",
+            errors,
+        )
+    if (
+        artifact.get("expectedFixtureDigest")
+        != value.get("postSyncSourceIdentityDigest")
+        or artifact.get("fixtureDigestBefore")
+        != value.get("postSyncSourceIdentityDigest")
+        or artifact.get("fixtureUnchanged") is not True
+        or artifact.get("fixtureDigestBefore") != artifact.get("fixtureDigestAfter")
+    ):
+        errors.append("evidence projection evaluator verification changed the fixture")
+    _validate_projection_verifier_command_contract(
+        case,
+        artifact,
+        evidence_path,
+        errors,
+    )
+    semantic = _projection_semantic_result(artifact.get("stdout"))
+    semantic_value = semantic.get(semantic_field) if isinstance(semantic_field, str) and semantic else None
+    alternate_field = (
+        "exactBytesPreserved" if semantic_field == "passed" else "passed"
+    )
+    if semantic is not None and isinstance(semantic.get(alternate_field), bool):
+        errors.append(
+            "evidence projection verifier has a contradictory semantic result"
+        )
+    semantic_digest = (
+        hashlib.sha256(
+            json.dumps(semantic, sort_keys=True, separators=(",", ":")).encode("utf-8")
+        ).hexdigest()
+        if semantic is not None
+        else None
+    )
+    if artifact.get("semanticResultDigest") != semantic_digest:
+        errors.append("evidence projection verifier semantic result digest is stale")
+    if outcome == "semantic-green" and not (
+        artifact.get("exitCode") == 0
+        and semantic_value is True
+        and artifact.get("infrastructureFailure") is None
+    ):
+        errors.append("evidence projection verifier semantic-green outcome is invalid")
+    if outcome == "semantic-red" and not (
+        expected_expectation == "control-observation"
+        and artifact.get("exitCode") == semantic_red_exit
+        and semantic_value is False
+        and artifact.get("infrastructureFailure") is None
+    ):
+        errors.append("evidence projection verifier semantic-red outcome is invalid")
+    if outcome == "infrastructure-failure":
+        errors.append("evidence projection verifier infrastructure failure blocks the run")
+    if expected_expectation == "success-required" and outcome != "semantic-green":
+        errors.append("evidence projection evaluator verification must pass")
+    if expected_expectation == "control-observation" and outcome != "semantic-red":
+        errors.append("evidence projection control must have the declared semantic-red outcome")
+
+
+def _validate_projection_verifier_command_contract(
+    case: Mapping[str, object],
+    artifact: Mapping[str, object],
+    evidence_path: Path,
+    errors: list[str],
+) -> None:
+    contract = artifact.get("commandContract")
+    expected_fields = {
+        "schema", "version", "case", "governedArgv", "interpreterName",
+        "interpreterDigest", "sourceKind", "sourcePath", "sourceDigest",
+        "sourceSize", "sourceEvidence", "executionScriptDigest",
+        "executionEvidence", "semanticResultField", "semanticRedExitCode",
+    }
+    if not isinstance(contract, Mapping) or set(contract) != expected_fields:
+        errors.append("evidence projection verifier command contract has an invalid shape")
+        return
+    expected_argv = list(command_spec(case.get("verify")).argv)
+    policy = _governed_projection_verifier_policy(case, errors)
+    if (
+        contract.get("schema") != "dev-methodology-eval-projection-verifier-command"
+        or contract.get("version") != 2
+        or contract.get("case") != case.get("id")
+        or contract.get("governedArgv") != expected_argv
+        or contract.get("interpreterName") != "python3"
+    ):
+        errors.append("evidence projection verifier command contract differs from the selected case")
+    if policy is not None and contract.get("semanticResultField") != policy[0]:
+        errors.append(
+            "evidence projection verifier command differs from the governed semantic result field"
+        )
+    if policy is not None and contract.get("semanticRedExitCode") != policy[1]:
+        errors.append(
+            "evidence projection verifier command differs from the governed semantic-red exit"
+        )
+    for field in ("interpreterDigest", "sourceDigest", "executionScriptDigest"):
+        _require_digest(contract.get(field), f"projection verifier command {field}", errors)
+    computed_contract_digest = hashlib.sha256(
+        json.dumps(contract, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    ).hexdigest()
+    if artifact.get("commandContractDigest") != computed_contract_digest:
+        errors.append("evidence projection verifier command contract digest is stale")
+
+    execution_reference = contract.get("executionEvidence")
+    _validate_projection_reference_marker(
+        execution_reference,
+        "dev-methodology-eval-projection-verifier-execution",
+        "projection verifier command executionEvidence",
+        errors,
+    )
+    validate_reference(
+        execution_reference,
+        "projection verifier command executionEvidence",
+        evidence_path,
+        errors,
+    )
+    execution_artifact = _load_mcp_json_artifact(
+        execution_reference,
+        "projection verifier command executionEvidence",
+        evidence_path,
+        errors,
+    )
+    execution_bytes: bytes | None = None
+    if execution_artifact is not None:
+        if set(execution_artifact) != {
+            "schema", "version", "digest", "size", "contentBase64",
+        }:
+            errors.append(
+                "evidence projection verifier execution artifact has an invalid shape"
+            )
+        else:
+            try:
+                execution_bytes = base64.b64decode(
+                    str(execution_artifact.get("contentBase64")),
+                    validate=True,
+                )
+            except (ValueError, TypeError):
+                errors.append(
+                    "evidence projection verifier execution bytes are not canonical base64"
+                )
+            if execution_bytes is not None and (
+                execution_artifact.get("schema")
+                != "dev-methodology-eval-projection-verifier-execution"
+                or execution_artifact.get("version") != 1
+                or execution_artifact.get("digest")
+                != contract.get("executionScriptDigest")
+                or execution_artifact.get("size") != len(execution_bytes)
+                or hashlib.sha256(execution_bytes).hexdigest()
+                != contract.get("executionScriptDigest")
+            ):
+                errors.append(
+                    "evidence projection verifier execution bytes differ from the command contract"
+                )
+    if artifact.get("executionInputDigest") != contract.get("executionScriptDigest"):
+        errors.append(
+            "evidence projection verifier execution input differs from the command contract"
+        )
+
+    source_reference = contract.get("sourceEvidence")
+    _validate_projection_reference_marker(
+        source_reference,
+        "dev-methodology-eval-projection-verifier-source",
+        "projection verifier command sourceEvidence",
+        errors,
+    )
+    validate_reference(
+        source_reference,
+        "projection verifier command sourceEvidence",
+        evidence_path,
+        errors,
+    )
+    source_artifact = _load_mcp_json_artifact(
+        source_reference,
+        "projection verifier command sourceEvidence",
+        evidence_path,
+        errors,
+    )
+    if source_artifact is None:
+        return
+    source_fields = {
+        "schema", "version", "kind", "path", "digest", "size", "contentBase64",
+    }
+    if set(source_artifact) != source_fields:
+        errors.append("evidence projection verifier source artifact has an invalid shape")
+        return
+    try:
+        source_content = base64.b64decode(
+            str(source_artifact.get("contentBase64")),
+            validate=True,
+        )
+    except (ValueError, TypeError):
+        errors.append("evidence projection verifier source is not canonical base64")
+        return
+    if (
+        source_artifact.get("schema")
+        != "dev-methodology-eval-projection-verifier-source"
+        or source_artifact.get("version") != 1
+        or source_artifact.get("kind") != contract.get("sourceKind")
+        or source_artifact.get("path") != contract.get("sourcePath")
+        or source_artifact.get("digest") != contract.get("sourceDigest")
+        or source_artifact.get("size") != contract.get("sourceSize")
+        or hashlib.sha256(source_content).hexdigest() != contract.get("sourceDigest")
+        or len(source_content) != contract.get("sourceSize")
+    ):
+        errors.append("evidence projection verifier source differs from its command contract")
+        return
+    expected_source: bytes | None = None
+    execution_content: bytes | None = None
+    if (
+        len(expected_argv) == 3
+        and expected_argv[:2] == ["python3", "-c"]
+        and contract.get("sourceKind") == "case-inline-normalized"
+        and contract.get("sourcePath") == "case.verify.argv[2]"
+    ):
+        expected_source = expected_argv[2].encode("utf-8")
+        execution_content = expected_source
+    elif (
+        len(expected_argv) >= 2
+        and expected_argv[0] == "python3"
+        and contract.get("sourceKind") == "evaluator-only-source"
+        and contract.get("sourcePath") == expected_argv[1]
+    ):
+        source_path = str(contract.get("sourcePath"))
+        evaluator_only = case.get("modelVisibleProjection", {}).get("evaluatorOnlyPaths", [])
+        if source_path not in evaluator_only:
+            errors.append("evidence projection verifier source is not evaluator-only")
+        candidate = ROOT / str(case.get("project")) / source_path
+        if candidate.is_file() and not candidate.is_symlink():
+            expected_source = candidate.read_bytes()
+            execution_content = (
+                "import sys\n"
+                f"_SOURCE = {expected_source!r}\n"
+                f"sys.argv = {json.dumps([source_path, *expected_argv[2:]])}\n"
+                f"_NS = {{'__name__': '__main__', '__file__': {json.dumps(source_path)}}}\n"
+                f"exec(compile(_SOURCE, {json.dumps(source_path)}, 'exec'), _NS, _NS)\n"
+            ).encode("utf-8")
+    if expected_source is None or execution_content is None:
+        errors.append("evidence projection verifier source form is not governed")
+        return
+    if source_content != expected_source:
+        errors.append("evidence projection verifier source differs from the governed evaluator source")
+    if hashlib.sha256(execution_content).hexdigest() != contract.get("executionScriptDigest"):
+        errors.append("evidence projection verifier execution script digest is stale")
+    if execution_bytes is not None and execution_bytes != execution_content:
+        errors.append(
+            "evidence projection verifier retained execution bytes differ from the governed form"
+        )
+
+
+def _governed_projection_verifier_policy(
+    case: Mapping[str, object],
+    errors: list[str],
+) -> tuple[str, int] | None:
+    """Derive semantic interpretation only from the selected governed case verifier."""
+
+    case_id = case.get("id")
+    catalog_case = load_cases().get(str(case_id))
+    policies = {
+        "terminology-standard-effect": ("passed", 3),
+        "terminology-standard-negative-activation": ("exactBytesPreserved", 3),
+    }
+    policy = policies.get(str(case_id))
+    if (
+        policy is None
+        or not isinstance(catalog_case, Mapping)
+        or case.get("verify") != catalog_case.get("verify")
+    ):
+        errors.append(
+            "selected case does not identify a supported governed projection verifier"
+        )
+        return None
+    return policy
+
+
+def _projection_semantic_result(stdout: object) -> Mapping[str, object] | None:
+    if not isinstance(stdout, str):
+        return None
+    try:
+        value = json.loads(stdout)
+    except json.JSONDecodeError:
+        return None
+    return value if isinstance(value, Mapping) else None
+
+
 def _validate_mcp_agent_ops_run(
     case: Mapping[str, object],
     run: Mapping[str, object],
@@ -1501,6 +2816,17 @@ def _validate_mcp_agent_ops_run(
     """Validate conditional release identity and digest-only MCP audit evidence."""
     contract = case.get("mcpAgentOps")
     value = run.get("mcpAgentOps")
+    treatment_only_disabled = (
+        isinstance(contract, Mapping)
+        and contract.get("enablement") == "probe-treatment-only"
+        and case.get("probeVariant") != "treatment"
+    )
+    if treatment_only_disabled:
+        if value is not None:
+            errors.append(
+                "evidence run.mcpAgentOps is forbidden outside the declared probe treatment"
+            )
+        return
     if contract is None:
         if value is not None:
             errors.append("evidence run.mcpAgentOps is forbidden for a non-MCP case")
@@ -1586,7 +2912,10 @@ def _validate_mcp_agent_ops_run(
             errors,
         )
     host_home_digest = value.get("permissionProfileHostHomeDigest")
-    if run.get("harness") == "codex":
+    if (
+        run.get("harness") == "codex"
+        and contract.get("schemaVersion") == 4
+    ):
         _require_digest(
             host_home_digest,
             "run.mcpAgentOps.permissionProfileHostHomeDigest",
@@ -1594,7 +2923,7 @@ def _validate_mcp_agent_ops_run(
         )
     elif host_home_digest is not None:
         errors.append(
-            "evidence Junie MCP run must not claim a Codex permission-profile home digest"
+            "evidence MCP run must not claim an unused Codex permission-profile home digest"
         )
     completed = value.get("completedTools")
     if not isinstance(completed, list) or any(
@@ -1747,10 +3076,15 @@ def _validate_mcp_agent_ops_run(
         evidence_path,
         errors,
     )
-    _validate_mcp_catalog_artifact(value, evidence_path, errors)
+    _validate_mcp_catalog_artifact(value, contract, evidence_path, errors)
     _validate_mcp_output_manifest(value, case, evidence_path, errors)
     if run.get("harness") == "junie":
-        _validate_junie_mcp_authorization(value, evidence_path, errors)
+        _validate_junie_mcp_authorization(
+            value,
+            contract,
+            evidence_path,
+            errors,
+        )
         _validate_junie_agent_attribution(value, run, evidence_path, errors)
 
 
@@ -1790,9 +3124,14 @@ def _validate_mcp_configuration_artifact(
     if configuration is None:
         return
     harness = run.get("harness")
+    reference_contract = contract.get("schemaVersion") == 5
     root_key = "mcp_servers" if harness == "codex" else "mcpServers"
     expected_root_fields = (
-        {root_key, "approval_policy", "default_permissions", "permissions"}
+        (
+            {root_key, "approval_policy"}
+            if reference_contract
+            else {root_key, "approval_policy", "default_permissions", "permissions"}
+        )
         if harness == "codex"
         else {root_key}
     )
@@ -1801,7 +3140,7 @@ def _validate_mcp_configuration_artifact(
         return
     if harness == "codex" and configuration.get("approval_policy") != "never":
         errors.append("evidence Codex MCP configuration must use the noninteractive approval policy")
-    if harness == "codex":
+    if harness == "codex" and not reference_contract:
         _validate_codex_mcp_permission_profile(
             configuration,
             value.get("permissionProfileHostHomeDigest"),
@@ -1842,16 +3181,28 @@ def _validate_mcp_configuration_artifact(
     ):
         errors.append("evidence Codex MCP strict execution policy differs from the run contract")
     environment = server.get("env")
-    expected_environment = {
-        "MCP_AGENT_OPS_SKILL_ROOTS",
-        "MCP_AGENT_OPS_DETECTION_REGISTRY",
-        "MCP_AGENT_OPS_WORKSPACE_ROOTS",
+    common_environment = {
         "MCP_AGENT_OPS_AUDIT_LOG",
         "MCP_AGENT_OPS_AUDIT_ROOTS",
         "MCP_AGENT_OPS_AUDIT_SHARED",
         "MCP_AGENT_OPS_AUDIT_SESSION_ID",
         "MCP_AGENT_OPS_REQUIRED_RUNTIME_DIGEST",
     }
+    expected_environment = (
+        common_environment
+        | {
+            "MCP_AGENT_OPS_WORKSPACE_ROOTS",
+            "MCP_AGENT_OPS_REFERENCE_ROOTS",
+            "MCP_AGENT_OPS_REFERENCE_NAMES",
+        }
+        if reference_contract
+        else common_environment
+        | {
+            "MCP_AGENT_OPS_SKILL_ROOTS",
+            "MCP_AGENT_OPS_DETECTION_REGISTRY",
+            "MCP_AGENT_OPS_WORKSPACE_ROOTS",
+        }
+    )
     if not isinstance(environment, Mapping) or set(environment) != expected_environment:
         errors.append("evidence MCP server environment differs from the governed set")
         return
@@ -1864,7 +3215,79 @@ def _validate_mcp_configuration_artifact(
     workspace_root = environment.get("MCP_AGENT_OPS_WORKSPACE_ROOTS")
     skill_root = environment.get("MCP_AGENT_OPS_SKILL_ROOTS")
     required_arguments = contract.get("requiredToolArguments")
-    if (
+    if reference_contract:
+        workspace_root = environment.get("MCP_AGENT_OPS_WORKSPACE_ROOTS")
+        reference_root = environment.get("MCP_AGENT_OPS_REFERENCE_ROOTS")
+        reference_names = environment.get("MCP_AGENT_OPS_REFERENCE_NAMES")
+        audit_root = environment.get("MCP_AGENT_OPS_AUDIT_ROOTS")
+        reference_path = (
+            Path(reference_root) if isinstance(reference_root, str) else None
+        )
+        audit_path = Path(audit_root) if isinstance(audit_root, str) else None
+        try:
+            configuration_path, _configuration_marker = (
+                _resolve_evidence_reference(
+                    value.get("configurationEvidence"),
+                    evidence_path,
+                )
+            )
+            catalog_path, _catalog_marker = _resolve_evidence_reference(
+                value.get("catalogEvidence"),
+                evidence_path,
+            )
+        except ValueError:
+            configuration_path = None
+            catalog_path = None
+        if (
+            reference_path is None
+            or audit_path is None
+            or not reference_path.is_absolute()
+            or not audit_path.is_absolute()
+            or reference_path.name != "references"
+            or reference_path.parent.parent != audit_path
+            or not reference_path.parent.name.startswith(".mcp-agent-ops-")
+            or configuration_path is None
+            or catalog_path is None
+            or (
+                harness == "codex"
+                and reference_path.parent != configuration_path.parent
+            )
+            or (
+                harness == "junie"
+                and reference_path.parent / "junie" / "mcp.json"
+                != configuration_path
+            )
+            or reference_path.parent != catalog_path.parent
+        ):
+            errors.append(
+                "evidence MCP reference root must be the runner-owned staged reference directory"
+            )
+        if reference_names != os.pathsep.join(
+            _string_items(contract.get("referenceNames"))
+        ):
+            errors.append(
+                "evidence MCP reference names differ from the run contract"
+            )
+        if not isinstance(workspace_root, str) or not Path(
+            workspace_root
+        ).is_absolute():
+            errors.append(
+                "evidence MCP workspace root must identify the disposable product workspace"
+            )
+        if isinstance(required_arguments, Mapping):
+            try:
+                expected_argument_digests = resolve_mcp_tool_argument_digests(
+                    required_arguments,
+                    Path(reference_root) if isinstance(reference_root, str) else Path("/"),
+                )
+            except ValueError as error:
+                errors.append(f"evidence MCP tool argument contract is invalid: {error}")
+            else:
+                if value.get("requiredToolArgumentDigests") != expected_argument_digests:
+                    errors.append(
+                        "evidence MCP tool argument digests do not match the reference contract"
+                    )
+    elif (
         isinstance(workspace_root, str)
         and isinstance(skill_root, str)
         and isinstance(required_arguments, Mapping)
@@ -1896,6 +3319,7 @@ def _validate_mcp_configuration_artifact(
         "MCP_AGENT_OPS_AUDIT_SHARED",
         "MCP_AGENT_OPS_AUDIT_SESSION_ID",
         "MCP_AGENT_OPS_REQUIRED_RUNTIME_DIGEST",
+        "MCP_AGENT_OPS_REFERENCE_NAMES",
     }:
         configured_path = environment.get(field)
         if not isinstance(configured_path, str) or not Path(configured_path).is_absolute():
@@ -1986,10 +3410,11 @@ def _validate_codex_mcp_permission_profile(
 
 def _validate_mcp_catalog_artifact(
     value: Mapping[str, object],
+    contract: Mapping[str, object],
     evidence_path: Path,
     errors: list[str],
 ) -> None:
-    """Validate the retained staged catalog manifest and its internal digest."""
+    """Validate the retained skill or reference catalog and its internal digest."""
     catalog = _load_mcp_json_artifact(
         value.get("catalogEvidence"),
         "run.mcpAgentOps.catalogEvidence",
@@ -1997,6 +3422,78 @@ def _validate_mcp_catalog_artifact(
         errors,
     )
     if catalog is None:
+        return
+    if contract.get("schemaVersion") == 5:
+        if (
+            set(catalog) != {"schema", "version", "manifestDigest", "names", "files"}
+            or catalog.get("schema")
+            != "dev-methodology-eval-mcp-reference-catalog"
+            or catalog.get("version") != 1
+            or catalog.get("names") != contract.get("referenceNames")
+        ):
+            errors.append("evidence MCP reference catalog has an invalid contract")
+            return
+        if catalog.get("manifestDigest") != value.get("catalogManifestDigest"):
+            errors.append(
+                "evidence MCP reference manifest digest differs from the receipt"
+            )
+        files = catalog.get("files")
+        expected_names = _string_items(contract.get("referenceNames"))
+        if (
+            not isinstance(files, list)
+            or len(files) != len(expected_names)
+            or any(
+                not isinstance(record, Mapping)
+                or set(record) != {"name", "path", "digest", "size"}
+                or record.get("name") not in expected_names
+                or record.get("path") != record.get("name")
+                or not isinstance(record.get("size"), int)
+                or not isinstance(record.get("digest"), str)
+                or re.fullmatch(r"[0-9a-f]{64}", str(record.get("digest"))) is None
+                for record in files
+            )
+        ):
+            errors.append("evidence MCP reference catalog files are invalid")
+            return
+        computed = hashlib.sha256(
+            json.dumps(files, sort_keys=True, separators=(",", ":")).encode(
+                "utf-8"
+            )
+        ).hexdigest()
+        if computed != catalog.get("manifestDigest"):
+            errors.append(
+                "evidence MCP reference file records do not match their manifest digest"
+            )
+        try:
+            catalog_path, _catalog_marker = _resolve_evidence_reference(
+                value.get("catalogEvidence"),
+                evidence_path,
+            )
+        except ValueError:
+            return
+        reference_root = catalog_path.parent / "references"
+        for record in files:
+            assert isinstance(record, Mapping)
+            reference = reference_root / str(record["name"])
+            if reference.is_symlink() or not reference.is_file():
+                errors.append(
+                    "evidence MCP retained reference context is missing or unsafe"
+                )
+                continue
+            try:
+                content = reference.read_bytes()
+            except OSError:
+                errors.append(
+                    "evidence MCP retained reference context is unreadable"
+                )
+                continue
+            if (
+                record.get("size") != len(content)
+                or record.get("digest") != hashlib.sha256(content).hexdigest()
+            ):
+                errors.append(
+                    "evidence MCP retained reference context differs from its manifest"
+                )
         return
     if (
         set(catalog) != {"schema", "version", "manifestDigest", "skills", "files"}
@@ -2108,6 +3605,7 @@ def _validate_mcp_output_manifest(
 
 def _validate_junie_mcp_authorization(
     value: Mapping[str, object],
+    contract: Mapping[str, object],
     evidence_path: Path,
     errors: list[str],
 ) -> None:
@@ -2118,7 +3616,15 @@ def _validate_junie_mcp_authorization(
         evidence_path,
         errors,
     )
-    if authorization is not None and dict(authorization) != junie_mcp_agent_ops_authorization_payload():
+    enabled_tools = contract.get("enabledTools")
+    if not isinstance(enabled_tools, list) or any(
+        not isinstance(tool, str) for tool in enabled_tools
+    ):
+        errors.append("evidence Junie MCP authorization lacks a valid tool contract")
+        return
+    if authorization is not None and dict(
+        authorization
+    ) != junie_mcp_agent_ops_authorization_payload(enabled_tools):
         errors.append("evidence Junie MCP authorization is not the narrow evaluator policy")
 
 
@@ -2172,6 +3678,15 @@ def _validate_skills(
     errors: list[str],
     stale_reasons: list[str],
 ) -> None:
+    selected_skills = _string_items(
+        case.get("executionSkills")
+        if case.get("probeVariant") in {
+            "treatment",
+            "target-omitted",
+            "wrong-skill",
+        }
+        else case.get("requiredSkills")
+    )
     receipt_skills: dict[str, Mapping[str, object]] = {}
     skills = evidence.get("skills")
     if not isinstance(skills, list):
@@ -2182,10 +3697,10 @@ def _validate_skills(
             errors.append("each evidence skill must be a mapping with id")
             continue
         receipt_skills[str(item["id"])] = item
-    extra_skills = sorted(set(receipt_skills) - set(_string_items(case.get("requiredSkills"))))
+    extra_skills = sorted(set(receipt_skills) - set(selected_skills))
     for skill in extra_skills:
-        errors.append(f"evidence includes a skill outside case.requiredSkills: {skill}")
-    for skill in _string_items(case.get("requiredSkills")):
+        errors.append(f"evidence includes a skill outside case execution: {skill}")
+    for skill in selected_skills:
         item = receipt_skills.get(skill)
         if item is None:
             errors.append(f"evidence missing required skill: {skill}")
@@ -2235,7 +3750,16 @@ def _validate_legacy_skills(
     if not isinstance(evidence.get("skills"), list):
         errors.append("evidence skills must be a list")
         return
-    for skill in _string_items(case.get("requiredSkills")):
+    selected_skills = (
+        case.get("executionSkills")
+        if case.get("probeVariant") in {
+            "treatment",
+            "target-omitted",
+            "wrong-skill",
+        }
+        else case.get("requiredSkills")
+    )
+    for skill in _string_items(selected_skills):
         item = receipt_skills.get(skill)
         if item is None:
             errors.append(f"evidence missing required skill: {skill}")

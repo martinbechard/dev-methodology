@@ -1166,7 +1166,7 @@ probes:
     negativeCondition: Raw evidence, exact identifiers, code, schemas, commands, quotations, and external product names are not rewritten through terminology preference.
     expectedBehavior: For ordinary application, invoke mcp-agent-ops reference_load exactly once with terminology.md, map a loaded aggregate or reference_not_found to TERMINOLOGY STANDARDS LOADED for the returned catalog revision and source labels, treat the process-local snapshot as immutable until reference_refresh, avoid claiming coverage of unlisted host roots, map missing capability or any other error to TERMINOLOGY STANDARD SCOPE UNAVAILABLE, apply the project-first aggregate when present, and never search user-home paths as a fallback.
     judgePlan: {deterministicChecks: [skill-read-trace, artifact-structure, operation-coverage], modelRubric: workflow-quality}
-    scenarioAssociations: [dev-coder-happy, dev-documentation-writer-happy, dev-documentation-writer-terminology-rewrite, wiki-writer-happy]
+    scenarioAssociations: [dev-coder-happy, dev-documentation-writer-happy, dev-documentation-writer-terminology-rewrite, dev-documentation-writer-terminology-exclusion, wiki-writer-happy]
     workflowAssociations: [code-delivery, documentation-methodology, wiki-lifecycle]
     executableCases: [terminology-standard-effect]
     coverageStatus: fixture-backed

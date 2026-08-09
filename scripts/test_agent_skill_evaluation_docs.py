@@ -96,7 +96,7 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
         """Build one current source model for the focused test class."""
         cls.generator = load_generator()
         cls.model = cls.generator.build_model(ROOT)
-        cls.page = PAGE_PATH.read_text(encoding="utf-8")
+        cls.page = cls.generator.render_page(cls.model)
 
     def test_inventories_and_selected_campaign_reconcile(self) -> None:
         """Current catalogs and the selected governed campaign must reconcile exactly."""
@@ -431,21 +431,55 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
             "Deterministic critical skip",
             "Functional isolation",
             "Security containment",
-            "No skill-level verdict",
-            "A suite PASS means the suite accepted the target behavior",
-            "A target can correctly return BLOCKED inside a suite PASS",
+            "No skill-level Evaluation result",
+            "A Test suite PASS means the Test suite accepted the target behavior",
+            "A target can correctly return BLOCKED inside a Test suite PASS",
             "A Judge pass is a separate semantic dimension",
             "does not mean a Model Judge passed",
         ):
             with self.subTest(text=text):
                 self.assertIn(text, self.page)
 
+    def test_rendered_copy_uses_preferred_evaluation_terms(self) -> None:
+        """Visible copy must distinguish the Campaign, Test report, Test suites, and Evaluation results."""
+        for text in (
+            "Campaign Test report and Evaluation results",
+            "Test report metadata",
+            "<dt>Test report</dt>",
+            "<h3>Evaluation results</h3>",
+            "<th>Evaluation result</th>",
+            "Campaign Test suites / current Test suites",
+            "Campaign Evaluation results / current scenarios",
+            "Linked governed Evaluation results",
+            "no skill-level Evaluation result or calibrated skill verdict",
+            "The selected Test report publishes no skill-level Evaluation result or calibrated skill verdict",
+            "the selected Test report publishes no skill-level Evaluation results",
+            "A FAIL Evaluation result records a reproducible target, skill, or test-contract defect",
+            "A BLOCKED Evaluation result records a governed boundary or unavailable semantic acceptance",
+            "Selected Campaign Test report",
+        ):
+            with self.subTest(text=text):
+                self.assertIn(text, self.page)
+        for obsolete in (
+            "Campaign receipt",
+            "skill-level receipt",
+            "skill receipts",
+            "Campaign verdict results",
+            "<th>Campaign verdict</th>",
+            "Latest governed Evaluation result",
+            "The selected Campaign publishes",
+            "the selected Campaign publishes",
+            "the Campaign recorded",
+        ):
+            with self.subTest(obsolete=obsolete):
+                self.assertNotIn(obsolete, self.page)
+
     def test_page_topics_separate_method_coverage_results_limits_and_history(self) -> None:
         """The page hierarchy must keep distinct evaluation evidence roles in reader order."""
         section_topics = (
             ("methodology", "Evaluation purpose and method"),
             ("coverage", "Coverage and case catalogs"),
-            ("campaign", "Campaign receipt and results"),
+            ("campaign", "Campaign Test report and Evaluation results"),
             ("limitations", "Evidence limitations"),
             ("history", "Historical evidence alignment"),
             ("agents", "Agent-by-agent evidence"),
@@ -467,11 +501,11 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
         for topic in (
             "Evaluation layers",
             "Workspace and privacy",
-            "Verdicts and Judges",
+            "Evaluation results and Judges",
             "Current catalog inventory",
             "Case and workflow catalogs",
             "Skill catalog states",
-            "Campaign verdict results",
+            "Evaluation results",
             "Harness and evidence breakdown",
             "Not verified passes",
             "Alignment and strength",
@@ -520,7 +554,7 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
             with self.subTest(control_id=control_id):
                 self.assertIn(f'for="{control_id}"', self.page)
                 self.assertIn(f'id="{control_id}"', self.page)
-        self.assertIn('<th>Campaign verdict</th>', self.page)
+        self.assertIn('<th>Evaluation result</th>', self.page)
         self.assertIn('<th>Evidence alignment</th>', self.page)
         self.assertNotIn("https://", self.page)
         self.assertNotIn("http://", self.page)
