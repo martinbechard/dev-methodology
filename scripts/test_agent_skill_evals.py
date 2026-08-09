@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import base64
 import hashlib
 import importlib.util
 import io
@@ -41,6 +42,21 @@ def load_module() -> ModuleType:
 
 def digest(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def write_prepared_workspace_marker(module: ModuleType, root: Path) -> str:
+    prepared_snapshot_digest = module.snapshot_digest(
+        module.snapshot_product_tree(root)
+    )
+    (root / ".eval-workspace.json").write_text(
+        json.dumps({
+            "preparedKey": "synthetic-test-fixture",
+            "preparedSnapshotDigest": prepared_snapshot_digest,
+            "disposable": True,
+        }, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    return prepared_snapshot_digest
 
 
 def _reference_treatment_case(module: ModuleType) -> dict[str, object]:
@@ -1021,6 +1037,11 @@ class EvidenceVersionTwoTests(unittest.TestCase):
             "modelVisiblePaths": ["TASK.md"],
             "allowedWritePaths": ["output.md"],
             "ephemeralWritePaths": [],
+            "verify": [
+                "python3",
+                "-c",
+                "import json; print(json.dumps({'passed': True}))",
+            ],
             "modelVisibleProjection": {
                 "schemaVersion": 1,
                 "mode": "isolated-harness-workspace",
@@ -1030,6 +1051,12 @@ class EvidenceVersionTwoTests(unittest.TestCase):
         receipt = self.receipt()
         receipt["case"] = case["id"]
         receipt["run"]["caseDefinitionDigest"] = self.module.case_definition_digest(case)
+        receipt["commands"] = [{
+            "argv": list(self.module.command_spec(case["verify"]).argv),
+            "exitCode": 0,
+            "expectation": "success",
+            "evidence": "commands.log#test",
+        }]
         receipt["isolation"]["functional"].update({
             "allowedWritePaths": case["allowedWritePaths"],
             "ephemeralWritePaths": [],
@@ -1037,15 +1064,25 @@ class EvidenceVersionTwoTests(unittest.TestCase):
             "projectHashAfter": "product-changed",
             "workspaceHashAfter": "workspace-changed",
         })
-        source_identity = receipt["preparedFixture"]["sourceDigest"]
+        source_identity = receipt["preparedFixture"]["preparedSnapshotDigest"]
+        post_sync_identity = "6" * 64
+        input_content = b"synthetic task input\n"
+        output_content = b"model output\n"
+        retained_marker = "dev-methodology-eval-projection-retained-bytes"
+        input_reference = f"retained-bytes/input.json#{retained_marker}"
+        output_reference = f"retained-bytes/output.json#{retained_marker}"
         projected_inputs = [{
             "path": "TASK.md",
-            "digest": "4" * 64,
-            "size": 21,
+            "type": "file",
+            "mode": "644",
+            "digest": hashlib.sha256(input_content).hexdigest(),
+            "size": len(input_content),
+            "retainedEvidence": input_reference,
         }]
         projection_payload = {
             "schema": "dev-methodology-eval-model-visible-projection",
-            "version": 1,
+            "version": 2,
+            "preparedSnapshotDigest": source_identity,
             "sourceIdentityDigest": source_identity,
             "modelVisiblePaths": case["modelVisiblePaths"],
             "evaluatorOnlyPaths": case["modelVisibleProjection"]["evaluatorOnlyPaths"],
@@ -1060,36 +1097,75 @@ class EvidenceVersionTwoTests(unittest.TestCase):
             "path": "output.md",
             "action": "create",
             "beforeDigest": None,
-            "afterDigest": "5" * 64,
-            "size": 13,
+            "afterDigest": hashlib.sha256(output_content).hexdigest(),
+            "size": len(output_content),
+            "mode": "644",
+            "retainedEvidence": output_reference,
         }]
         sync_payload = {
             "schema": "dev-methodology-eval-model-visible-projection-sync",
-            "version": 1,
+            "version": 2,
+            "preparedSnapshotDigest": source_identity,
             "sourceIdentityDigest": source_identity,
+            "postSyncSourceIdentityDigest": post_sync_identity,
             "projectionManifestDigest": projection_digest,
             "modelVisiblePaths": case["modelVisiblePaths"],
             "evaluatorOnlyPaths": case["modelVisibleProjection"]["evaluatorOnlyPaths"],
             "projectedInputs": projected_inputs,
             "syncPaths": case["allowedWritePaths"],
+            "createdDirectories": [],
             "mutations": mutations,
         }
         sync_digest = hashlib.sha256(
             json.dumps(sync_payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
         ).hexdigest()
         sync_artifact = {**sync_payload, "manifestDigest": sync_digest}
-        verifier_artifact = {
-            "schema": "dev-methodology-eval-projection-verification",
+        verifier_source = case["verify"][2].encode("utf-8")
+        verifier_source_digest = hashlib.sha256(verifier_source).hexdigest()
+        verifier_source_reference = (
+            "trusted-verifier-source.json#"
+            "dev-methodology-eval-projection-verifier-source"
+        )
+        command_contract = {
+            "schema": "dev-methodology-eval-projection-verifier-command",
             "version": 1,
             "case": case["id"],
+            "governedArgv": case["verify"],
+            "interpreterName": "python3",
+            "interpreterDigest": "7" * 64,
+            "sourceKind": "case-inline-normalized",
+            "sourcePath": "case.verify.argv[2]",
+            "sourceDigest": verifier_source_digest,
+            "sourceSize": len(verifier_source),
+            "sourceEvidence": verifier_source_reference,
+            "executionScriptDigest": verifier_source_digest,
+            "semanticResultField": "passed",
+            "semanticRedExitCode": 3,
+        }
+        command_contract_digest = hashlib.sha256(
+            json.dumps(command_contract, sort_keys=True, separators=(",", ":")).encode("utf-8")
+        ).hexdigest()
+        semantic_result = {"passed": True}
+        verifier_artifact = {
+            "schema": "dev-methodology-eval-projection-verification",
+            "version": 2,
+            "case": case["id"],
             "argv": list(self.module.command_spec(case["verify"]).argv),
+            "commandContract": command_contract,
+            "commandContractDigest": command_contract_digest,
             "exitCode": 0,
             "passed": True,
+            "outcome": "semantic-green",
+            "infrastructureFailure": None,
+            "semanticResultDigest": hashlib.sha256(
+                json.dumps(semantic_result, sort_keys=True, separators=(",", ":")).encode("utf-8")
+            ).hexdigest(),
             "expectation": "success-required",
-            "fixtureDigestBefore": "6" * 64,
-            "fixtureDigestAfter": "6" * 64,
+            "expectedFixtureDigest": post_sync_identity,
+            "fixtureDigestBefore": post_sync_identity,
+            "fixtureDigestAfter": post_sync_identity,
             "fixtureUnchanged": True,
-            "stdout": "verified\n",
+            "stdout": json.dumps(semantic_result) + "\n",
             "stderr": "",
         }
         files = {
@@ -1102,10 +1178,41 @@ class EvidenceVersionTwoTests(unittest.TestCase):
             "projection-verifier.json": json.dumps(
                 verifier_artifact, indent=2, sort_keys=True
             ) + "\n",
+            "retained-bytes/input.json": json.dumps({
+                "schema": retained_marker,
+                "version": 1,
+                "kind": "projected-input",
+                "path": "TASK.md",
+                "mode": "644",
+                "digest": hashlib.sha256(input_content).hexdigest(),
+                "size": len(input_content),
+                "contentBase64": base64.b64encode(input_content).decode("ascii"),
+            }, indent=2, sort_keys=True) + "\n",
+            "retained-bytes/output.json": json.dumps({
+                "schema": retained_marker,
+                "version": 1,
+                "kind": "synchronized-output",
+                "path": "output.md",
+                "mode": "644",
+                "digest": hashlib.sha256(output_content).hexdigest(),
+                "size": len(output_content),
+                "contentBase64": base64.b64encode(output_content).decode("ascii"),
+            }, indent=2, sort_keys=True) + "\n",
+            "trusted-verifier-source.json": json.dumps({
+                "schema": "dev-methodology-eval-projection-verifier-source",
+                "version": 1,
+                "kind": "case-inline-normalized",
+                "path": "case.verify.argv[2]",
+                "digest": verifier_source_digest,
+                "size": len(verifier_source),
+                "contentBase64": base64.b64encode(verifier_source).decode("ascii"),
+            }, indent=2, sort_keys=True) + "\n",
         }
         receipt["run"]["modelVisibleProjection"] = {
             "mode": "isolated-harness-workspace",
+            "preparedSnapshotDigest": source_identity,
             "sourceIdentityDigest": source_identity,
+            "postSyncSourceIdentityDigest": post_sync_identity,
             "projectionManifestDigest": projection_digest,
             "projectionEvidence": (
                 "projection-manifest.json#dev-methodology-eval-model-visible-projection"
@@ -1124,15 +1231,17 @@ class EvidenceVersionTwoTests(unittest.TestCase):
                 files["projection-sync.json"].encode("utf-8")
             ).hexdigest(),
             "mutations": mutations,
+            "createdDirectories": [],
             "evaluatorVerificationEvidence": (
                 "projection-verifier.json#dev-methodology-eval-projection-verification"
             ),
             "evaluatorVerificationEvidenceDigest": hashlib.sha256(
                 files["projection-verifier.json"].encode("utf-8")
             ).hexdigest(),
-            "evaluatorVerificationStatus": "passed",
+            "evaluatorVerificationStatus": "semantic-green",
             "evaluatorVerificationExitCode": 0,
             "evaluatorVerificationExpectation": "success-required",
+            "evaluatorVerificationCommandDigest": command_contract_digest,
             "syncEvidenceStatus": "applied-and-recorded",
         }
         return case, receipt, files
@@ -1190,10 +1299,118 @@ class EvidenceVersionTwoTests(unittest.TestCase):
 
         self.assertTrue(classification.stale_by_digest)
         self.assertTrue(any(
-            "projection source identity differs from the prepared fixture" in reason
+            "projection source identity differs from the prepared full-fixture snapshot" in reason
             for reason in classification.stale_reasons
         ))
         self.assertFalse(classification.judge_passed)
+
+    def test_projection_receipt_rejects_missing_or_invented_retained_mutation_bytes(self) -> None:
+        for scenario in ("missing", "invented-self-consistent"):
+            with self.subTest(scenario=scenario):
+                case, receipt, files = self.projection_receipt_fixture()
+                if scenario == "missing":
+                    files.pop("retained-bytes/output.json")
+                else:
+                    invented = "8" * 64
+                    mutation = receipt["run"]["modelVisibleProjection"]["mutations"][0]
+                    mutation["afterDigest"] = invented
+                    mutation["size"] = 999
+                    sync = json.loads(files["projection-sync.json"])
+                    sync["mutations"] = [dict(mutation)]
+                    sync_payload = {
+                        key: value
+                        for key, value in sync.items()
+                        if key != "manifestDigest"
+                    }
+                    sync_digest = hashlib.sha256(
+                        json.dumps(
+                            sync_payload,
+                            sort_keys=True,
+                            separators=(",", ":"),
+                        ).encode("utf-8")
+                    ).hexdigest()
+                    sync["manifestDigest"] = sync_digest
+                    files["projection-sync.json"] = (
+                        json.dumps(sync, indent=2, sort_keys=True) + "\n"
+                    )
+                    receipt["run"]["modelVisibleProjection"][
+                        "syncManifestDigest"
+                    ] = sync_digest
+                    receipt["run"]["modelVisibleProjection"][
+                        "syncEvidenceDigest"
+                    ] = hashlib.sha256(
+                        files["projection-sync.json"].encode("utf-8")
+                    ).hexdigest()
+
+                classification = self.classify(
+                    receipt,
+                    case=case,
+                    extra_files=files,
+                )
+
+                self.assertTrue(any(
+                    "retained" in error and (
+                        "missing" in error
+                        or "digest" in error
+                        or "size" in error
+                        or "differs" in error
+                    )
+                    for error in classification.errors
+                ))
+
+    def test_projection_receipt_red_control_requires_semantic_red(self) -> None:
+        validation_module = sys.modules[self.module.classify_evidence.__module__]
+        for outcome in ("semantic-green", "semantic-red"):
+            with self.subTest(outcome=outcome), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                case, receipt, files = self.projection_receipt_fixture()
+                case["probeVariant"] = "target-omitted"
+                value = receipt["run"]["modelVisibleProjection"]
+                verifier = json.loads(files["projection-verifier.json"])
+                semantic_result = {"passed": outcome == "semantic-green"}
+                verifier.update({
+                    "exitCode": 0 if outcome == "semantic-green" else 3,
+                    "passed": outcome == "semantic-green",
+                    "outcome": outcome,
+                    "expectation": "control-observation",
+                    "semanticResultDigest": hashlib.sha256(
+                        json.dumps(
+                            semantic_result,
+                            sort_keys=True,
+                            separators=(",", ":"),
+                        ).encode("utf-8")
+                    ).hexdigest(),
+                    "stdout": json.dumps(semantic_result) + "\n",
+                })
+                files["projection-verifier.json"] = (
+                    json.dumps(verifier, indent=2, sort_keys=True) + "\n"
+                )
+                value["evaluatorVerificationEvidenceDigest"] = hashlib.sha256(
+                    files["projection-verifier.json"].encode("utf-8")
+                ).hexdigest()
+                value["evaluatorVerificationStatus"] = outcome
+                value["evaluatorVerificationExitCode"] = verifier["exitCode"]
+                value["evaluatorVerificationExpectation"] = "control-observation"
+                for name, content in files.items():
+                    target = root / name
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    target.write_text(content, encoding="utf-8")
+                errors: list[str] = []
+
+                validation_module._validate_projection_verifier_artifact(
+                    case,
+                    value,
+                    root / "receipt.yaml",
+                    errors,
+                )
+
+                if outcome == "semantic-green":
+                    self.assertTrue(any(
+                        "control must have the declared semantic-red outcome" in error
+                        for error in errors
+                    ))
+                else:
+                    self.assertEqual([], errors)
 
     def _behavior_regression_fixture(
         self,
@@ -3057,8 +3274,14 @@ class HarnessAndJudgeTests(unittest.TestCase):
             for case_id in sorted(excluded):
                 with self.subTest(case=case_id):
                     case = cases[case_id]
-                    projection = self.module.stage_model_visible_projection(
+                    source = base / f"source-{case_id}"
+                    shutil.copytree(
                         ROOT / case["project"],
+                        source,
+                        ignore=shutil.ignore_patterns("__pycache__", "*.pyc"),
+                    )
+                    projection = self.module.stage_model_visible_projection(
+                        source,
                         base / case_id,
                         case["modelVisiblePaths"],
                         evaluator_only_paths=case["modelVisibleProjection"]["evaluatorOnlyPaths"],
@@ -3077,7 +3300,7 @@ class HarnessAndJudgeTests(unittest.TestCase):
                         for selected in case["modelVisiblePaths"]
                         for path in (
                             [selected]
-                            if (ROOT / case["project"] / selected).is_file()
+                            if (source / selected).is_file()
                             else []
                         )
                     }
@@ -3103,33 +3326,257 @@ class HarnessAndJudgeTests(unittest.TestCase):
                 evaluator_only_paths=[],
                 sync_paths=["output.md"],
             )
+            package = self.module.create_projection_evidence_directory(
+                base / "evidence",
+                source,
+                projection.root,
+            )
+            projection = self.module.seal_model_visible_projection(projection)
+            projection_evidence = self.module.write_model_visible_projection_manifest(
+                projection,
+                package.path("projection-manifest.json"),
+            )
             (projection.root / "output.md").write_text("model output\n", encoding="utf-8")
-            evidence_path = base / "evidence" / "projection-sync.json"
+            evidence_path = package.path("projection-sync.json")
 
             sync = self.module.synchronize_model_visible_projection(
                 projection,
                 evidence_path,
+                projection_manifest=projection_evidence,
             )
 
             self.assertEqual("model output\n", (source / "output.md").read_text(encoding="utf-8"))
             self.assertEqual(64, len(sync.manifest_digest))
             evidence = json.loads(evidence_path.read_text(encoding="utf-8"))
-            self.assertEqual(projection.manifest_digest, evidence["projectionManifestDigest"])
             self.assertEqual(
-                [{"path": "TASK.md", "digest": digest(source / "TASK.md"), "size": 17}],
-                evidence["projectedInputs"],
+                projection_evidence.manifest_digest,
+                evidence["projectionManifestDigest"],
             )
             self.assertEqual(
-                [{
-                    "action": "create",
-                    "afterDigest": digest(source / "output.md"),
-                    "beforeDigest": None,
-                    "path": "output.md",
-                    "size": 13,
-                }],
-                evidence["mutations"],
+                digest(source / "TASK.md"),
+                evidence["projectedInputs"][0]["digest"],
             )
+            self.assertEqual("file", evidence["projectedInputs"][0]["type"])
+            self.assertEqual("output.md", evidence["mutations"][0]["path"])
+            self.assertEqual(
+                digest(source / "output.md"),
+                evidence["mutations"][0]["afterDigest"],
+            )
+            self.assertIn("retainedEvidence", evidence["mutations"][0])
             self.assertEqual(sync.manifest_digest, evidence["manifestDigest"])
+
+    def test_projection_inventory_binds_modes_empty_directories_and_prepared_snapshot(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            source = base / "fixture"
+            source.mkdir()
+            visible = source / "visible"
+            visible.mkdir(mode=0o750)
+            (visible / "empty").mkdir(mode=0o710)
+            task = visible / "TASK.md"
+            task.write_text("Synthetic task.\n", encoding="utf-8")
+            task.chmod(0o640)
+            prepared_snapshot_digest = self.module.snapshot_digest(
+                self.module.snapshot_product_tree(source)
+            )
+
+            projection = self.module.stage_model_visible_projection(
+                source,
+                base / "projection",
+                ["visible"],
+                evaluator_only_paths=[],
+                sync_paths=["output.md"],
+                prepared_snapshot_digest=prepared_snapshot_digest,
+            )
+
+            self.assertEqual(
+                prepared_snapshot_digest,
+                projection.prepared_snapshot_digest,
+            )
+            self.assertEqual(prepared_snapshot_digest, projection.source_identity_digest)
+            self.assertEqual(
+                [
+                    {
+                        "path": "visible",
+                        "type": "directory",
+                        "mode": "750",
+                        "digest": None,
+                        "size": None,
+                    },
+                    {
+                        "path": "visible/TASK.md",
+                        "type": "file",
+                        "mode": "640",
+                        "digest": digest(task),
+                        "size": 16,
+                    },
+                    {
+                        "path": "visible/empty",
+                        "type": "directory",
+                        "mode": "710",
+                        "digest": None,
+                        "size": None,
+                    },
+                ],
+                [entry.__dict__ for entry in projection.entries],
+            )
+
+    def test_projection_sync_rejects_mode_only_and_transient_tree_mutations(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            source = base / "fixture"
+            source.mkdir()
+            task = source / "TASK.md"
+            task.write_text("Synthetic task.\n", encoding="utf-8")
+            task.chmod(0o640)
+
+            mode_projection = self.module.stage_model_visible_projection(
+                source,
+                base / "mode-projection",
+                ["TASK.md"],
+                evaluator_only_paths=[],
+                sync_paths=["output.md"],
+            )
+            mode_projection = self.module.seal_model_visible_projection(mode_projection)
+            (mode_projection.root / "TASK.md").chmod(0o600)
+            with self.assertRaisesRegex(ValueError, "modified|changed.*mode|unexpected"):
+                self.module.synchronize_model_visible_projection(
+                    mode_projection,
+                    base / "mode-evidence" / "projection-sync.json",
+                )
+
+            transient_projection = self.module.stage_model_visible_projection(
+                source,
+                base / "transient-projection",
+                ["TASK.md"],
+                evaluator_only_paths=[],
+                sync_paths=["output.md"],
+            )
+            transient_projection = self.module.seal_model_visible_projection(
+                transient_projection
+            )
+            transient = transient_projection.root / ".pytest_cache" / "model-created"
+            transient.parent.mkdir()
+            transient.write_text("must not be pruned\n", encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "unexpected model output"):
+                self.module.synchronize_model_visible_projection(
+                    transient_projection,
+                    base / "transient-evidence" / "projection-sync.json",
+                )
+
+    def test_projection_sync_uses_exclusive_create_for_a_late_collision(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            source = base / "fixture"
+            source.mkdir()
+            (source / "TASK.md").write_text("Write output.md.\n", encoding="utf-8")
+            projection = self.module.stage_model_visible_projection(
+                source,
+                base / "projection",
+                ["TASK.md"],
+                evaluator_only_paths=[],
+                sync_paths=["output.md"],
+            )
+            projection = self.module.seal_model_visible_projection(projection)
+            (projection.root / "output.md").write_text("model output\n", encoding="utf-8")
+            destination = source / "output.md"
+            real_os_open = os.open
+
+            def inject_collision(path: object, flags: int, mode: int = 0o777) -> int:
+                if Path(path).resolve() == destination.resolve() and not destination.exists():
+                    destination.write_text("racing owner\n", encoding="utf-8")
+                return real_os_open(path, flags, mode)
+
+            staging_module = sys.modules[
+                self.module.synchronize_model_visible_projection.__module__
+            ]
+            with mock.patch.object(
+                staging_module.os,
+                "open",
+                side_effect=inject_collision,
+            ), self.assertRaisesRegex(ValueError, "source changed at destination"):
+                self.module.synchronize_model_visible_projection(
+                    projection,
+                    base / "evidence" / "projection-sync.json",
+                )
+
+            self.assertEqual("racing owner\n", destination.read_text(encoding="utf-8"))
+
+    def test_projection_evidence_directory_is_owner_only_and_receipt_relative(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            source = base / "fixture"
+            projection_root = base / "projection"
+            source.mkdir()
+            projection_root.mkdir()
+
+            package = self.module.create_projection_evidence_directory(
+                base / "receipt-artifacts",
+                source,
+                projection_root,
+            )
+
+            self.assertEqual(0o700, package.root.stat().st_mode & 0o777)
+            artifact = package.path("projection-manifest.json")
+            artifact.write_text(
+                '{"schema":"dev-methodology-eval-model-visible-projection"}\n',
+                encoding="utf-8",
+            )
+            artifact.chmod(0o600)
+            self.assertEqual(
+                "projection-manifest.json#dev-methodology-eval-model-visible-projection",
+                package.reference(
+                    artifact,
+                    "dev-methodology-eval-model-visible-projection",
+                ),
+            )
+
+    def test_projection_manifests_retain_independent_input_and_output_bytes(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            source = base / "fixture"
+            source.mkdir()
+            task = source / "TASK.md"
+            task.write_bytes(b"Write output.md.\n")
+            projection = self.module.stage_model_visible_projection(
+                source,
+                base / "projection",
+                ["TASK.md"],
+                evaluator_only_paths=[],
+                sync_paths=["output.md"],
+            )
+            package = self.module.create_projection_evidence_directory(
+                base / "receipt-artifacts",
+                source,
+                projection.root,
+            )
+            projection = self.module.seal_model_visible_projection(projection)
+            projection_evidence = self.module.write_model_visible_projection_manifest(
+                projection,
+                package.path("projection-manifest.json"),
+            )
+            (projection.root / "output.md").write_bytes(b"model output\n")
+
+            sync = self.module.synchronize_model_visible_projection(
+                projection,
+                package.path("projection-sync.json"),
+                projection_manifest=projection_evidence,
+            )
+
+            projected_record = projection_evidence.projected_inputs[0]
+            projected_reference = str(projected_record["retainedEvidence"])
+            projected_path = package.root / projected_reference.rsplit("#", 1)[0]
+            projected_artifact = json.loads(projected_path.read_text(encoding="utf-8"))
+            self.assertEqual("V3JpdGUgb3V0cHV0Lm1kLgo=", projected_artifact["contentBase64"])
+            mutation_record = sync.mutation_records[0]
+            mutation_reference = str(mutation_record["retainedEvidence"])
+            mutation_path = package.root / mutation_reference.rsplit("#", 1)[0]
+            mutation_artifact = json.loads(mutation_path.read_text(encoding="utf-8"))
+            self.assertEqual("bW9kZWwgb3V0cHV0Cg==", mutation_artifact["contentBase64"])
+            self.assertEqual(
+                sync.post_sync_source_identity_digest,
+                self.module.snapshot_digest(self.module.snapshot_product_tree(source)),
+            )
 
     def test_projection_fails_closed_at_each_path_and_sync_boundary(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -3298,7 +3745,7 @@ class HarnessAndJudgeTests(unittest.TestCase):
                 "Model changed its input.\n",
                 encoding="utf-8",
             )
-            with self.assertRaisesRegex(ValueError, "unexpected model output"):
+            with self.assertRaisesRegex(ValueError, "projected input.*modified"):
                 self.module.synchronize_model_visible_projection(
                     modified_input, base / "modified-input-evidence.json"
                 )
@@ -3311,7 +3758,7 @@ class HarnessAndJudgeTests(unittest.TestCase):
                 sync_paths=["output.md"],
             )
             (unexpected_directory.root / "empty-surprise").mkdir()
-            with self.assertRaisesRegex(ValueError, "unexpected model output directory"):
+            with self.assertRaisesRegex(ValueError, "unexpected model output"):
                 self.module.synchronize_model_visible_projection(
                     unexpected_directory,
                     base / "unexpected-directory-evidence.json",
@@ -3368,6 +3815,7 @@ class HarnessAndJudgeTests(unittest.TestCase):
                 path.write_text("runner context\n", encoding="utf-8")
             for marker in (".eval-prepared.json", ".eval-workspace.json"):
                 (projection.root / marker).write_text("{}\n", encoding="utf-8")
+            projection = self.module.seal_model_visible_projection(projection)
             (projection.root / "output.md").write_text("model output\n", encoding="utf-8")
 
             sync = self.module.synchronize_model_visible_projection(
@@ -3389,13 +3837,16 @@ class HarnessAndJudgeTests(unittest.TestCase):
             source.mkdir()
             (source / "TASK.md").write_text("Inspect the visible task.\n", encoding="utf-8")
             (source / "evaluator-only.json").write_text('{"retained": true}\n', encoding="utf-8")
-            (source / ".eval-workspace.json").write_text("{}\n", encoding="utf-8")
+            write_prepared_workspace_marker(self.module, source)
+            governed_verify = self.module.load_cases()[
+                "terminology-standard-effect"
+            ]["verify"]
             case = {
-                "id": "projection-handler-test",
+                "id": "terminology-standard-effect",
                 "project": "evals/projects/projection-handler-test",
                 "task": "TASK.md",
                 "readOnly": True,
-                "verify": [sys.executable, "-c", "raise SystemExit(0)"],
+                "verify": governed_verify,
                 "allowedWritePaths": [],
                 "ephemeralWritePaths": [],
                 "requiredAgents": ["dev-coder"],
@@ -3458,9 +3909,14 @@ class HarnessAndJudgeTests(unittest.TestCase):
             invocation = json.loads(output.getvalue())
             projection_record = invocation["modelVisibleProjection"]
             self.assertEqual("preflight-only", projection_record["syncEvidenceStatus"])
+            self.assertEqual("TASK.md", projection_record["projectedInputs"][0]["path"])
             self.assertEqual(
-                [{"path": "TASK.md", "digest": digest(source / "TASK.md"), "size": 26}],
-                projection_record["projectedInputs"],
+                digest(source / "TASK.md"),
+                projection_record["projectedInputs"][0]["digest"],
+            )
+            self.assertIn(
+                "retainedEvidence",
+                projection_record["projectedInputs"][0],
             )
             self.assertEqual(64, len(projection_record["sourceIdentityDigest"]))
             self.assertEqual(64, len(projection_record["projectionManifestDigest"]))
@@ -3472,19 +3928,15 @@ class HarnessAndJudgeTests(unittest.TestCase):
             source.mkdir()
             (source / "TASK.md").write_text("Write output.md.\n", encoding="utf-8")
             (source / "evaluator-only.json").write_text('{"retained": true}\n', encoding="utf-8")
-            (source / ".eval-workspace.json").write_text("{}\n", encoding="utf-8")
+            write_prepared_workspace_marker(self.module, source)
             evidence_root = base / "dev-methodology-evals" / "evidence"
             event_path = evidence_root / "events.jsonl"
             case = {
-                "id": "live-projection-handler-test",
+                "id": "terminology-standard-effect",
                 "project": "evals/projects/live-projection-handler-test",
                 "task": "TASK.md",
                 "readOnly": False,
-                "verify": [
-                    sys.executable,
-                    "-c",
-                    "from pathlib import Path; raise SystemExit(0 if Path('output.md').is_file() else 3)",
-                ],
+                "verify": self.module.load_cases()["terminology-standard-effect"]["verify"],
                 "allowedWritePaths": ["output.md"],
                 "ephemeralWritePaths": [],
                 "requiredAgents": ["dev-coder"],
@@ -3518,7 +3970,12 @@ class HarnessAndJudgeTests(unittest.TestCase):
             def execute(command: object, cwd: Path) -> object:
                 if cwd.resolve() == source.resolve():
                     self.assertTrue((source / "output.md").is_file())
-                    return self.module.CommandResult(command.argv, 0, "verified\n", "")
+                    return self.module.CommandResult(
+                        command.argv,
+                        0,
+                        json.dumps({"passed": True}) + "\n",
+                        "",
+                    )
                 observed_roots.append(cwd)
                 self.assertNotEqual(source.resolve(), cwd.resolve())
                 self.assertFalse((cwd / "evaluator-only.json").exists())
@@ -3551,14 +4008,19 @@ class HarnessAndJudgeTests(unittest.TestCase):
             self.assertEqual(1, len(observed_roots))
             self.assertFalse(observed_roots[0].exists())
             records = [json.loads(line) for line in output.getvalue().splitlines() if line.startswith("{")]
-            projection_record = next(
-                record["modelVisibleProjection"]
+            projection_wrapper = next(
+                record
                 for record in records
                 if "modelVisibleProjection" in record
             )
+            projection_record = projection_wrapper["modelVisibleProjection"]
             self.assertEqual("applied-and-recorded", projection_record["syncEvidenceStatus"])
             self.assertEqual(64, len(projection_record["syncManifestDigest"]))
-            sync_evidence = Path(projection_record["syncEvidence"])
+            sync_reference = projection_record["syncEvidence"]
+            sync_evidence = (
+                Path(projection_wrapper["receiptArtifactDirectory"])
+                / sync_reference.rsplit("#", 1)[0]
+            )
             self.assertTrue(sync_evidence.is_file())
             self.assertEqual(
                 projection_record["syncManifestDigest"],
@@ -3575,21 +4037,219 @@ class HarnessAndJudgeTests(unittest.TestCase):
             specification = self.module.command_spec([
                 sys.executable,
                 "-c",
-                "raise SystemExit(3)",
+                "import json; print(json.dumps({'passed': False})); raise SystemExit(3)",
             ])
+            expected_digest = self.module.snapshot_digest(
+                self.module.snapshot_product_tree(base)
+            )
+            evidence_path = base.parent / f"{base.name}-verifier.json"
 
             record, acceptable = self.module._run_projection_verifier(
                 case,
                 base,
                 specification,
-                base / "verifier.json",
+                evidence_path,
                 {},
+                expected_fixture_digest=expected_digest,
             )
 
             self.assertTrue(acceptable)
             self.assertFalse(record["passed"])
             self.assertEqual(3, record["exitCode"])
             self.assertEqual("control-observation", record["expectation"])
+            self.assertEqual("semantic-red", record["outcome"])
+
+    def test_projection_control_rejects_every_non_semantic_red_failure(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            expected_digest = self.module.snapshot_digest(
+                self.module.snapshot_product_tree(base)
+            )
+            evidence_root = base.parent / f"{base.name}-verifier-evidence"
+            evidence_root.mkdir()
+            case = {
+                "id": "terminology-standard-effect",
+                "probeVariant": "wrong-skill",
+            }
+            scenarios = (
+                (124, "", "command timed out after 1 seconds", "timeout"),
+                (125, "", "command output exceeded the configured capture cap", "output-cap"),
+                (-9, "", "", "signal"),
+                (1, "", "Traceback: crash", "crash"),
+                (3, "not-json", "", "malformed-result"),
+                (3, json.dumps({"passed": True}), "", "malformed-result"),
+            )
+            for index, (exit_code, stdout, stderr, reason) in enumerate(scenarios):
+                with self.subTest(reason=reason):
+                    result = self.module.CommandResult(
+                        (sys.executable, "trusted-verifier.py"),
+                        exit_code,
+                        stdout,
+                        stderr,
+                    )
+                    with mock.patch.object(
+                        self.module,
+                        "run_command",
+                        return_value=result,
+                    ):
+                        record, acceptable = self.module._run_projection_verifier(
+                            case,
+                            base,
+                            self.module.command_spec(result.argv),
+                            evidence_root / f"verifier-{index}-{reason}.json",
+                            {},
+                            expected_fixture_digest=expected_digest,
+                        )
+
+                    self.assertFalse(acceptable)
+                    self.assertEqual("infrastructure-failure", record["outcome"])
+                    self.assertEqual(reason, record["infrastructureFailure"])
+
+    def test_projection_red_control_rejects_semantic_green(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            expected_digest = self.module.snapshot_digest(
+                self.module.snapshot_product_tree(base)
+            )
+            specification = self.module.command_spec([
+                sys.executable,
+                "-c",
+                "import json; print(json.dumps({'passed': True}))",
+            ])
+
+            record, acceptable = self.module._run_projection_verifier(
+                {
+                    "id": "terminology-standard-effect",
+                    "probeVariant": "target-omitted",
+                },
+                base,
+                specification,
+                base.parent / f"{base.name}-green-control.json",
+                {},
+                expected_fixture_digest=expected_digest,
+            )
+
+            self.assertEqual("semantic-green", record["outcome"])
+            self.assertFalse(acceptable)
+
+    def test_projection_verifier_pre_state_must_equal_post_sync_identity(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            specification = self.module.command_spec([sys.executable, "trusted-verifier.py"])
+            with mock.patch.object(self.module, "run_command") as execute:
+                with self.assertRaisesRegex(ValueError, "post-sync fixture identity"):
+                    self.module._run_projection_verifier(
+                        {"id": "terminology-standard-effect"},
+                        base,
+                        specification,
+                        base.parent / "verifier.json",
+                        {},
+                        expected_fixture_digest="f" * 64,
+                    )
+            execute.assert_not_called()
+
+    def test_projection_verifier_contract_normalizes_only_current_governed_forms(self) -> None:
+        cases = self.module.load_cases()
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            for case_id in (
+                "terminology-standard-effect",
+                "terminology-standard-negative-activation",
+            ):
+                with self.subTest(case=case_id):
+                    case = cases[case_id]
+                    source = base / f"source-{case_id}"
+                    shutil.copytree(
+                        ROOT / str(case["project"]),
+                        source,
+                        ignore=shutil.ignore_patterns("__pycache__", "*.pyc"),
+                    )
+                    projection = self.module.stage_model_visible_projection(
+                        source,
+                        base / f"projection-{case_id}",
+                        case["modelVisiblePaths"],
+                        evaluator_only_paths=case["modelVisibleProjection"]["evaluatorOnlyPaths"],
+                        sync_paths=[
+                            *case.get("allowedWritePaths", []),
+                            *case.get("ephemeralWritePaths", []),
+                        ],
+                    )
+                    package = self.module.create_projection_evidence_directory(
+                        base / f"evidence-{case_id}",
+                        source,
+                        projection.root,
+                    )
+
+                    trusted = self.module._prepare_projection_verifier_command(
+                        case,
+                        projection,
+                        package,
+                    )
+
+                    self.assertEqual(64, len(trusted.contract_digest))
+                    self.assertEqual(64, len(trusted.interpreter_digest))
+                    self.assertEqual(64, len(trusted.source_digest))
+                    self.assertEqual(64, len(trusted.execution_script_digest))
+                    self.assertEqual(2, len(trusted.specification.argv))
+                    self.assertNotIn("-c", trusted.specification.argv)
+                    self.assertNotIn("-m", trusted.specification.argv)
+                    self.assertNotIn("-e", trusted.specification.argv)
+                    self.module._validate_projection_verifier_command(
+                        trusted.specification,
+                        projection,
+                        trusted,
+                    )
+
+    def test_projection_verifier_contract_rejects_reproduced_argv_bypasses(self) -> None:
+        case = self.module.load_cases()["terminology-standard-negative-activation"]
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            source = base / "source"
+            shutil.copytree(
+                ROOT / str(case["project"]),
+                source,
+                ignore=shutil.ignore_patterns("__pycache__", "*.pyc"),
+            )
+            projection = self.module.stage_model_visible_projection(
+                source,
+                base / "projection",
+                case["modelVisiblePaths"],
+                evaluator_only_paths=case["modelVisibleProjection"]["evaluatorOnlyPaths"],
+                sync_paths=[
+                    *case.get("allowedWritePaths", []),
+                    *case.get("ephemeralWritePaths", []),
+                ],
+            )
+            package = self.module.create_projection_evidence_directory(
+                base / "evidence",
+                source,
+                projection.root,
+            )
+            trusted = self.module._prepare_projection_verifier_command(
+                case,
+                projection,
+                package,
+            )
+            bypasses = (
+                ["/usr/bin/env", "python3", str(trusted.script_path)],
+                [trusted.specification.argv[0], "-I", str(trusted.script_path)],
+                [trusted.specification.argv[0], "-m", "verify"],
+                [trusted.specification.argv[0], "-c", "raise SystemExit(0)"],
+                ["node", "-e", "process.exit(0)"],
+                ["bash", str(trusted.script_path)],
+                [trusted.specification.argv[0], str(projection.root / "preserved-evidence.md")],
+                [trusted.specification.argv[0], str(projection.source_root / "preserved-evidence.md")],
+            )
+            for argv in bypasses:
+                with self.subTest(argv=argv), self.assertRaisesRegex(
+                    ValueError,
+                    "exact evaluator-owned command contract",
+                ):
+                    self.module._validate_projection_verifier_command(
+                        self.module.command_spec(argv),
+                        projection,
+                        trusted,
+                    )
 
     def test_projection_verifier_cannot_execute_a_model_write_path(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -3606,12 +4266,12 @@ class HarnessAndJudgeTests(unittest.TestCase):
             )
             for argv in ([sys.executable, "verify.py"], ["verify.py"]):
                 with self.subTest(argv=argv):
-                    specification = self.module.command_spec(argv)
-                    with self.assertRaisesRegex(ValueError, "model-write path"):
-                        self.module._validate_projection_verifier_command(
-                            specification,
+                    self.assertTrue(
+                        self.module._projection_argument_is_model_write_path(
+                            argv[-1],
                             projection,
                         )
+                    )
 
     def test_projection_verifier_must_leave_the_full_fixture_unchanged(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -3624,12 +4284,16 @@ class HarnessAndJudgeTests(unittest.TestCase):
                 "from pathlib import Path; Path('output.md').write_text('changed\\n')",
             ])
 
+            expected_digest = self.module.snapshot_digest(
+                self.module.snapshot_product_tree(root)
+            )
             record, acceptable = self.module._run_projection_verifier(
                 case,
                 root,
                 specification,
-                root.parent / "verifier.json",
+                root.parent / f"{root.name}-verifier.json",
                 {},
+                expected_fixture_digest=expected_digest,
             )
 
             self.assertFalse(acceptable)
@@ -4580,10 +5244,7 @@ class HarnessAndJudgeTests(unittest.TestCase):
             )
             (workspace / "evidence").mkdir()
             (workspace / "negative-activation").mkdir()
-            (workspace / ".eval-workspace.json").write_text(
-                "{}\n",
-                encoding="utf-8",
-            )
+            write_prepared_workspace_marker(self.module, workspace)
             args = self.module._argument_parser().parse_args([
                 "--case",
                 str(case["id"]),

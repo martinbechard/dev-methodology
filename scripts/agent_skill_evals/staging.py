@@ -4,13 +4,15 @@
 
 from __future__ import annotations
 
+import base64
 import hashlib
 import json
 import os
 import re
 import secrets
 import shutil
-from dataclasses import dataclass
+import stat
+from dataclasses import dataclass, replace
 from pathlib import Path, PurePosixPath
 from typing import Iterable, Mapping, Sequence
 
@@ -25,7 +27,6 @@ from .invocations import (
 from .workspace import (
     TRANSIENT_TREE_NAMES,
     snapshot_digest,
-    snapshot_tree,
 )
 
 
@@ -92,11 +93,13 @@ class InputManifest:
 
 @dataclass(frozen=True)
 class ProjectedFile:
-    """Record one source file copied into an isolated model-visible workspace."""
+    """Record one typed filesystem entry copied into a model-visible workspace."""
 
     path: str
-    digest: str
-    size: int
+    type: str
+    mode: str
+    digest: str | None
+    size: int | None
 
 
 @dataclass(frozen=True)
@@ -108,6 +111,8 @@ class ProjectionMutation:
     before_digest: str | None
     after_digest: str
     size: int
+    mode: str
+    retained_evidence: str
 
 
 @dataclass(frozen=True)
@@ -118,12 +123,20 @@ class ModelVisibleProjection:
     root: Path
     files: tuple[ProjectedFile, ...]
     manifest_digest: str
+    prepared_snapshot_digest: str
     source_identity_digest: str
     source_files: tuple[ProjectedFile, ...]
     model_visible_paths: tuple[str, ...]
     evaluator_only_paths: tuple[str, ...]
     sync_paths: tuple[str, ...]
     initial_directories: tuple[str, ...]
+    sealed_entries: tuple[ProjectedFile, ...] = ()
+
+    @property
+    def entries(self) -> tuple[ProjectedFile, ...]:
+        """Return every projected file and directory in deterministic path order."""
+
+        return self.files
 
 
 @dataclass(frozen=True)
@@ -133,6 +146,9 @@ class ProjectionSyncManifest:
     evidence_path: Path
     manifest_digest: str
     mutations: tuple[ProjectionMutation, ...]
+    mutation_records: tuple[dict[str, object], ...]
+    created_directories: tuple[dict[str, str], ...]
+    post_sync_source_identity_digest: str
 
 
 @dataclass(frozen=True)
@@ -141,6 +157,34 @@ class ProjectionManifestEvidence:
 
     evidence_path: Path
     content_digest: str
+    manifest_digest: str
+    projected_inputs: tuple[dict[str, object], ...]
+
+
+@dataclass(frozen=True)
+class ProjectionEvidenceDirectory:
+    """Own one private directory whose artifacts remain relative to a future receipt."""
+
+    root: Path
+
+    def path(self, name: str) -> Path:
+        """Resolve one normalized artifact name beneath the private directory."""
+
+        relative = _safe_relative_path(name)
+        candidate = self.root.joinpath(*relative.parts)
+        if candidate == self.root or self.root not in candidate.parents:
+            raise ValueError("projection evidence artifact escapes its private directory")
+        return candidate
+
+    def reference(self, artifact: Path, marker: str) -> str:
+        """Return a stable file-marker reference relative to a receipt in this directory."""
+
+        if not marker or "#" in marker or "\n" in marker:
+            raise ValueError("projection evidence marker must be a non-empty single-line value")
+        resolved = artifact.resolve()
+        if self.root not in resolved.parents or not resolved.is_file():
+            raise ValueError("projection evidence reference must identify a retained artifact")
+        return f"{resolved.relative_to(self.root).as_posix()}#{marker}"
 
 
 class ContextPackBuilder:
@@ -789,6 +833,7 @@ def stage_model_visible_projection(
     *,
     evaluator_only_paths: Sequence[str],
     sync_paths: Sequence[str],
+    prepared_snapshot_digest: str | None = None,
 ) -> ModelVisibleProjection:
     """Copy one complete, explicitly partitioned fixture into an isolated harness root."""
 
@@ -816,81 +861,83 @@ def stage_model_visible_projection(
     _reject_projection_path_overlap(visible, synchronized, "model-visible", "sync")
     _reject_projection_path_overlap(evaluator_only, synchronized, "evaluator-only", "sync")
 
-    visible_files = _selected_projection_files(source_root, visible, "model-visible")
-    evaluator_files = _selected_projection_files(
+    source_entries = _projection_product_entries(
+        source_root,
+        include_runner_owned=False,
+    )
+    source_entry_map = {entry.path: entry for entry in source_entries}
+    visible_entries = _selected_projection_entries(
+        source_root,
+        visible,
+        "model-visible",
+        source_entry_map,
+    )
+    evaluator_entries = _selected_projection_entries(
         source_root,
         evaluator_only,
         "evaluator-only",
+        source_entry_map,
         allow_empty_selection=True,
     )
-    all_source_files = {
-        path.relative_to(source_root).as_posix()
-        for path in _walk_pruned(source_root)
-        if not _is_runner_owned(path.relative_to(source_root))
-    }
-    partitioned = set(visible_files) | set(evaluator_files)
-    undeclared = sorted(all_source_files - partitioned)
+    all_source_entries = set(source_entry_map)
+    partitioned = set(visible_entries) | set(evaluator_entries)
+    undeclared = sorted(all_source_entries - partitioned)
     if undeclared:
-        raise ValueError(f"model-visible projection has undeclared source file: {undeclared[0]}")
-    if partitioned - all_source_files:
-        raise ValueError("model-visible projection partition contains an unavailable source file")
+        raise ValueError(f"model-visible projection has undeclared source entry: {undeclared[0]}")
+    if partitioned - all_source_entries:
+        raise ValueError("model-visible projection partition contains an unavailable source entry")
     for relative in synchronized:
         _validate_unused_sync_destination(source_root, relative)
 
-    source_files = tuple(
-        ProjectedFile(
-            path=relative,
-            digest=hashlib.sha256((source_root / relative).read_bytes()).hexdigest(),
-            size=(source_root / relative).stat().st_size,
+    source_identity_digest = _projection_entries_digest(source_entries)
+    if prepared_snapshot_digest is None:
+        prepared_snapshot_digest = source_identity_digest
+    if prepared_snapshot_digest != source_identity_digest:
+        raise ValueError(
+            "model-visible projection source differs from the prepared full-fixture snapshot"
         )
-        for relative in sorted(all_source_files)
-    )
-    source_file_map = {file.path: file for file in source_files}
-    source_identity_digest = _projection_source_identity(source_root)
 
     destination_root.mkdir(mode=0o700)
-    projected_files: list[ProjectedFile] = []
+    projected_entries: list[ProjectedFile] = []
     try:
-        for relative in sorted(visible_files):
+        for relative, expected in sorted(visible_entries.items()):
             source = source_root / relative
             destination = destination_root / relative
-            destination.parent.mkdir(parents=True, exist_ok=True)
-            content = source.read_bytes()
-            expected = source_file_map[relative]
-            if (
-                len(content) != expected.size
-                or hashlib.sha256(content).hexdigest() != expected.digest
-            ):
-                raise ValueError(
-                    f"model-visible projection source changed during copy: {relative}"
-                )
-            destination.write_bytes(content)
-            shutil.copymode(source, destination)
-            projected_files.append(ProjectedFile(
-                path=relative,
-                digest=hashlib.sha256(content).hexdigest(),
-                size=len(content),
-            ))
+            if expected.type == "directory":
+                destination.mkdir(parents=True, exist_ok=False)
+                os.chmod(destination, int(expected.mode, 8))
+            else:
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                content = source.read_bytes()
+                if (
+                    len(content) != expected.size
+                    or hashlib.sha256(content).hexdigest() != expected.digest
+                    or _entry_mode(source) != expected.mode
+                ):
+                    raise ValueError(
+                        f"model-visible projection source changed during copy: {relative}"
+                    )
+                destination.write_bytes(content)
+                os.chmod(destination, int(expected.mode, 8))
+            projected_entries.append(expected)
         if _projection_source_identity(source_root) != source_identity_digest:
             raise ValueError("model-visible projection source changed during staging")
     except Exception:
         shutil.rmtree(destination_root, ignore_errors=True)
         raise
 
-    initial_directories = tuple(sorted({
-        parent.as_posix()
-        for file in projected_files
-        for parent in PurePosixPath(file.path).parents
-        if parent.as_posix() != "."
-    }))
+    initial_directories = tuple(
+        entry.path for entry in projected_entries if entry.type == "directory"
+    )
     payload = {
         "schema": "dev-methodology-eval-model-visible-projection",
-        "version": 1,
+        "version": 2,
+        "preparedSnapshotDigest": prepared_snapshot_digest,
         "sourceIdentityDigest": source_identity_digest,
         "modelVisiblePaths": [path.as_posix() for path in visible],
         "evaluatorOnlyPaths": [path.as_posix() for path in evaluator_only],
         "syncPaths": [path.as_posix() for path in synchronized],
-        "projectedInputs": [file.__dict__ for file in projected_files],
+        "projectedInputs": [entry.__dict__ for entry in projected_entries],
     }
     manifest_digest = hashlib.sha256(
         json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
@@ -898,20 +945,58 @@ def stage_model_visible_projection(
     return ModelVisibleProjection(
         source_root=source_root,
         root=destination_root,
-        files=tuple(projected_files),
+        files=tuple(projected_entries),
         manifest_digest=manifest_digest,
+        prepared_snapshot_digest=prepared_snapshot_digest,
         source_identity_digest=source_identity_digest,
-        source_files=source_files,
+        source_files=source_entries,
         model_visible_paths=tuple(path.as_posix() for path in visible),
         evaluator_only_paths=tuple(path.as_posix() for path in evaluator_only),
         sync_paths=tuple(path.as_posix() for path in synchronized),
         initial_directories=initial_directories,
+        sealed_entries=tuple(projected_entries),
     )
+
+
+def seal_model_visible_projection(
+    projection: ModelVisibleProjection,
+) -> ModelVisibleProjection:
+    """Seal the exact pre-model workspace, including runner-owned staged context."""
+
+    entries = _projection_product_entries(
+        projection.root,
+        include_runner_owned=True,
+    )
+    return replace(projection, sealed_entries=entries)
+
+
+def create_projection_evidence_directory(
+    directory: Path,
+    source_root: Path,
+    projection_root: Path,
+) -> ProjectionEvidenceDirectory:
+    """Create an unused owner-only artifact directory outside both disposable workspaces."""
+
+    if directory.exists() or directory.is_symlink():
+        raise ValueError("projection evidence directory must be an unused non-symlink path")
+    if directory.parent.is_symlink():
+        raise ValueError("projection evidence directory parent must not be a symlink")
+    directory.parent.mkdir(parents=True, exist_ok=True)
+    parent = directory.parent.resolve()
+    directory = parent / directory.name
+    for workspace in (source_root.resolve(), projection_root.resolve()):
+        if directory == workspace or workspace in directory.parents or directory in workspace.parents:
+            raise ValueError("projection evidence directory must stay outside both workspaces")
+    directory.mkdir(mode=0o700)
+    os.chmod(directory, 0o700)
+    return ProjectionEvidenceDirectory(directory.resolve())
 
 
 def synchronize_model_visible_projection(
     projection: ModelVisibleProjection,
     evidence_path: Path,
+    *,
+    projection_manifest: ProjectionManifestEvidence | None = None,
 ) -> ProjectionSyncManifest:
     """Fail closed or atomically copy allowlisted model-created files to the full fixture."""
 
@@ -928,60 +1013,69 @@ def synchronize_model_visible_projection(
     ):
         raise ValueError("projection sync roots must remain disjoint")
 
-    initial_files = {file.path: file for file in projection.files}
-    original_source_files = {file.path: file for file in projection.source_files}
-    current_source_files = {
-        path.relative_to(source_root).as_posix(): ProjectedFile(
-            path=path.relative_to(source_root).as_posix(),
-            digest=hashlib.sha256(path.read_bytes()).hexdigest(),
-            size=path.stat().st_size,
+    initial_entries = {entry.path: entry for entry in projection.files}
+    sealed_entries = {entry.path: entry for entry in projection.sealed_entries}
+    original_source_entries = {entry.path: entry for entry in projection.source_files}
+    current_source_entries = {
+        entry.path: entry
+        for entry in _projection_product_entries(
+            source_root,
+            include_runner_owned=False,
         )
-        for path in _walk_pruned(source_root)
-        if not _is_runner_owned(path.relative_to(source_root))
     }
-    if current_source_files != original_source_files:
+    if current_source_entries != original_source_entries:
         changed = sorted(
             relative
-            for relative in set(current_source_files) | set(original_source_files)
-            if current_source_files.get(relative) != original_source_files.get(relative)
+            for relative in set(current_source_entries) | set(original_source_entries)
+            if current_source_entries.get(relative) != original_source_entries.get(relative)
         )
         detail = changed[0] if changed else "unknown"
         raise ValueError(f"ambiguous sync state: fixture source changed: {detail}")
     if _projection_source_identity(source_root) != projection.source_identity_digest:
         raise ValueError("ambiguous sync state: fixture source identity changed")
-    for relative, expected in initial_files.items():
+    for relative, expected in initial_entries.items():
         source = source_root / relative
         _reject_relative_symlinks(source_root, PurePosixPath(relative), "projection source")
-        if not source.is_file():
+        if expected.type == "file" and not source.is_file():
             raise ValueError(f"ambiguous sync state: projected source changed: {relative}")
-        content = source.read_bytes()
-        if (
-            len(content) != expected.size
-            or hashlib.sha256(content).hexdigest() != expected.digest
-        ):
+        if expected.type == "directory" and not source.is_dir():
+            raise ValueError(f"ambiguous sync state: projected source changed: {relative}")
+        if _projection_entry(source, source_root) != expected:
             raise ValueError(f"ambiguous sync state: projected source changed: {relative}")
 
     synchronized = tuple(PurePosixPath(path) for path in projection.sync_paths)
     for relative in synchronized:
         _validate_unused_sync_destination(source_root, relative)
 
-    current_files, current_directories = _projection_product_snapshot(projection_root)
+    current_entries = {
+        entry.path: entry
+        for entry in _projection_product_entries(
+            projection_root,
+            include_runner_owned=True,
+        )
+    }
     mutations: list[ProjectionMutation] = []
     mutation_content: dict[str, bytes] = {}
     mutation_bytes = 0
-    for relative in sorted(set(initial_files) | set(current_files)):
-        before = initial_files.get(relative)
-        after = current_files.get(relative)
+    added_directories: list[ProjectedFile] = []
+    for relative in sorted(set(sealed_entries) | set(current_entries)):
+        before = sealed_entries.get(relative)
+        after = current_entries.get(relative)
         if before == after:
             continue
-        if after is None or not any(
-            _path_is_selected(Path(relative), selected) for selected in synchronized
-        ):
-            raise ValueError(f"unexpected model output in projected workspace: {relative}")
         if before is not None:
-            raise ValueError(f"ambiguous sync state: projected input was modified: {relative}")
+            label = "runner-owned context" if _is_runner_owned(Path(relative)) else "projected input"
+            raise ValueError(f"ambiguous sync state: {label} was modified: {relative}")
+        if after is None or _is_runner_owned(Path(relative)):
+            raise ValueError(f"unexpected model output in projected workspace: {relative}")
+        if not any(_path_is_selected(Path(relative), selected) for selected in synchronized):
+            raise ValueError(f"unexpected model output in projected workspace: {relative}")
+        if after.type == "directory":
+            added_directories.append(after)
+            continue
         if len(mutations) >= _MAX_PROJECTION_OUTPUT_FILES:
             raise ValueError("projected workspace exceeded the output file limit")
+        assert after.size is not None and after.digest is not None
         mutation_bytes += after.size
         if mutation_bytes > _MAX_PROJECTION_OUTPUT_BYTES:
             raise ValueError("projected workspace exceeded the output byte limit")
@@ -994,82 +1088,101 @@ def synchronize_model_visible_projection(
             before_digest=None,
             after_digest=after.digest,
             size=after.size,
+            mode=after.mode,
+            retained_evidence="",
         ))
         mutation_content[relative] = source_content
 
-    initial_directories = set(projection.initial_directories)
-    added_directories = current_directories - initial_directories
     mutation_paths = tuple(PurePosixPath(item.path) for item in mutations)
-    for relative in sorted(added_directories):
-        directory = PurePosixPath(relative)
+    for entry in added_directories:
+        directory = PurePosixPath(entry.path)
         if not any(directory in path.parents for path in mutation_paths):
-            raise ValueError(f"unexpected model output directory in projected workspace: {relative}")
+            raise ValueError(f"unexpected model output directory in projected workspace: {entry.path}")
 
-    projected_inputs = [file.__dict__ for file in projection.files]
-    mutation_payload = [
-        {
-            "path": item.path,
-            "action": item.action,
-            "beforeDigest": item.before_digest,
-            "afterDigest": item.after_digest,
-            "size": item.size,
-        }
-        for item in mutations
-    ]
-    payload = {
-        "schema": "dev-methodology-eval-model-visible-projection-sync",
-        "version": 1,
-        "sourceIdentityDigest": projection.source_identity_digest,
-        "projectionManifestDigest": projection.manifest_digest,
-        "modelVisiblePaths": list(projection.model_visible_paths),
-        "evaluatorOnlyPaths": list(projection.evaluator_only_paths),
-        "projectedInputs": projected_inputs,
-        "syncPaths": list(projection.sync_paths),
-        "mutations": mutation_payload,
-    }
-    manifest_digest = hashlib.sha256(
-        json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
-    ).hexdigest()
-    evidence = {**payload, "manifestDigest": manifest_digest}
     evidence_path = _validate_projection_evidence_path(
         evidence_path,
         source_root,
         projection_root,
     )
-    temporary_evidence = evidence_path.with_name(
-        f".{evidence_path.name}.pending-{secrets.token_hex(8)}"
+    projection_manifest_digest = (
+        projection_manifest.manifest_digest
+        if projection_manifest is not None
+        else projection.manifest_digest
     )
-    temporary_evidence.write_text(
-        json.dumps(evidence, indent=2, sort_keys=True) + "\n",
-        encoding="utf-8",
+    projected_inputs = (
+        list(projection_manifest.projected_inputs)
+        if projection_manifest is not None
+        else [entry.__dict__ for entry in projection.files]
     )
-    os.chmod(temporary_evidence, 0o600)
+    retained_paths: list[Path] = []
+    mutation_records: list[dict[str, object]] = []
+    mutation_values: list[ProjectionMutation] = []
+    for mutation in mutations:
+        retained_path, retained_reference = _retain_projection_bytes(
+            evidence_path.parent,
+            "synchronized-output",
+            mutation.path,
+            mutation.mode,
+            mutation_content[mutation.path],
+        )
+        retained_paths.append(retained_path)
+        retained_mutation = replace(mutation, retained_evidence=retained_reference)
+        mutation_values.append(retained_mutation)
+        mutation_records.append(_projection_mutation_record(retained_mutation))
 
     created_files: list[Path] = []
     created_directories: list[Path] = []
     try:
-        for mutation in mutations:
+        directory_modes = {
+            entry.path: entry.mode for entry in added_directories
+        }
+        for mutation in mutation_values:
             destination = source_root / mutation.path
             created_directories.extend(
-                _create_safe_destination_parents(source_root, destination.parent)
-            )
-            if destination.exists() or destination.is_symlink():
-                raise ValueError(
-                    f"ambiguous sync state: source changed at destination: {mutation.path}"
+                _create_safe_destination_parents(
+                    source_root,
+                    destination.parent,
+                    directory_modes,
                 )
-            temporary_destination = destination.with_name(
-                f".{destination.name}.pending-{secrets.token_hex(8)}"
             )
             try:
-                temporary_destination.write_bytes(mutation_content[mutation.path])
-                os.chmod(temporary_destination, 0o600)
-                os.replace(temporary_destination, destination)
-            finally:
-                if temporary_destination.exists():
-                    temporary_destination.unlink()
+                _write_projection_output_exclusive(
+                    destination,
+                    mutation_content[mutation.path],
+                    mutation.mode,
+                )
+            except FileExistsError as error:
+                raise ValueError(
+                    f"ambiguous sync state: source changed at destination: {mutation.path}"
+                ) from error
             created_files.append(destination)
-        os.link(temporary_evidence, evidence_path)
-        temporary_evidence.unlink()
+
+        post_sync_source_identity_digest = _projection_source_identity(source_root)
+        directory_payload = [
+            {"path": entry.path, "mode": entry.mode}
+            for entry in sorted(added_directories, key=lambda item: item.path)
+        ]
+        payload = {
+            "schema": "dev-methodology-eval-model-visible-projection-sync",
+            "version": 2,
+            "preparedSnapshotDigest": projection.prepared_snapshot_digest,
+            "sourceIdentityDigest": projection.source_identity_digest,
+            "postSyncSourceIdentityDigest": post_sync_source_identity_digest,
+            "projectionManifestDigest": projection_manifest_digest,
+            "modelVisiblePaths": list(projection.model_visible_paths),
+            "evaluatorOnlyPaths": list(projection.evaluator_only_paths),
+            "projectedInputs": projected_inputs,
+            "syncPaths": list(projection.sync_paths),
+            "createdDirectories": directory_payload,
+            "mutations": mutation_records,
+        }
+        manifest_digest = hashlib.sha256(
+            json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
+        ).hexdigest()
+        _write_json_exclusive(
+            evidence_path,
+            {**payload, "manifestDigest": manifest_digest},
+        )
     except Exception:
         for created in reversed(created_files):
             if created.is_file() and not created.is_symlink():
@@ -1079,14 +1192,18 @@ def synchronize_model_visible_projection(
                 created.rmdir()
             except OSError:
                 pass
-        if temporary_evidence.exists():
-            temporary_evidence.unlink()
+        evidence_path.unlink(missing_ok=True)
+        for retained in retained_paths:
+            retained.unlink(missing_ok=True)
         raise
 
     return ProjectionSyncManifest(
         evidence_path=evidence_path,
         manifest_digest=manifest_digest,
-        mutations=tuple(mutations),
+        mutations=tuple(mutation_values),
+        mutation_records=tuple(mutation_records),
+        created_directories=tuple(directory_payload),
+        post_sync_source_identity_digest=post_sync_source_identity_digest,
     )
 
 
@@ -1096,38 +1213,54 @@ def write_model_visible_projection_manifest(
 ) -> ProjectionManifestEvidence:
     """Retain the exact source partition and copied input identities outside both workspaces."""
 
-    payload = {
-        "schema": "dev-methodology-eval-model-visible-projection",
-        "version": 1,
-        "sourceIdentityDigest": projection.source_identity_digest,
-        "modelVisiblePaths": list(projection.model_visible_paths),
-        "evaluatorOnlyPaths": list(projection.evaluator_only_paths),
-        "syncPaths": list(projection.sync_paths),
-        "projectedInputs": [file.__dict__ for file in projection.files],
-        "manifestDigest": projection.manifest_digest,
-    }
     evidence_path = _validate_projection_evidence_path(
         evidence_path,
         projection.source_root,
         projection.root,
     )
-    temporary = evidence_path.with_name(
-        f".{evidence_path.name}.pending-{secrets.token_hex(8)}"
-    )
+    projected_inputs: list[dict[str, object]] = []
+    retained_paths: list[Path] = []
+    for entry in projection.files:
+        record = dict(entry.__dict__)
+        retained_evidence: str | None = None
+        if entry.type == "file":
+            retained_path, retained_evidence = _retain_projection_bytes(
+                evidence_path.parent,
+                "projected-input",
+                entry.path,
+                entry.mode,
+                (projection.root / entry.path).read_bytes(),
+            )
+            retained_paths.append(retained_path)
+        record["retainedEvidence"] = retained_evidence
+        projected_inputs.append(record)
+    payload = {
+        "schema": "dev-methodology-eval-model-visible-projection",
+        "version": 2,
+        "preparedSnapshotDigest": projection.prepared_snapshot_digest,
+        "sourceIdentityDigest": projection.source_identity_digest,
+        "modelVisiblePaths": list(projection.model_visible_paths),
+        "evaluatorOnlyPaths": list(projection.evaluator_only_paths),
+        "syncPaths": list(projection.sync_paths),
+        "projectedInputs": projected_inputs,
+    }
+    manifest_digest = hashlib.sha256(
+        json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    ).hexdigest()
     try:
-        temporary.write_text(
-            json.dumps(payload, indent=2, sort_keys=True) + "\n",
-            encoding="utf-8",
+        _write_json_exclusive(
+            evidence_path,
+            {**payload, "manifestDigest": manifest_digest},
         )
-        os.chmod(temporary, 0o600)
-        os.link(temporary, evidence_path)
-        temporary.unlink()
-    finally:
-        if temporary.exists():
-            temporary.unlink()
+    except Exception:
+        for retained in retained_paths:
+            retained.unlink(missing_ok=True)
+        raise
     return ProjectionManifestEvidence(
         evidence_path=evidence_path,
         content_digest=hashlib.sha256(evidence_path.read_bytes()).hexdigest(),
+        manifest_digest=manifest_digest,
+        projected_inputs=tuple(projected_inputs),
     )
 
 
@@ -1201,34 +1334,34 @@ def _relative_projection_paths_overlap(
     return left == right or left in right.parents or right in left.parents
 
 
-def _selected_projection_files(
+def _selected_projection_entries(
     root: Path,
     selected_paths: Sequence[PurePosixPath],
     label: str,
+    available: Mapping[str, ProjectedFile],
     *,
     allow_empty_selection: bool = False,
-) -> dict[str, Path]:
-    files: dict[str, Path] = {}
+) -> dict[str, ProjectedFile]:
+    entries: dict[str, ProjectedFile] = {}
     for relative in selected_paths:
         _reject_relative_symlinks(root, relative, label)
         selected = root / relative
         if not selected.exists():
             raise ValueError(f"declared {label} projection path is missing: {relative}")
-        candidates = (selected,) if selected.is_file() else _walk_pruned(selected)
-        selected_file_count = 0
-        for path in candidates:
-            if not path.is_file():
-                continue
-            relative_file = path.relative_to(root).as_posix()
-            if _is_runner_owned(Path(relative_file)):
-                continue
-            if relative_file in files:
-                raise ValueError(f"{label} projection destination collision: {relative_file}")
-            files[relative_file] = path
-            selected_file_count += 1
-        if not allow_empty_selection and selected_file_count == 0:
-            raise ValueError(f"declared {label} projection path selected no files: {relative}")
-    return files
+        selected_entries = {
+            path: entry
+            for path, entry in available.items()
+            if _path_is_selected(Path(path), relative)
+        }
+        if not selected_entries and not allow_empty_selection:
+            raise ValueError(f"declared {label} projection path selected no entries: {relative}")
+        overlap = set(entries) & set(selected_entries)
+        if overlap:
+            raise ValueError(
+                f"{label} projection destination collision: {sorted(overlap)[0]}"
+            )
+        entries.update(selected_entries)
+    return entries
 
 
 def _reject_relative_symlinks(
@@ -1255,11 +1388,18 @@ def _validate_unused_sync_destination(root: Path, relative: PurePosixPath) -> No
             raise ValueError(f"projection sync destination collision: {relative}")
 
 
-def _projection_product_snapshot(
+def _projection_source_identity(root: Path) -> str:
+    return _projection_entries_digest(
+        _projection_product_entries(root, include_runner_owned=False)
+    )
+
+
+def _projection_product_entries(
     root: Path,
-) -> tuple[dict[str, ProjectedFile], set[str]]:
-    files: dict[str, ProjectedFile] = {}
-    directories: set[str] = set()
+    *,
+    include_runner_owned: bool,
+) -> tuple[ProjectedFile, ...]:
+    entries: list[ProjectedFile] = []
     for directory, directory_names, file_names in os.walk(
         root,
         topdown=True,
@@ -1270,43 +1410,64 @@ def _projection_product_snapshot(
         for name in sorted(directory_names):
             path = current / name
             relative = path.relative_to(root)
-            if _is_runner_owned(relative) or name in TRANSIENT_TREE_NAMES:
+            if not include_runner_owned and _is_runner_owned(relative):
                 continue
             if path.is_symlink():
                 raise ValueError(
                     f"projected workspace contains a directory symlink: {relative}"
                 )
+            if not path.is_dir():
+                raise ValueError(
+                    f"projected workspace contains an unsupported entry: {relative}"
+                )
             retained_directories.append(name)
-            directories.add(relative.as_posix())
+            entries.append(_projection_entry(path, root))
         directory_names[:] = retained_directories
         for name in sorted(file_names):
             path = current / name
             relative = path.relative_to(root)
-            if _is_runner_owned(relative):
+            if not include_runner_owned and _is_runner_owned(relative):
                 continue
             if path.is_symlink():
                 raise ValueError(
                     f"projected workspace contains a file symlink: {relative}"
                 )
             if not path.is_file():
-                raise ValueError(f"projected workspace contains an unsupported entry: {relative}")
-            content = path.read_bytes()
-            files[relative.as_posix()] = ProjectedFile(
-                path=relative.as_posix(),
-                digest=hashlib.sha256(content).hexdigest(),
-                size=len(content),
-            )
-    return files, directories
+                raise ValueError(
+                    f"projected workspace contains an unsupported entry: {relative}"
+                )
+            entries.append(_projection_entry(path, root))
+    return tuple(sorted(entries, key=lambda entry: entry.path))
 
 
-def _projection_source_identity(root: Path) -> str:
-    snapshot = snapshot_tree(
-        root,
-        exclude_transient=True,
-        excluded_top_level_names=_RUNNER_OWNED_ROOTS,
+def _projection_entry(path: Path, root: Path) -> ProjectedFile:
+    relative = path.relative_to(root).as_posix()
+    mode = _entry_mode(path)
+    if path.is_dir():
+        return ProjectedFile(relative, "directory", mode, None, None)
+    content = path.read_bytes()
+    return ProjectedFile(
+        relative,
+        "file",
+        mode,
+        hashlib.sha256(content).hexdigest(),
+        len(content),
     )
-    for marker in _RUNNER_OWNED_FILES:
-        snapshot.pop(marker, None)
+
+
+def _entry_mode(path: Path) -> str:
+    return format(stat.S_IMODE(path.lstat().st_mode), "03o")
+
+
+def _projection_entries_digest(entries: Sequence[ProjectedFile]) -> str:
+    snapshot = {
+        entry.path: (
+            f"dir:{entry.mode}"
+            if entry.type == "directory"
+            else f"file:{entry.mode}:{entry.digest}"
+        )
+        for entry in entries
+    }
     return snapshot_digest(snapshot)
 
 
@@ -1319,7 +1480,8 @@ def _validate_projection_evidence_path(
         raise ValueError("projection sync evidence destination must be unused")
     if evidence_path.parent.is_symlink():
         raise ValueError("projection sync evidence parent must not be a symlink")
-    evidence_path.parent.mkdir(parents=True, exist_ok=True)
+    evidence_path.parent.mkdir(parents=True, mode=0o700, exist_ok=True)
+    os.chmod(evidence_path.parent, 0o700)
     evidence_path = evidence_path.resolve()
     if (
         evidence_path == source_root
@@ -1331,7 +1493,11 @@ def _validate_projection_evidence_path(
     return evidence_path
 
 
-def _create_safe_destination_parents(root: Path, destination_parent: Path) -> list[Path]:
+def _create_safe_destination_parents(
+    root: Path,
+    destination_parent: Path,
+    directory_modes: Mapping[str, str],
+) -> list[Path]:
     if destination_parent == root:
         return []
     try:
@@ -1345,9 +1511,93 @@ def _create_safe_destination_parents(root: Path, destination_parent: Path) -> li
         if current.is_symlink() or (current.exists() and not current.is_dir()):
             raise ValueError("projection sync destination parent is unsafe")
         if not current.exists():
-            current.mkdir()
+            relative_current = current.relative_to(root).as_posix()
+            current.mkdir(mode=int(directory_modes.get(relative_current, "700"), 8))
+            os.chmod(current, int(directory_modes.get(relative_current, "700"), 8))
             created.append(current)
     return created
+
+
+def _write_projection_output_exclusive(
+    destination: Path,
+    content: bytes,
+    mode: str,
+) -> None:
+    flags = os.O_CREAT | os.O_EXCL | os.O_WRONLY | getattr(os, "O_NOFOLLOW", 0)
+    descriptor = os.open(destination, flags, int(mode, 8))
+    try:
+        with os.fdopen(descriptor, "wb") as stream:
+            descriptor = -1
+            stream.write(content)
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.chmod(destination, int(mode, 8))
+    except Exception:
+        if descriptor >= 0:
+            os.close(descriptor)
+        destination.unlink(missing_ok=True)
+        raise
+
+
+def _retain_projection_bytes(
+    evidence_root: Path,
+    kind: str,
+    relative: str,
+    mode: str,
+    content: bytes,
+) -> tuple[Path, str]:
+    retained_root = evidence_root / "retained-bytes"
+    retained_root.mkdir(mode=0o700, exist_ok=True)
+    os.chmod(retained_root, 0o700)
+    identity = hashlib.sha256(f"{kind}\0{relative}".encode("utf-8")).hexdigest()
+    artifact = retained_root / f"{identity}.json"
+    digest = hashlib.sha256(content).hexdigest()
+    marker = "dev-methodology-eval-projection-retained-bytes"
+    _write_json_exclusive(
+        artifact,
+        {
+            "schema": marker,
+            "version": 1,
+            "kind": kind,
+            "path": relative,
+            "mode": mode,
+            "digest": digest,
+            "size": len(content),
+            "contentBase64": base64.b64encode(content).decode("ascii"),
+        },
+    )
+    reference = f"{artifact.relative_to(evidence_root).as_posix()}#{marker}"
+    return artifact, reference
+
+
+def _projection_mutation_record(mutation: ProjectionMutation) -> dict[str, object]:
+    return {
+        "path": mutation.path,
+        "action": mutation.action,
+        "beforeDigest": mutation.before_digest,
+        "afterDigest": mutation.after_digest,
+        "size": mutation.size,
+        "mode": mutation.mode,
+        "retainedEvidence": mutation.retained_evidence,
+    }
+
+
+def _write_json_exclusive(path: Path, value: Mapping[str, object]) -> None:
+    content = (json.dumps(value, indent=2, sort_keys=True) + "\n").encode("utf-8")
+    flags = os.O_CREAT | os.O_EXCL | os.O_WRONLY | getattr(os, "O_NOFOLLOW", 0)
+    descriptor = os.open(path, flags, 0o600)
+    try:
+        with os.fdopen(descriptor, "wb") as stream:
+            descriptor = -1
+            stream.write(content)
+            stream.flush()
+            os.fsync(stream.fileno())
+    except Exception:
+        if descriptor >= 0:
+            os.close(descriptor)
+        path.unlink(missing_ok=True)
+        raise
+    os.chmod(path, 0o600)
 
 
 def _path_is_selected(path: Path, selected: PurePosixPath) -> bool:

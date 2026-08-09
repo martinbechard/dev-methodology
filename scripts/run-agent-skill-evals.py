@@ -6,6 +6,7 @@
 from __future__ import annotations
 
 import argparse
+import base64
 import hashlib
 import json
 import os
@@ -15,7 +16,7 @@ import sys
 import tempfile
 from contextlib import contextmanager, nullcontext
 from pathlib import Path, PurePosixPath
-from typing import Iterable, Iterator, Mapping
+from typing import Iterable, Iterator, Mapping, NamedTuple
 
 import yaml
 
@@ -23,6 +24,9 @@ try:
     from agent_skill_evals import *  # noqa: F403
     from agent_skill_evals.staging import (
         ModelVisibleProjection,
+        ProjectionEvidenceDirectory,
+        create_projection_evidence_directory,
+        seal_model_visible_projection,
         stage_mcp_reference_context,
         stage_model_visible_projection,
         synchronize_model_visible_projection,
@@ -32,6 +36,9 @@ except ModuleNotFoundError:
     from scripts.agent_skill_evals import *  # type: ignore[no-redef]  # noqa: F403
     from scripts.agent_skill_evals.staging import (
         ModelVisibleProjection,
+        ProjectionEvidenceDirectory,
+        create_projection_evidence_directory,
+        seal_model_visible_projection,
         stage_mcp_reference_context,
         stage_model_visible_projection,
         synchronize_model_visible_projection,
@@ -47,6 +54,25 @@ except ModuleNotFoundError:
 _MAX_CAPTURE_REDACTION_BYTES = 10 * 1024 * 1024
 _MAX_PRESERVED_OUTPUT_FILES = 512
 _MAX_PRESERVED_OUTPUT_BYTES = 20 * 1024 * 1024
+
+
+class TrustedProjectionVerifier(NamedTuple):
+    """Bind one normalized evaluator-owned verifier to exact executable and source bytes."""
+
+    specification: object
+    governed_argv: tuple[str, ...]
+    interpreter_name: str
+    interpreter_digest: str
+    source_kind: str
+    source_path: str
+    source_digest: str
+    source_size: int
+    source_evidence: str
+    script_path: Path
+    execution_script_digest: str
+    contract_digest: str
+    semantic_result_field: str
+    semantic_red_exit_code: int | None
 
 
 def run(command: object, cwd: Path) -> bool:
@@ -358,6 +384,7 @@ def _argument_parser() -> argparse.ArgumentParser:
     parser.add_argument("--agent-id")
     parser.add_argument("--model", default="configured-model")
     parser.add_argument("--event-output", type=Path)
+    parser.add_argument("--receipt-artifact-directory", type=Path)
     parser.add_argument("--mcp-agent-ops-executable", type=Path)
     parser.add_argument("--codex-auth-file", type=Path)
     parser.add_argument("--output-schema", type=Path)
@@ -850,32 +877,195 @@ def _trusted_output_schema(path: Path | None) -> Path | None:
     return validate_codex_output_schema(path)  # noqa: F405
 
 
+def _prepare_projection_verifier_command(
+    case: Mapping[str, object],
+    projection: ModelVisibleProjection,
+    package: ProjectionEvidenceDirectory,
+) -> TrustedProjectionVerifier:
+    """Normalize one exact catalog verifier into a digest-bound evaluator-owned script."""
+
+    case_id = case.get("id")
+    catalog_case = load_cases().get(str(case_id))  # noqa: F405
+    if (
+        case_id not in {
+            "terminology-standard-effect",
+            "terminology-standard-negative-activation",
+        }
+        or not isinstance(catalog_case, Mapping)
+        or case.get("verify") != catalog_case.get("verify")
+    ):
+        raise ValueError(
+            "trusted projection verifier is not an exact governed catalog command"
+        )
+    governed = command_spec(case.get("verify"))  # noqa: F405
+    if governed.inherit_environment or governed.environment:
+        raise ValueError("trusted projection verifier cannot inherit or add environment values")
+    governed_argv = tuple(governed.argv)
+    if governed_argv[0] != "python3":
+        raise ValueError("trusted projection verifier must use the governed Python interpreter")
+
+    source_kind: str
+    source_path: str
+    semantic_result_field: str
+    semantic_red_exit_code: int | None
+    if (
+        case_id == "terminology-standard-effect"
+        and len(governed_argv) == 3
+        and governed_argv[1] == "-c"
+    ):
+        source_kind = "case-inline-normalized"
+        source_path = "case.verify.argv[2]"
+        source_content = governed_argv[2].encode("utf-8")
+        execution_content = source_content
+        semantic_result_field = "passed"
+        semantic_red_exit_code = 3
+    elif (
+        case_id == "terminology-standard-negative-activation"
+        and governed_argv == ("python3", "verify.py", "preserved-evidence.md")
+        and any(
+            _relative_path_contains_for_projection("verify.py", selected)
+            for selected in projection.evaluator_only_paths
+        )
+    ):
+        source_kind = "evaluator-only-source"
+        source_path = "verify.py"
+        source = projection.source_root / source_path
+        if source.is_symlink() or not source.is_file():
+            raise ValueError("trusted projection verifier source is missing or unsafe")
+        source_content = source.read_bytes()
+        expected = next(
+            (entry for entry in projection.source_files if entry.path == source_path),
+            None,
+        )
+        if (
+            expected is None
+            or expected.type != "file"
+            or expected.digest != hashlib.sha256(source_content).hexdigest()
+            or expected.size != len(source_content)
+        ):
+            raise ValueError("trusted projection verifier source differs from the prepared snapshot")
+        original_file = source_path
+        execution_content = (
+            "import sys\n"
+            f"sys.argv = {json.dumps([source_path, *governed_argv[2:]])}\n"
+            f"__file__ = {json.dumps(original_file)}\n"
+        ).encode("utf-8") + source_content
+        semantic_result_field = "exactBytesPreserved"
+        semantic_red_exit_code = None
+    else:
+        raise ValueError(
+            "trusted projection verifier command is not one of the two governed forms"
+        )
+
+    interpreter_value = shutil.which("python3")
+    if interpreter_value is None:
+        raise ValueError("trusted projection verifier Python interpreter is unavailable")
+    interpreter = Path(interpreter_value).resolve(strict=True)
+    if not interpreter.is_file():
+        raise ValueError("trusted projection verifier Python interpreter is not a file")
+    interpreter_digest = hashlib.sha256(interpreter.read_bytes()).hexdigest()
+    source_digest = hashlib.sha256(source_content).hexdigest()
+    execution_script_digest = hashlib.sha256(execution_content).hexdigest()
+    script_path = package.path("trusted-verifier.py")
+    _write_owner_only_bytes(script_path, execution_content)
+    source_evidence_path = package.path("trusted-verifier-source.json")
+    source_marker = "dev-methodology-eval-projection-verifier-source"
+    _write_owner_only_json(
+        source_evidence_path,
+        {
+            "schema": source_marker,
+            "version": 1,
+            "kind": source_kind,
+            "path": source_path,
+            "digest": source_digest,
+            "size": len(source_content),
+            "contentBase64": base64.b64encode(source_content).decode("ascii"),
+        },
+    )
+    source_evidence = package.reference(source_evidence_path, source_marker)
+    contract_payload = {
+        "schema": "dev-methodology-eval-projection-verifier-command",
+        "version": 1,
+        "case": case_id,
+        "governedArgv": list(governed_argv),
+        "interpreterName": "python3",
+        "interpreterDigest": interpreter_digest,
+        "sourceKind": source_kind,
+        "sourcePath": source_path,
+        "sourceDigest": source_digest,
+        "sourceSize": len(source_content),
+        "sourceEvidence": source_evidence,
+        "executionScriptDigest": execution_script_digest,
+        "semanticResultField": semantic_result_field,
+        "semanticRedExitCode": semantic_red_exit_code,
+    }
+    contract_digest = hashlib.sha256(
+        json.dumps(contract_payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    ).hexdigest()
+    trusted = TrustedProjectionVerifier(
+        specification=command_spec([str(interpreter), str(script_path)]),  # noqa: F405
+        governed_argv=governed_argv,
+        interpreter_name="python3",
+        interpreter_digest=interpreter_digest,
+        source_kind=source_kind,
+        source_path=source_path,
+        source_digest=source_digest,
+        source_size=len(source_content),
+        source_evidence=source_evidence,
+        script_path=script_path,
+        execution_script_digest=execution_script_digest,
+        contract_digest=contract_digest,
+        semantic_result_field=semantic_result_field,
+        semantic_red_exit_code=semantic_red_exit_code,
+    )
+    _validate_projection_verifier_command(trusted.specification, projection, trusted)
+    return trusted
+
+
 def _validate_projection_verifier_command(
     specification: object,
     projection: ModelVisibleProjection,
+    trusted: TrustedProjectionVerifier,
 ) -> None:
-    """Reject a trusted verifier that would execute code from a model-write path."""
+    """Require the exact normalized interpreter and evaluator-owned script command."""
 
+    expected_argv = tuple(trusted.specification.argv)
     argv = tuple(specification.argv)
-    executable = Path(argv[0]).name.lower()
-    interpreter_names = {
-        "bash", "dash", "node", "nodejs", "python", "python3", "ruby", "sh", "zsh",
-    }
-    executed_candidates = [argv[0]]
-    if executable in interpreter_names:
-        for argument in argv[1:]:
-            if argument in {"-c", "-e", "-m"}:
-                break
-            if argument.startswith("-"):
-                continue
-            executed_candidates.append(argument)
-            break
-    for argument in executed_candidates:
-        if _projection_argument_is_model_write_path(argument, projection):
-            raise ValueError(
-                "trusted projection verifier cannot execute a model-write path: "
-                f"{argument}"
-            )
+    valid = (
+        argv == expected_argv
+        and len(argv) == 2
+        and Path(argv[0]).resolve() == Path(expected_argv[0]).resolve()
+        and Path(argv[1]).resolve() == trusted.script_path.resolve()
+        and not specification.inherit_environment
+        and not specification.environment
+    )
+    if not valid:
+        raise ValueError(
+            "trusted projection verifier must match the exact evaluator-owned command contract"
+        )
+    if any(argument in {"-c", "-e", "-m"} or argument.startswith("-") for argument in argv):
+        raise ValueError(
+            "trusted projection verifier must match the exact evaluator-owned command contract"
+        )
+    if any(_projection_argument_is_model_write_path(argument, projection) for argument in argv):
+        raise ValueError(
+            "trusted projection verifier must match the exact evaluator-owned command contract"
+        )
+    interpreter = Path(argv[0])
+    if (
+        interpreter.is_symlink()
+        or not interpreter.is_file()
+        or hashlib.sha256(interpreter.read_bytes()).hexdigest()
+        != trusted.interpreter_digest
+    ):
+        raise ValueError("trusted projection verifier interpreter identity changed before execution")
+    if (
+        trusted.script_path.is_symlink()
+        or not trusted.script_path.is_file()
+        or hashlib.sha256(trusted.script_path.read_bytes()).hexdigest()
+        != trusted.execution_script_digest
+    ):
+        raise ValueError("trusted projection verifier script identity changed before execution")
 
 
 def _projection_argument_is_model_write_path(
@@ -902,16 +1092,30 @@ def _projection_argument_is_model_write_path(
     )
 
 
+def _relative_path_contains_for_projection(path: str, selected: str) -> bool:
+    selected_path = PurePosixPath(selected)
+    value = PurePosixPath(path)
+    return selected_path.as_posix() == "." or value == selected_path or selected_path in value.parents
+
+
 def _run_projection_verifier(
     case: Mapping[str, object],
     active_root: Path,
     specification: object,
     evidence_path: Path,
     redactions: Mapping[str, str],
+    *,
+    expected_fixture_digest: str,
+    trusted: TrustedProjectionVerifier | None = None,
 ) -> tuple[dict[str, object], bool]:
     """Run and retain one evaluator-owned verifier against the full disposable fixture."""
 
     before = snapshot_product_tree(active_root)  # noqa: F405
+    before_digest = snapshot_digest(before)  # noqa: F405
+    if before_digest != expected_fixture_digest:
+        raise ValueError(
+            "trusted projection verifier pre-state differs from the post-sync fixture identity"
+        )
     result = run_command(specification, active_root)  # noqa: F405
     after = snapshot_product_tree(active_root)  # noqa: F405
     stdout = _redact_approved_environment(result.stdout, redactions)
@@ -920,28 +1124,146 @@ def _run_projection_verifier(
         "target-omitted",
         "wrong-skill",
     }
+    semantic_field = (
+        trusted.semantic_result_field
+        if trusted is not None
+        else "passed"
+    )
+    semantic_result: Mapping[str, object] | None = None
+    try:
+        parsed = json.loads(stdout)
+        if isinstance(parsed, Mapping) and isinstance(parsed.get(semantic_field), bool):
+            semantic_result = parsed
+    except json.JSONDecodeError:
+        pass
+    semantic_value = (
+        semantic_result.get(semantic_field)
+        if semantic_result is not None
+        else None
+    )
+    red_exit_code = (
+        trusted.semantic_red_exit_code
+        if trusted is not None
+        else 3
+    )
+    infrastructure_failure: str | None = None
+    if result.exit_code == 124 and "timed out" in stderr:
+        outcome = "infrastructure-failure"
+        infrastructure_failure = "timeout"
+    elif result.exit_code == 125 and "output exceeded" in stderr:
+        outcome = "infrastructure-failure"
+        infrastructure_failure = "output-cap"
+    elif result.exit_code < 0:
+        outcome = "infrastructure-failure"
+        infrastructure_failure = "signal"
+    elif result.exit_code not in {0, red_exit_code}:
+        outcome = "infrastructure-failure"
+        infrastructure_failure = "crash"
+    elif semantic_result is None:
+        outcome = "infrastructure-failure"
+        infrastructure_failure = "malformed-result"
+    elif result.exit_code == 0 and semantic_value is True:
+        outcome = "semantic-green"
+    elif (
+        control_observation
+        and red_exit_code is not None
+        and result.exit_code == red_exit_code
+        and semantic_value is False
+    ):
+        outcome = "semantic-red"
+    else:
+        outcome = "infrastructure-failure"
+        infrastructure_failure = "malformed-result"
+    command_contract = (
+        _projection_verifier_contract_record(case, trusted)
+        if trusted is not None
+        else None
+    )
     payload = {
         "schema": "dev-methodology-eval-projection-verification",
-        "version": 1,
+        "version": 2,
         "case": case["id"],
-        "argv": list(specification.argv),
+        "argv": list(trusted.governed_argv if trusted is not None else specification.argv),
+        "commandContract": command_contract,
+        "commandContractDigest": trusted.contract_digest if trusted is not None else None,
         "exitCode": result.exit_code,
-        "passed": result.passed,
+        "passed": outcome == "semantic-green",
+        "outcome": outcome,
+        "infrastructureFailure": infrastructure_failure,
+        "semanticResultDigest": (
+            hashlib.sha256(
+                json.dumps(
+                    semantic_result,
+                    sort_keys=True,
+                    separators=(",", ":"),
+                ).encode("utf-8")
+            ).hexdigest()
+            if semantic_result is not None
+            else None
+        ),
         "expectation": (
             "control-observation" if control_observation else "success-required"
         ),
-        "fixtureDigestBefore": snapshot_digest(before),  # noqa: F405
+        "expectedFixtureDigest": expected_fixture_digest,
+        "fixtureDigestBefore": before_digest,
         "fixtureDigestAfter": snapshot_digest(after),  # noqa: F405
         "fixtureUnchanged": before == after,
         "stdout": stdout,
         "stderr": stderr,
     }
-    evidence_path.write_text(
-        json.dumps(payload, indent=2, sort_keys=True) + "\n",
-        encoding="utf-8",
+    _write_owner_only_json(evidence_path, payload)
+    acceptable_outcome = (
+        outcome == "semantic-red"
+        if control_observation
+        else outcome == "semantic-green"
     )
-    os.chmod(evidence_path, 0o600)
-    return payload, (control_observation or result.passed) and before == after
+    return payload, acceptable_outcome and before == after
+
+
+def _projection_verifier_contract_record(
+    case: Mapping[str, object],
+    trusted: TrustedProjectionVerifier,
+) -> dict[str, object]:
+    return {
+        "schema": "dev-methodology-eval-projection-verifier-command",
+        "version": 1,
+        "case": case.get("id"),
+        "governedArgv": list(trusted.governed_argv),
+        "interpreterName": trusted.interpreter_name,
+        "interpreterDigest": trusted.interpreter_digest,
+        "sourceKind": trusted.source_kind,
+        "sourcePath": trusted.source_path,
+        "sourceDigest": trusted.source_digest,
+        "sourceSize": trusted.source_size,
+        "sourceEvidence": trusted.source_evidence,
+        "executionScriptDigest": trusted.execution_script_digest,
+        "semanticResultField": trusted.semantic_result_field,
+        "semanticRedExitCode": trusted.semantic_red_exit_code,
+    }
+
+
+def _write_owner_only_bytes(path: Path, content: bytes) -> None:
+    flags = os.O_CREAT | os.O_EXCL | os.O_WRONLY | getattr(os, "O_NOFOLLOW", 0)
+    descriptor = os.open(path, flags, 0o600)
+    try:
+        with os.fdopen(descriptor, "wb") as stream:
+            descriptor = -1
+            stream.write(content)
+            stream.flush()
+            os.fsync(stream.fileno())
+    except Exception:
+        if descriptor >= 0:
+            os.close(descriptor)
+        path.unlink(missing_ok=True)
+        raise
+    os.chmod(path, 0o600)
+
+
+def _write_owner_only_json(path: Path, value: Mapping[str, object]) -> None:
+    _write_owner_only_bytes(
+        path,
+        (json.dumps(value, indent=2, sort_keys=True) + "\n").encode("utf-8"),
+    )
 
 
 def _handle_harness_invocation(
@@ -984,6 +1306,20 @@ def _handle_harness_invocation(
     ):
         return "model-visible projection requires validated path lists"
     try:
+        marker = active_root / ".eval-workspace.json"
+        if not marker.is_file() or marker.is_symlink():
+            return "harness invocation requires a runner-owned disposable workspace"
+        marker_value = json.loads(marker.read_text(encoding="utf-8"))
+        prepared_snapshot_digest = (
+            marker_value.get("preparedSnapshotDigest")
+            if isinstance(marker_value, Mapping)
+            else None
+        )
+        if (
+            not isinstance(prepared_snapshot_digest, str)
+            or not re.fullmatch(r"[0-9a-f]{64}", prepared_snapshot_digest)
+        ):
+            return "harness invocation workspace lacks a prepared snapshot identity"
         with tempfile.TemporaryDirectory(
             prefix=f".{case['id']}-{args.harness}-model-visible-",
             dir=active_root.parent,
@@ -994,10 +1330,8 @@ def _handle_harness_invocation(
                 model_visible_paths,
                 evaluator_only_paths=projection_contract["evaluatorOnlyPaths"],
                 sync_paths=[*allowed_write_paths, *ephemeral_write_paths],
+                prepared_snapshot_digest=prepared_snapshot_digest,
             )
-            marker = active_root / ".eval-workspace.json"
-            if not marker.is_file() or marker.is_symlink():
-                return "harness invocation requires a runner-owned disposable workspace"
             shutil.copy2(marker, projection.root / marker.name)
             return _handle_harness_invocation_in_workspace(
                 args,
@@ -1047,6 +1381,20 @@ def _handle_harness_invocation_in_workspace(
         or evidence_root / f"{case['id']}-{args.harness}-{active_root.name}-events.jsonl"
     )
     event_output = event_output.resolve()
+    projection_evidence_directory = None
+    if projection is not None:
+        package_path = (
+            args.receipt_artifact_directory
+            or event_output.with_name(f"{event_output.stem}-receipt-artifacts")
+        )
+        try:
+            projection_evidence_directory = create_projection_evidence_directory(
+                package_path,
+                active_root,
+                harness_root,
+            )
+        except ValueError as error:
+            return f"projection receipt artifact packaging failed: {error}"
     mcp_audit_output = event_output.with_name(
         f"{event_output.stem}-mcp-audit.jsonl"
     )
@@ -1054,17 +1402,17 @@ def _handle_harness_invocation_in_workspace(
         f"{event_output.stem}-mcp-identity.json"
     )
     projection_sync_output = (
-        event_output.with_name(f"{event_output.stem}-projection-sync.json")
+        projection_evidence_directory.path("projection-sync.json")
         if projection is not None
         else None
     )
     projection_manifest_output = (
-        event_output.with_name(f"{event_output.stem}-projection-manifest.json")
+        projection_evidence_directory.path("projection-manifest.json")
         if projection is not None
         else None
     )
     projection_verifier_output = (
-        event_output.with_name(f"{event_output.stem}-projection-verifier.json")
+        projection_evidence_directory.path("projection-verifier.json")
         if projection is not None
         else None
     )
@@ -1084,17 +1432,18 @@ def _handle_harness_invocation_in_workspace(
         except ValueError as error:
             return f"Codex authentication preflight failed: {error}"
         codex_home = event_output.parent / f".codex-home-{active_root.name}"
+    projection_verifier = None
     projection_verifier_specification = None
     try:
         output_schema = _trusted_output_schema(args.output_schema)
         if projection is not None:
-            projection_verifier_specification = command_spec(case.get("verify"))  # noqa: F405
-            if projection_verifier_specification.inherit_environment:
-                return "trusted projection verifier cannot inherit the host environment"
-            _validate_projection_verifier_command(
-                projection_verifier_specification,
+            assert projection_evidence_directory is not None
+            projection_verifier = _prepare_projection_verifier_command(
+                case,
                 projection,
+                projection_evidence_directory,
             )
+            projection_verifier_specification = projection_verifier.specification
         resource_allowlist = case.get("skillResourceAllowlist", {})
         if not isinstance(resource_allowlist, dict) or any(
             not isinstance(skill, str)
@@ -1207,6 +1556,8 @@ def _handle_harness_invocation_in_workspace(
         mcp_agent_ops=mcp_context,
         codex_home=codex_home,
     )
+    if projection is not None:
+        projection = seal_model_visible_projection(projection)
     execution_command = command
     projection_manifest_evidence = None
     if projection is not None and projection_manifest_output is not None:
@@ -1239,23 +1590,29 @@ def _handle_harness_invocation_in_workspace(
             "approvedEnvironmentNames": list(execution_command.host_environment_allowlist),
         }
         if projection is not None:
+            assert projection_evidence_directory is not None
             invocation_record["modelVisibleProjection"] = {
                 "mode": "isolated-harness-workspace",
+                "preparedSnapshotDigest": projection.prepared_snapshot_digest,
                 "sourceIdentityDigest": projection.source_identity_digest,
-                "projectionManifestDigest": projection.manifest_digest,
-                "projectionEvidence": str(
-                    projection_manifest_evidence.evidence_path
+                "projectionManifestDigest": projection_manifest_evidence.manifest_digest,
+                "projectionEvidence": projection_evidence_directory.reference(
+                    projection_manifest_evidence.evidence_path,
+                    "dev-methodology-eval-model-visible-projection",
                 ),
                 "projectionEvidenceDigest": (
                     projection_manifest_evidence.content_digest
                 ),
-                "projectedInputs": [file.__dict__ for file in projection.files],
+                "projectedInputs": list(projection_manifest_evidence.projected_inputs),
                 "evaluatorOnlyPaths": list(projection.evaluator_only_paths),
                 "syncPaths": list(projection.sync_paths),
                 "syncEvidenceStatus": (
                     "pending-runtime" if args.invoke_harness else "preflight-only"
                 ),
             }
+            invocation_record["receiptArtifactDirectory"] = str(
+                projection_evidence_directory.root
+            )
         if isinstance(case.get("probeId"), str):
             invocation_record["probeId"] = case["probeId"]
             invocation_record["probeVariant"] = case.get("probeVariant")
@@ -1424,6 +1781,7 @@ def _handle_harness_invocation_in_workspace(
                 projection_sync = synchronize_model_visible_projection(
                     projection,
                     projection_sync_output,
+                    projection_manifest=projection_manifest_evidence,
                 )
             if not result.passed:
                 return f"{args.harness} invocation failed with exit code {result.exit_code}"
@@ -1438,61 +1796,73 @@ def _handle_harness_invocation_in_workspace(
                     projection_verifier_specification,
                     projection_verifier_output,
                     redactions,
+                    expected_fixture_digest=(
+                        projection_sync.post_sync_source_identity_digest
+                    ),
+                    trusted=projection_verifier,
                 )
                 assert projection_sync is not None
+                assert projection_evidence_directory is not None
                 projection_record = {
                     "mode": "isolated-harness-workspace",
+                    "preparedSnapshotDigest": projection.prepared_snapshot_digest,
                     "sourceIdentityDigest": projection.source_identity_digest,
-                    "projectionManifestDigest": projection.manifest_digest,
-                    "projectionEvidence": str(
-                        projection_manifest_evidence.evidence_path
+                    "postSyncSourceIdentityDigest": (
+                        projection_sync.post_sync_source_identity_digest
+                    ),
+                    "projectionManifestDigest": projection_manifest_evidence.manifest_digest,
+                    "projectionEvidence": projection_evidence_directory.reference(
+                        projection_manifest_evidence.evidence_path,
+                        "dev-methodology-eval-model-visible-projection",
                     ),
                     "projectionEvidenceDigest": (
                         projection_manifest_evidence.content_digest
                     ),
-                    "projectedInputs": [file.__dict__ for file in projection.files],
+                    "projectedInputs": list(projection_manifest_evidence.projected_inputs),
                     "evaluatorOnlyPaths": list(projection.evaluator_only_paths),
                     "syncPaths": list(projection.sync_paths),
-                    "syncEvidence": str(projection_sync.evidence_path),
+                    "syncEvidence": projection_evidence_directory.reference(
+                        projection_sync.evidence_path,
+                        "dev-methodology-eval-model-visible-projection-sync",
+                    ),
                     "syncEvidenceDigest": hashlib.sha256(
                         projection_sync.evidence_path.read_bytes()
                     ).hexdigest(),
                     "syncManifestDigest": projection_sync.manifest_digest,
-                    "mutations": [
-                        {
-                            "path": mutation.path,
-                            "action": mutation.action,
-                            "beforeDigest": mutation.before_digest,
-                            "afterDigest": mutation.after_digest,
-                            "size": mutation.size,
-                        }
-                        for mutation in projection_sync.mutations
-                    ],
-                    "evaluatorVerificationEvidence": str(
-                        projection_verifier_output
+                    "createdDirectories": list(
+                        projection_sync.created_directories
+                    ),
+                    "mutations": list(projection_sync.mutation_records),
+                    "evaluatorVerificationEvidence": projection_evidence_directory.reference(
+                        projection_verifier_output,
+                        "dev-methodology-eval-projection-verification",
                     ),
                     "evaluatorVerificationEvidenceDigest": hashlib.sha256(
                         projection_verifier_output.read_bytes()
                     ).hexdigest(),
-                    "evaluatorVerificationStatus": (
-                        "passed" if verifier_record["passed"] else "failed"
-                    ),
+                    "evaluatorVerificationStatus": verifier_record["outcome"],
                     "evaluatorVerificationExitCode": verifier_record["exitCode"],
                     "evaluatorVerificationExpectation": verifier_record[
                         "expectation"
                     ],
+                    "evaluatorVerificationCommandDigest": (
+                        projection_verifier.contract_digest
+                    ),
                     "syncEvidenceStatus": "applied-and-recorded",
                 }
                 print(json.dumps({
                     "case": case["id"],
+                    "receiptArtifactDirectory": str(
+                        projection_evidence_directory.root
+                    ),
                     "modelVisibleProjection": projection_record,
                 }, sort_keys=True))
                 if not verifier_acceptable:
                     if verifier_record["fixtureUnchanged"] is not True:
                         return "trusted full-fixture verifier changed the fixture"
                     return (
-                        "trusted full-fixture verifier failed with exit code "
-                        f"{verifier_record['exitCode']}"
+                        "trusted full-fixture verifier did not produce an acceptable "
+                        f"semantic outcome: {verifier_record['outcome']}"
                     )
             if (
                 args.harness == "codex"
