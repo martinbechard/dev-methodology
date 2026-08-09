@@ -1,10 +1,10 @@
 # Improve Blocked Item Handling
 
-Status: Ready
+Status: Completed
 
 Type: Defect
 
-Owner: Unowned
+Owner: Dev Backlog Coordinator SOLO crisis task
 
 Provider: file
 
@@ -91,3 +91,10 @@ None.
 ### Approval Resolution
 
 Approved at creation. User wording on 2026-08-09 required clearer Backlog Coordinator guidance for Blocked analysis, authorized corrective file work, same-task restart through Starting, truthful Running or Blocked acceptance, and exact user escalation when a genuinely user-owned decision remains. Approval is limited to the governed canonical paths listed above; an additional governed definition path requires separately recorded scope-specific approval.
+
+## Completion Evidence
+
+- Delivered on authoritative main in commit `02fc4883`.
+- Added the mandatory ordinary Blocked recovery state machine, Coordinator-owned diagnosis and authorized correction, same-task preservation, exact User Action Required boundary, and serialized `Blocked -> Ready -> Starting -> Running|Blocked` resumption.
+- Deterministic Coordinator tests passed 28/28; Watchdog tests passed 31/31; bundle tests passed 174/174; four affected skill validators, generated freshness, Python compilation, Ruff, and `git diff --check` passed.
+- The two recovery-policy defects were implemented together because they share the Coordinator role and generated projections; this record is archived independently after terminal verification.
