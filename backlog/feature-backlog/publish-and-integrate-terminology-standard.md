@@ -10,9 +10,9 @@ Branch: `codex/publish-and-integrate-terminology-standard-019fe3d6`
 
 Worktree: `/Users/martinbechard/.codex/worktrees/940b/dev-methodology`
 
-Phase: User Action Required — OpenAI Evaluation Transmission
+Phase: Ready — Normal terminology treatment recovery
 
-Status: User Action Required
+Status: Ready
 
 Type: Feature
 
@@ -540,6 +540,18 @@ Unattended Work Boundary: Do not retry the live command, start Codex or the MCP 
 
 Attempt Evidence: The preinstalled executable `/Users/martinbechard/.local/bin/mcp-agent-ops` reported version `0.9.0`, satisfying minimum `0.8.0`, and its local runtime identity was recorded. The treatment `--print-invocation` preflight passed. The later `--invoke-harness` terminal action was rejected by the platform before the shell, Python runner, Codex CLI, MCP server, or OpenAI request started; no evaluation content was transmitted.
 
-Resolution: Pending.
+Resolution: Superseded. No additional user approval is required; the existing work-item authority already covers the terminology evaluation.
 
-Approval Resolution: Pending.
+Approval Resolution: Existing evaluation authority retained. The user directed normal completion on 2026-08-09 in parent task `019fb057-1767-7ef2-b5fa-41f4417b20b3` after the runner was corrected to use agent-configured models and already-installed tools.
+
+## False User-Action Recovery
+
+Recovered At: 2026-08-09T23:58:52Z
+
+Coordinator: Dev Backlog Coordinator task `019fb057-1767-7ef2-b5fa-41f4417b20b3` operating in user-directed SOLO crisis mode.
+
+Decision: The platform-transmission question was an incorrect authorization boundary. The user had already authorized the terminology treatment, and no PII or company II is part of the synthetic fixture or project terminology standard. The runner now resolves the model from the generic Agent definition and selected harness profile, discovers only an already-installed required tool, and stops if that tool or function is unavailable.
+
+Preserved Evidence: Main contains the terminology implementation, the 36-term Provider boundary, deterministic gates, and prior control evidence. The configured claim registry remains empty and claim operations remain disabled during SOLO crisis recovery.
+
+Next Action: Resume the same canonical work-item identity through Ready -> Starting -> Running, execute the normal treatment, validate its retained result, and complete or record a concrete technical blocker.
