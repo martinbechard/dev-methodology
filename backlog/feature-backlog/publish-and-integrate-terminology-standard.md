@@ -10,9 +10,9 @@ Branch: `codex/publish-and-integrate-terminology-standard-019fe3d6`
 
 Worktree: `/Users/martinbechard/.codex/worktrees/940b/dev-methodology`
 
-Phase: Ready — Approved provider-backed probe runner resumption
+Phase: Starting — Approved provider-backed probe runner resumption
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -250,3 +250,19 @@ Approved Additional Dependent Paths:
 Approval Boundary: Preserve all prior candidate commits, exact governed approvals, existing exclusions, and deferred overlap evidence. This answer does not authorize shared-user publication, unrelated framework changes, additional governed definitions, or absorption of baseline failures.
 
 Canonical Resumption: Preserve canonical task `019fe3d6-2dd6-7322-a507-e8ca961e27d8`, branch `codex/publish-and-integrate-terminology-standard-019fe3d6`, worktree `/Users/martinbechard/.codex/worktrees/940b/dev-methodology`, and commits `ec35759032051479bda3518cd892a4480119c41b`, `38825214eaee66433ae50c7cbafd3f6af407a2da`, and `2ee1d3968f710175810131c60d88def629e89d99`. Ready does not authorize source mutation; the same task must pass Ready -> Starting -> Running first.
+
+## Approval Resumption Starting Handoff
+
+Starting Recorded At: 2026-08-09T04:25:00Z
+
+Coordinator: Dev Backlog Coordinator task `019fb057-1767-7ef2-b5fa-41f4417b20b3`
+
+Canonical Execution: `019fe3d6-2dd6-7322-a507-e8ca961e27d8`
+
+Launch Result: Existing canonical task requested to resume.
+
+Approved Resumption Scope: The exact seven-path approval recorded in commit `967cc228d5cee11f64eb1e9866482ec4a6bc0a54`, together with the original governed sources and dependent boundaries. Shared-user publication, unrelated framework scope, additional governed definitions, and baseline absorption remain excluded.
+
+Preservation Boundary: Retain the clean canonical worktree, branch, three preserved candidate commits, existing review evidence, and all prior exclusions. Do not repeat completed corrections or accepted gates. Do not mutate source before this same canonical task independently records Starting -> Running with fresh bounded evidence and an exact activity=work claim.
+
+Next Reconciliation At: 2026-08-09T04:40:00Z
