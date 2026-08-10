@@ -30,17 +30,17 @@ Condition Type: delegated-work
 
 Owner: Dev Coder (/root/implement_complex_plan_skill), coordinated by Dev Orchestrator (019fe928-e31e-71e2-aaa8-7f9bef12c7b0)
 
-Evidence: Candidate commit d72e1a284a9b832295f2cd9e796f49f21404b6e2 remains preserved. Under bounded correction attempt 1, the installed-package helper suite now passes 13 tests covering interrupted create, update, reconcile and cleanup states, missing or malformed operation results, stale shifted targets, reserved metadata prefixes, and complete API signature validation. Complexity cleanup and authorized skill, role, assertion, and generator updates remain active in the same source worktree.
+Evidence: Candidate commit d72e1a284a9b832295f2cd9e796f49f21404b6e2 remains preserved. Correction attempt 1 now passes 13 installed-package helper tests, 2 structured focused bundle tests, all 175 full bundle tests, skill and provenance validation, metadata validation, and every generator check mode. Authorized canonical and generated artifacts are updated; one test-file formatting correction and the final post-format gate rerun remain before the replacement commit.
 
-Observed At: 2026-08-10T02:49:11Z
+Observed At: 2026-08-10T03:03:44Z
 
 Started At: 2026-08-10T02:21:49Z
 
-Deadline or Expires At: 2026-08-10T03:20:00Z
+Deadline or Expires At: 2026-08-10T03:35:00Z
 
-Next Action: Dev Coder completes the proportionality pass, aligns canonical skill and role behavior with the green helper contract, regenerates only authorized projections, runs the full correction verification batch, and commits the clean replacement candidate.
+Next Action: Dev Coder completes the post-format verification rerun, inspects the exact correction diff, and commits one clean replacement candidate for fresh source and methodology re-review.
 
-Next Reconciliation At: 2026-08-10T03:03:30Z
+Next Reconciliation At: 2026-08-10T03:17:30Z
 
 Codex Task ID: 019fe928-e31e-71e2-aaa8-7f9bef12c7b0
 
@@ -58,11 +58,11 @@ Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/use-mcp-hierarchy-
 
 Starting Head: 9488c71873e19c99b523927bce14ec64da634158
 
-Phase: bounded correction attempt 1 validation and documentation
+Phase: bounded correction attempt 1 final verification and commit preparation
 
-Provider Update Claim: mcp-hierarchy-plans-correction-green-update-019fe928; outcome SHARED_CHECKOUT_ACQUIRED; claim event 6669d642-3f39-4a51-90ef-e89f0add219b.
+Provider Update Claim: mcp-hierarchy-plans-correction-final-update-019fe928; outcome SHARED_CHECKOUT_ACQUIRED; claim event befe609f-db0a-4c5e-ba7d-38b9e5d8f857.
 
-Provider Path Claim: mcp-hierarchy-plans-correction-green-path-019fe928; outcome SHARED_CHECKOUT_ACQUIRED; claim event c58bf743-17b0-4d5f-abc9-e88744e07021.
+Provider Path Claim: mcp-hierarchy-plans-correction-final-path-019fe928; outcome SHARED_CHECKOUT_ACQUIRED; claim event cb4713bb-04c2-4473-a58c-8dc727b25d8d.
 
 ## Starting Handoff Evidence
 
