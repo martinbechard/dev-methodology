@@ -2,7 +2,9 @@
 
 Owner: Unowned
 
-Status: Ready
+Status: Blocked
+
+Owner: Unowned
 
 Type: Feature
 
@@ -64,15 +66,15 @@ Supporting evidence:
 
 ## Dependencies
 
-- create-html-document-outlines-from-raw-information
+- create-document-outlines-with-mcp-hierarchy-tools
 
-Blocker owner: Work Item create-html-document-outlines-from-raw-information.
+Blocker owner: Work Item create-document-outlines-with-mcp-hierarchy-tools.
 
-Blocked to Ready condition: the dependency is Completed with an accepted create-document-outline skill and working MCP structured JSON-to-HTML route.
+Blocked to Ready condition: create-document-outlines-with-mcp-hierarchy-tools is Completed with the clean direct-MCP create-document-outline Skill, targeted modification instructions, and accepted structured hierarchy and HTML behavior.
 
-Dependency Resolution: Satisfied on 2026-08-10. Work Item create-html-document-outlines-from-raw-information is Completed with an accepted create-document-outline skill, focused source-traceability validation, and a synchronized JSON-to-HTML route that fails clearly when mcp-agent-ops is unavailable.
+Dependency Resolution: Not satisfied. The prior create-html-document-outlines-from-raw-information implementation was rejected by the user and is being removed under remove-superseded-document-outline-skill-implementation.
 
-Next Action: Dev Backlog Coordinator may reserve this item as the next separate SOLO crisis work-item task after terminal cleanup of the completed dependency.
+Requested Coordinator action: complete and accept create-document-outlines-with-mcp-hierarchy-tools, then transition this Work Item from Blocked to Ready before dispatch.
 
 ## Verification
 
