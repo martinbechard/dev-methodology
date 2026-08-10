@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: User Action Required
+Status: Ready
 
 Type: Feature
 
@@ -46,7 +46,7 @@ Next Action: Reconcile the fresh rereviewer and reverifier terminal verdicts aga
 
 Next Reconciliation At: 2026-08-10T02:19:14Z
 
-## User Action Required
+## User Direction Resolution
 
 Question: Do you approve running `python3 scripts/install-skills.py --adapter codex --scope user --install-agents --replace` to refresh the repository-owned user-level Codex skills and agents and update `/Users/martinbechard/.codex/config.toml` with the required `MCP_AGENT_OPS_REFERENCE_ROOTS` and `MCP_AGENT_OPS_REFERENCE_NAMES=terminology.md` configuration?
 
@@ -60,9 +60,9 @@ Asked At: 2026-08-10T02:12:00Z
 
 Asked In: Parent coordination task 019fb057-1767-7ef2-b5fa-41f4417b20b3
 
-Resolution: Pending
+Resolution: Approved narrow configuration-only recovery. Add exactly `MCP_AGENT_OPS_REFERENCE_ROOTS=/Users/martinbechard/.agents/references:/Users/martinbechard/.codex/references` and `MCP_AGENT_OPS_REFERENCE_NAMES=terminology.md` to the existing `[mcp_servers.mcp-agent-ops.env]` table in `/Users/martinbechard/.codex/config.toml`, with backup and TOML validation. Do not run the broad installer.
 
-Approval Resolution: Pending
+Approval Resolution: User explicitly approved exposing `terminology.md` to the existing service and directed the narrow config-only repair in canonical task `019fe928-e2d9-73d3-a647-7fac38731628` on 2026-08-10.
 
 ## Starting Handoff Evidence
 
