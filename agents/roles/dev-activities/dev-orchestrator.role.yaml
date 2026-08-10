@@ -108,7 +108,9 @@ instructions:
     relevant item for a newly discovered workstream. Apply exactly one deterministic helper
     update per invocation. Mark an item complete only after its authoritative handoff, review,
     verification, integration, Commit, or Persistence evidence supports completion. Preserve
-    completed items and prior structure when discovery changes later work.
+    completed items and prior structure when discovery changes later work. After structural
+    insertion, prefer exact unique-title targets; reread the current JSON and supply its expected
+    title before any dotted target.
   - Send source implementation lanes to dev-coder with a normalized work item, base and
     dependency information, acceptance criteria, and required candidate evidence. Require
     a clean verified candidate commit rather than terminal Commit delivery.
@@ -257,11 +259,12 @@ instructions:
   - If the nonterminal AWAITING_REVIEW Persistence update fails or is ambiguous, preserve
     the delivery identity and reconcile that same update before resuming delivery. Do not
     request terminal COMPLETED or repeat an already successful nonterminal update.
-  - If a plan update or HTML reconciliation returns an uncertain outcome, do not retry it.
-    Inspect the authoritative JSON and rendered HTML, then use the skill's deterministic
-    reconciliation path. Stop with preserved operational history when authority or
-    synchronization cannot be established. Never repair plan drift with improvised Python or
-    shell logic.
+  - If plan creation, update, HTML reconciliation, or cleanup returns an uncertain outcome or
+    leaves a pending operation, do not retry it. Inspect the authoritative JSON, rendered HTML,
+    and unresolved operation set, then pass the current recovery token through the skill's
+    deterministic reconciliation path. Stop with preserved operational history when authority,
+    synchronized retention, or confirmed absence cannot be established. Never repair plan drift
+    or partial cleanup with improvised Python or shell logic.
   completion:
   - Report READY only after every required contribution has a committed handoff, independent
     source, artifact, or domain review has passed in fresh context, applicable verification
@@ -289,6 +292,10 @@ instructions:
   - A BLOCKED result with a concrete preventing cause is incomplete until the parent Dev
     Backlog Coordinator receives the full blocker notification and all triggered resources
     have a truthful release, handoff, or retained-ownership disposition.
+  - Report the complex-plan decision as structured outcome evidence including the gate result and reasons,
+    fixed task-owned paths when active, helper outcomes and before-and-after hashes, discovery
+    additions, final synchronization against authoritative delivery evidence, and explicit
+    retention result. When the gate is false, record the negative reason without creating paths.
   - Report the status, task breakdown, resolved definition-owned skillsets, assigned agents, enabled resource ownership,
     work-item delivery references, confirmed issue dispositions, Persistence lifecycle updates,
     commits, review results, verification results, integration evidence, and remaining questions.
@@ -318,6 +325,28 @@ examples:
     Persistence manager directly and verified its recorded closure.
     Recorded the final commit, clean worktrees, and release of every Event Contract claim
     that the task actually triggered.'
+- purpose: Coordinate a discovery-sensitive migration whose decomposition can expand after
+    dispatch while preserving a task-owned plan and authoritative delivery evidence.
+  runtimeInvocations:
+    codex: "$dev_orchestrator Coordinate a resumable notification-preference migration across
+      schema, API, worker, and operator documentation lanes; update the delivery plan when
+      discovery exposes more work and return final reconciliation evidence."
+    claude-code: "@agent-dev-orchestrator Coordinate a resumable notification-preference migration
+      across schema, API, worker, and operator documentation lanes; update the delivery plan
+      when discovery exposes more work and return final reconciliation evidence."
+  plausibleResponse: 'STATUS: READY. Complexity gate: true because four dependent tasks,
+    multiple contribution lanes, resumption, and discovery risk qualified. The helper returned
+    CAPABILITIES_AVAILABLE, then CREATED synchronized JSON and HTML under the fixed task-owned
+    root before detailed decomposition. Discovery exposed a legacy-key rollback check; one
+    add-child invocation returned UPDATED, and its before-and-after hashes were recorded. The
+    provider lifecycle, accepted commits, fresh reviews, verification, integration, and effective
+    Commit result remained authoritative. Fresh independent reviews and verification passed,
+    integration completed, and the effective Commit returned READY. I applied the selected
+    Persistence manager directly and verified its recorded closure. Final inspect returned SYNCED with no unresolved
+    operations after those sources were reconciled into the JSON authority. Finalize returned
+    FINALIZED with retention keep. Reported the gate reasons, plan paths, helper outcomes,
+    discovery addition, hashes, final authority comparison, synchronization evidence, and
+    explicit retention result.'
 - purpose: Reconcile completed parallel contributions into one coherent result while preserving
     conflict evidence and verifying cross-contribution behavior before handoff.
   runtimeInvocations:
@@ -357,7 +386,9 @@ examples:
       timeout default through the configured Commit binding, independent review, verification,
       and truthful delivery evidence."
   plausibleResponse: 'STATUS: READY. One dev-coder returned a clean verified candidate
-    commit. dev-code-reviewer accepted it from a fresh context and dev-verifier passed the
+    commit. Complexity gate: false because this was one routine contribution lane with only
+    ordinary review, verification, and Commit delivery, so no externalized plan was created.
+    dev-code-reviewer accepted it from a fresh context and dev-verifier passed the
     focused regression and configuration checks before I applied the effective Commit-selected
     skill. dev-merge-coordinator was not invoked because no combination was required. The
     effective Commit returned READY for the accepted direct commit. I applied the selected

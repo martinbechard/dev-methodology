@@ -70,7 +70,7 @@ Supply a canonical absolute workspace path, a safe root task ID, and a safe plan
 └── .history/<plan-name>/
 ```
 
-The history directory is bounded operational evidence. It is not a backlog or provider ledger. The helper retains at most 20 settled pre-mutation snapshots and does not prune unresolved uncertain operations.
+The history directory is bounded operational evidence. It is not a backlog or provider ledger. Before every create, update, reconcile, or cleanup effect, the helper creates an operation directory, writes a pending operation record, and preserves the available pre-mutation files. A missing, malformed, pending, or otherwise nonterminal result remains unresolved and is never silently skipped or pruned. The helper retains at most 20 operation directories by pruning only terminal history when space is needed.
 
 Keep the complete plan root ignored as operational state. Do not commit the plan, copy it into backlog, or use it to control provider lifecycle.
 
@@ -107,6 +107,8 @@ Create a temporary definition file inside the absolute workspace with this schem
 
 Use ordinary structured file editing for the definition. Do not assemble it with shell text or a Python snippet. Keep references concise. Exclude credentials, personal information, unauthorized proprietary content, prompt bodies, and unnecessary source payloads.
 
+Do not use `Dependency reference: ` or `Evidence reference: ` at the start of an actionable task title. The helper reserves both prefixes for complete structural reference leaves and rejects them in task definitions and discovered child or peer text.
+
 Create the canonical plan through the helper:
 
 ```bash
@@ -123,7 +125,7 @@ The helper calls create_hierarchy_plan and returns CREATED only when the canonic
 
 Update the plan when discovery changes the decomposition and when authoritative evidence completes a task. Each update invocation calls update_hierarchy_plan exactly once and accepts exactly one mutation.
 
-Use an exact one-based dotted path or an exact unique item title. Prefer a dotted path after peer insertion because later item numbers can change.
+Prefer an exact unique item title. Structural insertions can shift dotted paths, so prefer unique titles after any child or peer insertion. Before every dotted target, reread the current authoritative JSON and supply the title currently found at that path through `--expected-title`. The helper fails without mutation when the expected title is absent or the path has shifted.
 
 Mark one item complete:
 
@@ -132,7 +134,7 @@ python3 [skill-root]/scripts/plan.py \
   --workspace /absolute/workspace \
   --root-task-id task-123 \
   --plan-name delivery \
-  update --target 2 --complete
+  update --target 2 --expected-title Discovery --complete
 ```
 
 Add one discovered subtask beneath an existing task:
@@ -142,7 +144,7 @@ python3 [skill-root]/scripts/plan.py \
   --workspace /absolute/workspace \
   --root-task-id task-123 \
   --plan-name delivery \
-  update --target 2 --add-child "Verify the discovered boundary"
+  update --target Discovery --add-child "Verify the discovered boundary"
 ```
 
 Add one discovered peer workstream after an existing task:
@@ -152,7 +154,7 @@ python3 [skill-root]/scripts/plan.py \
   --workspace /absolute/workspace \
   --root-task-id task-123 \
   --plan-name delivery \
-  update --target 3 --add-peer-after "Document the new interface"
+  update --target Implementation --add-peer-after "Document the new interface"
 ```
 
 Do not rewrite completed items or prior structure to make discovery appear linear. Add the new child or peer at the point where it became necessary. Use separate invocations for separate discoveries.
@@ -177,31 +179,43 @@ python3 [skill-root]/scripts/plan.py \
   inspect
 ```
 
-Inspect parses the authoritative JSON and uses render_hierarchy_html without an output file. It compares the rendered bytes with the sibling HTML.
+Inspect parses the authoritative JSON and uses render_hierarchy_html without an output file. It compares the rendered bytes with the sibling HTML and reads every operation record without changing either artifact.
 
-- SYNCED means the files match and supplies their hashes plus a reconciliation token.
-- DRIFT means the HTML does not match the authoritative JSON.
+- SYNCED means the files match and no operation is unresolved.
+- ABSENT means neither selected artifact exists and no operation is unresolved, so create can retry.
+- DRIFT means valid authoritative JSON has missing or different sibling HTML.
+- RECOVERY_REQUIRED means at least one operation is unresolved, even when JSON and HTML already synchronize or both are absent.
+- ORPHANED_HTML means HTML exists without JSON and without a pending operation that authorizes recovery.
 - INVALID_PLAN means the JSON cannot be accepted as the hierarchy-plan authority.
 
-For valid JSON with HTML drift, run the deterministic reconcile command. It backs up the current artifacts and rebuilds only the sibling HTML through render_hierarchy_html.
+Each inspect result includes artifact hashes, artifact state, unresolved operation details, and a recovery token bound to that exact state. For valid JSON with ordinary HTML drift, run the deterministic reconcile command with the current token. It records its own pending operation before rebuilding only the sibling HTML through render_hierarchy_html.
 
 ```bash
 python3 [skill-root]/scripts/plan.py \
   --workspace /absolute/workspace \
   --root-task-id task-123 \
   --plan-name delivery \
-  reconcile
+  reconcile --recovery-token <token-from-inspect>
 ```
 
-An exception after a mutation starts returns UNCERTAIN_UPDATE or UNCERTAIN_RECONCILIATION. Do not repeat that command. Run inspect, then reconcile when HTML drift exists. If the files are already synchronized, pass the current inspect reconciliation token to the next update. Stop when JSON validity or artifact authority cannot be established.
+An exception after an effect may have started returns UNCERTAIN_CREATE, UNCERTAIN_UPDATE, UNCERTAIN_RECONCILIATION, or UNCERTAIN_CLEANUP. A process stop can leave only the earlier pending record. Do not repeat the interrupted command, even when the artifacts appear synchronized. Run inspect, then pass its current recovery token to reconcile. A stale token fails before mutation; inspect again instead of guessing.
 
 ```bash
 python3 [skill-root]/scripts/plan.py \
   --workspace /absolute/workspace \
   --root-task-id task-123 \
   --plan-name delivery \
-  update --target 2 --complete --reconciliation-token <token-from-inspect>
+  reconcile --recovery-token <token-from-inspect>
 ```
+
+Reconcile excludes only its own current pending record while resolving the previously unresolved set. It uses these deterministic recovery outcomes:
+
+- Valid JSON is retained as authority and HTML is rendered to match it. This covers JSON-only and synchronized interrupted creates, updates, and reconciliations.
+- An interrupted create with HTML only or without valid JSON is cleaned to confirmed absence so create can retry.
+- An interrupted cleanup continues HTML removal first and JSON removal last, then confirms both artifacts are absent.
+- Invalid or absent JSON for an interrupted update or reconciliation is restored only from a valid helper-owned pre-mutation JSON snapshot. Without one, recovery stops.
+
+Reconcile marks prior operations terminal only after it has confirmed synchronized retention or complete absence, then marks its own record terminal. Stop when JSON authority, snapshot validity, or synchronization cannot be established. Never delete partial artifacts or edit operation evidence by hand.
 
 ## Final Reconciliation And Retention
 
@@ -227,10 +241,11 @@ python3 [skill-root]/scripts/plan.py \
   finalize --retention remove
 ```
 
-The remove choice deletes only the selected plan JSON, sibling HTML, and its bounded operational history. It never changes provider state, another plan, source-control history, or delivery evidence.
+The remove choice deletes only the selected sibling HTML first, the selected plan JSON last, and then its bounded operational history after confirmed absence. It retains pending evidence until the absence result is terminal. It never changes provider state, another plan, source-control history, or delivery evidence.
 
-Finalization fails closed when an actionable item is incomplete, the artifacts drift, or any uncertain operation remains unresolved.
-If removal may have stopped after changing an artifact, the helper returns UNCERTAIN_CLEANUP. Do not retry removal. Reconcile the exact selected plan paths and retained terminal evidence first.
+Finalization fails closed when an actionable item is incomplete, the artifacts drift, or any uncertain operation remains unresolved. Both reserved structural prefixes remain invalid for incomplete or parent items, so actionable text cannot be hidden from the completion check.
+
+If removal may have stopped after changing an artifact, the helper returns UNCERTAIN_CLEANUP or leaves a pending cleanup record. Do not retry removal. Inspect the exact selected plan and pass the current recovery token to reconcile. Reconciliation must reach confirmed absence before create or cleanup can retry.
 
 ## Result
 

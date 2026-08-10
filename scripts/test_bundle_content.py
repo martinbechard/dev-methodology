@@ -2739,8 +2739,12 @@ class BundleContentTests(unittest.TestCase):
         for required_contract in (
             ".codex/plans/<root-task-id>/",
             "exactly one mutation",
+            "UNCERTAIN_CREATE",
             "UNCERTAIN_UPDATE",
             "UNCERTAIN_CLEANUP",
+            "missing, malformed, pending, or otherwise nonterminal",
+            "--recovery-token",
+            "--expected-title",
             "--retention keep",
             "--retention remove",
             "Never improvise Python snippets",
@@ -2751,6 +2755,25 @@ class BundleContentTests(unittest.TestCase):
         self.assertNotIn("FastMCP", skill_text)
         self.assertNotIn("FastMCP", helper_text)
         self.assertIn(".codex/", GITIGNORE_PATH.read_text(encoding="utf-8"))
+        for mutation_function, package_call in (
+            ("_create", "api.create_hierarchy_plan("),
+            ("_update", "api.update_hierarchy_plan("),
+            ("_reconcile", "_render_document(context, document, api, write=True)"),
+            ("_finalize", "_cleanup_artifacts(context)"),
+        ):
+            with self.subTest(mutation_function=mutation_function):
+                function_start = helper_text.index(f"def {mutation_function}(")
+                function_end = helper_text.find("\ndef ", function_start + 1)
+                function_text = helper_text[
+                    function_start : function_end if function_end != -1 else None
+                ]
+                self.assertLess(
+                    function_text.index("_start_operation("),
+                    function_text.index(package_call),
+                )
+        self.assertIn('reconcile.add_argument("--recovery-token")', helper_text)
+        self.assertIn('update.add_argument("--expected-title")', helper_text)
+        self.assertIn('"terminal": terminal', helper_text)
 
         role = load_yaml_object(
             ROLES_ROOT / "dev-activities" / "dev-orchestrator.role.yaml"
@@ -2768,6 +2791,103 @@ class BundleContentTests(unittest.TestCase):
             ["dev-coder", "dev-code-reviewer", "dev-verifier", "dev-merge-coordinator"],
             role["agentDependencies"],
         )
+        instructions = role["instructions"]
+        gate_decision = next(
+            decision
+            for decision in instructions["decisions"]
+            if "Require a complex-development plan" in decision
+        )
+        for qualifying_signal in (
+            "at least four actionable tasks with a dependency",
+            "at least three independently owned contribution lanes",
+            "task resumption",
+            "material discovery risk",
+            "routine single contribution lane",
+        ):
+            self.assertIn(qualifying_signal, gate_decision)
+        authority_decision = next(
+            decision
+            for decision in instructions["decisions"]
+            if "When plan state differs" in decision
+        )
+        self.assertIn("provider lifecycle", authority_decision)
+        self.assertIn("effective Commit result", authority_decision)
+
+        workflow = instructions["workflow"]
+        gate_index = next(
+            index
+            for index, step in enumerate(workflow)
+            if "Evaluate the complexity gate" in step
+        )
+        decomposition_index = next(
+            index
+            for index, step in enumerate(workflow)
+            if step.startswith("Decompose the outcome")
+        )
+        self.assertLess(gate_index, decomposition_index)
+        discovery_step = next(
+            step for step in workflow if "newly discovered subtask" in step
+        )
+        self.assertIn("exactly one deterministic helper update", discovery_step)
+        final_step = next(
+            step for step in workflow if "perform final reconciliation" in step
+        )
+        self.assertIn("Inspect JSON and HTML synchronization", final_step)
+
+        completion = instructions["completion"]
+        ready_contract = next(
+            item for item in completion if item.startswith("Report READY only")
+        )
+        self.assertIn("explicit retention result", ready_contract)
+        completion_output = next(
+            item
+            for item in completion
+            if item.startswith("Report the complex-plan decision")
+        )
+        for field in (
+            "gate result and reasons",
+            "helper outcomes",
+            "discovery additions",
+            "final synchronization",
+            "retention result",
+        ):
+            self.assertIn(field, completion_output)
+
+        complex_plan_output = next(
+            entry["complex development plan"]["purpose"]
+            for entry in role["outputContract"]
+            if "complex development plan" in entry
+        )
+        for output_field in (
+            "complexity-gate decision",
+            "task-owned plan paths",
+            "synchronization",
+            "discovery updates",
+            "final reconciliation",
+            "explicit retention result",
+            "without duplicating provider authority",
+        ):
+            self.assertIn(output_field, complex_plan_output)
+
+        complex_example = next(
+            example
+            for example in role["examples"]
+            if "discovery-sensitive" in example["purpose"]
+        )
+        for evidence in (
+            "CAPABILITIES_AVAILABLE",
+            "CREATED",
+            "UPDATED",
+            "SYNCED",
+            "FINALIZED",
+        ):
+            self.assertIn(evidence, complex_example["plausibleResponse"])
+        routine_example = next(
+            example
+            for example in role["examples"]
+            if "one reviewed and verified source lane" in example["purpose"]
+        )
+        self.assertIn("Complexity gate: false", routine_example["plausibleResponse"])
         role_text = json.dumps(role, sort_keys=True)
         for phrase in (
             "at least four actionable tasks",

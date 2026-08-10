@@ -30,8 +30,12 @@ REEXEC_MARKER = "MCP_AGENT_OPS_PLAN_REEXECUTED"
 SAFE_TASK_NAME = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]{0,199}")
 SAFE_PLAN_NAME = re.compile(r"[A-Za-z0-9][A-Za-z0-9_-]{0,99}")
 DOTTED_PATH = re.compile(r"[1-9][0-9]*(?:\.[1-9][0-9]*)*")
-HISTORY_DIRECTORY = re.compile(r"(?P<sequence>[0-9]{6})-(?:update|reconcile)")
+HISTORY_DIRECTORY = re.compile(
+    r"(?P<sequence>[0-9]{6})-(?P<kind>create|update|reconcile|cleanup)"
+)
 METADATA_PREFIXES = ("Dependency reference: ", "Evidence reference: ")
+OPERATION_SCHEMA = "dev-methodology-complex-plan-operation"
+OPERATION_VERSION = 1
 
 
 class _PlanHelperError(Exception):
@@ -56,6 +60,7 @@ class _PlanApi:
     render_hierarchy_html: Callable[..., str | Path]
     update_hierarchy_plan: Callable[..., Path]
     package_version: str
+    signatures: dict[str, str]
 
 
 @dataclass(frozen=True)
@@ -85,8 +90,90 @@ class _PlanDocument:
     items: tuple[_PlanItem, ...]
 
 
+@dataclass(frozen=True)
+class _OperationStatus:
+    operation_id: str
+    kind: str
+    path: Path
+    terminal: bool
+    result_state: str
+    result: dict[str, object] | None
+
+
 def _result(outcome: str, **details: object) -> dict[str, object]:
     return {"schema_version": RESULT_SCHEMA_VERSION, "outcome": outcome, **details}
+
+
+def _validate_api_contract(
+    functions: dict[str, Callable[..., object]],
+) -> dict[str, str]:
+    call_shapes: dict[str, tuple[tuple[tuple[object, ...], dict[str, object]], ...]] = {
+        "create_hierarchy_plan": (
+            (
+                (object(),),
+                {
+                    "title": "Plan",
+                    "output_filename": "plan.html",
+                    "output_folder": Path("."),
+                    "completed_items": (),
+                },
+            ),
+        ),
+        "render_hierarchy_html": (
+            (
+                (object(),),
+                {
+                    "title": "Plan",
+                    "theme": "default",
+                    "themes_folder": None,
+                    "numbering": True,
+                    "checkboxes": True,
+                    "completed_items": (),
+                },
+            ),
+            (
+                (object(),),
+                {
+                    "title": "Plan",
+                    "theme": "default",
+                    "themes_folder": None,
+                    "numbering": True,
+                    "checkboxes": True,
+                    "completed_items": (),
+                    "output_filename": "plan.html",
+                    "output_folder": Path("."),
+                },
+            ),
+        ),
+        "update_hierarchy_plan": (
+            ((Path("plan.json"), "Task"), {"completed": True}),
+            ((Path("plan.json"), "Task"), {"add_child": "Child"}),
+            ((Path("plan.json"), "Task"), {"add_peer_after": "Peer"}),
+        ),
+    }
+    signatures: dict[str, str] = {}
+    incompatibilities: dict[str, str] = {}
+    for name, shapes in call_shapes.items():
+        function = functions.get(name)
+        if not callable(function):
+            incompatibilities[name] = "not callable"
+            continue
+        try:
+            signature = inspect.signature(function)
+            for positional, keywords in shapes:
+                signature.bind(*positional, **keywords)
+        except (TypeError, ValueError) as error:
+            incompatibilities[name] = str(error)
+            continue
+        signatures[name] = str(signature)
+    if incompatibilities:
+        raise _PlanHelperError(
+            "CAPABILITY_UNAVAILABLE",
+            "The installed mcp-agent-ops package cannot accept every hierarchy call shape used by this helper.",
+            exit_code=3,
+            incompatibilities=incompatibilities,
+        )
+    return signatures
 
 
 def _load_api() -> _PlanApi:
@@ -109,42 +196,7 @@ def _load_api() -> _PlanApi:
         "render_hierarchy_html": render_hierarchy_html,
         "update_hierarchy_plan": update_hierarchy_plan,
     }
-    required_parameters = {
-        "create_hierarchy_plan": {"source", "output_filename", "output_folder"},
-        "render_hierarchy_html": {
-            "source",
-            "title",
-            "theme",
-            "numbering",
-            "checkboxes",
-            "completed_items",
-            "output_filename",
-            "output_folder",
-        },
-        "update_hierarchy_plan": {
-            "plan_path",
-            "target",
-            "completed",
-            "add_child",
-            "add_peer_after",
-        },
-    }
-    missing: dict[str, list[str]] = {}
-    for name, function in functions.items():
-        if not callable(function):
-            missing[name] = ["callable"]
-            continue
-        observed = set(inspect.signature(function).parameters)
-        absent = sorted(required_parameters[name] - observed)
-        if absent:
-            missing[name] = absent
-    if missing:
-        raise _PlanHelperError(
-            "CAPABILITY_UNAVAILABLE",
-            "The installed mcp-agent-ops package does not expose the required hierarchy API signatures.",
-            exit_code=3,
-            missing=missing,
-        )
+    signatures = _validate_api_contract(functions)
     try:
         package_version = importlib.metadata.version("mcp-agent-ops")
     except importlib.metadata.PackageNotFoundError:
@@ -154,6 +206,7 @@ def _load_api() -> _PlanApi:
         render_hierarchy_html=render_hierarchy_html,
         update_hierarchy_plan=update_hierarchy_plan,
         package_version=package_version,
+        signatures=signatures,
     )
 
 
@@ -168,11 +221,7 @@ def _capability_result(api: _PlanApi) -> dict[str, object]:
             "render_hierarchy_html",
             "update_hierarchy_plan",
         ],
-        signatures={
-            "create_hierarchy_plan": str(inspect.signature(api.create_hierarchy_plan)),
-            "render_hierarchy_html": str(inspect.signature(api.render_hierarchy_html)),
-            "update_hierarchy_plan": str(inspect.signature(api.update_hierarchy_plan)),
-        },
+        signatures=api.signatures,
     )
 
 
@@ -429,6 +478,18 @@ def _single_line(value: object, field: str, *, maximum: int = 500) -> str:
     return value
 
 
+def _action_text(value: object, field: str) -> str:
+    text = _single_line(value, field)
+    if text.startswith(METADATA_PREFIXES):
+        raise _PlanHelperError(
+            "RESERVED_ACTION_TEXT",
+            "Actionable plan text must not use a structural reference prefix.",
+            field=field,
+            reserved_prefixes=list(METADATA_PREFIXES),
+        )
+    return text
+
+
 def _string_list(value: object, field: str) -> tuple[str, ...]:
     if not isinstance(value, list):
         raise _PlanHelperError(
@@ -487,7 +548,7 @@ def _definition_item(
             "INVALID_DEFINITION", "Definition contains more than 1000 tasks."
         )
     return {
-        "title": _single_line(value["title"], f"{field}.title"),
+        "title": _action_text(value["title"], f"{field}.title"),
         "dependsOn": _string_list(value["dependsOn"], f"{field}.dependsOn"),
         "evidence": _string_list(value["evidence"], f"{field}.evidence"),
         "complete": complete,
@@ -613,6 +674,11 @@ def _plan_item(value: object, field: str, *, depth: int = 1) -> _PlanItem:
         raise _PlanHelperError(
             "INVALID_PLAN", f"Plan field {field} has invalid state or children."
         )
+    if text.startswith(METADATA_PREFIXES) and (not complete or children):
+        raise _PlanHelperError(
+            "INVALID_PLAN",
+            f"Plan field {field} uses a structural reference prefix without complete leaf metadata state.",
+        )
     return _PlanItem(
         text=text,
         complete=complete,
@@ -623,13 +689,9 @@ def _plan_item(value: object, field: str, *, depth: int = 1) -> _PlanItem:
     )
 
 
-def _load_plan(context: _PlanContext) -> _PlanDocument:
-    _safe_file(context.plan_path, context, required=True)
-    payload = _read_json(
-        context.plan_path,
-        "INVALID_PLAN",
-        "The authoritative hierarchy plan is not valid JSON.",
-    )
+def _plan_document_from_payload(
+    payload: dict[str, object], context: _PlanContext
+) -> _PlanDocument:
     if payload.get("schema") != PLAN_SCHEMA or payload.get("version") != PLAN_VERSION:
         raise _PlanHelperError(
             "INVALID_PLAN", "The hierarchy plan has an unsupported schema or version."
@@ -682,6 +744,16 @@ def _load_plan(context: _PlanContext) -> _PlanDocument:
     )
 
 
+def _load_plan(context: _PlanContext) -> _PlanDocument:
+    _safe_file(context.plan_path, context, required=True)
+    payload = _read_json(
+        context.plan_path,
+        "INVALID_PLAN",
+        "The authoritative hierarchy plan is not valid JSON.",
+    )
+    return _plan_document_from_payload(payload, context)
+
+
 def _hierarchy_items(items: Sequence[_PlanItem]) -> list[object]:
     rendered: list[object] = []
     for item in items:
@@ -714,58 +786,206 @@ def _evidence(context: _PlanContext) -> dict[str, object]:
     return {
         "plan_path": str(context.plan_path.resolve(strict=False)),
         "html_path": str(context.html_path.resolve(strict=False)),
+        "json_exists": context.plan_path.is_file()
+        and not context.plan_path.is_symlink(),
+        "html_exists": context.html_path.is_file()
+        and not context.html_path.is_symlink(),
         "json_sha256": _sha256(context.plan_path),
         "html_sha256": _sha256(context.html_path),
     }
 
 
-def _reconciliation_token(evidence: dict[str, object]) -> str | None:
-    json_hash = evidence.get("json_sha256")
-    html_hash = evidence.get("html_sha256")
-    if not isinstance(json_hash, str) or not isinstance(html_hash, str):
-        return None
-    return hashlib.sha256(f"{json_hash}:{html_hash}".encode("ascii")).hexdigest()
-
-
-def _inspect(context: _PlanContext, api: _PlanApi) -> dict[str, object]:
-    document = _load_plan(context)
-    _safe_file(context.html_path, context, required=False)
-    expected = api.render_hierarchy_html(
+def _render_document(
+    context: _PlanContext,
+    document: _PlanDocument,
+    api: _PlanApi,
+    *,
+    write: bool,
+) -> str | Path:
+    keywords: dict[str, object] = {
+        "title": document.title,
+        "theme": document.theme,
+        "themes_folder": document.themes_folder,
+        "numbering": True,
+        "checkboxes": True,
+        "completed_items": _completed_paths(document.items),
+    }
+    if write:
+        keywords.update(
+            output_filename=context.html_path.name,
+            output_folder=context.task_root,
+        )
+    return api.render_hierarchy_html(
         {document.root_label: _hierarchy_items(document.items)},
-        title=document.title,
-        theme=document.theme,
-        themes_folder=document.themes_folder,
-        numbering=True,
-        checkboxes=True,
-        completed_items=_completed_paths(document.items),
+        **keywords,
     )
+
+
+def _analyze_artifacts(context: _PlanContext, api: _PlanApi) -> dict[str, object]:
+    _safe_file(context.plan_path, context, required=False)
+    _safe_file(context.html_path, context, required=False)
+    evidence = _evidence(context)
+    plan_exists = bool(evidence["json_exists"])
+    html_exists = bool(evidence["html_exists"])
+    if not plan_exists and not html_exists:
+        return {
+            "artifact_state": "ABSENT",
+            "synchronized": False,
+            "document": None,
+            "expected_html_sha256": None,
+            **evidence,
+        }
+    if not plan_exists:
+        return {
+            "artifact_state": "HTML_ONLY",
+            "synchronized": False,
+            "document": None,
+            "expected_html_sha256": None,
+            **evidence,
+        }
+    try:
+        document = _load_plan(context)
+    except _PlanHelperError as error:
+        if error.outcome != "INVALID_PLAN":
+            raise
+        return {
+            "artifact_state": "INVALID_JSON",
+            "synchronized": False,
+            "document": None,
+            "invalid_plan_error": error.message,
+            "invalid_plan_details": error.details,
+            "expected_html_sha256": None,
+            **evidence,
+        }
+    expected = _render_document(context, document, api, write=False)
     if not isinstance(expected, str):
         raise _PlanHelperError(
             "CAPABILITY_UNAVAILABLE",
             "render_hierarchy_html did not return HTML for a non-writing inspection.",
             exit_code=3,
         )
-    observed = None
-    if context.html_path.is_file():
-        try:
-            observed = context.html_path.read_text(encoding="utf-8")
-        except (OSError, UnicodeError) as error:
-            raise _PlanHelperError(
-                "INVALID_HTML",
-                "The sibling HTML plan cannot be read as UTF-8.",
-                cause=str(error),
-            ) from error
-    evidence = _evidence(context)
+    expected_hash = hashlib.sha256(expected.encode("utf-8")).hexdigest()
+    if not html_exists:
+        return {
+            "artifact_state": "JSON_ONLY",
+            "synchronized": False,
+            "document": document,
+            "expected_html_sha256": expected_hash,
+            **evidence,
+        }
+    try:
+        observed = context.html_path.read_text(encoding="utf-8")
+    except (OSError, UnicodeError) as error:
+        raise _PlanHelperError(
+            "INVALID_HTML",
+            "The sibling HTML plan cannot be read as UTF-8.",
+            cause=str(error),
+        ) from error
     synchronized = observed == expected
-    unresolved = _unresolved_uncertain_operations(context)
-    return _result(
-        "SYNCED" if synchronized else "DRIFT",
-        synchronized=synchronized,
-        authoritative_source="json",
-        expected_html_sha256=hashlib.sha256(expected.encode("utf-8")).hexdigest(),
-        reconciliation_token=_reconciliation_token(evidence) if synchronized else None,
-        unresolved_operations=unresolved,
+    return {
+        "artifact_state": "SYNCED" if synchronized else "DRIFT",
+        "synchronized": synchronized,
+        "document": document,
+        "expected_html_sha256": expected_hash,
         **evidence,
+    }
+
+
+def _recovery_token(
+    artifact: dict[str, object], unresolved: Sequence[_OperationStatus]
+) -> str:
+    payload = {
+        "artifact": {
+            key: artifact.get(key)
+            for key in (
+                "artifact_state",
+                "json_exists",
+                "html_exists",
+                "json_sha256",
+                "html_sha256",
+            )
+        },
+        "unresolved": [
+            {
+                "operation_id": status.operation_id,
+                "kind": status.kind,
+                "result_state": status.result_state,
+            }
+            for status in unresolved
+        ],
+    }
+    serialized = json.dumps(payload, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(serialized.encode("utf-8")).hexdigest()
+
+
+def _inspect(
+    context: _PlanContext,
+    api: _PlanApi,
+    *,
+    exclude_operations: frozenset[str] = frozenset(),
+) -> dict[str, object]:
+    statuses = _operation_statuses(context)
+    unresolved = [
+        status
+        for status in statuses
+        if not status.terminal and status.operation_id not in exclude_operations
+    ]
+    artifact = _analyze_artifacts(context, api)
+    token = _recovery_token(artifact, unresolved)
+    artifact_state = str(artifact["artifact_state"])
+    if unresolved:
+        outcome = "RECOVERY_REQUIRED"
+    elif artifact_state == "SYNCED":
+        outcome = "SYNCED"
+    elif artifact_state == "ABSENT":
+        outcome = "ABSENT"
+    elif artifact_state in {"DRIFT", "JSON_ONLY"}:
+        outcome = "DRIFT"
+    elif artifact_state == "HTML_ONLY":
+        outcome = "ORPHANED_HTML"
+    else:
+        details = artifact.get("invalid_plan_details")
+        raise _PlanHelperError(
+            "INVALID_PLAN",
+            str(
+                artifact.get(
+                    "invalid_plan_error", "The authoritative JSON plan is invalid."
+                )
+            ),
+            **(details if isinstance(details, dict) else {}),
+        )
+    return _result(
+        outcome,
+        artifact_state=artifact_state,
+        synchronized=bool(artifact["synchronized"]),
+        authoritative_source="json",
+        expected_html_sha256=artifact["expected_html_sha256"],
+        recovery_token=token,
+        reconciliation_token=token,
+        unresolved_operations=[status.operation_id for status in unresolved],
+        unresolved_details=[
+            {
+                "operation_id": status.operation_id,
+                "kind": status.kind,
+                "result_state": status.result_state,
+            }
+            for status in unresolved
+        ],
+        recovery_required=bool(unresolved),
+        retryable_create=artifact_state == "ABSENT" and not unresolved,
+        **{
+            key: value
+            for key, value in artifact.items()
+            if key
+            not in {
+                "artifact_state",
+                "synchronized",
+                "expected_html_sha256",
+                "document",
+                "invalid_plan_error",
+                "invalid_plan_details",
+            }
+        },
     )
 
 
@@ -781,19 +1001,48 @@ def _walk_items(
     return walked
 
 
-def _validate_target(document: _PlanDocument, target: str) -> None:
+def _validate_target(
+    document: _PlanDocument, target: str, expected_title: str | None
+) -> _PlanItem:
     normalized = target.strip()
     if not normalized:
         raise _PlanHelperError("MISSING_TARGET", "The update target is empty.")
     walked = _walk_items(document.items)
     if DOTTED_PATH.fullmatch(normalized):
-        if normalized not in {path for path, _ in walked}:
+        matched = next((item for path, item in walked if path == normalized), None)
+        if matched is None:
             raise _PlanHelperError(
                 "MISSING_TARGET",
                 "The dotted target does not identify a plan item.",
                 target=target,
             )
-        return
+        if expected_title is None:
+            raise _PlanHelperError(
+                "EXPECTED_TITLE_REQUIRED",
+                "A dotted target requires --expected-title from the current authoritative JSON.",
+                target=target,
+            )
+        expected = _single_line(expected_title, "expected-title")
+        if matched.text != expected:
+            raise _PlanHelperError(
+                "STALE_TARGET",
+                "The dotted target no longer identifies the expected current title.",
+                target=target,
+                expected_title=expected,
+                observed_title=matched.text,
+            )
+        if matched.text.startswith(METADATA_PREFIXES):
+            raise _PlanHelperError(
+                "INVALID_TARGET",
+                "Structural dependency and evidence references are not actionable update targets.",
+                target=target,
+            )
+        return matched
+    if expected_title is not None:
+        raise _PlanHelperError(
+            "INVALID_REQUEST",
+            "--expected-title is used only with a dotted target.",
+        )
     matches = [path for path, item in walked if item.text == normalized]
     if not matches:
         raise _PlanHelperError(
@@ -808,6 +1057,14 @@ def _validate_target(document: _PlanDocument, target: str) -> None:
             target=target,
             matches=matches,
         )
+    matched = next(item for path, item in walked if path == matches[0])
+    if matched.text.startswith(METADATA_PREFIXES):
+        raise _PlanHelperError(
+            "INVALID_TARGET",
+            "Structural dependency and evidence references are not actionable update targets.",
+            target=target,
+        )
+    return matched
 
 
 def _history_directories(context: _PlanContext) -> list[Path]:
@@ -831,35 +1088,79 @@ def _history_directories(context: _PlanContext) -> list[Path]:
     return sorted(directories)
 
 
-def _history_results(context: _PlanContext) -> list[dict[str, object]]:
-    results: list[dict[str, object]] = []
-    for directory in _history_directories(context):
-        result_path = directory / "result.json"
-        if not result_path.is_file() or result_path.is_symlink():
-            continue
-        payload = _read_json(
-            result_path, "INVALID_HISTORY", "A plan history result is invalid."
+def _soft_json(path: Path) -> tuple[str, dict[str, object] | None]:
+    if not _lexists(path):
+        return "missing", None
+    if path.is_symlink() or not path.is_file():
+        return "malformed", None
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError):
+        return "malformed", None
+    if not isinstance(payload, dict):
+        return "malformed", None
+    return "present", payload
+
+
+def _operation_status(directory: Path) -> _OperationStatus:
+    match = HISTORY_DIRECTORY.fullmatch(directory.name)
+    if match is None:
+        raise _PlanHelperError(
+            "INVALID_HISTORY",
+            "The operational plan history contains an invalid operation directory.",
+            exit_code=4,
+            path=str(directory),
         )
-        results.append(payload)
-    return results
+    operation_id = directory.name
+    kind = match.group("kind")
+    operation_state, operation = _soft_json(directory / "operation.json")
+    result_state, result = _soft_json(directory / "result.json")
+    if result_state == "present":
+        result_malformed = (
+            result is None
+            or result.get("schema_version") != RESULT_SCHEMA_VERSION
+            or not isinstance(result.get("outcome"), str)
+            or not result["outcome"]
+            or result.get("operation_id") != operation_id
+            or not isinstance(result.get("terminal"), bool)
+        )
+        if result_malformed:
+            result_state = "malformed"
+        elif result["terminal"] is not True:
+            result_state = "pending"
+    operation_valid = (
+        operation_state == "present"
+        and operation is not None
+        and operation.get("schema") == OPERATION_SCHEMA
+        and operation.get("version") == OPERATION_VERSION
+        and operation.get("operation_id") == operation_id
+        and operation.get("kind") == kind
+    )
+    if not operation_valid:
+        result_state = "malformed" if operation_state == "present" else operation_state
+    terminal = result_state == "present" and operation_valid
+    return _OperationStatus(
+        operation_id=operation_id,
+        kind=kind,
+        path=directory,
+        terminal=terminal,
+        result_state="terminal" if terminal else result_state,
+        result=result,
+    )
 
 
-def _unresolved_uncertain_operations(context: _PlanContext) -> list[str]:
-    uncertain: set[str] = set()
-    reconciled: set[str] = set()
-    for result in _history_results(context):
-        operation_id = result.get("operation_id")
-        if result.get("outcome") in {
-            "UNCERTAIN_UPDATE",
-            "UNCERTAIN_RECONCILIATION",
-        } and isinstance(operation_id, str):
-            uncertain.add(operation_id)
-        references = result.get("reconciles", [])
-        if isinstance(references, list):
-            reconciled.update(
-                reference for reference in references if isinstance(reference, str)
-            )
-    return sorted(uncertain - reconciled)
+def _operation_statuses(context: _PlanContext) -> list[_OperationStatus]:
+    return [_operation_status(directory) for directory in _history_directories(context)]
+
+
+def _unresolved_operations(
+    context: _PlanContext, *, exclude: frozenset[str] = frozenset()
+) -> list[_OperationStatus]:
+    return [
+        status
+        for status in _operation_statuses(context)
+        if not status.terminal and status.operation_id not in exclude
+    ]
 
 
 def _remove_tree(directory: Path, root: Path) -> None:
@@ -927,51 +1228,101 @@ def _prune_history(context: _PlanContext) -> None:
     directories = _history_directories(context)
     if len(directories) < HISTORY_LIMIT:
         return
-    unresolved = set(_unresolved_uncertain_operations(context))
-    for directory in list(directories):
-        result_path = directory / "result.json"
-        operation_id = None
-        if result_path.is_file() and not result_path.is_symlink():
-            payload = _read_json(
-                result_path, "INVALID_HISTORY", "A plan history result is invalid."
-            )
-            operation_id = payload.get("operation_id")
-        if operation_id not in unresolved:
-            _remove_tree(directory, context.history_root)
-            directories.remove(directory)
-            if len(directories) < HISTORY_LIMIT:
+    statuses = _operation_statuses(context)
+    for status in statuses:
+        if status.terminal:
+            _remove_tree(status.path, context.history_root)
+            if len(_history_directories(context)) < HISTORY_LIMIT:
                 return
+    unresolved = [status.operation_id for status in statuses if not status.terminal]
     raise _PlanHelperError(
         "HISTORY_LIMIT_REACHED",
         "Twenty unresolved operational snapshots are retained; reconcile them before another mutation.",
         exit_code=4,
-        unresolved_operations=sorted(unresolved),
+        unresolved_operations=unresolved,
     )
 
 
-def _start_history(context: _PlanContext, operation: str) -> tuple[str, Path]:
+def _write_operation_result(
+    operation_path: Path, result: dict[str, object], *, terminal: bool
+) -> dict[str, object]:
+    stored = {**result, "terminal": terminal}
+    target = operation_path / "result.json"
+    target.write_text(
+        json.dumps(stored, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
+    return stored
+
+
+def _start_operation(
+    context: _PlanContext, kind: str, metadata: dict[str, object]
+) -> tuple[str, Path]:
     _make_safe_directory(context.workspace, context.history_root)
-    _prune_history(context)
-    directories = _history_directories(context)
+    existing = _history_directories(context)
     sequence = 1
-    if directories:
-        match = HISTORY_DIRECTORY.fullmatch(directories[-1].name)
+    if existing:
+        match = HISTORY_DIRECTORY.fullmatch(existing[-1].name)
         if match is not None:
             sequence = int(match.group("sequence")) + 1
-    operation_id = f"{sequence:06d}-{operation}"
+    _prune_history(context)
+    operation_id = f"{sequence:06d}-{kind}"
     operation_path = context.history_root / operation_id
     operation_path.mkdir()
-    (operation_path / "before.json").write_bytes(context.plan_path.read_bytes())
-    before_html = context.html_path.read_bytes() if context.html_path.is_file() else b""
-    (operation_path / "before.html").write_bytes(before_html)
+    before = _evidence(context)
+    operation_record = {
+        "schema": OPERATION_SCHEMA,
+        "version": OPERATION_VERSION,
+        "operation_id": operation_id,
+        "kind": kind,
+        "state": "pending",
+        "before": before,
+        "metadata": metadata,
+    }
+    (operation_path / "operation.json").write_text(
+        json.dumps(operation_record, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    if bool(before["json_exists"]):
+        (operation_path / "before.json").write_bytes(context.plan_path.read_bytes())
+    if bool(before["html_exists"]):
+        (operation_path / "before.html").write_bytes(context.html_path.read_bytes())
+    _write_operation_result(
+        operation_path,
+        _result(
+            f"PENDING_{kind.upper()}",
+            operation_id=operation_id,
+            history_path=str(operation_path),
+            before=before,
+            retry_allowed=False,
+        ),
+        terminal=False,
+    )
     return operation_id, operation_path
 
 
-def _write_history_result(operation_path: Path, result: dict[str, object]) -> None:
-    target = operation_path / "result.json"
-    target.write_text(
-        json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+def _record_uncertain(
+    operation_path: Path,
+    outcome: str,
+    operation_id: str,
+    context: _PlanContext,
+    error: Exception,
+    **details: object,
+) -> dict[str, object]:
+    result = _result(
+        outcome,
+        operation_id=operation_id,
+        history_path=str(operation_path),
+        current=_evidence(context),
+        error=str(error),
+        inspect_required=True,
+        recovery_required=True,
+        retry_allowed=False,
+        **details,
     )
+    try:
+        return _write_operation_result(operation_path, result, terminal=False)
+    except OSError:
+        return {**result, "terminal": False}
 
 
 def _create(
@@ -979,6 +1330,16 @@ def _create(
 ) -> dict[str, object]:
     definition = _load_definition(arguments.definition, context)
     _reject_symlink_components(context.workspace, context.plan_path)
+    unresolved = _unresolved_operations(context)
+    if unresolved:
+        inspected = _inspect(context, api)
+        raise _PlanHelperError(
+            "RECONCILIATION_REQUIRED",
+            "Create cannot start while a prior operation is unresolved.",
+            exit_code=4,
+            inspect=inspected,
+            unresolved_operations=[status.operation_id for status in unresolved],
+        )
     if _lexists(context.plan_path) or _lexists(context.html_path):
         raise _PlanHelperError(
             "PLAN_ALREADY_EXISTS",
@@ -988,9 +1349,15 @@ def _create(
         )
     _make_safe_directory(context.workspace, context.task_root)
     hierarchy, completed_paths = _definition_hierarchy(definition)
-    mutation_started = False
+    operation_id, operation_path = _start_operation(
+        context,
+        "create",
+        {
+            "definition_path": str(definition["path"]),
+            "definition_sha256": _sha256(definition["path"]),
+        },
+    )
     try:
-        mutation_started = True
         observed_path = api.create_hierarchy_plan(
             hierarchy,
             title=definition["title"],
@@ -1002,23 +1369,24 @@ def _create(
             raise RuntimeError(
                 "create_hierarchy_plan returned an unexpected canonical path"
             )
-        inspected = _inspect(context, api)
-        if not inspected["synchronized"]:
+        inspected = _inspect(context, api, exclude_operations=frozenset({operation_id}))
+        if inspected["outcome"] != "SYNCED":
             raise RuntimeError(
                 "created JSON and HTML plan artifacts are not synchronized"
             )
     except Exception as error:
-        outcome = "UNCERTAIN_CREATE" if mutation_started else "CREATE_FAILED"
-        raise _PlanHelperError(
-            outcome,
-            "Plan creation may have changed the task-owned artifacts; inspect before retrying.",
-            exit_code=4,
-            inspect_required=True,
-            cause=str(error),
-            current=_evidence(context),
-        ) from error
-    return _result(
+        return _record_uncertain(
+            operation_path,
+            "UNCERTAIN_CREATE",
+            operation_id,
+            context,
+            error,
+            definition_path=str(definition["path"]),
+        )
+    result = _result(
         "CREATED",
+        operation_id=operation_id,
+        history_path=str(operation_path),
         package_version=api.package_version,
         definition_path=str(definition["path"]),
         task_plan_root=str(context.task_root),
@@ -1031,49 +1399,43 @@ def _create(
         after=_evidence(context),
         synchronized=True,
     )
+    try:
+        return _write_operation_result(operation_path, result, terminal=True)
+    except OSError as error:
+        return _record_uncertain(
+            operation_path,
+            "UNCERTAIN_CREATE",
+            operation_id,
+            context,
+            error,
+            definition_path=str(definition["path"]),
+        )
 
 
 def _update(
     context: _PlanContext, arguments: argparse.Namespace, api: _PlanApi
 ) -> dict[str, object]:
     inspected = _inspect(context, api)
-    if not inspected["synchronized"]:
+    if inspected["outcome"] != "SYNCED":
         raise _PlanHelperError(
             "RECONCILIATION_REQUIRED",
-            "The authoritative JSON and sibling HTML differ; run reconcile before update.",
+            "Update requires synchronized artifacts and no unresolved operation.",
             exit_code=4,
             unresolved_operations=inspected["unresolved_operations"],
-            inspect_required=True,
             inspect=inspected,
         )
-    unresolved = list(inspected["unresolved_operations"])
-    reconciliation_token = arguments.reconciliation_token
-    if unresolved:
-        if reconciliation_token != inspected["reconciliation_token"]:
-            raise _PlanHelperError(
-                "RECONCILIATION_REQUIRED",
-                "A prior uncertain mutation requires a current inspect token or successful reconcile before retry.",
-                exit_code=4,
-                unresolved_operations=unresolved,
-                inspect_required=True,
-            )
-    elif reconciliation_token is not None:
-        raise _PlanHelperError(
-            "INVALID_REQUEST",
-            "--reconciliation-token is valid only when inspect reports unresolved uncertain operations.",
-        )
     document = _load_plan(context)
-    _validate_target(document, arguments.target)
+    _validate_target(document, arguments.target, arguments.expected_title)
     mutation: dict[str, object]
     if arguments.complete:
         mutation = {"completed": True}
     elif arguments.incomplete:
         mutation = {"completed": False}
     elif arguments.add_child is not None:
-        mutation = {"add_child": _single_line(arguments.add_child, "add-child")}
+        mutation = {"add_child": _action_text(arguments.add_child, "add-child")}
     elif arguments.add_peer_after is not None:
         mutation = {
-            "add_peer_after": _single_line(arguments.add_peer_after, "add-peer-after")
+            "add_peer_after": _action_text(arguments.add_peer_after, "add-peer-after")
         }
     else:
         raise _PlanHelperError(
@@ -1081,11 +1443,21 @@ def _update(
         )
 
     before = _evidence(context)
-    operation_id, operation_path = _start_history(context, "update")
+    operation_id, operation_path = _start_operation(
+        context,
+        "update",
+        {
+            "target": arguments.target,
+            "expected_title": arguments.expected_title,
+            "mutation": next(iter(mutation)),
+        },
+    )
     try:
         api.update_hierarchy_plan(context.plan_path, arguments.target, **mutation)
-        after_inspection = _inspect(context, api)
-        if not after_inspection["synchronized"]:
+        after_inspection = _inspect(
+            context, api, exclude_operations=frozenset({operation_id})
+        )
+        if after_inspection["outcome"] != "SYNCED":
             raise RuntimeError(
                 "updated JSON and HTML plan artifacts are not synchronized"
             )
@@ -1096,76 +1468,210 @@ def _update(
             history_path=str(operation_path),
             mutation=next(iter(mutation)),
             target=arguments.target,
+            expected_title=arguments.expected_title,
             before=before,
             after=after,
             synchronized=True,
-            reconciles=unresolved,
         )
-        _write_history_result(operation_path, result)
-        return result
+        return _write_operation_result(operation_path, result, terminal=True)
     except Exception as error:
-        result = _result(
+        return _record_uncertain(
+            operation_path,
             "UNCERTAIN_UPDATE",
-            operation_id=operation_id,
-            history_path=str(operation_path),
+            operation_id,
+            context,
+            error,
             mutation=next(iter(mutation)),
             target=arguments.target,
+            expected_title=arguments.expected_title,
             before=before,
-            current=_evidence(context),
-            error=str(error),
-            inspect_required=True,
-            retry_allowed=False,
-            reconciles=[],
         )
+
+
+def _settle_operations(
+    statuses: Sequence[_OperationStatus],
+    *,
+    recovered_by: str,
+    resolution: str,
+    evidence: dict[str, object],
+) -> None:
+    for status in statuses:
+        _write_operation_result(
+            status.path,
+            _result(
+                "RECOVERED_OPERATION",
+                operation_id=status.operation_id,
+                recovered_by=recovered_by,
+                resolution=resolution,
+                after=evidence,
+            ),
+            terminal=True,
+        )
+
+
+def _restore_latest_before_json(
+    context: _PlanContext, statuses: Sequence[_OperationStatus]
+) -> _PlanDocument:
+    for status in reversed(statuses):
+        snapshot = status.path / "before.json"
+        if snapshot.is_symlink() or not snapshot.is_file():
+            continue
         try:
-            _write_history_result(operation_path, result)
-        except OSError:
-            pass
-        return result
+            payload = json.loads(snapshot.read_text(encoding="utf-8"))
+            if not isinstance(payload, dict):
+                continue
+            document = _plan_document_from_payload(payload, context)
+        except (OSError, UnicodeError, json.JSONDecodeError, _PlanHelperError):
+            continue
+        _safe_file(context.plan_path, context, required=False)
+        context.plan_path.write_bytes(snapshot.read_bytes())
+        return document
+    raise _PlanHelperError(
+        "RECOVERY_BLOCKED",
+        "No valid pre-operation JSON snapshot can restore plan authority.",
+        exit_code=4,
+        unresolved_operations=[status.operation_id for status in statuses],
+    )
 
 
-def _reconcile(context: _PlanContext, api: _PlanApi) -> dict[str, object]:
+def _cleanup_artifacts(context: _PlanContext) -> list[str]:
+    removed: list[str] = []
+    for path in (context.html_path, context.plan_path):
+        _safe_file(path, context, required=False)
+        if path.is_file():
+            path.unlink()
+            removed.append(str(path))
+    return removed
+
+
+def _purge_plan_history(context: _PlanContext) -> None:
+    if context.history_root.exists():
+        _validate_cleanup_tree(context.history_root, context.task_root)
+        _remove_tree(context.history_root, context.task_root)
+    history_parent = context.task_root / ".history"
+    if history_parent.is_dir() and not any(history_parent.iterdir()):
+        history_parent.rmdir()
+    if context.task_root.is_dir() and not any(context.task_root.iterdir()):
+        context.task_root.rmdir()
+
+
+def _recover_to_absence(
+    context: _PlanContext,
+    api: _PlanApi,
+    *,
+    operation_id: str,
+    operation_path: Path,
+    previous: Sequence[_OperationStatus],
+    before: dict[str, object],
+) -> dict[str, object]:
+    removed = _cleanup_artifacts(context)
+    artifact = _analyze_artifacts(context, api)
+    if artifact["artifact_state"] != "ABSENT":
+        raise RuntimeError("recovery did not reach complete absence")
+    after = _evidence(context)
+    previous_ids = [status.operation_id for status in previous]
+    result = _result(
+        "RECOVERED_ABSENT",
+        operation_id=operation_id,
+        history_path=str(operation_path),
+        before=before,
+        after=after,
+        removed=removed,
+        reconciles=previous_ids,
+        retryable_create=True,
+    )
+    _settle_operations(
+        previous,
+        recovered_by=operation_id,
+        resolution="absent",
+        evidence=after,
+    )
+    stored = _write_operation_result(operation_path, result, terminal=True)
+    _purge_plan_history(context)
+    return stored
+
+
+def _reconcile(
+    context: _PlanContext, arguments: argparse.Namespace, api: _PlanApi
+) -> dict[str, object]:
     inspected = _inspect(context, api)
-    if inspected["synchronized"]:
-        unresolved = list(inspected["unresolved_operations"])
-        if not unresolved:
-            return _result(
-                "ALREADY_SYNCED",
-                **{key: value for key, value in inspected.items() if key != "outcome"},
-            )
-        operation_id, operation_path = _start_history(context, "reconcile")
-        result = _result(
-            "RECONCILED",
-            operation_id=operation_id,
-            history_path=str(operation_path),
-            synchronized=True,
-            reconciles=unresolved,
-            no_artifact_change=True,
-            **_evidence(context),
+    unresolved_ids = list(inspected["unresolved_operations"])
+    supplied_token = arguments.recovery_token
+    observed_token = inspected["recovery_token"]
+    if unresolved_ids and supplied_token != observed_token:
+        raise _PlanHelperError(
+            "STALE_RECOVERY_TOKEN",
+            "Reconciliation requires the recovery token from the current inspect result.",
+            exit_code=4,
+            unresolved_operations=unresolved_ids,
+            expected_recovery_token=observed_token,
         )
-        _write_history_result(operation_path, result)
-        return result
-    document = _load_plan(context)
+    if supplied_token is not None and supplied_token != observed_token:
+        raise _PlanHelperError(
+            "STALE_RECOVERY_TOKEN",
+            "The supplied recovery token does not match the current artifacts and operations.",
+            exit_code=4,
+            expected_recovery_token=observed_token,
+        )
+    if not unresolved_ids and inspected["outcome"] == "SYNCED":
+        return _result(
+            "ALREADY_SYNCED",
+            **{key: value for key, value in inspected.items() if key != "outcome"},
+        )
+    if not unresolved_ids and inspected["outcome"] == "ABSENT":
+        return _result(
+            "ALREADY_ABSENT",
+            **{key: value for key, value in inspected.items() if key != "outcome"},
+        )
+    if not unresolved_ids and inspected["outcome"] == "ORPHANED_HTML":
+        raise _PlanHelperError(
+            "RECOVERY_BLOCKED",
+            "HTML without authoritative JSON can be removed only as recovery for a pending create or cleanup.",
+            exit_code=4,
+            inspect=inspected,
+        )
+
     before = _evidence(context)
-    operation_id, operation_path = _start_history(context, "reconcile")
-    unresolved = _unresolved_uncertain_operations(context)
+    operation_id, operation_path = _start_operation(
+        context,
+        "reconcile",
+        {
+            "recovery_token": supplied_token,
+            "previous_unresolved": unresolved_ids,
+        },
+    )
+    previous = _unresolved_operations(context, exclude=frozenset({operation_id}))
+    previous_ids = [status.operation_id for status in previous]
     try:
-        api.render_hierarchy_html(
-            {document.root_label: _hierarchy_items(document.items)},
-            title=document.title,
-            theme=document.theme,
-            themes_folder=document.themes_folder,
-            numbering=True,
-            checkboxes=True,
-            completed_items=_completed_paths(document.items),
-            output_filename=context.html_path.name,
-            output_folder=context.task_root,
-        )
-        after_inspection = _inspect(context, api)
-        if not after_inspection["synchronized"]:
-            raise RuntimeError(
-                "HTML reconciliation did not synchronize the plan artifacts"
+        if any(status.kind == "cleanup" for status in previous):
+            return _recover_to_absence(
+                context,
+                api,
+                operation_id=operation_id,
+                operation_path=operation_path,
+                previous=previous,
+                before=before,
             )
+
+        artifact = _analyze_artifacts(context, api)
+        document = artifact.get("document")
+        has_pending_create = any(status.kind == "create" for status in previous)
+        if has_pending_create and not isinstance(document, _PlanDocument):
+            return _recover_to_absence(
+                context,
+                api,
+                operation_id=operation_id,
+                operation_path=operation_path,
+                previous=previous,
+                before=before,
+            )
+
+        if not isinstance(document, _PlanDocument):
+            document = _restore_latest_before_json(context, previous)
+        _render_document(context, document, api, write=True)
+        after_artifact = _analyze_artifacts(context, api)
+        if after_artifact["artifact_state"] != "SYNCED":
+            raise RuntimeError("reconciliation did not synchronize the plan artifacts")
         result = _result(
             "RECONCILED",
             operation_id=operation_id,
@@ -1174,27 +1680,26 @@ def _reconcile(context: _PlanContext, api: _PlanApi) -> dict[str, object]:
             before=before,
             after=_evidence(context),
             synchronized=True,
-            reconciles=unresolved,
+            reconciles=previous_ids,
+            retained_create=has_pending_create,
         )
-        _write_history_result(operation_path, result)
-        return result
+        _settle_operations(
+            previous,
+            recovered_by=operation_id,
+            resolution="synchronized",
+            evidence=_evidence(context),
+        )
+        return _write_operation_result(operation_path, result, terminal=True)
     except Exception as error:
-        result = _result(
+        return _record_uncertain(
+            operation_path,
             "UNCERTAIN_RECONCILIATION",
-            operation_id=operation_id,
-            history_path=str(operation_path),
+            operation_id,
+            context,
+            error,
             before=before,
-            current=_evidence(context),
-            error=str(error),
-            inspect_required=True,
-            retry_allowed=False,
             reconciles=[],
         )
-        try:
-            _write_history_result(operation_path, result)
-        except OSError:
-            pass
-        return result
 
 
 def _incomplete_items(document: _PlanDocument) -> list[str]:
@@ -1209,34 +1714,11 @@ def _incomplete_items(document: _PlanDocument) -> list[str]:
     return incomplete
 
 
-def _validate_plan_cleanup(context: _PlanContext) -> None:
-    for path in (context.plan_path, context.html_path):
-        _safe_file(path, context, required=True)
-    if context.history_root.exists():
-        _validate_cleanup_tree(context.history_root, context.task_root)
-
-
-def _remove_plan(context: _PlanContext) -> list[str]:
-    removed: list[str] = []
-    for path in (context.plan_path, context.html_path):
-        path.unlink()
-        removed.append(str(path))
-    if context.history_root.exists():
-        _remove_tree(context.history_root, context.task_root)
-        removed.append(str(context.history_root))
-    history_parent = context.task_root / ".history"
-    if history_parent.is_dir() and not any(history_parent.iterdir()):
-        history_parent.rmdir()
-    if context.task_root.is_dir() and not any(context.task_root.iterdir()):
-        context.task_root.rmdir()
-    return removed
-
-
 def _finalize(
     context: _PlanContext, arguments: argparse.Namespace, api: _PlanApi
 ) -> dict[str, object]:
     inspected = _inspect(context, api)
-    if not inspected["synchronized"] or inspected["unresolved_operations"]:
+    if inspected["outcome"] != "SYNCED":
         raise _PlanHelperError(
             "RECONCILIATION_REQUIRED",
             "Finalize requires synchronized artifacts and no unresolved uncertain operation.",
@@ -1265,27 +1747,41 @@ def _finalize(
                 "maximum_settled_snapshots": HISTORY_LIMIT,
             },
         )
-    _validate_plan_cleanup(context)
-    try:
-        removed = _remove_plan(context)
-    except (OSError, _PlanHelperError) as error:
-        raise _PlanHelperError(
-            "UNCERTAIN_CLEANUP",
-            "Cleanup may have removed part of the selected task-owned plan; reconcile exact paths before retry.",
-            exit_code=4,
-            cause=str(error),
-            current=_evidence(context),
-            retry_allowed=False,
-            reconciliation_required=True,
-        ) from error
-    return _result(
-        "CLEANED",
-        retention="remove",
-        synchronized_before_cleanup=True,
-        evidence_before_cleanup=evidence,
-        removed=removed,
-        provider_state_changed=False,
+    operation_id, operation_path = _start_operation(
+        context,
+        "cleanup",
+        {"retention": "remove", "synchronized_before_cleanup": True},
     )
+    try:
+        removed = _cleanup_artifacts(context)
+        artifact = _analyze_artifacts(context, api)
+        if artifact["artifact_state"] != "ABSENT":
+            raise RuntimeError("cleanup did not reach complete absence")
+        result = _result(
+            "CLEANED",
+            operation_id=operation_id,
+            history_path=str(operation_path),
+            retention="remove",
+            synchronized_before_cleanup=True,
+            evidence_before_cleanup=evidence,
+            evidence_after_cleanup=_evidence(context),
+            removed=removed,
+            provider_state_changed=False,
+            retryable_create=True,
+        )
+        stored = _write_operation_result(operation_path, result, terminal=True)
+        _purge_plan_history(context)
+        return stored
+    except Exception as error:
+        return _record_uncertain(
+            operation_path,
+            "UNCERTAIN_CLEANUP",
+            operation_id,
+            context,
+            error,
+            retention="remove",
+            evidence_before_cleanup=evidence,
+        )
 
 
 def _parser() -> _JsonArgumentParser:
@@ -1305,7 +1801,7 @@ def _parser() -> _JsonArgumentParser:
 
     update = subparsers.add_parser("update")
     update.add_argument("--target", required=True)
-    update.add_argument("--reconciliation-token")
+    update.add_argument("--expected-title")
     mutations = update.add_mutually_exclusive_group(required=True)
     mutations.add_argument("--complete", action="store_true")
     mutations.add_argument("--incomplete", action="store_true")
@@ -1313,7 +1809,8 @@ def _parser() -> _JsonArgumentParser:
     mutations.add_argument("--add-peer-after")
 
     subparsers.add_parser("inspect")
-    subparsers.add_parser("reconcile")
+    reconcile = subparsers.add_parser("reconcile")
+    reconcile.add_argument("--recovery-token")
 
     finalize = subparsers.add_parser("finalize")
     finalize.add_argument("--retention", choices=("keep", "remove"), required=True)
@@ -1343,18 +1840,20 @@ def execute(argv: Sequence[str] | None = None) -> tuple[int, dict[str, object]]:
             return 0, _capability_result(api)
         context = _context(arguments)
         if arguments.command == "create":
-            return 0, _create(context, arguments, api)
+            result = _create(context, arguments, api)
+            return (4 if result["outcome"] == "UNCERTAIN_CREATE" else 0), result
         if arguments.command == "inspect":
             inspected = _inspect(context, api)
-            return (0 if inspected["synchronized"] else 4), inspected
+            return (0 if inspected["outcome"] in {"SYNCED", "ABSENT"} else 4), inspected
         if arguments.command == "update":
             result = _update(context, arguments, api)
             return (4 if result["outcome"] == "UNCERTAIN_UPDATE" else 0), result
         if arguments.command == "reconcile":
-            result = _reconcile(context, api)
+            result = _reconcile(context, arguments, api)
             return (4 if result["outcome"] == "UNCERTAIN_RECONCILIATION" else 0), result
         if arguments.command == "finalize":
-            return 0, _finalize(context, arguments, api)
+            result = _finalize(context, arguments, api)
+            return (4 if result["outcome"] == "UNCERTAIN_CLEANUP" else 0), result
         raise _PlanHelperError("INVALID_REQUEST", "Unknown helper command.")
     except _PlanHelperError as error:
         return error.exit_code, _result(
