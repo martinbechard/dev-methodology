@@ -670,14 +670,14 @@
   <section class="section" aria-labelledby="definition-scope-title">
     <h2 id="definition-scope-title">Conceptual Definition Scope</h2>
     <p class="callout">A conceptual agent definition declares required and conditional technology-agnostic core skills. The role schema adds effective-communication and ste-technical-writing to every conceptual agent. Initial generation defaults these skills to by-reference delivery.</p>
-    <p class="callout">Effective communication governs ordinary user and agent messages. STE applies only when an agent writes, rewrites, or reviews technical-document prose. PROJECT.yaml supplies structured-explanation and organise-project-files as project-wide conditional skills instead of repeating them in selected Agent definitions. <a href="agents/general-agent-skills.md">General Agent Skills</a> explains how both mechanisms apply across all Agents.</p>
+    <p class="callout">Effective communication governs ordinary user and agent messages. STE applies only when an agent writes, rewrites, or reviews technical-document prose. PROJECT.yaml supplies structured-explanation, organise-project-files, and document-provenance as project-wide conditional skills instead of repeating them in selected Agent definitions. <a href="agents/general-agent-skills.md">General Agent Skills</a> explains how both mechanisms apply across all Agents.</p>
   </section>
 
   <section class="section" aria-labelledby="relationships-title">
     <h2 id="relationships-title">Agent-Skill Relationships</h2>
     <h3 id="hierarchy-title">Interactive Agent And Skill Map</h3>
     <p class="note">
-      This diagram uses color to distinguish agent-to-skill assignments from agent-to-agent dependencies. Amber lines show skills an agent always uses, while violet lines show skills selected when an applicable rule matches. Blue arrows show direct dependencies between agents. Blue skill cards have a separate meaning: they identify technology skills selected during project setup. <a href="skills-modularization.html">Agent Skill Architecture</a> explains these skill-assignment conventions.
+      This diagram uses color to distinguish agent-to-skill assignments from agent-to-agent dependencies. Amber lines show skills an agent always uses, while violet lines show skills selected when an applicable rule matches. Blue arrows show direct dependencies between agents. Blue skill cards in the generated skill catalog have a separate meaning: they identify technology skills available for setup-time selection through technology detection. <a href="skills-modularization.html">Agent Skill Architecture</a> explains these skill-assignment conventions.
     </p>
     <p><a href="agent-skill-hierarchy.svg">Open the interactive SVG diagram</a>.</p>
     <object id="agent-skill-hierarchy" class="hierarchy-embed" data="agent-skill-hierarchy.svg" type="image/svg+xml" tabindex="-1" aria-label="Interactive hierarchy connecting agents to bundled skills and direct agent dependencies">
@@ -700,12 +700,12 @@
 
   <section class="section" aria-labelledby="project-bindings-title">
     <h2 id="project-bindings-title">Project-Selected Delivery and Technology Bindings</h2>
-    <p>PROJECT.yaml records installed core delivery, Persistence, Commit, and user-confirmed folder technologies. AGENTS.md supplies the applicable folder technology references.</p>
+    <p>PROJECT.yaml records installed core delivery, resource coordination, Persistence, Commit, and user-confirmed folder technologies. AGENTS.md supplies the applicable claim-helper, workflow-skill, and folder technology references.</p>
   </section>
 
   <section class="section" aria-labelledby="provider-independence-title">
     <h2 id="provider-independence-title">Provider-Independent Dev Coder Inputs</h2>
-    <p>Dev Coder receives normalized work and persistence evidence through orchestration. It does not depend directly on provider-specific create or manage skills.</p>
+    <p>Dev Coder receives normalized work-item identity, source scope, and provider evidence through orchestration. It does not depend directly on provider-specific create or manage skills.</p>
   </section>
 
   <section class="section" aria-labelledby="delivery-responsibilities-title">
@@ -713,14 +713,17 @@
     <h3>Delivery Workflow</h3>
     <p>Candidate creation and terminal delivery are separate responsibilities:</p>
     <ol>
-      <li>Dev Coder returns a clean verified candidate commit without applying terminal delivery.</li>
+      <li>Dev Coder returns a clean verified candidate commit without applying terminal Commit delivery or provider mutation.</li>
       <li>Dev Orchestrator obtains fresh independent review and source verification, combines accepted candidates when needed, then applies or resumes the effective Commit-selected skill referenced by applicable AGENTS.md guidance.</li>
-      <li>The deliver-work-item-feature-branch completion contract consumes the accepted candidate without modifying source and preserves one delivery identity through host review and corrections.</li>
+      <li>The deliver-work-item interface gives the selected Commit provider one accepted input and requires the provider to consume, not author or amend, the accepted source change.</li>
+      <li>deliver-work-item-main-branch integrates and verifies the accepted change on configured main when the effective completion selector is main-branch.</li>
+      <li>deliver-work-item-feature-branch publishes one reviewable branch when the selected completion process is feature-branch or the request requires reviewed branch delivery through merge.</li>
+      <li>Feature-branch delivery uses create-pull-request only for GitHub or another configured host whose contract accurately uses pull-request terminology; GitLab delivery requires merge-request evidence from a configured capability.</li>
       <li>Every source correction returns through Dev Orchestrator to the original Dev Coder for a replacement candidate, fresh independent review, and verification before delivery resumes.</li>
-      <li>The completion contract loads create-pull-request only as its subordinate GitHub publication capability and returns AWAITING_REVIEW until required review, checks, dependency order, merge, and configured base-branch reachability are observed.</li>
+      <li>The effective Commit provider returns READY, AWAITING_REVIEW, or BLOCKED with state-keyed evidence. Publication alone is AWAITING_REVIEW, not completion.</li>
       <li>Persistence closure begins only after Commit returns READY.</li>
     </ol>
-    <p>Publication is therefore a resumable handoff rather than completion. Focused pull requests separate shared foundations from independently reviewable changes.</p>
+    <p>Delivery is therefore separate from provider lifecycle closure. Main-branch integration, feature-branch publication, host review, and Persistence closure each keep their own evidence boundary.</p>
 
     <h3>Persistence Selection</h3>
     <p>Work-item Persistence is an independent project selection:</p>
@@ -962,7 +965,7 @@
     }, { once: true });
   </script>
   <footer class="site-footer">
-    <p>Copyright 2026 (c) Martin.Bechard@DevConsult.ca - <a href="../LICENSE">MIT License</a></p>
+    <p>Copyright (c) 2026 Martin.Bechard@DevConsult.ca - <a href="../LICENSE">MIT License</a></p>
   </footer>
   <script src="agent-browser.js"></script>
   <script src="skill-browser.js"></script>
