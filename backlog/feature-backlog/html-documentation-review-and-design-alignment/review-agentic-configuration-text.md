@@ -2,7 +2,7 @@
 
 Owner: Dev Orchestrator (019fe928-fc32-73c2-af60-791087327934)
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -11,6 +11,34 @@ Provider: file
 Work Item ID: review-agentic-configuration-text
 
 Completion: main-branch
+
+## Active Execution Evidence
+
+Condition Type: root-execution
+
+Owner: Dev Orchestrator in Codex task 019fe928-fc32-73c2-af60-791087327934
+
+Evidence: The user explicitly approved restoration of the pre-candidate no-provenance-block state. The parent Coordinator durably reconciled User Action Required to Ready at commit 7cd6cfb3 and Ready to Starting at commit f995c6c9 for this same canonical task. The preserved clean branch, worktree, and candidate commits remain available for the authorized correction.
+
+Observed At: 2026-08-10T02:30:30Z
+
+Started At: 2026-08-10T00:49:42Z
+
+Deadline or Expires At: 2026-08-10T04:49:42Z
+
+Next Action: Acquire the exact activity=work claim, restore the target page to the approved pre-candidate no-provenance-block state while retaining supported text corrections, update only implicated page-content assertions, then obtain fresh independent review and verification before main-branch delivery.
+
+Next Reconciliation At: 2026-08-10T02:45:30Z
+
+Canonical Conversation: 019fe928-fc32-73c2-af60-791087327934
+
+Root Agent Task: 019fe928-fc32-73c2-af60-791087327934
+
+Branch: codex/review-agentic-configuration-text-019fb057
+
+Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/review-agentic-configuration-text-work-019fb057
+
+Phase: Authorized bounded correction
 
 ## Recovery Handoff Evidence
 
