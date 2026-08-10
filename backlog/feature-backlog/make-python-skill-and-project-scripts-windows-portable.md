@@ -36,17 +36,17 @@ Condition Type: delegated-work
 
 Owner: Original Dev Coder /root/windows_portability_coder under visible Root Dev Orchestrator 019fe928-e2d8-7f91-91b2-bd27990a7414
 
-Evidence: The Coordinator authorized bounded option B for all three review findings: a truthful portability-only Windows gate will retain the exact inherited failure baseline, report resolved failures, and reject any new or Windows-specific regression without mutating unrelated governed contracts. The reconciled current-main Python 3.11 run now has 11 failing entry-point files because current main resolved scripts/test_bundle_content.py from the original 12-record baseline. The original Dev Coder is paused before correction mutation and will also replace whole-file exclusions with per-case or subcommand coverage and add cross-platform lock contention plus abnormal-holder-termination verification.
+Evidence: The bounded correction now changes only four directly traceable Python paths: evals/agent-tests/project-bootstrapper/scripted_orchestration.py, scripts/agent_skill_evals/commands.py, scripts/test_python_windows_portability.py, and scripts/test_resource_claim.py. Six focused correction tests pass for portable lock import and crash contention, mixed-case inventory, command entry points, the retained 12-record baseline structure, and the static locking-abstraction contract; git diff --check is clean. Baseline identities still contain temporary pending values, no workflow or README claim has changed, and the original Dev Coder is paused at this safe checkpoint.
 
-Observed At: 2026-08-10T02:31:50Z
+Observed At: 2026-08-10T02:44:05Z
 
-Started At: 2026-08-10T02:31:50Z
+Started At: 2026-08-10T02:44:05Z
 
 Deadline or Expires At: 2026-08-10T04:49:31Z
 
-Next Action: Complete this short provider transaction, reacquire the visible root's exact activity=work claim, then release the original Dev Coder to implement the Coordinator-authorized comparator and the two remaining in-scope corrections in one replacement candidate.
+Next Action: Complete this short provider transaction, reacquire the visible root's exact activity=work claim, then release the original Dev Coder to finalize all baseline identities, the truthful workflow and README contract, and the complete replacement-candidate verification.
 
-Next Reconciliation At: 2026-08-10T02:46:50Z
+Next Reconciliation At: 2026-08-10T02:59:05Z
 
 ## Execution Identity
 
@@ -64,7 +64,7 @@ Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/make-python-window
 
 Current Phase: Implementing
 
-Work-Item Claim: Visible claim python-windows-portability-visible-work-8-019fe928 was released with handoff only for this bounded-correction authority and evidence refresh; source mutation remains paused until the visible root reacquires the exact activity=work claim.
+Work-Item Claim: Visible claim python-windows-portability-visible-work-9-019fe928 was released with handoff only for this bounded-correction evidence refresh; source mutation remains paused until the visible root reacquires the exact activity=work claim.
 
 ## Execution Handoff Reconciliation
 
