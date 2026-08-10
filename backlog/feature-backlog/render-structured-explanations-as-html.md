@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: Blocked
+Status: Ready
 
 Type: Feature
 
@@ -69,6 +69,10 @@ Supporting evidence:
 Blocker owner: Work Item create-html-document-outlines-from-raw-information.
 
 Blocked to Ready condition: the dependency is Completed with an accepted create-document-outline skill and working MCP structured JSON-to-HTML route.
+
+Dependency Resolution: Satisfied on 2026-08-10. Work Item create-html-document-outlines-from-raw-information is Completed with an accepted create-document-outline skill, focused source-traceability validation, and a synchronized JSON-to-HTML route that fails clearly when mcp-agent-ops is unavailable.
+
+Next Action: Dev Backlog Coordinator may reserve this item as the next separate SOLO crisis work-item task after terminal cleanup of the completed dependency.
 
 ## Verification
 
