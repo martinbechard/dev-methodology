@@ -28,19 +28,19 @@ Required Task Title: Implementing — Use MCP hierarchy plans for complex develo
 
 Condition Type: delegated-work
 
-Owner: Dev Coder (/root/implement_complex_plan_skill), coordinated by Dev Orchestrator (019fe928-e31e-71e2-aaa8-7f9bef12c7b0)
+Owner: Methodology Artifact Reviewer (/root/review_complex_plan_methodology) and replacement Dev Code Reviewer (/root/review_complex_plan_code_replacement), coordinated by Dev Orchestrator (019fe928-e31e-71e2-aaa8-7f9bef12c7b0)
 
-Evidence: The canonical execution remains active. Its bounded Dev Coder lane implemented the repository-owned helper, planning skill, conditional Dev Orchestrator routing, focused assertions, and generator-owned projections in the preserved source worktree. Helper, skill, provenance, bundle, and generator checks pass; final diff inspection and candidate commit preparation are active, and no shared source integration has started.
+Evidence: Candidate commit d72e1a284a9b832295f2cd9e796f49f21404b6e2 is clean and immutable in the preserved source worktree. Fresh methodology review and the one bounded replacement functional source review are actively evaluating that commit. The original source reviewer stopped before review because its assignment incorrectly requested formal cybersecurity analysis; it made no mutation and returned no candidate verdict.
 
-Observed At: 2026-08-10T01:59:25Z
+Observed At: 2026-08-10T02:15:36Z
 
-Started At: 2026-08-10T01:27:38Z
+Started At: 2026-08-10T02:02:00Z
 
-Deadline or Expires At: 2026-08-10T02:27:38Z
+Deadline or Expires At: 2026-08-10T02:45:00Z
 
-Next Action: Dev Coder records the clean candidate commit and exact verification evidence; Dev Orchestrator then dispatches fresh independent source and methodology review followed by independent verification.
+Next Action: Both fresh reviewers return terminal verdicts for the immutable candidate; accepted review evidence then routes to independent Dev Verifier, while any confirmed finding returns to the original Dev Coder within the bounded correction loop.
 
-Next Reconciliation At: 2026-08-10T02:13:30Z
+Next Reconciliation At: 2026-08-10T02:29:30Z
 
 Codex Task ID: 019fe928-e31e-71e2-aaa8-7f9bef12c7b0
 
@@ -58,11 +58,11 @@ Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/use-mcp-hierarchy-
 
 Starting Head: 9488c71873e19c99b523927bce14ec64da634158
 
-Phase: candidate finalization
+Phase: independent source and methodology review
 
-Provider Update Claim: mcp-hierarchy-plans-evidence-update2-019fe928; outcome SHARED_CHECKOUT_ACQUIRED; claim event e0c5fcdd-6d58-491a-9dc3-0c44fe83d02e.
+Provider Update Claim: mcp-hierarchy-plans-review-update-019fe928; outcome SHARED_CHECKOUT_ACQUIRED; claim event 450d5180-d2fc-4735-9344-6ad8361b2d1c.
 
-Provider Path Claim: mcp-hierarchy-plans-evidence-path2-019fe928; outcome SHARED_CHECKOUT_ACQUIRED; claim event 208e0f27-cc32-4fa4-b703-4a6cb00884c0.
+Provider Path Claim: mcp-hierarchy-plans-review-path-019fe928; outcome SHARED_CHECKOUT_ACQUIRED; claim event 25eb4fcc-8f9d-4ebb-b6a3-5669944b99cb.
 
 ## Starting Handoff Evidence
 
