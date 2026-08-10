@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: User Action Required
+Status: Ready
 
 Type: Feature
 
@@ -60,7 +60,7 @@ Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/review-agentic-con
 
 Phase: Bounded correction attempt 1 reconciliation
 
-## User Action Required
+## User Direction Resolution
 
 Question: Do you approve restoring `design/agentic-configuration.html` to its pre-candidate state with no provenance block, while retaining the supported text corrections?
 
@@ -74,9 +74,9 @@ Asked At: 2026-08-10T01:42:00Z
 
 Asked In: Parent coordination task 019fb057-1767-7ef2-b5fa-41f4417b20b3
 
-Resolution: Pending
+Resolution: Approved. Restore `design/agentic-configuration.html` to its pre-candidate state with no provenance block while retaining the supported text corrections. Do not invent historical provenance values.
 
-Approval Resolution: Pending
+Approval Resolution: The user answered exactly `ok I approve` in canonical Work Item conversation `019fe928-fc32-73c2-af60-791087327934` on 2026-08-10 in response to the recorded question.
 
 ## Summary
 
