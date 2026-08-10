@@ -32,21 +32,41 @@ Next Reconciliation At: 2026-08-10T00:59:00Z
 
 ## Active Execution Evidence
 
-Condition Type: independent-review
+Condition Type: exceptional-recovery
 
-Owner: Fresh Dev Code Reviewer and Methodology Artifact Reviewer under visible Root Dev Orchestrator 019fe928-e2d8-7f91-91b2-bd27990a7414
+Owner: Original Dev Coder /root/windows_portability_coder under visible Root Dev Orchestrator 019fe928-e2d8-7f91-91b2-bd27990a7414
 
-Evidence: Both fresh reviewers are paused at safe read-only checkpoints with the candidate unchanged and clean. The Code Reviewer provisionally returns NEEDS CORRECTION because the Windows exclusion table omits both changed process-tree cleanup regressions, unittest skipped outcomes are not recorded or fail-closed, and test baseline comparison uses only outcome kind plus test ID rather than the captured failure detail. The Methodology Artifact Reviewer independently identifies the same process-cleanup exclusions as likely making the README verification claim too strong. Focused contracts and local POSIX regressions pass, but terminal review verdicts remain pending.
+Evidence: Both fresh reviews are terminal NEEDS CORRECTION on clean candidate 7cb7e0312f0ce7e077c903886f8235a69f84971e. The Parent Coordinator explicitly authorized one fresh, separately bounded exceptional recovery cycle covering every terminal finding without a Blocked transition. Candidate 7cb7e031 and the current inherited baseline must be preserved. Source remains frozen until this manifest is committed and the visible root reacquires the exact activity=work claim; no verifier or integration has started.
 
-Observed At: 2026-08-10T04:24:38Z
+Observed At: 2026-08-10T04:30:57Z
 
-Started At: 2026-08-10T04:24:38Z
+Started At: 2026-08-10T04:30:57Z
 
 Deadline or Expires At: 2026-08-10T04:49:31Z
 
-Next Action: Complete this short provider transaction, reacquire the visible root's exact activity=work claim, then release both fresh reviewers to finish terminal verdicts; no source mutation or verification begins before those verdicts are reconciled.
+Next Action: Complete this provider transaction, release its exact update and path claims, reacquire the visible root's exact activity=work claim, then release the original Dev Coder to execute only the durable exceptional-recovery manifest below.
 
-Next Reconciliation At: 2026-08-10T04:39:38Z
+Next Reconciliation At: 2026-08-10T04:45:57Z
+
+## Exceptional Recovery Manifest
+
+Authorized By: Parent Coordinator 019fb057-1767-7ef2-b5fa-41f4417b20b3 on 2026-08-10T04:30:57Z
+
+Preserved Candidate: 7cb7e0312f0ce7e077c903886f8235a69f84971e
+
+Preserved Baseline: 16 authorized owners and 118 exact inherited identities, with resolutions remaining observable and no widening into those unrelated contracts.
+
+Recovery Scope:
+
+- Add Windows-selected root-plus-child process-tree cleanup tests for both changed cleanup paths.
+- Make taskkill failure and descendant ownership fail closed.
+- Capture ordinary unittest skips and reject every unclassified skip, including symlink-capability skips.
+- Compare stable sanitized diagnostic signatures for authorized test baselines so a new Windows-specific cause under an existing test ID fails.
+- Keep README evidence statements no stronger than behavior actually verified by the gate.
+
+Recovery Constraints: Use only the Work Item's already-approved Windows-portability implementation, directly traceable tests, verifier, workflow, and documentation scope. Preserve non-destructive history, the canonical task identity, candidate 7cb7e031, and the inherited baseline. Do not mutate unrelated baseline contracts.
+
+Cycle Limit: This is the final authorized correction cycle. After fresh independent review and verification, any unresolved finding or scope gap returns to the Parent Coordinator without another source correction attempt.
 
 ## Execution Identity
 
@@ -62,9 +82,9 @@ Branch: codex/make-python-skill-and-project-scripts-windows-portable
 
 Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/make-python-windows-portability-work-019fb057
 
-Current Phase: Reviewing
+Current Phase: Implementing
 
-Work-Item Claim: Visible claim python-windows-portability-visible-work-17-019fe928 was released with handoff only for this independent-review evidence refresh; source mutation remains paused until the visible root reacquires the exact activity=work claim.
+Work-Item Claim: Visible claim python-windows-portability-visible-work-18-019fe928 was released with handoff for this exceptional-recovery manifest transaction; source remains frozen until the visible root reacquires the exact activity=work claim.
 
 ## Execution Handoff Reconciliation
 
