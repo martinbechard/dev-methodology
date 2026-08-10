@@ -792,6 +792,7 @@ DOCUMENT_INFORMATION_OWNERS = {
 DOCUMENT_NAVIGATION_ORDER = (
     "agent-and-skill-definitions.html",
     "agent-and-skill-evaluations.html",
+    "agent-owned-evaluation-suites.html",
     "agentic-configuration.html",
     "skills-modularization.html",
     "generic-agent-definitions-source.html",
@@ -1591,7 +1592,7 @@ class BundleContentTests(unittest.TestCase):
             index_text,
         )
 
-        self.assertEqual(9, len(detail_pages))
+        self.assertEqual(10, len(detail_pages))
         for page_index, relative_path in enumerate(detail_pages):
             with self.subTest(detail_page=relative_path):
                 expected_sequence_links: list[tuple[str, str]] = []
@@ -12893,6 +12894,7 @@ Visible after.
         expected_index_owners = (
             "catalog",
             "evaluations",
+            "evaluation-suites",
             "configuration",
             "modularization",
             "agent-definitions",
