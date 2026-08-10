@@ -32,21 +32,21 @@ Next Reconciliation At: 2026-08-10T00:59:00Z
 
 ## Active Execution Evidence
 
-Condition Type: exceptional-recovery
+Condition Type: fresh-independent-review
 
-Owner: Original Dev Coder /root/windows_portability_coder under visible Root Dev Orchestrator 019fe928-e2d8-7f91-91b2-bd27990a7414
+Owner: Fresh independent code and methodology-artifact reviewers under visible Root Dev Orchestrator 019fe928-e2d8-7f91-91b2-bd27990a7414
 
-Evidence: The final recovery is fully green at the pre-commit handoff. Exactly seven pending tracked modifications are present with no staged or untracked path: README.md; the Project Bootstrapper launcher and direct test; the agent-skill-evaluation launcher and direct test; scripts/test_bundle_content.py; and scripts/test_python_windows_portability.py. Exact automated assertions confirm seven pending paths and 13 total paths from review base 9385665b27ff4c3f8fb1da3e04e82a47b4bf742c. Focused verifier 28/28, Project Bootstrapper cleanup 1/1, agent-evaluation cleanup and output-cap 2/2, and README/Python-skill contracts 2/2 pass. The fail-closed aggregate passes with 160 inventory paths, 63 test files, 1,525 tests, 21 command smokes, exact authorized baseline/signatures, and 24 classified exclusions. Negative inventory proof returns UNCLASSIFIED_PYTHON_REJECTED. All skill, hierarchy, evaluation-document, support-checklist, technology-detection, and OpenAI metadata freshness checks pass. Provenance validates three historical documents. git diff --check passes against HEAD and the review base. No native Windows pass is claimed.
+Evidence: The final-recovery replacement candidate is committed at cbab82b1f65f9096aa8c6b7ae9d7794f690715ff with message Harden fail-closed Windows portability verification. The preserved predecessor is 7cb7e0312f0ce7e077c903886f8235a69f84971e, and non-destructive history remains based on exact review base 9385665b27ff4c3f8fb1da3e04e82a47b4bf742c. The source worktree is clean; cached and base-to-candidate diff checks pass. The exact review range contains 13 paths: the seven recovery paths plus the workflow, two generator-owned documentation projections, resource-claim portability test, Python skill, and resource-claim helper source. All pre-commit focused, aggregate, freshness, provenance, negative inventory, and exact-path-set gates are green. No native Windows pass is claimed. Source mutation is stopped for entirely fresh independent review.
 
-Observed At: 2026-08-10T05:42:56Z
+Observed At: 2026-08-10T05:45:49Z
 
-Started At: 2026-08-10T04:41:22Z
+Started At: 2026-08-10T05:45:49Z
 
-Deadline or Expires At: 2026-08-10T06:11:22Z
+Deadline or Expires At: 2026-08-10T06:45:49Z
 
-Next Action: Complete this provider transaction, reacquire the visible root's exact activity=work claim, then release the original Dev Coder to stage and commit exactly the seven pending recovery paths with message Harden fail-closed Windows portability verification, return the clean candidate identity, and stop source mutation for fresh independent review.
+Next Action: Complete this provider transaction, reacquire the visible root's exact activity=work claim, set the canonical task title to Reviewing, and launch fresh read-only code and methodology-artifact reviewers against exact range 9385665b27ff4c3f8fb1da3e04e82a47b4bf742c..cbab82b1f65f9096aa8c6b7ae9d7794f690715ff. If either reviewer finds any unresolved issue or scope gap, return it to the Parent Coordinator without another source correction cycle.
 
-Next Reconciliation At: 2026-08-10T05:57:56Z
+Next Reconciliation At: 2026-08-10T06:00:49Z
 
 ## Exceptional Recovery Manifest
 
@@ -82,9 +82,9 @@ Branch: codex/make-python-skill-and-project-scripts-windows-portable
 
 Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/make-python-windows-portability-work-019fb057
 
-Current Phase: Implementing
+Current Phase: Reviewing
 
-Work-Item Claim: Visible claim python-windows-portability-visible-work-30-019fe928 was released with handoff for this fully green pre-commit checkpoint; source remains frozen until the visible root reacquires the exact activity=work claim.
+Work-Item Claim: Visible claim python-windows-portability-visible-work-32-019fe928 was released with handoff after candidate commit; source remains frozen for fresh review until the visible root reacquires the exact activity=work claim.
 
 ## Execution Handoff Reconciliation
 
