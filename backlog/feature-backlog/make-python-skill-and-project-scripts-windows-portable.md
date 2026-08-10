@@ -36,17 +36,17 @@ Condition Type: exceptional-recovery
 
 Owner: Original Dev Coder /root/windows_portability_coder under visible Root Dev Orchestrator 019fe928-e2d8-7f91-91b2-bd27990a7414
 
-Evidence: The final-recovery Windows process-ownership lane is green at a safe checkpoint on exactly five directly traceable implementation, test, and verifier paths. Both corrected launchers now create the real child suspended, assign it before first instruction to a kill-on-close Windows Job Object, resume it, use bounded waits, and fail closed on Assign, Resume, Terminate, or Wait errors; taskkill is absent. Deterministic root-plus-child cleanup tests pass for Project Bootstrapper timeout cleanup (1/1) and agent-skill-evaluation successful-root descendant plus output-cap cleanup (2/2). Python compilation passes, and the portability verifier passes 22/22 focused contracts plus command smokes with only the two authorized inherited command failures. No native Windows pass is claimed. Source is paused before the separately bounded ordinary-skip and diagnostic-signature lane.
+Evidence: The final-recovery full-history capture at exact baseline 9385665b27ff4c3f8fb1da3e04e82a47b4bf742c traversed 63/63 supported entries and observed exactly 15 failing owners and 118 identities, matching every nonzero authorized owner set with no extra, missing, or mismatched ID; the retained bundle owner is the 16th resolved zero-identity owner. Ordinary skip accounting reports exactly 23 exclusions: four registered Wiki Ingester unittest opt-in skips and 19 preselected runtime or sparse-checkout exclusions. Focused contracts reject unregistered or reason-drift skips, including all three resource-claim symlink decorators. Twenty-four of 26 verifier contracts pass; the only expected red contracts are the deliberately empty diagnostic-signature table and its dependent identity check. All 118 raw signatures are captured but not yet populated. Source is paused before inserting the stable diagnostic catalog and updating README; the previously green Job Object lane is preserved. No native Windows pass is claimed.
 
-Observed At: 2026-08-10T04:53:38Z
+Observed At: 2026-08-10T05:07:24Z
 
 Started At: 2026-08-10T04:41:22Z
 
 Deadline or Expires At: 2026-08-10T06:11:22Z
 
-Next Action: Complete this provider transaction, reacquire the visible root's exact activity=work claim, then release the original Dev Coder to capture and reject unclassified ordinary unittest skips, bind the 118 authorized inherited identities to stable sanitized diagnostics, keep README claims evidence-bounded, and run complete verification.
+Next Action: Complete this provider transaction, reacquire the visible root's exact activity=work claim, then release the original Dev Coder to populate all 118 stable sanitized diagnostics without placeholders, cap large normalized diagnostics with a readable prefix plus full-diagnostic SHA-256, update README no further than verified behavior, and run focused plus complete verification.
 
-Next Reconciliation At: 2026-08-10T05:08:38Z
+Next Reconciliation At: 2026-08-10T05:22:24Z
 
 ## Exceptional Recovery Manifest
 
@@ -84,7 +84,7 @@ Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/make-python-window
 
 Current Phase: Implementing
 
-Work-Item Claim: Visible claim python-windows-portability-visible-work-20-019fe928 was released with handoff for this final-recovery process-ownership checkpoint; source remains frozen until the visible root reacquires the exact activity=work claim.
+Work-Item Claim: Visible claim python-windows-portability-visible-work-22-019fe928 was released with handoff for this final-recovery signature-capture checkpoint; source remains frozen until the visible root reacquires the exact activity=work claim.
 
 ## Execution Handoff Reconciliation
 
