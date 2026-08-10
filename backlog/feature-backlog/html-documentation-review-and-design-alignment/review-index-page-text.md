@@ -34,9 +34,9 @@ Next Reconciliation At: 2026-08-10T00:59:00Z
 
 ## Active Execution Evidence
 
-Condition Type: root-execution
+Condition Type: owned-wait
 
-Owner: Dev Orchestrator
+Owner: Root Dev Orchestrator task 019fe929-3646-7b30-b2d7-5792c2997cda
 
 Canonical Conversation: 019fe929-3646-7b30-b2d7-5792c2997cda
 
@@ -46,19 +46,19 @@ Branch: codex/review-index-page-text-20260809
 
 Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/review-index-page-text-work-root
 
-Phase: Fresh independent source review and verification
+Phase: Awaiting adjacent navigation delivery and replacement gates
 
-Evidence: The visible canonical Root Dev Orchestrator task 019fe929-3646-7b30-b2d7-5792c2997cda remains active. Dev Coder returned clean candidate commit 8dd2610ca1bfef88c60ffa8013cc17275d0999e2 with exact changed paths index.html and scripts/test_bundle_content.py. Index-local HTML, link, fragment, image, terminology, focused bundle, and diff checks pass. Two adjacent sequence-link checks remain a coordination-only integration boundary owned by the concurrent Agent-and-Skill Evaluations and Agentic Configuration text-review tasks.
+Evidence: Replacement candidate commit 44bc5025dad21c40101f4d82150385d31fb1d9b9 is clean and preserves candidate 8dd2610ca1bfef88c60ffa8013cc17275d0999e2 as its direct parent. Fresh review found no candidate-file defect and returned NEEDS_CORRECTION only because the strengthened ten-page navigation contract still requires delivery from tasks 019fe928-e2d9-73d3-a647-7fac38731628 and 019fe928-fc32-73c2-af60-791087327934. Fresh verification returned NOT_VERIFIED on the same two adjacent links; all candidate-local checks passed. Both owners accepted the coordination boundary and retain their exact page paths.
 
-Observed At: 2026-08-10T01:19:51Z
+Observed At: 2026-08-10T01:31:40Z
 
-Started At: 2026-08-10T00:58:18Z
+Started At: 2026-08-10T01:31:40Z
 
 Deadline or Expires At: 2026-08-10T03:00:00Z
 
-Next Action: Reacquire exact activity=work ownership, obtain fresh independent artifact review and source verification, and return every correctable finding to the original Dev Coder.
+Next Action: Reacquire exact activity=work ownership, monitor the two named tasks for delivered main commits, then obtain fresh replacement review and verification on the reconciled combined tree.
 
-Next Reconciliation At: 2026-08-10T01:34:51Z
+Next Reconciliation At: 2026-08-10T01:46:40Z
 
 ## Summary
 
