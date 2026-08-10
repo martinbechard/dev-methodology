@@ -14,15 +14,15 @@ Completion: main-branch
 
 Series: backlog/feature-backlog/html-documentation-review-and-design-alignment/index.md
 
-Canonical Conversation: Not supplied by the Codex runtime
+Canonical Conversation: 019fe928-e2d9-73d3-a647-7fac38731628
 
-Root Agent Task: /root/review_agent_skill_evals
+Root Agent Task: 019fe928-e2d9-73d3-a647-7fac38731628
 
 Branch: codex/review-agent-and-skill-evaluations-text-019fb057
 
 Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/review-agent-skill-evals-text-work-019fb057
 
-Phase: Source inventory and text correction
+Phase: Canonical handoff reconciliation and source inventory
 
 Started At: 2026-08-10T00:49:58Z
 
@@ -30,19 +30,19 @@ Started At: 2026-08-10T00:49:58Z
 
 Condition Type: root-execution
 
-Owner: Dev Orchestrator /root/review_agent_skill_evals
+Owner: Dev Orchestrator 019fe928-e2d9-73d3-a647-7fac38731628
 
-Evidence: Codex task /root/review_agent_skill_evals is active with exact Work Item claim review-agent-skill-evals-text-work-019fb057 and isolated checkout codex/review-agent-and-skill-evaluations-text-019fb057 at baseline 292b55f9578d04438ce5c8d3b34c64b11af0f907.
+Evidence: Visible Codex task 019fe928-e2d9-73d3-a647-7fac38731628 is the active canonical root execution. The prior internal execution stopped without source mutation and released its claims; the retained isolated checkout codex/review-agent-and-skill-evaluations-text-019fb057 is clean at baseline 292b55f9578d04438ce5c8d3b34c64b11af0f907.
 
-Observed At: 2026-08-10T00:49:58Z
+Observed At: 2026-08-10T00:57:00Z
 
-Started At: 2026-08-10T00:49:58Z
+Started At: 2026-08-10T00:57:00Z
 
-Deadline or Expires At: 2026-08-10T04:49:58Z
+Deadline or Expires At: 2026-08-10T04:57:00Z
 
-Next Action: Inventory the target page and authoritative sources, then dispatch the exact text correction lane.
+Next Action: Acquire the exact Work Item activity=work claim, inventory the target page and authoritative sources, then dispatch the exact text correction lane.
 
-Next Reconciliation At: 2026-08-10T01:04:00Z
+Next Reconciliation At: 2026-08-10T01:11:00Z
 
 ## Starting Handoff Evidence
 
