@@ -631,11 +631,11 @@ project_taxonomy:
     - name: Raw source folder
       paths: [raw/**]
       stacks: [Raw source artifacts]
-      notes: contains unprocessed sources until ingest completes
+      notes: raw/** is the whole raw-source tree; unprocessed sources remain outside raw/processed/**
     - name: Completed source boundary
       paths: [raw/processed/**]
       stacks: [Processed source artifacts]
-      notes: contains sources that passed the required ingest gates
+      notes: raw/processed/** contains fully processed sources that passed the required ingest gates
     - name: Wiki synthesis
       paths: [docs/wiki/**]
       stacks: [Markdown project wiki]
@@ -662,9 +662,9 @@ role_agent_set:
     skills: [project-wiki, project-wiki-topic-write]
     conditional_skills:
       - skill: code-project-wiki
-        condition: when durable wiki claims depend on implementation behavior
+        condition: when durable wiki claims depend on implementation behavior that must remain traceable to authoritative code and tests.
       - skill: terminology-standard
-        condition: when ingest creates or revises governed durable wiki prose
+        condition: when ingest creates or revises durable wiki prose governed by a project or shared user Terminology Standard.
     completion_checks:
       - leaf linking, lint, OKF validation, and GOOD pre-move verifier verdict
       - source moved to raw/processed only after GOOD pre-move verdict
@@ -678,20 +678,21 @@ role_agent_set:
     skills: [project-wiki, project-wiki-topic-write]
     conditional_skills:
       - skill: code-project-wiki
-        condition: when wiki maintenance depends on code, tests, procedures, or backlog state
+        condition: when wiki maintenance depends on code, tests, procedures, backlog state, or commit-range evidence.
       - skill: terminology-standard
-        condition: when creating or revising governed durable wiki prose
+        condition: when creating or revising durable wiki prose governed by a project or shared user Terminology Standard.
     completion_checks:
       - leaf linking, lint, applicable OKF validation, and GOOD verifier verdict
-wiki_validation_commands:
-  - command: python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" status
-    proves: wiki root, raw queue, and source state are inspectable
-  - command: python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" link-leaves
-    proves: durable leaf references are linked
-  - command: python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" lint
-    proves: wiki structure and source links are valid
-  - command: python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" okf-validate
-    proves: OKF topic metadata is valid</code></pre>
+validation_plan:
+  commands:
+    - command: python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" status
+      proves: wiki root, raw queue, and source state are inspectable
+    - command: python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" link-leaves
+      proves: durable leaf references are linked
+    - command: python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" lint
+      proves: wiki structure and source links are valid
+    - command: python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" okf-validate
+      proves: OKF topic metadata is valid</code></pre>
     </article>
   </section>
 </main>
