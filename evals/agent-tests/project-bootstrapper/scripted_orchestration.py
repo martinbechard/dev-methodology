@@ -737,6 +737,46 @@ def _terminal(status: str, trace: list[dict[str, Any]], **evidence: Any) -> dict
     }
 
 
+def _start_owned_process(command: Sequence[str]) -> subprocess.Popen[bytes]:
+    """Start one worker in a platform-owned process group without a shell."""
+    process_options: dict[str, object] = {}
+    if os.name == "nt":
+        process_options["creationflags"] = subprocess.CREATE_NEW_PROCESS_GROUP
+    else:
+        process_options["start_new_session"] = True
+    return subprocess.Popen(list(command), **process_options)
+
+
+def _terminate_owned_process_tree(process: subprocess.Popen[bytes]) -> None:
+    """Terminate one owned worker tree and wait until its root descriptor is reaped."""
+    if process.poll() is not None:
+        process.wait()
+        return
+    if os.name == "nt":
+        taskkill = shutil.which("taskkill")
+        if taskkill is not None:
+            completed = subprocess.run(
+                [taskkill, "/PID", str(process.pid), "/T", "/F"],
+                check=False,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+            if completed.returncode != 0 and process.poll() is None:
+                process.kill()
+        else:
+            process.kill()
+    else:
+        try:
+            os.killpg(process.pid, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+    try:
+        process.wait(timeout=10)
+    except subprocess.TimeoutExpired:
+        process.kill()
+        process.wait(timeout=10)
+
+
 def _run_missing_configuration_worker(workspace: Path) -> dict[str, Any]:
     """Return the terminal first Bootstrapper execution for an absent root configuration."""
 
@@ -1409,13 +1449,12 @@ def run_isolated(
                 )
             if reverse_engineering and execution == "resumed":
                 command.append("--reverse-engineering")
-            process = subprocess.Popen(command, start_new_session=True)
+            process = _start_owned_process(command)
             remaining = deadline - time.monotonic()
             try:
                 process.wait(timeout=max(remaining, 0.001))
             except subprocess.TimeoutExpired:
-                os.killpg(process.pid, signal.SIGKILL)
-                process.wait()
+                _terminate_owned_process_tree(process)
                 return {
                     "schema": "project-bootstrapper-scripted-result",
                     "version": 1,

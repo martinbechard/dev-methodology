@@ -7,6 +7,7 @@ from __future__ import annotations
 import os
 import signal
 import shlex
+import shutil
 import subprocess
 import threading
 from dataclasses import dataclass, field
@@ -132,6 +133,11 @@ def run_command(command: CommandSpec, cwd: Path) -> CommandResult:
         if name in os.environ
     }
     environment.update(command.environment)
+    process_options: dict[str, object] = {}
+    if os.name == "nt":
+        process_options["creationflags"] = subprocess.CREATE_NEW_PROCESS_GROUP
+    else:
+        process_options["start_new_session"] = True
     process = subprocess.Popen(
         list(command.argv),
         cwd=cwd,
@@ -139,7 +145,7 @@ def run_command(command: CommandSpec, cwd: Path) -> CommandResult:
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         text=False,
-        start_new_session=True,
+        **process_options,
     )
     buffers: dict[str, bytearray] = {"stdout": bytearray(), "stderr": bytearray()}
     output_exceeded = threading.Event()
@@ -214,6 +220,21 @@ def _require_environment_name(value: object) -> str:
 
 
 def _kill_process_group(pid: int) -> None:
+    if os.name == "nt":
+        taskkill = shutil.which("taskkill")
+        if taskkill is not None:
+            subprocess.run(
+                [taskkill, "/PID", str(pid), "/T", "/F"],
+                check=False,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+            return
+        try:
+            os.kill(pid, signal.SIGTERM)
+        except (OSError, ProcessLookupError):
+            pass
+        return
     try:
         os.killpg(pid, signal.SIGKILL)
     except (PermissionError, ProcessLookupError):

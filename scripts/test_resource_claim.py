@@ -1775,22 +1775,28 @@ class ResourceClaimTests(unittest.TestCase):
         self.assertEqual(registry_inode, self.registry_path().stat().st_ino)
         self.assertFalse((self.common_directory() / "resource-claims.lock").exists())
 
-    @unittest.skipIf(os.name == "nt", "The fixture directly exercises POSIX fcntl crash cleanup.")
     def test_registry_os_lock_is_released_when_holder_process_crashes(self) -> None:
         acquired = self.claim(*self.acquire_arguments("first"), "--file", "README.md")
         self.assertEqual(0, acquired.returncode, acquired.stderr)
+        lock_process = (
+            "import importlib.util, sys, time; "
+            "spec = importlib.util.spec_from_file_location('claim_lock_fixture', sys.argv[1]); "
+            "module = importlib.util.module_from_spec(spec); "
+            "sys.modules[spec.name] = module; "
+            "spec.loader.exec_module(module); "
+            "registry = open(sys.argv[2], 'r+', encoding='utf-8'); "
+            "module._lock_file(registry); "
+            "print(sys.argv[3], flush=True); "
+            "time.sleep(30) if sys.argv[3] == 'locked' else module._unlock_file(registry)"
+        )
         holder = subprocess.Popen(
             [
                 sys.executable,
                 "-c",
-                (
-                    "import fcntl, sys, time; "
-                    "registry = open(sys.argv[1], 'r+', encoding='utf-8'); "
-                    "fcntl.flock(registry.fileno(), fcntl.LOCK_EX); "
-                    "print('locked', flush=True); "
-                    "time.sleep(30)"
-                ),
+                lock_process,
+                str(CLAIM_SCRIPT),
                 str(self.registry_path()),
+                "locked",
             ],
             text=True,
             stdout=subprocess.PIPE,
@@ -1799,22 +1805,29 @@ class ResourceClaimTests(unittest.TestCase):
         self.addCleanup(lambda: holder.poll() is None and holder.kill())
         self.assertIsNotNone(holder.stdout)
         self.assertEqual("locked", holder.stdout.readline().strip())
-        waiting_status = subprocess.Popen(
-            self.claim_command("status"),
+        competitor = subprocess.Popen(
+            [
+                sys.executable,
+                "-c",
+                lock_process,
+                str(CLAIM_SCRIPT),
+                str(self.registry_path()),
+                "acquired",
+            ],
             text=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
-        self.addCleanup(lambda: waiting_status.poll() is None and waiting_status.kill())
+        self.addCleanup(lambda: competitor.poll() is None and competitor.kill())
         time.sleep(0.2)
-        self.assertIsNone(waiting_status.poll())
+        self.assertIsNone(competitor.poll(), "a competing process acquired the live OS lock")
 
-        holder.kill()
+        holder.terminate()
         holder.communicate(timeout=5)
-        stdout, stderr = waiting_status.communicate(timeout=5)
+        stdout, stderr = competitor.communicate(timeout=5)
 
-        self.assertEqual(0, waiting_status.returncode, stderr)
-        self.assertEqual("STATUS", json.loads(stdout)["outcome"])
+        self.assertEqual(0, competitor.returncode, stderr)
+        self.assertEqual("acquired", stdout.strip())
 
     def test_first_writer_in_existing_linked_checkout_reports_linked_topology(self) -> None:
         linked_path = self.existing_linked_worktree()

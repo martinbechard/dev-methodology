@@ -1263,10 +1263,20 @@ class BundleContentTests(unittest.TestCase):
             "Windows 11 and Windows Server 2022",
             "CPython 3.11 through 3.13",
             "python scripts/test_python_windows_portability.py --run-supported-tests",
+            "portability-only gate",
+            "16-owner, 118-identity",
+            "does not mark inherited failures as passing",
+            "fails on any new, changed, or Windows-specific failure identity",
+            "all 63 supported test entry points",
+            "case-level capability exclusions",
             "does not require WSL, Git Bash, mktemp, or Unix command emulation",
         ):
             with self.subTest(clause=clause):
                 self.assertIn(clause, readme)
+        self.assertIn(
+            "Verify Windows portability and compare inherited failures",
+            workflow,
+        )
 
     def test_run_agent_tournament_package_and_probe_are_aligned(self) -> None:
         """Keep tournament activation, limits, retry identity, and reporting aligned."""

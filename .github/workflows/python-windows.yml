@@ -35,5 +35,5 @@ jobs:
       - name: Install test dependency
         run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
 
-      - name: Verify the tracked Python inventory on native Windows
+      - name: Verify Windows portability and compare inherited failures
         run: python scripts/test_python_windows_portability.py --run-supported-tests

@@ -769,7 +769,7 @@ PYTHONPATH=skills/project-wiki/scripts python3 -m unittest discover skills/proje
 
 ### Native Windows Python Portability
 
-Repository Python maintenance supports native Windows 11 and Windows Server 2022 with CPython 3.11 through 3.13. The python-windows workflow verifies the same contract on Windows Server 2022 for each supported Python version.
+Repository Python maintenance supports native Windows 11 and Windows Server 2022 with CPython 3.11 through 3.13. The python-windows workflow runs the portability-only gate on Windows Server 2022 for each supported Python version. This gate does not establish full repository acceptance.
 
 Install the one test dependency and run the local verification from the repository root:
 
@@ -778,4 +778,6 @@ python -m pip install PyYAML==6.0.2
 python scripts/test_python_windows_portability.py --run-supported-tests
 ```
 
-The command compiles every tracked Python file and rejects an unclassified file. It imports corrected entry points, runs supported command smokes, and runs every test file classified for native Windows. The result reports each bounded POSIX-only evaluation exclusion and the host symbolic-link capability. The command does not require WSL, Git Bash, mktemp, or Unix command emulation.
+The command compiles every tracked Python file and rejects an unclassified file. It imports corrected entry points, runs 21 supported command smokes, and selects all 63 supported test entry points. Mixed suites use explicit case-level capability exclusions for genuinely unavailable POSIX process inspection, operating-system semantics, symbolic-link creation, or Node and Playwright runtime behavior; supported cases in those same files still run. A local non-Windows sparse checkout may also exclude the one backlog-report case whose tracked HTML fixture is omitted. A full native Windows checkout must contain that fixture and runs all 63 supported test entry points.
+
+The gate compares results with a committed 16-owner, 118-identity current-main baseline, including a retained zero-identity owner that records a resolved failure. It reports inherited OS-independent test and command failures separately and does not mark inherited failures as passing. It fails on any new, changed, or Windows-specific failure identity. The result therefore proves the bounded Windows path, process, locking, cleanup, and command-portability contract while keeping unrelated repository failures visible. The command does not require WSL, Git Bash, mktemp, or Unix command emulation.

@@ -7,9 +7,12 @@ from __future__ import annotations
 
 import importlib.util
 import os
+import subprocess
 import sys
+import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 
 _MODULE_PATH = Path(__file__).with_name("scripted_orchestration.py")
@@ -740,13 +743,45 @@ class ScriptedBootstrapperTests(unittest.TestCase):
         self.assertIn("malformed handoff", malformed["reason"])
 
     def test_timeout_kills_the_owned_process_group_and_cleans_workspace(self) -> None:
-        result = scripted.run_isolated({"project-configurator": ["TIMEOUT"]}, timeout_seconds=0.1)
+        self.assertTrue(callable(getattr(scripted, "_start_owned_process", None)))
+        self.assertTrue(callable(getattr(scripted, "_terminate_owned_process_tree", None)))
+        timed_out_process = mock.Mock(pid=12345)
+        timed_out_process.wait.side_effect = subprocess.TimeoutExpired(
+            [sys.executable, "worker"],
+            0.1,
+        )
+        with (
+            mock.patch.object(
+                scripted,
+                "_start_owned_process",
+                return_value=timed_out_process,
+            ),
+            mock.patch.object(scripted, "_terminate_owned_process_tree") as terminate,
+        ):
+            result = scripted.run_isolated(timeout_seconds=0.1)
+        terminate.assert_called_once_with(timed_out_process)
         self.assertEqual("INFRASTRUCTURE_FAILED", result["status"])
         self.assertEqual("wall-clock timeout", result["reason"])
         self.assertEqual("complete", result["ownedProcessCleanup"])
         self.assertTrue(result["workspaceRemoved"])
-        with self.assertRaises(ProcessLookupError):
-            os.kill(result["workerPid"], 0)
+
+        with tempfile.TemporaryDirectory(prefix="project-bootstrapper-timeout-test-") as directory:
+            workspace = Path(directory) / "workspace"
+            workspace.mkdir()
+            process = scripted._start_owned_process(
+                [sys.executable, "-c", "import time; time.sleep(3600)"]
+            )
+            try:
+                scripted._terminate_owned_process_tree(process)
+            finally:
+                if process.poll() is None:
+                    process.kill()
+                    process.wait(timeout=10)
+            self.assertIsNotNone(process.returncode)
+        self.assertFalse(workspace.exists())
+        if os.name != "nt":
+            with self.assertRaises(ProcessLookupError):
+                os.kill(process.pid, 0)
 
 
 if __name__ == "__main__":
