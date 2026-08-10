@@ -16,7 +16,7 @@ Create a portable Skill that instructs an Agent to organize a large or structura
 
 ## Context
 
-Large or structurally complex documents can benefit from reviewing a proposed hierarchy before prose is written. The Agent performs the semantic work: it reads the authorized source information, identifies topics and relationships, chooses an appropriate section order, and represents that structure as a hierarchy. The configured mcp-agent-ops server owns hierarchy persistence and HTML rendering.
+Large or structurally complex documents can benefit from reviewing a proposed hierarchy before prose is written. The Agent performs the semantic work: it reads the source material explicitly selected for the outline, identifies topics and relationships, chooses an appropriate section order, and represents that structure as a hierarchy. The configured mcp-agent-ops server owns hierarchy persistence and HTML rendering.
 
 The Skill defines when to create the outline, how to express it using the generic hierarchy contract, how to invoke the configured tools, and how to incorporate review feedback. No document-specific software layer belongs between the Agent and that interface.
 
@@ -29,12 +29,13 @@ The user requested a new Skill that improves documentation writing by converting
 - Create the portable create-document-outline Skill.
 - Activate it when the work involves many sources, competing possible structures, substantial topic breadth, or an explicit request to review an outline before drafting prose.
 - Read the configured mcp-agent-ops documentation and tool schemas before writing the Skill instructions, then name the actual supported hierarchy operations and inputs precisely.
-- Instruct the Agent to read all authorized inputs, identify the document's topics and relationships, and choose an ordered hierarchy appropriate to the document type and audience.
+- Instruct the Agent to use only the source material explicitly selected for the outline. Do not search for or load additional material unless the user adds it to the outline scope.
+- Identify the selected material's topics and relationships, then choose an ordered hierarchy appropriate to the document type and audience.
 - Express the proposed document structure using the generic hierarchy contract accepted by the configured mcp-agent-ops server.
 - Invoke the configured hierarchy tools directly to create or update the hierarchy and render its HTML representation.
 - Identify source-supported content, proposed organization, unresolved conflicts, and missing information in the hierarchy when those distinctions matter to review, without defining a separate document-outline schema.
 - Let a person or Agent review the rendered hierarchy, revise the proposed structure, and render the revised hierarchy before full document writing begins.
-- Preserve the authorized sources for downstream writing and Verification; the outline does not replace Evidence.
+- Preserve the selected source material for downstream writing and Verification; the outline does not replace Evidence.
 - Use only artifact locations and retention behavior supported by the configured MCP tools.
 - Stop with a clear unavailable-tool result when a required configured operation is missing. Do not install a package, import the server's Python package directly, or implement a substitute renderer.
 - Do not introduce a document-specific executable helper, transformation service, schema, artifact manager, synchronization protocol, or filesystem security layer between the Agent and the configured MCP tools.
@@ -46,7 +47,8 @@ The user requested a new Skill that improves documentation writing by converting
 - Given representative multi-source information, the Agent produces a coherent generic hierarchy whose sections and nesting are suitable for the intended document.
 - The Skill invokes the documented configured mcp-agent-ops hierarchy operations directly, and those operations produce structured hierarchy data and reviewable HTML.
 - A reviewer can request structural changes, after which the revised hierarchy and HTML both reflect those changes.
-- The Skill clearly distinguishes outline preparation from final prose writing and requires the original sources to remain available to the writer.
+- The Skill clearly distinguishes outline preparation from final prose writing and requires the selected source material to remain available to the writer.
+- The workflow does not search for or load source material outside the explicitly selected outline scope.
 - Missing configured MCP hierarchy functionality stops the workflow with a clear error and no alternate installation, import, or renderer path.
 - The delivered Skill contains no document-specific executable helper, custom hierarchy schema, or duplicate renderer.
 - Conditional Agent routing activates the Skill only for document work that benefits from outline review.
