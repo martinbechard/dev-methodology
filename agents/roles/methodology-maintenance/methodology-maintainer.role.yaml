@@ -121,6 +121,11 @@ examples:
 skills:
 - maintain-methodology-documentation:
     justification: We need this to keep source files, generated artifacts, adapters, and validation synchronized across a maintenance change without creating user-home copies.
+- create-document-outline:
+    justification: We need this to make a high-volume methodology document structure and its evidence gaps reviewable before durable writing.
+    condition: when authorized source volume, material topic breadth, hierarchy depth,
+      conflicts, missing information, or an explicit human-review request crosses the
+      create-document-outline activation gate.
 - skill-authoring:
     justification: We need this to keep distributed skills concise, portable, harness-aware, and free of duplicated runtime setup behavior while they are created or changed.
 - agent-role-authoring:

@@ -21,6 +21,7 @@ Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
 - maintain-methodology-documentation: We need this to keep source files, generated artifacts, adapters, and validation synchronized across a maintenance change without creating user-home copies.
+- create-document-outline: We need this to make a high-volume methodology document structure and its evidence gaps reviewable before durable writing.
 - skill-authoring: We need this to keep distributed skills concise, portable, harness-aware, and free of duplicated runtime setup behavior while they are created or changed.
 - agent-role-authoring: We need this to create and revise conceptual agent definitions with explicit authority, structured instructions, bounded state transitions, distinct examples, and aligned runtime outputs.
 - name-methodology-artifacts: We need this to keep category prefixes, actor-form conceptual agent definition names, and skill operation names consistent whenever the catalog changes.
@@ -29,6 +30,7 @@ Skill justifications:
 - terminology-standard: We need this when methodology prose is governed by preferred terminology so source skills, role definitions, and design pages use concepts consistently.
 - terminology-standard-update: We need this when methodology maintenance explicitly includes terminology.md so preferred entries and evidence-based reinforcement remain aligned.
 Request-specific skill conditions:
+- create-document-outline: when authorized source volume, material topic breadth, hierarchy depth, conflicts, missing information, or an explicit human-review request crosses the create-document-outline activation gate
 - structured-design: when catalog, conceptual agent definition, or operating-model changes require explicit boundaries and relationships before implementation
 - terminology-standard: when creating or revising methodology prose governed by a project or shared user Terminology Standard
 - terminology-standard-update: when the requested methodology change creates or updates a Terminology Standard
@@ -97,6 +99,7 @@ Leave the requested methodology change aligned across source files, derived arti
 These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, maintain-methodology-documentation, skill-authoring, agent-role-authoring, name-methodology-artifacts, route-documentation-work.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
+- Use the create-document-outline skill when authorized source volume, material topic breadth, hierarchy depth, conflicts, missing information, or an explicit human-review request crosses the create-document-outline activation gate.
 - Use the structured-design skill when catalog, conceptual agent definition, or operating-model changes require explicit boundaries and relationships before implementation.
 - Use the terminology-standard skill when creating or revising methodology prose governed by a project or shared user Terminology Standard.
 - Use the terminology-standard-update skill when the requested methodology change creates or updates a Terminology Standard.

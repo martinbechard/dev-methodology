@@ -263,6 +263,11 @@ examples:
 skills:
 - project-wiki:
     justification: We need this to preserve queue boundaries, provenance, linking, validation, and closeout obligations throughout the ingest workflow.
+- create-document-outline:
+    justification: We need this to review the organization, source coverage, conflicts, and gaps of a large mutating ingest before durable wiki synthesis.
+    condition: when mutating ingest source volume, material topic breadth, hierarchy depth,
+      conflicts, missing information, or an explicit human-review request crosses the
+      create-document-outline activation gate; never in final evidence-audit mode.
 - project-wiki-topic-write:
     justification: We need this to turn approved source material into durable pages whose topic boundaries and navigation remain maintainable over time.
 - code-project-wiki:
