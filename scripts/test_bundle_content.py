@@ -11747,7 +11747,7 @@ Visible after.
     def test_model_profiles_are_semantic_and_adapter_complete(self) -> None:
         source_profiles = load_yaml_object(MODEL_PROFILES_PATH)["profiles"]
         self.assertEqual(
-            {"simple", "coordination", "default", "documentation", "advanced", "advanced-long", "intermediate"},
+            {"simple", "coordination", "default", "implementation", "verification", "documentation", "advanced", "advanced-long", "intermediate"},
             set(source_profiles),
         )
 
@@ -11767,6 +11767,8 @@ Visible after.
                 "simple": "gpt-5.6-luna",
                 "coordination": "gpt-5.6-terra",
                 "default": "gpt-5.6-terra",
+                "implementation": "gpt-5.6-sol",
+                "verification": "gpt-5.6-sol",
                 "documentation": "gpt-5.5",
                 "advanced": "gpt-5.6-sol",
                 "advanced-long": "gpt-5.6-sol",
@@ -11786,6 +11788,17 @@ Visible after.
                 self.assertNotIn("effort", role)
                 for profile in role.get("modelStages", {}).values():
                     self.assertIn(profile, source_profiles)
+
+        dev_roles = REPOSITORY_ROOT / "agents" / "roles" / "dev-activities"
+        self.assertEqual(
+            "implementation",
+            load_yaml_object(dev_roles / "dev-coder.role.yaml")["modelProfile"],
+        )
+        for role_name in ("dev-code-reviewer", "dev-verifier"):
+            self.assertEqual(
+                "verification",
+                load_yaml_object(dev_roles / f"{role_name}.role.yaml")["modelProfile"],
+            )
 
     def test_documentation_design_system_roles_and_checklists_are_complete(self) -> None:
         """The bounded runner and coordinator must retain their distinct skill and evidence contracts."""
@@ -12160,6 +12173,8 @@ Visible after.
                 "simple": 786_432,
                 "coordination": 750_000,
                 "default": 750_000,
+                "implementation": 750_000,
+                "verification": 750_000,
                 "documentation": 787_500,
                 "advanced": 750_000,
                 "advanced-long": 750_000,
@@ -12373,6 +12388,8 @@ Visible after.
                 "simple": ("gpt-5.6-luna", "medium"),
                 "coordination": ("gpt-5.6-terra", "low"),
                 "default": ("gpt-5.6-terra", "medium"),
+                "implementation": ("gpt-5.6-sol", "medium"),
+                "verification": ("gpt-5.6-sol", "low"),
                 "documentation": ("gpt-5.5", "high"),
                 "advanced": ("gpt-5.6-sol", "high"),
                 "advanced-long": ("gpt-5.6-sol", "high"),
@@ -12382,6 +12399,8 @@ Visible after.
                 "simple": ("fable-5", None),
                 "coordination": ("sonnet-5", None),
                 "default": ("sonnet-5", None),
+                "implementation": ("opus-4.8", None),
+                "verification": ("opus-4.8", None),
                 "documentation": ("fable-5", None),
                 "advanced": ("opus-4.8", None),
                 "advanced-long": ("opus-4.8", None),
@@ -12391,6 +12410,8 @@ Visible after.
                 "simple": ("flash", None),
                 "coordination": ("auto", None),
                 "default": ("auto", None),
+                "implementation": ("pro", None),
+                "verification": ("pro", None),
                 "documentation": ("auto", None),
                 "advanced": ("pro", None),
                 "advanced-long": ("pro", None),
@@ -12400,6 +12421,8 @@ Visible after.
                 "simple": ("gemini-flash", "low"),
                 "coordination": ("sonnet", "medium"),
                 "default": ("sonnet", "medium"),
+                "implementation": ("opus", "medium"),
+                "verification": ("opus", "low"),
                 "documentation": ("gpt-5.6-sol", "high"),
                 "advanced": ("opus", "high"),
                 "advanced-long": ("opus", "high"),

@@ -8,7 +8,7 @@ instructions: Select checks from actual behavior and risk with the technology gu
   failures from skipped checks. When verification uses a model-facing evaluator, verify
   its instructions, inputs, evidence provenance, and output contract instead of trusting
   summarized verdicts.
-modelProfile: advanced
+modelProfile: verification
 examples:
 - purpose: Verify a scoped retry-policy change with risk-based unit, integration, lint,
     and build checks while making coverage and omitted checks explicit.

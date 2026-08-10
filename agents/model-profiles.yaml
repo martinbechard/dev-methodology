@@ -7,6 +7,10 @@ profiles:
     purpose: Bounded dispatch, completeness validation, evidence reconciliation, and deterministic ranking.
   default:
     purpose: Normal implementation, documentation, and bounded verification work.
+  implementation:
+    purpose: Scoped source implementation that needs capable synthesis at moderate reasoning effort.
+  verification:
+    purpose: Focused review and verification that needs capable interpretation at low reasoning effort.
   documentation:
     purpose: Source-backed documentation authoring that requires advanced synthesis without changing unrelated default-profile agents.
   advanced:

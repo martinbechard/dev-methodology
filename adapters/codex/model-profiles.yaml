@@ -26,6 +26,22 @@ profiles:
     contextCapacityEvidence:
     - https://developers.openai.com/api/docs/models
     contextBudgetMechanismEvidence: https://developers.openai.com/codex/subagents
+  implementation:
+    model: gpt-5.6-sol
+    effort: medium
+    contextCapacityTokens: 1050000
+    contextBudgetMechanism: instruction
+    contextCapacityEvidence:
+    - https://developers.openai.com/api/docs/models
+    contextBudgetMechanismEvidence: https://developers.openai.com/codex/subagents
+  verification:
+    model: gpt-5.6-sol
+    effort: low
+    contextCapacityTokens: 1050000
+    contextBudgetMechanism: instruction
+    contextCapacityEvidence:
+    - https://developers.openai.com/api/docs/models
+    contextBudgetMechanismEvidence: https://developers.openai.com/codex/subagents
   documentation:
     model: gpt-5.5
     effort: high

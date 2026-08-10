@@ -29,6 +29,24 @@ profiles:
     - https://junie.jetbrains.com/docs/junie-cli-model-selection.html
     - https://platform.claude.com/docs/en/release-notes/overview
     contextBudgetMechanismEvidence: https://junie.jetbrains.com/docs/junie-cli-subagents.html
+  implementation:
+    model: opus
+    effort: medium
+    contextCapacityTokens: 1000000
+    contextBudgetMechanism: instruction
+    contextCapacityEvidence:
+    - https://junie.jetbrains.com/docs/junie-cli-model-selection.html
+    - https://platform.claude.com/docs/en/release-notes/overview
+    contextBudgetMechanismEvidence: https://junie.jetbrains.com/docs/junie-cli-subagents.html
+  verification:
+    model: opus
+    effort: low
+    contextCapacityTokens: 1000000
+    contextBudgetMechanism: instruction
+    contextCapacityEvidence:
+    - https://junie.jetbrains.com/docs/junie-cli-model-selection.html
+    - https://platform.claude.com/docs/en/release-notes/overview
+    contextBudgetMechanismEvidence: https://junie.jetbrains.com/docs/junie-cli-subagents.html
   documentation:
     model: gpt-5.6-sol
     effort: high

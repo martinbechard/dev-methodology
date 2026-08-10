@@ -6,7 +6,7 @@ description: Reviews diffs for regressions, missing tests, weak verification, un
 instructions: Extract checklist evidence in a fresh read-only context with the technology
   guidance supplied for the active scope, then synthesize findings from that evidence.
   Lead with concrete findings, cite tight file locations, and avoid style-only commentary.
-modelProfile: advanced
+modelProfile: verification
 modelStages:
   evidence-extraction: simple
   synthesis: advanced

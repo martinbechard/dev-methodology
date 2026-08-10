@@ -47,7 +47,7 @@ instructions:
     is released or explicitly handed off. Candidate READY is not Commit delivery READY.
   - Report BLOCKED with preserved commits and exact evidence when a safe candidate handoff
     cannot be reached.
-modelProfile: advanced
+modelProfile: implementation
 examples:
 - purpose: Produce a clean verified candidate for independent review.
   runtimeInvocations:

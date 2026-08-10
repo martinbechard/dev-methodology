@@ -208,7 +208,7 @@
               "contextCapacityTokens": 1000000,
               "headroomTokens": 250000,
               "model": "opus-4.8",
-              "modelProfile": "advanced"
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -222,7 +222,7 @@
             "careful-coding",
             "code-comments"
           ],
-          "sha256": "1f75441c2c5296f754acc65120cc467faa15a841211acea5c2d6773a776f9b4e",
+          "sha256": "b50efb01595ec066f88358b1b41ce8981e3a1e473a6248bc131ad42738c031e8",
           "source": "agents/roles/dev-activities/dev-code-reviewer.role.yaml"
         },
         {
@@ -241,7 +241,7 @@
               "contextCapacityTokens": 1000000,
               "headroomTokens": 250000,
               "model": "opus-4.8",
-              "modelProfile": "advanced"
+              "modelProfile": "implementation"
             },
             "rounding": "floor"
           },
@@ -255,7 +255,7 @@
             "code-discovery",
             "explain-code-fix"
           ],
-          "sha256": "a24474d3e6f4ce4b5a719c0c0edfb3baeb3e98ff1a2a7a37f2d05237eec9b03a",
+          "sha256": "27e7dcd6d5465c213eef0e88da45ddc17b35cfff8326dd331454b66e1ab6e584",
           "source": "agents/roles/dev-activities/dev-coder.role.yaml"
         },
         {
@@ -582,7 +582,7 @@
               "contextCapacityTokens": 1000000,
               "headroomTokens": 250000,
               "model": "opus-4.8",
-              "modelProfile": "advanced"
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -594,7 +594,7 @@
             "test-strategy",
             "review-structured-artifact"
           ],
-          "sha256": "ae79c3c9e83d133c3708a05509b12c3ba83277bd284e53ecdedc35cd113b963c",
+          "sha256": "acee0cc0b1d282c44707d05066d15fea7f5c46e1edc7fb65bdfde01d0754c2c7",
           "source": "agents/roles/dev-activities/dev-verifier.role.yaml"
         },
         {
@@ -1356,7 +1356,7 @@
               "contextCapacityTokens": 1050000,
               "headroomTokens": 262500,
               "model": "gpt-5.6-sol",
-              "modelProfile": "advanced"
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -1371,7 +1371,7 @@
             "code-comments",
             "codex-harness-directives"
           ],
-          "sha256": "233eaea7172644b0d08488c75c020d518a826153ca8d50ca5ebb56f90413fab3",
+          "sha256": "14d54849f31a5edaf1598766dd9a285a8391b173912fe1e26cd8e82d58bb5158",
           "source": "agents/roles/dev-activities/dev-code-reviewer.role.yaml"
         },
         {
@@ -1390,7 +1390,7 @@
               "contextCapacityTokens": 1050000,
               "headroomTokens": 262500,
               "model": "gpt-5.6-sol",
-              "modelProfile": "advanced"
+              "modelProfile": "implementation"
             },
             "rounding": "floor"
           },
@@ -1405,7 +1405,7 @@
             "explain-code-fix",
             "codex-harness-directives"
           ],
-          "sha256": "8892b99ba6ffbfaabd41e16e0ef1ce7b5a75a6fbb0a8b6b9debcd0450ad22026",
+          "sha256": "5ca48263a21dadf8620566b9903f2e1df001d6ca30fa5f5d1d0e6850458154d8",
           "source": "agents/roles/dev-activities/dev-coder.role.yaml"
         },
         {
@@ -1741,7 +1741,7 @@
               "contextCapacityTokens": 1050000,
               "headroomTokens": 262500,
               "model": "gpt-5.6-sol",
-              "modelProfile": "advanced"
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -1754,7 +1754,7 @@
             "review-structured-artifact",
             "codex-harness-directives"
           ],
-          "sha256": "4e3d811b4a8eaf59adbe95ab1d4f419b9086fd7d8e79bedfa7c8986465293c3c",
+          "sha256": "d683dde1873225f440c1df946022175c8ffd9b3f9dbefefbfa464dc931cf1d1e",
           "source": "agents/roles/dev-activities/dev-verifier.role.yaml"
         },
         {
@@ -2538,7 +2538,7 @@
               "contextCapacityTokens": 1048576,
               "headroomTokens": 262144,
               "model": "pro",
-              "modelProfile": "advanced"
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -2552,7 +2552,7 @@
             "careful-coding",
             "code-comments"
           ],
-          "sha256": "0fb4c3a2237008b79a045fa2fca6474e16c71c67abf85e774da31aa9ae8fa281",
+          "sha256": "9bd5200d089e48cb94c478d2dca263f7c19b0abec0f5c8eef6df78515e1b0679",
           "source": "agents/roles/dev-activities/dev-code-reviewer.role.yaml"
         },
         {
@@ -2572,7 +2572,7 @@
               "contextCapacityTokens": 1048576,
               "headroomTokens": 262144,
               "model": "pro",
-              "modelProfile": "advanced"
+              "modelProfile": "implementation"
             },
             "rounding": "floor"
           },
@@ -2586,7 +2586,7 @@
             "code-discovery",
             "explain-code-fix"
           ],
-          "sha256": "77f4b0917b20feb3c784cce344148f4d55cd154b0bccb3324b78e936e78844df",
+          "sha256": "fd6f707992c50c0980bb1629806b93912ecf043240007948082ca87a6f0aa377",
           "source": "agents/roles/dev-activities/dev-coder.role.yaml"
         },
         {
@@ -2925,7 +2925,7 @@
               "contextCapacityTokens": 1048576,
               "headroomTokens": 262144,
               "model": "pro",
-              "modelProfile": "advanced"
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -2937,7 +2937,7 @@
             "test-strategy",
             "review-structured-artifact"
           ],
-          "sha256": "7f4b31599fdf0c562efa29312faf1e6a8568b15bda214b9128d8ebb67c73e498",
+          "sha256": "2669da2f0f9448b7b25fbbf153c23f513434716a0bceb5c3357720eef45f2246",
           "source": "agents/roles/dev-activities/dev-verifier.role.yaml"
         },
         {
@@ -3725,7 +3725,7 @@
               "contextCapacityTokens": 1000000,
               "headroomTokens": 250000,
               "model": "opus",
-              "modelProfile": "advanced"
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -3739,7 +3739,7 @@
             "careful-coding",
             "code-comments"
           ],
-          "sha256": "01dffa6b83cdda5e58b7b6578114bf65a4e6073973861f3e2c29ac23773160e9",
+          "sha256": "0bd42f68883898c146ce78dadb1bb7dc86022ac14493b11cf388d9f435d5feed",
           "source": "agents/roles/dev-activities/dev-code-reviewer.role.yaml"
         },
         {
@@ -3759,7 +3759,7 @@
               "contextCapacityTokens": 1000000,
               "headroomTokens": 250000,
               "model": "opus",
-              "modelProfile": "advanced"
+              "modelProfile": "implementation"
             },
             "rounding": "floor"
           },
@@ -3773,7 +3773,7 @@
             "code-discovery",
             "explain-code-fix"
           ],
-          "sha256": "6cb3216f802d05cb9ffeaa02292ed5be2d6c695ef05a793af9d5492e8c4175a5",
+          "sha256": "9125bc96face5420ca7c6c445eafbcced2db70c2aff3592bfe6bfe99e20dcaee",
           "source": "agents/roles/dev-activities/dev-coder.role.yaml"
         },
         {
@@ -4112,7 +4112,7 @@
               "contextCapacityTokens": 1000000,
               "headroomTokens": 250000,
               "model": "opus",
-              "modelProfile": "advanced"
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -4124,7 +4124,7 @@
             "test-strategy",
             "review-structured-artifact"
           ],
-          "sha256": "9747659b65bf2c73b087b946584281549408ec0ca364bfd39a64a7cf23912ac3",
+          "sha256": "e4a56e62f836a5f94e130a90eaa221f4299c093961ee87b4cc435ebfc01acd4e",
           "source": "agents/roles/dev-activities/dev-verifier.role.yaml"
         },
         {
