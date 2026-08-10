@@ -2758,7 +2758,6 @@ class BundleContentTests(unittest.TestCase):
         for mutation_function, package_call in (
             ("_create", "api.create_hierarchy_plan("),
             ("_update", "api.update_hierarchy_plan("),
-            ("_reconcile", "_render_document(context, document, api, write=True)"),
             ("_finalize", "_cleanup_artifacts(context)"),
         ):
             with self.subTest(mutation_function=mutation_function):
@@ -2771,6 +2770,31 @@ class BundleContentTests(unittest.TestCase):
                     function_text.index("_start_operation("),
                     function_text.index(package_call),
                 )
+        reconcile_start = helper_text.index("def _reconcile(")
+        reconcile_end = helper_text.index("\ndef ", reconcile_start + 1)
+        reconcile_text = helper_text[reconcile_start:reconcile_end]
+        self.assertLess(
+            reconcile_text.index("_start_operation("),
+            reconcile_text.index("_prepare_recovery_operation("),
+        )
+        self.assertLess(
+            reconcile_text.index("_prepare_recovery_operation("),
+            reconcile_text.index("_execute_recovery_decision("),
+        )
+        execute_start = helper_text.index("def execute(")
+        execute_end = helper_text.find("\ndef ", execute_start + 1)
+        execute_text = helper_text[
+            execute_start : execute_end if execute_end != -1 else None
+        ]
+        self.assertIn("with _plan_lock(context):", execute_text)
+        for recovery_input in (
+            '"operation.json"',
+            '"result.json"',
+            '"before.json"',
+            '"before.html"',
+            '"expected_html_sha256"',
+        ):
+            self.assertIn(recovery_input, helper_text)
         self.assertIn('reconcile.add_argument("--recovery-token")', helper_text)
         self.assertIn('update.add_argument("--expected-title")', helper_text)
         self.assertIn('"terminal": terminal', helper_text)

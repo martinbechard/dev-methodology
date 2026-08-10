@@ -67,10 +67,13 @@ Supply a canonical absolute workspace path, a safe root task ID, and a safe plan
 .codex/plans/<root-task-id>/
 ├── <plan-name>.json
 ├── <plan-name>.html
-└── .history/<plan-name>/
+├── .history/<plan-name>/
+└── .locks/<plan-name>.lock
 ```
 
 The history directory is bounded operational evidence. It is not a backlog or provider ledger. Before every create, update, reconcile, or cleanup effect, the helper creates an operation directory, writes a pending operation record, and preserves the available pre-mutation files. A missing, malformed, pending, or otherwise nonterminal result remains unresolved and is never silently skipped or pruned. The helper retains at most 20 operation directories by pruning only terminal history when space is needed.
+
+The lock file coordinates one selected plan across processes. The helper holds its standard-library POSIX or Windows lock from inspection and target validation through package dispatch, artifact checks, and terminal result persistence. LOCK_TIMEOUT means another writer retained that boundary; do not bypass the lock or improvise a mutation. An unsupported lock backend fails with CAPABILITY_UNAVAILABLE.
 
 Keep the complete plan root ignored as operational state. Do not commit the plan, copy it into backlog, or use it to control provider lifecycle.
 
@@ -188,7 +191,7 @@ Inspect parses the authoritative JSON and uses render_hierarchy_html without an 
 - ORPHANED_HTML means HTML exists without JSON and without a pending operation that authorizes recovery.
 - INVALID_PLAN means the JSON cannot be accepted as the hierarchy-plan authority.
 
-Each inspect result includes artifact hashes, artifact state, unresolved operation details, and a recovery token bound to that exact state. For valid JSON with ordinary HTML drift, run the deterministic reconcile command with the current token. It records its own pending operation before rebuilding only the sibling HTML through render_hierarchy_html.
+Recoverable inspect outcomes include artifact hashes, artifact state, unresolved operation details, and a recovery token bound to that exact state. INVALID_PLAN is instead a structured non-recoverable error and does not promise those recovery-envelope fields. For valid JSON with ordinary HTML drift, run the deterministic reconcile command with the current token. It records its own pending operation before rebuilding only the sibling HTML through render_hierarchy_html.
 
 ```bash
 python3 [skill-root]/scripts/plan.py \
@@ -208,7 +211,7 @@ python3 [skill-root]/scripts/plan.py \
   reconcile --recovery-token <token-from-inspect>
 ```
 
-Reconcile excludes only its own current pending record while resolving the previously unresolved set. It uses these deterministic recovery outcomes:
+Reconcile excludes only its own current pending record while rechecking the recovery inputs. Before it settles a prior operation or changes a canonical artifact, it persists a prepared decision bound to the operation records, result records, snapshots, canonical artifact hashes, and expected rendered output. A later reconcile resumes that exact prepared decision after another interruption. It uses these deterministic recovery outcomes:
 
 - Valid JSON is retained as authority and HTML is rendered to match it. This covers JSON-only and synchronized interrupted creates, updates, and reconciliations.
 - An interrupted create with HTML only or without valid JSON is cleaned to confirmed absence so create can retry.

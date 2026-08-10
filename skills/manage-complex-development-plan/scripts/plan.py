@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import argparse
+import errno
 import hashlib
 import importlib.metadata
 import inspect
@@ -13,10 +14,14 @@ import os
 import re
 import shlex
 import shutil
+import stat
 import sys
+import time
 from collections.abc import Callable, Sequence
+from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
+from typing import BinaryIO, Iterator
 
 
 RESULT_SCHEMA_VERSION = 1
@@ -36,6 +41,22 @@ HISTORY_DIRECTORY = re.compile(
 METADATA_PREFIXES = ("Dependency reference: ", "Evidence reference: ")
 OPERATION_SCHEMA = "dev-methodology-complex-plan-operation"
 OPERATION_VERSION = 1
+RECOVERY_DECISION_VERSION = 1
+LOCK_TIMEOUT_SECONDS = 5.0
+LOCK_POLL_SECONDS = 0.05
+TERMINAL_OPERATION_OUTCOMES = {
+    "create": frozenset({"CREATED", "RECOVERED_OPERATION"}),
+    "update": frozenset({"UPDATED", "RECOVERED_OPERATION"}),
+    "reconcile": frozenset(
+        {
+            "RECONCILED",
+            "RECOVERED_ABSENT",
+            "RECOVERED_OPERATION",
+            "RECOVERY_REJECTED",
+        }
+    ),
+    "cleanup": frozenset({"CLEANED", "RECOVERED_OPERATION"}),
+}
 
 
 class _PlanHelperError(Exception):
@@ -71,6 +92,7 @@ class _PlanContext:
     plan_path: Path
     html_path: Path
     history_root: Path
+    lock_path: Path
 
 
 @dataclass(frozen=True)
@@ -98,6 +120,8 @@ class _OperationStatus:
     terminal: bool
     result_state: str
     result: dict[str, object] | None
+    operation_state: str
+    operation: dict[str, object] | None
 
 
 def _result(outcome: str, **details: object) -> dict[str, object]:
@@ -211,6 +235,14 @@ def _load_api() -> _PlanApi:
 
 
 def _capability_result(api: _PlanApi) -> dict[str, object]:
+    if os.name not in {"posix", "nt"}:
+        raise _PlanHelperError(
+            "CAPABILITY_UNAVAILABLE",
+            "The helper has no safe single-writer lock backend for this platform.",
+            exit_code=3,
+            platform=os.name,
+        )
+    _lock_module(os.name)
     return _result(
         "CAPABILITIES_AVAILABLE",
         package="mcp-agent-ops",
@@ -222,6 +254,7 @@ def _capability_result(api: _PlanApi) -> dict[str, object]:
             "update_hierarchy_plan",
         ],
         signatures=api.signatures,
+        lock_backend="fcntl" if os.name == "posix" else "msvcrt",
     )
 
 
@@ -400,6 +433,7 @@ def _context(arguments: argparse.Namespace) -> _PlanContext:
     plan_path = task_root / f"{plan_name}.json"
     html_path = task_root / f"{plan_name}.html"
     history_root = task_root / ".history" / plan_name
+    lock_path = task_root / ".locks" / f"{plan_name}.lock"
     return _PlanContext(
         workspace=workspace,
         task_root=task_root,
@@ -407,6 +441,7 @@ def _context(arguments: argparse.Namespace) -> _PlanContext:
         plan_path=plan_path,
         html_path=html_path,
         history_root=history_root,
+        lock_path=lock_path,
     )
 
 
@@ -430,6 +465,151 @@ def _make_safe_directory(workspace: Path, directory: Path) -> None:
                 )
         else:
             current.mkdir()
+
+
+def _lock_module(platform_name: str) -> object:
+    module_name = "fcntl" if platform_name == "posix" else "msvcrt"
+    try:
+        return __import__(module_name)
+    except ImportError as error:
+        raise _PlanHelperError(
+            "CAPABILITY_UNAVAILABLE",
+            "This Python runtime does not provide the standard-library plan-lock backend.",
+            exit_code=3,
+            platform=platform_name,
+            required_module=module_name,
+        ) from error
+
+
+def _try_platform_lock(
+    lock_file: BinaryIO,
+    *,
+    platform_name: str | None = None,
+    platform_module: object | None = None,
+) -> bool:
+    selected_platform = os.name if platform_name is None else platform_name
+    if selected_platform not in {"posix", "nt"}:
+        raise _PlanHelperError(
+            "CAPABILITY_UNAVAILABLE",
+            "The helper has no safe single-writer lock backend for this platform.",
+            exit_code=3,
+            platform=selected_platform,
+        )
+    module = (
+        _lock_module(selected_platform) if platform_module is None else platform_module
+    )
+    try:
+        if selected_platform == "posix":
+            flock = getattr(module, "flock")
+            flock(
+                lock_file.fileno(),
+                getattr(module, "LOCK_EX") | getattr(module, "LOCK_NB"),
+            )
+        else:
+            lock_file.seek(0, os.SEEK_END)
+            if lock_file.tell() == 0:
+                lock_file.write(b"\0")
+                lock_file.flush()
+            lock_file.seek(0)
+            locking = getattr(module, "locking")
+            locking(lock_file.fileno(), getattr(module, "LK_NBLCK"), 1)
+    except (BlockingIOError, PermissionError):
+        return False
+    except OSError as error:
+        if error.errno in {errno.EACCES, errno.EAGAIN, errno.EDEADLK}:
+            return False
+        raise _PlanHelperError(
+            "LOCK_FAILED",
+            "The per-plan single-writer lock could not be acquired safely.",
+            exit_code=4,
+            cause=str(error),
+        ) from error
+    return True
+
+
+def _release_platform_lock(
+    lock_file: BinaryIO,
+    *,
+    platform_name: str | None = None,
+    platform_module: object | None = None,
+) -> None:
+    selected_platform = os.name if platform_name is None else platform_name
+    if selected_platform not in {"posix", "nt"}:
+        raise _PlanHelperError(
+            "CAPABILITY_UNAVAILABLE",
+            "The helper has no safe single-writer lock backend for this platform.",
+            exit_code=3,
+            platform=selected_platform,
+        )
+    module = (
+        _lock_module(selected_platform) if platform_module is None else platform_module
+    )
+    try:
+        if selected_platform == "posix":
+            getattr(module, "flock")(lock_file.fileno(), getattr(module, "LOCK_UN"))
+        else:
+            lock_file.seek(0)
+            getattr(module, "locking")(
+                lock_file.fileno(), getattr(module, "LK_UNLCK"), 1
+            )
+    except OSError as error:
+        raise _PlanHelperError(
+            "LOCK_FAILED",
+            "The per-plan single-writer lock could not be released safely.",
+            exit_code=4,
+            cause=str(error),
+        ) from error
+
+
+@contextmanager
+def _plan_lock(
+    context: _PlanContext, *, timeout_seconds: float = LOCK_TIMEOUT_SECONDS
+) -> Iterator[None]:
+    _make_safe_directory(context.workspace, context.lock_path.parent)
+    _reject_symlink_components(context.workspace, context.lock_path)
+    flags = os.O_CREAT | os.O_RDWR
+    if hasattr(os, "O_NOFOLLOW"):
+        flags |= os.O_NOFOLLOW
+    try:
+        descriptor = os.open(context.lock_path, flags, 0o600)
+    except OSError as error:
+        raise _PlanHelperError(
+            "LOCK_FAILED",
+            "The per-plan lock file could not be opened safely.",
+            exit_code=4,
+            lock_path=str(context.lock_path),
+            cause=str(error),
+        ) from error
+    lock_file = os.fdopen(descriptor, "r+b", buffering=0)
+    acquired = False
+    try:
+        if not stat.S_ISREG(os.fstat(lock_file.fileno()).st_mode):
+            raise _PlanHelperError(
+                "LOCK_FAILED",
+                "The per-plan lock path is not a regular file.",
+                exit_code=4,
+                lock_path=str(context.lock_path),
+            )
+        deadline = time.monotonic() + timeout_seconds
+        while not _try_platform_lock(lock_file):
+            if time.monotonic() >= deadline:
+                raise _PlanHelperError(
+                    "LOCK_TIMEOUT",
+                    "Another process retained the selected plan's single-writer lock.",
+                    exit_code=4,
+                    lock_path=str(context.lock_path),
+                    timeout_seconds=timeout_seconds,
+                    retry_allowed=True,
+                )
+            time.sleep(LOCK_POLL_SECONDS)
+        acquired = True
+        yield
+    finally:
+        try:
+            if acquired:
+                _release_platform_lock(lock_file)
+        finally:
+            lock_file.close()
 
 
 def _safe_file(path: Path, context: _PlanContext, *, required: bool) -> None:
@@ -891,8 +1071,36 @@ def _analyze_artifacts(context: _PlanContext, api: _PlanApi) -> dict[str, object
     }
 
 
+def _file_fingerprint(path: Path) -> dict[str, object]:
+    if not _lexists(path):
+        return {"present": False, "type": "missing", "sha256": None}
+    try:
+        mode = path.lstat().st_mode
+    except OSError:
+        return {"present": True, "type": "unreadable", "sha256": None}
+    if stat.S_ISREG(mode):
+        try:
+            content_hash = hashlib.sha256(path.read_bytes()).hexdigest()
+        except OSError:
+            content_hash = None
+        return {"present": True, "type": "file", "sha256": content_hash}
+    if stat.S_ISLNK(mode):
+        try:
+            target = os.readlink(path)
+            content_hash = hashlib.sha256(target.encode("utf-8")).hexdigest()
+        except (OSError, UnicodeError):
+            content_hash = None
+        return {"present": True, "type": "symlink", "sha256": content_hash}
+    if stat.S_ISDIR(mode):
+        return {"present": True, "type": "directory", "sha256": None}
+    return {"present": True, "type": "other", "sha256": None}
+
+
 def _recovery_token(
-    artifact: dict[str, object], unresolved: Sequence[_OperationStatus]
+    artifact: dict[str, object],
+    statuses: Sequence[_OperationStatus],
+    *,
+    exclude_operations: frozenset[str],
 ) -> str:
     payload = {
         "artifact": {
@@ -903,19 +1111,42 @@ def _recovery_token(
                 "html_exists",
                 "json_sha256",
                 "html_sha256",
+                "expected_html_sha256",
             )
         },
-        "unresolved": [
+        "operations": [
             {
                 "operation_id": status.operation_id,
                 "kind": status.kind,
+                "terminal": status.terminal,
                 "result_state": status.result_state,
+                "files": {
+                    filename: _file_fingerprint(status.path / filename)
+                    for filename in (
+                        "operation.json",
+                        "result.json",
+                        "before.json",
+                        "before.html",
+                    )
+                },
             }
-            for status in unresolved
+            for status in statuses
+            if status.operation_id not in exclude_operations
         ],
     }
     serialized = json.dumps(payload, sort_keys=True, separators=(",", ":"))
     return hashlib.sha256(serialized.encode("utf-8")).hexdigest()
+
+
+def _current_recovery_token(
+    context: _PlanContext,
+    api: _PlanApi,
+    *,
+    exclude_operations: frozenset[str] = frozenset(),
+) -> str:
+    statuses = _operation_statuses(context)
+    artifact = _analyze_artifacts(context, api)
+    return _recovery_token(artifact, statuses, exclude_operations=exclude_operations)
 
 
 def _inspect(
@@ -931,7 +1162,7 @@ def _inspect(
         if not status.terminal and status.operation_id not in exclude_operations
     ]
     artifact = _analyze_artifacts(context, api)
-    token = _recovery_token(artifact, unresolved)
+    token = _recovery_token(artifact, statuses, exclude_operations=exclude_operations)
     artifact_state = str(artifact["artifact_state"])
     if unresolved:
         outcome = "RECOVERY_REQUIRED"
@@ -1102,6 +1333,370 @@ def _soft_json(path: Path) -> tuple[str, dict[str, object] | None]:
     return "present", payload
 
 
+def _valid_evidence(value: object) -> bool:
+    if not isinstance(value, dict):
+        return False
+    required = {
+        "plan_path",
+        "html_path",
+        "json_exists",
+        "html_exists",
+        "json_sha256",
+        "html_sha256",
+    }
+    if set(value) != required:
+        return False
+    return (
+        isinstance(value["plan_path"], str)
+        and isinstance(value["html_path"], str)
+        and isinstance(value["json_exists"], bool)
+        and isinstance(value["html_exists"], bool)
+        and (
+            value["json_sha256"] is None
+            or (
+                isinstance(value["json_sha256"], str)
+                and re.fullmatch(r"[0-9a-f]{64}", value["json_sha256"]) is not None
+            )
+        )
+        and (
+            value["html_sha256"] is None
+            or (
+                isinstance(value["html_sha256"], str)
+                and re.fullmatch(r"[0-9a-f]{64}", value["html_sha256"]) is not None
+            )
+        )
+    )
+
+
+def _valid_recovery_decision(value: object) -> bool:
+    if not isinstance(value, dict):
+        return False
+    expected_keys = {
+        "version",
+        "action",
+        "previous_operations",
+        "source",
+        "source_operation_id",
+        "source_json_sha256",
+        "expected_html_sha256",
+        "retained_create",
+        "input_recovery_token",
+    }
+    if set(value) != expected_keys:
+        return False
+    previous = value["previous_operations"]
+    common_valid = (
+        value["version"] == RECOVERY_DECISION_VERSION
+        and value["action"] in {"synchronize", "absent"}
+        and isinstance(previous, list)
+        and all(isinstance(item, str) for item in previous)
+        and len(previous) == len(set(previous))
+        and isinstance(value["retained_create"], bool)
+        and isinstance(value["input_recovery_token"], str)
+        and re.fullmatch(r"[0-9a-f]{64}", value["input_recovery_token"]) is not None
+    )
+    if not common_valid:
+        return False
+    if value["action"] == "absent":
+        return (
+            all(
+                value[field] is None
+                for field in (
+                    "source_operation_id",
+                    "source_json_sha256",
+                    "expected_html_sha256",
+                )
+            )
+            and value["source"] == "none"
+        )
+    return (
+        value["source"] in {"current-json", "snapshot"}
+        and isinstance(value["source_json_sha256"], str)
+        and re.fullmatch(r"[0-9a-f]{64}", value["source_json_sha256"]) is not None
+        and isinstance(value["expected_html_sha256"], str)
+        and re.fullmatch(r"[0-9a-f]{64}", value["expected_html_sha256"]) is not None
+        and (
+            (value["source"] == "current-json" and value["source_operation_id"] is None)
+            or (
+                value["source"] == "snapshot"
+                and isinstance(value["source_operation_id"], str)
+            )
+        )
+    )
+
+
+def _valid_operation_record(operation: object, *, operation_id: str, kind: str) -> bool:
+    if not isinstance(operation, dict):
+        return False
+    state = operation.get("state")
+    expected_keys = {
+        "schema",
+        "version",
+        "operation_id",
+        "kind",
+        "state",
+        "before",
+        "metadata",
+    }
+    if state == "prepared":
+        expected_keys.add("decision")
+    if set(operation) != expected_keys:
+        return False
+    if not (
+        operation.get("schema") == OPERATION_SCHEMA
+        and operation.get("version") == OPERATION_VERSION
+        and operation.get("operation_id") == operation_id
+        and operation.get("kind") == kind
+        and isinstance(operation.get("metadata"), dict)
+        and _valid_evidence(operation.get("before"))
+    ):
+        return False
+    if state == "pending":
+        return True
+    return (
+        kind == "reconcile"
+        and state == "prepared"
+        and _valid_recovery_decision(operation.get("decision"))
+    )
+
+
+def _valid_result_record(
+    result: object, *, operation_id: str, kind: str, operation_state: str
+) -> tuple[bool, bool]:
+    if not isinstance(result, dict):
+        return False, False
+    outcome = result.get("outcome")
+    terminal = result.get("terminal")
+    if not (
+        result.get("schema_version") == RESULT_SCHEMA_VERSION
+        and isinstance(outcome, str)
+        and outcome
+        and result.get("operation_id") == operation_id
+        and isinstance(terminal, bool)
+    ):
+        return False, False
+
+    pending_outcome = f"PENDING_{kind.upper()}"
+    uncertain_outcome = (
+        "UNCERTAIN_RECONCILIATION"
+        if kind == "reconcile"
+        else f"UNCERTAIN_{kind.upper()}"
+    )
+    base_fields = {"schema_version", "outcome", "operation_id", "terminal"}
+    if outcome == pending_outcome:
+        valid = (
+            set(result) == base_fields | {"history_path", "before", "retry_allowed"}
+            and terminal is False
+            and isinstance(result.get("history_path"), str)
+            and _valid_evidence(result.get("before"))
+            and result.get("retry_allowed") is False
+        )
+        return valid, False
+    if outcome == uncertain_outcome:
+        uncertain_fields = {
+            "create": {"definition_path"},
+            "update": {"mutation", "target", "expected_title", "before"},
+            "reconcile": {"reconciles"},
+            "cleanup": {"retention", "evidence_before_cleanup"},
+        }
+        valid = (
+            set(result)
+            == (
+                base_fields
+                | {
+                    "history_path",
+                    "current",
+                    "error",
+                    "inspect_required",
+                    "recovery_required",
+                    "retry_allowed",
+                }
+                | uncertain_fields[kind]
+            )
+            and terminal is False
+            and isinstance(result.get("history_path"), str)
+            and _valid_evidence(result.get("current"))
+            and isinstance(result.get("error"), str)
+            and result.get("inspect_required") is True
+            and result.get("recovery_required") is True
+            and result.get("retry_allowed") is False
+            and (
+                kind != "update"
+                or (
+                    isinstance(result.get("mutation"), str)
+                    and isinstance(result.get("target"), str)
+                    and (
+                        result.get("expected_title") is None
+                        or isinstance(result.get("expected_title"), str)
+                    )
+                    and _valid_evidence(result.get("before"))
+                )
+            )
+            and (
+                kind != "reconcile"
+                or (
+                    isinstance(result.get("reconciles"), list)
+                    and all(isinstance(item, str) for item in result["reconciles"])
+                )
+            )
+            and (
+                kind != "cleanup"
+                or (
+                    result.get("retention") == "remove"
+                    and _valid_evidence(result.get("evidence_before_cleanup"))
+                )
+            )
+            and (kind != "create" or isinstance(result.get("definition_path"), str))
+        )
+        return valid, False
+    if terminal is not True or outcome not in TERMINAL_OPERATION_OUTCOMES[kind]:
+        return False, False
+    if kind == "reconcile":
+        if outcome in {"RECONCILED", "RECOVERED_ABSENT", "RECOVERY_REJECTED"}:
+            if operation_state != "prepared":
+                return False, False
+    elif operation_state != "pending":
+        return False, False
+
+    terminal_fields = {
+        "CREATED": {
+            "history_path",
+            "package_version",
+            "definition_path",
+            "task_plan_root",
+            "history_policy",
+            "plan_path",
+            "html_path",
+            "after",
+            "synchronized",
+        },
+        "UPDATED": {
+            "history_path",
+            "mutation",
+            "target",
+            "expected_title",
+            "before",
+            "after",
+            "synchronized",
+        },
+        "RECONCILED": {
+            "history_path",
+            "authoritative_source",
+            "before",
+            "after",
+            "synchronized",
+            "reconciles",
+            "retained_create",
+        },
+        "RECOVERED_ABSENT": {
+            "history_path",
+            "before",
+            "after",
+            "removed",
+            "reconciles",
+            "retryable_create",
+        },
+        "CLEANED": {
+            "history_path",
+            "retention",
+            "synchronized_before_cleanup",
+            "evidence_before_cleanup",
+            "evidence_after_cleanup",
+            "removed",
+            "provider_state_changed",
+            "retryable_create",
+        },
+        "RECOVERED_OPERATION": {"recovered_by", "resolution", "after"},
+        "RECOVERY_REJECTED": {
+            "history_path",
+            "reason",
+            "expected_recovery_token",
+            "observed_recovery_token",
+        },
+    }
+    if set(result) != base_fields | terminal_fields[outcome]:
+        return False, False
+
+    valid_terminal = False
+    if outcome == "CREATED":
+        valid_terminal = (
+            isinstance(result.get("history_path"), str)
+            and isinstance(result.get("package_version"), str)
+            and isinstance(result.get("definition_path"), str)
+            and isinstance(result.get("task_plan_root"), str)
+            and isinstance(result.get("history_policy"), dict)
+            and isinstance(result.get("plan_path"), str)
+            and isinstance(result.get("html_path"), str)
+            and _valid_evidence(result.get("after"))
+            and result.get("synchronized") is True
+        )
+    elif outcome == "UPDATED":
+        valid_terminal = (
+            isinstance(result.get("history_path"), str)
+            and _valid_evidence(result.get("before"))
+            and _valid_evidence(result.get("after"))
+            and result.get("synchronized") is True
+            and isinstance(result.get("mutation"), str)
+            and isinstance(result.get("target"), str)
+            and (
+                result.get("expected_title") is None
+                or isinstance(result.get("expected_title"), str)
+            )
+        )
+    elif outcome == "RECONCILED":
+        valid_terminal = (
+            isinstance(result.get("history_path"), str)
+            and _valid_evidence(result.get("before"))
+            and _valid_evidence(result.get("after"))
+            and result.get("synchronized") is True
+            and isinstance(result.get("reconciles"), list)
+            and all(isinstance(item, str) for item in result["reconciles"])
+            and result.get("authoritative_source") == "json"
+            and isinstance(result.get("retained_create"), bool)
+        )
+    elif outcome == "RECOVERED_ABSENT":
+        valid_terminal = (
+            isinstance(result.get("history_path"), str)
+            and _valid_evidence(result.get("before"))
+            and _valid_evidence(result.get("after"))
+            and isinstance(result.get("reconciles"), list)
+            and all(isinstance(item, str) for item in result["reconciles"])
+            and isinstance(result.get("removed"), list)
+            and all(isinstance(item, str) for item in result["removed"])
+            and result.get("retryable_create") is True
+        )
+    elif outcome == "CLEANED":
+        valid_terminal = (
+            isinstance(result.get("history_path"), str)
+            and _valid_evidence(result.get("evidence_before_cleanup"))
+            and _valid_evidence(result.get("evidence_after_cleanup"))
+            and result.get("retention") == "remove"
+            and result.get("synchronized_before_cleanup") is True
+            and isinstance(result.get("removed"), list)
+            and all(isinstance(item, str) for item in result["removed"])
+            and result.get("provider_state_changed") is False
+            and result.get("retryable_create") is True
+        )
+    elif outcome == "RECOVERED_OPERATION":
+        valid_terminal = (
+            isinstance(result.get("recovered_by"), str)
+            and isinstance(result.get("resolution"), str)
+            and _valid_evidence(result.get("after"))
+        )
+    elif outcome == "RECOVERY_REJECTED":
+        valid_terminal = (
+            isinstance(result.get("history_path"), str)
+            and result.get("reason") == "stale-recovery-token"
+            and isinstance(result.get("expected_recovery_token"), str)
+            and isinstance(result.get("observed_recovery_token"), str)
+            and re.fullmatch(r"[0-9a-f]{64}", result["expected_recovery_token"])
+            is not None
+            and re.fullmatch(r"[0-9a-f]{64}", result["observed_recovery_token"])
+            is not None
+        )
+    return valid_terminal, valid_terminal
+
+
 def _operation_status(directory: Path) -> _OperationStatus:
     match = HISTORY_DIRECTORY.fullmatch(directory.name)
     if match is None:
@@ -1115,37 +1710,33 @@ def _operation_status(directory: Path) -> _OperationStatus:
     kind = match.group("kind")
     operation_state, operation = _soft_json(directory / "operation.json")
     result_state, result = _soft_json(directory / "result.json")
-    if result_state == "present":
-        result_malformed = (
-            result is None
-            or result.get("schema_version") != RESULT_SCHEMA_VERSION
-            or not isinstance(result.get("outcome"), str)
-            or not result["outcome"]
-            or result.get("operation_id") != operation_id
-            or not isinstance(result.get("terminal"), bool)
-        )
-        if result_malformed:
-            result_state = "malformed"
-        elif result["terminal"] is not True:
-            result_state = "pending"
-    operation_valid = (
-        operation_state == "present"
-        and operation is not None
-        and operation.get("schema") == OPERATION_SCHEMA
-        and operation.get("version") == OPERATION_VERSION
-        and operation.get("operation_id") == operation_id
-        and operation.get("kind") == kind
+    operation_valid = operation_state == "present" and _valid_operation_record(
+        operation, operation_id=operation_id, kind=kind
     )
     if not operation_valid:
         result_state = "malformed" if operation_state == "present" else operation_state
-    terminal = result_state == "present" and operation_valid
+        terminal = False
+    elif result_state == "present":
+        valid_result, terminal = _valid_result_record(
+            result,
+            operation_id=operation_id,
+            kind=kind,
+            operation_state=str(operation["state"]),
+        )
+        result_state = (
+            "terminal" if terminal else "pending" if valid_result else "malformed"
+        )
+    else:
+        terminal = False
     return _OperationStatus(
         operation_id=operation_id,
         kind=kind,
         path=directory,
         terminal=terminal,
-        result_state="terminal" if terminal else result_state,
+        result_state=result_state,
         result=result,
+        operation_state=operation_state,
+        operation=operation,
     )
 
 
@@ -1243,15 +1834,44 @@ def _prune_history(context: _PlanContext) -> None:
     )
 
 
+def _write_json_atomic(target: Path, payload: dict[str, object]) -> None:
+    temporary = target.with_name(
+        f".{target.name}.{os.getpid()}.{time.monotonic_ns()}.tmp"
+    )
+    encoded = (json.dumps(payload, indent=2, sort_keys=True) + "\n").encode("utf-8")
+    try:
+        descriptor = os.open(temporary, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
+        with os.fdopen(descriptor, "wb") as output:
+            output.write(encoded)
+            output.flush()
+            os.fsync(output.fileno())
+        os.replace(temporary, target)
+    finally:
+        if _lexists(temporary) and temporary.is_file() and not temporary.is_symlink():
+            temporary.unlink()
+
+
 def _write_operation_result(
     operation_path: Path, result: dict[str, object], *, terminal: bool
 ) -> dict[str, object]:
     stored = {**result, "terminal": terminal}
-    target = operation_path / "result.json"
-    target.write_text(
-        json.dumps(stored, indent=2, sort_keys=True) + "\n", encoding="utf-8"
-    )
+    _write_json_atomic(operation_path / "result.json", stored)
     return stored
+
+
+def _prepare_recovery_operation(
+    operation_path: Path, decision: dict[str, object]
+) -> dict[str, object]:
+    operation_path_json = operation_path / "operation.json"
+    operation = _read_json(
+        operation_path_json,
+        "INVALID_HISTORY",
+        "The pending reconciliation operation record is invalid.",
+    )
+    operation["state"] = "prepared"
+    operation["decision"] = decision
+    _write_json_atomic(operation_path_json, operation)
+    return operation
 
 
 def _start_operation(
@@ -1278,10 +1898,7 @@ def _start_operation(
         "before": before,
         "metadata": metadata,
     }
-    (operation_path / "operation.json").write_text(
-        json.dumps(operation_record, indent=2, sort_keys=True) + "\n",
-        encoding="utf-8",
-    )
+    _write_json_atomic(operation_path / "operation.json", operation_record)
     if bool(before["json_exists"]):
         (operation_path / "before.json").write_bytes(context.plan_path.read_bytes())
     if bool(before["html_exists"]):
@@ -1496,6 +2113,26 @@ def _settle_operations(
     evidence: dict[str, object],
 ) -> None:
     for status in statuses:
+        if status.terminal:
+            continue
+        if not _valid_operation_record(
+            status.operation,
+            operation_id=status.operation_id,
+            kind=status.kind,
+        ):
+            existing = status.operation if isinstance(status.operation, dict) else {}
+            before = existing.get("before")
+            metadata = existing.get("metadata")
+            repaired = {
+                "schema": OPERATION_SCHEMA,
+                "version": OPERATION_VERSION,
+                "operation_id": status.operation_id,
+                "kind": status.kind,
+                "state": "pending",
+                "before": before if _valid_evidence(before) else evidence,
+                "metadata": metadata if isinstance(metadata, dict) else {},
+            }
+            _write_json_atomic(status.path / "operation.json", repaired)
         _write_operation_result(
             status.path,
             _result(
@@ -1509,9 +2146,9 @@ def _settle_operations(
         )
 
 
-def _restore_latest_before_json(
+def _latest_before_snapshot(
     context: _PlanContext, statuses: Sequence[_OperationStatus]
-) -> _PlanDocument:
+) -> tuple[_OperationStatus, _PlanDocument, str]:
     for status in reversed(statuses):
         snapshot = status.path / "before.json"
         if snapshot.is_symlink() or not snapshot.is_file():
@@ -1523,15 +2160,96 @@ def _restore_latest_before_json(
             document = _plan_document_from_payload(payload, context)
         except (OSError, UnicodeError, json.JSONDecodeError, _PlanHelperError):
             continue
-        _safe_file(context.plan_path, context, required=False)
-        context.plan_path.write_bytes(snapshot.read_bytes())
-        return document
+        snapshot_hash = _sha256(snapshot)
+        if snapshot_hash is not None:
+            return status, document, snapshot_hash
     raise _PlanHelperError(
         "RECOVERY_BLOCKED",
         "No valid pre-operation JSON snapshot can restore plan authority.",
         exit_code=4,
         unresolved_operations=[status.operation_id for status in statuses],
     )
+
+
+def _rendered_document_hash(
+    context: _PlanContext, document: _PlanDocument, api: _PlanApi
+) -> str:
+    rendered = _render_document(context, document, api, write=False)
+    if not isinstance(rendered, str):
+        raise _PlanHelperError(
+            "CAPABILITY_UNAVAILABLE",
+            "render_hierarchy_html did not return HTML for recovery validation.",
+            exit_code=3,
+        )
+    return hashlib.sha256(rendered.encode("utf-8")).hexdigest()
+
+
+def _build_recovery_decision(
+    context: _PlanContext,
+    api: _PlanApi,
+    previous: Sequence[_OperationStatus],
+    *,
+    input_recovery_token: str,
+) -> dict[str, object]:
+    previous_ids = [status.operation_id for status in previous]
+    has_pending_create = any(status.kind == "create" for status in previous)
+    if any(status.kind == "cleanup" for status in previous):
+        return {
+            "version": RECOVERY_DECISION_VERSION,
+            "action": "absent",
+            "previous_operations": previous_ids,
+            "source": "none",
+            "source_operation_id": None,
+            "source_json_sha256": None,
+            "expected_html_sha256": None,
+            "retained_create": False,
+            "input_recovery_token": input_recovery_token,
+        }
+
+    artifact = _analyze_artifacts(context, api)
+    document = artifact.get("document")
+    if has_pending_create and not isinstance(document, _PlanDocument):
+        return {
+            "version": RECOVERY_DECISION_VERSION,
+            "action": "absent",
+            "previous_operations": previous_ids,
+            "source": "none",
+            "source_operation_id": None,
+            "source_json_sha256": None,
+            "expected_html_sha256": None,
+            "retained_create": False,
+            "input_recovery_token": input_recovery_token,
+        }
+
+    source = "current-json"
+    source_operation_id: str | None = None
+    source_hash = artifact.get("json_sha256")
+    expected_html_hash = artifact.get("expected_html_sha256")
+    if not isinstance(document, _PlanDocument):
+        source_status, document, source_hash = _latest_before_snapshot(
+            context, previous
+        )
+        source = "snapshot"
+        source_operation_id = source_status.operation_id
+        expected_html_hash = _rendered_document_hash(context, document, api)
+    if not isinstance(source_hash, str) or not isinstance(expected_html_hash, str):
+        raise _PlanHelperError(
+            "RECOVERY_BLOCKED",
+            "Recovery could not bind a valid JSON source and rendered HTML expectation.",
+            exit_code=4,
+            unresolved_operations=previous_ids,
+        )
+    return {
+        "version": RECOVERY_DECISION_VERSION,
+        "action": "synchronize",
+        "previous_operations": previous_ids,
+        "source": source,
+        "source_operation_id": source_operation_id,
+        "source_json_sha256": source_hash,
+        "expected_html_sha256": expected_html_hash,
+        "retained_create": has_pending_create,
+        "input_recovery_token": input_recovery_token,
+    }
 
 
 def _cleanup_artifacts(context: _PlanContext) -> list[str]:
@@ -1555,40 +2273,196 @@ def _purge_plan_history(context: _PlanContext) -> None:
         context.task_root.rmdir()
 
 
-def _recover_to_absence(
+def _prepared_reconciliation(
+    statuses: Sequence[_OperationStatus],
+) -> _OperationStatus | None:
+    prepared = [
+        status
+        for status in statuses
+        if not status.terminal
+        and status.kind == "reconcile"
+        and isinstance(status.operation, dict)
+        and status.operation.get("state") == "prepared"
+        and _valid_operation_record(
+            status.operation,
+            operation_id=status.operation_id,
+            kind=status.kind,
+        )
+    ]
+    if len(prepared) > 1:
+        raise _PlanHelperError(
+            "RECOVERY_BLOCKED",
+            "More than one prepared reconciliation decision is unresolved.",
+            exit_code=4,
+            prepared_operations=[status.operation_id for status in prepared],
+        )
+    return prepared[0] if prepared else None
+
+
+def _decision_previous_statuses(
+    context: _PlanContext, decision: dict[str, object]
+) -> list[_OperationStatus]:
+    statuses = {status.operation_id: status for status in _operation_statuses(context)}
+    previous_ids = decision["previous_operations"]
+    if not isinstance(previous_ids, list):
+        raise _PlanHelperError(
+            "RECOVERY_BLOCKED",
+            "The prepared reconciliation decision has invalid prior operations.",
+            exit_code=4,
+        )
+    missing = [
+        operation_id for operation_id in previous_ids if operation_id not in statuses
+    ]
+    if missing:
+        raise _PlanHelperError(
+            "RECOVERY_BLOCKED",
+            "A journal entry bound to the prepared recovery decision is missing.",
+            exit_code=4,
+            missing_operations=missing,
+        )
+    return [statuses[operation_id] for operation_id in previous_ids]
+
+
+def _reject_prepared_recovery(
+    operation: _OperationStatus,
+    *,
+    expected_token: str,
+    observed_token: str,
+) -> None:
+    _write_operation_result(
+        operation.path,
+        _result(
+            "RECOVERY_REJECTED",
+            operation_id=operation.operation_id,
+            history_path=str(operation.path),
+            reason="stale-recovery-token",
+            expected_recovery_token=expected_token,
+            observed_recovery_token=observed_token,
+        ),
+        terminal=True,
+    )
+
+
+def _execute_recovery_decision(
     context: _PlanContext,
     api: _PlanApi,
-    *,
-    operation_id: str,
-    operation_path: Path,
-    previous: Sequence[_OperationStatus],
-    before: dict[str, object],
+    operation: _OperationStatus,
+    decision: dict[str, object],
 ) -> dict[str, object]:
-    removed = _cleanup_artifacts(context)
-    artifact = _analyze_artifacts(context, api)
-    if artifact["artifact_state"] != "ABSENT":
-        raise RuntimeError("recovery did not reach complete absence")
-    after = _evidence(context)
+    previous = _decision_previous_statuses(context, decision)
     previous_ids = [status.operation_id for status in previous]
-    result = _result(
-        "RECOVERED_ABSENT",
-        operation_id=operation_id,
-        history_path=str(operation_path),
-        before=before,
-        after=after,
-        removed=removed,
-        reconciles=previous_ids,
-        retryable_create=True,
+    before = (
+        operation.operation.get("before")
+        if isinstance(operation.operation, dict)
+        else None
     )
+    if not _valid_evidence(before):
+        raise _PlanHelperError(
+            "RECOVERY_BLOCKED",
+            "The prepared reconciliation has no valid before evidence.",
+            exit_code=4,
+        )
+
+    if decision["action"] == "absent":
+        removed = _cleanup_artifacts(context)
+        artifact = _analyze_artifacts(context, api)
+        if artifact["artifact_state"] != "ABSENT":
+            raise RuntimeError("recovery did not reach complete absence")
+        after = _evidence(context)
+        _settle_operations(
+            previous,
+            recovered_by=operation.operation_id,
+            resolution="absent",
+            evidence=after,
+        )
+        stored = _write_operation_result(
+            operation.path,
+            _result(
+                "RECOVERED_ABSENT",
+                operation_id=operation.operation_id,
+                history_path=str(operation.path),
+                before=before,
+                after=after,
+                removed=removed,
+                reconciles=previous_ids,
+                retryable_create=True,
+            ),
+            terminal=True,
+        )
+        _purge_plan_history(context)
+        return stored
+
+    source_hash = str(decision["source_json_sha256"])
+    source_path = context.plan_path
+    if decision["source"] == "snapshot":
+        source_operation_id = str(decision["source_operation_id"])
+        source_status = next(
+            status for status in previous if status.operation_id == source_operation_id
+        )
+        source_path = source_status.path / "before.json"
+    if _sha256(source_path) != source_hash:
+        raise _PlanHelperError(
+            "STALE_RECOVERY_TOKEN",
+            "The JSON source bound to the prepared recovery decision changed.",
+            exit_code=4,
+            source_path=str(source_path),
+        )
+    payload = _read_json(
+        source_path,
+        "RECOVERY_BLOCKED",
+        "The JSON source bound to the prepared recovery decision is invalid.",
+    )
+    document = _plan_document_from_payload(payload, context)
+    rendered_hash = _rendered_document_hash(context, document, api)
+    if rendered_hash != decision["expected_html_sha256"]:
+        raise _PlanHelperError(
+            "STALE_RECOVERY_TOKEN",
+            "The rendered-output expectation bound to recovery changed.",
+            exit_code=4,
+            expected_html_sha256=decision["expected_html_sha256"],
+            observed_html_sha256=rendered_hash,
+        )
+
+    artifact = _analyze_artifacts(context, api)
+    already_synchronized = (
+        artifact["artifact_state"] == "SYNCED"
+        and artifact["json_sha256"] == source_hash
+        and artifact["expected_html_sha256"] == decision["expected_html_sha256"]
+    )
+    if not already_synchronized:
+        if source_path != context.plan_path:
+            _safe_file(context.plan_path, context, required=False)
+            context.plan_path.write_bytes(source_path.read_bytes())
+        _render_document(context, document, api, write=True)
+    after_artifact = _analyze_artifacts(context, api)
+    if (
+        after_artifact["artifact_state"] != "SYNCED"
+        or after_artifact["json_sha256"] != source_hash
+        or after_artifact["expected_html_sha256"] != decision["expected_html_sha256"]
+    ):
+        raise RuntimeError("reconciliation did not synchronize the plan artifacts")
+    after = _evidence(context)
     _settle_operations(
         previous,
-        recovered_by=operation_id,
-        resolution="absent",
+        recovered_by=operation.operation_id,
+        resolution="synchronized",
         evidence=after,
     )
-    stored = _write_operation_result(operation_path, result, terminal=True)
-    _purge_plan_history(context)
-    return stored
+    return _write_operation_result(
+        operation.path,
+        _result(
+            "RECONCILED",
+            operation_id=operation.operation_id,
+            history_path=str(operation.path),
+            authoritative_source="json",
+            before=before,
+            after=after,
+            synchronized=True,
+            reconciles=previous_ids,
+            retained_create=bool(decision["retained_create"]),
+        ),
+        terminal=True,
+    )
 
 
 def _reconcile(
@@ -1613,6 +2487,8 @@ def _reconcile(
             exit_code=4,
             expected_recovery_token=observed_token,
         )
+    statuses = _operation_statuses(context)
+    prepared = _prepared_reconciliation(statuses)
     if not unresolved_ids and inspected["outcome"] == "SYNCED":
         return _result(
             "ALREADY_SYNCED",
@@ -1631,74 +2507,84 @@ def _reconcile(
             inspect=inspected,
         )
 
-    before = _evidence(context)
-    operation_id, operation_path = _start_operation(
-        context,
-        "reconcile",
-        {
-            "recovery_token": supplied_token,
-            "previous_unresolved": unresolved_ids,
-        },
-    )
-    previous = _unresolved_operations(context, exclude=frozenset({operation_id}))
-    previous_ids = [status.operation_id for status in previous]
-    try:
-        if any(status.kind == "cleanup" for status in previous):
-            return _recover_to_absence(
-                context,
-                api,
-                operation_id=operation_id,
-                operation_path=operation_path,
-                previous=previous,
-                before=before,
-            )
-
-        artifact = _analyze_artifacts(context, api)
-        document = artifact.get("document")
-        has_pending_create = any(status.kind == "create" for status in previous)
-        if has_pending_create and not isinstance(document, _PlanDocument):
-            return _recover_to_absence(
-                context,
-                api,
-                operation_id=operation_id,
-                operation_path=operation_path,
-                previous=previous,
-                before=before,
-            )
-
-        if not isinstance(document, _PlanDocument):
-            document = _restore_latest_before_json(context, previous)
-        _render_document(context, document, api, write=True)
-        after_artifact = _analyze_artifacts(context, api)
-        if after_artifact["artifact_state"] != "SYNCED":
-            raise RuntimeError("reconciliation did not synchronize the plan artifacts")
-        result = _result(
-            "RECONCILED",
-            operation_id=operation_id,
-            history_path=str(operation_path),
-            authoritative_source="json",
-            before=before,
-            after=_evidence(context),
-            synchronized=True,
-            reconciles=previous_ids,
-            retained_create=has_pending_create,
-        )
-        _settle_operations(
+    operation: _OperationStatus
+    if prepared is None:
+        previous = [status for status in statuses if not status.terminal]
+        decision = _build_recovery_decision(
+            context,
+            api,
             previous,
-            recovered_by=operation_id,
-            resolution="synchronized",
-            evidence=_evidence(context),
+            input_recovery_token=str(observed_token),
         )
-        return _write_operation_result(operation_path, result, terminal=True)
+        operation_id, operation_path = _start_operation(
+            context,
+            "reconcile",
+            {
+                "recovery_token": supplied_token,
+                "previous_unresolved": unresolved_ids,
+            },
+        )
+        _prepare_recovery_operation(operation_path, decision)
+        operation = _operation_status(operation_path)
+        after_prepare_token = _current_recovery_token(
+            context, api, exclude_operations=frozenset({operation_id})
+        )
+        if after_prepare_token != observed_token:
+            _reject_prepared_recovery(
+                operation,
+                expected_token=str(observed_token),
+                observed_token=after_prepare_token,
+            )
+            raise _PlanHelperError(
+                "STALE_RECOVERY_TOKEN",
+                "Recovery inputs changed after the decision was prepared and before any canonical effect.",
+                exit_code=4,
+                expected_recovery_token=observed_token,
+                observed_recovery_token=after_prepare_token,
+            )
+    else:
+        operation = prepared
+        decision_value = operation.operation.get("decision")
+        if not isinstance(decision_value, dict):
+            raise _PlanHelperError(
+                "RECOVERY_BLOCKED",
+                "The prepared reconciliation decision is invalid.",
+                exit_code=4,
+            )
+        decision = decision_value
+        resume_token = _current_recovery_token(context, api)
+        if resume_token != observed_token:
+            _reject_prepared_recovery(
+                operation,
+                expected_token=str(observed_token),
+                observed_token=resume_token,
+            )
+            raise _PlanHelperError(
+                "STALE_RECOVERY_TOKEN",
+                "Recovery inputs changed before the prepared decision could resume.",
+                exit_code=4,
+                expected_recovery_token=observed_token,
+                observed_recovery_token=resume_token,
+            )
+
+    try:
+        return _execute_recovery_decision(context, api, operation, decision)
+    except _PlanHelperError as error:
+        if error.outcome == "STALE_RECOVERY_TOKEN":
+            _reject_prepared_recovery(
+                operation,
+                expected_token=str(observed_token),
+                observed_token=_current_recovery_token(context, api),
+            )
+        raise
     except Exception as error:
         return _record_uncertain(
-            operation_path,
+            operation.path,
             "UNCERTAIN_RECONCILIATION",
-            operation_id,
+            operation.operation_id,
             context,
             error,
-            before=before,
-            reconciles=[],
+            reconciles=decision["previous_operations"],
         )
 
 
@@ -1839,21 +2725,26 @@ def execute(argv: Sequence[str] | None = None) -> tuple[int, dict[str, object]]:
         if arguments.command == "capabilities":
             return 0, _capability_result(api)
         context = _context(arguments)
-        if arguments.command == "create":
-            result = _create(context, arguments, api)
-            return (4 if result["outcome"] == "UNCERTAIN_CREATE" else 0), result
-        if arguments.command == "inspect":
-            inspected = _inspect(context, api)
-            return (0 if inspected["outcome"] in {"SYNCED", "ABSENT"} else 4), inspected
-        if arguments.command == "update":
-            result = _update(context, arguments, api)
-            return (4 if result["outcome"] == "UNCERTAIN_UPDATE" else 0), result
-        if arguments.command == "reconcile":
-            result = _reconcile(context, arguments, api)
-            return (4 if result["outcome"] == "UNCERTAIN_RECONCILIATION" else 0), result
-        if arguments.command == "finalize":
-            result = _finalize(context, arguments, api)
-            return (4 if result["outcome"] == "UNCERTAIN_CLEANUP" else 0), result
+        with _plan_lock(context):
+            if arguments.command == "create":
+                result = _create(context, arguments, api)
+                return (4 if result["outcome"] == "UNCERTAIN_CREATE" else 0), result
+            if arguments.command == "inspect":
+                inspected = _inspect(context, api)
+                return (
+                    0 if inspected["outcome"] in {"SYNCED", "ABSENT"} else 4
+                ), inspected
+            if arguments.command == "update":
+                result = _update(context, arguments, api)
+                return (4 if result["outcome"] == "UNCERTAIN_UPDATE" else 0), result
+            if arguments.command == "reconcile":
+                result = _reconcile(context, arguments, api)
+                return (
+                    4 if result["outcome"] == "UNCERTAIN_RECONCILIATION" else 0
+                ), result
+            if arguments.command == "finalize":
+                result = _finalize(context, arguments, api)
+                return (4 if result["outcome"] == "UNCERTAIN_CLEANUP" else 0), result
         raise _PlanHelperError("INVALID_REQUEST", "Unknown helper command.")
     except _PlanHelperError as error:
         return error.exit_code, _result(

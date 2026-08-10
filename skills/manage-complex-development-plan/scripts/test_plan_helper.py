@@ -11,6 +11,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
 import unittest
 from dataclasses import replace
 from pathlib import Path
@@ -156,6 +157,7 @@ class PlanHelperTests(unittest.TestCase):
             result["capabilities"],
         )
         self.assertRegex(str(result["package_version"]), r"^\d+\.\d+\.\d+")
+        self.assertIn(result["lock_backend"], {"fcntl", "msvcrt"})
         self.assertEqual("", completed.stderr)
 
     def test_capability_validation_checks_every_supplied_call_shape(self) -> None:
@@ -797,6 +799,318 @@ class PlanHelperTests(unittest.TestCase):
                 self.assertEqual("SYNCED", settled["outcome"])
                 self.assertFalse(settled["unresolved_operations"])
 
+    def test_operation_journal_requires_recognized_complete_state_combinations(
+        self,
+    ) -> None:
+        self._create()
+        module = self._load_helper_module()
+        arguments = module._parser().parse_args([*self._base_arguments(), "inspect"])
+        context = module._context(arguments)
+
+        corruptions = (
+            (
+                "operation-without-state",
+                lambda operation, result: (operation.pop("state"), None),
+            ),
+            (
+                "terminal-pending-create",
+                lambda operation, result: result.update(
+                    outcome="PENDING_CREATE", terminal=True
+                ),
+            ),
+            (
+                "terminal-update-missing-after",
+                lambda operation, result: result.update(
+                    outcome="UPDATED", terminal=True
+                ),
+            ),
+            (
+                "mismatched-terminal-kind",
+                lambda operation, result: result.update(
+                    outcome="CREATED", terminal=True
+                ),
+            ),
+        )
+        for label, corrupt in corruptions:
+            with self.subTest(label=label):
+                operation_id, operation_path = module._start_operation(
+                    context,
+                    "update",
+                    {"target": "Implementation", "mutation": "completed"},
+                )
+                operation_path_json = operation_path / "operation.json"
+                result_path = operation_path / "result.json"
+                operation = json.loads(operation_path_json.read_text())
+                result = json.loads(result_path.read_text())
+                corrupt(operation, result)
+                operation_path_json.write_text(
+                    json.dumps(operation) + "\n", encoding="utf-8"
+                )
+                result_path.write_text(json.dumps(result) + "\n", encoding="utf-8")
+
+                inspected, _ = self._invoke(
+                    *self._base_arguments(), "inspect", expected_exit=4
+                )
+                detail = next(
+                    item
+                    for item in inspected["unresolved_details"]
+                    if item["operation_id"] == operation_id
+                )
+                self.assertEqual("malformed", detail["result_state"])
+                recovered, _ = self._invoke(
+                    *self._base_arguments(),
+                    "reconcile",
+                    "--recovery-token",
+                    str(inspected["recovery_token"]),
+                )
+                self.assertIn(operation_id, recovered["reconciles"])
+
+    def test_prepared_reconciliation_resumes_after_repeated_interruption(self) -> None:
+        module = self._load_helper_module()
+
+        for recovery_kind in ("create", "cleanup"):
+            with self.subTest(recovery_kind=recovery_kind):
+                plan_name = f"resume{recovery_kind}"
+                definition = self._definition_path(
+                    filename=f"{plan_name}-definition.json"
+                )
+                self._create(definition=definition, plan_name=plan_name)
+                if recovery_kind == "create":
+                    arguments = module._parser().parse_args(
+                        [*self._base_arguments(plan_name=plan_name), "inspect"]
+                    )
+                    context = module._context(arguments)
+                    prior_id, _ = module._start_operation(
+                        context, "create", {"definition_path": str(definition)}
+                    )
+                else:
+                    self._complete_default_plan(plan_name=plan_name)
+                    actual_write = module._write_operation_result
+
+                    def stop_cleanup_terminal(
+                        operation_path: Path,
+                        result: dict[str, object],
+                        *,
+                        terminal: bool,
+                    ) -> dict[str, object]:
+                        if terminal and result.get("outcome") == "CLEANED":
+                            raise SystemExit("stop before cleanup terminal result")
+                        return actual_write(operation_path, result, terminal=terminal)
+
+                    with patch.object(
+                        module,
+                        "_write_operation_result",
+                        side_effect=stop_cleanup_terminal,
+                    ):
+                        with self.assertRaises(SystemExit):
+                            module.execute(
+                                [
+                                    *self._base_arguments(plan_name=plan_name),
+                                    "finalize",
+                                    "--retention",
+                                    "remove",
+                                ]
+                            )
+                    inspected_cleanup, _ = self._invoke(
+                        *self._base_arguments(plan_name=plan_name),
+                        "inspect",
+                        expected_exit=4,
+                    )
+                    prior_id = str(inspected_cleanup["unresolved_operations"][0])
+
+                inspected, _ = self._invoke(
+                    *self._base_arguments(plan_name=plan_name),
+                    "inspect",
+                    expected_exit=4,
+                )
+                actual_write = module._write_operation_result
+
+                def stop_reconcile_terminal(
+                    operation_path: Path,
+                    result: dict[str, object],
+                    *,
+                    terminal: bool,
+                ) -> dict[str, object]:
+                    if terminal and operation_path.name.endswith("-reconcile"):
+                        raise SystemExit("stop after settling prior operation")
+                    return actual_write(operation_path, result, terminal=terminal)
+
+                with patch.object(
+                    module,
+                    "_write_operation_result",
+                    side_effect=stop_reconcile_terminal,
+                ):
+                    with self.assertRaises(SystemExit):
+                        module.execute(
+                            [
+                                *self._base_arguments(plan_name=plan_name),
+                                "reconcile",
+                                "--recovery-token",
+                                str(inspected["recovery_token"]),
+                            ]
+                        )
+
+                interrupted, _ = self._invoke(
+                    *self._base_arguments(plan_name=plan_name),
+                    "inspect",
+                    expected_exit=4,
+                )
+                self.assertEqual(
+                    "ABSENT" if recovery_kind == "cleanup" else "SYNCED",
+                    interrupted["artifact_state"],
+                )
+                self.assertNotIn(prior_id, interrupted["unresolved_operations"])
+                self.assertEqual(1, len(interrupted["unresolved_operations"]))
+                pending_reconcile = (
+                    self.workspace
+                    / ".codex"
+                    / "plans"
+                    / self.task_id
+                    / ".history"
+                    / plan_name
+                    / str(interrupted["unresolved_operations"][0])
+                    / "operation.json"
+                )
+                prepared_record = json.loads(pending_reconcile.read_text())
+                self.assertEqual("prepared", prepared_record["state"])
+                self.assertEqual(
+                    "absent" if recovery_kind == "cleanup" else "synchronize",
+                    prepared_record["decision"]["action"],
+                )
+                recovered, _ = self._invoke(
+                    *self._base_arguments(plan_name=plan_name),
+                    "reconcile",
+                    "--recovery-token",
+                    str(interrupted["recovery_token"]),
+                )
+                self.assertEqual(
+                    "RECOVERED_ABSENT" if recovery_kind == "cleanup" else "RECONCILED",
+                    recovered["outcome"],
+                )
+                terminal, _ = self._invoke(
+                    *self._base_arguments(plan_name=plan_name), "inspect"
+                )
+                self.assertEqual(
+                    "ABSENT" if recovery_kind == "cleanup" else "SYNCED",
+                    terminal["outcome"],
+                )
+
+    def test_recovery_token_binds_snapshot_content_before_canonical_effect(
+        self,
+    ) -> None:
+        module = self._load_helper_module()
+
+        for mutate_snapshot in (True, False):
+            with self.subTest(mutate_snapshot=mutate_snapshot):
+                plan_name = "snapshotstale" if mutate_snapshot else "snapshotstable"
+                self._create(
+                    definition=self._definition_path(
+                        filename=f"{plan_name}-definition.json"
+                    ),
+                    plan_name=plan_name,
+                )
+                arguments = module._parser().parse_args(
+                    [*self._base_arguments(plan_name=plan_name), "inspect"]
+                )
+                context = module._context(arguments)
+                _, prior_path = module._start_operation(
+                    context,
+                    "update",
+                    {"target": "Implementation", "mutation": "completed"},
+                )
+                context.plan_path.unlink()
+                before_html = context.html_path.read_bytes()
+                inspected, _ = self._invoke(
+                    *self._base_arguments(plan_name=plan_name),
+                    "inspect",
+                    expected_exit=4,
+                )
+
+                if mutate_snapshot:
+                    actual_prepare = module._prepare_recovery_operation
+
+                    def mutate_after_prepare(*args: object, **kwargs: object) -> object:
+                        prepared = actual_prepare(*args, **kwargs)
+                        (prior_path / "before.json").write_text(
+                            '{"changed": true}\n', encoding="utf-8"
+                        )
+                        return prepared
+
+                    preparation = patch.object(
+                        module,
+                        "_prepare_recovery_operation",
+                        side_effect=mutate_after_prepare,
+                    )
+                else:
+                    preparation = patch.object(
+                        module,
+                        "_prepare_recovery_operation",
+                        wraps=module._prepare_recovery_operation,
+                    )
+                with preparation:
+                    exit_code, recovered = module.execute(
+                        [
+                            *self._base_arguments(plan_name=plan_name),
+                            "reconcile",
+                            "--recovery-token",
+                            str(inspected["recovery_token"]),
+                        ]
+                    )
+                if mutate_snapshot:
+                    self.assertEqual(4, exit_code)
+                    self.assertEqual("STALE_RECOVERY_TOKEN", recovered["outcome"])
+                    self.assertFalse(context.plan_path.exists())
+                    self.assertEqual(before_html, context.html_path.read_bytes())
+                else:
+                    self.assertEqual(0, exit_code)
+                    self.assertEqual("RECONCILED", recovered["outcome"])
+                    synced, _ = self._invoke(
+                        *self._base_arguments(plan_name=plan_name), "inspect"
+                    )
+                    self.assertEqual("SYNCED", synced["outcome"])
+
+    def test_recovery_token_binds_rendered_output_expectation(self) -> None:
+        self._create()
+        plan_path, html_path = self._plan_paths()
+        html_path.write_text("drifted HTML\n", encoding="utf-8")
+        before = (plan_path.read_bytes(), html_path.read_bytes())
+        inspected, _ = self._invoke(*self._base_arguments(), "inspect", expected_exit=4)
+
+        module = self._load_helper_module()
+        actual_api = module._load_api()
+        calls = 0
+
+        def changing_renderer(*args: object, **kwargs: object) -> str | Path:
+            nonlocal calls
+            calls += 1
+            rendered = actual_api.render_hierarchy_html(*args, **kwargs)
+            if calls >= 3 and isinstance(rendered, str):
+                return rendered + "<!-- changed renderer expectation -->\n"
+            return rendered
+
+        changing_api = replace(actual_api, render_hierarchy_html=changing_renderer)
+        with patch.object(module, "_load_api", return_value=changing_api):
+            exit_code, stale = module.execute(
+                [
+                    *self._base_arguments(),
+                    "reconcile",
+                    "--recovery-token",
+                    str(inspected["recovery_token"]),
+                ]
+            )
+        self.assertEqual(4, exit_code)
+        self.assertEqual("STALE_RECOVERY_TOKEN", stale["outcome"])
+        self.assertEqual(before, (plan_path.read_bytes(), html_path.read_bytes()))
+
+        current, _ = self._invoke(*self._base_arguments(), "inspect", expected_exit=4)
+        recovered, _ = self._invoke(
+            *self._base_arguments(),
+            "reconcile",
+            "--recovery-token",
+            str(current["recovery_token"]),
+        )
+        self.assertEqual("RECONCILED", recovered["outcome"])
+
     def test_interrupted_create_recovers_html_only_json_only_and_synchronized_states(
         self,
     ) -> None:
@@ -1007,6 +1321,111 @@ class PlanHelperTests(unittest.TestCase):
                 )
                 self.assertEqual("ABSENT", absent["outcome"])
                 self.assertTrue(absent["retryable_create"])
+
+    def test_plan_lock_revalidates_shifted_dotted_target_after_waiting_writer(
+        self,
+    ) -> None:
+        tasks = [
+            {
+                "title": title,
+                "dependsOn": [],
+                "evidence": [],
+                "complete": False,
+                "children": [],
+            }
+            for title in ("Alpha", "Beta", "Gamma")
+        ]
+        self._create(definition=self._definition_path(tasks=tasks))
+        module = self._load_helper_module()
+        actual_api = module._load_api()
+        arguments = module._parser().parse_args([*self._base_arguments(), "inspect"])
+        context = module._context(arguments)
+
+        command = [
+            sys.executable,
+            str(HELPER_PATH),
+            *self._base_arguments(),
+            "update",
+            "--target",
+            "4",
+            "--expected-title",
+            "Gamma",
+            "--complete",
+        ]
+        with module._plan_lock(context):
+            waiting = subprocess.Popen(
+                command,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+            )
+            self.addCleanup(lambda: waiting.kill() if waiting.poll() is None else None)
+            time.sleep(0.15)
+            self.assertIsNone(waiting.poll(), "writer did not wait for the plan lock")
+            actual_api.update_hierarchy_plan(
+                context.plan_path, "Alpha", add_peer_after="Inserted"
+            )
+        stdout, stderr = waiting.communicate(timeout=5)
+        self.assertEqual(2, waiting.returncode, stderr)
+        stale = json.loads(stdout)
+        self.assertEqual("STALE_TARGET", stale["outcome"])
+        self.assertEqual("Beta", stale["observed_title"])
+
+        payload = json.loads(context.plan_path.read_text())
+        self.assertEqual(
+            [
+                "Objective: Deliver the accepted change",
+                "Alpha",
+                "Inserted",
+                "Beta",
+                "Gamma",
+            ],
+            [item["text"] for item in payload["items"]],
+        )
+        self.assertFalse(payload["items"][4].get("complete", False))
+
+    def test_plan_lock_has_import_safe_windows_branch_and_fails_closed(self) -> None:
+        module = self._load_helper_module()
+
+        class FakeMsvcrt:
+            LK_NBLCK = 11
+            LK_UNLCK = 12
+
+            def __init__(self) -> None:
+                self.calls: list[tuple[int, int, int]] = []
+
+            def locking(self, descriptor: int, mode: int, size: int) -> None:
+                self.calls.append((descriptor, mode, size))
+
+        fake = FakeMsvcrt()
+        lock_path = self.workspace / "windows-lock"
+        with lock_path.open("w+b") as lock_file:
+            self.assertTrue(
+                module._try_platform_lock(
+                    lock_file, platform_name="nt", platform_module=fake
+                )
+            )
+            module._release_platform_lock(
+                lock_file, platform_name="nt", platform_module=fake
+            )
+        self.assertEqual(
+            [fake.LK_NBLCK, fake.LK_UNLCK], [call[1] for call in fake.calls]
+        )
+
+        with self.assertRaises(module._PlanHelperError) as captured:
+            module._try_platform_lock(
+                object(), platform_name="unsupported", platform_module=None
+            )
+        self.assertEqual("CAPABILITY_UNAVAILABLE", captured.exception.outcome)
+
+        arguments = module._parser().parse_args([*self._base_arguments(), "inspect"])
+        context = module._context(arguments)
+        with module._plan_lock(context):
+            with self.assertRaises(module._PlanHelperError) as contention:
+                with module._plan_lock(context, timeout_seconds=0):
+                    self.fail("a second writer entered the locked plan")
+        self.assertEqual("LOCK_TIMEOUT", contention.exception.outcome)
+        self.assertTrue(contention.exception.details["retry_allowed"])
 
     def _load_helper_module(self) -> ModuleType:
         specification = importlib.util.spec_from_file_location(
