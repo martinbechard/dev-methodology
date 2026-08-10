@@ -368,7 +368,7 @@
 
     <section class="hero" aria-labelledby="page-title">
       <h1 id="page-title">Generic Agent Definitions Source</h1>
-      <p class="callout">Conceptual roles under <code>agents/roles/</code> own agent intent, <code>agents/role-schema.yaml</code> owns the allowed vocabulary, and the model-profile sources own semantic profile IDs and concrete runtime model values. The default generator owns the transformation that preserves fixed and conditional core-skill semantics while emitting native by-reference bindings. Explicit inline remains available for self-contained runtimes. The generator also produces the generation manifest from those source values, recording the chosen mode and agent digests so installation metadata can prove that the installed bytes use the same delivery contract.</p>
+      <p class="callout">Conceptual roles under <code>agents/roles/</code> own agent intent, <code>agents/role-schema.yaml</code> owns the allowed vocabulary, and the model-profile sources own semantic profile IDs and concrete runtime model values. The repository generator owns the transformation that preserves fixed and conditional core-skill semantics while emitting native by-reference bindings. Explicit inline remains available for self-contained runtimes. The generator also produces the generation manifest from those source values, recording the chosen mode and agent digests so installation metadata can prove that the installed bytes use the same delivery contract.</p>
       <p class="lede">
         Skills and agents have different portability models. A source skill remains the same portable skill package when it is deployed,
         while a conceptual agent definition source must be converted into the file format and properties understood by each agent harness.
@@ -422,7 +422,7 @@
       <div class="flow" aria-label="Conceptual agent definition generation flow">
         <div class="flow-row">
           <div><span class="name">1. Author The Conceptual Agent Definition</span></div>
-          <p>Define intent with conceptual properties such as <code>instructions</code>, <code>skills</code>, <code>modelProfile</code>, <code>tools</code>, and <code>outputContract</code>. Omit <code>contextBudgetPercent</code> to use the schema default of 75. Declare a whole integer from 1 through 100 only when the role needs an explicit override. The percentage does not identify a provider model or token capacity.</p>
+          <p>Define intent with conceptual properties such as <code>instructions</code>, <code>skills</code>, <code>modelProfile</code>, <code>tools</code>, and <code>outputContract</code>. Omit <code>contextBudgetPercent</code> to use the schema default of 75. Declare a whole integer from 1 through 100 only when the role needs an explicit override. The percentage does not identify a concrete model or token capacity.</p>
         </div>
         <div class="flow-row">
           <div><span class="name">2. Validate And Resolve</span></div>
@@ -603,7 +603,7 @@
           <tr>
             <td><span class="name">Model profile</span></td>
             <td><code>modelProfile</code></td>
-            <td>Selects simple, default, documentation, advanced, or advanced-long capability without naming a provider model. Adapter mappings resolve the native model and reasoning settings.</td>
+            <td>Selects simple, coordination, default, documentation, advanced, advanced-long, or intermediate capability without naming a concrete model. Adapter mappings resolve the native model and reasoning settings.</td>
           </tr>
           <tr>
             <td><span class="name">Context budget percentage</span></td>
@@ -666,12 +666,12 @@
 
     <section class="section" aria-labelledby="ignored-properties-title">
       <h2 id="ignored-properties-title">Schema Constraints: Properties We Ignore</h2>
-      <p class="lede"><code>agents/role-schema.yaml</code> owns this exclusion boundary. Excluded vendor properties are not canonical conceptual fields and therefore do not acquire generated equivalents.</p>
+      <p class="lede"><code>agents/role-schema.yaml</code> owns this exclusion boundary. Excluded vendor properties are not role-authored conceptual fields. A generator may still emit an adapter-owned native constant when the generator source owns that output.</p>
       <table>
         <thead><tr><th>Property</th><th>Reason</th></tr></thead>
         <tbody>
           <tr><td><code>hooks</code></td><td>Hooks remain vendor configuration rather than portable agent behavior.</td></tr>
-          <tr><td><code>target</code> and Gemini <code>kind</code></td><td>The methodology assumes local development and does not model local-versus-remote or editor-versus-cloud targets.</td></tr>
+          <tr><td><code>target</code> and Gemini <code>kind</code></td><td>Role sources do not choose local-versus-remote or editor-versus-cloud targets. <code>fixedBehavior.target</code> declares the repository's local-development default. The current Gemini adapter separately hardcodes the corresponding native output as <code>kind: local</code>.</td></tr>
           <tr><td>Display metadata, colors, and nicknames</td><td>Presentation-only values do not change authority, routing, skills, or outputs.</td></tr>
           <tr><td>Other vendor-only presentation fields</td><td>Adapters omit decoration that is not necessary for correct runtime behavior.</td></tr>
         </tbody>
@@ -685,7 +685,7 @@
         <thead><tr><th>Behavior</th><th>Methodology Default</th><th>Adapter Rule</th></tr></thead>
         <tbody>
           <tr><td><code>defaults.contextBudgetPercent</code></td><td>An omitted role value resolves to 75. A valid explicit role value takes precedence.</td><td>Use the resolved percentage for the primary model, every model stage, generated role data, runtime instructions, and manifest allocations.</td></tr>
-          <tr><td><code>fixedBehavior.target</code></td><td>Every conceptual agent definition targets local development.</td><td>Do not emit a remote or cloud execution target unless a future schema version adds one.</td></tr>
+          <tr><td><code>fixedBehavior.target</code></td><td>Every conceptual agent definition targets local development.</td><td>The current Gemini adapter emits a hardcoded corresponding value, <code>kind: local</code>. Other adapters do not emit a remote or cloud execution target unless a future generator version validates and maps the schema declaration.</td></tr>
           <tr><td><code>fixedBehavior.userInvocable</code></td><td>The schema declares every conceptual agent eligible for user invocation.</td><td>Emit the runtime's normal invocation metadata where supported.</td></tr>
           <tr><td><code>fixedBehavior.automaticDelegation</code></td><td>The schema declares every conceptual agent eligible for automatic delegation.</td><td>Use descriptions and runtime invocation fields to preserve automatic selection.</td></tr>
           <tr><td><code>fixedBehavior.informationDisclosurePolicy</code></td><td>Every conceptual agent must not send PII or company II to an LLM unless specifically instructed.</td><td>Render the exact policy in every native agent's instructions.</td></tr>
@@ -731,17 +731,17 @@
             <tr>
               <td><span class="name">Claude Code</span></td>
               <td>Markdown with YAML frontmatter and a Markdown instruction body.</td>
-              <td>Claude discovers project <code>.claude/agents/</code> and user <code>~/.claude/agents/</code>. The adapter renders <code>model</code> and the context-budget instruction in the Markdown body. Claude Code 2.1.104 and the official subagent schema expose no native per-agent context-limit field. The generator owns the YAML frontmatter, Markdown body, and output filename under <code>generated/adapters/claude/agents/*.md</code>.</td>
+              <td>Claude discovers project <code>.claude/agents/</code> and user <code>~/.claude/agents/</code>. The adapter renders <code>model</code>, native core-skill preload entries, selected optional role fields, and the context-budget instruction in the Markdown body. Claude Code 2.1.104 and the official subagent schema expose no native per-agent context-limit field. Current official docs also list <code>effort</code>, but this generator renders only the concrete <code>model</code> for Claude model-profile settings. The generator owns the YAML frontmatter, Markdown body, and output filename under <code>generated/adapters/claude/agents/*.md</code>.</td>
             </tr>
             <tr>
               <td><span class="name">Gemini CLI</span></td>
               <td>Markdown with YAML frontmatter and a Markdown instruction body.</td>
-              <td>Gemini CLI discovers workspace <code>.gemini/agents/</code> and user <code>~/.gemini/agents/</code>. The adapter renders <code>model</code> and the context-budget instruction in the Markdown body. Gemini CLI 0.39.1 and the official subagent schema expose no native per-agent context-limit field. The generator owns the YAML frontmatter, Markdown body, and output filename under <code>generated/adapters/gemini/agents/&lt;agent-name&gt;.md</code>.</td>
+              <td>Gemini CLI discovers workspace <code>.gemini/agents/</code> and user <code>~/.gemini/agents/</code>. The adapter renders <code>kind: local</code>, <code>model</code>, selected optional role fields, and the context-budget instruction in the Markdown body. Gemini CLI 0.39.1 and the official subagent schema expose no native per-agent context-limit field. The generator owns the YAML frontmatter, Markdown body, and output filename under <code>generated/adapters/gemini/agents/&lt;agent-name&gt;.md</code>.</td>
             </tr>
             <tr>
               <td><span class="name">Junie CLI</span></td>
               <td>Markdown with YAML metadata and a Markdown instruction body.</td>
-              <td>Junie CLI discovers project <code>.junie/agents/</code> or <code>.agents/</code>, user <code>~/.junie/agents/</code> or <code>~/.agents/</code>, and explicit agent locations. The adapter renders <code>model</code>, optional <code>reasoningLevel</code>, and the context-budget instruction in the Markdown body. The official model-selection page is dated 05 August 2026. The separately dated July 2026 subagent page exposes no native per-agent context-limit field. The generator owns the YAML metadata, Markdown body, and output filename under <code>generated/adapters/junie/agents/&lt;agent-name&gt;.md</code>.</td>
+              <td>Junie CLI discovers project <code>.junie/agents/</code> or <code>.agents/</code>, user <code>~/.junie/agents/</code> or <code>~/.agents/</code>, and explicit agent locations. The adapter renders <code>model</code>, native core-skill preload entries, optional <code>reasoningLevel</code>, selected optional role fields, and the context-budget instruction in the Markdown body. The official model-selection and custom-subagent pages are dated 05 August 2026. The subagent frontmatter table exposes no native per-agent context-limit field. The generator owns the YAML metadata, Markdown body, and output filename under <code>generated/adapters/junie/agents/&lt;agent-name&gt;.md</code>.</td>
             </tr>
             <tr>
               <td><span class="name">GitHub Copilot Agent Mode</span></td>
@@ -754,7 +754,7 @@
     </section>
     <section class="section" aria-labelledby="mapping-title">
       <h2 id="mapping-title">Conceptual-To-Native Property Mapping</h2>
-      <p class="lede">This matrix shows how <code>scripts/build-skill-docs.py</code> converts conceptual agent definition properties to the actual properties or instruction surfaces understood by each harness. Conceptual roles and schema declarations supply source values; adapter model-profile YAML supplies concrete model and any effort or context values present. The generator owns native property names, Codex runtime-name normalization and output-filename derivation, instruction placement, omissions, skill handling, comments, and runtime structures.</p>
+      <p class="lede">This matrix shows how <code>scripts/build-skill-docs.py</code> converts conceptual agent definition properties to the actual properties or instruction surfaces understood by each supported generated harness. Conceptual roles and schema declarations supply source values; adapter model-profile YAML supplies concrete model and any effort or context values present. The generator owns native property names, Codex runtime-name normalization and output-filename derivation, instruction placement, omissions, skill handling, comments, and runtime structures. GitHub Copilot entries identify the observed vendor surface, but native GitHub generation is not part of the current adapter milestone.</p>
       <table>
         <thead>
           <tr>
@@ -801,7 +801,7 @@
           </tr>
           <tr>
             <td><span class="name">skillAvailability</span></td>
-            <td><code>[[skills.config]]</code> name-based or path-based enablement; not instruction preloading</td>
+            <td><code>[[skills.config]]</code> name-based or path-based enablement; not instruction preloading. Enablement is not preloading or behavioral evidence.</td>
             <td>No documented equivalent.</td>
             <td>No documented equivalent.</td>
             <td>No documented equivalent.</td>
@@ -998,7 +998,7 @@
       </div>
     </section>
 
-    <p class="note">For explicit target deployment, ownership manifests, customer updates, pruning, and removal, follow the operational commands and policy in the <a href="../README.md#explicit-target-deployment">README</a>.</p>
+    <p class="note">For scoped target deployment, ownership manifests, customer updates, pruning, and removal, follow the operational commands and policy in the <a href="../README.md#scoped-target-deployment">README</a>.</p>
   </main>
   <footer class="site-footer">
     <p>Copyright 2026 (c) Martin.Bechard@DevConsult.ca - <a href="../LICENSE">MIT License</a></p>

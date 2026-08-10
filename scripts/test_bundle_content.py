@@ -834,7 +834,7 @@ DOCUMENT_REQUIRED_CONTENT_LINKS = {
         "../skills/route-documentation-work/assets/templates/project-template.yaml",
     ),
     "generic-agent-definitions-source.html": (
-        "../README.md#explicit-target-deployment",
+        "../README.md#scoped-target-deployment",
     ),
     "orchestrated-development-lifecycle.html": (
         "../skills/create-work-item-file/SKILL.md",
@@ -11925,8 +11925,8 @@ Visible after.
             "Codex CLI 0.144.1",
             "Claude Code 2.1.104",
             "Gemini CLI 0.39.1",
-            "dated 05 August 2026",
-            "separately dated July 2026 subagent page",
+            "The official model-selection and custom-subagent pages are dated 05 August 2026.",
+            "The subagent frontmatter table exposes no native per-agent context-limit field.",
             "https://developers.openai.com/codex/subagents",
             "https://code.claude.com/docs/en/sub-agents",
             "https://geminicli.com/docs/core/subagents/",
