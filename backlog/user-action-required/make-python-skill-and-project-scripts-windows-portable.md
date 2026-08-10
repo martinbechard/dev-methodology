@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: Blocked
+Status: User Action Required
 
 Type: Feature
 
@@ -30,21 +30,49 @@ Last Contact: 2026-08-10T00:44:00Z
 
 Next Reconciliation At: 2026-08-10T00:59:00Z
 
-## Blocked Evidence
+## Recovery Evidence
 
-Exact Blocker: The final authorized correction cycle produced clean candidate cbab82b1f65f9096aa8c6b7ae9d7794f690715ff, but both fresh reviewers returned terminal NEEDS CORRECTION. The Windows CreateProcessW wrappers do not connect captured standard streams to the real child and do not prove every Job Object process has terminated before cleanup returns. README also contains three prohibited inline-code spans.
+Corrected Candidate: 9eb990c01b45689a2de9d2699c93748bc9eaa28e
 
-Blocker Owner: Dev Backlog Coordinator under active crisis recovery.
+Corrected Findings: Both Windows CreateProcessW wrappers now pass inherited standard handles to the real child through STARTF_USESTDHANDLES. Every TerminateJobObject path polls JobObjectBasicAccountingInformation until ActiveProcesses is zero or the bounded cleanup deadline fails closed. The README and focused bundle assertion no longer use prohibited inline-code spans.
 
-Unblock Condition: A Coordinator-owned SOLO recovery corrects the two Win32 Job Object contracts and the bounded README/test wording, then produces a clean candidate that passes fresh review, verification, native Windows evidence, main delivery, and provider closure.
+Local Verification: 28 portability contracts, two agent-skill cleanup tests, one Project Bootstrapper root-and-child cleanup test, the native-Windows README/workflow bundle assertion, Python 3.11 compilation, focused Ruff, and Git diff validation pass. The broader bundle file retains two unrelated existing unused-variable Ruff findings. No native Windows pass is claimed.
 
-Next-Action Owner: Dev Backlog Coordinator.
+Remaining Gate: Push the corrected candidate branch to the configured GitHub origin and invoke the existing Python Windows portability workflow against that exact ref. The workflow runs Windows Server 2022 with Python 3.11, 3.12, and 3.13. External branch publication and workflow dispatch require explicit user authority.
 
-Requested Coordinator Action: Adopt candidate cbab82b1 without claims or another delegated correction cycle, implement only the three terminal findings, and preserve every resolved baseline, inventory, workflow, skill, provenance, and non-hiding contract.
+Preserved Review Evidence: The terminal review findings are fully represented by the corrected source and focused contracts. Native Windows execution, fresh acceptance review after that evidence, main delivery, and provider closure remain outstanding.
 
-Preserved Review Evidence: Code review found two High defects: missing STARTF_USESTDHANDLES and standard-handle wiring in both CreateProcessW wrappers, and no bounded proof that Job Object ActiveProcesses reaches zero after TerminateJobObject. Artifact review found one Low README inline-code rule breach with its focused bundle assertion. All other reviewed surfaces were accepted.
+## User Action Required
 
-Claim Disposition: Every work, update, and path claim was released before this Blocked transition. No native Windows pass, verification, or integration is claimed.
+The corrected candidate is ready for the repository's native Windows workflow, but running it requires publishing the branch to the configured GitHub origin and invoking an external workflow.
+
+## Question for the User
+
+Do you authorize pushing branch codex/make-python-skill-and-project-scripts-windows-portable to origin and invoking the configured Python Windows portability workflow against that branch?
+
+Asked At: 2026-08-10T06:21:44Z
+
+Asked In: Parent coordination task 019fb057-1767-7ef2-b5fa-41f4417b20b3
+
+## Why User Input Is Required
+
+The local source correction and deterministic macOS verification are complete. A push and GitHub Actions dispatch mutate an external repository and consume external CI resources; that authority is not inferred from local implementation authority.
+
+## Options and Tradeoffs
+
+- Authorize: Push only the preserved candidate branch and invoke the existing workflow against its exact ref. Continue to fresh acceptance review and main delivery only if all three native Windows jobs pass.
+- Defer: Move the item to Holding with candidate 9eb990c0 preserved locally.
+- Decline: Keep the item out of external CI and archive it without claiming native Windows acceptance.
+
+## Resolution
+
+Pending.
+
+## Unattended Work Boundary
+
+Do not push the branch, invoke GitHub Actions, integrate the candidate, or claim native Windows acceptance until the user answers this exact question.
+
+Claim Disposition: Crisis-mode SOLO recovery used no claim mechanism. No native Windows pass, fresh post-recovery acceptance verdict, or integration is claimed.
 
 ## Exceptional Recovery Manifest
 
