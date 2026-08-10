@@ -288,9 +288,10 @@ def build_harness_command(
     executable = _validated_harness_executable(harness, harness_executable)
     if mcp_agent_ops is not None:
         _validate_mcp_agent_ops_context(mcp_agent_ops, workspace, isolated_config_root)
+    scratch_root = event_output.parent / f".eval-tmp-{workspace.name}"
     controlled_environment = {
-        "HOME": str(workspace / ".eval-context" / "home"),
-        "TMPDIR": str(event_output.parent / f".eval-tmp-{workspace.name}"),
+        "HOME": str(scratch_root / "home"),
+        "TMPDIR": str(scratch_root),
     }
     if harness == "codex":
         expected_agent = isolated_config_root / ".codex" / "agents" / f"{agent_id}.toml"

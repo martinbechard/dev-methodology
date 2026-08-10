@@ -2626,6 +2626,14 @@ class HarnessAndJudgeTests(unittest.TestCase):
             self.assertIn("--sandbox", codex.argv)
             self.assertIn("read-only", codex.argv)
             self.assertNotIn("--ephemeral", codex.argv)
+            self.assertEqual(
+                Path(codex.environment["TMPDIR"]),
+                Path(codex.environment["HOME"]).parent,
+            )
+            self.assertTrue(
+                str(evidence_root.resolve()) in codex.environment["HOME"]
+            )
+            self.assertNotIn(str(root.resolve()), codex.environment["HOME"])
             junie = self.module.build_harness_command(
                 "junie", root, "dev-coder", "Do the task", "test-model", read_only=False,
                 event_output=evidence_root / "junie.jsonl",
@@ -2641,6 +2649,10 @@ class HarnessAndJudgeTests(unittest.TestCase):
             self.assertFalse(any("sandbox" in value.lower() for value in junie.argv))
             self.assertIn("JUNIE_HOME", junie.environment)
             self.assertNotEqual(junie.environment["HOME"], junie.environment["JUNIE_HOME"])
+            self.assertEqual(
+                Path(junie.environment["TMPDIR"]),
+                Path(junie.environment["HOME"]).parent,
+            )
             self.assertTrue(
                 str(evidence_root.resolve()) in junie.environment["JUNIE_HOME"]
             )
