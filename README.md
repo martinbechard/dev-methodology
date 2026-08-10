@@ -566,6 +566,7 @@ The development practice skills are:
 - effective-communication
 - structured-explanation
 - structured-design
+- manage-complex-development-plan
 - review-structured-artifact
 - resource-claim
 - resource-claim-helper
@@ -609,6 +610,8 @@ backlog in the primary worktree on main. PROJECT.yaml selects Persistence and Co
 while AGENTS.md supplies only the corresponding provider references.
 
 deliver-work-item is the provider-neutral Commit interface consumed by Dev Orchestrator. It defines the accepted commit input, READY, AWAITING_REVIEW, and BLOCKED results, state-keyed evidence, and prepared Persistence handoff. AGENTS.md still selects deliver-work-item-main-branch or deliver-work-item-feature-branch from the effective Commit value.
+
+manage-complex-development-plan gives Dev Orchestrator a conditional task-owned execution view for work that crosses its concrete complexity gate. Its repository-owned helper calls the installed mcp-agent-ops hierarchy package APIs to maintain one authoritative JSON plan, a synchronized read-only HTML projection, and bounded operational history under the ignored .codex/plans/&lt;root-task-id&gt;/ root. Provider lifecycle, commits, independent review, verification, and Commit delivery remain authoritative.
 
 Current project configuration writes Commit main-branch. Existing PROJECT.yaml files may use direct-main only at the documented Commit compatibility paths; setup normalizes that exact legacy value to main-branch while rejecting malformed selectors and unrelated unsupported values.
 
