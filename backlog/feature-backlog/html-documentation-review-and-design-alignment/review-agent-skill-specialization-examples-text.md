@@ -38,17 +38,17 @@ Condition Type: root-execution
 
 Owner: Dev Orchestrator
 
-Evidence: Visible canonical root execution 019fe928-e317-7942-87c0-1a9235a9d2c8 remains active and owns the live exact activity=work claim visible-specialization-work-019fe928. The prior independent verifier returned FAIL for one recursive PROJECT shape mismatch: role_agent_set does not permit repositoryMutation. Verifier-bounded correction commit 8b93e9867d40a3f808e1662c65ccb824fe7f6bff removes only that non-schema line; its exact child claim was released and independently confirmed absent. Cumulative corrected candidate 8b93e9867d40a3f808e1662c65ccb824fe7f6bff is now under a new fresh independent read-only methodology review. Completed inventory, implementation, prior reviews, and prior correction gates will not be repeated.
+Evidence: Visible canonical root execution 019fe928-e317-7942-87c0-1a9235a9d2c8 remains active and owns the live exact activity=work claim visible-specialization-work-019fe928. Verifier-bounded correction commit 8b93e9867d40a3f808e1662c65ccb824fe7f6bff removed the sole non-schema role entry; its exact child claim was released and independently confirmed absent. A new fresh independent cumulative methodology review returned GOOD with no findings, including zero template-unknown recursive paths. A different independent verifier is now re-running the complete final gate on corrected tip 8b93e9867d40a3f808e1662c65ccb824fe7f6bff. Completed inventory, implementation, review, and prior correction gates will not be repeated.
 
-Observed At: 2026-08-10T01:56:50Z
+Observed At: 2026-08-10T02:05:30Z
 
 Started At: 2026-08-10T00:56:30Z
 
 Deadline or Expires At: 2026-08-10T04:56:30Z
 
-Next Action: Receive the fresh cumulative review verdict for corrected candidate 8b93e9867d40a3f808e1662c65ccb824fe7f6bff; on GOOD, dispatch a new independent verifier, and on NEEDS_CORRECTION, authorize only the reviewer-bounded correction.
+Next Action: Receive the new independent verifier's final PASS or FAIL; on PASS, acquire the main-integration claim and integrate the accepted cumulative candidate, and on FAIL, authorize only the verifier-bounded correction.
 
-Next Reconciliation At: 2026-08-10T02:11:50Z
+Next Reconciliation At: 2026-08-10T02:20:30Z
 
 Canonical Conversation: 019fe928-e317-7942-87c0-1a9235a9d2c8
 
