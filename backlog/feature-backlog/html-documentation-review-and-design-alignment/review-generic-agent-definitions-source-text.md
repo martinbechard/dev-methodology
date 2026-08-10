@@ -36,19 +36,19 @@ Next Reconciliation At: 2026-08-10T00:59:00Z
 
 Condition Type: delegated-work
 
-Owner: Dev Orchestrator task 019fe929-3695-7d20-93dc-63852ced1020 coordinating original Dev Coder task /root/fix_generic_agent_test_contract
+Owner: Dev Orchestrator task 019fe929-3695-7d20-93dc-63852ced1020 coordinating Dev Merge Coordinator task /root/combine_generic_agent_candidate
 
-Evidence: Fresh code review returned GOOD. Fresh artifact review confirmed all three prior findings resolved in the HTML but returned NEEDS CORRECTION because test_context_budget_ownership_and_runtime_evidence_are_documented still requires the retired July 2026 Junie wording. The original Dev Coder is applying only that source-backed test-contract correction on immutable combined candidate e40a50fae05f8e26264269b7a6970512abf416e4.
+Evidence: The original Dev Coder resolved the remaining focused context-budget contract in clean commit da91be945718993f293f7fbce37f29d3068c0153, with all five context-budget tests and both generic-agent focused tests passing. The Dev Merge Coordinator is producing one final two-path candidate from original base 9488c71873e19c99b523927bce14ec64da634158 with bytes equal to that accepted correction tree.
 
-Observed At: 2026-08-10T01:32:15Z
+Observed At: 2026-08-10T01:34:03Z
 
-Started At: 2026-08-10T01:32:15Z
+Started At: 2026-08-10T01:34:03Z
 
-Deadline or Expires At: 2026-08-10T01:47:00Z
+Deadline or Expires At: 2026-08-10T01:48:00Z
 
-Next Action: Collect the one-path test correction, combine it into a new immutable candidate, and repeat fresh artifact and code review before independent verification.
+Next Action: Collect the final combined candidate, then repeat fresh artifact and code review against its exact immutable commit.
 
-Next Reconciliation At: 2026-08-10T01:43:00Z
+Next Reconciliation At: 2026-08-10T01:44:00Z
 
 Codex Task ID: 019fe929-3695-7d20-93dc-63852ced1020
 
@@ -58,11 +58,11 @@ Root Role: Dev Orchestrator
 
 Parent Task ID: 019fb057-1767-7ef2-b5fa-41f4417b20b3
 
-Branch: codex/review-generic-agent-definitions-test-contract-round2-019fe929
+Branch: codex/review-generic-agent-definitions-final-combined-019fe929
 
-Worktree: /private/tmp/review-generic-agent-definitions-test-contract-round2-019fe929
+Worktree: /private/tmp/review-generic-agent-definitions-final-combined-019fe929
 
-Phase: Correction round 2
+Phase: Final candidate combination
 
 ## Summary
 
