@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: Blocked
+Status: Ready
 
 Type: Feature
 
@@ -58,6 +58,8 @@ Target page: design/agent-owned-evaluation-suites.html
 Blocker owner: Work Item review-agent-owned-evaluation-suites-text.
 
 Blocked to Ready condition: review-agent-owned-evaluation-suites-text is Completed with corrected content, fresh independent acceptance, and an immutable content baseline for design/agent-owned-evaluation-suites.html.
+
+Dependency Resolution: Satisfied by completed Work Item `review-agent-owned-evaluation-suites-text`, archived in provider commit `6a19623fc10b6bf87a8ab9c568c34c6b8ab66223`. Accepted content baseline `146f96166b90688171e690ff2165100ba4f14cc8` was delivered to main as `5be6cdfc3e15034d7383897d75ab7bced6baa059` with fresh artifact review GOOD and both candidate and integrated-main verification GOOD.
 
 ## Verification
 
