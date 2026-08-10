@@ -2,7 +2,7 @@
 
 Owner: Dev Orchestrator (019fe928-e31e-71e2-aaa8-7f9bef12c7b0)
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -23,6 +23,44 @@ Requested At: 2026-08-10T01:20:00Z
 Next Action: The same Dev Orchestrator records Starting to Running, acquires the exact Work Item activity=work claim, and implements the bounded planning skill without changing mcp-agent-ops.
 
 Required Task Title: Implementing — Use MCP hierarchy plans for complex development
+
+## Active Execution Evidence
+
+Condition Type: root-execution
+
+Owner: Dev Orchestrator (019fe928-e31e-71e2-aaa8-7f9bef12c7b0)
+
+Evidence: The same visible canonical task accepted the corrected resumption authorized by main commits ecf63ed2 and ae37d940. The task title is synchronized, the preserved source branch and worktree are clean, and implementation will use the documented mcp_agent_ops.hierarchy package API through a repository-owned helper without changing mcp-agent-ops.
+
+Observed At: 2026-08-10T01:23:25Z
+
+Started At: 2026-08-10T01:23:25Z
+
+Next Action: Commit this Starting-to-Running transition, acquire the exact activity=work claim, reconcile the preserved source branch to current main, and dispatch the bounded helper and skill implementation.
+
+Next Reconciliation At: 2026-08-10T01:38:25Z
+
+Codex Task ID: 019fe928-e31e-71e2-aaa8-7f9bef12c7b0
+
+Conversation ID: 019fe928-e31e-71e2-aaa8-7f9bef12c7b0
+
+Task Title: Implementing — Use MCP hierarchy plans for complex development
+
+Root Role: Dev Orchestrator
+
+Parent Task ID: 019fb057-1767-7ef2-b5fa-41f4417b20b3
+
+Branch: codex/use-mcp-hierarchy-plans-for-complex-development
+
+Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/use-mcp-hierarchy-plans-work-019fb057
+
+Starting Head: 9488c71873e19c99b523927bce14ec64da634158
+
+Phase: helper and skill implementation
+
+Provider Update Claim: mcp-hierarchy-plans-resume-update-019fe928; outcome SHARED_CHECKOUT_ACQUIRED; claim event b7e47974-ccab-48f6-a0e9-4fa24f7f5857.
+
+Provider Path Claim: mcp-hierarchy-plans-resume-path-019fe928; outcome SHARED_CHECKOUT_ACQUIRED; claim event 6c632fde-1273-408f-8121-ac3e21b6771d.
 
 ## Starting Handoff Evidence
 
