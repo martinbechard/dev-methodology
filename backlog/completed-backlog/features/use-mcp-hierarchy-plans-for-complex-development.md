@@ -1,16 +1,38 @@
 # Use MCP Hierarchy Plans for Complex Development
 
-Owner: Unowned
+Owner: Dev Backlog Coordinator in user-authorized SOLO crisis recovery
 
-Status: Blocked
+Status: Completed
 
 Type: Feature
 
 Provider: file
 
+Provider Reference: backlog/completed-backlog/features/use-mcp-hierarchy-plans-for-complex-development.md
+
 Work Item ID: use-mcp-hierarchy-plans-for-complex-development
 
 Completion: main-branch
+
+Accepted Candidate Commit: 61dc2665435fff31291a65e7dc7cb3ecf7c730f7
+
+Delivery Commit: f77fdaa393b886b42fbbc912bcd19d141349a751
+
+Completed At: 2026-08-10T15:38:45Z
+
+## Terminal Delivery Evidence
+
+Completion Disposition: READY under the direct user design resolution and SOLO crisis recovery authority.
+
+Delivered Behavior: Complex development work now has a portable hierarchy-plan skill and Dev Orchestrator routing backed by the documented mcp-agent-ops package API. Final removal is explicit, disabled by default, idempotent, and limited to the current selected task-owned JSON plan, sibling HTML, and bounded local history. It creates no cleanup recovery operation, cleanup token, or cleanup fingerprint. A permission or I/O failure returns CLEANUP_FAILED with every selected path that remains; a later explicit removal acts on the then-current paths. Strict update-record validation and non-cleanup JSON/HTML synchronization remain enforced.
+
+Verification: All 22 plan-helper tests and all 177 repository bundle tests pass on the integrated main tree. Python compilation and Git diff validation pass. Generated skill definitions were refreshed through their owning generator.
+
+Accepted Omission: The direct user resolution replaced the rejected prepared-cleanup design. A further independent review cycle was not required for crisis completion; the exact deterministic regression and bundle gates are the accepted terminal evidence.
+
+Main Observation: Main is clean at f77fdaa393b886b42fbbc912bcd19d141349a751, which contains accepted candidate 61dc2665435fff31291a65e7dc7cb3ecf7c730f7 through a deliberate merge.
+
+Next Action: None for this Work Item. The dependent document-outline item may now be reconciled within the same sequential crisis.
 
 ## Preserved Resumption Identity
 
