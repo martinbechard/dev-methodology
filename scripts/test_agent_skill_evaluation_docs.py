@@ -182,7 +182,11 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
         source_scenarios = self.generator.load_yaml(BACKLOG_STEWARD_SCENARIOS_PATH)[
             "scenarios"
         ]
-        source_by_id = {scenario["id"]: scenario for scenario in source_scenarios}
+        source_by_id = {
+            scenario["id"]: scenario
+            for scenario in source_scenarios
+            if "resourceCoordinationCases" in scenario
+        }
         historical_ids = {
             "creation-and-claim",
             "interrupted-work-recovery",
@@ -192,7 +196,11 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
             "blocked-failed-claim-resumption",
             "future-ideas-capture-and-promotion",
         }
-        rendered_by_id = {scenario["id"]: scenario for scenario in steward["scenarios"]}
+        rendered_by_id = {
+            scenario["id"]: scenario
+            for scenario in steward["scenarios"]
+            if scenario["id"] in source_by_id
+        }
 
         self.assertEqual(historical_ids, set(source_by_id))
         self.assertEqual(historical_ids, set(rendered_by_id))
@@ -383,7 +391,7 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
                 page,
                 rf'id="skill-{re.escape(unlinked_skill)}"\s+data-kind="skill" data-status="none"',
             )
-            self.assertIn("Indirect agent-suite coverage only", page)
+            self.assertIn("Indirect agent-scenario evidence only", page)
             self.assertIn("No recorded evaluation evidence", page)
 
         for mutation in ("orphan", "duplicate"):
@@ -428,14 +436,15 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
             "Historical ID alignment; definition freshness unknown",
             "Manual observation",
             "Uncalibrated Model Judge",
-            "Deterministic critical skip",
+            "Current BLOCKED",
+            "Current STALE",
+            "Selected 2026 Test report BLOCKED",
+            "A critical Deterministic Judge failure skips semantic judgment",
             "Functional isolation",
             "Security containment",
             "No skill-level Evaluation result",
-            "A Test suite PASS means the Test suite accepted the target behavior",
-            "A target can correctly return BLOCKED inside a Test suite PASS",
-            "A Judge pass is a separate semantic dimension",
-            "does not mean a Model Judge passed",
+            "A target can correctly return BLOCKED inside a PASS",
+            "It does not mean that a Model Judge passed",
         ):
             with self.subTest(text=text):
                 self.assertIn(text, self.page)
@@ -443,19 +452,19 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
     def test_rendered_copy_uses_preferred_evaluation_terms(self) -> None:
         """Visible copy must distinguish the Campaign, Test report, Test suites, and Evaluation results."""
         for text in (
-            "Campaign Test report and Evaluation results",
+            "Selected Campaign Test report and Evaluation results",
             "Test report metadata",
             "<dt>Test report</dt>",
             "<h3>Evaluation results</h3>",
             "<th>Evaluation result</th>",
-            "Campaign Test suites / current Test suites",
-            "Campaign Evaluation results / current scenarios",
-            "Linked governed Evaluation results",
-            "no skill-level Evaluation result or calibrated skill verdict",
-            "The selected Test report publishes no skill-level Evaluation result or calibrated skill verdict",
-            "the selected Test report publishes no skill-level Evaluation results",
-            "A FAIL Evaluation result records a reproducible target, skill, or test-contract defect",
-            "A BLOCKED Evaluation result records a governed boundary or unavailable semantic acceptance",
+            "Selected-report Test suites / current Test suites",
+            "Selected-report Evaluation results / current scenarios",
+            "Linked Campaign Evaluation results",
+            "no skill-level Evaluation result",
+            "The selected Test report publishes no skill-level Evaluation result",
+            "The selected Test report publishes no skill-level Evaluation results",
+            "Selected 2026 Test report FAIL",
+            "Selected 2026 Test report BLOCKED",
             "Selected Campaign Test report",
         ):
             with self.subTest(text=text):
@@ -470,6 +479,7 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
             "The selected Campaign publishes",
             "the selected Campaign publishes",
             "the Campaign recorded",
+            "selected-Campaign",
         ):
             with self.subTest(obsolete=obsolete):
                 self.assertNotIn(obsolete, self.page)
@@ -479,12 +489,12 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
         section_topics = (
             ("methodology", "Evaluation purpose and method"),
             ("coverage", "Coverage and case catalogs"),
-            ("campaign", "Campaign Test report and Evaluation results"),
+            ("campaign", "Selected Campaign Test report and Evaluation results"),
             ("limitations", "Evidence limitations"),
             ("history", "Historical evidence alignment"),
             ("agents", "Agent-by-agent evidence"),
             ("skills", "Skill-by-skill evidence"),
-            ("follow-ups", "Recorded campaign follow-ups"),
+            ("follow-ups", "Recorded Campaign follow-ups"),
             ("sources", "Authoritative sources"),
         )
         positions = []
@@ -500,14 +510,14 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
 
         for topic in (
             "Evaluation layers",
-            "Workspace and privacy",
-            "Evaluation results and Judges",
+            "Harness, workspace, and privacy",
+            "Current protocol and selected-report results",
             "Current catalog inventory",
             "Case and workflow catalogs",
             "Skill catalog states",
             "Evaluation results",
             "Harness and evidence breakdown",
-            "Not verified passes",
+            "Evidence that does not prove a pass",
             "Alignment and strength",
             "Evidence alignment states",
         ):
@@ -540,6 +550,10 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
             r"\.site-header \{[^}]*display: flex;[^}]*align-items: center;",
         )
         self.assertIn('<noscript>', self.page)
+        self.assertIn(
+            "Copyright (c) 2026 Martin.Bechard@DevConsult.ca - ",
+            self.page,
+        )
 
     def test_responsive_controls_and_statuses_have_accessible_text_contracts(self) -> None:
         """Responsive layout, focus visibility, labels, and live counts must be explicit."""
@@ -964,12 +978,12 @@ process.stdout.write(JSON.stringify({{
         for event_name in ('"input"', '"change"', '"click"', '"DOMContentLoaded"'):
             self.assertIn(event_name, script)
 
-    def test_navigation_places_evaluation_between_core_and_configuration(self) -> None:
-        """The generated page must be a standard sequence member after the core catalog."""
+    def test_navigation_places_evaluation_before_agent_owned_suites(self) -> None:
+        """The generated page must lead from the core catalog to the suite strategy."""
         definitions_page = (ROOT / "design" / "agent-and-skill-definitions.html").read_text(
             encoding="utf-8"
         )
-        configuration_page = (ROOT / "design" / "agentic-configuration.html").read_text(
+        suite_page = (ROOT / "design" / "agent-owned-evaluation-suites.html").read_text(
             encoding="utf-8"
         )
         self.assertIn(
@@ -983,14 +997,19 @@ process.stdout.write(JSON.stringify({{
             self.page,
         )
         self.assertIn(
-            '<a href="agentic-configuration.html" rel="next">'
-            'Next: Agentic Configuration <span aria-hidden="true">&rarr;</span></a>',
+            '<a href="agent-owned-evaluation-suites.html" rel="next">'
+            'Next: Agent-Owned Evaluation Suites <span aria-hidden="true">&rarr;</span></a>',
             self.page,
         )
         self.assertIn(
             '<a href="agent-and-skill-evaluations.html" rel="prev">'
             '<span aria-hidden="true">&larr;</span> Previous: Evaluation Evidence</a>',
-            configuration_page,
+            suite_page,
+        )
+        self.assertIn(
+            '<a href="agentic-configuration.html" rel="next">'
+            'Next: Agentic Configuration <span aria-hidden="true">&rarr;</span></a>',
+            suite_page,
         )
 
 

@@ -28,6 +28,8 @@ CASES_PATH = REPOSITORY_ROOT / "evals" / "cases.yaml"
 AGENT_SCENARIOS_PATH = REPOSITORY_ROOT / "evals" / "agent-scenarios.yaml"
 WORKFLOW_PACKS_PATH = REPOSITORY_ROOT / "evals" / "workflow-packs.yaml"
 SUITE_INDEX_PATH = REPOSITORY_ROOT / "evals" / "agent-tests" / "suite-index.yaml"
+SUITE_PROTOCOL_PATH = REPOSITORY_ROOT / "evals" / "agent-tests" / "AGENTS.md"
+SUITE_STRATEGY_PATH = REPOSITORY_ROOT / "evals" / "agent-tests" / "README.md"
 EVAL_README_PATH = REPOSITORY_ROOT / "evals" / "README.md"
 JUDGES_PATH = REPOSITORY_ROOT / "evals" / "judges.yaml"
 CAMPAIGN_PATH = (
@@ -539,6 +541,8 @@ def build_model(root: Path = REPOSITORY_ROOT) -> dict[str, object]:
         SUITE_INDEX_PATH.relative_to(REPOSITORY_ROOT).as_posix(),
         CAMPAIGN_PATH.relative_to(REPOSITORY_ROOT).as_posix(),
         EVAL_README_PATH.relative_to(REPOSITORY_ROOT).as_posix(),
+        SUITE_PROTOCOL_PATH.relative_to(REPOSITORY_ROOT).as_posix(),
+        SUITE_STRATEGY_PATH.relative_to(REPOSITORY_ROOT).as_posix(),
         JUDGES_PATH.relative_to(REPOSITORY_ROOT).as_posix(),
         MANUAL_OBSERVATION_PATH.relative_to(REPOSITORY_ROOT).as_posix(),
     }
@@ -692,9 +696,12 @@ def build_model(root: Path = REPOSITORY_ROOT) -> dict[str, object]:
             key=VERDICTS.index,
         )
         if outcomes:
-            latest_outcome = "Linked agent-suite outcomes only: " + ", ".join(outcomes)
+            latest_outcome = (
+                "Linked agent-scenario Evaluation result categories: "
+                + ", ".join(outcomes)
+            )
         else:
-            latest_outcome = "No governed campaign link"
+            latest_outcome = "No selected Campaign Evaluation result link"
         skills.append(
             {
                 **skill,
@@ -705,8 +712,9 @@ def build_model(root: Path = REPOSITORY_ROOT) -> dict[str, object]:
                 "directGovernedResult": direct_governed_result,
                 "latestGovernedOutcome": latest_outcome,
                 "limitation": (
-                    "A probe declaration or linked agent-suite Evaluation result is not a skill-level pass. "
-                    "The selected Test report publishes no skill-level Evaluation result or calibrated skill verdict."
+                    "A probe declaration or linked agent-scenario Evaluation result does not establish a "
+                    "skill-level Evaluation result. The selected Test report publishes no skill-level "
+                    "Evaluation result."
                 ),
             }
         )
@@ -812,7 +820,7 @@ def render_skill_card(skill: dict[str, object]) -> str:
     probe = skill["probe"]
     if not isinstance(probe, dict):
         probe_html = (
-            f'<p>{status_badge("No direct evaluation evidence", "missing")}</p>'
+            f'<p>{status_badge("No direct probe declaration", "missing")}</p>'
             "<p>No diagnostic probe is declared for this skill.</p>"
         )
         probe_id = "none"
@@ -871,8 +879,8 @@ def render_skill_card(skill: dict[str, object]) -> str:
         governed_html = f"<ul class=\"link-list\">{link_items}</ul>"
     else:
         governed_html = (
-            f'<p>{status_badge("No governed campaign link", "missing")}</p>'
-            "<p>No selected-campaign scenario currently names this skill as a target skill.</p>"
+            f'<p>{status_badge("No selected Campaign scenario link", "missing")}</p>'
+            "<p>No scenario in the selected Campaign currently names this skill as a target skill.</p>"
         )
 
     search_text = " ".join(
@@ -886,8 +894,8 @@ def render_skill_card(skill: dict[str, object]) -> str:
     ).lower()
     coverage_labels = {
         "direct-governed": "Direct governed skill result",
-        "direct-probe": "Direct diagnostic probe",
-        "indirect-only": "Indirect agent-suite coverage only",
+        "direct-probe": "Direct diagnostic probe declaration",
+        "indirect-only": "Indirect agent-scenario evidence only",
         "none": "No recorded evaluation evidence",
     }
     return f"""
@@ -899,13 +907,13 @@ def render_skill_card(skill: dict[str, object]) -> str:
       </div>
       <p>{escape(skill['description'])}</p>
       <p class="source-row">{source_link(str(skill['sourcePath']), 'Skill source')}</p>
-      <h4>Direct diagnostic probe</h4>
+      <h4>Direct diagnostic probe declaration</h4>
       {probe_html}
-      <h4>Governed campaign links</h4>
+      <h4>Selected Campaign scenario links</h4>
       {governed_html}
       <dl class="compact-list">
-        <div><dt>Linked governed Evaluation results</dt><dd>{escape(skill['latestGovernedOutcome'])}</dd></div>
-        <div><dt>Evidence level</dt><dd>No skill-level Evaluation result; linked Evaluation results remain agent-scenario evidence</dd></div>
+        <div><dt>Linked Campaign Evaluation results</dt><dd>{escape(skill['latestGovernedOutcome'])}</dd></div>
+        <div><dt>Evidence level</dt><dd>Agent-scenario evidence only; no skill-level Evaluation result</dd></div>
         <div><dt>Limitation</dt><dd>{escape(skill['limitation'])}</dd></div>
       </dl>
     </article>
@@ -1152,30 +1160,30 @@ def render_page(model: dict[str, object]) -> str:
   <nav class="document-nav" aria-label="Documentation navigation">
     <div class="document-sequence">
       <a href="agent-and-skill-definitions.html" rel="prev"><span aria-hidden="true">&larr;</span> Previous: Core Agent and Skills</a>
-      <a href="agentic-configuration.html" rel="next">Next: Agentic Configuration <span aria-hidden="true">&rarr;</span></a>
+      <a href="agent-owned-evaluation-suites.html" rel="next">Next: Agent-Owned Evaluation Suites <span aria-hidden="true">&rarr;</span></a>
     </div>
   </nav>
   <section class="hero" aria-labelledby="page-title">
     <span class="eyebrow">Evaluation evidence</span>
     <h1 id="page-title">Agent and Skill Evaluations</h1>
-    <p class="lede">A static, source-reconciled view of how the bundle is evaluated, what the selected governed Campaign established, and where definition freshness is unknown or current catalog evidence is missing.</p>
-    <p class="scope-note"><strong>Evidence boundary.</strong> A declared probe is a diagnostic plan, a linked scenario Evaluation result comes from an agent Test suite, and neither is automatically a verified skill pass. Historical alignment, BLOCKED, FAIL, missing evidence, manual observations, Judge results, calibration, functional isolation, and security containment remain separate dimensions.</p>
+    <p class="lede">Current catalogs and one selected historical Campaign Test report show how the bundle is evaluated. The page keeps catalog coverage, historical Evaluation results, definition freshness, and missing evidence separate.</p>
+    <p class="scope-note"><strong>Evidence boundary.</strong> Probe declarations describe diagnostic plans. Linked agent-scenario Evaluation results do not establish skill-level Evaluation results. Historical alignment, result categories, manual observations, Judge results, calibration, functional isolation, and security containment remain separate evidence dimensions.</p>
   </section>
   <nav class="chapter-nav" aria-label="Page sections">
     <a href="#methodology">Purpose and method</a><a href="#coverage">Coverage and cases</a><a href="#campaign">Campaign Evaluation results</a><a href="#limitations">Limitations</a><a href="#history">Historical evidence</a><a href="#agents">Agents</a><a href="#skills">Skills</a><a href="#follow-ups">Follow-ups</a><a href="#sources">Sources</a>
   </nav>
 
   <section class="section" id="methodology" aria-labelledby="methodology-title">
-    <div class="section-heading"><h2 id="methodology-title">Evaluation purpose and method</h2><p>The repository evaluates structure, agent behavior, targeted skill diagnostics, and multi-agent workflow evidence at distinct layers. Exact checks run before semantic review.</p></div>
+    <div class="section-heading"><h2 id="methodology-title">Evaluation purpose and method</h2><p>The current methodology separates structural checks, agent behavior, targeted skill diagnostics, and multi-agent Workflow evidence. Deterministic Judges run before semantic judgment.</p></div>
     <div class="grid">
-      <article class="method-card"><h3>Evaluation layers</h3><ul><li>Structural validation checks catalogs, schemas, links, source digests, and harness policy.</li><li>Agent suites exercise responsibility, output, mutation, decision, delegation, and terminal-state contracts.</li><li>Skill probes diagnose activation, negative activation, expected behavior, ablation, and controls. They are not exhaustive skill verification.</li><li>Workflow evidence checks handoffs, claims, integration, verification, and completion across declared dependencies.</li></ul></article>
-      <article class="method-card"><h3>Workspace and privacy</h3><ul><li>Ordinary cases use disposable workspaces with isolated harness state and synthetic inputs.</li><li>Inputs must exclude personal, customer, confidential, credential, and secret material.</li><li>Functional isolation compares complete before-and-after workspace manifests and allowed changes.</li><li>Security containment is a separate claim. Local reproducibility or a tool allowlist does not prove hostile-code containment.</li></ul></article>
-      <article class="method-card"><h3>Evaluation results and Judges</h3><ul><li><strong>PASS:</strong> A Test suite PASS means the Test suite accepted the target behavior against its gates. A target can correctly return BLOCKED inside a Test suite PASS when the scenario tests a governed boundary.</li><li><strong>FAIL:</strong> A FAIL Evaluation result records a reproducible target, skill, or test-contract defect.</li><li><strong>BLOCKED:</strong> A BLOCKED Evaluation result records a governed boundary or unavailable semantic acceptance; the Test suite was not left unexecuted.</li><li>A Judge pass is a separate semantic dimension and is not interchangeable with the Test suite Evaluation result.</li><li>A Deterministic critical skip means an exact critical boundary prevented Model Judge execution; it does not mean a Model Judge passed.</li><li>Human Judges create gold labels and adjudicate ambiguity. Calibration promotion is disabled, so the current state is <strong>Uncalibrated Model Judge</strong>.</li></ul></article>
+      <article class="method-card"><h3>Evaluation layers</h3><ul><li>Structural validation checks suite structure, catalogs, source references, harness policy, executable-case links, and current digests.</li><li>Agent suites check responsibility, output contracts, mutation policy, decisions, delegation, failure handling, and terminal outcomes.</li><li>Skill probes diagnose activation, negative activation, expected behavior, and ablation controls. They are not exhaustive skill verification.</li><li>Workflow evidence checks delegation, handoffs, claims, integration, verification, and terminal status across allowed dependencies.</li></ul></article>
+      <article class="method-card"><h3>Harness, workspace, and privacy</h3><ul><li>The current evaluation system supports Codex and Junie.</li><li>Ordinary cases use disposable workspaces with controlled harness state and synthetic inputs.</li><li>Inputs must exclude personal, customer, company-confidential, credential, and secret material.</li><li>Functional isolation compares complete before-and-after workspace manifests with the allowed-write contract.</li><li>Security containment is a separate claim. Local reproducibility or a tool allowlist does not prove hostile-code containment.</li></ul></article>
+      <article class="method-card"><h3>Current protocol and selected-report results</h3><ul><li><strong>Current PASS:</strong> Every critical deterministic gate passed, and the required semantic Judge accepted the run.</li><li><strong>Current FAIL:</strong> Governed evidence demonstrates a target-agent contract violation.</li><li><strong>Current BLOCKED:</strong> The run could not reach a verdict because a required dependency, harness feature, fixture capability, or approved authority was unavailable.</li><li><strong>Current STALE:</strong> A governed source, adapter, scenario, fixture, rubric, or evidence digest no longer matches the run.</li><li><strong>Selected 2026 Test report PASS:</strong> The Test suite accepted the target behavior. A target can correctly return BLOCKED inside a PASS when a scenario tests a governed boundary.</li><li><strong>Selected 2026 Test report FAIL:</strong> The report records a reproducible target, skill, or test-contract defect.</li><li><strong>Selected 2026 Test report BLOCKED:</strong> The report records a governed boundary or unavailable semantic acceptance. All 78 report scenarios were executed.</li><li>A critical Deterministic Judge failure skips semantic judgment. It does not mean that a Model Judge passed.</li><li>Human Judges create calibration labels and adjudicate ambiguity. Calibration promotion is disabled, so the current state is <strong>Uncalibrated Model Judge</strong>.</li></ul></article>
     </div>
   </section>
 
   <section class="section" id="coverage" aria-labelledby="coverage-title">
-    <div class="section-heading"><h2 id="coverage-title">Coverage and case catalogs</h2><p>Current catalog inventory remains separate from historical Campaign Evaluation results. Probe records retain their executable case, agent-scenario, and workflow associations without turning declarations into verified runs.</p></div>
+    <div class="section-heading"><h2 id="coverage-title">Coverage and case catalogs</h2><p>Current catalog inventory remains separate from the selected historical Campaign Evaluation results. Probe records retain executable-case, agent-scenario, and Workflow associations without turning declarations into verified runs.</p></div>
     <h3>Current catalog inventory</h3>
     <div class="grid" style="margin-top:1rem">
       <article class="metric"><strong>{summary['skillCount']}</strong><span>Bundled skills</span></article>
@@ -1191,12 +1199,12 @@ def render_page(model: dict[str, object]) -> str:
       <article class="metric"><strong>{model['associationCatalogCounts']['workflowPacks']}</strong><span>Workflow packs</span></article>
     </div>
     <div class="grid" style="margin-top:1rem">
-      <article class="method-card"><h3>Skill catalog states</h3><ul><li>{summary['directGovernedSkillCount']} skills have a direct governed Evaluation result.</li><li>{summary['directProbeSkillCount']} skills have a direct diagnostic probe declaration but no direct Evaluation result.</li><li>{summary['indirectOnlySkillCount']} skills have only indirect current Test suite coverage without a direct probe or Evaluation result.</li><li>{summary['noRecordedEvidenceSkillCount']} skills have no recorded evaluation evidence.</li><li>{summary['skillsWithGovernedLinks']} skills are named by at least one selected-Campaign scenario; {summary['skillsWithoutGovernedLinks']} are not.</li></ul><p><strong>No skill-level Evaluation result:</strong> the selected Test report publishes no skill-level Evaluation results, so linked PASS results remain agent-scenario evidence.</p></article>
+      <article class="method-card"><h3>Skill catalog states</h3><ul><li>{summary['directGovernedSkillCount']} skills have a direct governed Evaluation result.</li><li>{summary['directProbeSkillCount']} skills have a direct diagnostic probe declaration but no direct Evaluation result.</li><li>{summary['indirectOnlySkillCount']} skills have only indirect current Test suite coverage without a direct probe or Evaluation result.</li><li>{summary['noRecordedEvidenceSkillCount']} skills have no recorded evaluation evidence.</li><li>{summary['skillsWithGovernedLinks']} skills are named by at least one scenario in the selected Campaign; {summary['skillsWithoutGovernedLinks']} are not.</li></ul><p><strong>No skill-level Evaluation result:</strong> The selected Test report publishes no skill-level Evaluation results. Linked PASS results remain agent-scenario evidence.</p></article>
     </div>
   </section>
 
   <section class="section" id="campaign" aria-labelledby="campaign-title">
-    <div class="section-heading"><h2 id="campaign-title">Campaign Test report and Evaluation results</h2><p>One governed Test report is selected explicitly. Filename ordering does not select or merge Campaigns, and current catalog coverage is calculated separately.</p></div>
+    <div class="section-heading"><h2 id="campaign-title">Selected Campaign Test report and Evaluation results</h2><p>The generator selects one governed Test report by path. It does not infer selection from filename order or merge multiple Campaigns. Current catalog coverage is calculated separately.</p></div>
     <h3>Test report metadata</h3>
     <dl class="compact-list">
       <div><dt>Test report</dt><dd>{source_link(str(campaign['sourcePath']), 'Complete Agent Suite Results')}</dd></div>
@@ -1204,14 +1212,14 @@ def render_page(model: dict[str, object]) -> str:
       <div><dt>Harness</dt><dd>{escape(campaign['harness'])}</dd></div>
       <div><dt>Runtime</dt><dd>{escape(campaign['runtime'])}</dd></div>
       <div><dt>Evidence level</dt><dd>{escape(campaign['evidenceLevel'])}</dd></div>
-      <div><dt>Documentation snapshot mode</dt><dd>{escape(model['snapshotMetadata']['mode'])}</dd></div>
+      <div><dt>Source snapshot mode</dt><dd>{escape(model['snapshotMetadata']['mode'])}</dd></div>
       <div><dt>Wall-clock build time</dt><dd>Not retained; deterministic output does not claim an unsupported generation timestamp</dd></div>
-      <div><dt>Current source snapshot</dt><dd><code>{escape(model['sourceDigest'])}</code>; regenerated and compared by the focused check</dd></div>
+      <div><dt>Current source digest</dt><dd><code>{escape(model['sourceDigest'])}</code>; regenerated and compared by the focused check</dd></div>
     </dl>
     <div style="margin-top:2rem"><h3>Evaluation results</h3></div>
     <div class="grid" style="margin-top:1rem">
-      <article class="metric"><strong>{campaign['suiteCount']} / {summary['suiteCount']}</strong><span>Campaign Test suites / current Test suites ({percent(campaign['suiteCount'], summary['suiteCount'])})</span></article>
-      <article class="metric"><strong>{campaign['scenarioCount']} / {summary['currentScenarioCount']}</strong><span>Campaign Evaluation results / current scenarios ({percent(campaign['scenarioCount'], summary['currentScenarioCount'])})</span></article>
+      <article class="metric"><strong>{campaign['suiteCount']} / {summary['suiteCount']}</strong><span>Selected-report Test suites / current Test suites ({percent(campaign['suiteCount'], summary['suiteCount'])})</span></article>
+      <article class="metric"><strong>{campaign['scenarioCount']} / {summary['currentScenarioCount']}</strong><span>Selected-report Evaluation results / current scenarios ({percent(campaign['scenarioCount'], summary['currentScenarioCount'])})</span></article>
       {verdict_cards}
     </div>
   </section>
@@ -1219,8 +1227,8 @@ def render_page(model: dict[str, object]) -> str:
   <section class="section" id="limitations" aria-labelledby="limitations-title">
     <div class="section-heading"><h2 id="limitations-title">Evidence limitations</h2><p>Result categories, harness context, containment claims, and skill-level evidence remain separate so the page does not promote incomplete evidence to a verified pass.</p></div>
     <div class="grid">
-      <article class="method-card"><h3>Harness and evidence breakdown</h3><ul><li>{campaign['scenarioCount']} Campaign scenarios: {escape(campaign['harness'])}, {escape(campaign['evidenceLevel'])}.</li><li>{summary['missingScenarioResults']} current scenarios: no selected-Campaign evidence level or harness result.</li><li>Per-scenario functional-isolation and security-containment fields are not published in the selected Test report; the Test report states clean Test-suite-owned closeout globally.</li></ul></article>
-      <article class="method-card"><h3>Not verified passes</h3><ul><li>{campaign['verdicts']['BLOCKED']} BLOCKED Evaluation results are governed boundaries or unavailable semantic acceptance, not PASS or FAIL.</li><li>{campaign['verdicts']['FAIL']} FAIL Evaluation results are reproducible defects, not verified passes.</li><li>Missing, historical-only, removed, or drifted current-catalog evidence does not inherit a current PASS.</li><li>Manual observations and uncalibrated semantic Judge results are excluded from verified-pass totals.</li></ul></article>
+      <article class="method-card"><h3>Harness and evidence breakdown</h3><ul><li>{campaign['scenarioCount']} selected-report scenario results use {escape(campaign['harness'])} at the {escape(campaign['evidenceLevel'])} evidence level.</li><li>{summary['missingScenarioResults']} current scenarios have no result in the selected Test report.</li><li>Per-scenario functional-isolation and security-containment fields are not published in the selected Test report. The report states clean suite-owned closeout globally.</li></ul></article>
+      <article class="method-card"><h3>Evidence that does not prove a pass</h3><ul><li>The selected Test report contains {campaign['verdicts']['BLOCKED']} BLOCKED results. They are governed boundaries or unavailable semantic acceptance, not PASS or FAIL.</li><li>The selected Test report contains {campaign['verdicts']['FAIL']} FAIL results. They are reproducible defects, not verified passes.</li><li>Missing, historical-only, removed, or drifted current-catalog evidence does not inherit a current PASS.</li><li>Manual observations and uncalibrated semantic Judge results do not establish verified passes.</li></ul></article>
     </div>
     <div class="legend" aria-label="Status legend">
       {status_badge('PASS', 'pass')}{status_badge('FAIL', 'fail')}{status_badge('BLOCKED', 'blocked')}{status_badge('Missing campaign evidence', 'missing')}{status_badge('Historical ID alignment; definition freshness unknown', 'historical-id-only')}{status_badge('Campaign-only / removed', 'historical-removed')}{status_badge('Diagnostic declaration', 'declared')}
@@ -1230,13 +1238,13 @@ def render_page(model: dict[str, object]) -> str:
   <section class="section" id="history" aria-labelledby="history-title">
     <div class="section-heading"><h2 id="history-title">Historical evidence alignment</h2><p>Historical Campaign Evaluation results remain visible, while current definition freshness and current-scenario gaps are reported separately.</p></div>
     <div class="grid">
-      <article class="method-card"><h3>Alignment and strength</h3><ul><li><strong>Historical ID alignment; definition freshness unknown</strong> means the current catalog and Campaign ledger share an id, but the Test report retained no scenario-definition snapshot or digest.</li><li>Historical snapshot aligned is available only when a retained definition proves purpose, expected target status, and target skills match.</li><li>Historical definition drift names proved field differences. Campaign-only / removed rows remain visible rather than disappearing.</li><li>Missing Campaign evidence means no selected-Campaign Evaluation result exists for the current scenario.</li><li>A Manual observation in an older report is historical context, not governed verification.</li></ul></article>
+      <article class="method-card"><h3>Alignment and strength</h3><ul><li><strong>Historical ID alignment; definition freshness unknown</strong> means the current catalog and Campaign ledger share a scenario ID, but the Test report retained no scenario-definition snapshot or digest.</li><li>Historical snapshot aligned is available only when a retained definition proves that <code>purpose</code>, <code>expectedTerminalStatus</code>, and <code>targetSkills</code> match.</li><li>Historical definition drift lists proved differences in those fields. Campaign-only / removed rows remain visible.</li><li>Missing Campaign evidence means that the current scenario has no result in the selected Test report.</li><li>A Manual observation in an older report is historical context, not governed verification.</li></ul></article>
       <article class="method-card"><h3>Evidence alignment states</h3><ul><li>{summary['historicalIdOnlyResults']} Evaluation results have only historical id alignment; definition freshness is unknown.</li><li>{summary['snapshotAlignedResults']} Evaluation results are aligned to a retained definition snapshot.</li><li>{summary['definitionDriftResults']} Evaluation results have proved definition-field drift.</li><li>{summary['removedCampaignResults']} Campaign Evaluation results are Campaign-only / removed from the current catalog.</li><li>{summary['missingScenarioResults']} current scenarios have missing Campaign evidence.</li><li>{summary['historicalUnknownSuiteResults']} Test suites are historical-unknown, {summary['snapshotAlignedSuiteResults']} snapshot-aligned, {summary['definitionDriftSuiteResults']} drifted, and {summary['missingSuiteResults']} missing.</li></ul></article>
     </div>
   </section>
 
   <section class="section" id="agents" aria-labelledby="agents-title">
-    <div class="section-heading"><h2 id="agents-title">Agent-by-agent evidence</h2><p>All current conceptual agents are present. Each card includes current scenarios plus any Campaign-only row, expected target status when retained, selected-Campaign Evaluation result, evidence alignment, sources, and unresolved findings.</p></div>
+    <div class="section-heading"><h2 id="agents-title">Agent-by-agent evidence</h2><p>All current conceptual agents are present. Each card includes current scenarios, any Campaign-only row, the expected target status when retained, the selected-report Evaluation result, evidence alignment, sources, and unresolved findings.</p></div>
     <div class="filters" data-filter-scope="agent">
       <label class="field" for="agent-search">Search agents or scenarios<input id="agent-search" type="search" autocomplete="off" data-filter-search="agent"></label>
       <label class="field" for="agent-status">Evidence status<select id="agent-status" data-filter-status="agent"><option value="all">All statuses</option><option value="historical-unknown">Historical, definition unknown</option><option value="snapshot-aligned">Snapshot aligned</option><option value="historical-drift">Definition drift</option><option value="missing">Missing</option></select></label>
@@ -1248,7 +1256,7 @@ def render_page(model: dict[str, object]) -> str:
   </section>
 
   <section class="section" id="skills" aria-labelledby="skills-title">
-    <div class="section-heading"><h2 id="skills-title">Skill-by-skill evidence</h2><p>All bundled skills are present. Direct diagnostic plans, linked Campaign scenarios, latest linked Evaluation results, evidence level, sources, and limitations remain distinct.</p></div>
+    <div class="section-heading"><h2 id="skills-title">Skill-by-skill evidence</h2><p>All bundled skills are present. Direct diagnostic probe declarations, linked selected-report scenarios, linked Evaluation result categories, evidence level, sources, and limitations remain distinct.</p></div>
     <div class="filters" data-filter-scope="skill">
       <label class="field" for="skill-search">Search skills or probes<input id="skill-search" type="search" autocomplete="off" data-filter-search="skill"></label>
       <label class="field" for="skill-status">Coverage status<select id="skill-status" data-filter-status="skill"><option value="all">All statuses</option><option value="direct-governed">Direct governed Evaluation result</option><option value="direct-probe">Direct diagnostic probe</option><option value="indirect-only">Indirect Test suite only</option><option value="none">No recorded evidence</option></select></label>
@@ -1260,19 +1268,19 @@ def render_page(model: dict[str, object]) -> str:
   </section>
 
   <section class="section" id="follow-ups" aria-labelledby="follow-ups-title">
-    <div class="section-heading"><h2 id="follow-ups-title">Recorded campaign follow-ups</h2><p>The selected report records {len(campaign['followUps'])} linked correction items. Only explicit narrative mappings are attached to an agent; all others remain campaign-wide.</p></div>
+    <div class="section-heading"><h2 id="follow-ups-title">Recorded Campaign follow-ups</h2><p>The selected report records {len(campaign['followUps'])} linked correction items. Only explicit narrative mappings are attached to an Agent. All other items remain Campaign-wide.</p></div>
     <ol class="link-list">{followups_html}</ol>
   </section>
 
   <section class="section" id="sources" aria-labelledby="sources-title">
     <div class="section-heading"><h2 id="sources-title">Authoritative sources</h2><p>Tracked repository artifacts remain authoritative. Temporary retained-summary paths named in the historical Test report are context, not the only support for any statistic on this page.</p></div>
     <div class="grid">
-      <article class="method-card"><h3>Method and catalogs</h3><ul><li>{source_link('evals/README.md', 'Evaluation methodology')}</li><li>{source_link('evals/skill-probes.yaml', 'Skill probe catalog')}</li><li>{source_link('evals/cases.yaml', f"Executable cases ({model['associationCatalogCounts']['cases']})")}</li><li>{source_link('evals/agent-scenarios.yaml', f"Agent scenarios ({model['associationCatalogCounts']['agentScenarios']})")}</li><li>{source_link('evals/workflow-packs.yaml', f"Workflow packs ({model['associationCatalogCounts']['workflowPacks']})")}</li><li>{source_link('evals/agent-tests/suite-index.yaml', 'Agent suite index')}</li><li>{source_link('evals/judges.yaml', 'Judge catalog and calibration policy')}</li></ul></article>
-      <article class="method-card"><h3>Results</h3><ul><li>{source_link(str(campaign['sourcePath']), 'Selected Campaign Test report')}</li><li>{source_link('evals/results/2026-07-09-live-agent-evaluations.md', 'Older Manual observation report')}</li></ul><p>The older report is not merged into selected-Campaign totals.</p></article>
+      <article class="method-card"><h3>Method and catalogs</h3><ul><li>{source_link('evals/README.md', 'Evaluation methodology')}</li><li>{source_link('evals/agent-tests/AGENTS.md', 'Current Agent Test Suite Protocol')}</li><li>{source_link('evals/agent-tests/README.md', 'Agent-Owned Evaluation Suites strategy')}</li><li>{source_link('evals/skill-probes.yaml', 'Skill probe catalog')}</li><li>{source_link('evals/cases.yaml', f"Executable cases ({model['associationCatalogCounts']['cases']})")}</li><li>{source_link('evals/agent-scenarios.yaml', f"Agent scenarios ({model['associationCatalogCounts']['agentScenarios']})")}</li><li>{source_link('evals/workflow-packs.yaml', f"Workflow packs ({model['associationCatalogCounts']['workflowPacks']})")}</li><li>{source_link('evals/agent-tests/suite-index.yaml', 'Agent suite index')}</li><li>{source_link('evals/judges.yaml', 'Judge catalog and calibration policy')}</li></ul></article>
+      <article class="method-card"><h3>Results</h3><ul><li>{source_link(str(campaign['sourcePath']), 'Selected Campaign Test report')}</li><li>{source_link('evals/results/2026-07-09-live-agent-evaluations.md', 'Older Manual observation report')}</li></ul><p>The older report is not merged into the selected Campaign totals.</p></article>
     </div>
   </section>
 </main>
-<footer class="site-footer"><p>Copyright 2026 (c) Martin.Bechard@DevConsult.ca - <a href="../LICENSE">MIT License</a></p></footer>
+<footer class="site-footer"><p>Copyright (c) 2026 Martin.Bechard@DevConsult.ca - <a href="../LICENSE">MIT License</a></p></footer>
 <script src="documentation-settings.js"></script>
 <script src="agent-and-skill-evaluations.js"></script>
 </body>
