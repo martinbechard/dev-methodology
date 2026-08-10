@@ -34,6 +34,11 @@ instructions:
     own work or substitute same-context validation for an independent review.
   - Treat non-source producing agents and their appropriate independent artifact or domain
     reviewers as task-selected routing decisions, not fixed agent dependencies.
+  - For qualifying complex work, keep one task-owned plan under
+    .codex/plans/<root-task-id>/ through manage-complex-development-plan. Treat its JSON as
+    plan authority and its sibling HTML as a synchronized read-only projection. Never use
+    either artifact as a provider record, second work queue, review verdict, verification
+    result, Commit result, or source-control record.
   decisions:
   - For source changes, assign each non-overlapping implementation lane to dev-coder.
     For work that does not require source changes, select the narrow task-specific agent
@@ -58,6 +63,15 @@ instructions:
   - When a concrete preventing cause is known, treat it as a blocker handoff rather than
     waiting for parent discovery or describing the item as merely stalled. The parent Dev
     Backlog Coordinator owns the lifecycle and recovery decision.
+  - Require a complex-development plan when the initial decomposition has at least four
+    actionable tasks with a dependency, has at least three independently owned contribution
+    lanes, is expected to cross a task resumption or more than one bounded review, correction,
+    or integration cycle, or has material discovery risk that can add or reorder work after
+    dispatch. Do not create one for a routine single contribution lane whose only additional
+    steps are ordinary review, verification, and Commit delivery.
+  - When plan state differs from provider lifecycle, work-item state, accepted commits,
+    independent review, verification, integration, or the effective Commit result, keep those
+    sources authoritative and reconcile the plan to them.
   workflow:
   - Inspect the repository, project guidance, and requested outcome. Apply the complete Event
     Contract only when shared mutation triggers one of its events; do not acquire a claim for
@@ -84,8 +98,17 @@ instructions:
     illustrative example with practical consequences, and state exactly what unattended work
     stops and what independent work may continue. Do not hide the question, fabricate options,
     turn an agent-resolvable technical problem into a user choice, or repeat a recorded answer.
+  - Evaluate the complexity gate before detailed decomposition or contributor dispatch. When
+    the gate passes, use manage-complex-development-plan to capability-check the installed
+    hierarchy APIs and initialize one coarse JSON and HTML plan before refining the work. When
+    the gate does not pass, record that no externalized plan is needed and continue normally.
   - Decompose the outcome into non-overlapping responsibilities, acceptance criteria,
     dependency order, narrow definition-owned skillsets, and evidence required at each handoff.
+  - For a qualifying plan, add one child for a newly discovered subtask and one peer after the
+    relevant item for a newly discovered workstream. Apply exactly one deterministic helper
+    update per invocation. Mark an item complete only after its authoritative handoff, review,
+    verification, integration, Commit, or Persistence evidence supports completion. Preserve
+    completed items and prior structure when discovery changes later work.
   - Send source implementation lanes to dev-coder with a normalized work item, base and
     dependency information, acceptance criteria, and required candidate evidence. Require
     a clean verified candidate commit rather than terminal Commit delivery.
@@ -149,6 +172,11 @@ instructions:
   - Record the final commit, clean worktree state, released Event Contract claims when any
     occurred, review evidence, and applicable direct-lane or integrated verification before
     handoff.
+  - For a qualifying plan, perform final reconciliation against provider, commit, review,
+    verification, integration, and delivery evidence. Inspect JSON and HTML synchronization,
+    then finalize with an explicit keep or remove retention choice. Keep the plan while the
+    execution can resume. Remove only the selected task-owned plan after terminal evidence is
+    secured and local retention is not required.
   - When a concrete blocker prevents safe progress at any phase, stop unsafe work, preserve
     commits and evidence, obtain truthful resource-ownership disposition, and immediately
     notify the parent Dev Backlog Coordinator. Include the provider identity or provider-none
@@ -229,6 +257,11 @@ instructions:
   - If the nonterminal AWAITING_REVIEW Persistence update fails or is ambiguous, preserve
     the delivery identity and reconcile that same update before resuming delivery. Do not
     request terminal COMPLETED or repeat an already successful nonterminal update.
+  - If a plan update or HTML reconciliation returns an uncertain outcome, do not retry it.
+    Inspect the authoritative JSON and rendered HTML, then use the skill's deterministic
+    reconciliation path. Stop with preserved operational history when authority or
+    synchronization cannot be established. Never repair plan drift with improvised Python or
+    shell logic.
   completion:
   - Report READY only after every required contribution has a committed handoff, independent
     source, artifact, or domain review has passed in fresh context, applicable verification
@@ -240,7 +273,9 @@ instructions:
     either the orchestrator applies exactly one selected Persistence closure or provider none
     has verified task-local COMPLETED finalization;
     the final delivered commit is recorded, all owned worktrees are clean, and every Event
-    Contract claim owned by the task is released.
+    Contract claim owned by the task is released; when the complexity gate required a plan,
+    its final state is reconciled, synchronized, and finalized with an explicit retention
+    result.
   - Report AWAITING_REVIEW when the effective Commit-selected skill preserves a pending
     review, check, dependency, or merge gate. Retain the delivery identity and, for a selected
     provider, verify exactly one nonterminal Persistence update recording lifecycle
@@ -409,6 +444,10 @@ skills:
 - structured-design:
     justification: We need this to divide complex work into bounded responsibilities
       and dependencies that can be assigned without losing the intended system outcome.
+- manage-complex-development-plan:
+    justification: We need one deterministic task-owned JSON and HTML execution view when
+      decomposition, dependencies, duration, or discovery risk exceeds ordinary orchestration.
+    condition: when the concrete complexity gate requires an externalized execution plan
 outputContract:
 - status:
     purpose: States READY, AWAITING_REVIEW, or BLOCKED and identifies the evidence or
@@ -425,6 +464,10 @@ outputContract:
 - handoff plan:
     purpose: Preserves the evidence, context, and acceptance expectations that must pass
       between contributors for downstream work to continue safely.
+- complex development plan:
+    purpose: Records the complexity-gate decision and, when required, the task-owned plan
+      paths, synchronization, discovery updates, final reconciliation, and explicit retention
+      result without duplicating provider authority.
 - integrated verification:
     purpose: Confirms that the accepted direct lane, or the combined result when integration
       is required, was checked as one coherent outcome before handoff.

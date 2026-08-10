@@ -110,6 +110,7 @@ NEW_DEVELOPMENT_SKILLS = (
     "analyze-root-cause",
     "collect-runtime-evidence",
     "organise-project-files",
+    "manage-complex-development-plan",
     "deliver-work-item",
     "deliver-work-item-main-branch",
     "create-work-item",
@@ -2702,6 +2703,95 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(skill_name=skill_name):
                 self.assertTrue((SKILLS_ROOT / skill_name / "SKILL.md").is_file())
                 self.assertTrue(openai_metadata_path(skill_name).is_file())
+
+    def test_complex_development_plan_uses_hierarchy_apis_and_routes_conditionally(self) -> None:
+        """Complex orchestration uses one task-owned plan without becoming a shadow queue."""
+        skill_root = SKILLS_ROOT / "manage-complex-development-plan"
+        skill_path = skill_root / "SKILL.md"
+        helper_path = skill_root / "scripts" / "plan.py"
+        helper_test_path = skill_root / "scripts" / "test_plan_helper.py"
+        skill_text = skill_path.read_text(encoding="utf-8")
+        helper_text = helper_path.read_text(encoding="utf-8")
+        frontmatter = load_yaml_object_from_frontmatter(skill_path)
+
+        self.assertEqual("manage-complex-development-plan", frontmatter["name"])
+        self.assertEqual("development-practice", frontmatter["metadata"]["category"])
+        self.assertTrue(helper_path.is_file())
+        self.assertTrue(helper_test_path.is_file())
+        for api_name in (
+            "create_hierarchy_plan",
+            "update_hierarchy_plan",
+            "render_hierarchy_html",
+        ):
+            with self.subTest(api_name=api_name):
+                self.assertIn(api_name, skill_text)
+                self.assertIn(api_name, helper_text)
+        for command in (
+            "capabilities",
+            "create",
+            "update",
+            "inspect",
+            "reconcile",
+            "finalize",
+        ):
+            with self.subTest(command=command):
+                self.assertIn(f'add_parser("{command}")', helper_text)
+        for required_contract in (
+            ".codex/plans/<root-task-id>/",
+            "exactly one mutation",
+            "UNCERTAIN_UPDATE",
+            "UNCERTAIN_CLEANUP",
+            "--retention keep",
+            "--retention remove",
+            "Never improvise Python snippets",
+            "not a provider record",
+        ):
+            with self.subTest(required_contract=required_contract):
+                self.assertIn(required_contract, skill_text)
+        self.assertNotIn("FastMCP", skill_text)
+        self.assertNotIn("FastMCP", helper_text)
+        self.assertIn(".codex/", GITIGNORE_PATH.read_text(encoding="utf-8"))
+
+        role = load_yaml_object(
+            ROLES_ROOT / "dev-activities" / "dev-orchestrator.role.yaml"
+        )
+        role_skill_entries = {
+            next(iter(entry)): entry[next(iter(entry))]
+            for entry in role["skills"]
+        }
+        self.assertIn("manage-complex-development-plan", role_skill_entries)
+        self.assertIn(
+            "complexity gate",
+            role_skill_entries["manage-complex-development-plan"]["condition"],
+        )
+        self.assertEqual(
+            ["dev-coder", "dev-code-reviewer", "dev-verifier", "dev-merge-coordinator"],
+            role["agentDependencies"],
+        )
+        role_text = json.dumps(role, sort_keys=True)
+        for phrase in (
+            "at least four actionable tasks",
+            "before detailed decomposition or contributor dispatch",
+            "one child for a newly discovered subtask",
+            "final reconciliation",
+            "explicit keep or remove retention choice",
+            "provider lifecycle",
+        ):
+            with self.subTest(role_phrase=phrase):
+                self.assertIn(phrase, role_text)
+
+        for relative_path in (
+            Path("codex/agents/dev-orchestrator.toml"),
+            Path("claude/agents/dev-orchestrator.md"),
+            Path("gemini/agents/dev-orchestrator.md"),
+            Path("junie/agents/dev-orchestrator.md"),
+        ):
+            adapter = GENERATED_ADAPTERS_ROOT / relative_path
+            with self.subTest(adapter=relative_path):
+                self.assertIn(
+                    "manage-complex-development-plan",
+                    adapter.read_text(encoding="utf-8"),
+                )
 
     def test_work_item_creation_interface_and_provider_names_are_canonical(self) -> None:
         """Creation uses one interface stem and provider implementations preserve it."""
