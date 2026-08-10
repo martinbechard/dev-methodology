@@ -38,17 +38,17 @@ Condition Type: root-execution
 
 Owner: Dev Orchestrator in visible Codex task 019fe928-e316-7833-bd7d-44af8c0bc89d
 
-Evidence: Correction commit 40e4b07b2ef79a2f87550f8e4dc0fe4d242899bb resolves the four candidate-specific review findings across the page and two directly consuming test files, passed its focused checks, and leaves the recorded isolated worktree clean. The root execution is preparing fresh re-review and a distinct provider-owned disposition for one pre-existing generator-order defect.
+Evidence: Correction commit 40e4b07bbcdacc7c4c4c8f1871333502c6278c0a resolves the four candidate-specific review findings across the page and two directly consuming test files and leaves the recorded isolated worktree clean. Two new independent reviewers are evaluating that replacement tip. The pre-existing generator-order conflict is separately recorded as file-provider Work Item reconcile-agent-skill-hierarchy-category-order at commit 1c857bf2.
 
-Observed At: 2026-08-10T01:30:40Z
+Observed At: 2026-08-10T01:37:58Z
 
 Started At: 2026-08-10T00:48:41Z
 
 Deadline or Expires At: 2026-08-10T04:48:41Z
 
-Next Action: Reacquire the exact work activity claim, obtain fresh documentation and methodology re-review of the replacement candidate, and record the separate generator-order defect.
+Next Action: Reacquire the exact work activity claim, receive both fresh re-review verdicts, and send an accepted replacement tip to independent verification.
 
-Next Reconciliation At: 2026-08-10T01:45:40Z
+Next Reconciliation At: 2026-08-10T01:52:58Z
 
 Canonical Conversation: Codex task 019fe928-e316-7833-bd7d-44af8c0bc89d
 
