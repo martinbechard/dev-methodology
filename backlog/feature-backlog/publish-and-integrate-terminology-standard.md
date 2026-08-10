@@ -1,6 +1,6 @@
 # Publish and Integrate the Terminology Standard
 
-Owner: Unowned
+Owner: Dev Backlog Coordinator task `019fb057-1767-7ef2-b5fa-41f4417b20b3`
 
 Canonical Conversation: `019fe3d6-2dd6-7322-a507-e8ca961e27d8`
 
@@ -10,9 +10,9 @@ Branch: `codex/publish-and-integrate-terminology-standard-019fe3d6`
 
 Worktree: `/Users/martinbechard/.codex/worktrees/940b/dev-methodology`
 
-Phase: Starting — Normal terminology treatment recovery
+Phase: Running — Normal terminology treatment recovery
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -571,3 +571,23 @@ Normalized Objective: Execute the normal terminology treatment using the generic
 Preservation Boundary: Preserve current main, prior accepted implementation and control evidence, the exact synthetic fixture, and all exclusions. Do not install tools, add evaluation cases, widen the payload, publish remotely, release, deploy, or mutate user-level content.
 
 Next Reconciliation At: 2026-08-10T00:14:32Z
+
+## SOLO Crisis Running Restart
+
+Condition Type: root-execution
+
+Owner: Dev Backlog Coordinator task `019fb057-1767-7ef2-b5fa-41f4417b20b3`
+
+Canonical Task Preserved: `019fe3d6-2dd6-7322-a507-e8ca961e27d8`
+
+Observed At: 2026-08-10T00:00:02Z
+
+Started At: 2026-08-10T00:00:02Z
+
+Deadline or Expires At: 2026-08-10T01:00:02Z
+
+Execution Evidence: Authoritative main is clean after the serialized false-UAR recovery commits. The generic Agent model and installed-tool runner correction is committed as `138e448b7f9c2f29370193db93317ebf8fea69e6`. The Coordinator directly owns this single crisis item; no secondary task, replacement candidate, or resource claim is active.
+
+Next Action: Run the normal terminology treatment through the corrected runner, validate its semantic result and evidence, rerun focused completion checks, and archive the item only if the completion contract passes.
+
+Next Reconciliation At: 2026-08-10T00:15:02Z
