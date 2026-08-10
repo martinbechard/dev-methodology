@@ -580,14 +580,14 @@ Owner: Dev Backlog Coordinator task `019fb057-1767-7ef2-b5fa-41f4417b20b3`
 
 Canonical Task Preserved: `019fe3d6-2dd6-7322-a507-e8ca961e27d8`
 
-Observed At: 2026-08-10T00:00:02Z
+Observed At: 2026-08-10T00:28:38Z
 
 Started At: 2026-08-10T00:00:02Z
 
-Deadline or Expires At: 2026-08-10T01:00:02Z
+Deadline or Expires At: 2026-08-10T01:28:38Z
 
-Execution Evidence: Authoritative main is clean after the serialized false-UAR recovery commits. The generic Agent model and installed-tool runner correction is committed as `138e448b7f9c2f29370193db93317ebf8fea69e6`. The Coordinator directly owns this single crisis item; no secondary task, replacement candidate, or resource claim is active.
+Execution Evidence: Authoritative main is clean at `022c437fe29ad6cd2aa0f31cdd42f5b0061a4cf9`. The user explicitly authorized Codex evaluations to contact OpenAI for test purposes. Commit `022c437f` records that standing authorization and makes live Codex evaluations discover the standard protected login while ignoring all other user configuration; 175 runner tests pass. The exact treatment then reached OpenAI and produced both allowed artifacts. The deterministic verifier found one semantic mismatch: TERM-01 retained `Approval condition` instead of the preferred `Acceptance criterion`. The runner additionally misclassified that valid treatment result as `infrastructure-failure/malformed-result` because its semantic-red branch is restricted to control variants. The Coordinator directly owns this single crisis item; no secondary task or resource claim is active.
 
-Next Action: Run the normal terminology treatment through the corrected runner, validate its semantic result and evidence, rerun focused completion checks, and archive the item only if the completion contract passes.
+Next Action: Correct the ambiguous TERM-01 source wording so it unambiguously expresses the Acceptance criterion concept without supplying the preferred term, correct valid failed treatment classification to a semantic failure, run focused regressions, then execute and validate the treatment again.
 
-Next Reconciliation At: 2026-08-10T00:15:02Z
+Next Reconciliation At: 2026-08-10T00:42:38Z
