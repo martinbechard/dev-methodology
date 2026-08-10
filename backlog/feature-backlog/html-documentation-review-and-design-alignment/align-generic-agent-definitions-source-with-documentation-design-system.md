@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: Blocked
+Status: Ready
 
 Type: Feature
 
@@ -58,6 +58,8 @@ Target page: design/generic-agent-definitions-source.html
 Blocker owner: Work Item review-generic-agent-definitions-source-text.
 
 Blocked to Ready condition: review-generic-agent-definitions-source-text is Completed with corrected content, fresh independent acceptance, and an immutable content baseline for design/generic-agent-definitions-source.html.
+
+Dependency Resolution: Satisfied by completed Work Item `review-generic-agent-definitions-source-text`, archived in the terminal provider transaction. Accepted content baseline `82c88a17e17ce407ba225f491ba5ba59a2150d3a` was delivered through main integration commit `33728187db5cfd0eb4359ae7acc69d8da598e010` with fresh artifact and code reviews GOOD plus independent verification WARN only for the pre-existing historical provenance migration gap.
 
 ## Verification
 

@@ -35,7 +35,7 @@ Pages may proceed independently. A design-alignment item may not start merely be
 - [Review Agent and Skill Specialization Examples Text](review-agent-skill-specialization-examples-text.md)
 - [Review Coding-Agent Runtime Configuration Text](review-agentic-configuration-text.md)
 - [Review Documentation Templates Text](../../completed-backlog/features/review-documentation-templates-text.md)
-- [Review Generic Agent Definitions Source Text](review-generic-agent-definitions-source-text.md)
+- [Review Generic Agent Definitions Source Text](../../completed-backlog/features/review-generic-agent-definitions-source-text.md)
 - [Review Orchestrated Development Lifecycle Text](review-orchestrated-development-lifecycle-text.md)
 - [Review Agent Skill Architecture Text](review-skills-modularization-text.md)
 - [Review Wiki Skills and Project Context Text](review-wiki-skills-and-project-context-text.md)
