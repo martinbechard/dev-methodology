@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: Blocked
+Status: Ready
 
 Type: Feature
 
@@ -58,6 +58,8 @@ Target page: design/agent-and-skill-definitions.html
 Blocker owner: Work Item review-agent-and-skill-definitions-text.
 
 Blocked to Ready condition: review-agent-and-skill-definitions-text is Completed with corrected content, fresh independent acceptance, and an immutable content baseline for design/agent-and-skill-definitions.html.
+
+Dependency Resolution: Satisfied by completed Work Item `review-agent-and-skill-definitions-text`, archived in provider commit `1f9830ea3d1d59467b9f0cfdd1a95831d07de308`. Accepted content baseline `ae362a573dc7d4068ba305864287fece02a96248` was delivered byte-identically through main integration tip `0e3d97a58006b7d616458c596b3377a6c6042f2f` with fresh documentation and methodology reviews GOOD plus independent verification PASS.
 
 ## Verification
 
