@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: Blocked
+Status: Ready
 
 Type: Feature
 
@@ -67,9 +67,13 @@ Supporting evidence:
 
 - use-mcp-hierarchy-plans-for-complex-development
 
-Blocker owner: the user decision and subsequent mcp-agent-ops delivery owned by Work Item use-mcp-hierarchy-plans-for-complex-development.
+Blocker owner: Resolved by completed Work Item use-mcp-hierarchy-plans-for-complex-development.
 
 Blocked to Ready condition: the dependency is Completed with typed MCP creation and rendering behavior that can produce the required structured JSON and synchronized HTML inside configured workspace roots.
+
+Dependency Resolution: Satisfied on 2026-08-10. Work Item use-mcp-hierarchy-plans-for-complex-development is Completed and delivered the documented hierarchy-plan API, synchronized JSON and HTML behavior, focused tests, and repository integration required by this item.
+
+Next Action: Dev Backlog Coordinator may reserve one separate Dev Orchestrator task for implementation under active sequential SOLO crisis recovery.
 
 ## Verification
 
