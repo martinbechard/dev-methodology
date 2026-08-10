@@ -36,19 +36,19 @@ Next Reconciliation At: 2026-08-10T00:59:00Z
 
 Condition Type: delegated-work
 
-Owner: Dev Orchestrator task 019fe929-3695-7d20-93dc-63852ced1020 coordinating Dev Merge Coordinator task /root/combine_generic_agent_candidate
+Owner: Dev Orchestrator task 019fe929-3695-7d20-93dc-63852ced1020 coordinating new fresh Dev Artifact Reviewer task /root/review_accepted_generic_agent_html and Dev Code Reviewer task /root/review_accepted_generic_agent_test
 
-Evidence: The original documentation producer added the exact lifecycle distinction in clean commit f8590096f4d83bdbb3805f726f77c74cd621ede9. The complete four-test lifecycle suite, 17 focused bundle-content tests, documentation freshness, HTML link/accessibility checks, terminology scan, and diff checks now pass. Dev Merge Coordinator is producing one accepted two-path candidate from original base 9488c71873e19c99b523927bce14ec64da634158 with bytes equal to that corrected tree.
+Evidence: Dev Merge Coordinator produced clean accepted candidate 82c88a17e17ce407ba225f491ba5ba59a2150d3a with original parent 9488c71873e19c99b523927bce14ec64da634158 and exactly the corrected HTML plus focused test contract. The full lifecycle suite, prior bundle-content selectors, documentation freshness, byte equivalence, and diff checks pass. Two new fresh-context reviewers are independently reviewing the accepted immutable candidate.
 
-Observed At: 2026-08-10T01:53:37Z
+Observed At: 2026-08-10T01:55:58Z
 
-Started At: 2026-08-10T01:53:37Z
+Started At: 2026-08-10T01:55:58Z
 
-Deadline or Expires At: 2026-08-10T02:07:00Z
+Deadline or Expires At: 2026-08-10T02:10:00Z
 
-Next Action: Collect the accepted combined commit, then repeat fresh artifact and code review followed by independent verification.
+Next Action: Require terminal GOOD from both accepted-candidate reviewers, then repeat independent verification against the same immutable commit.
 
-Next Reconciliation At: 2026-08-10T02:03:00Z
+Next Reconciliation At: 2026-08-10T02:06:00Z
 
 Codex Task ID: 019fe929-3695-7d20-93dc-63852ced1020
 
@@ -62,7 +62,7 @@ Branch: codex/review-generic-agent-definitions-accepted-019fe929
 
 Worktree: /private/tmp/review-generic-agent-definitions-accepted-019fe929
 
-Phase: Accepted candidate combination
+Phase: Accepted candidate fresh review
 
 ## Summary
 
