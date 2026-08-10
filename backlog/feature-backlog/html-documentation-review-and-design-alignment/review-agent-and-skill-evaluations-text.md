@@ -1,8 +1,8 @@
 # Review and Correct Agent and Skill Evaluations Text
 
-Owner: Unowned
+Owner: Dev Orchestrator (019fe928-e2d9-73d3-a647-7fac38731628)
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -27,6 +27,20 @@ Candidate Commit: 5043884e3a2d31ca0c86be33338447a306004578
 Phase: Fresh independent rereview and reverification
 
 Started At: 2026-08-10T00:49:58Z
+
+## Recovery Handoff Evidence
+
+Canonical Task: 019fe928-e2d9-73d3-a647-7fac38731628
+
+Recovery Scope: Narrow configuration-only repair of the existing Codex mcp-agent-ops environment, followed by a fresh service/session terminology load, the preserved singular-grammar correction, and completion of the remaining fresh review and verification gates.
+
+Excluded Action: Do not run the user-scope installer or replace installed skills and Agent definitions.
+
+Requested At: 2026-08-10T02:19:00Z
+
+Next Action: The same Dev Orchestrator records Starting to Running, acquires the exact Work Item activity=work claim and the shared configuration resource, performs the two-line documented repair with backup and TOML validation, then resumes the preserved candidate.
+
+Required Task Title: Implementing — Review Agent and Skill Evaluations Text
 
 ## Prior Active Execution Evidence
 
