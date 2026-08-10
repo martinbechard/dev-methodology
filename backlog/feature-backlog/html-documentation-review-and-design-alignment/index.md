@@ -30,7 +30,7 @@ Pages may proceed independently. A design-alignment item may not start merely be
 
 - [Review AI-Assisted Coding Toolkit Index Text](review-index-page-text.md)
 - [Review Conceptual Agent and Skill Definitions Text](../../completed-backlog/features/review-agent-and-skill-definitions-text.md)
-- [Review Agent and Skill Evaluations Text](review-agent-and-skill-evaluations-text.md)
+- [Review Agent and Skill Evaluations Text](../../completed-backlog/features/review-agent-and-skill-evaluations-text.md)
 - [Review Agent-Owned Evaluation Suites Text](../../completed-backlog/features/review-agent-owned-evaluation-suites-text.md)
 - [Review Agent and Skill Specialization Examples Text](../../completed-backlog/features/html-documentation-review-and-design-alignment/review-agent-skill-specialization-examples-text.md)
 - [Review Coding-Agent Runtime Configuration Text](review-agentic-configuration-text.md)
