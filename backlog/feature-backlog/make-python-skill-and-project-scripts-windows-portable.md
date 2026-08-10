@@ -1,8 +1,8 @@
 # Make the Python Skill and Project Scripts Windows Portable
 
-Owner: Dev Orchestrator
+Owner: Unowned
 
-Status: Running
+Status: Blocked
 
 Type: Feature
 
@@ -30,23 +30,21 @@ Last Contact: 2026-08-10T00:44:00Z
 
 Next Reconciliation At: 2026-08-10T00:59:00Z
 
-## Active Execution Evidence
+## Blocked Evidence
 
-Condition Type: fresh-review-needs-correction
+Exact Blocker: The final authorized correction cycle produced clean candidate cbab82b1f65f9096aa8c6b7ae9d7794f690715ff, but both fresh reviewers returned terminal NEEDS CORRECTION. The Windows CreateProcessW wrappers do not connect captured standard streams to the real child and do not prove every Job Object process has terminated before cleanup returns. README also contains three prohibited inline-code spans.
 
-Owner: Visible Root Dev Orchestrator 019fe928-e2d8-7f91-91b2-bd27990a7414 awaiting Parent Coordinator disposition
+Blocker Owner: Dev Backlog Coordinator under active crisis recovery.
 
-Evidence: Both entirely fresh reviewers returned terminal NEEDS CORRECTION on clean candidate cbab82b1f65f9096aa8c6b7ae9d7794f690715ff and exact 13-path range. Code review found two High Win32 defects. First, both CreateProcessW wrappers leave STARTUPINFO.dwFlags and hStdInput, hStdOutput, and hStdError unset, so the real child is not connected to captured streams; this breaks selected Windows output-cap and PID-observation tests in scripts/test_agent_skill_evals.py and affects both scripts/agent_skill_evals/commands.py around line 422 and the duplicate Project Bootstrapper wrapper around line 921. Second, TerminateJobObject is asynchronous, but the wrappers wait only for the root and never prove job-level ActiveProcesses reaches zero before return and handle close; this affects commands.py around lines 460-485 and scripted_orchestration.py around line 959, while delayed sentinels do not prove bounded descendant reaping or released I/O. Artifact review separately found one Low repository-maintenance breach: README.md lines 781 and 783 add inline code formatting for unittest, excluded_cases, and killpg, with scripts/test_bundle_content.py line 1270 hard-coding one affected span. Ordinary-skip enforcement, stable diagnostic cause binding, exact-baseline non-hiding, inventory, workflow structure, skill/generator freshness, provenance, and prior substantive artifact findings otherwise review positively. No reviewer mutated state; source remains clean and frozen. No native Windows pass is claimed.
+Unblock Condition: A Coordinator-owned SOLO recovery corrects the two Win32 Job Object contracts and the bounded README/test wording, then produces a clean candidate that passes fresh review, verification, native Windows evidence, main delivery, and provider closure.
 
-Observed At: 2026-08-10T06:10:56Z
+Next-Action Owner: Dev Backlog Coordinator.
 
-Started At: 2026-08-10T05:45:49Z
+Requested Coordinator Action: Adopt candidate cbab82b1 without claims or another delegated correction cycle, implement only the three terminal findings, and preserve every resolved baseline, inventory, workflow, skill, provenance, and non-hiding contract.
 
-Deadline or Expires At: 2026-08-10T06:40:56Z
+Preserved Review Evidence: Code review found two High defects: missing STARTF_USESTDHANDLES and standard-handle wiring in both CreateProcessW wrappers, and no bounded proof that Job Object ActiveProcesses reaches zero after TerminateJobObject. Artifact review found one Low README inline-code rule breach with its focused bundle assertion. All other reviewed surfaces were accepted.
 
-Next Action: Complete this provider transaction, release the provider update claims, and return the exact terminal review packet to Parent Coordinator 019fb057-1767-7ef2-b5fa-41f4417b20b3. Do not reacquire a work claim, mutate source, start verification, integrate main, or transition to Blocked without a new explicit Coordinator disposition; the authorized final correction cycle is exhausted.
-
-Next Reconciliation At: 2026-08-10T06:25:56Z
+Claim Disposition: Every work, update, and path claim was released before this Blocked transition. No native Windows pass, verification, or integration is claimed.
 
 ## Exceptional Recovery Manifest
 
