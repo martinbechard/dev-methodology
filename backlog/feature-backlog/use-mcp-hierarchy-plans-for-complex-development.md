@@ -1,8 +1,8 @@
 # Use MCP Hierarchy Plans for Complex Development
 
-Owner: Dev Orchestrator (019fe928-e31e-71e2-aaa8-7f9bef12c7b0)
+Owner: Unowned
 
-Status: Running
+Status: Blocked
 
 Type: Feature
 
@@ -24,23 +24,27 @@ Next Action: The same Dev Orchestrator records Starting to Running, acquires the
 
 Required Task Title: Implementing — Use MCP hierarchy plans for complex development
 
-## Active Execution Evidence
+## Blocked Evidence
 
-Condition Type: delegated-work
+Exact Blocker: Managed approval rejected the required prepared-prefix validator patch twice because the Coordinator recovery delegation was treated as untrusted agent history for potentially destructive recovery semantics. The exceptional recovery therefore cannot safely continue without direct user approval in the root conversation.
 
-Owner: Dev Coder (/root/exceptional_recovery_complex_plan), coordinated by Dev Orchestrator (019fe928-e31e-71e2-aaa8-7f9bef12c7b0)
+Blocker Owner: User/project authority.
 
-Evidence: The fresh exceptional-recovery Dev Coder completed the mandatory red gate before any production or documentation mutation. Three new focused regression methods produced ten expected failures: changed synchronized canonical JSON and HTML after a prepared cleanup, each of four changed prior recovery fingerprints, and five empty, unsupported, or inconsistent update-journal cases all incorrectly returned success instead of a stale or unresolved result. Only the authorized helper test file is dirty; candidate 3ad236c3 and every preserved predecessor remain immutable. The fresh coder has no blocker or authority expansion.
+Unblock Condition: The user directly approves the bounded prepared-prefix recovery semantics and authorizes resumption of this same preserved execution. The Coordinator must then record Blocked to Ready, followed by Ready to Starting; the same canonical task may accept Starting to Running with a fresh exact work claim.
 
-Observed At: 2026-08-10T04:35:48Z
+Next-Action Owner: Dev Backlog Coordinator after the direct user answer.
 
-Started At: 2026-08-10T04:23:40Z
+Requested Coordinator Action: Preserve this Blocked record and surface the exact approval question. Do not redispatch, authorize another correction cycle, verify, integrate, or mutate the dirty recovery until the unblock condition is satisfied.
 
-Deadline or Expires At: 2026-08-10T05:10:00Z
+Blocking Reference: managed-review-rejected-prepared-prefix-recovery-patch.
 
-Next Action: Reacquire the exact activity=work claim, resume the same fresh Dev Coder, implement only the proven prepared-decision binding, strict update-record validation, cited Markdown and exit-code wording corrections, then run the complete focused and full gates and commit one clean recovery candidate.
+Correction History: The fresh recovery coder completed the required red gate: three methods produced ten expected failures, and current behavior returned exit 0 for every changed prepared input and invalid update-record case. Partial fingerprint and schema logic was added, but the prepared-prefix validator patch was rejected twice. No green suite, documentation regeneration, candidate commit, review, verification, or integration exists.
 
-Next Reconciliation At: 2026-08-10T04:49:48Z
+Preserved Candidates: d72e1a284a9b832295f2cd9e796f49f21404b6e2, 07b8f090d4a5f895785c3d279589fe3edaa1f218, and 3ad236c3a1017e7ec9b2238e4ba2e8dcec7f4ead, together with both final NEEDS_CORRECTION packets.
+
+Preserved Dirty Recovery: The source worktree remains on HEAD 3ad236c3a1017e7ec9b2238e4ba2e8dcec7f4ead with uncommitted changes only in skills/manage-complex-development-plan/scripts/plan.py and skills/manage-complex-development-plan/scripts/test_plan_helper.py. Git diff check passes.
+
+Claim Disposition: Exact work claim mcp-hierarchy-plans-work-resumed-019fe928 was released with disposition blocked in event 5f45ff38-8760-44b8-8be2-d45ec2aceb2c.
 
 Codex Task ID: 019fe928-e31e-71e2-aaa8-7f9bef12c7b0
 
@@ -58,7 +62,7 @@ Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/use-mcp-hierarchy-
 
 Starting Head: 9488c71873e19c99b523927bce14ec64da634158
 
-Phase: exceptional recovery red-to-green implementation
+Phase: blocked after managed-review rejection of exceptional recovery
 
 Provider Update Claim: mcp-hierarchy-plans-recovery-red-update-019fe928; outcome SHARED_CHECKOUT_ACQUIRED; claim event a7de41e2-a77b-42b4-81d2-f89a0b6d250f.
 
