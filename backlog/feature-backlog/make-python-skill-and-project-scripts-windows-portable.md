@@ -32,21 +32,21 @@ Next Reconciliation At: 2026-08-10T00:59:00Z
 
 ## Active Execution Evidence
 
-Condition Type: fresh-independent-review
+Condition Type: fresh-review-needs-correction
 
-Owner: Fresh independent code and methodology-artifact reviewers under visible Root Dev Orchestrator 019fe928-e2d8-7f91-91b2-bd27990a7414
+Owner: Visible Root Dev Orchestrator 019fe928-e2d8-7f91-91b2-bd27990a7414 awaiting Parent Coordinator disposition
 
-Evidence: Both entirely fresh reviewers reached clean read-only checkpoints on exact candidate cbab82b1f65f9096aa8c6b7ae9d7794f690715ff and confirmed the clean 13-path range and diff hygiene. The methodology-artifact reviewer reports a provisional terminal NEEDS CORRECTION for one low-priority repository-maintenance rule breach: new README.md lines 781 and 783 use inline code formatting for unittest, excluded_cases, and killpg, while scripts/test_bundle_content.py line 1270 hard-codes one affected span; all substantive cleanup-evidence, README-strength, generated-freshness, provenance, skill, and negative-inventory checks are otherwise green. The code reviewer reports 28/28 focused contracts green and is validating whether the Windows wrappers prove bounded job-wide descendant reaping after TerminateJobObject rather than waiting only for the root. Its attempted local python3 command-smoke phase used an unsupported interpreter without tomllib and is not candidate evidence; no supported Python 3.11 rerun has started. Neither reviewer has mutated any state. Source remains frozen, and no native Windows pass is claimed.
+Evidence: Both entirely fresh reviewers returned terminal NEEDS CORRECTION on clean candidate cbab82b1f65f9096aa8c6b7ae9d7794f690715ff and exact 13-path range. Code review found two High Win32 defects. First, both CreateProcessW wrappers leave STARTUPINFO.dwFlags and hStdInput, hStdOutput, and hStdError unset, so the real child is not connected to captured streams; this breaks selected Windows output-cap and PID-observation tests in scripts/test_agent_skill_evals.py and affects both scripts/agent_skill_evals/commands.py around line 422 and the duplicate Project Bootstrapper wrapper around line 921. Second, TerminateJobObject is asynchronous, but the wrappers wait only for the root and never prove job-level ActiveProcesses reaches zero before return and handle close; this affects commands.py around lines 460-485 and scripted_orchestration.py around line 959, while delayed sentinels do not prove bounded descendant reaping or released I/O. Artifact review separately found one Low repository-maintenance breach: README.md lines 781 and 783 add inline code formatting for unittest, excluded_cases, and killpg, with scripts/test_bundle_content.py line 1270 hard-coding one affected span. Ordinary-skip enforcement, stable diagnostic cause binding, exact-baseline non-hiding, inventory, workflow structure, skill/generator freshness, provenance, and prior substantive artifact findings otherwise review positively. No reviewer mutated state; source remains clean and frozen. No native Windows pass is claimed.
 
-Observed At: 2026-08-10T05:56:23Z
+Observed At: 2026-08-10T06:10:56Z
 
 Started At: 2026-08-10T05:45:49Z
 
-Deadline or Expires At: 2026-08-10T06:45:49Z
+Deadline or Expires At: 2026-08-10T06:40:56Z
 
-Next Action: Complete this provider transaction, reacquire the visible root's exact activity=work claim, release both fresh reviewers to finish terminal synthesis and any remaining supported read-only check, then record their exact terminal verdicts. Because this is the final authorized correction cycle, any confirmed finding or scope gap returns to the Parent Coordinator without source mutation or another correction attempt.
+Next Action: Complete this provider transaction, release the provider update claims, and return the exact terminal review packet to Parent Coordinator 019fb057-1767-7ef2-b5fa-41f4417b20b3. Do not reacquire a work claim, mutate source, start verification, integrate main, or transition to Blocked without a new explicit Coordinator disposition; the authorized final correction cycle is exhausted.
 
-Next Reconciliation At: 2026-08-10T06:11:23Z
+Next Reconciliation At: 2026-08-10T06:25:56Z
 
 ## Exceptional Recovery Manifest
 
@@ -82,9 +82,9 @@ Branch: codex/make-python-skill-and-project-scripts-windows-portable
 
 Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/make-python-windows-portability-work-019fb057
 
-Current Phase: Reviewing
+Current Phase: Reviewing — Needs Correction
 
-Work-Item Claim: Visible claim python-windows-portability-visible-work-34-019fe928 was released with handoff at the fresh-review checkpoint; source remains frozen until the visible root reacquires the exact activity=work claim.
+Work-Item Claim: Visible claim python-windows-portability-visible-work-36-019fe928 was released with handoff after terminal fresh review. No work claim will be reacquired without a new explicit Parent Coordinator disposition.
 
 ## Execution Handoff Reconciliation
 
