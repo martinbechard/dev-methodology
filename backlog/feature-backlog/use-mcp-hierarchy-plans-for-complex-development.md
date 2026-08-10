@@ -1,8 +1,8 @@
 # Use MCP Hierarchy Plans for Complex Development
 
-Owner: Dev Orchestrator
+Owner: Dev Orchestrator (/root/mcp_hierarchy_plans)
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -29,6 +29,38 @@ Launch Result: Reserved; canonical root launch follows this committed transition
 Last Contact: 2026-08-10T00:44:00Z
 
 Next Reconciliation At: 2026-08-10T00:59:00Z
+
+## Active Execution Evidence
+
+Condition Type: root-execution
+
+Owner: Dev Orchestrator (/root/mcp_hierarchy_plans)
+
+Evidence: Codex task /root/mcp_hierarchy_plans accepted the work-item claim and created the private source worktree from main commit 9488c71873e19c99b523927bce14ec64da634158.
+
+Observed At: 2026-08-10T00:49:06Z
+
+Started At: 2026-08-10T00:48:23Z
+
+Deadline or Expires At: 2026-08-10T04:48:23Z
+
+Next Action: Dispatch the bounded source implementation lane for the approved planning skill and Dev Orchestrator routing.
+
+Next Reconciliation At: 2026-08-10T00:59:00Z
+
+Codex Task ID: /root/mcp_hierarchy_plans
+
+Conversation ID: 019fb057-1767-7ef2-b5fa-41f4417b20b3
+
+Root Role: Dev Orchestrator
+
+Parent Task ID: /root
+
+Branch: codex/use-mcp-hierarchy-plans-for-complex-development
+
+Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/use-mcp-hierarchy-plans-work-019fb057
+
+Phase: implementation dispatch
 
 ## Summary
 
