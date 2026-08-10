@@ -1,8 +1,8 @@
 # Review and Correct Generic Agent Definitions Source Text
 
-Owner: Unowned
+Owner: Dev Orchestrator
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -13,6 +13,24 @@ Work Item ID: review-generic-agent-definitions-source-text
 Completion: main-branch
 
 Series: backlog/feature-backlog/html-documentation-review-and-design-alignment/index.md
+
+## Starting Handoff Evidence
+
+Parent Coordination Task: 019fb057-1767-7ef2-b5fa-41f4417b20b3
+
+Dispatch Reservation: First normal multitask wave after terminology completion.
+
+Normalized Objective: Review and correct all text in design/generic-agent-definitions-source.html before design alignment.
+
+Dispatch Requested At: 2026-08-10T00:44:00Z
+
+Intended Root Role: Dev Orchestrator
+
+Launch Result: Reserved; canonical root launch follows this committed transition.
+
+Last Contact: 2026-08-10T00:44:00Z
+
+Next Reconciliation At: 2026-08-10T00:59:00Z
 
 ## Summary
 
