@@ -36,17 +36,17 @@ Condition Type: exceptional-recovery
 
 Owner: Original Dev Coder /root/windows_portability_coder under visible Root Dev Orchestrator 019fe928-e2d8-7f91-91b2-bd27990a7414
 
-Evidence: The unchanged fail-closed 63-entry aggregate now passes with outcome PORTABLE_PREFLIGHT_PASSED and native_windows=false: all 160 inventory paths, 63 supported test files, 21 command smokes, and 1,525 selected tests were exercised. The comparator observed 15 failing owners and 117 inherited identities plus the one exact resolved documentation identity, accounting for the authorized 118; scripts/test_bundle_content.py remains the separate zero-identity resolved owner. There is no new, changed, or Windows-specific failure. Twenty-four exclusions across four files are explicitly classified, including four ordinary Wiki Ingester unittest skips. The only red command smokes are the two authorized catalog list and validation failures with the same inherited ValueError. Focused verifier contracts pass 28/28. The lexical/resolved root regression proves exactly three derived hashes changed after correct alias normalization while every identity, outcome kind, exception class, readable message, and other hash remained unchanged. Source is paused before final freshness, provenance, exact-tree diff, and pre-commit audit. No native Windows pass is claimed.
+Evidence: The final recovery is fully green at the pre-commit handoff. Exactly seven pending tracked modifications are present with no staged or untracked path: README.md; the Project Bootstrapper launcher and direct test; the agent-skill-evaluation launcher and direct test; scripts/test_bundle_content.py; and scripts/test_python_windows_portability.py. Exact automated assertions confirm seven pending paths and 13 total paths from review base 9385665b27ff4c3f8fb1da3e04e82a47b4bf742c. Focused verifier 28/28, Project Bootstrapper cleanup 1/1, agent-evaluation cleanup and output-cap 2/2, and README/Python-skill contracts 2/2 pass. The fail-closed aggregate passes with 160 inventory paths, 63 test files, 1,525 tests, 21 command smokes, exact authorized baseline/signatures, and 24 classified exclusions. Negative inventory proof returns UNCLASSIFIED_PYTHON_REJECTED. All skill, hierarchy, evaluation-document, support-checklist, technology-detection, and OpenAI metadata freshness checks pass. Provenance validates three historical documents. git diff --check passes against HEAD and the review base. No native Windows pass is claimed.
 
-Observed At: 2026-08-10T05:37:55Z
+Observed At: 2026-08-10T05:42:56Z
 
 Started At: 2026-08-10T04:41:22Z
 
 Deadline or Expires At: 2026-08-10T06:11:22Z
 
-Next Action: Complete this provider transaction, reacquire the visible root's exact activity=work claim, then release the original Dev Coder to run remaining freshness, provenance, exact-tree diff, and hygiene checks, complete the final scoped diff audit, and pause at the safe pre-commit handoff without committing.
+Next Action: Complete this provider transaction, reacquire the visible root's exact activity=work claim, then release the original Dev Coder to stage and commit exactly the seven pending recovery paths with message Harden fail-closed Windows portability verification, return the clean candidate identity, and stop source mutation for fresh independent review.
 
-Next Reconciliation At: 2026-08-10T05:52:55Z
+Next Reconciliation At: 2026-08-10T05:57:56Z
 
 ## Exceptional Recovery Manifest
 
@@ -84,7 +84,7 @@ Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/make-python-window
 
 Current Phase: Implementing
 
-Work-Item Claim: Visible claim python-windows-portability-visible-work-28-019fe928 was released with handoff for this green full-aggregate checkpoint; source remains frozen until the visible root reacquires the exact activity=work claim.
+Work-Item Claim: Visible claim python-windows-portability-visible-work-30-019fe928 was released with handoff for this fully green pre-commit checkpoint; source remains frozen until the visible root reacquires the exact activity=work claim.
 
 ## Execution Handoff Reconciliation
 
