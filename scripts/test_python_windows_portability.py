@@ -117,6 +117,8 @@ scripts/test_terminology_standard_effect_fixture.py
 scripts/test_validate_agent_skills.py
 scripts/test_work_item_coordination.py
 scripts/validate-agent-skills.py
+skills/create-document-outline/scripts/outline.py
+skills/create-document-outline/scripts/test_outline_helper.py
 skills/detect-technology-skills/scripts/detect.py
 skills/document-provenance/scripts/test_validate_document_provenance.py
 skills/document-provenance/scripts/validate_document_provenance.py

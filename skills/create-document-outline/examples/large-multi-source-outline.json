@@ -1,0 +1,183 @@
+{
+  "schema": "dev-methodology-document-outline",
+  "version": 1,
+  "title": "Service Reliability Guide",
+  "documentType": "custom technical guide",
+  "inputReview": {
+    "authorized": true,
+    "sensitiveDataExcluded": true
+  },
+  "sources": [
+    {
+      "id": "requirements",
+      "label": "Approved reliability requirements",
+      "locator": "design/reliability-requirements.md"
+    },
+    {
+      "id": "research",
+      "label": "Operator research notes",
+      "locator": "raw/operator-research.md"
+    },
+    {
+      "id": "implementation",
+      "label": "Current runtime and focused tests",
+      "locator": "src/retry.py and tests/test_retry.py"
+    },
+    {
+      "id": "review",
+      "label": "Human review <draft>",
+      "locator": "review/service-reliability-outline.md"
+    }
+  ],
+  "root": {
+    "title": "Service Reliability Guide",
+    "level": 1,
+    "kind": "proposed_organization",
+    "scope": "Organize the evidence needed for a source-backed reliability guide.",
+    "sourceRefs": [],
+    "children": [
+      {
+        "title": "Purpose and audience",
+        "level": 2,
+        "kind": "source_fact",
+        "scope": "State the required service outcome and the people who use the guide.",
+        "sourceRefs": [
+          "requirements",
+          "research"
+        ],
+        "reviewText": "Explain the reliability target for operators, developers, and reviewers.",
+        "children": []
+      },
+      {
+        "title": "Current behavior",
+        "level": 2,
+        "kind": "source_fact",
+        "scope": "Describe the implemented retry path and the disputed failure behavior.",
+        "sourceRefs": [
+          "implementation"
+        ],
+        "children": [
+          {
+            "title": "Runtime path",
+            "level": 3,
+            "kind": "source_fact",
+            "scope": "Trace retry eligibility, attempt limits, and terminal outcomes.",
+            "sourceRefs": [
+              "implementation"
+            ],
+            "reviewText": "Connect each runtime step to the implementation and focused tests.",
+            "children": []
+          },
+          {
+            "title": "Failure-state conflict",
+            "level": 3,
+            "kind": "conflict",
+            "scope": "Keep the operator expectation separate from the observed timeout behavior.",
+            "sourceRefs": [
+              "research",
+              "implementation"
+            ],
+            "reviewText": "Show both accounts and leave the resolution open for an authoritative decision.",
+            "children": []
+          }
+        ]
+      },
+      {
+        "title": "Operator workflow",
+        "level": 2,
+        "kind": "source_fact",
+        "scope": "Describe detection, diagnosis, mitigation, and escalation in source order.",
+        "sourceRefs": [
+          "requirements",
+          "research"
+        ],
+        "children": [
+          {
+            "title": "Detect and diagnose",
+            "level": 3,
+            "kind": "source_fact",
+            "scope": "Identify the observable signals and the first diagnostic checks.",
+            "sourceRefs": [
+              "research",
+              "implementation"
+            ],
+            "reviewText": "List the supported signals before the diagnostic sequence.",
+            "children": []
+          },
+          {
+            "title": "Mitigate and escalate",
+            "level": 3,
+            "kind": "unknown",
+            "scope": "Expose the missing owner for the final escalation decision.",
+            "sourceRefs": [
+              "research"
+            ],
+            "reviewText": "Retain the supported mitigation steps and link the unresolved owner question.",
+            "children": []
+          }
+        ]
+      },
+      {
+        "title": "Verification",
+        "level": 2,
+        "kind": "proposed_organization",
+        "scope": "Group acceptance conditions and retained Evidence without claiming a current Test run.",
+        "sourceRefs": [],
+        "children": [
+          {
+            "title": "Acceptance conditions",
+            "level": 3,
+            "kind": "source_fact",
+            "scope": "Connect each required behavior to an observable acceptance condition.",
+            "sourceRefs": [
+              "requirements",
+              "implementation"
+            ],
+            "reviewText": "Separate required outcomes from retained Test evidence and unverified assumptions.",
+            "children": []
+          }
+        ]
+      },
+      {
+        "title": "Document decisions",
+        "level": 2,
+        "kind": "final_document_decision",
+        "scope": "Record the accepted order and the decision to preserve unresolved conflicts.",
+        "sourceRefs": [
+          "review"
+        ],
+        "reviewText": "Feed the accepted organization and named gaps into the selected document-writing method.",
+        "children": []
+      }
+    ]
+  },
+  "unresolvedQuestions": [
+    {
+      "id": "Q-1",
+      "question": "Who owns the final escalation decision when retry exhaustion and operator guidance disagree?",
+      "sourceRefs": [
+        "research",
+        "implementation"
+      ]
+    },
+    {
+      "id": "Q-2",
+      "question": "Which retained Test result proves the documented timeout threshold in the target environment?",
+      "sourceRefs": [
+        "requirements",
+        "implementation"
+      ]
+    }
+  ],
+  "review": {
+    "status": "draft",
+    "acceptedSectionOrder": [],
+    "requiredCorrections": [
+      "Confirm the escalation owner before final document acceptance."
+    ],
+    "remainingQuestionIds": [
+      "Q-1",
+      "Q-2"
+    ]
+  }
+}

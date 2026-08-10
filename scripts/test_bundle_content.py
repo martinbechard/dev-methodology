@@ -85,6 +85,7 @@ REMOVED_DEVELOPMENT_REFERENCES = (
 NEW_WORKFLOW_SKILLS = (
     "bootstrap-project-documentation",
     "reverse-engineer-project-documentation",
+    "create-document-outline",
     "code-project-wiki",
     "verify-documentation-page",
     "terminology-standard",
@@ -3008,6 +3009,101 @@ class BundleContentTests(unittest.TestCase):
                     "manage-complex-development-plan",
                     adapter.read_text(encoding="utf-8"),
                 )
+
+    def test_document_outline_uses_renderer_and_routes_only_at_its_activation_gate(
+        self,
+    ) -> None:
+        """Large document preparation keeps JSON authority, source coverage, and conditional routing."""
+        skill_root = SKILLS_ROOT / "create-document-outline"
+        skill_path = skill_root / "SKILL.md"
+        helper_path = skill_root / "scripts" / "outline.py"
+        helper_test_path = skill_root / "scripts" / "test_outline_helper.py"
+        example_path = skill_root / "examples" / "large-multi-source-outline.json"
+        skill_text = skill_path.read_text(encoding="utf-8")
+        helper_text = helper_path.read_text(encoding="utf-8")
+        frontmatter = load_yaml_object_from_frontmatter(skill_path)
+
+        self.assertEqual("create-document-outline", frontmatter["name"])
+        self.assertEqual("documentation-methodology", frontmatter["metadata"]["category"])
+        self.assertTrue(openai_metadata_path("create-document-outline").is_file())
+        self.assertTrue(helper_path.is_file())
+        self.assertTrue(helper_test_path.is_file())
+        self.assertTrue(example_path.is_file())
+        for contract in (
+            "five or more authorized source artifacts",
+            "ten or more material facts",
+            "JSON outline is authoritative",
+            "Never hand-edit the HTML projection",
+            "accepted outline and the original source evidence",
+            "credentials, personal information, unauthorized proprietary content",
+            ".codex/outlines/<task-id>/",
+            "CAPABILITIES_AVAILABLE",
+            "STALE_HTML",
+        ):
+            with self.subTest(contract=contract):
+                self.assertIn(contract, skill_text)
+        for implementation_contract in (
+            "render_hierarchy_html",
+            'add_parser("capabilities")',
+            'add_parser("build")',
+            'add_parser("inspect")',
+            '"INVALID_OUTLINE"',
+            '"STALE_HTML"',
+            '"SYNCED"',
+        ):
+            with self.subTest(implementation_contract=implementation_contract):
+                self.assertIn(implementation_contract, helper_text)
+        self.assertNotIn("FastMCP", skill_text)
+        self.assertNotIn("FastMCP", helper_text)
+
+        example = load_yaml_object(example_path)
+        self.assertEqual("dev-methodology-document-outline", example["schema"])
+        self.assertGreaterEqual(len(example["sources"]), 4)
+        self.assertGreaterEqual(len(example["root"]["children"]), 5)
+        self.assertGreaterEqual(len(example["unresolvedQuestions"]), 2)
+        self.assertEqual(
+            [question["id"] for question in example["unresolvedQuestions"]],
+            example["review"]["remainingQuestionIds"],
+        )
+
+        expected_roles = {
+            "dev-activities/dev-documentation-writer.role.yaml",
+            "wiki-activities/wiki-writer.role.yaml",
+            "wiki-activities/wiki-ingester.role.yaml",
+            "methodology-maintenance/methodology-maintainer.role.yaml",
+        }
+        observed_roles: set[str] = set()
+        for role_path in sorted(ROLES_ROOT.rglob("*.role.yaml")):
+            role = load_yaml_object(role_path)
+            entries = {
+                next(iter(entry)): entry[next(iter(entry))]
+                for entry in role["skills"]
+            }
+            if "create-document-outline" not in entries:
+                continue
+            relative = role_path.relative_to(ROLES_ROOT).as_posix()
+            observed_roles.add(relative)
+            entry = entries["create-document-outline"]
+            self.assertIn("activation gate", entry["condition"])
+            self.assertIn("justification", entry)
+        self.assertEqual(expected_roles, observed_roles)
+
+        readme_text = README_PATH.read_text(encoding="utf-8")
+        self.assertIn("- create-document-outline", readme_text)
+        self.assertIn("source-traceable JSON outline", readme_text)
+
+        probes = load_yaml_object(REPOSITORY_ROOT / "evals" / "skill-probes.yaml")
+        probe = next(
+            entry
+            for entry in probes["probes"]
+            if entry["id"] == "probe-create-document-outline"
+        )
+        self.assertEqual("create-document-outline", probe["skill"])
+        self.assertIn("large or complex document", probe["activationCondition"])
+        self.assertIn("short single-source document", probe["negativeCondition"])
+        self.assertIn("canonical JSON", probe["expectedBehavior"])
+        self.assertIn("original source evidence", probe["expectedBehavior"])
+        self.assertEqual("declared", probe["coverageStatus"])
 
     def test_work_item_creation_interface_and_provider_names_are_canonical(self) -> None:
         """Creation uses one interface stem and provider implementations preserve it."""

@@ -501,6 +501,7 @@ The wiki and development-wiki skills are:
 The documentation methodology skills are:
 
 - route-documentation-work
+- create-document-outline
 - bootstrap-project-documentation
 - reverse-engineer-project-documentation
 - verify-documentation-page
@@ -516,6 +517,8 @@ The documentation methodology skills are:
 - name-methodology-artifacts
 
 The terminology-standard family uses the exact terminology.md artifact name at shared user and project scope. Load Terminology Standards is realized by mcp-agent-ops reference_load against the active configured reference snapshot. Ordinary application and review load once. Updates refresh and load before mutation, then refresh and load after mutation to verify the published revision and changed target digest. A loaded aggregate or reference_not_found result is conclusive only for that catalog revision and its returned source labels; it does not prove an unlisted host root exists or was eligible. Other provider failures are unavailable. Review cannot pass and updates cannot mutate after a pre-mutation provider error. A valid file change whose refresh or reload cannot be verified returns PUBLICATION INCOMPLETE instead of being misreported as either zero mutation or complete. Update completion is relative to the published snapshot and authorized target; a request that requires evidence for an unlisted physical scope is blocked. Project entries govern overlaps when the project source is present. A preferred definition is sufficient to establish the expected term; Avoid remains optional reinforcement for observed persistent substitutions.
+
+create-document-outline is a conditional preparation skill for large or complex document work. Its repository-owned helper validates one source-traceable JSON outline and uses the installed mcp-agent-ops hierarchy renderer to create a synchronized, self-contained HTML review projection. The outline remains separate from original evidence, the selected document-writing method, provenance, and artifact-specific review.
 
 The artifact creation skills are:
 
