@@ -36,19 +36,19 @@ Next Reconciliation At: 2026-08-10T00:59:00Z
 
 Condition Type: delegated-work
 
-Owner: Dev Artifact Reviewer in task /root/review_generic_agent_text, coordinated by Dev Orchestrator task 019fe929-3695-7d20-93dc-63852ced1020
+Owner: Dev Orchestrator task 019fe929-3695-7d20-93dc-63852ced1020 coordinating Dev Documentation Writer task /root/write_generic_agent_text and Dev Coder task /root/fix_generic_agent_test_contract
 
-Evidence: Dev Documentation Writer returned clean candidate e82a8b0fc284faa9fa9cdeacc3ede896a56bd5fb for design/generic-agent-definitions-source.html. The visible canonical root execution assigned that immutable candidate to a fresh independent Dev Artifact Reviewer with repository and official vendor source authority.
+Evidence: Fresh independent review returned NEEDS CORRECTION with three source-backed findings. The original writer is correcting the two HTML findings, and a separate Dev Coder owns the non-overlapping stale scripts/test_bundle_content.py link assertion. Both bounded correction tasks are running against immutable candidate e82a8b0fc284faa9fa9cdeacc3ede896a56bd5fb.
 
-Observed At: 2026-08-10T01:10:36Z
+Observed At: 2026-08-10T01:16:57Z
 
-Started At: 2026-08-10T01:10:36Z
+Started At: 2026-08-10T01:16:57Z
 
-Deadline or Expires At: 2026-08-10T01:22:12Z
+Deadline or Expires At: 2026-08-10T01:28:57Z
 
-Next Action: Return a terminal GOOD or NEEDS CORRECTION verdict with source-backed findings and a runnable correction for each finding.
+Next Action: Collect both clean correction commits, combine them through Dev Merge Coordinator, then repeat fresh independent artifact review.
 
-Next Reconciliation At: 2026-08-10T01:22:00Z
+Next Reconciliation At: 2026-08-10T01:28:45Z
 
 Codex Task ID: 019fe929-3695-7d20-93dc-63852ced1020
 
@@ -62,7 +62,7 @@ Branch: codex/review-generic-agent-definitions-source-text-orchestrator
 
 Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/review-generic-agent-definitions-source-text-start-update
 
-Phase: Fresh independent artifact review
+Phase: Correction round 1
 
 ## Summary
 
