@@ -36,17 +36,17 @@ Condition Type: exceptional-recovery
 
 Owner: Original Dev Coder /root/windows_portability_coder under visible Root Dev Orchestrator 019fe928-e2d8-7f91-91b2-bd27990a7414
 
-Evidence: The final recovery is green at the pre-aggregate checkpoint on exactly seven correction paths. The stable baseline catalog contains 16 owners, 118 exact identities, 118 populated diagnostic signatures, and 34 deduplicated cause groups with no placeholder or pending record. Twenty-six of 26 focused verifier contracts pass; command smokes report only the two authorized inherited failures. Both Job Object cleanup fixtures pass (agent evaluation 2/2 and Project Bootstrapper 1/1), two bundle README and Python-skill contracts pass, and Wiki Ingester reports its four exact classified unittest skips plus inherited diagnostic. The skip registry has 15 exact case registrations, including all three symlink decorators; unregistered and reason-drift negative contracts pass. AssignProcessToJobObject failure now terminates the still-suspended unassigned root, performs a bounded wait, checks termination and wait results, and closes handles; neither launcher contains taskkill. README conditions process, path, and locking proof on a successful native Windows job and states that non-Windows preflight is not native execution. git diff --check passes. The 63-entry aggregate has not started, and no native Windows pass is claimed.
+Evidence: The fail-closed 63-entry aggregate completed red after approximately six minutes with exactly three same-ID diagnostic hash drifts and no new identity or skip failure. All three are the claude, gemini, and junie variants of scripts/test_codex_task_control.py::CodexTaskControlRoleRoutingTests.test_non_codex_generated_agents_do_not_name_portable_policy_as_codex. Read-only comparison proves the test cause is unchanged and the candidate verifier normalization is at fault: the exact-main full-history clone traceback uses the resolved /private/tmp baseline path while _ROOT retained its lexical /tmp alias, so literal-root replacement missed the resolved alias before temporary-path normalization; the candidate traceback correctly became <repo>. The stable message content is otherwise byte-identical. This is an in-scope verifier regression within the authorized final recovery. No source mutation followed the red result, all prior focused evidence remains preserved, and no native Windows pass is claimed.
 
-Observed At: 2026-08-10T05:14:55Z
+Observed At: 2026-08-10T05:24:25Z
 
 Started At: 2026-08-10T04:41:22Z
 
 Deadline or Expires At: 2026-08-10T06:11:22Z
 
-Next Action: Complete this provider transaction, reacquire the visible root's exact activity=work claim, then release the original Dev Coder to run the fail-closed 63-entry aggregate and remaining exact-tree checks, audit the complete diff, and pause at the safe pre-commit handoff.
+Next Action: Complete this provider transaction, reacquire the visible root's exact activity=work claim, then release the original Dev Coder to normalize both lexical _ROOT and _ROOT.resolve() before temporary-path normalization, add a focused alias-equivalence regression, rerun focused checks and the unchanged fail-closed 63-entry aggregate, then pause at the safe pre-commit handoff.
 
-Next Reconciliation At: 2026-08-10T05:29:55Z
+Next Reconciliation At: 2026-08-10T05:39:25Z
 
 ## Exceptional Recovery Manifest
 
@@ -84,7 +84,7 @@ Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/make-python-window
 
 Current Phase: Implementing
 
-Work-Item Claim: Visible claim python-windows-portability-visible-work-24-019fe928 was released with handoff for this green final-recovery pre-aggregate checkpoint; source remains frozen until the visible root reacquires the exact activity=work claim.
+Work-Item Claim: Visible claim python-windows-portability-visible-work-26-019fe928 was released with handoff for this fail-closed aggregate checkpoint; source remains frozen until the visible root reacquires the exact activity=work claim.
 
 ## Execution Handoff Reconciliation
 
