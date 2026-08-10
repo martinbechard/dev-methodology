@@ -36,19 +36,19 @@ Next Reconciliation At: 2026-08-10T00:59:00Z
 
 Condition Type: delegated-work
 
-Owner: Dev Orchestrator task 019fe929-3695-7d20-93dc-63852ced1020 coordinating Dev Documentation Writer task /root/write_generic_agent_text and Dev Coder task /root/fix_generic_agent_test_contract
+Owner: Dev Orchestrator task 019fe929-3695-7d20-93dc-63852ced1020 coordinating Dev Merge Coordinator task /root/combine_generic_agent_candidate
 
-Evidence: Fresh independent review returned NEEDS CORRECTION with three source-backed findings. The original writer is correcting the two HTML findings, and a separate Dev Coder owns the non-overlapping stale scripts/test_bundle_content.py link assertion. Both bounded correction tasks are running against immutable candidate e82a8b0fc284faa9fa9cdeacc3ede896a56bd5fb.
+Evidence: The original writer resolved both HTML findings in f1e7cc28a71ace5d6ae1ff5e520aab38d6c7a7a0 and the Dev Coder resolved the non-overlapping stale link assertion in 9516308b86a448d8bb5226200a6f2925cbb726f5. A Dev Merge Coordinator is combining those accepted corrections with initial candidate e82a8b0fc284faa9fa9cdeacc3ede896a56bd5fb into one immutable two-path candidate from base 9488c71873e19c99b523927bce14ec64da634158.
 
-Observed At: 2026-08-10T01:16:57Z
+Observed At: 2026-08-10T01:21:40Z
 
-Started At: 2026-08-10T01:16:57Z
+Started At: 2026-08-10T01:21:40Z
 
-Deadline or Expires At: 2026-08-10T01:28:57Z
+Deadline or Expires At: 2026-08-10T01:40:00Z
 
-Next Action: Collect both clean correction commits, combine them through Dev Merge Coordinator, then repeat fresh independent artifact review.
+Next Action: Collect the clean combined commit, then dispatch new fresh-context artifact and code reviewers before independent verification.
 
-Next Reconciliation At: 2026-08-10T01:28:45Z
+Next Reconciliation At: 2026-08-10T01:32:00Z
 
 Codex Task ID: 019fe929-3695-7d20-93dc-63852ced1020
 
@@ -62,7 +62,7 @@ Branch: codex/review-generic-agent-definitions-source-text-orchestrator
 
 Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/review-generic-agent-definitions-source-text-start-update
 
-Phase: Correction round 1
+Phase: Candidate combination
 
 ## Summary
 
