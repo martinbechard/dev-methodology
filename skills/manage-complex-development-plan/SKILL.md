@@ -71,7 +71,7 @@ Supply a canonical absolute workspace path, a safe root task ID, and a safe plan
 └── .locks/<plan-name>.lock
 ```
 
-The history directory is bounded operational evidence. It is not a backlog or provider ledger. Before every create, update, reconcile, or cleanup effect, the helper creates an operation directory, writes a pending operation record, and preserves the available pre-mutation files. A missing, malformed, pending, or otherwise nonterminal result remains unresolved and is never silently skipped or pruned. The helper retains at most 20 operation directories by pruning only terminal history when space is needed.
+The history directory is bounded operational evidence. It is not a backlog or provider ledger. Before every create, update, or reconcile effect, the helper creates an operation directory, writes a pending operation record, and preserves the available pre-mutation files. A missing, malformed, pending, or otherwise nonterminal result remains unresolved and is never silently skipped or pruned. The helper retains at most 20 operation directories by pruning only terminal history when space is needed. Explicit final removal is immediate and does not create a resumable operation record.
 
 The lock file coordinates one selected plan across processes. The helper holds its standard-library POSIX or Windows lock from inspection and target validation through package dispatch, artifact checks, and terminal result persistence. LOCK_TIMEOUT means another writer retained that boundary; do not bypass the lock or improvise a mutation. An unsupported lock backend fails with CAPABILITY_UNAVAILABLE.
 
@@ -201,7 +201,7 @@ python3 [skill-root]/scripts/plan.py \
   reconcile --recovery-token <token-from-inspect>
 ```
 
-An exception after an effect may have started returns UNCERTAIN_CREATE, UNCERTAIN_UPDATE, UNCERTAIN_RECONCILIATION, or UNCERTAIN_CLEANUP. A process stop can leave only the earlier pending record. Do not repeat the interrupted command, even when the artifacts appear synchronized. Run inspect, then pass its current recovery token to reconcile. A stale token fails before mutation; inspect again instead of guessing.
+An exception after a create, update, or reconcile effect may have started returns UNCERTAIN_CREATE, UNCERTAIN_UPDATE, or UNCERTAIN_RECONCILIATION. A process stop can leave only the earlier pending record. Do not repeat the interrupted command, even when the artifacts appear synchronized. Run inspect, then pass its current recovery token to reconcile. A stale token fails before mutation; inspect again instead of guessing. Final removal is different: it never resumes automatically, and a later explicit remove invocation acts only on the then-current exact plan paths.
 
 ```bash
 python3 [skill-root]/scripts/plan.py \
@@ -215,7 +215,7 @@ Reconcile excludes only its own current pending record while rechecking the reco
 
 - Valid JSON is retained as authority and HTML is rendered to match it. This covers JSON-only and synchronized interrupted creates, updates, and reconciliations.
 - An interrupted create with HTML only or without valid JSON is cleaned to confirmed absence so create can retry.
-- An interrupted cleanup continues HTML removal first and JSON removal last, then confirms both artifacts are absent.
+- Cleanup is excluded from prepared recovery decisions. It has no cleanup recovery token, saved cleanup fingerprint, or automatic resume path.
 - Invalid or absent JSON for an interrupted update or reconciliation is restored only from a valid helper-owned pre-mutation JSON snapshot. Without one, recovery stops.
 
 Reconcile marks prior operations terminal only after it has confirmed synchronized retention or complete absence, then marks its own record terminal. Stop when JSON authority, snapshot validity, or synchronization cannot be established. Never delete partial artifacts or edit operation evidence by hand.
@@ -248,7 +248,7 @@ The remove choice deletes only the selected sibling HTML first, the selected pla
 
 Finalization fails closed when an actionable item is incomplete, the artifacts drift, or any uncertain operation remains unresolved. Both reserved structural prefixes remain invalid for incomplete or parent items, so actionable text cannot be hidden from the completion check.
 
-If removal may have stopped after changing an artifact, the helper returns UNCERTAIN_CLEANUP or leaves a pending cleanup record. Do not retry removal. Inspect the exact selected plan and pass the current recovery token to reconcile. Reconciliation must reach confirmed absence before create or cleanup can retry.
+Removal is explicit, immediate, and idempotent. It acts only on the selected task-owned JSON plan, sibling HTML, and bounded local history. On a permission or I/O failure, the helper returns CLEANUP_FAILED with every selected path that remains. It does not infer completion or resume automatically. Correct the reported filesystem problem and invoke finalize with retention remove again; that invocation acts on the current exact paths.
 
 ## Result
 

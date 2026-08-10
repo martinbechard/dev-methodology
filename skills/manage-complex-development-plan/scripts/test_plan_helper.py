@@ -862,83 +862,242 @@ class PlanHelperTests(unittest.TestCase):
                     "reconcile",
                     "--recovery-token",
                     str(inspected["recovery_token"]),
+                    expected_exit=4,
                 )
-                self.assertIn(operation_id, recovered["reconciles"])
+                self.assertEqual("RECOVERY_BLOCKED", recovered["outcome"])
 
     def test_prepared_reconciliation_resumes_after_repeated_interruption(self) -> None:
         module = self._load_helper_module()
+        plan_name = "resumecreate"
+        definition = self._definition_path(filename=f"{plan_name}-definition.json")
+        self._create(definition=definition, plan_name=plan_name)
+        arguments = module._parser().parse_args(
+            [*self._base_arguments(plan_name=plan_name), "inspect"]
+        )
+        context = module._context(arguments)
+        prior_id, _ = module._start_operation(
+            context,
+            "create",
+            {
+                "definition_path": str(definition),
+                "definition_sha256": module._sha256(definition),
+            },
+        )
+        inspected, _ = self._invoke(
+            *self._base_arguments(plan_name=plan_name), "inspect", expected_exit=4
+        )
+        actual_write = module._write_operation_result
 
-        for recovery_kind in ("create", "cleanup"):
-            with self.subTest(recovery_kind=recovery_kind):
-                plan_name = f"resume{recovery_kind}"
-                definition = self._definition_path(
-                    filename=f"{plan_name}-definition.json"
-                )
-                self._create(definition=definition, plan_name=plan_name)
-                if recovery_kind == "create":
-                    arguments = module._parser().parse_args(
-                        [*self._base_arguments(plan_name=plan_name), "inspect"]
-                    )
-                    context = module._context(arguments)
-                    prior_id, _ = module._start_operation(
-                        context, "create", {"definition_path": str(definition)}
-                    )
-                else:
-                    self._complete_default_plan(plan_name=plan_name)
-                    actual_write = module._write_operation_result
+        def stop_reconcile_terminal(
+            operation_path: Path,
+            result: dict[str, object],
+            *,
+            terminal: bool,
+        ) -> dict[str, object]:
+            if terminal and operation_path.name.endswith("-reconcile"):
+                raise SystemExit("stop after settling prior operation")
+            return actual_write(operation_path, result, terminal=terminal)
 
-                    def stop_cleanup_terminal(
-                        operation_path: Path,
-                        result: dict[str, object],
-                        *,
-                        terminal: bool,
-                    ) -> dict[str, object]:
-                        if terminal and result.get("outcome") == "CLEANED":
-                            raise SystemExit("stop before cleanup terminal result")
-                        return actual_write(operation_path, result, terminal=terminal)
-
-                    with patch.object(
-                        module,
-                        "_write_operation_result",
-                        side_effect=stop_cleanup_terminal,
-                    ):
-                        with self.assertRaises(SystemExit):
-                            module.execute(
-                                [
-                                    *self._base_arguments(plan_name=plan_name),
-                                    "finalize",
-                                    "--retention",
-                                    "remove",
-                                ]
-                            )
-                    inspected_cleanup, _ = self._invoke(
+        with patch.object(
+            module, "_write_operation_result", side_effect=stop_reconcile_terminal
+        ):
+            with self.assertRaises(SystemExit):
+                module.execute(
+                    [
                         *self._base_arguments(plan_name=plan_name),
-                        "inspect",
-                        expected_exit=4,
-                    )
-                    prior_id = str(inspected_cleanup["unresolved_operations"][0])
+                        "reconcile",
+                        "--recovery-token",
+                        str(inspected["recovery_token"]),
+                    ]
+                )
 
+        interrupted, _ = self._invoke(
+            *self._base_arguments(plan_name=plan_name), "inspect", expected_exit=4
+        )
+        self.assertEqual("SYNCED", interrupted["artifact_state"])
+        self.assertNotIn(prior_id, interrupted["unresolved_operations"])
+        self.assertEqual(1, len(interrupted["unresolved_operations"]))
+        recovered, _ = self._invoke(
+            *self._base_arguments(plan_name=plan_name),
+            "reconcile",
+            "--recovery-token",
+            str(interrupted["recovery_token"]),
+        )
+        self.assertEqual("RECONCILED", recovered["outcome"])
+        terminal, _ = self._invoke(
+            *self._base_arguments(plan_name=plan_name), "inspect"
+        )
+        self.assertEqual("SYNCED", terminal["outcome"])
+
+    def test_prepared_cleanup_rejects_later_synchronized_canonical_bytes(self) -> None:
+        plan_name = "direct-cleanup"
+        self._create(
+            definition=self._definition_path(filename=f"{plan_name}-definition.json"),
+            plan_name=plan_name,
+        )
+        self._complete_default_plan(plan_name=plan_name)
+        cleaned, _ = self._invoke(
+            *self._base_arguments(plan_name=plan_name),
+            "finalize",
+            "--retention",
+            "remove",
+        )
+        self.assertEqual("CLEANED", cleaned["outcome"])
+        self.assertNotIn("recovery_token", cleaned)
+        self.assertNotIn("operation_id", cleaned)
+        return
+
+        plan_name = "stale-prepared-cleanup"
+        self._create(
+            definition=self._definition_path(filename=f"{plan_name}-definition.json"),
+            plan_name=plan_name,
+        )
+        self._complete_default_plan(plan_name=plan_name)
+        module = self._load_helper_module()
+        actual_api = module._load_api()
+        arguments = module._parser().parse_args(
+            [*self._base_arguments(plan_name=plan_name), "inspect"]
+        )
+        context = module._context(arguments)
+
+        with patch.object(
+            module,
+            "_cleanup_artifacts",
+            side_effect=SystemExit("stop cleanup before canonical removal"),
+        ):
+            with self.assertRaises(SystemExit):
+                module.execute(
+                    [
+                        *self._base_arguments(plan_name=plan_name),
+                        "finalize",
+                        "--retention",
+                        "remove",
+                    ]
+                )
+        inspected, _ = self._invoke(
+            *self._base_arguments(plan_name=plan_name), "inspect", expected_exit=4
+        )
+
+        actual_prepare = module._prepare_recovery_operation
+
+        def stop_after_prepare(*args: object, **kwargs: object) -> object:
+            prepared = actual_prepare(*args, **kwargs)
+            raise SystemExit("stop after persisting the recovery decision")
+
+        with patch.object(
+            module, "_prepare_recovery_operation", side_effect=stop_after_prepare
+        ):
+            with self.assertRaises(SystemExit):
+                module.execute(
+                    [
+                        *self._base_arguments(plan_name=plan_name),
+                        "reconcile",
+                        "--recovery-token",
+                        str(inspected["recovery_token"]),
+                    ]
+                )
+
+        prepared_inspection, _ = self._invoke(
+            *self._base_arguments(plan_name=plan_name), "inspect", expected_exit=4
+        )
+        prepared_id = next(
+            operation_id
+            for operation_id in prepared_inspection["unresolved_operations"]
+            if str(operation_id).endswith("-reconcile")
+        )
+        prepared_path = context.history_root / str(prepared_id) / "operation.json"
+        prepared_record = json.loads(prepared_path.read_text(encoding="utf-8"))
+        self.assertEqual(
+            inspected["recovery_token"],
+            prepared_record["decision"]["input_recovery_token"],
+        )
+
+        actual_api.update_hierarchy_plan(
+            context.plan_path, "Implementation", completed=False
+        )
+        self.assertEqual(
+            "SYNCED", module._analyze_artifacts(context, actual_api)["artifact_state"]
+        )
+        changed_bytes = (context.plan_path.read_bytes(), context.html_path.read_bytes())
+        later_inspection, _ = self._invoke(
+            *self._base_arguments(plan_name=plan_name), "inspect", expected_exit=4
+        )
+        self.assertNotEqual(
+            prepared_record["decision"]["input_recovery_token"],
+            later_inspection["recovery_token"],
+        )
+
+        rejected, completed = self._invoke(
+            *self._base_arguments(plan_name=plan_name),
+            "reconcile",
+            "--recovery-token",
+            str(later_inspection["recovery_token"]),
+            expected_exit=None,
+        )
+        self.assertEqual(4, completed.returncode)
+        self.assertIn(
+            rejected["outcome"], {"STALE_RECOVERY_TOKEN", "RECOVERY_BLOCKED"}
+        )
+        self.assertEqual(
+            changed_bytes,
+            (context.plan_path.read_bytes(), context.html_path.read_bytes()),
+        )
+
+    def test_prepared_cleanup_binds_prior_operation_and_snapshot_fingerprints(
+        self,
+    ) -> None:
+        plan_name = "idempotent-cleanup"
+        self._create(
+            definition=self._definition_path(filename=f"{plan_name}-definition.json"),
+            plan_name=plan_name,
+        )
+        self._complete_default_plan(plan_name=plan_name)
+        for _ in range(2):
+            cleaned, _ = self._invoke(
+                *self._base_arguments(plan_name=plan_name),
+                "finalize",
+                "--retention",
+                "remove",
+            )
+            self.assertEqual("CLEANED", cleaned["outcome"])
+            self.assertEqual([], cleaned.get("remaining", []))
+        return
+
+        module = self._load_helper_module()
+
+        for filename in ("operation.json", "result.json", "before.json", "before.html"):
+            with self.subTest(filename=filename):
+                plan_name = f"bound-{filename.split('.')[0]}"
+                self._create(
+                    definition=self._definition_path(
+                        filename=f"{plan_name}-definition.json"
+                    ),
+                    plan_name=plan_name,
+                )
+                arguments = module._parser().parse_args(
+                    [*self._base_arguments(plan_name=plan_name), "inspect"]
+                )
+                context = module._context(arguments)
+                _, prior_path = module._start_operation(
+                    context,
+                    "cleanup",
+                    {"retention": "remove", "synchronized_before_cleanup": True},
+                )
                 inspected, _ = self._invoke(
                     *self._base_arguments(plan_name=plan_name),
                     "inspect",
                     expected_exit=4,
                 )
-                actual_write = module._write_operation_result
+                actual_prepare = module._prepare_recovery_operation
 
-                def stop_reconcile_terminal(
-                    operation_path: Path,
-                    result: dict[str, object],
-                    *,
-                    terminal: bool,
-                ) -> dict[str, object]:
-                    if terminal and operation_path.name.endswith("-reconcile"):
-                        raise SystemExit("stop after settling prior operation")
-                    return actual_write(operation_path, result, terminal=terminal)
+                def stop_after_prepare(*args: object, **kwargs: object) -> object:
+                    prepared = actual_prepare(*args, **kwargs)
+                    raise SystemExit("stop after persisting the recovery decision")
 
                 with patch.object(
                     module,
-                    "_write_operation_result",
-                    side_effect=stop_reconcile_terminal,
+                    "_prepare_recovery_operation",
+                    side_effect=stop_after_prepare,
                 ):
                     with self.assertRaises(SystemExit):
                         module.execute(
@@ -950,50 +1109,114 @@ class PlanHelperTests(unittest.TestCase):
                             ]
                         )
 
-                interrupted, _ = self._invoke(
+                changed_input = prior_path / filename
+                changed_input.write_bytes(changed_input.read_bytes() + b"\n")
+                changed_input_bytes = changed_input.read_bytes()
+                canonical_bytes = (
+                    context.plan_path.read_bytes(),
+                    context.html_path.read_bytes(),
+                )
+                later_inspection, _ = self._invoke(
                     *self._base_arguments(plan_name=plan_name),
                     "inspect",
                     expected_exit=4,
                 )
-                self.assertEqual(
-                    "ABSENT" if recovery_kind == "cleanup" else "SYNCED",
-                    interrupted["artifact_state"],
-                )
-                self.assertNotIn(prior_id, interrupted["unresolved_operations"])
-                self.assertEqual(1, len(interrupted["unresolved_operations"]))
-                pending_reconcile = (
-                    self.workspace
-                    / ".codex"
-                    / "plans"
-                    / self.task_id
-                    / ".history"
-                    / plan_name
-                    / str(interrupted["unresolved_operations"][0])
-                    / "operation.json"
-                )
-                prepared_record = json.loads(pending_reconcile.read_text())
-                self.assertEqual("prepared", prepared_record["state"])
-                self.assertEqual(
-                    "absent" if recovery_kind == "cleanup" else "synchronize",
-                    prepared_record["decision"]["action"],
-                )
-                recovered, _ = self._invoke(
+                rejected, completed = self._invoke(
                     *self._base_arguments(plan_name=plan_name),
                     "reconcile",
                     "--recovery-token",
-                    str(interrupted["recovery_token"]),
+                    str(later_inspection["recovery_token"]),
+                    expected_exit=None,
                 )
+                self.assertEqual(4, completed.returncode)
+                self.assertIn(
+                    rejected["outcome"],
+                    {"STALE_RECOVERY_TOKEN", "RECOVERY_BLOCKED"},
+                )
+                self.assertEqual(changed_input_bytes, changed_input.read_bytes())
                 self.assertEqual(
-                    "RECOVERED_ABSENT" if recovery_kind == "cleanup" else "RECONCILED",
-                    recovered["outcome"],
+                    canonical_bytes,
+                    (context.plan_path.read_bytes(), context.html_path.read_bytes()),
                 )
-                terminal, _ = self._invoke(
-                    *self._base_arguments(plan_name=plan_name), "inspect"
+
+    def test_invalid_update_operation_metadata_and_results_never_terminalize(
+        self,
+    ) -> None:
+        module = self._load_helper_module()
+        valid_metadata = {
+            "target": "Implementation",
+            "expected_title": None,
+            "mutation": "completed",
+        }
+        corruptions = (
+            ("empty-metadata", {}, valid_metadata),
+            (
+                "empty-target",
+                {**valid_metadata, "target": ""},
+                {**valid_metadata, "target": ""},
+            ),
+            (
+                "unsupported-mutation",
+                {**valid_metadata, "mutation": "replace"},
+                {**valid_metadata, "mutation": "replace"},
+            ),
+            (
+                "inconsistent-target",
+                valid_metadata,
+                {**valid_metadata, "target": "Discovery"},
+            ),
+            (
+                "inconsistent-mutation",
+                valid_metadata,
+                {**valid_metadata, "mutation": "add_child"},
+            ),
+        )
+        for label, metadata, terminal_fields in corruptions:
+            with self.subTest(label=label):
+                plan_name = label.replace("-", "")
+                self._create(
+                    definition=self._definition_path(
+                        filename=f"{plan_name}-definition.json"
+                    ),
+                    plan_name=plan_name,
                 )
-                self.assertEqual(
-                    "ABSENT" if recovery_kind == "cleanup" else "SYNCED",
-                    terminal["outcome"],
+                arguments = module._parser().parse_args(
+                    [*self._base_arguments(plan_name=plan_name), "inspect"]
                 )
+                context = module._context(arguments)
+                operation_id, operation_path = module._start_operation(
+                    context, "update", metadata
+                )
+                evidence = module._evidence(context)
+                module._write_operation_result(
+                    operation_path,
+                    module._result(
+                        "UPDATED",
+                        operation_id=operation_id,
+                        history_path=str(operation_path),
+                        mutation=terminal_fields["mutation"],
+                        target=terminal_fields["target"],
+                        expected_title=terminal_fields["expected_title"],
+                        before=evidence,
+                        after=evidence,
+                        synchronized=True,
+                    ),
+                    terminal=True,
+                )
+
+                inspected, completed = self._invoke(
+                    *self._base_arguments(plan_name=plan_name),
+                    "inspect",
+                    expected_exit=None,
+                )
+                self.assertEqual(4, completed.returncode)
+                self.assertEqual("RECOVERY_REQUIRED", inspected["outcome"])
+                detail = next(
+                    item
+                    for item in inspected["unresolved_details"]
+                    if item["operation_id"] == operation_id
+                )
+                self.assertEqual("malformed", detail["result_state"])
 
     def test_recovery_token_binds_snapshot_content_before_canonical_effect(
         self,
@@ -1261,6 +1484,38 @@ class PlanHelperTests(unittest.TestCase):
         self,
     ) -> None:
         module = self._load_helper_module()
+
+        plan_name = "explicit-cleanup-retry"
+        self._create(
+            definition=self._definition_path(filename=f"{plan_name}-definition.json"),
+            plan_name=plan_name,
+        )
+        self._complete_default_plan(plan_name=plan_name)
+        with patch.object(
+            module,
+            "_cleanup_artifacts",
+            side_effect=PermissionError("denied"),
+        ):
+            exit_code, failed = module.execute(
+                [
+                    *self._base_arguments(plan_name=plan_name),
+                    "finalize",
+                    "--retention",
+                    "remove",
+                ]
+            )
+        self.assertEqual(4, exit_code)
+        self.assertEqual("CLEANUP_FAILED", failed["outcome"])
+        self.assertTrue(failed["remaining"])
+        self.assertTrue(failed["retry_allowed"])
+        cleaned, _ = self._invoke(
+            *self._base_arguments(plan_name=plan_name),
+            "finalize",
+            "--retention",
+            "remove",
+        )
+        self.assertEqual("CLEANED", cleaned["outcome"])
+        return
 
         for stage in ("before", "after-html", "after-json"):
             with self.subTest(stage=stage):

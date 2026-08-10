@@ -2741,7 +2741,7 @@ class BundleContentTests(unittest.TestCase):
             "exactly one mutation",
             "UNCERTAIN_CREATE",
             "UNCERTAIN_UPDATE",
-            "UNCERTAIN_CLEANUP",
+            "CLEANUP_FAILED",
             "missing, malformed, pending, or otherwise nonterminal",
             "--recovery-token",
             "--expected-title",
@@ -2758,7 +2758,6 @@ class BundleContentTests(unittest.TestCase):
         for mutation_function, package_call in (
             ("_create", "api.create_hierarchy_plan("),
             ("_update", "api.update_hierarchy_plan("),
-            ("_finalize", "_cleanup_artifacts(context)"),
         ):
             with self.subTest(mutation_function=mutation_function):
                 function_start = helper_text.index(f"def {mutation_function}(")
@@ -2770,6 +2769,12 @@ class BundleContentTests(unittest.TestCase):
                     function_text.index("_start_operation("),
                     function_text.index(package_call),
                 )
+        finalize_start = helper_text.index("def _finalize(")
+        finalize_end = helper_text.index("\ndef ", finalize_start + 1)
+        finalize_text = helper_text[finalize_start:finalize_end]
+        self.assertIn("_cleanup_artifacts(context)", finalize_text)
+        self.assertNotIn("_start_operation(", finalize_text)
+        self.assertIn('"CLEANUP_FAILED"', finalize_text)
         reconcile_start = helper_text.index("def _reconcile(")
         reconcile_end = helper_text.index("\ndef ", reconcile_start + 1)
         reconcile_text = helper_text[reconcile_start:reconcile_end]
