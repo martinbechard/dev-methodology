@@ -28,19 +28,19 @@ Required Task Title: Implementing — Use MCP hierarchy plans for complex develo
 
 Condition Type: delegated-work
 
-Owner: Dev Coder (/root/implement_complex_plan_skill), coordinated by Dev Orchestrator (019fe928-e31e-71e2-aaa8-7f9bef12c7b0)
+Owner: Dev Code Reviewer (/root/rereview_complex_plan_code) and Methodology Artifact Reviewer (/root/rereview_complex_plan_methodology), coordinated by Dev Orchestrator (019fe928-e31e-71e2-aaa8-7f9bef12c7b0)
 
-Evidence: Candidate commit d72e1a284a9b832295f2cd9e796f49f21404b6e2 remains preserved. Correction attempt 1 now passes 13 installed-package helper tests, 2 structured focused bundle tests, all 175 full bundle tests, skill and provenance validation, metadata validation, and every generator check mode. Authorized canonical and generated artifacts are updated; one test-file formatting correction and the final post-format gate rerun remain before the replacement commit.
+Evidence: Replacement candidate commit 07b8f090d4a5f895785c3d279589fe3edaa1f218 is clean and immutable above preserved original candidate d72e1a284a9b832295f2cd9e796f49f21404b6e2. It contains exactly 12 authorized correction paths and retains the aggregate 16-path boundary. Fresh functional source and methodology correction re-review are actively evaluating every confirmed finding, the complete candidate, and the larger recovery state machine before independent verification.
 
-Observed At: 2026-08-10T03:03:44Z
+Observed At: 2026-08-10T03:09:31Z
 
-Started At: 2026-08-10T02:21:49Z
+Started At: 2026-08-10T03:08:30Z
 
-Deadline or Expires At: 2026-08-10T03:35:00Z
+Deadline or Expires At: 2026-08-10T03:45:00Z
 
-Next Action: Dev Coder completes the post-format verification rerun, inspects the exact correction diff, and commits one clean replacement candidate for fresh source and methodology re-review.
+Next Action: Both fresh correction reviewers return terminal verdicts for replacement candidate 07b8f090; accepted evidence then routes to independent Dev Verifier, while any remaining confirmed issue follows the bounded correction disposition rule.
 
-Next Reconciliation At: 2026-08-10T03:17:30Z
+Next Reconciliation At: 2026-08-10T03:23:30Z
 
 Codex Task ID: 019fe928-e31e-71e2-aaa8-7f9bef12c7b0
 
@@ -58,11 +58,11 @@ Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/use-mcp-hierarchy-
 
 Starting Head: 9488c71873e19c99b523927bce14ec64da634158
 
-Phase: bounded correction attempt 1 final verification and commit preparation
+Phase: fresh correction source and methodology re-review
 
-Provider Update Claim: mcp-hierarchy-plans-correction-final-update-019fe928; outcome SHARED_CHECKOUT_ACQUIRED; claim event befe609f-db0a-4c5e-ba7d-38b9e5d8f857.
+Provider Update Claim: mcp-hierarchy-plans-rereview-update-019fe928; outcome SHARED_CHECKOUT_ACQUIRED; claim event d528074c-ab33-44dd-ac5c-c225e2c263a5.
 
-Provider Path Claim: mcp-hierarchy-plans-correction-final-path-019fe928; outcome SHARED_CHECKOUT_ACQUIRED; claim event cb4713bb-04c2-4473-a58c-8dc727b25d8d.
+Provider Path Claim: mcp-hierarchy-plans-rereview-path-019fe928; outcome SHARED_CHECKOUT_ACQUIRED; claim event 04daab1f-3fbc-4865-aed2-d21413800344.
 
 ## Starting Handoff Evidence
 
