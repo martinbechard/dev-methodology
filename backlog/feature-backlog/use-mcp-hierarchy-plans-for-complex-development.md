@@ -26,21 +26,21 @@ Required Task Title: Implementing — Use MCP hierarchy plans for complex develo
 
 ## Active Execution Evidence
 
-Condition Type: delegated-work
+Condition Type: root-execution
 
-Owner: Dev Code Reviewer (/root/rereview_complex_plan_code) and Methodology Artifact Reviewer (/root/rereview_complex_plan_methodology), coordinated by Dev Orchestrator (019fe928-e31e-71e2-aaa8-7f9bef12c7b0)
+Owner: Dev Orchestrator (019fe928-e31e-71e2-aaa8-7f9bef12c7b0)
 
-Evidence: Replacement candidate commit 07b8f090d4a5f895785c3d279589fe3edaa1f218 is clean and immutable above preserved original candidate d72e1a284a9b832295f2cd9e796f49f21404b6e2. It contains exactly 12 authorized correction paths and retains the aggregate 16-path boundary. Fresh functional source and methodology correction re-review are actively evaluating every confirmed finding, the complete candidate, and the larger recovery state machine before independent verification.
+Evidence: Fresh functional source and methodology correction re-review both returned NEEDS_CORRECTION for clean replacement candidate 07b8f090d4a5f895785c3d279589fe3edaa1f218 above preserved original candidate d72e1a284a9b832295f2cd9e796f49f21404b6e2. Consolidated correction scope is bounded to strict operation-record terminal semantics, resumable recovery decisions after repeated interruption, recovery tokens that bind every snapshot and expected-render input, a cross-process per-plan single-writer lock with post-lock target revalidation, and truthful inspect-result wording. The candidate remains immutable at the accepted aggregate 16-path boundary; independent verification has not started.
 
-Observed At: 2026-08-10T03:09:31Z
+Observed At: 2026-08-10T03:25:23Z
 
-Started At: 2026-08-10T03:08:30Z
+Started At: 2026-08-10T03:25:23Z
 
-Deadline or Expires At: 2026-08-10T03:45:00Z
+Deadline or Expires At: 2026-08-10T04:10:00Z
 
-Next Action: Both fresh correction reviewers return terminal verdicts for replacement candidate 07b8f090; accepted evidence then routes to independent Dev Verifier, while any remaining confirmed issue follows the bounded correction disposition rule.
+Next Action: Dispatch final bounded correction attempt 2 to the original Dev Coder, preserving the same source branch and authorized path boundary; require focused interruption, snapshot-token, malformed-record, and concurrent-target regressions before fresh independent re-review.
 
-Next Reconciliation At: 2026-08-10T03:23:30Z
+Next Reconciliation At: 2026-08-10T03:39:23Z
 
 Codex Task ID: 019fe928-e31e-71e2-aaa8-7f9bef12c7b0
 
@@ -58,11 +58,11 @@ Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/use-mcp-hierarchy-
 
 Starting Head: 9488c71873e19c99b523927bce14ec64da634158
 
-Phase: fresh correction source and methodology re-review
+Phase: final bounded correction attempt 2 disposition
 
-Provider Update Claim: mcp-hierarchy-plans-rereview-update-019fe928; outcome SHARED_CHECKOUT_ACQUIRED; claim event d528074c-ab33-44dd-ac5c-c225e2c263a5.
+Provider Update Claim: mcp-hierarchy-plans-correction2-update-019fe928; outcome SHARED_CHECKOUT_ACQUIRED; claim event e829ed52-c822-4c13-a2e9-894657d6d70d.
 
-Provider Path Claim: mcp-hierarchy-plans-rereview-path-019fe928; outcome SHARED_CHECKOUT_ACQUIRED; claim event 04daab1f-3fbc-4865-aed2-d21413800344.
+Provider Path Claim: mcp-hierarchy-plans-correction2-path-019fe928; outcome SHARED_CHECKOUT_ACQUIRED; claim event c9de4b0a-12f0-4e54-976d-3411fe5a2afb.
 
 ## Starting Handoff Evidence
 
