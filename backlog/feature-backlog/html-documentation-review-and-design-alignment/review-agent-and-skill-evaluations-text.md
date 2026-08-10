@@ -32,17 +32,17 @@ Condition Type: root-execution
 
 Owner: Dev Orchestrator 019fe928-e2d9-73d3-a647-7fac38731628
 
-Evidence: Visible Codex task 019fe928-e2d9-73d3-a647-7fac38731628 remains the active canonical root execution. Fresh Dev Coder assignment /root/evaluation_text_producer completed the authoritative source inventory and paused before mutation with isolated checkout codex/review-agent-and-skill-evaluations-text-019fb057 clean at baseline 292b55f9578d04438ce5c8d3b34c64b11af0f907.
+Evidence: Visible Codex task 019fe928-e2d9-73d3-a647-7fac38731628 remains the active canonical root execution. Fresh Dev Coder assignment /root/evaluation_text_producer is paused at a bounded checkpoint with one uncommitted generator diff, blob 21c2c67f64c47173fae9f44057b332e869012bd7, in isolated checkout codex/review-agent-and-skill-evaluations-text-019fb057 at baseline 292b55f9578d04438ce5c8d3b34c64b11af0f907; the focused test and generated HTML remain unchanged and no command is running.
 
-Observed At: 2026-08-10T01:05:45Z
+Observed At: 2026-08-10T01:17:11Z
 
 Started At: 2026-08-10T00:57:00Z
 
 Deadline or Expires At: 2026-08-10T04:57:00Z
 
-Next Action: Reacquire the exact Work Item activity=work and generator/output path claims, then resume the same Dev Coder assignment for the bounded text correction.
+Next Action: Reacquire the exact Work Item activity=work and three-path source claim, then resume the same Dev Coder to update the focused navigation assertion, regenerate the HTML, run focused checks, and commit the candidate.
 
-Next Reconciliation At: 2026-08-10T01:19:45Z
+Next Reconciliation At: 2026-08-10T01:31:11Z
 
 ## Starting Handoff Evidence
 
