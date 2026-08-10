@@ -1267,7 +1267,7 @@ class BundleContentTests(unittest.TestCase):
             "16-owner, 118-identity",
             "does not mark inherited failures as passing",
             "same-identity cause drift",
-            "classified ordinary skips appear in `excluded_cases`",
+            "classified ordinary skips appear in excluded_cases",
             "stable sanitized terminal diagnostic",
             "A successful native Windows job establishes",
             "A non-Windows preflight does not establish native Windows execution",

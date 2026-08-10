@@ -827,6 +827,18 @@ def _run_windows_job_owned_command(command: Sequence[str], timeout_seconds: floa
             ("PeakJobMemoryUsed", ctypes.c_size_t),
         )
 
+    class _JobObjectBasicAccountingInformation(ctypes.Structure):
+        _fields_ = (
+            ("TotalUserTime", ctypes.c_int64),
+            ("TotalKernelTime", ctypes.c_int64),
+            ("ThisPeriodTotalUserTime", ctypes.c_int64),
+            ("ThisPeriodTotalKernelTime", ctypes.c_int64),
+            ("TotalPageFaultCount", wintypes.DWORD),
+            ("TotalProcesses", wintypes.DWORD),
+            ("ActiveProcesses", wintypes.DWORD),
+            ("TotalTerminatedProcesses", wintypes.DWORD),
+        )
+
     class _StartupInfo(ctypes.Structure):
         _fields_ = (
             ("cb", wintypes.DWORD),
@@ -867,6 +879,16 @@ def _run_windows_job_owned_command(command: Sequence[str], timeout_seconds: floa
         wintypes.DWORD,
     )
     kernel32.SetInformationJobObject.restype = wintypes.BOOL
+    kernel32.QueryInformationJobObject.argtypes = (
+        wintypes.HANDLE,
+        ctypes.c_int,
+        ctypes.c_void_p,
+        wintypes.DWORD,
+        ctypes.POINTER(wintypes.DWORD),
+    )
+    kernel32.QueryInformationJobObject.restype = wintypes.BOOL
+    kernel32.GetStdHandle.argtypes = (wintypes.DWORD,)
+    kernel32.GetStdHandle.restype = wintypes.HANDLE
     kernel32.CreateProcessW.argtypes = (
         wintypes.LPCWSTR,
         wintypes.LPWSTR,
@@ -899,9 +921,34 @@ def _run_windows_job_owned_command(command: Sequence[str], timeout_seconds: floa
     wait_timeout = 258
     create_suspended = 0x00000004
     create_new_process_group = 0x00000200
+    STARTF_USESTDHANDLES = 0x00000100
+    std_input_handle = 0xFFFFFFF6
+    std_output_handle = 0xFFFFFFF5
+    std_error_handle = 0xFFFFFFF4
+    invalid_handle_value = ctypes.c_void_p(-1).value
+    job_object_basic_accounting_information = 1
     job_object_extended_limit_information = 9
     cleanup_timeout_ms = int(_CLEANUP_TIMEOUT_SECONDS * 1000)
     command_timeout_ms = min(0xFFFFFFFE, max(1, int(timeout_seconds * 1000)))
+
+    def wait_for_empty_job() -> None:
+        deadline = time.monotonic() + _CLEANUP_TIMEOUT_SECONDS
+        while True:
+            accounting = _JobObjectBasicAccountingInformation()
+            returned_length = wintypes.DWORD()
+            if not kernel32.QueryInformationJobObject(
+                job,
+                job_object_basic_accounting_information,
+                ctypes.byref(accounting),
+                ctypes.sizeof(accounting),
+                ctypes.byref(returned_length),
+            ):
+                raise ctypes.WinError(ctypes.get_last_error())
+            if accounting.ActiveProcesses == 0:
+                return
+            if time.monotonic() >= deadline:
+                raise RuntimeError("Windows command job did not become empty")
+            time.sleep(0.01)
 
     job = kernel32.CreateJobObjectW(None, None)
     if not job:
@@ -920,6 +967,15 @@ def _run_windows_job_owned_command(command: Sequence[str], timeout_seconds: floa
 
         startup = _StartupInfo()
         startup.cb = ctypes.sizeof(startup)
+        startup.dwFlags = STARTF_USESTDHANDLES
+        startup.hStdInput = kernel32.GetStdHandle(std_input_handle)
+        startup.hStdOutput = kernel32.GetStdHandle(std_output_handle)
+        startup.hStdError = kernel32.GetStdHandle(std_error_handle)
+        if any(
+            handle in (None, invalid_handle_value)
+            for handle in (startup.hStdInput, startup.hStdOutput, startup.hStdError)
+        ):
+            raise ctypes.WinError(ctypes.get_last_error())
         command_line = ctypes.create_unicode_buffer(subprocess.list2cmdline(list(command)))
         if not kernel32.CreateProcessW(
             None,
@@ -949,11 +1005,7 @@ def _run_windows_job_owned_command(command: Sequence[str], timeout_seconds: floa
                 error_code = ctypes.get_last_error()
                 if not kernel32.TerminateJobObject(job, 126):
                     raise ctypes.WinError(ctypes.get_last_error())
-                if kernel32.WaitForSingleObject(
-                    process_information.hProcess,
-                    cleanup_timeout_ms,
-                ) != wait_object_0:
-                    raise RuntimeError("Suspended Windows command did not terminate")
+                wait_for_empty_job()
                 raise ctypes.WinError(error_code)
 
             wait_result = kernel32.WaitForSingleObject(
@@ -963,11 +1015,7 @@ def _run_windows_job_owned_command(command: Sequence[str], timeout_seconds: floa
             if wait_result == wait_timeout:
                 if not kernel32.TerminateJobObject(job, 124):
                     raise ctypes.WinError(ctypes.get_last_error())
-                if kernel32.WaitForSingleObject(
-                    process_information.hProcess,
-                    cleanup_timeout_ms,
-                ) != wait_object_0:
-                    raise RuntimeError("Timed-out Windows command tree did not terminate")
+                wait_for_empty_job()
                 return 124
             if wait_result != wait_object_0:
                 raise ctypes.WinError(ctypes.get_last_error())
@@ -980,6 +1028,7 @@ def _run_windows_job_owned_command(command: Sequence[str], timeout_seconds: floa
                 raise ctypes.WinError(ctypes.get_last_error())
             if not kernel32.TerminateJobObject(job, 1):
                 raise ctypes.WinError(ctypes.get_last_error())
+            wait_for_empty_job()
             return int(exit_code.value)
         finally:
             close_error = 0
