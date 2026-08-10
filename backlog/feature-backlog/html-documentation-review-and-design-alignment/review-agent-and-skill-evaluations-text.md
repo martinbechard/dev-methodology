@@ -24,7 +24,7 @@ Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/review-agent-skill
 
 Candidate Commit: 5043884e3a2d31ca0c86be33338447a306004578
 
-Phase: Narrow Codex reference configuration recovery
+Phase: Applying preserved singular-grammar correction
 
 Started At: 2026-08-10T00:49:58Z
 
@@ -34,17 +34,17 @@ Condition Type: root-execution
 
 Owner: Dev Orchestrator 019fe928-e2d9-73d3-a647-7fac38731628
 
-Evidence: The same visible canonical Codex task accepted the durable recovery handoff after User Action Required to Ready commit f78028f7 and Ready to Starting commit bc144e64. The user's exact approved recovery is limited to adding MCP_AGENT_OPS_REFERENCE_ROOTS and MCP_AGENT_OPS_REFERENCE_NAMES to the existing mcp-agent-ops environment table in /Users/martinbechard/.codex/config.toml, with backup, TOML validation, and a fresh service/session reference_load verification. The broad user-scope installer is explicitly excluded. Clean candidate 5043884e3a2d31ca0c86be33338447a306004578 and all prior review and verification evidence remain preserved.
+Evidence: The same visible canonical Codex task completed the user's narrow configuration-only recovery without running the broad installer. The active config now differs from task-specific backup /Users/martinbechard/.codex/config.toml.bak.review-agent-and-skill-evaluations-text.20260810T022232Z by exactly MCP_AGENT_OPS_REFERENCE_ROOTS and MCP_AGENT_OPS_REFERENCE_NAMES. TOML validation passed. A genuinely fresh mcp-agent-ops 0.9.0 stdio process using the active configured values returned ok true, project-scope terminology.md, catalog revision 2388741065caa47c5c032fc72db2b953d23607d1ef18c0548b3d6446de495aff, and digest 4bf18f7862b783170600a88dd1ebbb4351389133099db24464101df42ece751d. The current Codex host retains its pre-change MCP environment, which explains the unchanged built-in probe result but does not invalidate the fresh-process verification. Shared config claim review-agent-and-skill-evaluations-text-codex-config-install-9 is released. The earlier exact source-path request waited on specialization-main-integration-019fe928; its owner now reports RELEASED after independently verified main commit d0d6a16d6c88449e3ad5c7955f8498998c6f89c3, so the same task is proceeding to guarded reacquisition and the preserved one-label correction.
 
-Observed At: 2026-08-10T02:21:06Z
+Observed At: 2026-08-10T02:31:20Z
 
-Started At: 2026-08-10T02:20:43Z
+Started At: 2026-08-10T02:31:20Z
 
 Deadline or Expires At: 2026-08-10T03:20:43Z
 
-Next Action: Commit this Starting to Running transition, acquire activity=work and the exact shared-install configuration resource, apply and verify only the two-line configuration repair, then correct the preserved singular-grammar finding and repeat fresh independent gates.
+Next Action: Reacquire the exact generator, focused test, and generated HTML paths; apply only the preserved singular-grammar fix and focused assertion; regenerate the HTML; then repeat fresh independent review and verification.
 
-Next Reconciliation At: 2026-08-10T02:35:43Z
+Next Reconciliation At: 2026-08-10T02:46:20Z
 
 ## Recovery Handoff Evidence
 
