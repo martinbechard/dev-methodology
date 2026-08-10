@@ -22,11 +22,7 @@ The Skill defines when to create the outline, how to express it using the generi
 
 ## Source Evidence
 
-The user requested a new skill for improving documentation writing by converting a large amount of raw information into an HTML outline through mcp-agent-ops, for preparation of a full document or human review. On 2026-08-10 in canonical task 019fb057-1767-7ef2-b5fa-41f4417b20b3, the user clarified that the model should take the document structure it has developed and put that structure into a hierarchy. The user then directed:
-
-> Create a new workitem as if we had never done anything.
-
-This request authorizes the Skill and its exact governed routing scope below.
+The user requested a new Skill that improves documentation writing by converting a large body of raw information into an HTML outline through mcp-agent-ops. The outline is intended for document preparation or human review when a document must incorporate substantial source material. On 2026-08-10 in canonical task 019fb057-1767-7ef2-b5fa-41f4417b20b3, the user clarified that the model performs the semantic work: it determines the document structure and places that structure into the generic hierarchy used by the MCP tools. This request authorizes the Skill and its exact governed routing scope below.
 
 ## Requirements
 
@@ -97,7 +93,7 @@ None.
 
 ### Approval Resolution
 
-Approved at creation. The user explicitly requested a new document-outline Skill using mcp-agent-ops and, on 2026-08-10 in canonical task 019fb057-1767-7ef2-b5fa-41f4417b20b3, directed that this Work item be created from a clean-slate understanding. Approval covers exactly the governed canonical sources and dependent artifacts listed above. It does not authorize another Skill, Agent definition, local executable helper, or unrelated generated surface.
+Approved at creation. The user explicitly requested a new document-outline Skill using mcp-agent-ops and clarified on 2026-08-10 in canonical task 019fb057-1767-7ef2-b5fa-41f4417b20b3 that the model determines the document structure before submitting it through the generic MCP hierarchy interface. Approval covers exactly the governed canonical sources and dependent artifacts listed above. It does not authorize another Skill, Agent definition, local executable helper, or unrelated generated surface.
 
 ## Notes
 
