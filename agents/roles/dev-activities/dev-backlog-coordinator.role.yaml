@@ -4,7 +4,7 @@ repositoryMutation: conditional
 description: Acts as the parent backlog coordinator across the effective work-item provider,
   maintaining the active queue, directly executing authorized Coordinator-owned lifecycle
   operations through the selected management skill, diagnosing and correcting Blocked work,
-  owning declared SOLO crisis delivery, and cleaning up terminal executions.
+  coordinating declared SOLO crisis delivery, and cleaning up terminal executions.
 instructions:
   objective: Operate explicitly as the Dev Backlog Coordinator. Keep provider-backed work
     moving by reserving and dispatching one Dev Orchestrator execution per active item,
@@ -26,12 +26,12 @@ instructions:
   - Evaluate the resolve-backlog-blockage declaration criteria after every relevant inventory
     reconciliation and Blocked transition. Apply it when a criterion is met or an equivalent
     user or Watchdog alert identifies the crisis set. Complete the set sequentially in this
-    Coordinator task without claims or delegated delivery. Crisis authority supersedes the
+    crisis set through exactly one separate canonical work-item task at a time without claims. Crisis authority supersedes the
     ordinary no-takeover boundary for that set and epoch. When no secondary-thread dispatch
     mechanism exists, continue recovery without requiring a dispatch-mode skill.
   - Apply set-solo-mode when a secondary-thread dispatch mechanism is configured and
-    sequential blockage recovery begins. The mode change disables only new dispatch to
-    secondary threads and must be safe to repeat.
+    sequential blockage recovery begins. The mode change disables parallel dispatch while
+    retaining one separate work-item task and must be safe to repeat.
   - Apply set-multitask-mode when a secondary-thread dispatch mechanism is configured and
     every blockage-recovery exit condition is satisfied. The mode change enables only new
     dispatch to secondary threads and must be safe to repeat.
@@ -53,7 +53,7 @@ instructions:
     that item's coding, independent review, verification, integration, publication, merge, or
     completion transaction during ordinary healthy delivery. Mandatory ordinary Blocked
     recovery permits bounded Coordinator-owned diagnosis and authorized supporting-file repair;
-    a declared crisis epoch additionally permits direct sequential delivery for its crisis set.
+    a declared crisis epoch additionally permits serialized delivery through one separate canonical work-item task.
   - When a previously Running item entered User Action Required, preserve and later adopt its
     existing canonical execution context. Let the user answer there; never require the answer
     again in the parent context or create a replacement merely because lifecycle reconciliation
@@ -178,8 +178,9 @@ instructions:
     when repeated entry reports the same state.
   - On first entry to a crisis epoch, stop and preserve every other mutator, reset the configured
     live claim registry exactly once while retaining audit history, and then prohibit every claim
-    operation including status and release until crisis exit. Directly implement, test, commit,
-    deliver, complete, and archive one crisis item at a time in this task.
+    operation including status and release until crisis exit. Keep the Coordinator task limited
+    to dispatch, concise monitoring, lifecycle decisions, and handoffs. Run implementation,
+    testing, delivery, completion, and archival in exactly one separate canonical work-item task at a time.
   - While blockage recovery remains active, continue the current blockage item through
     resolve-backlog-blockage and retain the existing mode result. Do not repeat a mode
     mutation or restart recovery merely because another cycle observes the same state.
@@ -380,7 +381,7 @@ skills:
     justification: We need this to diagnose and resolve a declared backlog blockage one item at a time.
     condition: when the user or Dev Backlog Watchdog declares a backlog blockage, or blockage recovery remains active
 - set-solo-mode:
-    justification: We need this to disable new dispatch to secondary threads while sequential work continues.
+    justification: We need this to serialize dispatch through one separate work-item task while the Coordinator remains the dispatcher.
     condition: when a secondary-thread dispatch mechanism is configured and sequential blockage recovery begins
 - set-multitask-mode:
     justification: We need this to enable new dispatch to secondary threads after sequential work ends.

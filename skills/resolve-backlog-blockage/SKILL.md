@@ -1,6 +1,6 @@
 ---
 name: resolve-backlog-blockage
-description: Resolve a declared backlog blockage sequentially in one Coordinator task without claims or delegated delivery.
+description: Resolve a declared backlog blockage through one separate work-item task at a time while the Coordinator dispatches and monitors.
 metadata:
   category: development-practice
 ---
@@ -30,7 +30,7 @@ The declaration names the triggering condition, time, queue counts, initial Bloc
 
 Declared crisis recovery supersedes the Coordinator's ordinary no-takeover boundary and the ordinary resource-claim requirement only for the active crisis set and epoch.
 
-1. Stop new dispatch and enter regular SOLO mode.
+1. Stop parallel dispatch and enter regular SOLO mode, which permits exactly one separate work-item task at a time.
 2. Stop or pause every other mutating execution at a safe preservation boundary. Preserve commits, diffs, candidates, worktrees, review, verification, and blocker evidence.
 3. After preservation is verified, invoke the configured claim helper's reset operation exactly once for the new crisis epoch. The reset must leave the live registry empty and preserve claim-event audit history.
 4. After that reset, do not perform any claim status, acquire, extend, deadline extension, heartbeat, release, wait, retry, report, maintenance, or additional reset operation while the crisis epoch remains active.
@@ -39,11 +39,11 @@ The crisis-epoch marker and the reset event are durable evidence preventing repe
 
 ## Recovery
 
-The sole Coordinator directly owns delivery for the blockage set in its existing task.
+The Coordinator remains the dispatcher. It does not implement crisis items in the dispatcher task when a separate-task mechanism is available.
 
-1. Process exactly one blockage item at a time without claims or delegated delivery.
-2. Keep all other mutation stopped while the current item is active.
-3. Read the current item and review current changes to understand what was done so far.
+1. Dispatch exactly one blockage item to one separate canonical work-item task at a time, without claims.
+2. Keep every other work-item task and mutation stopped while that task is active.
+3. Have the work-item task read the current item and review current changes to understand what was done so far.
 4. Confirm that the recorded blocker still exists.
 5. Rewrite unclear objectives, terms, requirements, or blockers before implementation.
 6. Remove requirements that do not contribute to the requested outcome.
@@ -52,6 +52,10 @@ The sole Coordinator directly owns delivery for the blockage set in its existing
 9. Run focused tests for the changed behavior and its direct consumers.
 10. Commit the current item before starting another item.
 11. Finish and archive the item as Completed, Abandoned, or Superseded before starting another item.
+
+Preserve historical commits, candidates, reviews, and lifecycle records in their durable locations. Do not reconstruct, reread, or restate the complete history unless a specific current ambiguity cannot be resolved from the current item and current changes.
+
+Work-item receipts to the Coordinator contain only the current state, changed paths, latest check or blocker, and next action. Do not repeat claim events, superseded candidate histories, prior lifecycle transitions, or previously accepted evidence unless one is directly required for the next decision.
 
 Unrelated modified files do not stop blockage recovery. Stop only for an overlapping change to a file required by the current item. Adopt interrupted work when its ownership and purpose are clear; otherwise reconcile that exact overlap.
 
@@ -89,4 +93,4 @@ The user may end blockage recovery. Report any unresolved blockage items before 
 
 ## Result
 
-Report the blockage trigger, current blockage item, completed items, unresolved items, focused checks, commits, and whether every exit condition is satisfied.
+Report the blockage trigger once. Subsequent reports contain only the current item, changes since the prior report, latest focused check or blocker, next action, and whether every exit condition is satisfied.

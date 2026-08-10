@@ -1,6 +1,6 @@
 ---
 name: set-multitask-mode
-description: Enable dispatch to secondary threads after the condition requiring solo work has ended.
+description: Re-enable parallel dispatch after the condition requiring serialized work has ended.
 metadata:
   category: development-practice
 ---
@@ -24,7 +24,7 @@ Task-ID-Evidence: historical-unknown
 
 # Set Multitask Mode
 
-Use this skill when dispatch to secondary threads may resume after a condition requiring solo work has ended.
+Use this skill when parallel dispatch may resume after a condition requiring serialized work has ended.
 
 This procedure changes only the secondary-thread dispatch setting. It does not diagnose domain problems, select work-item states, or alter provider records.
 
@@ -53,8 +53,8 @@ If the root file exists but fails its applicable validation gate, do not infer c
 6. When no secondary-thread dispatch mechanism is configured, return NOT_APPLICABLE without mutation.
 7. Read the current dispatch setting before changing it.
 8. When dispatch is already enabled, return ALREADY_MULTITASK without mutation.
-9. Enable dispatch to secondary threads.
-10. Verify that new secondary-thread dispatch is enabled for the intended coordination context.
+9. Enable parallel dispatch to secondary threads.
+10. Verify that parallel dispatch is enabled for the intended coordination context.
 
 Do not create, select, or launch secondary-thread work as part of changing the mode. Do not change capacity, priority, provider, or work-item state.
 

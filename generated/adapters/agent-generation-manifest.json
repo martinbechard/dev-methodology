@@ -61,7 +61,7 @@
             "ste-technical-writing",
             "manage-work-items"
           ],
-          "sha256": "ed2c69136b98c8c3690f33a6bb061da50f5cf9b04bd8bb6e4e2aa5a58a5f57fa",
+          "sha256": "4d7e3349cca70095d12a7faa77e0629804366546f9898dbcc1539aeba38d2e7a",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
@@ -1207,7 +1207,7 @@
             "manage-work-items",
             "codex-harness-directives"
           ],
-          "sha256": "e45c22dc7abd146a941334a1555007278288981d445052e4b0a6a9a023d5ed81",
+          "sha256": "c29f02010f5dd996a09d9c4144f28d916441c9dcba976d86395ee5160cb041aa",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
@@ -2384,7 +2384,7 @@
             "ste-technical-writing",
             "manage-work-items"
           ],
-          "sha256": "dae13f675b3178ce0d938540c74c0aeafcec27f7212664a77a3d800b355ff4a9",
+          "sha256": "4cb45a29a980b57857ded6bf59655786b7e48cec948f8b08d1eb06e2ceb2376e",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
@@ -3571,7 +3571,7 @@
             "ste-technical-writing",
             "manage-work-items"
           ],
-          "sha256": "44bd6931451d40540e88e0274411ddaf05bf0cf85461041a83b1c195f0ede084",
+          "sha256": "90435fab15be401fd923b8f2511cd5fc36c1e58839b5b1e84752777d30a4941c",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {

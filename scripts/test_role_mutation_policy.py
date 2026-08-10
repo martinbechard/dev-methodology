@@ -306,7 +306,10 @@ class RoleMutationPolicyTests(unittest.TestCase):
             "Do not inspect or change a secondary-thread dispatch mechanism for this fallback.",
             solo,
         )
-        self.assertIn("The current Agent continues the work itself.", solo)
+        self.assertIn(
+            "the dispatcher coordinates and the single work-item task performs the work.",
+            solo,
+        )
         self.assertIn(
             "When PROJECT.yaml is absent from the repository root, do not enable secondary-thread dispatch.",
             multitask,

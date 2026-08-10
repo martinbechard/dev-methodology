@@ -1973,8 +1973,10 @@ class BundleContentTests(unittest.TestCase):
         for phrase in (
             "invoke the configured claim helper's reset operation exactly once",
             "do not perform any claim status, acquire, extend, deadline extension, heartbeat, release, wait, retry, report, maintenance, or additional reset operation",
-            "Process exactly one blockage item at a time without claims or delegated delivery.",
-            "Read the current item and review current changes to understand what was done so far.",
+            "Dispatch exactly one blockage item to one separate canonical work-item task at a time, without claims.",
+            "Have the work-item task read the current item and review current changes to understand what was done so far.",
+            "Do not reconstruct, reread, or restate the complete history unless a specific current ambiguity cannot be resolved",
+            "Work-item receipts to the Coordinator contain only the current state, changed paths, latest check or blocker, and next action.",
             "Commit the current item before starting another item.",
             "Moving an item to Ready does not resolve it.",
             "When the same blockage state and recovery result are observed again, return the existing result without repeating lifecycle mutation.",
@@ -1984,13 +1986,13 @@ class BundleContentTests(unittest.TestCase):
         for skill_text, action, unchanged_result, sibling in (
             (
                 solo_text,
-                "Disable dispatch to secondary threads.",
+                "Disable parallel dispatch while retaining serial dispatch of one separate work-item task.",
                 "ALREADY_SOLO",
                 "set-multitask-mode",
             ),
             (
                 multitask_text,
-                "Enable dispatch to secondary threads.",
+                "Enable parallel dispatch to secondary threads.",
                 "ALREADY_MULTITASK",
                 "set-solo-mode",
             ),
@@ -10774,9 +10776,9 @@ Visible after.
         for phrase in (
             "After a new work item is persisted",
             "It does not reserve capacity, change lifecycle state, create a delivery execution, or start implementation.",
-            "Resolve Backlog Blockage owns diagnosis and one-item-at-a-time recovery",
-            "Set Solo Mode disables only new secondary-thread dispatch",
-            "Set Multitask Mode enables new dispatch only after every blockage item is terminal",
+            "Resolve Backlog Blockage owns one-item-at-a-time recovery",
+            "Set Solo Mode disables parallel dispatch while retaining serial dispatch of one task",
+            "Set Multitask Mode restores parallel dispatch only after every blockage item is terminal",
             "Repeated transitions preserve the effective setting",
             "Release removes the named live claim while the registry is locked",
             "reset creates an empty claim registry before new work is dispatched.",

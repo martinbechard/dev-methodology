@@ -4,9 +4,9 @@ interface:
   # User-facing name shown in Codex skill surfaces.
   display_name: Set Multitask Mode
   # User-facing summary shown in Codex skill surfaces.
-  short_description: Enable dispatch to secondary threads after the condition requiring solo work has ended.
+  short_description: Re-enable parallel dispatch after the condition requiring serialized work has ended.
   # Prompt Codex can use when launching this skill directly.
-  default_prompt: Use $set-multitask-mode to enable dispatch to secondary threads for the current coordination context.
+  default_prompt: Use $set-multitask-mode to re-enable parallel dispatch for the current coordination context.
 
 # Optional invocation policy placeholder.
 # policy:
