@@ -36,17 +36,17 @@ Condition Type: delegated-work
 
 Owner: Original Dev Coder /root/windows_portability_coder under visible Root Dev Orchestrator 019fe928-e2d8-7f91-91b2-bd27990a7414
 
-Evidence: The corrected aggregate again failed closed after all 21 portability-contract tests passed. It rejected exactly failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_timeout_kills_the_owned_process_group_and_cleans_workspace in evals/agent-tests/project-bootstrapper/test_scripted_orchestration.py. Because scripted_orchestration.py is one of the two newly corrected process launchers, this is treated as a candidate regression until isolated evidence proves otherwise; it was not baselined or excluded. The POSIX case must remain green locally, while only a genuinely Windows-specific assertion may receive case-level handling. All mutation is paused with exactly seven changed paths.
+Evidence: The corrected aggregate is green with outcome PORTABLE_PREFLIGHT_PASSED. It classifies all 160 tracked Python files as 85 portable, 4 corrected, 21 mixed, and 50 fixtures; executes 21 command smokes plus 63 supported test entry points and 1,525 selected cases; and observes exactly 15 inherited failing owners with 117 identities against the authorized 16-owner and 118-identity baseline. Exactly two authorized entries are reported resolved, with no new or changed identity. Twenty exact local capability exclusions span three files, two inherited command failures remain visible, git diff --check is clean, and the eight-path correction is paused before final focused and freshness verification.
 
-Observed At: 2026-08-10T03:39:22Z
+Observed At: 2026-08-10T03:52:15Z
 
-Started At: 2026-08-10T03:39:22Z
+Started At: 2026-08-10T03:52:15Z
 
 Deadline or Expires At: 2026-08-10T04:49:31Z
 
-Next Action: Complete this short provider transaction, reacquire the visible root's exact activity=work claim, then release the original Dev Coder to isolate and correct the process-group regression before rerunning the aggregate and remaining verification.
+Next Action: Complete this short provider transaction, reacquire the visible root's exact activity=work claim, then release the original Dev Coder to run focused mixed-suite, locking, process, negative-inventory, generated-freshness, provenance, diff, and status checks before the replacement-candidate commit.
 
-Next Reconciliation At: 2026-08-10T03:54:22Z
+Next Reconciliation At: 2026-08-10T04:07:15Z
 
 ## Execution Identity
 
@@ -64,7 +64,7 @@ Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/make-python-window
 
 Current Phase: Implementing
 
-Work-Item Claim: Visible claim python-windows-portability-visible-work-13-019fe928 was released with handoff only for this fail-closed candidate-regression evidence refresh; source mutation remains paused until the visible root reacquires the exact activity=work claim.
+Work-Item Claim: Visible claim python-windows-portability-visible-work-14-019fe928 was released with handoff only for this green aggregate evidence refresh; source mutation remains paused until the visible root reacquires the exact activity=work claim.
 
 ## Execution Handoff Reconciliation
 
