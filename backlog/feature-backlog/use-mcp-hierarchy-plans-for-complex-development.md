@@ -28,19 +28,19 @@ Required Task Title: Implementing — Use MCP hierarchy plans for complex develo
 
 Condition Type: delegated-work
 
-Owner: Dev Coder (/root/implement_complex_plan_skill), coordinated by Dev Orchestrator (019fe928-e31e-71e2-aaa8-7f9bef12c7b0)
+Owner: Dev Code Reviewer (/root/final_review_complex_plan_code) and Methodology Artifact Reviewer (/root/final_review_complex_plan_methodology), coordinated by Dev Orchestrator (019fe928-e31e-71e2-aaa8-7f9bef12c7b0)
 
-Evidence: Final bounded correction attempt 2 remains confined to the authorized skill, helper, and helper-test paths above clean replacement candidate 07b8f090d4a5f895785c3d279589fe3edaa1f218. The complete installed-package helper suite reached 19 of 19 passing cases for strict journal semantics, repeated-interruption prepared recovery, snapshot and renderer drift, lock timeout, concurrent dotted-target shifting, and the import-safe Windows lock branch. Python 3.11 compilation is green after a stricter exact-field result-schema refinement; that refinement still requires the final test rerun, formatting, bundle, generator, and validator checks. The lane was paused at a safe boundary solely for this provider reconciliation, with no blocker or authority expansion. Independent verification has not started.
+Evidence: Clean immutable final-attempt candidate 3ad236c3a1017e7ec9b2238e4ba2e8dcec7f4ead is committed above preserved corrections 07b8f090d4a5f895785c3d279589fe3edaa1f218 and d72e1a284a9b832295f2cd9e796f49f21404b6e2. The final correction changes exactly five authorized paths and retains the aggregate 16-path boundary. Coder verification is green for the 19-case installed-package helper suite, two focused bundle cases, all 175 bundle tests, Ruff, compilation, generator freshness, skill validation, metadata, provenance, and diff checks; the two known role-mutation-policy failures remain tied to an unchanged out-of-scope delivery skill. Fresh independent functional source and methodology reviewers are now evaluating the complete candidate and every final correction category. Independent verification has not started.
 
-Observed At: 2026-08-10T03:51:13Z
+Observed At: 2026-08-10T04:07:39Z
 
-Started At: 2026-08-10T03:25:23Z
+Started At: 2026-08-10T04:07:39Z
 
 Deadline or Expires At: 2026-08-10T04:45:00Z
 
-Next Action: Reacquire the exact activity=work claim, resume the same Dev Coder, rerun the complete helper suite after the schema refinement, finish full checks, commit the clean replacement candidate, then route it to fresh independent source and methodology review.
+Next Action: Both fresh reviewers return terminal verdicts for candidate 3ad236c3; accepted review evidence then routes to a new independent Dev Verifier, while any repeated confirmed defect triggers the bounded correction blocker rule.
 
-Next Reconciliation At: 2026-08-10T04:06:13Z
+Next Reconciliation At: 2026-08-10T04:21:39Z
 
 Codex Task ID: 019fe928-e31e-71e2-aaa8-7f9bef12c7b0
 
@@ -58,11 +58,11 @@ Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/use-mcp-hierarchy-
 
 Starting Head: 9488c71873e19c99b523927bce14ec64da634158
 
-Phase: final bounded correction attempt 2 verification
+Phase: final correction fresh independent review
 
-Provider Update Claim: mcp-hierarchy-plans-correction2-green-update-019fe928; outcome SHARED_CHECKOUT_ACQUIRED; claim event d7776543-41f3-4792-946e-53da504b46e8.
+Provider Update Claim: mcp-hierarchy-plans-final-review-update-019fe928; outcome SHARED_CHECKOUT_ACQUIRED; claim event 00e792d1-38de-40b1-8232-13e0e8a31726.
 
-Provider Path Claim: mcp-hierarchy-plans-correction2-green-path-019fe928; outcome SHARED_CHECKOUT_ACQUIRED; claim event 48bae208-20e8-4e9f-9d8e-21fb9e54505d.
+Provider Path Claim: mcp-hierarchy-plans-final-review-path-019fe928; outcome SHARED_CHECKOUT_ACQUIRED; claim event 62a1d332-de93-446a-b20e-1d5380f45ce5.
 
 ## Starting Handoff Evidence
 
