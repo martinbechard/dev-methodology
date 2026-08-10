@@ -426,6 +426,19 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
             )
         )
 
+    def test_skill_catalog_counts_use_singular_grammar_for_one_skill(self) -> None:
+        """One-item skill catalog states must use singular nouns and verbs."""
+        self.assertIn(
+            "1 skill has only indirect current Test suite coverage without a direct "
+            "probe or Evaluation result.",
+            self.page,
+        )
+        self.assertIn(
+            "1 skill has no recorded evaluation evidence.",
+            self.page,
+        )
+        self.assertNotRegex(self.page, r"\b1 skills (?:have|are)\b")
+
     def test_page_preserves_verdict_and_evidence_semantics(self) -> None:
         """The page must name distinct verdict, manual, calibration, and containment states."""
         for text in (

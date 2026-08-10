@@ -815,6 +815,15 @@ def percent(numerator: int, denominator: int) -> str:
     return "0.0%" if denominator == 0 else f"{numerator / denominator:.1%}"
 
 
+def skill_count_phrase(
+    count: int, singular_predicate: str, plural_predicate: str
+) -> str:
+    """Render a source-derived skill count with grammatical number agreement."""
+    noun = "skill" if count == 1 else "skills"
+    predicate = singular_predicate if count == 1 else plural_predicate
+    return f"{count} {noun} {predicate}"
+
+
 def render_skill_card(skill: dict[str, object]) -> str:
     """Render one complete static skill entry with probe and campaign limitations."""
     probe = skill["probe"]
@@ -1207,7 +1216,7 @@ def render_page(model: dict[str, object]) -> str:
       <article class="metric"><strong>{model['associationCatalogCounts']['workflowPacks']}</strong><span>Workflow packs</span></article>
     </div>
     <div class="grid" style="margin-top:1rem">
-      <article class="method-card"><h3>Skill catalog states</h3><ul><li>{summary['directGovernedSkillCount']} skills have a direct governed Evaluation result.</li><li>{summary['directProbeSkillCount']} skills have a direct diagnostic probe declaration but no direct Evaluation result.</li><li>{summary['indirectOnlySkillCount']} skills have only indirect current Test suite coverage without a direct probe or Evaluation result.</li><li>{summary['noRecordedEvidenceSkillCount']} skills have no recorded evaluation evidence.</li><li>{summary['skillsWithGovernedLinks']} skills are named by at least one scenario in the selected Campaign; {summary['skillsWithoutGovernedLinks']} are not.</li></ul><p><strong>No skill-level Evaluation result:</strong> The selected Test report publishes no skill-level Evaluation results. Linked PASS results remain agent-scenario evidence.</p></article>
+      <article class="method-card"><h3>Skill catalog states</h3><ul><li>{skill_count_phrase(int(summary['directGovernedSkillCount']), 'has a direct governed Evaluation result.', 'have a direct governed Evaluation result.')}</li><li>{skill_count_phrase(int(summary['directProbeSkillCount']), 'has a direct diagnostic probe declaration but no direct Evaluation result.', 'have a direct diagnostic probe declaration but no direct Evaluation result.')}</li><li>{skill_count_phrase(int(summary['indirectOnlySkillCount']), 'has only indirect current Test suite coverage without a direct probe or Evaluation result.', 'have only indirect current Test suite coverage without a direct probe or Evaluation result.')}</li><li>{skill_count_phrase(int(summary['noRecordedEvidenceSkillCount']), 'has no recorded evaluation evidence.', 'have no recorded evaluation evidence.')}</li><li>{skill_count_phrase(int(summary['skillsWithGovernedLinks']), 'is named by at least one scenario in the selected Campaign', 'are named by at least one scenario in the selected Campaign')}; {skill_count_phrase(int(summary['skillsWithoutGovernedLinks']), 'is not.', 'are not.')}</li></ul><p><strong>No skill-level Evaluation result:</strong> The selected Test report publishes no skill-level Evaluation results. Linked PASS results remain agent-scenario evidence.</p></article>
     </div>
   </section>
 
