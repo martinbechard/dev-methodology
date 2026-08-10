@@ -1,8 +1,8 @@
 # Create HTML Document Outlines from Raw Information
 
-Owner: Dev Orchestrator pending task acceptance
+Owner: Dev Orchestrator task /root/create_document_outline
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -90,6 +90,24 @@ Canonical Execution: Pending child task creation
 Last Contact At: 2026-08-10T19:48:53Z
 
 Next Reconciliation At: 2026-08-10T20:03:53Z
+
+## Active Execution Evidence
+
+Condition Type: root-execution
+
+Owner: Dev Orchestrator task /root/create_document_outline
+
+Evidence: The canonical root Dev Orchestrator accepted the Starting handoff and is implementing the approved document-outline skill as the single active SOLO crisis work-item task.
+
+Observed At: 2026-08-10T19:49:51Z
+
+Started At: 2026-08-10T19:49:51Z
+
+Deadline or Expires At: 2026-08-10T21:49:51Z
+
+Next Action: Implement the exact approved skill, routing, focused tests, generated artifacts, review, verification, delivery, and provider closure.
+
+Next Reconciliation At: 2026-08-10T20:04:51Z
 
 ## Verification
 
