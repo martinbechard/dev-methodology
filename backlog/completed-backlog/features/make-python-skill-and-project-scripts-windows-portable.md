@@ -36,6 +36,8 @@ Main Observation: Main is clean at bf2744161e83b57e62627d671544f8e2c0e89429; the
 
 Next Action: None for this Work Item. Continue the active SOLO crisis with the remaining crisis-set items.
 
+Terminal Cleanup: Verified-clean detached worktree `/Users/martinbechard/.codex/worktrees/d42b/dev-methodology` and source worktree `/Users/martinbechard/dev/dev-methodology/.worktrees/make-python-windows-portability-work-019fb057` were removed. The fully merged local source branch was deleted. The published remote source branch remains retained as immutable external evidence of candidate 9eb990c01b45689a2de9d2699c93748bc9eaa28e. Canonical task 019fe928-e2d8-7f91-91b2-bd27990a7414 was retitled Done and archived.
+
 ## Active Crisis Epoch
 
 Epoch ID: backlog-crisis-2026-08-10T06-32-31Z
