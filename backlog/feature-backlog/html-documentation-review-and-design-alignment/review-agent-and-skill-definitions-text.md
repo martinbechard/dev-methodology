@@ -38,17 +38,17 @@ Condition Type: root-execution
 
 Owner: Dev Orchestrator in visible Codex task 019fe928-e316-7833-bd7d-44af8c0bc89d
 
-Evidence: Correction commit 40e4b07bbcdacc7c4c4c8f1871333502c6278c0a resolves the four candidate-specific review findings across the page and two directly consuming test files and leaves the recorded isolated worktree clean. Two new independent reviewers are evaluating that replacement tip. The pre-existing generator-order conflict is separately recorded as file-provider Work Item reconcile-agent-skill-hierarchy-category-order at commit 1c857bf2.
+Evidence: Fresh Dev Artifact Reviewer returned REVIEW: GOOD for correction commit 40e4b07bbcdacc7c4c4c8f1871333502c6278c0a. Fresh Methodology Artifact Reviewer returned METHODOLOGY REVIEW: NEEDS CORRECTION after finding one additional stale page assertion and two wording defects; the original writer is applying bounded correction attempt 2. The reviewer also confirmed a pre-existing missing historical provenance block; the root execution is preserving the ordinary-edit boundary and preparing a distinct provider-owned disposition because no historical-migration envelope is authorized.
 
-Observed At: 2026-08-10T01:37:58Z
+Observed At: 2026-08-10T01:48:25Z
 
 Started At: 2026-08-10T00:48:41Z
 
 Deadline or Expires At: 2026-08-10T04:48:41Z
 
-Next Action: Reacquire the exact work activity claim, receive both fresh re-review verdicts, and send an accepted replacement tip to independent verification.
+Next Action: Reacquire the exact work activity claim, receive correction attempt 2, record the provenance-migration gap without inventing historical values, and obtain fresh replacement-tip review.
 
-Next Reconciliation At: 2026-08-10T01:52:58Z
+Next Reconciliation At: 2026-08-10T02:03:25Z
 
 Canonical Conversation: Codex task 019fe928-e316-7833-bd7d-44af8c0bc89d
 
@@ -58,7 +58,7 @@ Branch: codex/review-agent-and-skill-definitions-text
 
 Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/review-agent-and-skill-definitions-text-update-019fb057
 
-Phase: Fresh re-review after correction attempt 1
+Phase: Bounded correction attempt 2
 
 ## Summary
 
