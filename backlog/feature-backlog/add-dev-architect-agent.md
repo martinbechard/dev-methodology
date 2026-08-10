@@ -20,11 +20,14 @@ The current catalog has no general software-architecture Agent. Dev Documentatio
 
 ## Source Evidence
 
-The user requested on 2026-08-10 in task 019fb057-1767-7ef2-b5fa-41f4417b20b3: “create it like a Dev Coder but its goal is to ensure choices make technical sense and are a proper way of implementing the requirements. It will normally be used for architecture documents and high-level designs. It will use XHigh reasoning. Create a work item for this.” The user further directed that Dev Architect review every Dev Coder plan unless the user explicitly requests coding without planning, review complex test infrastructure planned or discovered during coding, and use a general three-failed-reviews rule. Methodology Artifact Reviewer remains an optional additional review when the created artifact is a methodology artifact.
+The user requested on 2026-08-10 in task 019fb057-1767-7ef2-b5fa-41f4417b20b3: “create it like a Dev Coder but its goal is to ensure choices make technical sense and are a proper way of implementing the requirements. It will normally be used for architecture documents and high-level designs. It will use XHigh reasoning. Create a work item for this.” The user further directed that Dev Architect review every Dev Coder plan unless the user explicitly requests coding without planning, review complex test infrastructure planned or discovered during coding, and use a general three-failed-reviews rule. Methodology Artifact Reviewer remains an optional additional review when the created artifact is a methodology artifact. The user then requested that this work item update the other Agents and skills needed to implement the process and update the HTML documentation with an SVG of the orchestration process.
 
 ## Requirements
 
 - Add the conceptual role dev-architect under the Dev Activities role group.
+- Update Dev Coder to create the bounded implementation and TDD plan, respond to Dev Architect findings, and pause to update the plan before introducing substantial custom test infrastructure discovered during coding.
+- Update Dev Orchestrator to own plan-to-assignment alignment, the user-directed coding-without-planning shortcut, Dev Architect dispatch, optional Methodology Artifact Reviewer dispatch for methodology artifacts, correction-count enforcement, and User Action Required escalation after the third failed review.
+- Update Dev Documentation Writer so architecture and high-level-design prose follows accepted Dev Architect technical decisions while the writer retains document structure, source use, and prose quality.
 - Give Dev Architect a Dev Coder-like workflow for scoped discovery, requirements traceability, repository-pattern inspection, focused validation, clean candidate commits, and bounded correction handoff.
 - Make Dev Architect responsible for selecting and explaining technically sound, implementable approaches that satisfy the stated requirements and constraints.
 - Route architecture documents and high-level designs to Dev Architect when their technical choices require creation or material revision.
@@ -41,10 +44,15 @@ The user requested on 2026-08-10 in task 019fb057-1767-7ef2-b5fa-41f4417b20b3: �
 - Permit an ambitious plan or test helper only after the user explicitly confirms the scale with the proportionality evidence visible; do not infer approval from the original implementation request alone.
 - Apply one general Dev Orchestrator review-loop limit: the initial submission may receive at most two correction retries; a third failed review moves the Work Item to User Action Required with the unresolved review issue and one concrete user decision.
 - Apply the same three-failed-reviews rule to Dev Architect, Methodology Artifact Reviewer, Dev Code Reviewer, and other Dev Orchestrator-managed review loops rather than cycling indefinitely.
+- Update route-documentation-work, create-architecture, and create-high-level-design so planned architecture and high-level-design work uses Dev Architect for material technical decisions without transferring document-writing responsibility.
+- Update test-driven-development so ordinary tests and routine fixtures remain in the coding loop, while substantial custom helpers, service simulators, harnesses, runners, or equivalent test infrastructure pause for a Dev Architect plan review before implementation.
+- Do not duplicate the existing simplicity rules in careful-coding; use those rules as an input to Dev Architect proportionality review.
 - Add an architecture semantic model profile that maps to XHigh reasoning in Codex and to the closest explicitly supported high-capability setting in other adapters.
 - Add materially distinct success and blocked examples, including insufficient requirements or unresolved technical constraints.
 - Add focused positive and boundary evaluation coverage for the role and its routing.
 - Regenerate all supported native Agent projections and repository-owned role documentation from canonical sources.
+- Update design/orchestrated-development-lifecycle.html to explain the complete planning, architectural review, optional methodology review, coding, complex-test-infrastructure, implementation review, verification, correction-limit, and User Action Required flow.
+- Add design/development-orchestration-process.svg as a directly maintained, accessible visualization of the same process and include it in the lifecycle HTML. Keep the SVG simple and static; do not introduce a custom diagram generator solely for this asset.
 
 ## Planned Workflow
 
@@ -113,7 +121,11 @@ flowchart TD
 - Focused orchestration coverage proves that initial review plus two failed correction retries results in User Action Required on the third failed review.
 - Focused evaluation demonstrates rejection of an inordinately ambitious service simulator in favor of a bounded testing approach.
 - Architecture and high-level-design workflows can route technical design work to Dev Architect without replacing Dev Documentation Writer or Dev Artifact Reviewer.
+- Dev Coder and Dev Orchestrator definitions implement the plan-review, coding-without-planning, complex-test-infrastructure, and three-failed-reviews paths shown in the planned workflow.
+- route-documentation-work, create-architecture, create-high-level-design, and test-driven-development describe the same responsibility boundaries without introducing a second orchestration process.
 - Focused evaluation proves both a technically justified design outcome and a safe blocked outcome when the available requirements cannot support a responsible choice.
+- design/orchestrated-development-lifecycle.html contains a concise Dev Architect section and presents the complete orchestration flow without requiring the reader to infer it from role definitions.
+- design/development-orchestration-process.svg matches the planned workflow, includes an accessible title and description, labels decision outcomes, remains legible at narrow widths and zoom, and has an equivalent concise text explanation in the HTML page.
 - Generated adapters, role documentation, evaluation projections, hierarchy artifacts, and support-checklist projections are current.
 - Focused role, model-profile, generation, evaluation-catalog, and bundle checks pass.
 
@@ -125,6 +137,7 @@ None.
 
 - Validate the new conceptual role against agents/role-schema.yaml.
 - Run focused model-profile, role-generation, routing, mutation-policy, evaluation-catalog, and bundle contract tests.
+- Validate the lifecycle HTML and orchestration SVG with focused markup, accessibility-label, link, and workflow-content assertions in the existing documentation test surface.
 - Run repository-authorized generators in write mode, followed by their freshness checks.
 - Run git diff --check.
 
@@ -137,8 +150,13 @@ Resolve the closest supported non-Codex adapter mappings from each adapter's doc
 ### Governed Canonical Sources
 
 - agents/roles/dev-activities/dev-architect.role.yaml
+- agents/roles/dev-activities/dev-coder.role.yaml
 - agents/roles/dev-activities/dev-documentation-writer.role.yaml
 - agents/roles/dev-activities/dev-orchestrator.role.yaml
+- skills/create-architecture/SKILL.md
+- skills/create-high-level-design/SKILL.md
+- skills/route-documentation-work/SKILL.md
+- skills/test-driven-development/SKILL.md
 
 ### Allowed Dependent Artifacts
 
@@ -148,6 +166,8 @@ Resolve the closest supported non-Codex adapter mappings from each adapter's doc
 - adapters/gemini/model-profiles.yaml
 - adapters/junie/model-profiles.yaml
 - README.md
+- design/development-orchestration-process.svg
+- design/orchestrated-development-lifecycle.html
 - evals/agent-scenarios.yaml
 - evals/cases.yaml
 - evals/workflow-packs.yaml
@@ -162,4 +182,4 @@ Resolve the closest supported non-Codex adapter mappings from each adapter's doc
 
 ### Approval Resolution
 
-Approved at creation by the user's quoted 2026-08-10 request in task 019fb057-1767-7ef2-b5fa-41f4417b20b3. Approval is limited to the Dev Architect role, the exact routing roles, the architecture model profile, focused evaluation and contract coverage, and their repository-authorized generated projections.
+Approved at creation and expanded by the user's quoted 2026-08-10 requests in task 019fb057-1767-7ef2-b5fa-41f4417b20b3. Approval is limited to the Dev Architect role, Dev Coder, Dev Orchestrator, Dev Documentation Writer, the four named workflow skills, the architecture model profile, the lifecycle HTML and orchestration SVG, focused evaluation and contract coverage, and their repository-authorized generated projections.
