@@ -1,6 +1,6 @@
 # Replace Document Outline Helper with Direct MCP Workflow
 
-Status: Ready
+Status: Abandoned
 
 Type: Defect
 
@@ -106,3 +106,11 @@ Approved at creation. On 2026-08-10 in canonical task 019fb057-1767-7ef2-b5fa-41
 - This item replaces the implementation architecture; it does not reject the original user outcome of producing a reviewable HTML outline before writing a large document.
 - File deletion is not the first action. The forensic inventory and exact removal manifest must precede removal.
 - Generic hierarchy content may carry concise source labels or unknown markers, but their meaning is authored by the model rather than enforced by a custom Python schema.
+
+## Abandonment Evidence
+
+Abandoned At: 2026-08-10
+
+Authority: The user rejected this incremental replacement framing in canonical task 019fb057-1767-7ef2-b5fa-41f4417b20b3 and directed creation of a new work item as though no prior implementation existed.
+
+Outcome: No implementation was dispatched or performed under this Work Item. Its requirements are not authority for future document-outline work.
