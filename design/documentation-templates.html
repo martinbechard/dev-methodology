@@ -1,4 +1,21 @@
 <!doctype html>
+<!--
+Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+Artifact-ID: 5121ccbe-4e4a-410e-aa1d-e543ea401a41
+Created-UTC: 2026-07-15T12:29:28Z
+Creating-Agent: historical-unknown
+Runtime: historical-unknown
+Dispatched-Model: historical-unknown
+Reasoning-Effort: historical-unknown
+Task-ID: historical-unknown
+Artifact-ID-Evidence: migration-assigned
+Created-UTC-Evidence: git-derived
+Creating-Agent-Evidence: historical-unknown
+Runtime-Evidence: historical-unknown
+Dispatched-Model-Evidence: historical-unknown
+Reasoning-Effort-Evidence: historical-unknown
+Task-ID-Evidence: historical-unknown
+-->
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -396,7 +413,7 @@
 
     <section class="hero" aria-labelledby="page-title">
       <h1 id="page-title">Documentation Templates</h1>
-      <p class="lede">The development methodology ships eight source-backed templates for project configuration, wiki methodology, product behavior, system design, module design, unit test planning, and file-backed work items. Each template supplies TODO instructions that are replaced with project evidence when an artifact is created.</p>
+      <p class="lede">The development methodology ships eight source-backed templates: one PROJECT.yaml configuration template, six methodology document templates, and one file-backed Work item template. The methodology document templates cover project wiki, functional specification, architecture, high-level design, module design, and unit test plan artifacts. Each template supplies TODO instructions that are replaced with project evidence when an artifact is created.</p>
     </section>
 
     <nav class="page-section-nav" aria-label="Page sections">
@@ -411,7 +428,7 @@
       <div class="grid">
         <article class="card configuration">
           <h3>Project Configuration</h3>
-          <p>Records the complete project-wide intent for conceptual agent definitions, technology skillsets, folder routes, AGENTS.md locations, validation evidence, and customer-safe examples.</p>
+          <p>Records the repository's setup choices for Agent and Skill operation, including delivery mode, coordination, Persistence and Commit selectors, documentation mode, shared and project skill routing, folder rules, guidance files, and validation evidence.</p>
           <ul>
             <li>Output: PROJECT.yaml at the project root</li>
             <li>Creator: create-project-configuration</li>
@@ -488,11 +505,11 @@
 
         <article class="card product">
           <h3>File-Backed Work Item</h3>
-          <p>Records one self-contained file-provider work package with canonical metadata, source evidence, requirements, acceptance criteria, dependencies, verification, technical questions, and any genuine user-action boundary.</p>
+          <p>Records one file-provider Work item or series child with canonical metadata, source evidence, requirements, acceptance criteria, dependencies, verification, technical questions, lifecycle state, and any genuine user-action boundary.</p>
           <ul>
-            <li>Scope: one independently dispatchable work item or series child</li>
+            <li>Scope: one file-backed Work item; Ready is dispatchable, Blocked waits on a hard dependency, Holding is explicit deferral, and User Action Required waits on one user-owned answer.</li>
             <li>Creator: create-work-item-file</li>
-            <li>Verifier: verify-documentation-page</li>
+            <li>Final check: create-work-item-file Final Check And Result</li>
           </ul>
           <a class="path-link" data-template-definition="file-work-item-template.md" data-template-title="File-Backed Work Item" href="../skills/route-documentation-work/assets/templates/file-work-item-template.md">file-work-item-template.md</a>
         </article>
@@ -505,7 +522,7 @@
 
       <section class="section" aria-labelledby="selection-title">
         <h3 id="selection-title">Template Selection</h3>
-        <p class="lede">Choose the smallest artifact that fully owns the requested knowledge. Project configuration and wiki methodology establish operating context; the remaining templates form a progressively narrower development chain.</p>
+        <p class="lede">Choose the smallest artifact that fully owns the requested knowledge. Project configuration and wiki methodology establish operating context. Functional specification, architecture, high-level design, module design, and unit test plan templates form a progressively narrower development chain. The file-backed Work item template is a cross-cutting provider record, not a prerequisite or successor in that chain.</p>
         <div class="matrix">
           <table>
           <thead>
@@ -516,11 +533,6 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>What source-backed work package should enter the file-provider queue, and does a genuine user-owned answer block it?</td>
-              <td>File-Backed Work Item</td>
-              <td>Creates one dispatchable typed item, one deferred Holding item, or one User Action Required item without turning technical uncertainty into a user gate.</td>
-            </tr>
             <tr>
               <td>Which agents, skills, folder rules, and guidance files apply to this repository?</td>
               <td>Project Configuration</td>
@@ -556,6 +568,11 @@
               <td>Unit Test Plan</td>
               <td>Translates accepted contracts and implementation evidence into durable test obligations.</td>
             </tr>
+            <tr>
+              <td>What source-backed Work item should enter the file-provider queue, and does a genuine user-owned answer block it?</td>
+              <td>File-Backed Work Item</td>
+              <td>Records a cross-cutting provider item. Ready is dispatchable; Blocked has an unmet hard dependency; Holding is explicitly deferred; User Action Required has one user-owned answer.</td>
+            </tr>
           </tbody>
           </table>
         </div>
@@ -568,7 +585,7 @@
           <article class="panel">
             <h4>Template structure authority</h4>
             <ul>
-              <li>Keep the selected artifact sections and their order.</li>
+              <li>Keep the selected artifact's required sections, order, and optional-section rules from the owning creation skill.</li>
               <li>Keep descriptions, requirements, decisions, and procedures in their source-defined forms.</li>
               <li>Use structured-explanation only for a technical reasoning section that needs its item model.</li>
             </ul>
@@ -600,9 +617,10 @@
           <article class="panel">
             <h4>Artifact review</h4>
             <ul>
-              <li>Run the matching artifact reviewer after the document is complete.</li>
+              <li>Run the matching reviewer or verifier after the artifact is complete.</li>
+              <li>Use create-work-item-file Final Check And Result for file-backed Work items.</li>
               <li>Keep steady-state prose and record unresolved decisions explicitly.</li>
-              <li>Add editable Mermaid diagrams only when a real relationship is easier to understand visually.</li>
+              <li>Add editable Mermaid diagrams when real sequence, handoff, branch, lifecycle, data, or structural relationships trigger them.</li>
             </ul>
           </article>
           <article class="panel">
@@ -615,7 +633,7 @@
 
     <section class="section" aria-labelledby="wiki-format-title">
       <h2 id="wiki-format-title">Wiki Format</h2>
-      <p class="lede">A project wiki lives under docs/wiki and acts as compiled understanding rather than primary authority. The wiki methodology template records project-specific maintenance rules. The project-wiki page schema owns the concrete format for topic pages, folders, and required root files.</p>
+      <p class="lede">The Project Wiki Methodology template can define a project wiki under docs/wiki as compiled understanding rather than primary authority. This page includes the repository and topic-page formats that README.md assigns to it. The project-wiki page schema owns the concrete format for topic pages, folders, and required root files.</p>
 
       <div class="wiki-layout">
         <article class="panel">
@@ -625,7 +643,8 @@
             <li>schema.md records authority, page sections, and maintenance rules.</li>
             <li>topic-index.md maps topics and their source neighborhoods.</li>
             <li>glossary.md defines recurring project terminology.</li>
-            <li>open-decisions.md and known-defects.md retain unresolved and defective states.</li>
+            <li>open-decisions.md records unresolved source conflicts and decisions.</li>
+            <li>known-defects.md explains how to interpret defect records.</li>
             <li>maintenance-log.md records notable maintenance events.</li>
             <li>Topic folders use index.md hub pages plus granular leaf pages.</li>
             <li>digests/index.md and YYYY-MM.md pages summarize ingested developments when digests apply.</li>
@@ -653,17 +672,8 @@ tags: [topic-folder]
 
       <div class="grid section">
         <article class="panel">
-          <h3>Topic page shared contract</h3>
-          <ol class="contract-list">
-            <li>Current Understanding</li>
-            <li>Authoritative Sources</li>
-            <li>Related Code</li>
-            <li>Related Tests</li>
-            <li>Related Backlog Items</li>
-            <li>Related Wiki Pages</li>
-            <li>Open Questions</li>
-            <li>Maintenance Notes</li>
-          </ol>
+          <h3>Shared contract scope</h3>
+          <p>The code example shows the eight shared sections for docs/wiki topic pages. The same shared sections start the six methodology document templates. PROJECT.yaml and file-backed Work items keep their own formats.</p>
         </article>
 
         <article class="panel">
@@ -673,13 +683,13 @@ tags: [topic-folder]
             <li>Folder index.md and log.md files are reserved navigation pages and do not need concept frontmatter.</li>
             <li>Hub pages describe a stable domain and link to granular leaves that can change or be maintained independently.</li>
             <li>Additional topic-specific sections may follow the shared contract without replacing its required sections.</li>
-            <li>Specialized methodology documents keep the eight shared sections first and append the extension sections owned by their template.</li>
+            <li>The six methodology document templates keep the eight shared sections first and append the extension sections owned by their template.</li>
           </ul>
         </article>
       </div>
 
       <aside class="note">
-        <p><strong>Format boundary:</strong> the shared wiki-compatible contract applies to docs/wiki topic pages and methodology artifacts created from these templates. It does not automatically apply to README files, design HTML pages, runtime schemas, generated data, or native agent definitions that already have another authoritative format.</p>
+        <p><strong>Format boundary:</strong> the shared wiki-compatible contract applies to docs/wiki topic pages and the six methodology document templates. It does not apply to PROJECT.yaml, file-backed Work items, README files, design HTML pages, runtime schemas, generated data, or native agent definitions that already have another authoritative format.</p>
       </aside>
 
       <p class="section"><a href="../skills/project-wiki/references/page-schema.md">Read the complete project wiki page schema</a> for leaf splitting, digest ordering, source-link, OKF, and maintenance rules. The <a href="wiki-skills-and-project-context.html">Wiki Skills And Project Context page</a> explains how that page format participates in persistent synthesis, source authority, independent verification, and code-aware synchronization.</p>
@@ -687,7 +697,8 @@ tags: [topic-folder]
 
   </main>
   <footer class="site-footer">
-    <p>Copyright 2026 (c) Martin.Bechard@DevConsult.ca - <a href="../LICENSE">MIT License</a></p>
+    <p>Copyright (c) 2026 Martin.Bechard@DevConsult.ca</p>
+    <span hidden><a href="../LICENSE">MIT License</a></span>
   </footer>
   <script src="documentation-settings.js"></script>
   <script src="generated/template-definitions.js"></script>
