@@ -36,19 +36,19 @@ Next Reconciliation At: 2026-08-10T00:59:00Z
 
 Condition Type: delegated-work
 
-Owner: Dev Orchestrator task 019fe929-3695-7d20-93dc-63852ced1020 coordinating independent Dev Verifier task /root/verify_final_generic_agent_candidate
+Owner: Dev Orchestrator task 019fe929-3695-7d20-93dc-63852ced1020 coordinating original Dev Documentation Writer task /root/write_generic_agent_text
 
-Evidence: New fresh-context Dev Artifact Reviewer and Dev Code Reviewer both returned GOOD with no material findings for final candidate c8cf8e5150360b13cb308665dd607779be5cede1. Every prior review finding is resolved and the pre-existing missing historical provenance block remains a documented non-blocking ordinary-edit residual. An independent Dev Verifier is running the complete focused acceptance gate against the same immutable commit.
+Evidence: Independent verification passed all candidate-specific checks but returned FAIL because scripts/test_skill_lifecycle_documentation.py found one pre-existing yet in-scope missing sentence: Enablement is not preloading or behavioral evidence. The original documentation producer is adding that exact source-backed lifecycle distinction to the HTML only on immutable candidate c8cf8e5150360b13cb308665dd607779be5cede1.
 
-Observed At: 2026-08-10T01:41:31Z
+Observed At: 2026-08-10T01:50:06Z
 
-Started At: 2026-08-10T01:41:31Z
+Started At: 2026-08-10T01:50:06Z
 
-Deadline or Expires At: 2026-08-10T01:57:00Z
+Deadline or Expires At: 2026-08-10T02:02:00Z
 
-Next Action: Require terminal PASS from the independent verifier, then deliver the accepted candidate through a fresh main-integration branch.
+Next Action: Collect the scoped HTML correction, produce a final immutable combined commit, then repeat fresh review and independent verification.
 
-Next Reconciliation At: 2026-08-10T01:52:00Z
+Next Reconciliation At: 2026-08-10T01:59:00Z
 
 Codex Task ID: 019fe929-3695-7d20-93dc-63852ced1020
 
@@ -58,11 +58,11 @@ Root Role: Dev Orchestrator
 
 Parent Task ID: 019fb057-1767-7ef2-b5fa-41f4417b20b3
 
-Branch: codex/review-generic-agent-definitions-final-combined-019fe929
+Branch: codex/review-generic-agent-definitions-html-round3-019fe929
 
-Worktree: /private/tmp/review-generic-agent-definitions-final-combined-019fe929
+Worktree: /private/tmp/review-generic-agent-definitions-html-round3-019fe929
 
-Phase: Independent verification
+Phase: Correction round 3
 
 ## Summary
 
