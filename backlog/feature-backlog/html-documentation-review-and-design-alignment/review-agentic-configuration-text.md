@@ -1,8 +1,8 @@
 # Review and Correct Coding-Agent Runtime Configuration Text
 
-Owner: Unowned
+Owner: Dev Orchestrator (019fe928-fc32-73c2-af60-791087327934)
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -11,6 +11,18 @@ Provider: file
 Work Item ID: review-agentic-configuration-text
 
 Completion: main-branch
+
+## Recovery Handoff Evidence
+
+Canonical Task: 019fe928-fc32-73c2-af60-791087327934
+
+Authorized Correction: Restore the target page to the pre-candidate no-provenance-block state while retaining the supported text corrections. Do not invent historical provenance.
+
+Requested At: 2026-08-10T02:29:00Z
+
+Next Action: The same Dev Orchestrator records Starting to Running, acquires the exact Work Item activity=work claim, resumes the preserved clean branch and worktree, applies the authorized correction, then obtains fresh independent review and verification before delivery.
+
+Required Task Title: Implementing — Agentic configuration text review
 
 Series: backlog/feature-backlog/html-documentation-review-and-design-alignment/index.md
 
