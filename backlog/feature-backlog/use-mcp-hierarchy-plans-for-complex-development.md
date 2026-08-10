@@ -28,19 +28,19 @@ Required Task Title: Implementing — Use MCP hierarchy plans for complex develo
 
 Condition Type: delegated-work
 
-Owner: Methodology Artifact Reviewer (/root/review_complex_plan_methodology) and replacement Dev Code Reviewer (/root/review_complex_plan_code_replacement), coordinated by Dev Orchestrator (019fe928-e31e-71e2-aaa8-7f9bef12c7b0)
+Owner: Dev Coder (/root/implement_complex_plan_skill), coordinated by Dev Orchestrator (019fe928-e31e-71e2-aaa8-7f9bef12c7b0)
 
-Evidence: Candidate commit d72e1a284a9b832295f2cd9e796f49f21404b6e2 is clean and immutable in the preserved source worktree. Fresh methodology review and the one bounded replacement functional source review are actively evaluating that commit. The original source reviewer stopped before review because its assignment incorrectly requested formal cybersecurity analysis; it made no mutation and returned no candidate verdict.
+Evidence: Candidate commit d72e1a284a9b832295f2cd9e796f49f21404b6e2 remains clean and preserved. Fresh methodology and replacement functional source review both returned NEEDS_CORRECTION for durable interrupted-operation recovery, partial create and cleanup recovery, stale dotted-target guarding, metadata-prefix collisions, complete capability-signature checks, and stronger structured routing evidence. The original Dev Coder accepted bounded correction attempt 1 under the same 16-path authority.
 
-Observed At: 2026-08-10T02:15:36Z
+Observed At: 2026-08-10T02:22:27Z
 
-Started At: 2026-08-10T02:02:00Z
+Started At: 2026-08-10T02:21:49Z
 
-Deadline or Expires At: 2026-08-10T02:45:00Z
+Deadline or Expires At: 2026-08-10T03:05:00Z
 
-Next Action: Both fresh reviewers return terminal verdicts for the immutable candidate; accepted review evidence then routes to independent Dev Verifier, while any confirmed finding returns to the original Dev Coder within the bounded correction loop.
+Next Action: Dev Coder adds red regressions, corrects only the confirmed findings, regenerates authorized projections, and returns one replacement clean verified commit for fresh re-review.
 
-Next Reconciliation At: 2026-08-10T02:29:30Z
+Next Reconciliation At: 2026-08-10T02:36:30Z
 
 Codex Task ID: 019fe928-e31e-71e2-aaa8-7f9bef12c7b0
 
@@ -58,11 +58,11 @@ Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/use-mcp-hierarchy-
 
 Starting Head: 9488c71873e19c99b523927bce14ec64da634158
 
-Phase: independent source and methodology review
+Phase: bounded correction attempt 1
 
-Provider Update Claim: mcp-hierarchy-plans-review-update-019fe928; outcome SHARED_CHECKOUT_ACQUIRED; claim event 450d5180-d2fc-4735-9344-6ad8361b2d1c.
+Provider Update Claim: mcp-hierarchy-plans-correction-update-019fe928; outcome SHARED_CHECKOUT_ACQUIRED; claim event 2bd7a7cb-312f-4ae3-af07-51f660e60974.
 
-Provider Path Claim: mcp-hierarchy-plans-review-path-019fe928; outcome SHARED_CHECKOUT_ACQUIRED; claim event 25eb4fcc-8f9d-4ebb-b6a3-5669944b99cb.
+Provider Path Claim: mcp-hierarchy-plans-correction-path-019fe928; outcome SHARED_CHECKOUT_ACQUIRED; claim event 62b36b20-b081-4fee-96ba-01ff93799e95.
 
 ## Starting Handoff Evidence
 
