@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: Blocked
+Status: Ready
 
 Type: Feature
 
@@ -58,6 +58,8 @@ Target page: design/agentic-configuration.html
 Blocker owner: Work Item review-agentic-configuration-text.
 
 Blocked to Ready condition: review-agentic-configuration-text is Completed with corrected content, fresh independent acceptance, and an immutable content baseline for design/agentic-configuration.html.
+
+Dependency Resolution: Satisfied by the completed Work Item archived in provider commit b259a2ea8d477a3dc691eed598d3fdc6e75c5c4a. Accepted integration aa4b763387cd6a470777136562fc0070796ce563 reached main through merge commit c8ca3c85c74320cee513b4967b531dbb68f97053 after three fresh replacement reviews returned GOOD/PASS and independent verification returned PASS.
 
 ## Verification
 
