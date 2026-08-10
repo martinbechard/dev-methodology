@@ -1976,7 +1976,7 @@ class BundleContentTests(unittest.TestCase):
             "Dispatch exactly one blockage item to one separate canonical work-item task at a time, without claims.",
             "Have the work-item task read the current item and review current changes to understand what was done so far.",
             "Do not reconstruct, reread, or restate the complete history unless a specific current ambiguity cannot be resolved",
-            "Work-item receipts to the Coordinator contain only the current state, changed paths, latest check or blocker, and next action.",
+            "The work-item task sends only its final outcome or one specific Coordinator decision it cannot make.",
             "Commit the current item before starting another item.",
             "Moving an item to Ready does not resolve it.",
             "When the same blockage state and recovery result are observed again, return the existing result without repeating lifecycle mutation.",
@@ -2090,7 +2090,7 @@ class BundleContentTests(unittest.TestCase):
             <= {scenario["id"] for scenario in watchdog_scenarios["scenarios"]}
         )
 
-    def test_new_file_item_notifies_coordinator_without_dispatch(self) -> None:
+    def test_new_file_item_is_discovered_without_routine_notification(self) -> None:
         create_skill = (
             SKILLS_ROOT / "create-work-item-file" / "SKILL.md"
         ).read_text(encoding="utf-8")
@@ -2098,26 +2098,9 @@ class BundleContentTests(unittest.TestCase):
             SKILLS_ROOT / "coordinate-work-items" / "SKILL.md"
         ).read_text(encoding="utf-8")
 
-        self.assertIn(
-            "After a new work-item file is committed successfully",
-            create_skill,
-        )
-        self.assertIn(
-            "send its Work Item ID to the existing Dev Backlog Coordinator task",
-            create_skill,
-        )
-        self.assertIn(
-            "Send no message when creation fails or when duplicate reconciliation creates no item.",
-            create_skill,
-        )
-        self.assertIn(
-            "reread current provider inventory before deciding whether to reserve or dispatch anything",
-            coordination_skill,
-        )
-        self.assertIn(
-            "The message is not lifecycle authority",
-            coordination_skill,
-        )
+        self.assertIn("Do not send a routine task message", create_skill)
+        self.assertIn("discovers committed items by reading the authoritative provider inventory", create_skill)
+        self.assertIn("consults provider, Git, review, verification, and claim records only when needed", coordination_skill)
 
     def test_coordination_roles_select_portable_and_codex_peer_skills(self) -> None:
         """Portable policy and Codex task mechanics remain separate peer contracts."""
@@ -2214,9 +2197,9 @@ class BundleContentTests(unittest.TestCase):
         ).read_text(encoding="utf-8")
 
         for clause in (
-            "Reconcile each terminal task independently, even after one actionable anomaly is found.",
+            "Reconcile a terminal task only when runtime observation indicates incomplete cleanup or another specific decision.",
             "A preserved source branch never suppresses an independently authorized alert to remove its clean terminal worktree.",
-            "NO_ACTION is valid only after every terminal task has complete acknowledged provider, claim, worktree, branch, notification, preservation, and archival reconciliation.",
+            "When no decision is required, send nothing.",
         ):
             with self.subTest(portable_clause=clause):
                 self.assertIn(clause, coordination_text)
@@ -2344,8 +2327,8 @@ class BundleContentTests(unittest.TestCase):
             "expected to take more than five minutes",
             "the exact active unit and later units not started",
             "a hard stop condition and retained evidence path",
-            "not a provider transaction or approval gate",
-            "Distinguish active serial work from selected or queued work.",
+            "not a progress message, provider transaction, or approval gate",
+            "In SOLO mode, run exactly one separate work-item task and keep the dispatcher free of implementation work.",
             "classify the failure before repeating anything",
             "add the smallest offline replay or deterministic regression",
             "follow resource-claim for any triggered claim",
@@ -9762,7 +9745,8 @@ Visible after.
             "active queue defined by coordinate-work-items",
             "Retry only when that notification arrives",
             "Only the watchdog investigates stale claim ownership",
-            "Every fifteen minutes",
+            "Observe worker status through runtime task tools",
+            "send only a final outcome or one specific Coordinator decision",
             "canonical execution identity",
             "When coordinate-codex-tasks is active, also retain its canonical Codex task and conversation identifiers",
             "remove the clean worktree",
@@ -10361,11 +10345,11 @@ Visible after.
             "The new execution independently commits Starting to Running under its own exact "
             "provider claim before implementation.",
             "When coordinate-codex-tasks is active, the root execution maps to one Codex task.",
-            "A failed or missing launch remains Starting until the Watchdog reports it "
-            "and the Coordinator performs recovery.",
-            "Running is active only while both its finite condition deadline and "
-            "next-reconciliation boundary remain in the future.",
-            "Missing or expired evidence moves the item to a truthful non-active "
+            "A failed or missing launch remains Starting until runtime observation "
+            "triggers Coordinator recovery.",
+            "Running remains active only while runtime tools show active root work, "
+            "delegated work, or a bounded runtime wait.",
+            "Inactive runtime work moves to a truthful non-active "
             "state before capacity is refilled.",
             "Stalled and Blocked are non-active recovery states.",
         ):
@@ -10402,12 +10386,11 @@ Visible after.
             "The new execution commits Starting to Running through its own claim.",
             "When coordinate-codex-tasks is active, that execution maps to one Codex task.",
             "Failed or missing launches stay Starting until Watchdog evidence triggers Coordinator recovery.",
-            "Observed and started times are history.",
-            "Keep both future boundaries current",
-            "Expiry of either boundary invalidates active eligibility.",
+            "The dispatcher observes the canonical task through runtime tools.",
+            "Workers send no routine progress or heartbeat messages.",
             "A failed launch remains Starting until Coordinator recovery.",
-            "Absent, invalid, or expired evidence cannot preserve Running.",
-            "The Coordinator directly records its selected lifecycle transition through the effective Persistence manager before filling the vacancy.",
+            "An inactive or failed runtime task cannot preserve Running.",
+            "The Coordinator consults durable records only as needed, then records its selected lifecycle transition before filling the vacancy.",
         ):
             with self.subTest(visible_clause=clause):
                 self.assertIn(clause, anomaly_section)
@@ -10763,7 +10746,7 @@ Visible after.
         self.assertIn("overflow-x: auto", lifecycle_text)
 
     def test_completed_work_items_are_reflected_in_human_facing_documentation(self) -> None:
-        """Document Persistence, notification, blockage, mode, and claim behavior."""
+        """Document Persistence, provider discovery, blockage, mode, and claim behavior."""
 
         lifecycle_text = (
             REPOSITORY_ROOT / "design" / "orchestrated-development-lifecycle.html"
@@ -10775,7 +10758,8 @@ Visible after.
 
         for phrase in (
             "After a new work item is persisted",
-            "It does not reserve capacity, change lifecycle state, create a delivery execution, or start implementation.",
+            "the creator sends no routine task message",
+            "The message does not duplicate durable creation evidence or start implementation.",
             "Resolve Backlog Blockage owns one-item-at-a-time recovery",
             "Set Solo Mode disables parallel dispatch while retaining serial dispatch of one task",
             "Set Multitask Mode restores parallel dispatch only after every blockage item is terminal",

@@ -55,7 +55,7 @@ The Coordinator remains the dispatcher. It does not implement crisis items in th
 
 Preserve historical commits, candidates, reviews, and lifecycle records in their durable locations. Do not reconstruct, reread, or restate the complete history unless a specific current ambiguity cannot be resolved from the current item and current changes.
 
-Work-item receipts to the Coordinator contain only the current state, changed paths, latest check or blocker, and next action. Do not repeat claim events, superseded candidate histories, prior lifecycle transitions, or previously accepted evidence unless one is directly required for the next decision.
+The work-item task sends only its final outcome or one specific Coordinator decision it cannot make. It does not send progress receipts, heartbeats, repeated evidence, or lifecycle history. The Coordinator observes runtime state and consults durable records only when needed.
 
 Unrelated modified files do not stop blockage recovery. Stop only for an overlapping change to a file required by the current item. Adopt interrupted work when its ownership and purpose are clear; otherwise reconcile that exact overlap.
 
@@ -93,4 +93,4 @@ The user may end blockage recovery. Report any unresolved blockage items before 
 
 ## Result
 
-Report the blockage trigger once. Subsequent reports contain only the current item, changes since the prior report, latest focused check or blocker, next action, and whether every exit condition is satisfied.
+Report the blockage trigger once. The work-item task then communicates only its final outcome or one specific Coordinator decision it cannot make.

@@ -48,6 +48,9 @@ instructions:
   - Treat dev-backlog-watchdog as the fixed scheduled read-only observer for sustained queues.
     The Watchdog reports evidence and recommendations but never chooses lifecycle state,
     consumes capacity, or performs recovery or mutation.
+  - Observe worker status through runtime task tools. Consult durable provider, Git, review,
+    verification, and claim records only when a decision requires them. Do not request routine
+    progress receipts, heartbeats, repeated evidence summaries, title-only handoffs, or lifecycle histories.
   - Delegate one whole Starting work item to one canonical root execution whose Agent
     operates under Dev Orchestrator Role. Do not take over
     that item's coding, independent review, verification, integration, publication, merge, or
@@ -127,9 +130,8 @@ instructions:
     resource coordination, worktrees, current runtime executions, and unread handoffs. Resume
     valid Starting or Running ownership
     before dispatching new work.
-  - When a successful work-item creation message supplies a Work Item ID, reread current
-    provider inventory before any reservation or dispatch decision. Treat repeated messages as
-    reconciliation prompts, not lifecycle authority. A message never creates a delivery task.
+  - Discover new work through current provider inventory. Work-item creation sends no routine
+    task message and never creates a delivery task.
   - For durable providers, own the dispatch trigger and directly apply the selected manager
     to commit Ready -> Starting with the evidence required by the central coordination
     section. Start the new root Dev Orchestrator execution only after the provider operation is
@@ -204,23 +206,23 @@ instructions:
     only as that skill permits. For other runtimes, do not require Codex title or archival
     behavior. For durable providers, immediately reconcile active eligibility and apply the
     central active-queue outcome.
-  - Every fifteen minutes, report active capacity when durable inventory exists,
-    phase ages, delivery waits, enabled ownership pressure, accepted work awaiting delivery, delivered work awaiting
-    provider closeout, execution anomalies, interval gate throughput, completed-item throughput, and
-    active versus blocked execution averages. Make a recovery or dispatch adjustment in the same
-    review when needed.
+  - In concurrent mode, dispatch eligible Ready work from available capacity and satisfied
+    dependencies. In SOLO mode, dispatch exactly one separate canonical work-item task and
+    never implement the item in the Coordinator task.
   delegation:
   - Route one whole Starting work item to a root dev-orchestrator execution with
     the effective Commit-selected
     skill reference, independent-review requirement, focused verification expectation, and clean
     evidence handoff; do not duplicate the selected completion procedure.
+  - Require worker tasks to send only a final outcome or one specific Coordinator decision
+    they cannot make. Read durable evidence directly when needed instead of copying it into messages.
   - Apply the effective Persistence-selected management skill directly for every
     Coordinator-owned user-decision or lifecycle transition. Route only provider-wide
     inventory normalization, archival audits, and sustained recovery to dev-backlog-steward.
   - Route scheduled observation to dev-backlog-watchdog with the portable read-only contract.
-    When coordinate-codex-tasks is active, render its canonical standing and heartbeat prompt
-    templates byte-identically for the Codex Watchdog task. Accept only one concise no-action
-    result or one actionable alert; never assign mutation, dispatch, recovery, delivery, or cleanup.
+    When coordinate-codex-tasks is active, render its canonical standing prompt for the Codex
+    Watchdog task. Do not send heartbeat prompts. Accept only a specific decision request;
+    healthy observation sends no message. Never assign mutation, dispatch, recovery, delivery, or cleanup.
   - Dev Backlog Coordinator owns READY -> STARTING dispatch, priority, capacity when inventory
     exists, canonical execution reconciliation, notification-driven stall routing,
     combined-regression scheduling, runtime cleanup, worktree cleanup, and merged-branch cleanup.
@@ -286,11 +288,11 @@ instructions:
     handoff has selected-Commit READY evidence and required provider completion, every triggered
     Event Contract claim is released, cleanup is finished, and no accepted commit is stranded
     outside the configured delivery result.
-  - Report BLOCKED with the exact provider identity or explicit execution, canonical execution id, phase,
-    wait age, blocker owner, preserved commits, attempted remedies, and the one unavailable
-    selection, capability, authority, or decision.
-  - Always report the provider lifecycle snapshot or provider-none task state, dispatches,
-    stalled-delivery actions, completed-item cleanup, and fifteen-minute throughput summary.
+  - Report BLOCKED only when one specific Coordinator or user decision remains, naming the
+    affected Work Item ID, blocker, owner, unblock condition, and required decision. Read the
+    preserved evidence from durable records instead of copying it into the message.
+  - Return only the final coordination outcome or a specific user decision that remains.
+    Provider lifecycle, dispatch, delivery, and cleanup evidence stays in durable records.
 agentDependencies:
 - dev-backlog-watchdog
 - dev-orchestrator
@@ -396,13 +398,8 @@ outputContract:
     purpose: Reports the central contract's active-queue result, canonical executions
       started or resumed, and any eligible-work shortage or provider-none exception.
 - stalled delivery actions:
-    purpose: Reports wait ages, blocker owners, structured outcomes, release or recovery
-      notifications, exhausted-correction evidence, preserved attempt history, and the one
-      resulting route or disposition.
+    purpose: Names one specific unresolved decision and smallest next action without duplicating durable history.
 - completed item cleanup:
     purpose: Reports selected-Commit evidence, provider completion when applicable, released
       triggered Event Contract claims, worktree removal, safe branch deletion, and runtime
       cleanup. When coordinate-codex-tasks is active, it also reports verified title and task archival.
-- fifteen-minute throughput summary:
-    purpose: Reports accepted gates, completed items, average active and blocked work, triggered
-      claim pressure, trend, and the adjustment made in the interval.

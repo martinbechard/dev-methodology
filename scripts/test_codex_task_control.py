@@ -29,11 +29,9 @@ ROLE_PATHS = {
 
 CANONICAL_STANDING_PROMPT = """Act as the dedicated read-only Dev Methodology backlog watchdog for parent task {parent_task_id} in {repository_root}.
 
-Apply skills/coordinate-work-items/SKILL.md for portable active-execution, capacity, lifecycle-reconciliation, Blocked, Stalled, and read-only Watchdog criteria. Apply skills/coordinate-codex-tasks/SKILL.md only for Codex task identity, conversation-title observation, follow-up, and archival mapping. On each cycle, read the selected provider inventory, Git state, configured resource-coordination state when enabled, and Codex runtime state. Evaluate Starting reconciliation, Running Active Execution Evidence, phase age, estimates, hard stops, evidence progress, Blocked and Stalled exit conditions, accepted work stranded before Commit delivery, READY delivery awaiting provider closeout, terminal cleanup anomalies, and unsafe, stale, or broad shared ownership.
+Apply skills/coordinate-work-items/SKILL.md for portable capacity, lifecycle reconciliation, Blocked, Stalled, and read-only Watchdog criteria. Apply skills/coordinate-codex-tasks/SKILL.md only for Codex task identity, conversation-title observation, bounded resumption, and archival mapping. Observe task state through runtime tools. Consult provider, Git, and resource records only for a lifecycle decision, anomaly, dependency, delivery, or cleanup question; do not reconstruct lifecycle history on every cycle.
 
-Remain strictly read-only. Do not mutate repository files, provider lifecycle, claims, tasks, branches, worktrees, or shared resources. Do not dispatch, integrate, clean up, or run expensive or live verification. Notify parent task {parent_task_id} only when an actionable condition exists, with exact evidence and the smallest recommended Coordinator action. When healthy, record only one concise no-action cycle result here."""
-
-CANONICAL_HEARTBEAT_PROMPT = """Run one complete read-only Watchdog cycle now using this task's standing contract. Notify parent task {parent_task_id} only if an actionable condition exists; otherwise record one concise no-action cycle result here."""
+Remain strictly read-only. Do not mutate repository files, provider lifecycle, claims, tasks, branches, worktrees, or shared resources. Do not dispatch, integrate, clean up, archive, or run expensive or live verification. Notify parent task {parent_task_id} only when a specific Coordinator decision is required. State the affected item, decision, and smallest recommended action without copying durable evidence into the message. When healthy, send nothing."""
 
 
 def _selected_skills(role: dict[str, object]) -> dict[str, dict[str, str]]:
@@ -162,8 +160,8 @@ class CodexTaskControlPackageTests(unittest.TestCase):
     def test_follow_up_resumes_the_same_task(self) -> None:
         normalized_lower = self.normalized.lower()
         for clause in (
-            "send one follow-up to the same canonical task",
-            "Never use follow-up as lifecycle authority",
+            "send one follow-up only to resume an authorized bounded next action or deliver a Coordinator decision",
+            "Never use follow-up for routine status, heartbeat, lifecycle history, capacity evidence, provider mutation, or proof of progress",
             "do not create a replacement task merely because the task is idle",
             "preserve the original task identity and reconcile the returned runtime state",
         ):
@@ -172,21 +170,19 @@ class CodexTaskControlPackageTests(unittest.TestCase):
 
     def test_archival_waits_for_portable_terminal_closeout(self) -> None:
         for clause in (
-            "Archive a terminal Codex task only after coordinate-work-items confirms",
+            "Task archival is mandatory by default after the applicable ordinary terminal gates pass",
             "terminal provider or task-local disposition",
-            "cleanup eligibility",
-            "no unresolved notification remains",
+            "safe branch and worktree disposition",
+            "no unresolved notification",
             "An idle, stopped, titled, or archived Codex task proves none of those facts",
         ):
             with self.subTest(clause=clause):
                 self.assertIn(clause, self.normalized)
 
-    def test_watchdog_prompt_templates_are_canonical_and_render_byte_identically(self) -> None:
+    def test_watchdog_prompt_is_canonical_without_heartbeat_messages(self) -> None:
         standing = _prompt_template(self.codex, "Canonical Standing Prompt Template")
-        heartbeat = _prompt_template(self.codex, "Canonical Heartbeat Prompt Template")
 
         self.assertEqual(CANONICAL_STANDING_PROMPT, standing)
-        self.assertEqual(CANONICAL_HEARTBEAT_PROMPT, heartbeat)
         self.assertEqual(
             CANONICAL_STANDING_PROMPT.replace("{parent_task_id}", "parent-17").replace(
                 "{repository_root}", "/workspace/project"
@@ -195,10 +191,8 @@ class CodexTaskControlPackageTests(unittest.TestCase):
                 "{repository_root}", "/workspace/project"
             ),
         )
-        self.assertEqual(
-            CANONICAL_HEARTBEAT_PROMPT.replace("{parent_task_id}", "parent-17"),
-            heartbeat.replace("{parent_task_id}", "parent-17"),
-        )
+        self.assertNotIn("Canonical Heartbeat Prompt Template", self.codex)
+        self.assertIn("Do not send scheduled heartbeat or progress follow-ups", self.codex)
 
     def test_portable_skill_contains_no_codex_only_vocabulary(self) -> None:
         for phrase in (

@@ -61,7 +61,7 @@
             "ste-technical-writing",
             "manage-work-items"
           ],
-          "sha256": "4d7e3349cca70095d12a7faa77e0629804366546f9898dbcc1539aeba38d2e7a",
+          "sha256": "f9b458a45078efd8cfd87ee8f88c85f6e5c8308022774cce96e964294ee8f6e6",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
@@ -122,7 +122,7 @@
             "manage-work-items",
             "coordinate-work-items"
           ],
-          "sha256": "e6175a28f6545ed49b5f8ce44894e10db941d26b9c2e84d98fa3a81a1c120437",
+          "sha256": "a1cf28ca073e1ff9afbcb6b42bff44d4a30195655eb4ef28e5a58162f415e31b",
           "source": "agents/roles/dev-activities/dev-backlog-watchdog.role.yaml"
         },
         {
@@ -380,7 +380,7 @@
             "deliver-work-item",
             "structured-design"
           ],
-          "sha256": "a107ab3013a961614923fcc19e3abb72289707afc30810f5caac43f305d38d42",
+          "sha256": "333c531399fbb1b5dcc285fec0c63e6d3cb51ae2e78af7dce10502b6b89a7bff",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -1207,7 +1207,7 @@
             "manage-work-items",
             "codex-harness-directives"
           ],
-          "sha256": "c29f02010f5dd996a09d9c4144f28d916441c9dcba976d86395ee5160cb041aa",
+          "sha256": "d43f32e8c6d164adbe19d48a74d5664a58e35a0fa8edd11ac59dadee49430102",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
@@ -1269,7 +1269,7 @@
             "manage-work-items",
             "coordinate-work-items"
           ],
-          "sha256": "3f83995c0d5c0bbbe7d1e08b1b8a0a69ad8cd1b0a670640c25bdf32153d341fe",
+          "sha256": "8422ffcb8fce261dc09ebbe5ad8d946e830e99f209696a7c9e54d1cbffc0dc70",
           "source": "agents/roles/dev-activities/dev-backlog-watchdog.role.yaml"
         },
         {
@@ -1534,7 +1534,7 @@
             "structured-design",
             "codex-harness-directives"
           ],
-          "sha256": "1e4a33d0f464ab76c95874aa9ba05e5cb4a1e2a38c0135b763c8807be920bbca",
+          "sha256": "9c0af270dd995bff233a9d48b2bb3e0b187b75bce0190dea160751c13f898aaf",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -2384,7 +2384,7 @@
             "ste-technical-writing",
             "manage-work-items"
           ],
-          "sha256": "4cb45a29a980b57857ded6bf59655786b7e48cec948f8b08d1eb06e2ceb2376e",
+          "sha256": "b6276077beb129386e4ba746d0634612326efc51b862423ba4346b133c1b44ef",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
@@ -2447,7 +2447,7 @@
             "manage-work-items",
             "coordinate-work-items"
           ],
-          "sha256": "d0751e27832bff5b15d1dd0e040cbc27fd5164ee194c04c04d800ba44683c720",
+          "sha256": "50b9ba19efa40caa8eff596f4a20241edaeaaa58a94100dfd7c217088a60dd28",
           "source": "agents/roles/dev-activities/dev-backlog-watchdog.role.yaml"
         },
         {
@@ -2715,7 +2715,7 @@
             "deliver-work-item",
             "structured-design"
           ],
-          "sha256": "df2e5a6de24f797d02ed690f84a6f725256681ea4b0f47f0abf2a483beda6606",
+          "sha256": "4591328ce7f75b03e401e326488223a56650986d4e287c15570dc9974247a48e",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -3571,7 +3571,7 @@
             "ste-technical-writing",
             "manage-work-items"
           ],
-          "sha256": "90435fab15be401fd923b8f2511cd5fc36c1e58839b5b1e84752777d30a4941c",
+          "sha256": "049479469a8e78c3f52c8c7a0a1f3fdd86c72d568e2b170fd60a88650ffd778f",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
@@ -3634,7 +3634,7 @@
             "manage-work-items",
             "coordinate-work-items"
           ],
-          "sha256": "5899ab1938296fce172cc0527ec6fc5ed3b7c8b860c4e3714ca513df8ef54803",
+          "sha256": "4c2a70feeeff70a76eb6e9ecf4efc25a29766256448ce93d23817fa0e97f4fe3",
           "source": "agents/roles/dev-activities/dev-backlog-watchdog.role.yaml"
         },
         {
@@ -3902,7 +3902,7 @@
             "deliver-work-item",
             "structured-design"
           ],
-          "sha256": "a1c6d0b4091959fa178adca628b4cfcce1b3310a499b5fb0578c95f8dc49dacb",
+          "sha256": "f6d9d326d5e28b89b23fca49bc0ac7a3408ac925163d1a940ab3d306a2e7fb1d",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {

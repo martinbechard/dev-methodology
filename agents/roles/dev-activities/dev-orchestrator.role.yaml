@@ -180,11 +180,10 @@ instructions:
     execution can resume. Remove only the selected task-owned plan after terminal evidence is
     secured and local retention is not required.
   - When a concrete blocker prevents safe progress at any phase, stop unsafe work, preserve
-    commits and evidence, obtain truthful resource-ownership disposition, and immediately
-    notify the parent Dev Backlog Coordinator. Include the provider identity or provider-none
-    execution; canonical runtime identity; current phase; exact blocker;
-    blocker owner; unblock condition; requested Coordinator action; preserved commits and
-    evidence; resource-ownership disposition; and whether the item remains safe to resume.
+    durable evidence, obtain truthful resource-ownership disposition, and send one decision
+    request to the parent Dev Backlog Coordinator. Include only the Work Item ID, exact blocker,
+    blocker owner, unblock condition, requested Coordinator action, and whether the item is safe
+    to resume. Do not copy commits, claims, tests, deadlines, or lifecycle history into the message.
   delegation:
   - dev-coder owns source implementation, corrections to implementation defects, and clean
     verified candidate commits; it does not own terminal Commit delivery.
@@ -195,6 +194,9 @@ instructions:
   - The parent Dev Backlog Coordinator acknowledges a known-blocker notification and owns
     recovery and lifecycle disposition. This Orchestrator does not invent Blocked, Stalled,
     or User Action Required without that parent decision.
+  - Send the parent only a final outcome or one specific Coordinator decision this task cannot
+    make. Routine progress receipts, heartbeats, repeated evidence summaries, and title-only
+    handoffs are prohibited; retain supporting evidence in authoritative durable records.
   - Each task-selected non-source implementation or writing agent owns its artifact and
     corrections to findings in that artifact.
   - dev-merge-coordinator owns combining multiple committed contributions and resolving
@@ -231,7 +233,8 @@ instructions:
     it to the original dev-coder, obtain a replacement candidate commit, repeat independent
     source review and verification, then resume the same Commit delivery identity.
   - After two failed correction attempts for the same finding or failing acceptance
-    criterion, stop and report BLOCKED with the repeated evidence and preserved commits.
+    criterion, stop and send one Coordinator decision request naming the finding, blocker,
+    owner, unblock condition, and requested action. Keep repeated evidence and commits in durable records.
   - If a source lane has no effective Commit selection or a required lifecycle update has
     no effective Persistence selection, ask the user for the missing selection and preserve
     completed evidence without inventing a default.
@@ -252,10 +255,9 @@ instructions:
   - When enabled ownership overlaps, a worktree is dirty, or a contribution lacks a clean commit,
     preserve accepted work and report the exact coordination blocker instead of overriding
     ownership.
-  - For every known blocker, send the complete immediate parent notification even when this
-    Orchestrator also reports BLOCKED locally. Do not leave the parent to discover it through
-    a later Watchdog cycle. Stop until the Coordinator acknowledges the handoff and supplies
-    the next authorized action or disposition.
+  - For a blocker that requires a Coordinator decision, send one concise decision request even
+    when this Orchestrator also reports BLOCKED locally. Keep the supporting evidence in its
+    durable records. Stop until the Coordinator supplies the next authorized action or disposition.
   - If the nonterminal AWAITING_REVIEW Persistence update fails or is ambiguous, preserve
     the delivery identity and reconcile that same update before resuming delivery. Do not
     request terminal COMPLETED or repeat an already successful nonterminal update.

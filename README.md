@@ -197,14 +197,13 @@ and treats any remaining active Status: Proposed item as a migration anomaly rat
 operational bucket. Starting begins after the Coordinator directly applies the selected
 provider manager for Ready -> Starting. The Coordinator then launches one root execution and
 its handoff is complete. That execution independently applies the selected provider manager for
-Starting -> Running. A failed or missing launch remains Starting until the Watchdog reports its
-age and the Coordinator selects the portable reconciliation action. When coordinate-codex-tasks
+Starting -> Running. A failed or missing launch remains Starting until runtime observation
+shows that Coordinator reconciliation is required. When coordinate-codex-tasks
 is active, the Coordinator uses its follow-up, stop, replacement, and archival mapping.
-Running consumes capacity only with complete Active Execution Evidence for active
-root execution, live delegated work, or a bounded owned wait or progress condition. Its
-historical observation and start times do not control expiry; both its finite condition
-deadline and next-reconciliation boundary must remain in the future. An ineligible Running
-record moves to a truthful non-active state before replacement capacity is dispatched.
+Running consumes capacity only while runtime tools show the canonical task or its delegated
+work is active. Workers do not send heartbeat or progress receipts. The dispatcher consults
+durable records only when a lifecycle, dependency, delivery, cleanup, or recovery decision
+requires them. An inactive Running record moves to a truthful non-active state before replacement capacity is dispatched.
 
 manage-future-ideas owns file-provider Future Ideas. These lightweight records are intentionally
 absent from the ordinary report, runnable counts, and lifecycle totals. With another Persistence
@@ -426,10 +425,10 @@ provider-wide inventory, normalization, archival audits, and recovery. The stabl
 conversation identity remains unchanged, and its title is display state, never provider,
 active-execution, or delivery authority.
 
-The dedicated Dev Backlog Watchdog observes provider, runtime, Active Execution Evidence,
-estimate, hard-stop, Stalled, and Blocked exit-condition evidence on its
-periodic read-only cycle. It stays quiet when no action is needed and alerts the Coordinator
-when investigation or disposition is required; it never mutates provider state, dispatches
+The dedicated Dev Backlog Watchdog observes runtime state first and consults provider, Git,
+review, verification, or claim records only when a specific decision requires them. It sends
+nothing when no action is needed and asks the Coordinator only for a decision it cannot make;
+it never mutates provider state, dispatches
 work, or chooses a lifecycle transition. The Coordinator retains capacity,
 canonical-execution, lifecycle-decision, and terminal housekeeping obligations without
 copying provider or completion procedures. Each accepted item merges after focused
@@ -437,9 +436,9 @@ verification. When explicitly related items require a broader check, the Coordin
 one combined regression after every selected item is present on main and records the tested
 commit.
 
-After a new file-backed work item is committed, its creator sends the opaque Work Item ID to the existing Coordinator execution. The message only prompts a fresh inventory read; it does not reserve capacity, change lifecycle state, create a delivery execution, or begin implementation. When coordinate-codex-tasks is active, send the message to the existing Coordinator task without creating another task. If no Coordinator execution is available, the committed item remains discoverable in the backlog.
+After a new file-backed work item is committed, it remains discoverable in provider inventory. The Coordinator reads that inventory when scheduling; item creation does not require a notification message, reserve capacity, change lifecycle state, create a delivery execution, or begin implementation.
 
-When the user or Watchdog declares a backlog blockage, [Resolve Backlog Blockage](skills/resolve-backlog-blockage/SKILL.md) owns one-item-at-a-time recovery without claims. The Coordinator remains the dispatcher and runs exactly one separate canonical work-item task at a time. That task reviews only the current item and current changes unless a specific ambiguity requires older evidence, and it sends concise current-state receipts. If a secondary-thread dispatch mechanism is configured, [Set Solo Mode](skills/set-solo-mode/SKILL.md) disables parallel dispatch while retaining serial dispatch of one task; [Set Multitask Mode](skills/set-multitask-mode/SKILL.md) restores parallel dispatch only after every exit condition passes. Both mode changes are idempotent. Without such a mechanism, blockage recovery proceeds without either dispatch-mode skill.
+When the user or Watchdog declares a backlog blockage, [Resolve Backlog Blockage](skills/resolve-backlog-blockage/SKILL.md) owns one-item-at-a-time recovery without claims. The Coordinator remains the dispatcher and runs exactly one separate canonical work-item task at a time. That task reviews only the current item and current changes unless a specific ambiguity requires older evidence, and it communicates only a final outcome or a specific Coordinator decision. If a secondary-thread dispatch mechanism is configured, [Set Solo Mode](skills/set-solo-mode/SKILL.md) disables parallel dispatch while retaining serial dispatch of one task; [Set Multitask Mode](skills/set-multitask-mode/SKILL.md) restores parallel dispatch only after every exit condition passes. Both mode changes are idempotent. Without such a mechanism, blockage recovery proceeds without either dispatch-mode skill.
 
 Normal coordination avoids crisis accumulation by classifying preventing conditions before
 selecting lifecycle state. Requested-outcome blockers use Blocked; genuine user decisions use
@@ -457,7 +456,7 @@ creation-time User Action Required condition. An executing item becomes Stalled 
 progress has stopped and the preventing cause is still unknown; it becomes Blocked only when
 the Coordinator can name the preventing cause and record an observable unblock condition.
 Stalled is nonterminal and outside active capacity. The Coordinator may return it to Running
-with the same owner and fresh Active Execution Evidence, to Ready after ownership ends, to
+when runtime observation proves the same owner resumed, to Ready after ownership ends, to
 Blocked when investigation identifies the cause, to User Action Required for one exact
 user-owned action, or to a terminal outcome with matching evidence. A Ready item moves to
 User Action Required only after execution reaches a distinct user-owned decision that the

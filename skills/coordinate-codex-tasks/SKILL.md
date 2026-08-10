@@ -60,7 +60,7 @@ Use this lifecycle and phase mapping:
 - Failed: Failed — short work-item title.
 - Abandoned: Abandoned — short work-item title.
 
-The owning Coordinator or Orchestrator is accountable after every successful lifecycle transition. When Codex grants rename authority, rename the canonical conversation directly. Otherwise send the exact required title to its owner and verify the handoff before reporting title coordination complete. A failed title update does not roll back a durable lifecycle transition. Preserve the provider mutation and report title coordination incomplete.
+The owning Coordinator or Orchestrator is accountable after every successful lifecycle transition. When Codex grants rename authority, rename the canonical conversation directly. Otherwise leave the title unsynchronized and retain that limitation in the durable record; do not send a title-only task message. A failed title update does not roll back a durable lifecycle transition.
 
 Apply the title contract when the task is created, after each successful lifecycle transition, and at each material Running phase change. Never use raw prompt text, markup, error output, identifiers, or a generic title.
 
@@ -80,7 +80,7 @@ Map Codex task states into portable evidence without inventing lifecycle. A runn
 
 ## Task Follow-Up
 
-When the canonical task is idle but remains the selected resumable execution, send one follow-up to the same canonical task. Use follow-up for a bounded next action, resumption request, or Watchdog heartbeat. Never use follow-up as lifecycle authority, capacity evidence, provider mutation, or proof of progress.
+When the canonical task is idle but remains the selected resumable execution, send one follow-up only to resume an authorized bounded next action or deliver a Coordinator decision. Never use follow-up for routine status, heartbeat, lifecycle history, capacity evidence, provider mutation, or proof of progress.
 
 Do not create a replacement task merely because the task is idle, slow, or has not produced a recent message. After a follow-up, preserve the original task identity and reconcile the returned runtime state. If the task cannot resume, report that evidence to the portable lifecycle owner before any replacement decision.
 
@@ -93,20 +93,14 @@ When coordinate-work-items permits a dedicated read-only Watchdog, create one Co
 ```text
 Act as the dedicated read-only Dev Methodology backlog watchdog for parent task {parent_task_id} in {repository_root}.
 
-Apply skills/coordinate-work-items/SKILL.md for portable active-execution, capacity, lifecycle-reconciliation, Blocked, Stalled, and read-only Watchdog criteria. Apply skills/coordinate-codex-tasks/SKILL.md only for Codex task identity, conversation-title observation, follow-up, and archival mapping. On each cycle, read the selected provider inventory, Git state, configured resource-coordination state when enabled, and Codex runtime state. Evaluate Starting reconciliation, Running Active Execution Evidence, phase age, estimates, hard stops, evidence progress, Blocked and Stalled exit conditions, accepted work stranded before Commit delivery, READY delivery awaiting provider closeout, every terminal Codex task in this Coordinator campaign, complete provider, claim, worktree, branch, notification, preservation, archival, and current scoped archive-pause evidence, and unsafe, stale, or broad shared ownership.
+Apply skills/coordinate-work-items/SKILL.md for portable capacity, lifecycle reconciliation, Blocked, Stalled, and read-only Watchdog criteria. Apply skills/coordinate-codex-tasks/SKILL.md only for Codex task identity, conversation-title observation, bounded resumption, and archival mapping. Observe task state through runtime tools. Consult provider, Git, and resource records only for a lifecycle decision, anomaly, dependency, delivery, or cleanup question; do not reconstruct lifecycle history on every cycle.
 
-Remain strictly read-only. Do not mutate repository files, provider lifecycle, claims, tasks, branches, worktrees, or shared resources. Do not dispatch, integrate, clean up, archive, or run expensive or live verification. Notify parent task {parent_task_id} only when an actionable condition exists. Send exactly one aggregate alert containing every actionable anomaly, its exact evidence, and its smallest recommended Coordinator action. When healthy, record only one concise no-action cycle result here.
+Remain strictly read-only. Do not mutate repository files, provider lifecycle, claims, tasks, branches, worktrees, or shared resources. Do not dispatch, integrate, clean up, archive, or run expensive or live verification. Notify parent task {parent_task_id} only when a specific Coordinator decision is required. State the affected item, decision, and smallest recommended action without copying durable evidence into the message. When healthy, send nothing.
 ```
 
-### Canonical Heartbeat Prompt Template
+Substitute only the resolved parent task identifier and repository root. Supply provider and resource-coordination variation through resolved task context without rewriting the canonical prompt.
 
-```text
-Run one complete read-only Watchdog cycle now using this task's standing contract. Notify parent task {parent_task_id} only if an actionable condition exists; otherwise record one concise no-action cycle result here.
-```
-
-Substitute only the resolved parent task identifier and repository root. Supply provider and resource-coordination variation through resolved task context without rewriting either canonical prompt.
-
-Use a follow-up on that same Watchdog task for each scheduled heartbeat. Do not create a new Watchdog task per cycle. The Watchdog reports actionable evidence to the parent task and otherwise retains one concise no-action result in its own task. It does not mutate tasks, provider records, claims, Git, branches, worktrees, or resources.
+Do not send scheduled heartbeat or progress follow-ups to worker or Watchdog tasks. The dispatcher observes runtime state through runtime tools. A Watchdog reports only a specific Coordinator decision it cannot make itself; otherwise it sends nothing.
 
 If the Watchdog task is unavailable, the parent performs the portable review directly. Do not create a second ledger or duplicate observer.
 
@@ -119,3 +113,12 @@ An archival pause is valid only when explicit current user direction names the e
 Before archival, verify the terminal conversation title and preserve the canonical task identity with the terminal handoff. If no valid current named-task pause exists, archive the task after every ordinary gate passes. If archival fails or the runtime does not support it, record the limitation and do not report archival success. An idle, stopped, titled, or archived Codex task proves none of those facts.
 
 Task archival is a runtime cleanup mapping. It does not close a provider record, prove Commit delivery, release a claim, delete a worktree, or delete a branch.
+
+## Task Message Contract
+
+Workers send the dispatcher only one of these messages:
+
+- a final outcome after the work-item task reaches its current terminal delivery result; or
+- one specific Coordinator decision the worker cannot make itself.
+
+Do not send routine progress receipts, heartbeat messages, repeated evidence summaries, title-only handoffs, or lifecycle-history reconstructions. Do not copy commit hashes, claim events, test history, deadlines, branches, worktrees, or other durable evidence into task messages. The dispatcher observes runtime state through runtime tools and consults the authoritative provider, Git, review, verification, or claim record only when a decision requires it.

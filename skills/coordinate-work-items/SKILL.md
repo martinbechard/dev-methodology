@@ -36,7 +36,7 @@ A definition outside the work item's exact named scope is additional work and re
 
 This skill is the single normative authority for active-execution eligibility and active-capacity accounting. Persistence managers record provider mutations and caller-supplied evidence. They do not determine whether execution is active, inspect runtime state, or calculate capacity.
 
-Count no more than ten actively eligible work items. Ten is a hard ceiling, not a scheduling target. A provider state contributes one active-capacity slot only while it satisfies the matching evidence contract below. Reconcile every Starting and Running record against current runtime evidence before counting it and before reserving more work.
+Count no more than ten actively eligible work items. Ten is a hard ceiling, not a scheduling target. Reconcile Starting and Running records against current runtime state before counting them and before reserving more work. In concurrent mode, dispatch eligible Ready work from available capacity and satisfied dependencies. In SOLO mode, run exactly one separate work-item task and keep the dispatcher free of implementation work.
 
 ### Adaptive Capacity And Finish-Lane Priority
 
@@ -55,7 +55,7 @@ Finish-lane work has priority over new Ready scheduling when it includes an acce
 
 Starting is the durable handoff between the parent Dev Backlog Coordinator and one new root Dev Orchestrator execution. The Coordinator selects one Ready item and directly applies the Persistence-selected management skill to record Ready -> Starting atomically. The selected provider resolves the Work Item ID, protects its required resources, commits or publishes the update, and releases its coordination resources. Only after that operation is durable does the Coordinator request runtime dispatch. The Coordinator's handoff ends after that request; it does not wait for or perform Starting -> Running.
 
-The new root execution independently accepts the item. Its Dev Orchestrator directly applies the Persistence-selected management skill to record Starting -> Running with the canonical execution identity and Active Execution Evidence before implementation begins. The provider owns its resource protection, durable mutation, and cleanup.
+The new root execution independently accepts the item. Its Dev Orchestrator directly applies the Persistence-selected management skill to record Starting -> Running with the canonical execution identity before implementation begins. The provider owns its resource protection, durable mutation, and cleanup.
 
 Retain this evidence in the provider record:
 
@@ -67,40 +67,23 @@ Coordinator: [parent execution identity]
 Normalized Objective: [bounded objective]
 Launch Result: [Not attempted, Requested, Started, Failed, or Unknown]
 Canonical Execution: [runtime execution identity or None]
-Last Contact At: [UTC timestamp or None]
-Next Reconciliation At: [UTC timestamp no later than the next fifteen-minute parent review]
 ```
 
-A failed or missing runtime launch, an execution that cannot claim the provider, or an execution that stops before Running leaves the provider in Starting. Do not automatically restore Ready. At or after Next Reconciliation At, the Watchdog reports the stale Starting item and its evidence to the Coordinator. The Coordinator may contact the same execution, stop it, request one replacement after duplicate reconciliation, or authorize a truthful provider transition. The Watchdog never mutates the item or launches a replacement.
+A failed or missing runtime launch, an execution that cannot accept the provider, or an execution that stops before Running leaves the provider in Starting. Do not automatically restore Ready. The dispatcher observes the runtime task through runtime tools and reconciles the item when the task fails, disappears, or requires a decision. The Watchdog never mutates the item or launches a replacement.
 
 Starting consumes active capacity until the provider records Running or the Coordinator records another truthful lifecycle state. A runtime launch response does not replace either provider transaction.
 
-### Running Eligibility And Evidence
+### Running Eligibility
 
-Running is actively eligible only while current evidence proves at least one condition:
+Running is actively eligible only while current runtime state proves at least one condition:
 
 - active root execution: the canonical root execution is currently working on the item
 - live delegated work: a child execution is currently completing a bounded assignment
-- bounded owned wait or progress condition: a named owner retains a necessary short wait or progress condition with a finite deadline, observable evidence, and a concrete next action
+- bounded runtime wait: the canonical task remains active while awaiting a runtime operation required by the current phase
 
-Every Running item retains exactly one current Active Execution Evidence section:
+The provider records the canonical execution and current phase when Running begins or materially changes. It does not require routine progress refreshes, heartbeat timestamps, deadlines, or reconciliation timestamps.
 
-```markdown
-## Active Execution Evidence
-
-Condition Type: [root-execution, delegated-work, owned-wait, or progress-condition]
-Owner: [responsible Agent or coordinator]
-Evidence: [current runtime state, delegated assignment, retained output, or wait condition]
-Observed At: [UTC timestamp]
-Started At: [UTC timestamp]
-Deadline or Expires At: [finite UTC timestamp]
-Next Action: [concrete owned action]
-Next Reconciliation At: [UTC timestamp]
-```
-
-Observed At and Started At are historical evidence timestamps. They do not expire the record. Validity is governed by two future boundaries: Deadline or Expires At and Next Reconciliation At. At evaluation time, both future boundaries must remain later than the current time. Evidence is invalid when current time is at or after either boundary. The owner must still own the condition, and the supporting state must remain true. Next Reconciliation At must be no later than the next fifteen-minute parent review. A review may refresh current observation evidence but must not extend the underlying condition automatically.
-
-Running must leave active capacity when its evidence is absent, invalid, or expired. Restore Ready when ownership ended and ordinary redispatch is safe. Record Stalled when progress stopped for an unknown cause and preserved evidence needs diagnosis. Record Blocked for a known preventing cause, User Action Required for a genuine user-owned action, Awaiting Review for an accepted delivery that reached that provider state, or the applicable terminal outcome. The selected provider must record that truthful non-active state before replacement scheduling releases the capacity slot.
+Running must leave active capacity when runtime observation shows that ownership ended or execution cannot continue. Restore Ready when ordinary redispatch is safe. Record Stalled when progress stopped for an unknown cause and preserved evidence needs diagnosis. Record Blocked for a known preventing cause, User Action Required for a genuine user-owned action, Awaiting Review for an accepted delivery that reached that provider state, or the applicable terminal outcome. The selected provider must record that truthful non-active state before replacement scheduling releases the capacity slot.
 
 ## Resource Coordination
 
@@ -119,7 +102,7 @@ For a selected Persistence provider, use its management skill to record phase-ap
 - canonical root execution identity and root Dev Orchestrator
 - branch and worktree
 - current phase
-- Starting Handoff Evidence or Active Execution Evidence while the lifecycle requires it
+- Starting handoff and canonical Running execution identity while the lifecycle requires them
 - accepted candidate commit
 - delivery-wait or provider-closure-wait start time
 - applicable claim result, notification, blocking evidence, and owner
@@ -151,17 +134,15 @@ For a provider that supports inventory and lifecycle transitions:
 2. Determine the effective scheduling limit from current evidence. Select eligible Ready items only below that limit and only when a launch will not delay compatible finish-lane work.
 3. For each selection, the parent Coordinator directly applies the effective Persistence-selected management skill to record Ready -> Starting, Starting Handoff Evidence, and scheduling evidence before requesting runtime dispatch.
 4. Request at most one root Dev Orchestrator execution for the Starting item through the applicable runtime mapping. Reuse an existing canonical execution when a prior lifecycle pause preserved it.
-5. The root Dev Orchestrator accepts ownership, produces valid Active Execution Evidence, and directly applies the effective Persistence-selected management skill to record Starting -> Running before implementation.
+5. The root Dev Orchestrator accepts ownership and directly applies the effective Persistence-selected management skill to record Starting -> Running with its canonical execution identity before implementation.
 6. Schedule only work that can begin implementation or another bounded delivery phase. Do not launch an execution merely to wait for approval, a dependency, a reviewer, a shared resource, or a delivery window.
 7. When an item leaves Starting or Running, reconcile finish-lane work and the effective limit before reserving a replacement. Never refill a vacancy from count alone.
 
 Stalled, Blocked, User Action Required, Holding, Awaiting Review, Completed, Failed, and Abandoned do not count toward ten. Future Ideas are not work-item states and enter coordination only after deliberate promotion creates a complete typed work item. A Starting or Running record without valid matching evidence also does not count and must be reconciled before replacement scheduling. Provider none does not synthesize a queue or capacity target from runtime state.
 
-## New Work-Item Notification
+## New Work-Item Discovery
 
-After a provider creates a new item successfully, it may send the opaque Work Item ID to the existing Coordinator through the available runtime message mechanism. On receipt, reread current provider inventory before deciding whether to reserve or dispatch anything. Reconcile dependencies, capacity, lifecycle state, and the existing canonical execution. The message is not lifecycle authority and does not reserve capacity or start delivery.
-
-Repeated messages are harmless because each triggers fresh inventory reconciliation. A failed or duplicate no-op creation sends no message. When no Coordinator execution is available, the provider item remains discoverable during the next inventory read.
+The Coordinator discovers new work through current provider inventory. Item creation sends no routine task message and does not reserve capacity or start delivery. Before dispatch, reconcile dependencies, capacity, lifecycle state, and any existing canonical execution from authoritative records.
 
 ## Effective Commit Delivery And Persistence Closure
 
@@ -179,14 +160,14 @@ For main-branch integration, start from current main and designate this fresh br
 8. Resume the same effective Commit-selected skill until it returns READY or BLOCKED.
 9. Only after the effective Commit-selected skill returns READY, Dev Orchestrator applies the effective Persistence-selected management skill exactly once for the distinct terminal lifecycle COMPLETED update. Reconcile an already successful terminal update instead of repeating it.
 10. Provider file closure uses its file manager. GitHub and GitLab closure use their own provider identities. Placeholder providers preserve BLOCKED. Provider none records terminal evidence only in the task result.
-11. Notify the parent with candidate provenance, review and verification, final Commit disposition, provider results when selected, claims, delivery identity, worktree, and cleanup eligibility.
-12. The parent performs only cleanup proven safe by the terminal handoff, then obtains fresh provider inventory and schedules eligible replacement work.
+11. Send the parent only the final outcome or one specific Coordinator decision the Orchestrator cannot make. Keep provenance, review, verification, Commit, provider, claim, and cleanup evidence in their authoritative durable records.
+12. The parent consults those records when needed, performs only cleanup proven safe by the terminal result, then obtains fresh provider inventory and schedules eligible replacement work.
 
 Keep claim release, Commit delivery, and Persistence closure as distinct operations. One cannot substitute for another. If a provider update fails or is ambiguous, preserve the Commit handoff and reconcile the same Persistence transaction before resuming delivery.
 
 ### Candidate Recovery
 
-Preserve a candidate recovery receipt with its immutable commit, exact changed paths, accepted findings, review result, verification result, and commands already passed. After a mechanical or shared-resource unblock, reconcile the preserved candidate against current integration state once. Rerun only integration-sensitive checks and review required because combined bytes changed meaning.
+Preserve candidate recovery evidence in the authoritative Git, review, verification, and provider records. Do not copy that history into task messages. After a mechanical or shared-resource unblock, reconcile the preserved candidate against current integration state once. Rerun only integration-sensitive checks and review required because combined bytes changed meaning.
 
 ### Review And Verification Availability
 
@@ -206,14 +187,14 @@ If the combined regression finds a distinct defect, record it against the tested
 
 ## Long-Running Execution Control
 
-Before starting a command or phase expected to take more than five minutes, Dev Orchestrator exposes:
+Before starting a command or phase expected to take more than five minutes, Dev Orchestrator records locally:
 
 - the exact active unit and later units not started
 - expected duration or best evidence-based estimate
 - a hard stop condition and retained evidence path
 - the distinct acceptance criterion that requires the expensive operation
 
-This update is operational telemetry, not a provider transaction or approval gate. Observe long-running work at phase start, first failure, timeout, and completion. Distinguish active serial work from selected or queued work.
+This is local operational control, not a progress message, provider transaction, or approval gate. The dispatcher observes runtime state through runtime tools.
 
 After an expensive failure, classify the failure before repeating anything. Reuse retained output, add the smallest offline replay or deterministic regression, and make it pass before another equivalent expensive run. Stop a unit when it reaches its hard stop, repeats the same failure, or stops producing useful evidence. Preserve its work and follow resource-claim for any triggered claim. Two unproductive attempts require parent investigation and a revised plan.
 
@@ -237,7 +218,7 @@ A failed, stopped, or missing canonical execution requires immediate reconciliat
 
 The Coordinator chooses exactly one evidence-backed disposition:
 
-1. Restore Running only when the same canonical owner resumes safely, supplies complete unexpired evidence, and capacity remains below the effective limit.
+1. Restore Running only when the same canonical owner resumes safely, runtime tools show active execution, durable records are consistent where needed, and capacity remains below the effective limit.
 2. Restore Ready when ownership ended and normal redispatch is required.
 3. Set Blocked when a concrete cause and Coordinator-owned next action are known.
 4. Set User Action Required when a concrete user-owned action and exact question exist.
@@ -245,11 +226,11 @@ The Coordinator chooses exactly one evidence-backed disposition:
 
 A retained Stalled owner must not resume repository or provider mutation until the Coordinator records Stalled -> Running.
 
-When Dev Orchestrator recognizes a concrete blocker, it stops unsafe work, preserves commits and evidence, obtains truthful resource disposition, and immediately notifies the Coordinator. Include provider identity or provider-none execution, canonical execution identity, phase, blocker, owner, unblock condition, requested action, preserved evidence, resource disposition, and whether resumption is safe.
+When Dev Orchestrator recognizes a concrete blocker, it stops unsafe work, preserves durable evidence, obtains truthful resource disposition, and sends one decision request to the Coordinator containing only the affected Work Item ID, blocker, owner, unblock condition, requested Coordinator action, and whether resumption is safe. The Coordinator consults durable records when more evidence is needed.
 
 ## Blocked Reconciliation And Disposition
 
-On every Watchdog cycle, reconcile every Blocked item against its blocker, unblock condition, next-action owner, dependencies, candidate, review and verification, runtime state, Git state, live claims, and correction history. Retain one concise result for every Blocked item. The Watchdog never chooses a lifecycle outcome.
+Reconcile a Blocked item when runtime or provider observation shows a changed unblock condition, missing disposition, or required Coordinator decision. Consult only the durable evidence needed for that decision. The Watchdog never chooses a lifecycle outcome.
 
 ### Mandatory Ordinary Blocked Recovery
 
@@ -258,7 +239,7 @@ Outside a declared backlog crisis, Dev Backlog Coordinator owns the complete rec
 1. Read current provider, canonical execution, candidate, worktree, review, verification, dependency, acceptance-criteria, Git, and resource-coordination evidence.
 2. Reproduce or otherwise confirm the preventing condition. Correct stale, contradictory, over-scoped, or incomplete work-item content before changing implementation.
 3. Complete bounded technical investigation and mechanical recovery. The Coordinator may directly correct other files already authorized by the original request and standing directives when those corrections are necessary to make the item runnable. Do not widen the requested outcome or governed-definition authority.
-4. Reuse preserved candidates and accepted gates where their bytes and assumptions remain valid. Record a compact recovery receipt containing the blocker diagnosis, exact corrections, retained evidence, remaining risks, and restart decision.
+4. Reuse preserved candidates and accepted gates where their bytes and assumptions remain valid. Record the recovery decision in the provider; do not send or reconstruct a separate recovery-history receipt.
 5. Use User Action Required only when bounded diagnosis isolates one concrete user-owned decision, authority grant, action, risk acceptance, or fact. Record one exact question and synchronize the canonical task to a Waiting for User title. Technical uncertainty or Coordinator inexperience is not user work.
 6. When recovery makes dispatch safe, preserve the same canonical execution and record Blocked -> Ready, then Ready -> Starting as two serialized provider transitions. A direct Blocked -> Running transition is prohibited.
 7. The preserved root Dev Orchestrator independently records Starting -> Running when capable of proceeding. If it still cannot proceed, it records a new Blocked handoff with the current exact cause, owner, evidence, and observable unblock condition.
@@ -292,10 +273,10 @@ During review, reconcile active capacity, eligible Ready work, Stalled and Block
 
 When the user requests background supervision for a sustained queue, the parent may assign one dedicated watchdog execution under the Dev Backlog Watchdog Role. The watchdog never performs scheduling or recovery. It observes and reports. It remains outside the provider queue and active capacity and is not a durable record or substitute Coordinator.
 
-The Watchdog reads provider inventory, Git state, runtime evidence, and applicable resource coordination state. For provider none, it reads only task-local evidence. It evaluates:
+The Watchdog observes runtime state first. It reads provider, Git, and applicable resource records only when a specific anomaly or Coordinator decision requires them. For provider none, it reads only task-local evidence. It evaluates:
 
 - overdue Starting reconciliation
-- absent or expired Running evidence
+- provider Running without active runtime execution
 - estimates, hard stops, and latest evidence-bearing progress
 - suspected stalls and recorded Stalled exit conditions
 - every Blocked item's blocker, unblock condition, owner, dependencies, candidate, review and verification, runtime and Git state, claims, attempts, and disposition
@@ -305,15 +286,15 @@ The Watchdog reads provider inventory, Git state, runtime evidence, and applicab
 - terminal provider evidence, live and released claims, worktree disposition, delivery and cleanup branch disposition, source-branch disposition, unresolved notifications, and runtime archival state
 - stale, unsafe, or unnecessarily broad claims when resource-claim is loaded
 
-Reconcile each terminal task independently, even after one actionable anomaly is found. Retain its exact provider, task, claim, worktree, branch, notification, preservation, archival, and next-action evidence in the cycle result.
+Reconcile a terminal task only when runtime observation indicates incomplete cleanup or another specific decision. Consult its durable provider, Git, claim, and archival records as needed; do not construct a repeated cycle history.
 
 A source branch may remain deliberately preserved only when current evidence proves that it is non-ancestral or non-equivalent. Retain that evidence-backed disposition without another alert after the Coordinator acknowledges the same evidence and required action. Alert again when the evidence or required action changes. A preserved source branch never suppresses an independently authorized alert to remove its clean terminal worktree.
 
-When a runtime mapping supports task archival, an archival pause may suppress only archival for the exact named runtime tasks validated by that mapping. It never suppresses provider closeout, claim reconciliation, worktree cleanup, delivery-branch cleanup, source-branch cleanup, notification, or another terminal action.
+When a runtime mapping supports execution archival, an archival pause may suppress only archival for the exact named runtime executions validated by that mapping. It never suppresses provider closeout, claim reconciliation, worktree cleanup, delivery-branch cleanup, source-branch cleanup, notification, or another terminal action.
 
 The Watchdog is read-only. It must not change repository files, provider records, lifecycle state, claims, runtime state, branches, worktrees, or shared resources. It must not schedule work, integrate changes, perform cleanup, or run expensive or live verification.
 
-Notify the Coordinator only when action is required. Send exactly one aggregate parent alert that identifies every actionable item, its observed evidence, why attention is required, and its smallest recommended action. Treat quiet work as healthy only while its current evidence remains valid. NO_ACTION is valid only after every terminal task has complete acknowledged provider, claim, worktree, branch, notification, preservation, and archival reconciliation. If the Watchdog is unavailable, the parent performs the review directly and does not create a replacement ledger.
+Notify the Coordinator only when a specific decision is required. Send the affected Work Item ID, reason, and smallest recommended action without copying durable evidence into the message. When no decision is required, send nothing. If the Watchdog is unavailable, the parent performs the review directly and does not create a replacement ledger.
 
 ## User Decisions And Terminal State
 
@@ -330,8 +311,6 @@ Preserve out-of-sequence work as evidence. Reconcile provider state, claims, com
 
 Completed requires Commit READY, required independent review, focused verification, and terminal evidence through the effective Persistence-selected management skill when a provider exists. Provider none records equivalent evidence in the execution result. Runtime cleanup is eligible only after this terminal contract is satisfied.
 
-## Reporting
+## Task Communication
 
-For each considered item, report canonical lifecycle state, any invalid Ready dependency, unmet hard blocker, coordination-only overlap, and deferred edit, resource, or integration event as distinct facts. Do not invent an effective lifecycle beside the provider record.
-
-Also return provider identity, owner and canonical execution, dependency and claim evidence, current phase, branch and worktree, accepted commit, review and verification results, Commit and Persistence dispositions, cleanup eligibility, and next safe action.
+Workers communicate only a final outcome or one specific Coordinator decision they cannot make themselves. Routine progress, heartbeat, title-only, repeated evidence, and lifecycle-history messages are prohibited. Messages do not duplicate commit hashes, claim events, test history, deadlines, branches, worktrees, or other durable evidence. The dispatcher observes runtime status through runtime tools and consults provider, Git, review, verification, and claim records only when needed.

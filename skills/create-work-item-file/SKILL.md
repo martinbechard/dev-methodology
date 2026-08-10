@@ -218,13 +218,9 @@ The creation commit and result must preserve Work Item ID, current provider-owne
 - Keep completed or failed outcomes out of newly created active items.
 - Use imperative, steady-state language.
 
-## Coordinator Notification
+## Coordinator Discovery
 
-After a new work-item file is committed successfully, use the current runtime's normal task-message feature to send its Work Item ID to the existing Dev Backlog Coordinator task.
-
-The message only reports that the backlog changed. It does not reserve capacity, change lifecycle state, create a delivery task, or start implementation.
-
-Send no message when creation fails or when duplicate reconciliation creates no item. If no Coordinator task is available, leave the committed item unchanged. The Coordinator will discover it during its next inventory read.
+Do not send a routine task message after creating a work item. The Dev Backlog Coordinator discovers committed items by reading the authoritative provider inventory when scheduling or reconciling capacity. A specific Coordinator decision that creation cannot resolve may still be requested through the ordinary task-message contract.
 
 ## Final Check And Result
 
@@ -243,9 +239,10 @@ Before reporting completion:
 - Confirm user-action-required content has the complete question and unattended boundary.
 - Confirm no provider issue, mirror, shadow queue, or duplicate file was created.
 
-Return provider file, opaque Work Item ID, current diagnostic location, item type, lifecycle
-status, source evidence, dependency Work Item IDs, completion selection, creation commit,
-immutable proof, and next runnable action.
+Return a concise final outcome with provider file, opaque Work Item ID, current diagnostic
+location, lifecycle status, and next runnable action. Keep commit identity, transaction proof,
+and other durable evidence in the provider and Git records instead of duplicating them in the
+task message.
 
 ## Migration
 
