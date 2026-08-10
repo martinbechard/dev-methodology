@@ -77,9 +77,9 @@ Use scripts/outline.py from this skill package. The helper imports and signature
 
 Do not improvise another parser, renderer wrapper, or HTML writer. Do not install, emulate, or change mcp-agent-ops when the capability is unavailable.
 
-On native Windows, the helper can use python.exe beside the installed mcp-agent-ops.exe console launcher. The helper returns CAPABILITY_UNAVAILABLE when neither the active interpreter nor that installed package interpreter provides the API.
+The helper uses only the current Python environment. It returns CAPABILITY_UNAVAILABLE when that environment cannot import a compatible API. It does not inspect launchers, install packages, or re-execute through another interpreter.
 
-The helper renders to a validated temporary directory. It rejects symbolic links, hard-link aliases, and non-file HTML targets. It atomically replaces the final HTML only after the temporary bytes match the in-memory rendering. A renderer failure leaves the previous HTML unchanged.
+The helper renders to a validated temporary directory. It rejects symbolic links, hard-link aliases, and non-file HTML targets. It compares UTF-8 HTML after normalizing line endings. It atomically replaces the final HTML only after the content matches the in-memory rendering. It calculates html_sha256 from the exact published bytes. A renderer failure leaves the previous HTML unchanged.
 
 Run the capability check first:
 

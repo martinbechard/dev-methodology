@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import importlib.util
 import json
 import os
@@ -106,13 +107,16 @@ class OutlineHelperTests(unittest.TestCase):
         spec.loader.exec_module(module)
         return module
 
-    def test_capability_check_finds_the_installed_renderer_from_system_python(self) -> None:
-        """The portable helper can re-exec through the installed mcp-agent-ops interpreter."""
+    def test_capability_check_uses_the_current_python_environment(self) -> None:
+        """The helper reports the renderer and current Python interpreter."""
         result, completed = self._invoke("capabilities")
 
         self.assertEqual("CAPABILITIES_AVAILABLE", result["outcome"])
         self.assertEqual(["render_hierarchy_html"], result["capabilities"])
         self.assertRegex(str(result["package_version"]), r"^\d+\.\d+\.\d+")
+        self.assertEqual(
+            Path(sys.executable).resolve(), Path(str(result["interpreter"]))
+        )
         self.assertEqual("", completed.stderr)
 
     def test_large_multi_source_example_builds_synchronized_review_html(self) -> None:
@@ -324,19 +328,38 @@ class OutlineHelperTests(unittest.TestCase):
             sorted(path.name for path in json_path.parent.iterdir()),
         )
 
-    def test_native_windows_console_launcher_resolves_its_package_interpreter(self) -> None:
-        """A Windows console launcher uses the sibling package Python interpreter."""
+    def test_build_accepts_crlf_renderer_output_and_hashes_published_bytes(self) -> None:
+        """Build compares newline-equivalent HTML and hashes the exact published bytes."""
         helper = self._load_helper_module()
-        scripts = self.workspace / "Scripts"
-        scripts.mkdir()
-        launcher = scripts / "mcp-agent-ops.exe"
-        interpreter = scripts / "python.exe"
-        launcher.write_bytes(b"launcher")
-        interpreter.write_bytes(b"python")
+        json_path, html_path = self._artifact_paths()
+        expected_html = "<!doctype html>\n<html>\n<body>outline</body>\n</html>\n"
 
-        self.assertEqual((interpreter, []), helper._windows_interpreter(launcher))
-        interpreter.unlink()
-        self.assertIsNone(helper._windows_interpreter(launcher))
+        def crlf_renderer(_source: object, **options: object) -> str | Path:
+            output_folder = options.get("output_folder")
+            if output_folder is None:
+                return expected_html
+            output_path = Path(str(output_folder)) / str(options["output_filename"])
+            output_path.write_bytes(expected_html.replace("\n", "\r\n").encode("utf-8"))
+            return output_path
+
+        context = helper._context(
+            Namespace(
+                workspace=str(self.workspace),
+                output_folder=self.output_folder.as_posix(),
+                name=self.outline_name,
+            )
+        )
+        api = helper._OutlineApi(crlf_renderer, "test", "test signature")
+
+        built = helper._build(context, Namespace(definition=str(json_path)), api)
+        published_bytes = html_path.read_bytes()
+
+        self.assertEqual("BUILT", built["outcome"])
+        self.assertTrue(built["synchronized"])
+        self.assertIn(b"\r\n", published_bytes)
+        self.assertEqual(
+            hashlib.sha256(published_bytes).hexdigest(), built["html_sha256"]
+        )
 
     def test_inspect_detects_stale_html_and_rebuild_restores_sync(self) -> None:
         """A changed or missing projection is stale until regenerated from authoritative JSON."""
@@ -360,6 +383,27 @@ class OutlineHelperTests(unittest.TestCase):
         synced, _ = self._invoke(*self._arguments(), "inspect")
         self.assertEqual("SYNCED", synced["outcome"])
         self.assertTrue(synced["synchronized"])
+
+    def test_inspect_accepts_crlf_projection_and_hashes_exact_bytes(self) -> None:
+        """Inspect treats CRLF as equivalent and reports the stored HTML byte digest."""
+        self._build()
+        _json_path, html_path = self._artifact_paths()
+        normalized_html = (
+            html_path.read_bytes()
+            .decode("utf-8")
+            .replace("\r\n", "\n")
+            .replace("\r", "\n")
+        )
+        crlf_bytes = normalized_html.replace("\n", "\r\n").encode("utf-8")
+        html_path.write_bytes(crlf_bytes)
+
+        inspected, _ = self._invoke(*self._arguments(), "inspect")
+
+        self.assertEqual("SYNCED", inspected["outcome"])
+        self.assertTrue(inspected["synchronized"])
+        self.assertEqual(
+            hashlib.sha256(crlf_bytes).hexdigest(), inspected["html_sha256"]
+        )
 
     def test_review_cannot_drop_unresolved_questions_and_acceptance_records_order(self) -> None:
         """Review keeps every open question and records the accepted top-level section order."""

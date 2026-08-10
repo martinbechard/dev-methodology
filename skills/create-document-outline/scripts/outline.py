@@ -11,8 +11,6 @@ import inspect
 import json
 import os
 import re
-import shlex
-import shutil
 import stat
 import sys
 import tempfile
@@ -24,7 +22,6 @@ from pathlib import Path
 _RESULT_SCHEMA_VERSION = 1
 _OUTLINE_SCHEMA = "dev-methodology-document-outline"
 _OUTLINE_VERSION = 1
-_REEXEC_MARKER = "MCP_AGENT_OPS_OUTLINE_REEXECUTED"
 _SAFE_NAME = re.compile(r"[A-Za-z0-9][A-Za-z0-9_-]{0,99}")
 _SAFE_IDENTIFIER = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]{0,99}")
 _SECTION_KINDS = frozenset(
@@ -135,85 +132,6 @@ def _load_api() -> _OutlineApi:
         package_version=package_version,
         signature=str(signature),
     )
-
-
-def _reexec_interpreter() -> tuple[Path, list[str]] | None:
-    command = shutil.which("mcp-agent-ops")
-    if command is None:
-        return None
-    command_path = Path(command)
-    if os.name == "nt":
-        return _windows_interpreter(command_path)
-    try:
-        with command_path.open("r", encoding="utf-8") as executable:
-            first_line = executable.readline().rstrip("\r\n")
-    except (OSError, UnicodeError):
-        return None
-    if not first_line.startswith("#!"):
-        return None
-    words = shlex.split(first_line[2:].strip())
-    if not words:
-        return None
-    interpreter = Path(words[0])
-    interpreter_arguments = words[1:]
-    if interpreter.name == "env":
-        if not interpreter_arguments or interpreter_arguments[0].startswith("-"):
-            return None
-        resolved = shutil.which(interpreter_arguments[0])
-        if resolved is None:
-            return None
-        interpreter = Path(resolved)
-        interpreter_arguments = interpreter_arguments[1:]
-    if not interpreter.is_absolute() or not interpreter.is_file():
-        return None
-    if "python" not in interpreter.name.lower():
-        return None
-    return interpreter, interpreter_arguments
-
-
-def _windows_interpreter(command_path: Path) -> tuple[Path, list[str]] | None:
-    interpreter = command_path.with_name("python.exe")
-    if not interpreter.is_absolute() or not interpreter.is_file():
-        return None
-    return interpreter, []
-
-
-def _maybe_reexec(argv: Sequence[str]) -> None:
-    try:
-        _load_api()
-        return
-    except _OutlineHelperError as error:
-        if (
-            error.outcome != "CAPABILITY_UNAVAILABLE"
-            or os.environ.get(_REEXEC_MARKER) == "1"
-        ):
-            return
-    resolved = _reexec_interpreter()
-    if resolved is None:
-        return
-    interpreter, interpreter_arguments = resolved
-    if interpreter == Path(sys.executable):
-        return
-    environment = dict(os.environ)
-    environment[_REEXEC_MARKER] = "1"
-    try:
-        os.execve(
-            interpreter,
-            [
-                str(interpreter),
-                *interpreter_arguments,
-                str(Path(__file__).resolve()),
-                *argv,
-            ],
-            environment,
-        )
-    except OSError as error:
-        raise _OutlineHelperError(
-            "CAPABILITY_UNAVAILABLE",
-            "The mcp-agent-ops executable interpreter could not start the outline helper.",
-            exit_code=3,
-            cause=str(error),
-        ) from error
 
 
 def _is_within(path: Path, root: Path) -> bool:
@@ -768,7 +686,7 @@ def _render_validated_html(
     outline: _ValidatedOutline,
     api: _OutlineApi,
     expected_html: str,
-) -> str:
+) -> bytes:
     with tempfile.TemporaryDirectory(
         prefix=f".{context.outline_name}-render-", dir=context.output_root
     ) as temporary_directory:
@@ -826,7 +744,7 @@ def _render_validated_html(
             )
         _validate_html_target(context)
         os.replace(expected_path, context.html_path)
-        return actual_html
+        return context.html_path.read_bytes()
 
 
 def _sha256(content: bytes) -> str:
@@ -852,14 +770,14 @@ def _build(
         raise _OutlineHelperError("INVALID_OUTLINE", str(error)) from error
     expected_html = _render_html(outline, api)
     _make_safe_directory(context)
-    actual_html = _render_validated_html(context, outline, api, expected_html)
+    published_html = _render_validated_html(context, outline, api, expected_html)
     canonical_bytes = definition_path.read_bytes()
     return _result(
         "BUILT",
         json_path=str(context.json_path),
         html_path=str(context.html_path),
         json_sha256=_sha256(canonical_bytes),
-        html_sha256=_sha256(actual_html.encode("utf-8")),
+        html_sha256=_sha256(published_html),
         synchronized=True,
         **_summary(outline),
     )
@@ -889,6 +807,7 @@ def _inspect(context: _OutlineContext, api: _OutlineApi) -> dict[str, object]:
     expected_html = _render_html(outline, api)
     canonical_bytes = context.json_path.read_bytes()
     actual_html = context.html_path.read_text(encoding="utf-8") if html_exists else None
+    actual_html_bytes = context.html_path.read_bytes() if html_exists else None
     synchronized = actual_html == expected_html
     return _result(
         "SYNCED" if synchronized else "STALE_HTML",
@@ -896,7 +815,7 @@ def _inspect(context: _OutlineContext, api: _OutlineApi) -> dict[str, object]:
         html_path=str(context.html_path),
         json_sha256=_sha256(canonical_bytes),
         html_sha256=(
-            _sha256(actual_html.encode("utf-8")) if actual_html is not None else None
+            _sha256(actual_html_bytes) if actual_html_bytes is not None else None
         ),
         expected_html_sha256=_sha256(expected_html.encode("utf-8")),
         synchronized=synchronized,
@@ -982,16 +901,11 @@ def main(argv: Sequence[str] | None = None) -> int:
         The process exit code paired with the printed result.
 
     Side effects:
-        The command can re-exec under the installed mcp-agent-ops interpreter, print one
-        JSON result, and perform only the selected workspace-contained file effects.
+        The command prints one JSON result and performs only the selected
+        workspace-contained file effects.
     """
     arguments = list(sys.argv[1:] if argv is None else argv)
-    try:
-        _maybe_reexec(arguments)
-        exit_code, result = execute(arguments)
-    except _OutlineHelperError as error:
-        exit_code = error.exit_code
-        result = _result(error.outcome, error=error.message, **error.details)
+    exit_code, result = execute(arguments)
     print(json.dumps(result, sort_keys=True))
     return exit_code
 
