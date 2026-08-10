@@ -12,31 +12,52 @@ Work Item ID: use-mcp-hierarchy-plans-for-complex-development
 
 Completion: main-branch
 
-## Resumption Handoff Evidence
+## Preserved Resumption Identity
 
 Canonical Task: 019fe928-e31e-71e2-aaa8-7f9bef12c7b0
 
-Resolution: Resume the preserved execution using the documented `mcp_agent_ops.hierarchy` package API. The prior FastMCP-wrapper blocker was an incorrect interpretation and is superseded.
+Resolution: Preserve the canonical task and its dirty recovery worktree while the active SOLO crisis remains in force. Do not resume the task or use claims during this crisis epoch.
 
 Requested At: 2026-08-10T01:20:00Z
 
-Next Action: The same Dev Orchestrator records Starting to Running, acquires the exact Work Item activity=work claim, and implements the bounded planning skill without changing mcp-agent-ops.
+Next Action: The sole crisis Coordinator applies the direct user design resolution below when this item becomes the current sequential crisis item. The preserved task remains paused and receives no lifecycle or claim handoff during crisis recovery.
 
 Required Task Title: Implementing — Use MCP hierarchy plans for complex development
 
 ## Blocked Evidence
 
-Exact Blocker: Managed approval rejected the required prepared-prefix validator patch twice because the Coordinator recovery delegation was treated as untrusted agent history for potentially destructive recovery semantics. The exceptional recovery therefore cannot safely continue without direct user approval in the root conversation.
+Exact Blocker: The rejected prepared-prefix cleanup design is superseded by the user's direct instruction that deletion is immediate and does not need hashes or other recovery machinery. The item remains Blocked only until the sole crisis Coordinator implements and verifies that bounded simpler design in sequence.
 
-Blocker Owner: User/project authority.
+Blocker Owner: Dev Backlog Coordinator under active SOLO crisis recovery.
 
-Unblock Condition: The user directly approves the bounded prepared-prefix recovery semantics and authorizes resumption of this same preserved execution. The Coordinator must then record Blocked to Ready, followed by Ready to Starting; the same canonical task may accept Starting to Running with a fresh exact work claim.
+Unblock Condition: The Coordinator removes cleanup-specific prepared decisions, recovery tokens, stored cleanup fingerprints or hashes, and automatic cleanup resumption; implements simple explicit idempotent deletion with structured remaining-path errors; retains strict update-record validation and non-cleanup synchronization; and completes focused review, verification, delivery, and provider closure without claims.
 
-Next-Action Owner: Dev Backlog Coordinator after the direct user answer.
+Next-Action Owner: Dev Backlog Coordinator when this item becomes the current sequential crisis item.
 
-Requested Coordinator Action: Preserve this Blocked record and surface the exact approval question. Do not redispatch, authorize another correction cycle, verify, integrate, or mutate the dirty recovery until the unblock condition is satisfied.
+Requested Coordinator Action: Preserve immutable candidates d72e1a284, 07b8f090, and 3ad236c3, both final NEEDS_CORRECTION packets, and the dirty two-file recovery diff. Adopt the existing worktree directly in SOLO crisis mode without claims. Do not redispatch the preserved task or implement the rejected prepared-prefix design.
 
 Blocking Reference: managed-review-rejected-prepared-prefix-recovery-patch.
+
+## Direct User Design Resolution
+
+User Answer: "deletion takes a fraction of a second, there's no need for hashes and other complicated things."
+
+Resolution Received In: Canonical task 019fe928-e31e-71e2-aaa8-7f9bef12c7b0 and reported to parent task 019fb057-1767-7ef2-b5fa-41f4417b20b3 on 2026-08-10.
+
+Design Disposition:
+
+- Remove cleanup-specific prepared decisions, recovery tokens, saved cleanup fingerprints or hashes, and automatic cleanup resumption.
+- Keep hashes that serve non-cleanup JSON and HTML synchronization.
+- Make finalize with retention remove only the explicitly selected task-owned plan JSON, its sibling HTML, and bounded local history.
+- Make deletion explicit, idempotent, and disabled by default.
+- On permission or I/O failure, return a structured error listing every remaining selected path. Do not auto-resume or infer deletion from an earlier operation.
+- A later explicit removal acts on the then-current exact paths rather than a stored cleanup decision.
+- Retain strict rejection of empty update metadata, target, or mutation and the cited Markdown and exit-code corrections.
+- Do not add paths or broaden generated surfaces.
+
+Rejected Interpretation: This answer does not approve the prepared-prefix patch that managed review rejected. It replaces that design with the simpler deletion contract above.
+
+Crisis Boundary: The user answer resolves design authority but does not exit the active SOLO crisis or authorize claim-based task resumption. This item remains Blocked until direct sequential Coordinator delivery reaches a terminal disposition.
 
 Correction History: The fresh recovery coder completed the required red gate: three methods produced ten expected failures, and current behavior returned exit 0 for every changed prepared input and invalid update-record case. Partial fingerprint and schema logic was added, but the prepared-prefix validator patch was rejected twice. No green suite, documentation regeneration, candidate commit, review, verification, or integration exists.
 
