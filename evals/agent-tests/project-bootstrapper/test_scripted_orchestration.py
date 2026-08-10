@@ -10,6 +10,7 @@ import os
 import subprocess
 import sys
 import tempfile
+import time
 import unittest
 from pathlib import Path
 from unittest import mock
@@ -766,22 +767,39 @@ class ScriptedBootstrapperTests(unittest.TestCase):
         self.assertTrue(result["workspaceRemoved"])
 
         with tempfile.TemporaryDirectory(prefix="project-bootstrapper-timeout-test-") as directory:
-            workspace = Path(directory) / "workspace"
-            workspace.mkdir()
-            process = scripted._start_owned_process(
-                [sys.executable, "-c", "import time; time.sleep(3600)"]
+            root = Path(directory)
+            descendant_started = root / "descendant-started"
+            descendant_completed = root / "descendant-completed"
+            descendant_script = (
+                "import pathlib, time; "
+                f"pathlib.Path({str(descendant_started)!r}).write_text('started', encoding='utf-8'); "
+                "time.sleep(0.5); "
+                f"pathlib.Path({str(descendant_completed)!r}).write_text('survived', encoding='utf-8')"
             )
+            root_script = (
+                "import subprocess, sys, time; "
+                f"subprocess.Popen([sys.executable, '-c', {descendant_script!r}]); "
+                "time.sleep(3600)"
+            )
+            process = scripted._start_owned_process([sys.executable, "-c", root_script])
             try:
+                for _ in range(100):
+                    if descendant_started.exists():
+                        break
+                    time.sleep(0.01)
+                else:
+                    self.fail("owned descendant did not start")
                 scripted._terminate_owned_process_tree(process)
             finally:
                 if process.poll() is None:
                     process.kill()
                     process.wait(timeout=10)
             self.assertIsNotNone(process.returncode)
-        self.assertFalse(workspace.exists())
-        if os.name != "nt":
-            with self.assertRaises(ProcessLookupError):
-                os.kill(process.pid, 0)
+            time.sleep(0.75)
+            self.assertFalse(
+                descendant_completed.exists(),
+                "timeout cleanup left its owned descendant running",
+            )
 
 
 if __name__ == "__main__":

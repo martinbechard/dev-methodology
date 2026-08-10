@@ -680,35 +680,42 @@ class PreparedWorkspaceTests(unittest.TestCase):
 
     def test_successful_command_terminates_remaining_process_group_members(self) -> None:
         child_pid: int | None = None
-        try:
-            with tempfile.TemporaryDirectory() as directory:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            descendant_completed = root / "descendant-completed"
+            descendant_script = (
+                "import pathlib, time; "
+                "time.sleep(0.5); "
+                f"pathlib.Path({str(descendant_completed)!r}).write_text('survived', encoding='utf-8')"
+            )
+            try:
                 script = (
                     "import subprocess, sys\n"
                     "child = subprocess.Popen("
-                    "[sys.executable, '-c', 'import time; time.sleep(60)'], "
+                    f"[sys.executable, '-c', {descendant_script!r}], "
                     "stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)\n"
                     "print(child.pid, flush=True)\n"
                 )
                 result = self.module.run_command(
                     self.module.command_spec([sys.executable, "-c", script]),
-                    Path(directory),
+                    root,
                 )
-            self.assertTrue(result.passed)
-            child_pid = int(result.stdout.strip())
-            for _ in range(100):
-                try:
-                    os.kill(child_pid, 0)
-                except ProcessLookupError:
-                    break
-                time.sleep(0.01)
-            else:
-                self.fail("successful command left a child process running")
-        finally:
-            if child_pid is not None:
-                try:
-                    os.kill(child_pid, 9)
-                except ProcessLookupError:
-                    pass
+                self.assertTrue(result.passed)
+                child_pid = int(result.stdout.strip())
+                time.sleep(0.75)
+                self.assertFalse(
+                    descendant_completed.exists(),
+                    "successful command left its owned descendant running",
+                )
+                if os.name != "nt":
+                    with self.assertRaises(ProcessLookupError):
+                        os.kill(child_pid, 0)
+            finally:
+                if os.name != "nt" and child_pid is not None:
+                    try:
+                        os.kill(child_pid, 9)
+                    except ProcessLookupError:
+                        pass
 
     def test_workspace_is_removed_after_context_exit(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

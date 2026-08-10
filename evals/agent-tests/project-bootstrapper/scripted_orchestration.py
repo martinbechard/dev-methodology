@@ -40,6 +40,10 @@ _REQUIRED_FRESH_MAIN_COMMANDS = (
     "python3.11 evals/agent-tests/project-bootstrapper/scripted_orchestration.py",
 )
 _TERMINAL_OUTCOMES = frozenset({"PASS", "FAIL", "BLOCKED", "NEEDS_CORRECTION"})
+_CLEANUP_TIMEOUT_SECONDS = 10.0
+_DEFAULT_JOB_WRAPPER_TIMEOUT_SECONDS = 190.0
+_WINDOWS_JOB_WRAPPER = "--windows-job-wrapper"
+JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE = 0x00002000
 _CONTRIBUTIONS = (
     ("dev-documentation-writer", "docs/coverage-manifest.yaml"),
     ("dev-documentation-writer", "docs/module-catalog.md"),
@@ -737,44 +741,275 @@ def _terminal(status: str, trace: list[dict[str, Any]], **evidence: Any) -> dict
     }
 
 
-def _start_owned_process(command: Sequence[str]) -> subprocess.Popen[bytes]:
+def _start_owned_process(
+    command: Sequence[str],
+    *,
+    timeout_seconds: float = _DEFAULT_JOB_WRAPPER_TIMEOUT_SECONDS,
+) -> subprocess.Popen[bytes]:
     """Start one worker in a platform-owned process group without a shell."""
     process_options: dict[str, object] = {}
+    process_argv = list(command)
     if os.name == "nt":
         process_options["creationflags"] = subprocess.CREATE_NEW_PROCESS_GROUP
+        process_argv = [
+            sys.executable,
+            str(Path(__file__).resolve()),
+            _WINDOWS_JOB_WRAPPER,
+            str(timeout_seconds + _CLEANUP_TIMEOUT_SECONDS),
+            *process_argv,
+        ]
     else:
         process_options["start_new_session"] = True
-    return subprocess.Popen(list(command), **process_options)
+    return subprocess.Popen(process_argv, **process_options)
 
 
 def _terminate_owned_process_tree(process: subprocess.Popen[bytes]) -> None:
     """Terminate one owned worker tree and wait until its root descriptor is reaped."""
-    if process.poll() is not None:
-        process.wait()
-        return
     if os.name == "nt":
-        taskkill = shutil.which("taskkill")
-        if taskkill is not None:
-            completed = subprocess.run(
-                [taskkill, "/PID", str(process.pid), "/T", "/F"],
-                check=False,
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL,
-            )
-            if completed.returncode != 0 and process.poll() is None:
+        if process.poll() is None:
+            try:
                 process.kill()
-        else:
-            process.kill()
+            except OSError as error:
+                if process.poll() is None:
+                    raise RuntimeError("Unable to terminate the Windows Job Object owner") from error
     else:
         try:
             os.killpg(process.pid, signal.SIGKILL)
         except ProcessLookupError:
             pass
     try:
-        process.wait(timeout=10)
-    except subprocess.TimeoutExpired:
-        process.kill()
-        process.wait(timeout=10)
+        process.wait(timeout=_CLEANUP_TIMEOUT_SECONDS)
+    except subprocess.TimeoutExpired as error:
+        raise RuntimeError("Owned process-tree root did not terminate") from error
+
+
+def _run_windows_job_owned_command(command: Sequence[str], timeout_seconds: float) -> int:
+    """Run one command assigned before resume to a kill-on-close Windows Job Object."""
+
+    if os.name != "nt":
+        raise RuntimeError("Windows Job Object wrapper invoked on a non-Windows host")
+    if not command:
+        raise ValueError("Windows Job Object wrapper requires a command")
+
+    import ctypes
+    from ctypes import wintypes
+
+    class _JobObjectBasicLimitInformation(ctypes.Structure):
+        _fields_ = (
+            ("PerProcessUserTimeLimit", ctypes.c_int64),
+            ("PerJobUserTimeLimit", ctypes.c_int64),
+            ("LimitFlags", wintypes.DWORD),
+            ("MinimumWorkingSetSize", ctypes.c_size_t),
+            ("MaximumWorkingSetSize", ctypes.c_size_t),
+            ("ActiveProcessLimit", wintypes.DWORD),
+            ("Affinity", ctypes.c_size_t),
+            ("PriorityClass", wintypes.DWORD),
+            ("SchedulingClass", wintypes.DWORD),
+        )
+
+    class _IoCounters(ctypes.Structure):
+        _fields_ = tuple((name, ctypes.c_uint64) for name in (
+            "ReadOperationCount",
+            "WriteOperationCount",
+            "OtherOperationCount",
+            "ReadTransferCount",
+            "WriteTransferCount",
+            "OtherTransferCount",
+        ))
+
+    class _JobObjectExtendedLimitInformation(ctypes.Structure):
+        _fields_ = (
+            ("BasicLimitInformation", _JobObjectBasicLimitInformation),
+            ("IoInfo", _IoCounters),
+            ("ProcessMemoryLimit", ctypes.c_size_t),
+            ("JobMemoryLimit", ctypes.c_size_t),
+            ("PeakProcessMemoryUsed", ctypes.c_size_t),
+            ("PeakJobMemoryUsed", ctypes.c_size_t),
+        )
+
+    class _StartupInfo(ctypes.Structure):
+        _fields_ = (
+            ("cb", wintypes.DWORD),
+            ("lpReserved", wintypes.LPWSTR),
+            ("lpDesktop", wintypes.LPWSTR),
+            ("lpTitle", wintypes.LPWSTR),
+            ("dwX", wintypes.DWORD),
+            ("dwY", wintypes.DWORD),
+            ("dwXSize", wintypes.DWORD),
+            ("dwYSize", wintypes.DWORD),
+            ("dwXCountChars", wintypes.DWORD),
+            ("dwYCountChars", wintypes.DWORD),
+            ("dwFillAttribute", wintypes.DWORD),
+            ("dwFlags", wintypes.DWORD),
+            ("wShowWindow", wintypes.WORD),
+            ("cbReserved2", wintypes.WORD),
+            ("lpReserved2", ctypes.POINTER(wintypes.BYTE)),
+            ("hStdInput", wintypes.HANDLE),
+            ("hStdOutput", wintypes.HANDLE),
+            ("hStdError", wintypes.HANDLE),
+        )
+
+    class _ProcessInformation(ctypes.Structure):
+        _fields_ = (
+            ("hProcess", wintypes.HANDLE),
+            ("hThread", wintypes.HANDLE),
+            ("dwProcessId", wintypes.DWORD),
+            ("dwThreadId", wintypes.DWORD),
+        )
+
+    kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+    kernel32.CreateJobObjectW.argtypes = (ctypes.c_void_p, wintypes.LPCWSTR)
+    kernel32.CreateJobObjectW.restype = wintypes.HANDLE
+    kernel32.SetInformationJobObject.argtypes = (
+        wintypes.HANDLE,
+        ctypes.c_int,
+        ctypes.c_void_p,
+        wintypes.DWORD,
+    )
+    kernel32.SetInformationJobObject.restype = wintypes.BOOL
+    kernel32.CreateProcessW.argtypes = (
+        wintypes.LPCWSTR,
+        wintypes.LPWSTR,
+        ctypes.c_void_p,
+        ctypes.c_void_p,
+        wintypes.BOOL,
+        wintypes.DWORD,
+        ctypes.c_void_p,
+        wintypes.LPCWSTR,
+        ctypes.POINTER(_StartupInfo),
+        ctypes.POINTER(_ProcessInformation),
+    )
+    kernel32.CreateProcessW.restype = wintypes.BOOL
+    kernel32.AssignProcessToJobObject.argtypes = (wintypes.HANDLE, wintypes.HANDLE)
+    kernel32.AssignProcessToJobObject.restype = wintypes.BOOL
+    kernel32.ResumeThread.argtypes = (wintypes.HANDLE,)
+    kernel32.ResumeThread.restype = wintypes.DWORD
+    kernel32.WaitForSingleObject.argtypes = (wintypes.HANDLE, wintypes.DWORD)
+    kernel32.WaitForSingleObject.restype = wintypes.DWORD
+    kernel32.GetExitCodeProcess.argtypes = (wintypes.HANDLE, ctypes.POINTER(wintypes.DWORD))
+    kernel32.GetExitCodeProcess.restype = wintypes.BOOL
+    kernel32.TerminateProcess.argtypes = (wintypes.HANDLE, wintypes.UINT)
+    kernel32.TerminateProcess.restype = wintypes.BOOL
+    kernel32.TerminateJobObject.argtypes = (wintypes.HANDLE, wintypes.UINT)
+    kernel32.TerminateJobObject.restype = wintypes.BOOL
+    kernel32.CloseHandle.argtypes = (wintypes.HANDLE,)
+    kernel32.CloseHandle.restype = wintypes.BOOL
+
+    wait_object_0 = 0
+    wait_timeout = 258
+    create_suspended = 0x00000004
+    create_new_process_group = 0x00000200
+    job_object_extended_limit_information = 9
+    cleanup_timeout_ms = int(_CLEANUP_TIMEOUT_SECONDS * 1000)
+    command_timeout_ms = min(0xFFFFFFFE, max(1, int(timeout_seconds * 1000)))
+
+    job = kernel32.CreateJobObjectW(None, None)
+    if not job:
+        raise ctypes.WinError(ctypes.get_last_error())
+    process_information = _ProcessInformation()
+    try:
+        limits = _JobObjectExtendedLimitInformation()
+        limits.BasicLimitInformation.LimitFlags = JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE
+        if not kernel32.SetInformationJobObject(
+            job,
+            job_object_extended_limit_information,
+            ctypes.byref(limits),
+            ctypes.sizeof(limits),
+        ):
+            raise ctypes.WinError(ctypes.get_last_error())
+
+        startup = _StartupInfo()
+        startup.cb = ctypes.sizeof(startup)
+        command_line = ctypes.create_unicode_buffer(subprocess.list2cmdline(list(command)))
+        if not kernel32.CreateProcessW(
+            None,
+            command_line,
+            None,
+            None,
+            True,
+            create_suspended | create_new_process_group,
+            None,
+            None,
+            ctypes.byref(startup),
+            ctypes.byref(process_information),
+        ):
+            raise ctypes.WinError(ctypes.get_last_error())
+        try:
+            if not kernel32.AssignProcessToJobObject(job, process_information.hProcess):
+                error_code = ctypes.get_last_error()
+                if not kernel32.TerminateProcess(process_information.hProcess, 126):
+                    raise ctypes.WinError(ctypes.get_last_error())
+                if kernel32.WaitForSingleObject(
+                    process_information.hProcess,
+                    cleanup_timeout_ms,
+                ) != wait_object_0:
+                    raise RuntimeError("Unassigned suspended Windows command did not terminate")
+                raise ctypes.WinError(error_code)
+            if kernel32.ResumeThread(process_information.hThread) == 0xFFFFFFFF:
+                error_code = ctypes.get_last_error()
+                if not kernel32.TerminateJobObject(job, 126):
+                    raise ctypes.WinError(ctypes.get_last_error())
+                if kernel32.WaitForSingleObject(
+                    process_information.hProcess,
+                    cleanup_timeout_ms,
+                ) != wait_object_0:
+                    raise RuntimeError("Suspended Windows command did not terminate")
+                raise ctypes.WinError(error_code)
+
+            wait_result = kernel32.WaitForSingleObject(
+                process_information.hProcess,
+                command_timeout_ms,
+            )
+            if wait_result == wait_timeout:
+                if not kernel32.TerminateJobObject(job, 124):
+                    raise ctypes.WinError(ctypes.get_last_error())
+                if kernel32.WaitForSingleObject(
+                    process_information.hProcess,
+                    cleanup_timeout_ms,
+                ) != wait_object_0:
+                    raise RuntimeError("Timed-out Windows command tree did not terminate")
+                return 124
+            if wait_result != wait_object_0:
+                raise ctypes.WinError(ctypes.get_last_error())
+
+            exit_code = wintypes.DWORD()
+            if not kernel32.GetExitCodeProcess(
+                process_information.hProcess,
+                ctypes.byref(exit_code),
+            ):
+                raise ctypes.WinError(ctypes.get_last_error())
+            if not kernel32.TerminateJobObject(job, 1):
+                raise ctypes.WinError(ctypes.get_last_error())
+            return int(exit_code.value)
+        finally:
+            close_error = 0
+            if process_information.hThread:
+                if not kernel32.CloseHandle(process_information.hThread):
+                    close_error = ctypes.get_last_error()
+            if process_information.hProcess:
+                if not kernel32.CloseHandle(process_information.hProcess) and not close_error:
+                    close_error = ctypes.get_last_error()
+            if close_error:
+                raise ctypes.WinError(close_error)
+    finally:
+        if not kernel32.CloseHandle(job):
+            raise ctypes.WinError(ctypes.get_last_error())
+
+
+def _windows_job_wrapper_main(arguments: Sequence[str]) -> int:
+    """Validate private wrapper arguments and surface ownership failures to the parent."""
+
+    if len(arguments) < 2:
+        print("Windows Job Object wrapper requires a timeout and command", file=sys.stderr)
+        return 126
+    try:
+        timeout_seconds = float(arguments[0])
+        if timeout_seconds <= 0:
+            raise ValueError("timeout must be positive")
+        return _run_windows_job_owned_command(arguments[1:], timeout_seconds)
+    except Exception as error:
+        print(f"Windows Job Object ownership failed: {error}", file=sys.stderr)
+        return 126
 
 
 def _run_missing_configuration_worker(workspace: Path) -> dict[str, Any]:
@@ -1449,8 +1684,11 @@ def run_isolated(
                 )
             if reverse_engineering and execution == "resumed":
                 command.append("--reverse-engineering")
-            process = _start_owned_process(command)
             remaining = deadline - time.monotonic()
+            process = _start_owned_process(
+                command,
+                timeout_seconds=max(remaining, 0.001),
+            )
             try:
                 process.wait(timeout=max(remaining, 0.001))
             except subprocess.TimeoutExpired:
@@ -1518,6 +1756,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     The command prints one JSON result and returns zero only for the expected PASS outcome.
     """
 
+    arguments_list = list(argv) if argv is not None else sys.argv[1:]
+    if arguments_list[:1] == [_WINDOWS_JOB_WRAPPER]:
+        return _windows_job_wrapper_main(arguments_list[1:])
+
     parser = argparse.ArgumentParser(description="Run scripted Project Bootstrapper orchestration.")
     parser.add_argument("--plan", type=Path)
     parser.add_argument("--timeout-minutes", type=float, default=3.0)
@@ -1542,7 +1784,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         default="canonical-multitask",
     )
     parser.add_argument("--reverse-engineering", action="store_true")
-    arguments = parser.parse_args(argv)
+    arguments = parser.parse_args(arguments_list)
     plan = json.loads(arguments.plan.read_text(encoding="utf-8")) if arguments.plan else {}
     legacy_runtime_dispatch = (
         None

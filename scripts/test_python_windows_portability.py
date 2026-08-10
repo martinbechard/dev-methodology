@@ -6,10 +6,12 @@ from __future__ import annotations
 
 import argparse
 import contextlib
+import hashlib
 import importlib.util
 import io
 import json
 import os
+import re
 import shutil
 import stat
 import subprocess
@@ -136,13 +138,14 @@ skills/project-wiki/scripts/wiki_ops.py
 _CORRECTED_PATHS = {
     "evals/agent-tests/project-bootstrapper/scripted_orchestration.py": (
         "The worker launcher unconditionally requested a POSIX session and called os.killpg. "
-        "It now uses a Windows process group plus taskkill tree cleanup while retaining the "
-        "existing POSIX session and signal behavior."
+        "It now assigns the suspended Windows worker to a kill-on-close Job Object before "
+        "resume and checks bounded tree cleanup, while retaining the existing POSIX session "
+        "and signal behavior."
     ),
     "scripts/agent_skill_evals/commands.py": (
         "The evaluation command runner unconditionally requested a POSIX session and called "
-        "os.killpg. It now creates a Windows process group and uses discovered taskkill tree "
-        "cleanup, with direct-process termination only when taskkill is unavailable."
+        "os.killpg. It now assigns the suspended Windows root to a kill-on-close Job Object "
+        "before resume and checks bounded root and descendant cleanup."
     ),
     "scripts/test_resource_claim.py": (
         "The crash fixture imported fcntl directly and skipped Windows. It now drives the "
@@ -220,13 +223,12 @@ _MIXED_PLATFORM_COVERAGE = {
     "scripts/test_install_skills.py": "scripts/test_install_skills.py",
 }
 
-# These cases assert POSIX-only process-group or permission semantics. All other cases in each
+# These cases assert POSIX-only process inspection or permission semantics. All other cases in each
 # mixed suite remain selected on Windows. The key is repository path, test class, and method.
 _WINDOWS_UNSUPPORTED_TEST_CASES = {
     "evals/agent-tests/dev-backlog-steward/test_contract.py::DevBacklogStewardContractTests.test_success_and_safe_rollback_preserve_dirty_bytes_modes_and_index": "asserts POSIX mode-bit preservation",
     "evals/agent-tests/dev-code-reviewer/test_fixtures.py::DevCodeReviewerFixtureTests.test_candidate_staging_enforces_oracle_boundary": "asserts POSIX read-only directory mode bits",
     "evals/agent-tests/dev-runtime-diagnostician/test_fixtures.py::DevRuntimeDiagnosticianFixtureTests.test_retained_process_reproduction_cleans_its_child": "requires lsof and POSIX signal inspection",
-    "evals/agent-tests/project-bootstrapper/test_scripted_orchestration.py::ScriptedBootstrapperTests.test_timeout_kills_the_owned_process_group_and_cleans_workspace": "asserts POSIX process-group teardown",
     "evals/agent-tests/test_runner.py::AgentSuiteRunnerTests.test_runtime_uses_current_app_bundled_codex": "asserts the macOS application-bundled Codex path",
     "evals/agent-tests/test_runner.py::AgentSuiteRunnerTests.test_offline_typescript_launcher_uses_bundled_node": "asserts a POSIX executable shell launcher and mode bit",
     "evals/agent-tests/test_runner.py::AgentSuiteRunnerTests.test_playwright_preflight_timeout_reaps_a_hung_process_tree": "asserts POSIX detached-process-group recovery",
@@ -236,7 +238,6 @@ _WINDOWS_UNSUPPORTED_TEST_CASES = {
     "evals/agent-tests/test_workspace_inventory.py::WorkspaceInventoryTests.test_file_modes_and_git_index_changes_are_detected": "asserts POSIX mode-bit changes",
     "evals/agent-tests/wiki-writer/test_contract.py::WikiWriterOfflineInterruptionTests.test_mode_only_change_updates_preserved_state_digest": "asserts POSIX execute-bit changes",
     "scripts/test_agent_skill_evals.py::PreparedWorkspaceTests.test_fixture_key_tracks_modes_empty_directories_and_command_environment_policy": "asserts POSIX mode-bit identity",
-    "scripts/test_agent_skill_evals.py::PreparedWorkspaceTests.test_successful_command_terminates_remaining_process_group_members": "asserts POSIX process-group teardown",
 }
 
 # Symlink security tests run when the Windows host grants symbolic-link creation. The exact cases
@@ -313,6 +314,66 @@ _TRACKED_FIXTURE_CAPABILITY_TEST_CASES = {
         "scripts/test_generate_backlog_report.py::"
         "BacklogReportTest.test_committed_example_remains_a_curated_semantic_reference"
     ): "backlog/examples/styled-backlog-report.html",
+}
+
+
+def _exact_skip_reason(reason: str) -> str:
+    """Return one full-match regular expression for a fixed unittest skip reason."""
+
+    return re.escape(reason)
+
+
+# unittest decorators and skipTest calls remain visible separately from pre-selection exclusions.
+# A tuple permits one case to have a class-level capability reason and a narrower opt-in reason.
+_INTENTIONAL_UNITTEST_SKIP_REASONS = {
+    "scripts/test_agent_skill_evaluation_docs.py::AgentSkillEvaluationDocumentationTests.test_optional_filter_matches_text_and_status_without_removing_static_content": (
+        _exact_skip_reason("Node is unavailable for pure JavaScript checks"),
+    ),
+    "scripts/test_resource_claim.py::ResourceClaimTests.test_case_variant_exact_file_alias_conflicts_on_case_insensitive_filesystem": (
+        _exact_skip_reason("requires a case-insensitive filesystem"),
+    ),
+    "scripts/test_resource_claim.py::ResourceClaimTests.test_future_case_variant_exact_file_alias_conflicts_on_case_insensitive_filesystem": (
+        _exact_skip_reason("requires a case-insensitive filesystem"),
+    ),
+    "scripts/test_resource_claim.py::ResourceClaimTests.test_legacy_case_variant_file_blocks_new_acquire_without_registry_mutation": (
+        _exact_skip_reason("requires a case-insensitive filesystem"),
+    ),
+    "scripts/test_resource_claim.py::ResourceClaimTests.test_legacy_case_variant_file_blocks_new_extend_without_registry_mutation": (
+        _exact_skip_reason("requires a case-insensitive filesystem"),
+    ),
+    "scripts/test_resource_claim.py::ResourceClaimTests.test_legacy_owner_extend_preserves_stored_case_variant": (
+        _exact_skip_reason("requires a case-insensitive filesystem"),
+    ),
+    "scripts/test_resource_claim.py::ResourceClaimTests.test_legacy_case_variant_tree_blocks_descendant_without_registry_mutation": (
+        _exact_skip_reason("requires a case-insensitive filesystem"),
+    ),
+    "scripts/test_resource_claim.py::ResourceClaimTests.test_dangling_symlink_and_missing_target_remain_distinct_stable_paths": (
+        _exact_skip_reason("Symbolic-link creation is unavailable."),
+    ),
+    "scripts/test_resource_claim.py::ResourceClaimTests.test_absolute_symlink_scope_preserves_lexical_path_without_following_target": (
+        _exact_skip_reason("Symbolic-link creation is unavailable."),
+    ),
+    "scripts/test_resource_claim.py::ResourceClaimTests.test_exact_file_symlink_does_not_inherit_target_directory_kind": (
+        _exact_skip_reason("Symbolic-link creation is unavailable."),
+    ),
+    "scripts/test_resource_claim.py::ResourceClaimTests.test_distinct_hard_link_paths_can_be_claimed_concurrently": (
+        r"hard\ links\ unavailable:\ .+",
+    ),
+    "evals/agent-tests/wiki-ingester/test_contract.py::WikiIngesterLiveInterruptionTests.test_target_blocks_and_preserves_gate_state_for_every_interruption": (
+        _exact_skip_reason("set WIKI_INGESTER_LIVE_CONTROL=1 for actual adapter controls"),
+    ),
+    "evals/agent-tests/wiki-ingester/test_contract.py::WikiIngesterLiveNeighborTests.test_raw_ingest_reaches_both_good_gates_and_closes_cleanly": (
+        _exact_skip_reason("set WIKI_INGESTER_LIVE_NEIGHBORS=1 for raw-ingest and collision controls"),
+        _exact_skip_reason("raw-ingest not selected by focused live case selector"),
+    ),
+    "evals/agent-tests/wiki-ingester/test_contract.py::WikiIngesterLiveNeighborTests.test_collision_preserves_both_sources_without_verifier_mutation": (
+        _exact_skip_reason("set WIKI_INGESTER_LIVE_NEIGHBORS=1 for raw-ingest and collision controls"),
+        _exact_skip_reason("collision excluded from the focused live correction rerun"),
+    ),
+    "evals/agent-tests/wiki-ingester/test_contract.py::WikiIngesterLiveNeighborTests.test_verifier_failure_retains_substantiated_content_and_closes_blocked": (
+        _exact_skip_reason("set WIKI_INGESTER_LIVE_NEIGHBORS=1 for raw-ingest and collision controls"),
+        _exact_skip_reason("verifier-failure excluded from focused live correction rerun"),
+    ),
 }
 
 # The original candidate inherited twelve unrelated failing test entry points. Expanding mixed
@@ -553,6 +614,509 @@ failure:test_work_item_coordination.WorkItemCoordinationPackageTests.test_watchd
         ),
     ),
 }
+
+# Captured from the exact current-main failures. Each identity is bound to one normalized
+# terminal cause so a same-ID exception or assertion change cannot be absorbed.
+_OS_INDEPENDENT_FAILURE_CAUSES = {
+    'evals/agent-tests/dev-artifact-reviewer/test_checklist_contract.py': (
+        (
+            _failure_ids(
+                """
+failure:test_checklist_contract.ChecklistContractTests.test_current_canonical_sources_have_stable_unique_question_sequences
+"""
+            ),
+            'AssertionError',
+            'Tuples differ: (36, 25) != (36, 43)',
+        ),
+    ),
+    'evals/agent-tests/dev-documentation-writer/test_fixtures.py': (
+        (
+            _failure_ids(
+                """
+failure:test_fixtures.DocumentationWriterFixtureTests.test_final_validator_accepts_canonical_bold_readiness_markers
+failure:test_fixtures.DocumentationWriterFixtureTests.test_final_validator_accepts_complete_source_faithful_artifact
+failure:test_fixtures.DocumentationWriterFixtureTests.test_final_validator_accepts_explanatory_node_prose
+failure:test_fixtures.DocumentationWriterFixtureTests.test_final_validator_accepts_local_reference_style_destinations
+failure:test_fixtures.DocumentationWriterFixtureTests.test_final_validator_accepts_local_shortcut_reference_destinations
+failure:test_fixtures.DocumentationWriterFixtureTests.test_final_validator_accepts_nonanaphoric_that_coverage_claim
+failure:test_fixtures.DocumentationWriterFixtureTests.test_final_validator_treats_html_comment_markers_in_fences_as_literal
+failure:test_fixtures.DocumentationWriterFixtureTests.test_final_validator_treats_html_comments_in_nested_fences_as_literal
+failure:test_fixtures.DocumentationWriterFixtureTests.test_final_validator_treats_nested_blockquotes_as_visible_prose
+"""
+            ),
+            'AssertionError',
+            '0 != 3 : {"artifactPathValid": true, "artifactPresent": true, "commandClaims": ["python3 -m unittest discover -s tests"], "commandStructureValid": true, "evidenceReferencesValid": true, "externalReferences": [], "headingsMatch": true, "markdownStructureValid": true, "readinessValid": true, "referencedPaths": ["../src/inventory.py", "../tests/test_inventory.py"], "sourcePresent": true, "templateAuthorityValid": false, "testClaimsValid": true, "testCommandValid": true, "testOutput": "./n----------... [sha256:a41145f999a9e42cab6df6dbf3163d5ed8c25a948564a95009b9058adef863cb]',
+        ),
+        (
+            _failure_ids(
+                """
+failure:test_fixtures.DocumentationWriterFixtureTests.test_final_validator_excludes_html_comments_from_visible_evidence
+"""
+            ),
+            'AssertionError',
+            '0 != 3',
+        ),
+        (
+            _failure_ids(
+                """
+failure:test_fixtures.DocumentationWriterFixtureTests.test_final_validator_ignores_unrelated_external_reference_destination
+"""
+            ),
+            'AssertionError',
+            '0 != 3 : {"artifactPathValid": true, "artifactPresent": true, "commandClaims": ["python3 -m unittest discover -s tests"], "commandStructureValid": true, "evidenceReferencesValid": true, "externalReferences": ["https://example.invalid/reference"], "headingsMatch": true, "markdownStructureValid": true, "readinessValid": true, "referencedPaths": ["../src/inventory.py", "../tests/test_inventory.py"], "sourcePresent": true, "templateAuthorityValid": false, "testClaimsValid": true, "testCommandValid":... [sha256:abc5e9ffe918bbafc6f89a2e34c5209fd254f6bc1ece9c38d1198fc3b19b75d3]',
+        ),
+    ),
+    'evals/agent-tests/dev-orchestrator/test_fixtures.py': (
+        (
+            _failure_ids(
+                """
+error:test_fixtures.DependencyRoutingFixtureTests.test_committed_fixture_contract_is_complete
+error:test_fixtures.DependencyRoutingFixtureTests.test_coordinator_prompt_exposes_none_coordination_boundary
+error:test_fixtures.DependencyRoutingFixtureTests.test_delivery_result_controls_provider_closeout
+error:test_fixtures.DependencyRoutingFixtureTests.test_dirty_receipt_repository_matrix_is_rejected (drift='tracked')
+error:test_fixtures.DependencyRoutingFixtureTests.test_dirty_receipt_repository_matrix_is_rejected (drift='untracked')
+error:test_fixtures.DependencyRoutingFixtureTests.test_every_handoff_field_has_an_exact_omission_diagnostic
+error:test_fixtures.DependencyRoutingFixtureTests.test_every_handoff_lane_has_an_exact_omission_diagnostic
+error:test_fixtures.DependencyRoutingFixtureTests.test_evidence_audit_preserves_missing_and_duplicate_lane_errors (case='duplicate')
+error:test_fixtures.DependencyRoutingFixtureTests.test_evidence_audit_preserves_missing_and_duplicate_lane_errors (case='missing')
+error:test_fixtures.DependencyRoutingFixtureTests.test_evidence_audit_rejects_extra_lane_with_or_without_claims (claim_release=False)
+error:test_fixtures.DependencyRoutingFixtureTests.test_evidence_audit_rejects_extra_lane_with_or_without_claims (claim_release=True)
+error:test_fixtures.DependencyRoutingFixtureTests.test_evidence_audit_rejects_receipt_for_empty_lane_set (claim_release=False)
+error:test_fixtures.DependencyRoutingFixtureTests.test_evidence_audit_rejects_receipt_for_empty_lane_set (claim_release=True)
+error:test_fixtures.DependencyRoutingFixtureTests.test_fabricated_receipt_evidence_matrix_is_rejected
+error:test_fixtures.DependencyRoutingFixtureTests.test_hyphenated_producer_alias_does_not_match_registered_invocation
+error:test_fixtures.DependencyRoutingFixtureTests.test_none_coordination_evidence_needs_no_claim_journal
+error:test_fixtures.DependencyRoutingFixtureTests.test_none_coordination_ignores_pre_existing_claim_files
+error:test_fixtures.DependencyRoutingFixtureTests.test_none_coordination_is_not_a_required_target_skill
+error:test_fixtures.DependencyRoutingFixtureTests.test_none_coordination_rejects_claim_invocation (session_id='coder')
+error:test_fixtures.DependencyRoutingFixtureTests.test_none_coordination_rejects_claim_invocation (session_id='target')
+error:test_fixtures.DependencyRoutingFixtureTests.test_none_coordination_report_omits_claim_release_evidence
+error:test_fixtures.DependencyRoutingFixtureTests.test_producer_session_evidence_matrix_is_rejected
+error:test_fixtures.DependencyRoutingFixtureTests.test_receipt_session_superset_rejects_duplicates_replacements_and_foreign_roles (name='duplicate-review')
+error:test_fixtures.DependencyRoutingFixtureTests.test_receipt_session_superset_rejects_duplicates_replacements_and_foreign_roles (name='duplicate-verification')
+error:test_fixtures.DependencyRoutingFixtureTests.test_receipt_session_superset_rejects_duplicates_replacements_and_foreign_roles (name='foreign-review')
+error:test_fixtures.DependencyRoutingFixtureTests.test_receipt_session_superset_rejects_duplicates_replacements_and_foreign_roles (name='foreign-verification')
+error:test_fixtures.DependencyRoutingFixtureTests.test_receipt_session_superset_rejects_duplicates_replacements_and_foreign_roles (name='replacement-review')
+error:test_fixtures.DependencyRoutingFixtureTests.test_receipt_session_superset_rejects_duplicates_replacements_and_foreign_roles (name='replacement-verification')
+error:test_fixtures.DependencyRoutingFixtureTests.test_receipts_may_retain_additional_same_role_review_and_verification_sessions
+error:test_fixtures.DependencyRoutingFixtureTests.test_report_rejects_extra_lane_with_or_without_claims (claim_release=False)
+error:test_fixtures.DependencyRoutingFixtureTests.test_report_rejects_extra_lane_with_or_without_claims (claim_release=True)
+error:test_fixtures.DependencyRoutingFixtureTests.test_report_rejects_receipt_for_empty_lane_set (claim_release=False)
+error:test_fixtures.DependencyRoutingFixtureTests.test_report_rejects_receipt_for_empty_lane_set (claim_release=True)
+error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_accepts_exact_legacy_markers
+error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_allows_released_named_resource_event
+error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_executes_and_audits_complete_lifecycle
+error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_reads_legacy_state_as_fallback
+error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_contradictory_dual_state
+error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='acquire-after-mutation')
+error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='acquire-after-release')
+error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='active-registry')
+error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='duplicate-claim-id-across-repositories')
+error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='duplicate-release-event-ids')
+error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='early-integration-claim')
+error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='isolated-integration-acquire')
+error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='malformed-journal-json')
+error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='missing-acquire')
+error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='multiple-release-event-ids')
+error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='resource-file-domain')
+error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='second-repository-surplus-claim')
+error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='surplus-bound-successful-release')
+error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='surplus-private-file-claim')
+error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='unexpected-integration-resource')
+error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='unrecognized-named-resource')
+error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='unreleased-named-resource')
+error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='unsupported-schema')
+error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='wrong-integration-scope')
+error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_mixed_registry_and_event_layouts
+error:test_fixtures.DependencyRoutingFixtureTests.test_scalar_receipt_evidence_matrix_is_rejected
+error:test_fixtures.DependencyRoutingFixtureTests.test_skill_under_test_finding_uses_separate_protected_and_provider_boundaries
+"""
+            ),
+            'ValueError',
+            'dev-orchestrator native agent does not include required skill structured-explanation',
+        ),
+    ),
+    'evals/agent-tests/project-bootstrapper/test_scripted_orchestration.py': (
+        (
+            _failure_ids(
+                """
+error:test_scripted_orchestration.ScriptedBootstrapperTests.test_configuration_dependency_invokes_each_public_setup_procedure
+"""
+            ),
+            'KeyError',
+            "'configurationExecution'",
+        ),
+        (
+            _failure_ids(
+                """
+error:test_scripted_orchestration.ScriptedBootstrapperTests.test_isolated_snapshot_contains_only_declared_inputs
+"""
+            ),
+            'KeyError',
+            "'copiedInputs'",
+        ),
+        (
+            _failure_ids(
+                """
+failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_both_configuration_outputs_receive_independent_reviews
+"""
+            ),
+            'AssertionError',
+            'False is not true',
+        ),
+        (
+            _failure_ids(
+                """
+failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_correction_retries_the_owner_and_stops_at_two
+"""
+            ),
+            'AssertionError',
+            "Lists differ: [('dev-documentation-writer', 'contribute'[218 chars]SS')] != []",
+        ),
+        (
+            _failure_ids(
+                """
+failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_default_trace_is_repeatable_and_complete
+failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_integration_review_and_verification_corrections_are_bounded
+failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_missing_configuration_uses_primary_claim_free_handoff_then_resumes
+failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_resumed_execution_obeys_canonical_solo_and_legacy_selectors
+failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_reverse_engineering_audit_detects_swapped_manifest_mappings
+failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_reverse_engineering_audit_owner_corrections_are_bounded
+failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_reverse_engineering_audit_parses_the_exact_owner_field
+failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_reverse_engineering_audit_routes_corrections_and_reaches_steady_state
+failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_reverse_engineering_audit_routes_missing_auditable_artifacts (artifact='docs/module-catalog.md')
+failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_reverse_engineering_audit_routes_missing_auditable_artifacts (artifact='docs/wiki/topic-index.md')
+failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_verification_correction_is_reviewed_and_reaudited_before_retry
+failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_verification_correction_uses_persistent_owner_for_audit_created_document
+"""
+            ),
+            'AssertionError',
+            "'PASS' != 'INFRASTRUCTURE_FAILED'",
+        ),
+        (
+            _failure_ids(
+                """
+failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_reverse_engineering_audit_blocks_without_coverage_manifest_evidence
+failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_reverse_engineering_audit_blocks_without_required_ledger
+failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_reverse_engineering_audit_rejects_baseline_classification_mismatch
+failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_reverse_engineering_audit_rejects_incomplete_path_classifications
+failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_reverse_engineering_audit_requires_hashed_baseline_for_every_source
+failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_terminal_dependency_outcomes_are_reproducible (outcome='BLOCKED')
+"""
+            ),
+            'AssertionError',
+            "'BLOCKED' != 'INFRASTRUCTURE_FAILED'",
+        ),
+        (
+            _failure_ids(
+                """
+failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_terminal_dependency_outcomes_are_reproducible
+"""
+            ),
+            'AssertionError',
+            "'malformed handoff' not found in 'Bootstrapper target contract drifted: skills/resource-claim/SKILL.md'",
+        ),
+        (
+            _failure_ids(
+                """
+failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_terminal_dependency_outcomes_are_reproducible (outcome='FAIL')
+"""
+            ),
+            'AssertionError',
+            "'FAIL' != 'INFRASTRUCTURE_FAILED'",
+        ),
+    ),
+    'evals/agent-tests/project-configurator/test_fixtures.py': (
+        (
+            _failure_ids(
+                """
+failure:test_fixtures.ProjectConfiguratorFixtureTests.test_routing_contracts_name_exact_role_ownership_and_bridge_bytes
+"""
+            ),
+            'AssertionError',
+            'Items in the first set but not the second:',
+        ),
+    ),
+    'evals/agent-tests/test_runner.py': (
+        (
+            _failure_ids(
+                """
+failure:test_runner.AgentSuiteRunnerTests.test_cleanup_audit_rejects_active_claim_in_nested_fixture_repository
+"""
+            ),
+            'AssertionError',
+            '"Fixture repository retains active claims" does not match "Receipt repository is not a Git worktree: <temp>/.agent-suite-fixtures/dev-coder/candidate"',
+        ),
+    ),
+    'evals/agent-tests/wiki-ingester/test_contract.py': (
+        (
+            _failure_ids(
+                """
+failure:test_contract.WikiIngesterTargetBoundaryTests.test_retained_evaluator_artifacts_replay_offline
+"""
+            ),
+            'AssertionError',
+            "'f2eaee91e9851beb804f4324ef1055b2e6626ac726d8d9c8aca63efd53f86478' != '3990d5fd475e52a8cb85658339390fe722dbaa5f0866f754fc58e83fe5806203'",
+        ),
+    ),
+    'scripts/test_agent_skill_evaluation_docs.py': (
+        (
+            _failure_ids(
+                """
+failure:test_agent_skill_evaluation_docs.AgentSkillEvaluationDocumentationTests.test_backlog_steward_rows_publish_neutral_resource_coordination_variants
+"""
+            ),
+            'AssertionError',
+            'Items in the second set but not the first:',
+        ),
+        (
+            _failure_ids(
+                """
+failure:test_agent_skill_evaluation_docs.AgentSkillEvaluationDocumentationTests.test_generator_check_reports_current_output
+"""
+            ),
+            'AssertionError',
+            '0 != 1 : Evaluation documentation is stale: run build-agent-skill-evaluation-docs.py',
+        ),
+    ),
+    'scripts/test_codex_task_control.py': (
+        (
+            _failure_ids(
+                """
+failure:test_codex_task_control.CodexTaskControlPackageTests.test_archival_waits_for_portable_terminal_closeout (clause='Archive a terminal Codex task only after coordinate-work-items confirms')
+"""
+            ),
+            'AssertionError',
+            '\'Archive a terminal Codex task only after coordinate-work-items confirms\' not found in "--- name: coordinate-codex-tasks description: Map portable work-item coordination to Codex task creation, resumption, identity, titles, follow-up, reconciliation, watchdog operation, and archival. Use only when coordinated work runs through Codex tasks. metadata: category: development-practice --- # Coordinate Codex Tasks Codex task control maps one portable work-item execution to one canonical Codex task and... [sha256:c811adc9468fba2d71d06fc90bc42d882fcd575dc00a043b9f68ceeda191bfbd]',
+        ),
+        (
+            _failure_ids(
+                """
+failure:test_codex_task_control.CodexTaskControlPackageTests.test_archival_waits_for_portable_terminal_closeout (clause='cleanup eligibility')
+"""
+            ),
+            'AssertionError',
+            '\'cleanup eligibility\' not found in "--- name: coordinate-codex-tasks description: Map portable work-item coordination to Codex task creation, resumption, identity, titles, follow-up, reconciliation, watchdog operation, and archival. Use only when coordinated work runs through Codex tasks. metadata: category: development-practice --- # Coordinate Codex Tasks Codex task control maps one portable work-item execution to one canonical Codex task and its retained user-visible context. Apply coordinate... [sha256:f006f1cd45ecf91308a680deece3a9ed93bbb75231cb71358e68af262079bf54]',
+        ),
+        (
+            _failure_ids(
+                """
+failure:test_codex_task_control.CodexTaskControlPackageTests.test_archival_waits_for_portable_terminal_closeout (clause='no unresolved notification remains')
+"""
+            ),
+            'AssertionError',
+            '\'no unresolved notification remains\' not found in "--- name: coordinate-codex-tasks description: Map portable work-item coordination to Codex task creation, resumption, identity, titles, follow-up, reconciliation, watchdog operation, and archival. Use only when coordinated work runs through Codex tasks. metadata: category: development-practice --- # Coordinate Codex Tasks Codex task control maps one portable work-item execution to one canonical Codex task and its retained user-visible context. A... [sha256:24f2c3650c347b3d92736b9e5c4c56b9e711fc09abd25887e4d5fcbcd388c30b]',
+        ),
+        (
+            _failure_ids(
+                """
+failure:test_codex_task_control.CodexTaskControlPackageTests.test_portable_skill_contains_no_codex_only_vocabulary (phrase='task archival')
+"""
+            ),
+            'AssertionError',
+            '\'task archival\' unexpectedly found in "---/nname: coordinate-work-items/ndescription: coordinate multiple provider-selected work items through one parent backlog coordinator and one root dev orchestrator execution per starting or running item. use when a sustained queue needs provider-neutral scheduling, reviewed delivery, lifecycle closure, and recovery./nmetadata:/n category: development-practice/n---/n/n# coordinate work items/n/nwork-item coordination connects a durable provider queue to bou... [sha256:a0bb1a9780fa2e8432cc95c2681da6d8aa9fc3ac690934dbc5f5e3788770d306]',
+        ),
+        (
+            _failure_ids(
+                """
+failure:test_codex_task_control.CodexTaskControlPackageTests.test_watchdog_prompt_templates_are_canonical_and_render_byte_identically
+"""
+            ),
+            'AssertionError',
+            "'Act [806 chars]out, terminal cleanup anomalies, and unsafe, s[458 chars]ere.' != 'Act [806 chars]out, every terminal Codex task in this Coordin[690 chars]ere.'",
+        ),
+        (
+            _failure_ids(
+                """
+failure:test_codex_task_control.CodexTaskControlRoleRoutingTests.test_non_codex_generated_agents_do_not_name_portable_policy_as_codex (runtime='claude', role='dev-backlog-watchdog')
+"""
+            ),
+            'AssertionError',
+            "Regex didn't match: 'when .*Codex|when coordinate-codex-tasks is active|for other runtimes' not found in '7. For each terminal Codex task, observe whether every status-applicable terminal gate passes. For Completed, require merged delivery before default archival. For Failed and Abandoned, require valid terminal evidence without inferring merged delivery. Treat archival as required by default. Accept an archival pause only from explicit current user direction for exact named task archival with r... [sha256:f46fc71fc2e84f8220c2d96a139b2dc327363366061f5e0c0b992354ccb30ed9]",
+        ),
+        (
+            _failure_ids(
+                """
+failure:test_codex_task_control.CodexTaskControlRoleRoutingTests.test_non_codex_generated_agents_do_not_name_portable_policy_as_codex (runtime='gemini', role='dev-backlog-watchdog')
+"""
+            ),
+            'AssertionError',
+            "Regex didn't match: 'when .*Codex|when coordinate-codex-tasks is active|for other runtimes' not found in '7. For each terminal Codex task, observe whether every status-applicable terminal gate passes. For Completed, require merged delivery before default archival. For Failed and Abandoned, require valid terminal evidence without inferring merged delivery. Treat archival as required by default. Accept an archival pause only from explicit current user direction for exact named task archival with r... [sha256:36da48e12dbf2349d6aa3a1fc3dac62a4f74075feba5e1a434dc77e563a97660]",
+        ),
+        (
+            _failure_ids(
+                """
+failure:test_codex_task_control.CodexTaskControlRoleRoutingTests.test_non_codex_generated_agents_do_not_name_portable_policy_as_codex (runtime='junie', role='dev-backlog-watchdog')
+"""
+            ),
+            'AssertionError',
+            "Regex didn't match: 'when .*Codex|when coordinate-codex-tasks is active|for other runtimes' not found in '7. For each terminal Codex task, observe whether every status-applicable terminal gate passes. For Completed, require merged delivery before default archival. For Failed and Abandoned, require valid terminal evidence without inferring merged delivery. Treat archival as required by default. Accept an archival pause only from explicit current user direction for exact named task archival with r... [sha256:d09c5235029c1e2852431427eaf7ec6ac14249ddce95049c5d2604db4150d1fc]",
+        ),
+    ),
+    'scripts/test_eval_coverage_catalog.py': (
+        (
+            _failure_ids(
+                """
+failure:test_eval_coverage_catalog.RepositoryCoverageCliTests.test_cli_reproduces_structural_and_declared_totals
+"""
+            ),
+            'AssertionError',
+            "'30 conceptual agents and 131 bundled skills have structural coverage' not found in '# Agent, Skill, Technology, And Test Coverage Checklist/n/nThis page is generated from the live conceptual agent and skill inventories, all six evaluation catalogs, executable fixture checks, sandbox declarations, Judge calibration records, and classified evidence receipts. Regenerate it with scripts/build-support-checklist.py./n/n## Status Meaning/n/n- Structural means the current agent or skill source exists a... [sha256:f2d466cded460a524a383c935c8c154e32fddce42ab438fad09fac83209dba01]",
+        ),
+    ),
+    'scripts/test_resource_claim.py': (
+        (
+            _failure_ids(
+                """
+error:test_resource_claim.ResourceClaimTests.test_report_groups_versioned_work_item_segments_and_diagnostics
+"""
+            ),
+            'KeyError',
+            "'outcome'",
+        ),
+    ),
+    'scripts/test_role_mutation_policy.py': (
+        (
+            _failure_ids(
+                """
+failure:test_role_mutation_policy.RoleMutationPolicyTests.test_execute_workitem_package_is_retired_without_weakening_delivery_contracts
+failure:test_role_mutation_policy.RoleMutationPolicyTests.test_workflow_skills_delegate_claim_rules_to_resource_claim
+"""
+            ),
+            'AssertionError',
+            "'Claim Events table in resource-claim' not found in '---/nname: deliver-work-item-feature-branch/ndescription: Complete a normalized work item through one reviewable feature branch, provider-accurate pull-request or merge-request publication, accepted corrections, required checks, observed merge, and final provider lifecycle evidence. Use when the selected completion process is feature-branch or a request explicitly requires reviewed branch delivery through merge./nmetadata:/n category: developm... [sha256:47c025b4416c042752c67704954e9f375f53b7e33669d715c835517b53923da1]",
+        ),
+    ),
+    'scripts/test_ste_technical_writing.py': (
+        (
+            _failure_ids(
+                """
+failure:test_ste_technical_writing.SteTechnicalWritingContractTests.test_documentation_roles_and_codex_profile_use_gpt_55_high
+"""
+            ),
+            'AssertionError',
+            "{'mod[27 chars]high'} != {'mod[27 chars]high', 'contextCapacityTokens': 1050000, 'cont[199 chars]nts'}",
+        ),
+    ),
+    'scripts/test_technology_detection.py': (
+        (
+            _failure_ids(
+                """
+failure:test_technology_detection.TechnologyDetectionTests.test_agents_section_preserves_none_unset_and_unsupported_boundaries
+"""
+            ),
+            'AssertionError',
+            "'asks for the Persistence decision before a persistence operation' not found in '## Resource Coordination Skill Reference/n/nProject Configurator selected resource-coordination skill resource-claim. Apply that bundled skill by reference before taking ownership of repository paths or exclusive runtime and integration resources./n/nThe selected skill owns its coordination procedure and evidence. Work-item providers own durable assignment and lifecycle records; they do not own operational resources... [sha256:97ad355d6eee93eb850df3210fe2789508cebfb9c064c3a547f1c56e4245eae6]",
+        ),
+        (
+            _failure_ids(
+                """
+failure:test_technology_detection.TechnologyDetectionTests.test_render_docstring_distinguishes_optional_authority_from_required_workflow
+"""
+            ),
+            'AssertionError',
+            "'Optional definition authority' not found in 'Render configured root AGENTS.md project and skill sections./n/n value is the mapping loaded from PROJECT.yaml. workflow_selection and/n resource_coordination are required./n agent_claim_transport is required only when resource_coordination selects resource-claim/n and must be absent when resource_coordination selects none./n Technology guidance is always produced from the configured loadouts. Optional/n shared_agent_skills, document_provenance, and ... [sha256:1a79876e2d3e4ac7f2b1f6a44094d8df51789a7920a05f1e7aec0670dd6beae8]",
+        ),
+    ),
+    'scripts/test_work_item_coordination.py': (
+        (
+            _failure_ids(
+                """
+failure:test_work_item_coordination.WorkItemCoordinationPackageTests.test_watchdog_policy_is_read_only_and_provider_neutral (clause='Notify the coordinator only when action is required')
+"""
+            ),
+            'AssertionError',
+            '\'Notify the coordinator only when action is required\' not found in "When the user requests background supervision for a sustained queue, the parent may assign one dedicated watchdog execution under the Dev Backlog Watchdog Role. The watchdog never performs scheduling or recovery. It observes and reports. It remains outside the provider queue and active capacity and is not a durable record or substitute Coordinator. The Watchdog reads provider inventory, Git state, runtime evidence, and applicabl... [sha256:120b5924b620cc78e90aab2d3effea8632dfe8a6be1eb4c95b76b709e863c251]',
+        ),
+        (
+            _failure_ids(
+                """
+failure:test_work_item_coordination.WorkItemCoordinationPackageTests.test_watchdog_policy_is_read_only_and_provider_neutral (clause='one concise no-action cycle result')
+"""
+            ),
+            'AssertionError',
+            '\'one concise no-action cycle result\' not found in "When the user requests background supervision for a sustained queue, the parent may assign one dedicated watchdog execution under the Dev Backlog Watchdog Role. The watchdog never performs scheduling or recovery. It observes and reports. It remains outside the provider queue and active capacity and is not a durable record or substitute Coordinator. The Watchdog reads provider inventory, Git state, runtime evidence, and applicable resource coordi... [sha256:284069d61936aef12418c04675a48a88335469a4324ba707dc4d4213885789e0]',
+        ),
+    ),
+}
+
+_ROOT_ALIAS_DIAGNOSTIC_HASH_REFRESH = {
+    "failure:test_codex_task_control.CodexTaskControlRoleRoutingTests.test_non_codex_generated_agents_do_not_name_portable_policy_as_codex (runtime='claude', role='dev-backlog-watchdog')": (
+        "03db336336755dfc0bb92a9926f48bd0fd04e3fa3affa45c26c0529ff2f99e7a",
+        "f46fc71fc2e84f8220c2d96a139b2dc327363366061f5e0c0b992354ccb30ed9",
+    ),
+    "failure:test_codex_task_control.CodexTaskControlRoleRoutingTests.test_non_codex_generated_agents_do_not_name_portable_policy_as_codex (runtime='gemini', role='dev-backlog-watchdog')": (
+        "aa1b585d3ab023cb102c3a01a5dd39c9bd5efa3a2ae42089db543c42327620ef",
+        "36da48e12dbf2349d6aa3a1fc3dac62a4f74075feba5e1a434dc77e563a97660",
+    ),
+    "failure:test_codex_task_control.CodexTaskControlRoleRoutingTests.test_non_codex_generated_agents_do_not_name_portable_policy_as_codex (runtime='junie', role='dev-backlog-watchdog')": (
+        "a548965fb7b6c2d7ee4523620bc042fe895afeb223f59bb020eacad2f7a286ce",
+        "d09c5235029c1e2852431427eaf7ec6ac14249ddce95049c5d2604db4150d1fc",
+    ),
+}
+
+
+def _encode_failure_diagnostic(
+    kind: str,
+    identity: str,
+    exception: str,
+    diagnostic: str,
+) -> str:
+    """Encode one normalized diagnostic as a stable comparison value."""
+
+    return json.dumps(
+        {
+            "diagnostic": diagnostic,
+            "exception": exception,
+            "identity": identity,
+            "kind": kind,
+        },
+        separators=(",", ":"),
+        sort_keys=True,
+    )
+
+
+def _build_baseline_failure_diagnostics() -> dict[str, dict[str, str]]:
+    """Bind every authorized failure identity to exactly one captured terminal cause."""
+
+    diagnostics: dict[str, dict[str, str]] = {}
+    for relative_path, cause_groups in _OS_INDEPENDENT_FAILURE_CAUSES.items():
+        baseline = _OS_INDEPENDENT_FAILURE_BASELINE.get(relative_path)
+        if baseline is None:
+            raise _InventoryError(
+                f"Diagnostic baseline has no failure-identity owner: {relative_path}"
+            )
+        path_diagnostics = diagnostics.setdefault(relative_path, {})
+        for identities, exception, diagnostic in cause_groups:
+            for identity in identities:
+                if identity in path_diagnostics:
+                    raise _InventoryError(
+                        f"Diagnostic baseline repeats an identity: {relative_path}: {identity}"
+                    )
+                kind, separator, _test_id = identity.partition(":")
+                if not separator:
+                    raise _InventoryError(
+                        f"Diagnostic baseline identity has no outcome kind: {identity}"
+                    )
+                path_diagnostics[identity] = _encode_failure_diagnostic(
+                    kind,
+                    identity,
+                    exception,
+                    diagnostic,
+                )
+    for relative_path, baseline in _OS_INDEPENDENT_FAILURE_BASELINE.items():
+        expected = set(baseline.failure_ids)
+        observed = set(diagnostics.get(relative_path, {}))
+        if observed != expected:
+            raise _InventoryError(
+                "Diagnostic baseline identity mismatch for "
+                f"{relative_path}: missing={sorted(expected - observed)}, "
+                f"extra={sorted(observed - expected)}"
+            )
+    return diagnostics
+
+
+_OS_INDEPENDENT_FAILURE_DIAGNOSTICS = _build_baseline_failure_diagnostics()
 
 _OS_INDEPENDENT_COMMAND_FAILURE_BASELINE = {
     "agent-suite catalog list": (
@@ -1095,10 +1659,150 @@ class WindowsPortabilityContractTests(unittest.TestCase):
             self.assertTrue(relative_path.endswith(".py"))
             self.assertTrue(expected.owner)
             self.assertTrue(expected.failure_ids or expected.status == "resolved on current main")
+            self.assertEqual(
+                set(expected.failure_ids),
+                set(_OS_INDEPENDENT_FAILURE_DIAGNOSTICS.get(relative_path, {})),
+            )
+
+    def test_diagnostic_normalization_removes_only_runtime_variant_identity(self) -> None:
+        root = str(_ROOT)
+        first = (
+            f"failure at {root}/scripts/check.py in "
+            "/private/var/folders/aa/bb/T/run-one/case.py "
+            "uuid=123e4567-e89b-12d3-a456-426614174000 object=0xABC123"
+        )
+        second = (
+            f"failure at {root.replace('/', chr(92))}\\scripts\\check.py in "
+            "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\run-two\\case.py "
+            "uuid=aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee object=0x9f"
+        )
+        self.assertEqual(
+            _sanitize_terminal_diagnostic(first),
+            _sanitize_terminal_diagnostic(second),
+        )
+
+    def test_lexical_and_resolved_repository_aliases_share_one_signature(self) -> None:
+        identity = "failure:module.Case.test_repository_alias"
+        with (
+            mock.patch(__name__ + "._ROOT", Path("/workspace/project-alias")),
+            mock.patch.object(
+                Path,
+                "resolve",
+                return_value=Path("/mounted-volume/project-resolved"),
+            ),
+        ):
+            lexical = _failure_diagnostic_signature(
+                "failure",
+                identity,
+                "AssertionError: mismatch at /workspace/project-alias/generated/agent.md",
+            )
+            resolved = _failure_diagnostic_signature(
+                "failure",
+                identity,
+                "AssertionError: mismatch at /mounted-volume/project-resolved/generated/agent.md",
+            )
+        self.assertEqual(lexical, resolved)
+
+    def test_root_alias_refresh_changes_only_three_recorded_diagnostic_hashes(self) -> None:
+        expected_identities = {
+            "failure:test_codex_task_control.CodexTaskControlRoleRoutingTests.test_non_codex_generated_agents_do_not_name_portable_policy_as_codex (runtime='claude', role='dev-backlog-watchdog')",
+            "failure:test_codex_task_control.CodexTaskControlRoleRoutingTests.test_non_codex_generated_agents_do_not_name_portable_policy_as_codex (runtime='gemini', role='dev-backlog-watchdog')",
+            "failure:test_codex_task_control.CodexTaskControlRoleRoutingTests.test_non_codex_generated_agents_do_not_name_portable_policy_as_codex (runtime='junie', role='dev-backlog-watchdog')",
+        }
+        self.assertEqual(expected_identities, set(_ROOT_ALIAS_DIAGNOSTIC_HASH_REFRESH))
+        diagnostics = _OS_INDEPENDENT_FAILURE_DIAGNOSTICS[
+            "scripts/test_codex_task_control.py"
+        ]
+        for identity, (previous_hash, normalized_hash) in (
+            _ROOT_ALIAS_DIAGNOSTIC_HASH_REFRESH.items()
+        ):
+            with self.subTest(identity=identity):
+                diagnostic = json.loads(diagnostics[identity])["diagnostic"]
+                self.assertNotEqual(previous_hash, normalized_hash)
+                self.assertNotIn(previous_hash, diagnostic)
+                self.assertIn(normalized_hash, diagnostic)
+
+    def test_failure_baseline_rejects_same_identity_cause_drift(self) -> None:
+        identity = "failure:module.Case.test_contract"
+        expected = _failure_diagnostic_signature(
+            "failure",
+            identity,
+            "Traceback (most recent call last):\nAssertionError: expected alpha",
+        )
+        baseline = {"fixture.py": _BaselineFailure("fixture", (identity,))}
+        diagnostics = {"fixture.py": {identity: expected}}
+        observed = {"fixture.py": {identity: expected}}
+        with (
+            mock.patch.dict(
+                __name__ + "._OS_INDEPENDENT_FAILURE_BASELINE",
+                baseline,
+                clear=True,
+            ),
+            mock.patch.dict(
+                __name__ + "._OS_INDEPENDENT_FAILURE_DIAGNOSTICS",
+                diagnostics,
+                clear=True,
+            ),
+        ):
+            self.assertEqual({}, _compare_supported_test_failures(observed))
+            changed_class = {
+                "fixture.py": {
+                    identity: _failure_diagnostic_signature(
+                        "failure",
+                        identity,
+                        "Traceback (most recent call last):\nRuntimeError: expected alpha",
+                    )
+                }
+            }
+            with self.assertRaisesRegex(RuntimeError, "diagnostic signature drift"):
+                _compare_supported_test_failures(changed_class)
+            changed_message = {
+                "fixture.py": {
+                    identity: _failure_diagnostic_signature(
+                        "failure",
+                        identity,
+                        "Traceback (most recent call last):\nAssertionError: expected beta",
+                    )
+                }
+            }
+            with self.assertRaisesRegex(RuntimeError, "diagnostic signature drift"):
+                _compare_supported_test_failures(changed_message)
+
+    def test_ordinary_unittest_skips_require_exact_registered_reasons(self) -> None:
+        case = mock.Mock(spec=unittest.TestCase)
+        case.id.return_value = (
+            "test_resource_claim.ResourceClaimTests."
+            "test_dangling_symlink_and_missing_target_remain_distinct_stable_paths"
+        )
+        classified = _classify_unittest_skips(
+            "scripts/test_resource_claim.py",
+            [(case, "Symbolic-link creation is unavailable.")],
+        )
+        self.assertIn("Symbolic-link creation is unavailable.", next(iter(classified.values())))
+        with self.assertRaisesRegex(RuntimeError, "reason drift"):
+            _classify_unittest_skips(
+                "scripts/test_resource_claim.py",
+                [(case, "symlinks might be unavailable")],
+            )
+        unknown = mock.Mock(spec=unittest.TestCase)
+        unknown.id.return_value = "module.Case.test_unregistered_skip"
+        with self.assertRaisesRegex(RuntimeError, "Unclassified unittest skip"):
+            _classify_unittest_skips("scripts/test_resource_claim.py", [(unknown, "missing")])
+
+    def test_symlink_skip_decorators_have_exact_intentional_registrations(self) -> None:
+        expected = {
+            "scripts/test_resource_claim.py::ResourceClaimTests.test_dangling_symlink_and_missing_target_remain_distinct_stable_paths",
+            "scripts/test_resource_claim.py::ResourceClaimTests.test_absolute_symlink_scope_preserves_lexical_path_without_following_target",
+            "scripts/test_resource_claim.py::ResourceClaimTests.test_exact_file_symlink_does_not_inherit_target_directory_kind",
+        }
+        self.assertTrue(expected <= set(_INTENTIONAL_UNITTEST_SKIP_REASONS))
 
     def test_failure_baseline_rejects_new_identity_inside_inherited_red_file(self) -> None:
         observed = {
-            path: baseline.failure_ids
+            path: {
+                identity: _OS_INDEPENDENT_FAILURE_DIAGNOSTICS[path][identity]
+                for identity in baseline.failure_ids
+            }
             for path, baseline in _OS_INDEPENDENT_FAILURE_BASELINE.items()
             if baseline.failure_ids
         }
@@ -1109,7 +1813,10 @@ class WindowsPortabilityContractTests(unittest.TestCase):
         )
         drifted = dict(observed)
         inherited_path = "scripts/test_technology_detection.py"
-        drifted[inherited_path] = (*drifted[inherited_path], "failure:new_windows_regression")
+        drifted[inherited_path] = {
+            **drifted[inherited_path],
+            "failure:new_windows_regression": "unrecognized diagnostic",
+        }
         with self.assertRaisesRegex(RuntimeError, "new_windows_regression"):
             _compare_supported_test_failures(drifted)
 
@@ -1123,7 +1830,19 @@ class WindowsPortabilityContractTests(unittest.TestCase):
                 self.assertIn('if os.name == "nt"', source)
                 self.assertIn("CREATE_NEW_PROCESS_GROUP", source)
                 self.assertIn('process_options["start_new_session"] = True', source)
-                self.assertIn('shutil.which("taskkill")', source)
+                self.assertIn("JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE", source)
+                self.assertIn("AssignProcessToJobObject", source)
+                self.assertIn("TerminateProcess", source)
+                self.assertIn("Unassigned suspended Windows command did not terminate", source)
+                self.assertNotIn("taskkill", source.lower())
+
+    def test_corrected_cleanup_cases_are_always_selected_on_windows(self) -> None:
+        corrected_cases = {
+            "evals/agent-tests/project-bootstrapper/test_scripted_orchestration.py::ScriptedBootstrapperTests.test_timeout_kills_the_owned_process_group_and_cleans_workspace",
+            "scripts/test_agent_skill_evals.py::PreparedWorkspaceTests.test_successful_command_terminates_remaining_process_group_members",
+        }
+        self.assertTrue(corrected_cases.isdisjoint(_WINDOWS_UNSUPPORTED_TEST_CASES))
+        self.assertTrue(corrected_cases.isdisjoint(_CHILD_PROCESS_INSPECTION_TEST_CASES))
 
     def test_lock_crash_fixture_uses_the_cross_platform_abstraction(self) -> None:
         source = (_ROOT / "scripts/test_resource_claim.py").read_text(encoding="utf-8")
@@ -1170,6 +1889,7 @@ class _TestOutcome(NamedTuple):
 
     tests_run: int
     failure_ids: tuple[str, ...]
+    failure_diagnostics: tuple[tuple[str, str], ...]
     excluded_cases: tuple[tuple[str, str], ...]
     output: str
 
@@ -1189,6 +1909,85 @@ def _configured_case_key(relative_path: str, test: unittest.TestCase) -> str:
     components = identifier.split(".")
     case_id = ".".join(components[-2:]) if len(components) >= 2 else identifier
     return f"{relative_path}::{case_id}"
+
+
+def _classify_unittest_skips(
+    relative_path: str,
+    skipped: Sequence[tuple[unittest.TestCase, str]],
+) -> dict[str, str]:
+    """Classify ordinary unittest skips and reject an unknown identity or changed reason."""
+
+    classified: dict[str, str] = {}
+    for test, reason in skipped:
+        key = _configured_case_key(relative_path, test)
+        patterns = _INTENTIONAL_UNITTEST_SKIP_REASONS.get(key)
+        if patterns is None:
+            raise RuntimeError(f"Unclassified unittest skip: {key}: {reason}")
+        if not any(re.fullmatch(pattern, reason) for pattern in patterns):
+            raise RuntimeError(f"unittest skip reason drift for {key}: {reason}")
+        classified[key] = f"unittest skip: {reason}"
+    return classified
+
+
+_TERMINAL_EXCEPTION_DIAGNOSTIC = re.compile(
+    r"^(?P<exception>[A-Za-z_][A-Za-z0-9_.]*(?:Error|Exception|Failure))"
+    r"(?::\s*(?P<message>.*))?$"
+)
+
+
+def _sanitize_terminal_diagnostic(value: str) -> str:
+    """Normalize runtime-only path and object identities in one terminal diagnostic."""
+
+    sanitized = value.replace("\\", "/")
+    repository_roots = {
+        str(_ROOT).replace("\\", "/"),
+        str(_ROOT.resolve()).replace("\\", "/"),
+    }
+    for repository_root in sorted(repository_roots, key=len, reverse=True):
+        sanitized = sanitized.replace(repository_root, "<repo>")
+    for pattern in (
+        r"(?i)\b[A-Z]:/Users/[^/\s]+/AppData/Local/Temp/[^/\s\"']+",
+        r"/(?:private/)?var/folders/[^/\s]+/[^/\s]+/T/[^/\s\"']+",
+        r"/(?:private/)?tmp/[^/\s\"']+",
+    ):
+        sanitized = re.sub(pattern, "<temp>", sanitized)
+    sanitized = re.sub(
+        r"\b[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-"
+        r"[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}\b",
+        "<uuid>",
+        sanitized,
+    )
+    sanitized = re.sub(r"\b0x[0-9a-fA-F]+\b", "<address>", sanitized)
+    normalized = " ".join(sanitized.split())
+    if len(normalized) <= 500:
+        return normalized
+    digest = hashlib.sha256(normalized.encode("utf-8")).hexdigest()
+    return f"{normalized[:500]}... [sha256:{digest}]"
+
+
+def _failure_diagnostic_signature(kind: str, identity: str, traceback_text: str) -> str:
+    """Encode the terminal exception class and diagnostic for one stable failure identity."""
+
+    if not identity.startswith(f"{kind}:"):
+        raise ValueError("failure diagnostic kind and identity disagree")
+    terminal_match: re.Match[str] | None = None
+    for line in traceback_text.splitlines():
+        match = _TERMINAL_EXCEPTION_DIAGNOSTIC.fullmatch(line.strip())
+        if match is not None:
+            terminal_match = match
+    if terminal_match is None:
+        raise RuntimeError(f"No terminal exception diagnostic found for {identity}")
+    diagnostic = terminal_match.group("message") or "<no-message>"
+    return json.dumps(
+        {
+            "diagnostic": _sanitize_terminal_diagnostic(diagnostic),
+            "exception": terminal_match.group("exception").rsplit(".", 1)[-1],
+            "identity": identity,
+            "kind": kind,
+        },
+        separators=(",", ":"),
+        sort_keys=True,
+    )
 
 
 def _case_exclusions(relative_path: str) -> dict[str, str]:
@@ -1260,21 +2059,52 @@ def _collect_test_outcome(relative_path: str) -> _TestOutcome:
         raise RuntimeError(
             "Windows case exclusion no longer names a discovered test:\n" + "\n".join(sorted(missing))
         )
+    registered = {
+        key
+        for key in _INTENTIONAL_UNITTEST_SKIP_REASONS
+        if key.startswith(f"{relative_path}::")
+    }
+    missing_registered = registered - observed_keys
+    if missing_registered:
+        raise RuntimeError(
+            "Intentional unittest skip no longer names a discovered test:\n"
+            + "\n".join(sorted(missing_registered))
+        )
 
     diagnostics = io.StringIO()
     with contextlib.redirect_stdout(diagnostics), contextlib.redirect_stderr(diagnostics):
         result = unittest.TextTestRunner(stream=diagnostics, verbosity=1).run(selected)
-    failure_ids = tuple(
-        sorted(
-            [f"failure:{test.id()}" for test, _traceback in result.failures]
-            + [f"error:{test.id()}" for test, _traceback in result.errors]
-            + [f"unexpected-success:{test.id()}" for test in result.unexpectedSuccesses]
+    failure_diagnostics: dict[str, str] = {}
+    for kind, outcomes in (("failure", result.failures), ("error", result.errors)):
+        for test, traceback_text in outcomes:
+            identity = f"{kind}:{test.id()}"
+            failure_diagnostics[identity] = _failure_diagnostic_signature(
+                kind,
+                identity,
+                traceback_text,
+            )
+    for test in result.unexpectedSuccesses:
+        identity = f"unexpected-success:{test.id()}"
+        failure_diagnostics[identity] = json.dumps(
+            {
+                "diagnostic": "test unexpectedly succeeded",
+                "exception": "UnexpectedSuccess",
+                "identity": identity,
+                "kind": "unexpected-success",
+            },
+            separators=(",", ":"),
+            sort_keys=True,
         )
-    )
+    ordinary_skips = _classify_unittest_skips(relative_path, result.skipped)
+    overlap = set(exclusions) & set(ordinary_skips)
+    if overlap:
+        raise RuntimeError("A test was both pre-excluded and ordinarily skipped: " + ", ".join(overlap))
+    all_exclusions = {**exclusions, **ordinary_skips}
     return _TestOutcome(
         tests_run=result.testsRun,
-        failure_ids=failure_ids,
-        excluded_cases=tuple(sorted(exclusions.items())),
+        failure_ids=tuple(sorted(failure_diagnostics)),
+        failure_diagnostics=tuple(sorted(failure_diagnostics.items())),
+        excluded_cases=tuple(sorted(all_exclusions.items())),
         output=diagnostics.getvalue(),
     )
 
@@ -1285,6 +2115,7 @@ def _encode_test_outcome(outcome: _TestOutcome) -> str:
         {
             "tests_run": outcome.tests_run,
             "failure_ids": list(outcome.failure_ids),
+            "failure_diagnostics": dict(outcome.failure_diagnostics),
             "excluded_cases": dict(outcome.excluded_cases),
             "output": outcome.output,
         },
@@ -1298,6 +2129,7 @@ def _decode_test_outcome(text: str, relative_path: str) -> _TestOutcome:
         value = json.loads(text)
         tests_run = value["tests_run"]
         failure_ids = value["failure_ids"]
+        failure_diagnostics = value["failure_diagnostics"]
         excluded_cases = value["excluded_cases"]
         output = value["output"]
     except (KeyError, TypeError, json.JSONDecodeError) as error:
@@ -1306,6 +2138,12 @@ def _decode_test_outcome(text: str, relative_path: str) -> _TestOutcome:
         not isinstance(tests_run, int)
         or not isinstance(failure_ids, list)
         or not all(isinstance(item, str) for item in failure_ids)
+        or not isinstance(failure_diagnostics, dict)
+        or not all(
+            isinstance(key, str) and isinstance(signature, str)
+            for key, signature in failure_diagnostics.items()
+        )
+        or set(failure_ids) != set(failure_diagnostics)
         or not isinstance(excluded_cases, dict)
         or not all(
             isinstance(key, str) and isinstance(reason, str)
@@ -1317,6 +2155,7 @@ def _decode_test_outcome(text: str, relative_path: str) -> _TestOutcome:
     return _TestOutcome(
         tests_run,
         tuple(failure_ids),
+        tuple(sorted(failure_diagnostics.items())),
         tuple(sorted(excluded_cases.items())),
         output,
     )
@@ -1333,21 +2172,29 @@ def _test_python_path(path: Path, inherited: str) -> str:
 
 
 def _compare_supported_test_failures(
-    observed_failures: dict[str, tuple[str, ...]],
+    observed_failures: dict[str, dict[str, str]],
 ) -> dict[str, tuple[str, ...]]:
-    """Accept inherited identities and return baseline identities that have been resolved."""
+    """Accept exact inherited identities and diagnostics; return identities now resolved."""
     unexpected: list[str] = []
     resolved: dict[str, tuple[str, ...]] = {}
-    for relative_path, outcome_ids in observed_failures.items():
+    for relative_path, outcome_diagnostics in observed_failures.items():
         baseline = _OS_INDEPENDENT_FAILURE_BASELINE.get(relative_path)
         if baseline is None:
             unexpected.append(f"{relative_path}: new failing test entry point")
             continue
-        additions = set(outcome_ids) - set(baseline.failure_ids)
+        additions = set(outcome_diagnostics) - set(baseline.failure_ids)
         if additions:
             unexpected.extend(f"{relative_path}: {item}" for item in sorted(additions))
+        expected_diagnostics = _OS_INDEPENDENT_FAILURE_DIAGNOSTICS.get(relative_path, {})
+        for identity in sorted(set(outcome_diagnostics) & set(baseline.failure_ids)):
+            if outcome_diagnostics[identity] != expected_diagnostics.get(identity):
+                unexpected.append(
+                    f"{relative_path}: diagnostic signature drift for {identity}: "
+                    f"expected {expected_diagnostics.get(identity)!r}, "
+                    f"observed {outcome_diagnostics[identity]!r}"
+                )
     for relative_path, baseline in _OS_INDEPENDENT_FAILURE_BASELINE.items():
-        missing = set(baseline.failure_ids) - set(observed_failures.get(relative_path, ()))
+        missing = set(baseline.failure_ids) - set(observed_failures.get(relative_path, {}))
         if missing or not baseline.failure_ids:
             resolved[relative_path] = tuple(sorted(missing))
     if unexpected:
@@ -1362,7 +2209,7 @@ def _run_supported_tests() -> dict[str, object]:
     environment = os.environ.copy()
     environment["PYTHONDONTWRITEBYTECODE"] = "1"
     inherited_python_path = environment.get("PYTHONPATH", "")
-    observed_failures: dict[str, tuple[str, ...]] = {}
+    observed_failures: dict[str, dict[str, str]] = {}
     excluded_cases: dict[str, dict[str, str]] = {}
     tests_run = 0
     for relative_path in _supported_test_paths():
@@ -1383,7 +2230,7 @@ def _run_supported_tests() -> dict[str, object]:
         outcome = _decode_test_outcome(completed.stdout, relative_path)
         tests_run += outcome.tests_run
         if outcome.failure_ids:
-            observed_failures[relative_path] = outcome.failure_ids
+            observed_failures[relative_path] = dict(outcome.failure_diagnostics)
         if outcome.excluded_cases:
             excluded_cases[relative_path] = dict(outcome.excluded_cases)
 
@@ -1391,7 +2238,11 @@ def _run_supported_tests() -> dict[str, object]:
     return {
         "tests_run": tests_run,
         "observed_inherited_failures": {
-            path: list(identities) for path, identities in sorted(observed_failures.items())
+            path: {
+                identity: json.loads(signature)
+                for identity, signature in sorted(diagnostics.items())
+            }
+            for path, diagnostics in sorted(observed_failures.items())
         },
         "resolved_baseline_failures": {
             path: list(identities) for path, identities in sorted(resolved.items())
@@ -1506,6 +2357,12 @@ def _report(
             path: {
                 "owner": baseline.owner,
                 "failure_ids": list(baseline.failure_ids),
+                "failure_diagnostics": {
+                    identity: json.loads(signature)
+                    for identity, signature in sorted(
+                        _OS_INDEPENDENT_FAILURE_DIAGNOSTICS.get(path, {}).items()
+                    )
+                },
                 "status": baseline.status,
             }
             for path, baseline in sorted(_OS_INDEPENDENT_FAILURE_BASELINE.items())
