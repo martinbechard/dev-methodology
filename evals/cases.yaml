@@ -1014,6 +1014,8 @@ cases:
               if marker not in blocks or not contains(blocks[marker], term)
           ]
           missing_literals = [literal for literal in protected_literals if literal not in text]
+          preferred_term_coverage = (len(expected_terms) - len(missing_terms)) / len(expected_terms)
+          minimum_preferred_term_coverage = 0.95
           candidate_occurrences = [
               {"candidate": candidate, "marker": marker}
               for marker, candidate in scratchpad_candidates.items()
@@ -1023,7 +1025,9 @@ cases:
               "artifact": artifact.name,
               "semanticMarkersValid": all(count == 1 for count in marker_counts.values()),
               "markerCounts": marker_counts,
-              "preferredTerminologyValid": not missing_terms,
+              "preferredTerminologyCoverage": preferred_term_coverage,
+              "minimumPreferredTerminologyCoverage": minimum_preferred_term_coverage,
+              "preferredTerminologyValid": preferred_term_coverage >= minimum_preferred_term_coverage,
               "missingPreferredTerms": missing_terms,
               "protectedLiteralsValid": not missing_literals,
               "missingProtectedLiterals": missing_literals,

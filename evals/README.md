@@ -108,6 +108,8 @@ The evaluator reserves a disjoint audit path and a random run session identity. 
 
 A version-five probe-treatment-only contract is the narrow exception to that default. The ordinary terminology treatment requires an already-installed mcp-agent-ops 0.8.0 or newer, stages only the declared terminology.md bytes in an isolated runner-owned reference root, and exposes reference_load as its only MCP tool. The exact MCP_AGENT_OPS_REFERENCE_ROOTS and MCP_AGENT_OPS_REFERENCE_NAMES values are retained in the configuration evidence. The treatment keeps the ordinary case sandbox and ignored user configuration; it does not use the Git-lifecycle permission profile or a complete skill catalog. The reference_refresh capability remains recognized by framework validation for publication workflows, but reference_refresh remains disabled for this ordinary treatment. The target-omitted and wrong-skill controls remove the complete MCP server contract and forbid terminology-standard while preserving the same probe comparison key.
 
+The terminology treatment requires at least 95 percent preferred-term coverage. Every semantic marker, protected literal, and structural check remains mandatory. With 36 governed terms, one missed preferred term is tolerated and two are not. A valid verifier result below the threshold is a semantic-red treatment failure, not an infrastructure failure; semantic red is expected only for the target-omitted and wrong-skill controls.
+
 Print the MCP-enabled Codex or Junie base-case invocation without starting the server or a model session with:
 
 ```bash

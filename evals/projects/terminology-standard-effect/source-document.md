@@ -1,6 +1,6 @@
 # Evaluation Program Notes
 
-[TERM-01] The approval condition AC-17 says the rewritten work product must retain all 36 concept statements.
+[TERM-01] AC-17 states the measurable condition that the rewritten work product must satisfy to be accepted: retain all 36 concept statements.
 
 [TERM-02] The automated software participant uses the `dev_documentation_writer` model, instructions, context, and tools within delegated authority.
 

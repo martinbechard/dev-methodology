@@ -1232,8 +1232,7 @@ def _run_projection_verifier(
     elif result.exit_code == 0 and semantic_value is True:
         outcome = "semantic-green"
     elif (
-        control_observation
-        and red_exit_code is not None
+        red_exit_code is not None
         and result.exit_code == red_exit_code
         and semantic_value is False
     ):

@@ -10,6 +10,7 @@ import importlib.util
 import io
 import json
 import os
+import re
 import shutil
 import sys
 import threading
@@ -5542,6 +5543,88 @@ class HarnessAndJudgeTests(unittest.TestCase):
             self.assertEqual(3, record["exitCode"])
             self.assertEqual("control-observation", record["expectation"])
             self.assertEqual("semantic-red", record["outcome"])
+
+    def test_projection_verifier_records_a_failed_treatment_as_semantic_red(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            case, projection, package, trusted = _trusted_projection_fixture(
+                self.module,
+                base,
+                "terminology-standard-effect",
+            )
+            expected_digest = self.module.snapshot_digest(
+                self.module.snapshot_product_tree(projection.source_root)
+            )
+            result = self.module.CommandResult(
+                trusted.specification.argv,
+                3,
+                json.dumps({"passed": False}) + "\n",
+                "",
+            )
+            with mock.patch.object(
+                self.module,
+                "_run_trusted_projection_process",
+                return_value=result,
+            ):
+                record, acceptable = self.module._run_projection_verifier(
+                    case,
+                    projection.source_root,
+                    trusted.specification,
+                    package.path("failed-treatment.json"),
+                    {},
+                    expected_fixture_digest=expected_digest,
+                    trusted=trusted,
+                    projection=projection,
+                )
+
+            self.assertFalse(acceptable)
+            self.assertFalse(record["passed"])
+            self.assertEqual("success-required", record["expectation"])
+            self.assertEqual("semantic-red", record["outcome"])
+            self.assertIsNone(record["infrastructureFailure"])
+
+    def test_terminology_verifier_accepts_one_missing_preferred_term_but_not_two(self) -> None:
+        case = self.module.load_cases()["terminology-standard-effect"]
+        script = case["verify"]["argv"][2]
+        term_block = script.split("expected_terms = {", 1)[1].split(
+            "}\nprotected_literals",
+            1,
+        )[0]
+        terms = re.findall(r'"(TERM-\d{2})": "([^"]+)"', term_block)
+        self.assertEqual(36, len(terms))
+        protected = (
+            "AC-17 `dev_documentation_writer` 36 build-2026.08.08 "
+            "`agent_role` PASS FAIL 26 78 `python3 verify.py`"
+        )
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+
+            def verify_with_missing(count: int) -> object:
+                lines = ["# Terminology coverage"]
+                for index, (marker, term) in enumerate(terms):
+                    value = "unpreferred wording" if index < count else term
+                    lines.append(f"[{marker}] {value}")
+                lines.append(protected)
+                (root / "rewritten-document.md").write_text(
+                    "\n\n".join(lines) + "\n",
+                    encoding="utf-8",
+                )
+                return self.module.run_command(
+                    self.module.command_spec(case["verify"]),
+                    root,
+                )
+
+            one_missing = verify_with_missing(1)
+            self.assertEqual(0, one_missing.exit_code)
+            one_result = json.loads(one_missing.stdout)
+            self.assertEqual(35 / 36, one_result["preferredTerminologyCoverage"])
+            self.assertTrue(one_result["preferredTerminologyValid"])
+
+            two_missing = verify_with_missing(2)
+            self.assertEqual(3, two_missing.exit_code)
+            two_result = json.loads(two_missing.stdout)
+            self.assertFalse(two_result["preferredTerminologyValid"])
 
     def test_projection_control_rejects_every_non_semantic_red_failure(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
