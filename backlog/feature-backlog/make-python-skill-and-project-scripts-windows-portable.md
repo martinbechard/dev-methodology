@@ -36,17 +36,17 @@ Condition Type: delegated-work
 
 Owner: Original Dev Coder /root/windows_portability_coder under visible Root Dev Orchestrator 019fe928-e2d8-7f91-91b2-bd27990a7414
 
-Evidence: All 12 inherited baseline owner records now contain exact unittest failure or error identities with no pending placeholders; scripts/test_bundle_content.py remains recorded as resolved by current main. The expanded 63-entry-point run across the complete 160-file inventory is active with no child-error output, and its longer duration is expected because newly included mixed suites add the 92-second resource-claim suite. No workflow or README claim has changed, and the original Dev Coder has stopped all mutation while the read-only run finishes.
+Evidence: Coordinator dispositions now authorize an exact 16-owner baseline containing 117 retained failure or error identities plus the resolved scripts/test_bundle_content.py owner at zero identities. The explicit case-level capability map contains 14 static Windows-inapplicable cases, 6 child-process-inspection cases, 13 Playwright or Node runtime cases, and 31 symlink-capability cases; mixed files remain selected and only exact cases carry reasons. Four focused fail-closed tests pass for the capability map, exact baseline, within-owner identity-drift rejection, and cross-platform lock contention plus crash release. The four directly traceable Python paths remain uncommitted with a clean diff, and aggregate, workflow, and README mutation is paused.
 
-Observed At: 2026-08-10T02:58:01Z
+Observed At: 2026-08-10T03:12:18Z
 
-Started At: 2026-08-10T02:58:01Z
+Started At: 2026-08-10T03:12:18Z
 
 Deadline or Expires At: 2026-08-10T04:49:31Z
 
-Next Action: Complete this short provider transaction, reacquire the visible root's exact activity=work claim, then release the original Dev Coder to finish the active comparator run, update the truthful workflow and README contract, and complete replacement-candidate verification.
+Next Action: Complete this short provider transaction, reacquire the visible root's exact activity=work claim, then release the original Dev Coder to run the expanded aggregate comparator, update the truthful workflow and README contract, and complete replacement-candidate verification.
 
-Next Reconciliation At: 2026-08-10T03:13:01Z
+Next Reconciliation At: 2026-08-10T03:27:18Z
 
 ## Execution Identity
 
@@ -64,7 +64,7 @@ Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/make-python-window
 
 Current Phase: Implementing
 
-Work-Item Claim: Visible claim python-windows-portability-visible-work-10-019fe928 was released with handoff only for this bounded-correction verification refresh; source mutation remains paused until the visible root reacquires the exact activity=work claim.
+Work-Item Claim: Visible claim python-windows-portability-visible-work-11-019fe928 was released with handoff only for this exact baseline and capability-map evidence refresh; source mutation remains paused until the visible root reacquires the exact activity=work claim.
 
 ## Execution Handoff Reconciliation
 
