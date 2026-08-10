@@ -1,8 +1,8 @@
 # Use MCP Hierarchy Plans for Complex Development
 
-Owner: Unowned
+Owner: Dev Orchestrator (019fe928-e31e-71e2-aaa8-7f9bef12c7b0)
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -11,6 +11,18 @@ Provider: file
 Work Item ID: use-mcp-hierarchy-plans-for-complex-development
 
 Completion: main-branch
+
+## Resumption Handoff Evidence
+
+Canonical Task: 019fe928-e31e-71e2-aaa8-7f9bef12c7b0
+
+Resolution: Resume the preserved execution using the documented `mcp_agent_ops.hierarchy` package API. The prior FastMCP-wrapper blocker was an incorrect interpretation and is superseded.
+
+Requested At: 2026-08-10T01:20:00Z
+
+Next Action: The same Dev Orchestrator records Starting to Running, acquires the exact Work Item activity=work claim, and implements the bounded planning skill without changing mcp-agent-ops.
+
+Required Task Title: Implementing — Use MCP hierarchy plans for complex development
 
 ## Starting Handoff Evidence
 
