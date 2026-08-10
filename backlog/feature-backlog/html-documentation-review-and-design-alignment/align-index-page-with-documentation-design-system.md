@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: Blocked
+Status: Ready
 
 Type: Feature
 
@@ -58,6 +58,8 @@ Target page: index.html
 Blocker owner: Work Item review-index-page-text.
 
 Blocked to Ready condition: review-index-page-text is Completed with corrected content, fresh independent acceptance, and an immutable content baseline for index.html.
+
+Dependency Resolution: Satisfied by accepted candidate 6874526448340418cd5b074a27e6021ab300cc49 after three fresh GOOD reviews and fresh VERDICT: VERIFIED. Main delivery merge 9e7d20d66eb90da29ff6a43e52c634df99c2b505 preserves the accepted index.html and focused test blobs; provider completion/archive commit 2089100a7275340e0dc401b0379bb430ede31879 records the completed predecessor.
 
 ## Verification
 
