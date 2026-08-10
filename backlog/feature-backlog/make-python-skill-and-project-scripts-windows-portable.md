@@ -36,17 +36,17 @@ Condition Type: delegated-work
 
 Owner: Original Dev Coder /root/windows_portability_coder under visible Root Dev Orchestrator 019fe928-e2d8-7f91-91b2-bd27990a7414
 
-Evidence: Both fresh reviewers returned NEEDS CORRECTION for candidate 512aeb37d47f84884c62a63da27bf8255fd6c5a1. Confirmed P1 findings are a predictably red mandatory Windows workflow, whole-file platform exclusions that omit supported mixed-suite and maintenance-command behavior, and missing Windows lock contention plus abnormal-holder-termination coverage. The original Dev Coder is assigned one bounded correction attempt and is reconciling current main non-destructively before mutation so source-baseline fixes are reused rather than hidden or widened.
+Evidence: All 12 inherited baseline owner records now contain exact unittest failure or error identities with no pending placeholders; scripts/test_bundle_content.py remains recorded as resolved by current main. The expanded 63-entry-point run across the complete 160-file inventory is active with no child-error output, and its longer duration is expected because newly included mixed suites add the 92-second resource-claim suite. No workflow or README claim has changed, and the original Dev Coder has stopped all mutation while the read-only run finishes.
 
-Observed At: 2026-08-10T02:19:15Z
+Observed At: 2026-08-10T02:58:01Z
 
-Started At: 2026-08-10T02:19:15Z
+Started At: 2026-08-10T02:58:01Z
 
 Deadline or Expires At: 2026-08-10T04:49:31Z
 
-Next Action: Complete this short provider transaction, reacquire the visible root's exact activity=work claim, then release the original Dev Coder to reconcile current main and correct all three confirmed findings in one replacement candidate.
+Next Action: Complete this short provider transaction, reacquire the visible root's exact activity=work claim, then release the original Dev Coder to finish the active comparator run, update the truthful workflow and README contract, and complete replacement-candidate verification.
 
-Next Reconciliation At: 2026-08-10T02:34:15Z
+Next Reconciliation At: 2026-08-10T03:13:01Z
 
 ## Execution Identity
 
@@ -64,7 +64,7 @@ Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/make-python-window
 
 Current Phase: Implementing
 
-Work-Item Claim: Visible claim python-windows-portability-visible-work-7-019fe928 was released with handoff only for this bounded-correction evidence refresh; source mutation remains paused until the visible root reacquires the exact activity=work claim.
+Work-Item Claim: Visible claim python-windows-portability-visible-work-10-019fe928 was released with handoff only for this bounded-correction verification refresh; source mutation remains paused until the visible root reacquires the exact activity=work claim.
 
 ## Execution Handoff Reconciliation
 

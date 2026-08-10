@@ -1,8 +1,8 @@
 # Review and Correct Coding-Agent Runtime Configuration Text
 
-Owner: Unowned
+Owner: Dev Orchestrator (019fe928-fc32-73c2-af60-791087327934)
 
-Status: User Action Required
+Status: Running
 
 Type: Feature
 
@@ -11,6 +11,46 @@ Provider: file
 Work Item ID: review-agentic-configuration-text
 
 Completion: main-branch
+
+## Active Execution Evidence
+
+Condition Type: root-execution
+
+Owner: Dev Orchestrator in Codex task 019fe928-fc32-73c2-af60-791087327934
+
+Evidence: Fresh Dev Artifact Reviewer and Dev Code Reviewer accepted page contribution 674d2d12a99d5792b553744500857b3f1bd4d84e and test contribution fbb1404e94bee1cd50bf46d362f249c645195bb0. Fresh Methodology Artifact Reviewer returned NEEDS CORRECTION for two bounded medium findings: the page retains a narrower or inconsistent Agent harness concept, and its portable-skill and Copilot scope statements remain unbounded or misleading. The original page producer is applying correction attempt 1; the test producer will update only directly implicated assertions afterward.
+
+Observed At: 2026-08-10T02:52:15Z
+
+Started At: 2026-08-10T00:49:42Z
+
+Deadline or Expires At: 2026-08-10T04:49:42Z
+
+Next Action: Complete bounded correction attempt 1 in the page and its page-content assertions, then repeat fresh methodology and code review before integrating only accepted commits onto current main.
+
+Next Reconciliation At: 2026-08-10T03:15:00Z
+
+Canonical Conversation: 019fe928-fc32-73c2-af60-791087327934
+
+Root Agent Task: 019fe928-fc32-73c2-af60-791087327934
+
+Branch: codex/review-agentic-configuration-text-019fb057
+
+Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/review-agentic-configuration-text-work-019fb057
+
+Phase: Bounded methodology correction attempt 1
+
+## Recovery Handoff Evidence
+
+Canonical Task: 019fe928-fc32-73c2-af60-791087327934
+
+Authorized Correction: Restore the target page to the pre-candidate no-provenance-block state while retaining the supported text corrections. Do not invent historical provenance.
+
+Requested At: 2026-08-10T02:29:00Z
+
+Next Action: The same Dev Orchestrator records Starting to Running, acquires the exact Work Item activity=work claim, resumes the preserved clean branch and worktree, applies the authorized correction, then obtains fresh independent review and verification before delivery.
+
+Required Task Title: Implementing — Agentic configuration text review
 
 Series: backlog/feature-backlog/html-documentation-review-and-design-alignment/index.md
 
@@ -60,7 +100,7 @@ Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/review-agentic-con
 
 Phase: Bounded correction attempt 1 reconciliation
 
-## User Action Required
+## User Direction Resolution
 
 Question: Do you approve restoring `design/agentic-configuration.html` to its pre-candidate state with no provenance block, while retaining the supported text corrections?
 
@@ -74,9 +114,9 @@ Asked At: 2026-08-10T01:42:00Z
 
 Asked In: Parent coordination task 019fb057-1767-7ef2-b5fa-41f4417b20b3
 
-Resolution: Pending
+Resolution: Approved. Restore `design/agentic-configuration.html` to its pre-candidate state with no provenance block while retaining the supported text corrections. Do not invent historical provenance values.
 
-Approval Resolution: Pending
+Approval Resolution: The user answered exactly `ok I approve` in canonical Work Item conversation `019fe928-fc32-73c2-af60-791087327934` on 2026-08-10 in response to the recorded question.
 
 ## Summary
 

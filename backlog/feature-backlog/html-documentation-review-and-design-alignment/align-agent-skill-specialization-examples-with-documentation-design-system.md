@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: Blocked
+Status: Ready
 
 Type: Feature
 
@@ -58,6 +58,8 @@ Target page: design/agent-skill-specialization-examples.html
 Blocker owner: Work Item review-agent-skill-specialization-examples-text.
 
 Blocked to Ready condition: review-agent-skill-specialization-examples-text is Completed with corrected content, fresh independent acceptance, and an immutable content baseline for design/agent-skill-specialization-examples.html.
+
+Dependency Resolution: Satisfied by completed Work Item `review-agent-skill-specialization-examples-text`, archived in provider commit `da6854e6f9c8dd7b1c6bad2af324bd200b345b49`. Accepted content baseline `8b93e9867d40a3f808e1662c65ccb824fe7f6bff` passed fresh methodology review GOOD, independent candidate verification PASS, and independent integrated-tree verification PASS after main delivery.
 
 ## Verification
 

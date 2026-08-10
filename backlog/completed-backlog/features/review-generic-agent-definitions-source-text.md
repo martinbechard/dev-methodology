@@ -2,11 +2,13 @@
 
 Owner: Dev Orchestrator
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
 Provider: file
+
+Provider Reference: backlog/completed-backlog/features/review-generic-agent-definitions-source-text.md
 
 Work Item ID: review-generic-agent-definitions-source-text
 
@@ -124,3 +126,25 @@ None.
 
 - The dependent design item is align-generic-agent-definitions-source-with-documentation-design-system.
 - Creation of this work item does not dispatch it while backlog crisis recovery remains active.
+
+## Completion Evidence
+
+Completed At: 2026-08-10T02:23:00Z
+
+Completion Disposition: READY through the configured main-branch Commit workflow.
+
+Accepted Source: Commit 82c88a17e17ce407ba225f491ba5ba59a2150d3a is the immutable accepted candidate over base 9488c71873e19c99b523927bce14ec64da634158. It changes only design/generic-agent-definitions-source.html and scripts/test_bundle_content.py. The page remains hand-authored maintained HTML; canonical role schema, model-profile mappings, adapter generator behavior, README ownership, skill-lifecycle documentation, and current official runtime documentation supplied the reviewed evidence.
+
+Main Integration: Clean current-main replay mapped accepted source 82c88a17e17ce407ba225f491ba5ba59a2150d3a to integration commit 33728187db5cfd0eb4359ae7acc69d8da598e010 over main base d30d2a98e08317ed9d733430f6e75afb05d3141a. The accepted patch ID 4e50db181b7737830550c8a486472d2913dac98f was preserved; the accepted HTML blob is byte-identical, and the test delta was applied exactly while retaining newer main test content. Integration commit 33728187db5cfd0eb4359ae7acc69d8da598e010 is an ancestor of observed main 81c46ff1fefff992b4fab2f119fe4d19c17bfa85. No remote publication was required or performed.
+
+Independent Review: Final fresh-context Dev Artifact Reviewer and Dev Code Reviewer returned GOOD with no material finding. They confirmed the scoped README fragment, schema target versus hardcoded Gemini kind boundary, current Junie date and frontmatter evidence, exact skill-enablement lifecycle distinction, complete accessibility text, terminology, local links, generated boundaries, and strengthened focused test contracts. A temporary date concern was retracted after both official Junie page footers directly exposed 05 August 2026.
+
+Verification: Independent Dev Verifier returned WARN only for the pre-existing historical provenance migration gap and confirmed every scoped acceptance criterion passes. Documentation freshness, the complete four-test lifecycle suite, 18 focused bundle-content selector executions, the Gemini and Junie native-frontmatter test, deterministic page parsing, terminology and stale-text scans, exact changed-path scope, source mapping, candidate cleanliness, and Git diff checks passed. Post-integration verification on main reran documentation freshness, all four lifecycle tests, five context-budget tests, one generic-agent test, four link tests, and three HTML-documentation tests successfully.
+
+Residual Scope: The missing historical creation-provenance block predates the accepted candidate and cannot be synthesized by an ordinary edit without an authorized runtime envelope. The candidate preserves that gap exactly; the dependent design-alignment item retains the provenance requirement. No unresolved material content, terminology, structure, accessibility, source-traceability, generator, or focused-test finding remains.
+
+Coordination: Exact source-path integration claim review-generic-agent-definitions-source-text-integration-paths-019fe929 was released at event 36919669-a354-49f7-903b-77c42be63703. Exclusive main-integration resource claim review-generic-agent-definitions-source-text-main-integration-019fe929 was released at event b528956d-5764-4def-bbe1-38a739124e12. Final activity=work claim review-generic-agent-definitions-source-text-work15-019fe929 was released with handoff at event c17230d1-43de-49dc-affa-684fba98c6b0. Waiting canonical task 019fe928-e317-7942-87c0-1a9235a9d2c8 received explicit release and retry notification. Terminal update claims review-generic-agent-definitions-source-text-complete-update-019fe929 and align-generic-agent-definitions-source-dependency-update-019fe929 plus exact path claim review-generic-agent-definitions-source-text-complete-paths-019fe929 protect this provider transaction and are released immediately after commit verification.
+
+Terminal Provider Commit: The commit containing this exact status, dependency, index, and archive transaction; its immutable hash is reported from Git after commit.
+
+Archive: backlog/completed-backlog/features/review-generic-agent-definitions-source-text.md. The dependent Work Item align-generic-agent-definitions-source-with-documentation-design-system is Ready for Coordinator reconciliation; this completion does not independently dispatch or start it.

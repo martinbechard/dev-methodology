@@ -22,9 +22,9 @@ Branch: codex/review-agent-and-skill-evaluations-text-019fb057
 
 Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/review-agent-skill-evals-text-work-019fb057
 
-Candidate Commit: 5043884e3a2d31ca0c86be33338447a306004578
+Candidate Commit: 34a69070b4c1f86d38190b3cde9fbcff35604ddd
 
-Phase: Narrow Codex reference configuration recovery
+Phase: Fresh final independent review and verification
 
 Started At: 2026-08-10T00:49:58Z
 
@@ -34,17 +34,17 @@ Condition Type: root-execution
 
 Owner: Dev Orchestrator 019fe928-e2d9-73d3-a647-7fac38731628
 
-Evidence: The same visible canonical Codex task accepted the durable recovery handoff after User Action Required to Ready commit f78028f7 and Ready to Starting commit bc144e64. The user's exact approved recovery is limited to adding MCP_AGENT_OPS_REFERENCE_ROOTS and MCP_AGENT_OPS_REFERENCE_NAMES to the existing mcp-agent-ops environment table in /Users/martinbechard/.codex/config.toml, with backup, TOML validation, and a fresh service/session reference_load verification. The broad user-scope installer is explicitly excluded. Clean candidate 5043884e3a2d31ca0c86be33338447a306004578 and all prior review and verification evidence remain preserved.
+Evidence: The same visible canonical Codex task completed the user's narrow configuration-only recovery without running the broad installer. The active config differs from its task-specific backup by exactly the two approved reference allowlist assignments, TOML validation passes, and a genuinely fresh mcp-agent-ops 0.9.0 stdio process loaded project-scope terminology.md successfully at catalog revision 2388741065caa47c5c032fc72db2b953d23607d1ef18c0548b3d6446de495aff. Original Dev Coder /root/evaluation_text_producer then committed clean final correction candidate 34a69070b4c1f86d38190b3cde9fbcff35604ddd, limited to the same generator, focused test, and generated HTML paths. Its new singular-grammar test failed red on the prior output, then all 30 applicable focused tests, generator freshness, Python compilation, historical provenance, exact diff checks, and clean status passed. Exact source claim review-agent-and-skill-evaluations-text-019fe928-source-paths-13 was released at candidate boundary. Fresh read-only Methodology Artifact Reviewer /root/evaluation_text_final_review and Dev Verifier /root/evaluation_text_final_verify are independently evaluating the cumulative candidate from original baseline 292b55f9578d04438ce5c8d3b34c64b11af0f907; each uses the actual configured provider through a fresh stdio process rather than the current host's cached pre-change MCP environment.
 
-Observed At: 2026-08-10T02:21:06Z
+Observed At: 2026-08-10T02:38:52Z
 
-Started At: 2026-08-10T02:20:43Z
+Started At: 2026-08-10T02:38:40Z
 
 Deadline or Expires At: 2026-08-10T03:20:43Z
 
-Next Action: Commit this Starting to Running transition, acquire activity=work and the exact shared-install configuration resource, apply and verify only the two-line configuration repair, then correct the preserved singular-grammar finding and repeat fresh independent gates.
+Next Action: Reconcile both fresh terminal verdicts against final candidate 34a69070b4c1f86d38190b3cde9fbcff35604ddd and begin main-branch delivery only if methodology review and verification are both GOOD.
 
-Next Reconciliation At: 2026-08-10T02:35:43Z
+Next Reconciliation At: 2026-08-10T02:53:52Z
 
 ## Recovery Handoff Evidence
 
