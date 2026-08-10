@@ -36,17 +36,17 @@ Condition Type: fresh-independent-review
 
 Owner: Fresh independent code and methodology-artifact reviewers under visible Root Dev Orchestrator 019fe928-e2d8-7f91-91b2-bd27990a7414
 
-Evidence: The final-recovery replacement candidate is committed at cbab82b1f65f9096aa8c6b7ae9d7794f690715ff with message Harden fail-closed Windows portability verification. The preserved predecessor is 7cb7e0312f0ce7e077c903886f8235a69f84971e, and non-destructive history remains based on exact review base 9385665b27ff4c3f8fb1da3e04e82a47b4bf742c. The source worktree is clean; cached and base-to-candidate diff checks pass. The exact review range contains 13 paths: the seven recovery paths plus the workflow, two generator-owned documentation projections, resource-claim portability test, Python skill, and resource-claim helper source. All pre-commit focused, aggregate, freshness, provenance, negative inventory, and exact-path-set gates are green. No native Windows pass is claimed. Source mutation is stopped for entirely fresh independent review.
+Evidence: Both entirely fresh reviewers reached clean read-only checkpoints on exact candidate cbab82b1f65f9096aa8c6b7ae9d7794f690715ff and confirmed the clean 13-path range and diff hygiene. The methodology-artifact reviewer reports a provisional terminal NEEDS CORRECTION for one low-priority repository-maintenance rule breach: new README.md lines 781 and 783 use inline code formatting for unittest, excluded_cases, and killpg, while scripts/test_bundle_content.py line 1270 hard-codes one affected span; all substantive cleanup-evidence, README-strength, generated-freshness, provenance, skill, and negative-inventory checks are otherwise green. The code reviewer reports 28/28 focused contracts green and is validating whether the Windows wrappers prove bounded job-wide descendant reaping after TerminateJobObject rather than waiting only for the root. Its attempted local python3 command-smoke phase used an unsupported interpreter without tomllib and is not candidate evidence; no supported Python 3.11 rerun has started. Neither reviewer has mutated any state. Source remains frozen, and no native Windows pass is claimed.
 
-Observed At: 2026-08-10T05:45:49Z
+Observed At: 2026-08-10T05:56:23Z
 
 Started At: 2026-08-10T05:45:49Z
 
 Deadline or Expires At: 2026-08-10T06:45:49Z
 
-Next Action: Complete this provider transaction, reacquire the visible root's exact activity=work claim, set the canonical task title to Reviewing, and launch fresh read-only code and methodology-artifact reviewers against exact range 9385665b27ff4c3f8fb1da3e04e82a47b4bf742c..cbab82b1f65f9096aa8c6b7ae9d7794f690715ff. If either reviewer finds any unresolved issue or scope gap, return it to the Parent Coordinator without another source correction cycle.
+Next Action: Complete this provider transaction, reacquire the visible root's exact activity=work claim, release both fresh reviewers to finish terminal synthesis and any remaining supported read-only check, then record their exact terminal verdicts. Because this is the final authorized correction cycle, any confirmed finding or scope gap returns to the Parent Coordinator without source mutation or another correction attempt.
 
-Next Reconciliation At: 2026-08-10T06:00:49Z
+Next Reconciliation At: 2026-08-10T06:11:23Z
 
 ## Exceptional Recovery Manifest
 
@@ -84,7 +84,7 @@ Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/make-python-window
 
 Current Phase: Reviewing
 
-Work-Item Claim: Visible claim python-windows-portability-visible-work-32-019fe928 was released with handoff after candidate commit; source remains frozen for fresh review until the visible root reacquires the exact activity=work claim.
+Work-Item Claim: Visible claim python-windows-portability-visible-work-34-019fe928 was released with handoff at the fresh-review checkpoint; source remains frozen until the visible root reacquires the exact activity=work claim.
 
 ## Execution Handoff Reconciliation
 
