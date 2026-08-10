@@ -1974,6 +1974,7 @@ class BundleContentTests(unittest.TestCase):
             "invoke the configured claim helper's reset operation exactly once",
             "do not perform any claim status, acquire, extend, deadline extension, heartbeat, release, wait, retry, report, maintenance, or additional reset operation",
             "Process exactly one blockage item at a time without claims or delegated delivery.",
+            "Read the current item and review current changes to understand what was done so far.",
             "Commit the current item before starting another item.",
             "Moving an item to Ready does not resolve it.",
             "When the same blockage state and recovery result are observed again, return the existing result without repeating lifecycle mutation.",

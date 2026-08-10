@@ -43,7 +43,7 @@ The sole Coordinator directly owns delivery for the blockage set in its existing
 
 1. Process exactly one blockage item at a time without claims or delegated delivery.
 2. Keep all other mutation stopped while the current item is active.
-3. Read the current item, current main, relevant sources, preserved candidates, and review findings.
+3. Read the current item and review current changes to understand what was done so far.
 4. Confirm that the recorded blocker still exists.
 5. Rewrite unclear objectives, terms, requirements, or blockers before implementation.
 6. Remove requirements that do not contribute to the requested outcome.
