@@ -309,7 +309,7 @@ class AgentSkillHierarchyTests(unittest.TestCase):
         self.assertIn("Amber lines show skills an agent always uses", hierarchy_section)
         self.assertIn("Blue arrows show direct dependencies between agents", hierarchy_section)
         self.assertIn(
-            "Blue skill cards in the generated skill catalog have a separate meaning: they identify specialized technology and domain skills available for setup-time detection.",
+            "Blue skill labels in the generated skill catalog have a separate meaning: they identify specialized technology and domain skills available for setup-time detection.",
             hierarchy_section,
         )
         self.assertNotIn("Role Agent Categories", role_map)

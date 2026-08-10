@@ -3394,7 +3394,7 @@ class BundleContentTests(unittest.TestCase):
             README_PATH.read_text(encoding="utf-8"),
         )
         self.assertIn(
-            "Focused pull requests separate shared foundations from independently reviewable changes",
+            "Delivery is therefore separate from provider lifecycle closure.",
             (REPOSITORY_ROOT / "design" / "agent-and-skill-definitions.html").read_text(
                 encoding="utf-8"
             ),
@@ -13415,6 +13415,10 @@ Visible after.
                 ),
             ],
             re.findall(r'<h2 id="([^"]+)">([^<]+)</h2>', page_text),
+        )
+        self.assertIn(
+            "Dev Coder receives the work-item identifier or source reference, base and dependency information, source scope, acceptance criteria, and required candidate-evidence expectations through orchestration. It produces candidate evidence, but neither applies provider-specific create or manage skills nor mutates provider lifecycle.",
+            page_text,
         )
 
         outline_coordination_heading = re.search(

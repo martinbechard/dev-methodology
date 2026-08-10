@@ -677,7 +677,7 @@
     <h2 id="relationships-title">Agent-Skill Relationships</h2>
     <h3 id="hierarchy-title">Interactive Agent And Skill Map</h3>
     <p class="note">
-      This diagram uses color to distinguish agent-to-skill assignments from agent-to-agent dependencies. Amber lines show skills an agent always uses, while violet lines show skills selected when an applicable rule matches. Blue arrows show direct dependencies between agents. Blue skill cards in the generated skill catalog have a separate meaning: they identify specialized technology and domain skills available for setup-time detection. <a href="skills-modularization.html">Agent Skill Architecture</a> explains these skill-assignment conventions.
+      This diagram uses color to distinguish agent-to-skill assignments from agent-to-agent dependencies. Amber lines show skills an agent always uses, while violet lines show skills selected when an applicable rule matches. Blue arrows show direct dependencies between agents. Blue skill labels in the generated skill catalog have a separate meaning: they identify specialized technology and domain skills available for setup-time detection. <a href="skills-modularization.html">Agent Skill Architecture</a> explains these skill-assignment conventions.
     </p>
     <p><a href="agent-skill-hierarchy.svg">Open the interactive SVG diagram</a>.</p>
     <object id="agent-skill-hierarchy" class="hierarchy-embed" data="agent-skill-hierarchy.svg" type="image/svg+xml" tabindex="-1" aria-label="Interactive hierarchy connecting agents to bundled skills and direct agent dependencies">
@@ -705,7 +705,7 @@
 
   <section class="section" aria-labelledby="provider-independence-title">
     <h2 id="provider-independence-title">Provider-Independent Dev Coder Inputs</h2>
-    <p>Dev Coder receives the work-item identifier or source reference, base and dependency information, source scope, acceptance criteria, and candidate evidence through orchestration. It neither applies provider-specific create or manage skills nor mutates provider lifecycle.</p>
+    <p>Dev Coder receives the work-item identifier or source reference, base and dependency information, source scope, acceptance criteria, and required candidate-evidence expectations through orchestration. It produces candidate evidence, but neither applies provider-specific create or manage skills nor mutates provider lifecycle.</p>
   </section>
 
   <section class="section" aria-labelledby="delivery-responsibilities-title">
