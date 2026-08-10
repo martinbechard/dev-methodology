@@ -515,7 +515,7 @@ Task-ID-Evidence: historical-unknown
 
   <section class="section" aria-labelledby="examples-title">
     <h2 id="examples-title">Configuration Examples By Project Structure</h2>
-    <p class="note">Each example is a focused PROJECT.yaml excerpt. The snippets omit full source-evidence, confirmation, and validation fields. The <a href="../skills/route-documentation-work/assets/templates/project-template.yaml">linked template</a> defines the complete configuration shape, while create-project-configuration and the renderer validate behavior.</p>
+    <p class="note">Each example is a focused PROJECT.yaml excerpt. The snippets omit full source-evidence, confirmation, and validation fields. The <a href="../skills/route-documentation-work/assets/templates/project-template.yaml">linked template</a> defines the complete project configuration shape. The <a href="../skills/create-project-configuration/SKILL.md">create-project-configuration skill</a> owns project setup validation, and <a href="../scripts/render-agents-technology-skills.py">render-agents-technology-skills.py</a> renders AGENTS.md guidance from accepted configuration data.</p>
     <div class="grid">
       <article class="card case">
         <h3><a href="#northwind-title">Northwind Tools: Root-Only Guidance</a></h3>
@@ -683,6 +683,20 @@ role_agent_set:
         condition: when creating or revising durable wiki prose governed by a project or shared user Terminology Standard.
     completion_checks:
       - leaf linking, lint, applicable OKF validation, and GOOD verifier verdict
+  - role: wiki-topic-verifier
+    repositoryMutation: never
+    purpose: independently verify supplied wiki topic pages in a fresh read-only context
+    owns:
+      - verification verdicts for page contract, durable leaf coverage, source links, digests, federation, lint, and OKF status
+    hands_off:
+      - actionable file-specific corrections to the assigning wiki-ingester or wiki-writer
+    skills: [project-wiki-topic-verify]
+    conditional_skills:
+      - skill: terminology-standard-review
+        condition: when the verified topic pages are governed by a project or shared user Terminology Standard.
+    completion_checks:
+      - return GOOD or NEEDS_CORRECTION without editing files
+      - include the reviewed page inventory and evidence sources
 validation_plan:
   commands:
     - command: python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" status
