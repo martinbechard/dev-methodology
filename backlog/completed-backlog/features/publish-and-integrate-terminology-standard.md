@@ -10,9 +10,9 @@ Branch: `codex/publish-and-integrate-terminology-standard-019fe3d6`
 
 Worktree: `/Users/martinbechard/.codex/worktrees/940b/dev-methodology`
 
-Phase: Running — Normal terminology treatment recovery
+Phase: Completed
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
@@ -76,7 +76,7 @@ Supporting repository evidence:
 - Every generated adapter and maintained methodology projection affected by canonical changes is regenerated and passes stale-output checks.
 - No terminology-effect evaluation depends on `evals/projects/terminology-standard-effect/AGENTS.md` to activate `terminology-standard`.
 - The target-omitted control remains red for preferred terminology while preserving all 36 semantic markers and protected literals.
-- The production-routed treatment is green for all 36 preferred terms, uses Provider for the interface implementation, uses Work item for tracked work, and has no scratchpad candidate occurrence.
+- The production-routed treatment is green at the governed 95 percent preferred-term threshold, uses Provider for the interface implementation, uses Work item for tracked work, and has no scratchpad candidate occurrence. All semantic markers, protected literals, and structural checks remain mandatory.
 - The wrong-skill control receives no terminology credit, and a linked negative-activation case proves the skill does not activate for excluded raw evidence or exact identifiers.
 - No `Receipt` or `Rollout` `Avoid` rule is added unless new retained evidence independently satisfies the promotion threshold.
 - The complete focused and repository-wide verification set passes on the final main commit.
@@ -591,3 +591,17 @@ Execution Evidence: Authoritative main is clean at `022c437fe29ad6cd2aa0f31cdd42
 Next Action: Correct the ambiguous TERM-01 source wording so it unambiguously expresses the Acceptance criterion concept without supplying the preferred term, correct valid failed treatment classification to a semantic failure, run focused regressions, then execute and validate the treatment again.
 
 Next Reconciliation At: 2026-08-10T00:42:38Z
+
+## Completion Evidence
+
+Completed At: 2026-08-10T00:39:54Z
+
+Delivery: The project Terminology Standard and its production routing are present on authoritative main. Commit `022c437fe29ad6cd2aa0f31cdd42f5b0061a4cf9` records standing Codex/OpenAI evaluation authorization and automatic protected-login discovery. Commit `6def363bb70dc5eac974c373293067400dbff957` clarifies the TERM-01 source concept, sets the governed 95 percent preferred-term threshold, and reports valid failed treatments as semantic-red rather than infrastructure failures.
+
+Terminology Contract: Project `terminology.md` contains 36 preferred terms and exactly two `Avoid` sections. Provider names the concrete implementation behind an interface; Work item forbids Provider as a synonym for tracked work.
+
+Deterministic Verification: The complete runner suite passed 177 of 177 Tests. Bundle content passed 174 of 174 Tests. Catalog validation, Python compilation, and Git diff checks passed. Threshold regressions prove one missed term out of 36 passes and two misses fail; treatment semantic failures retain semantic-red classification without an infrastructure-failure claim.
+
+Live Evaluation: The normal Codex treatment used the generic Dev Documentation Writer model configuration, automatically discovered the protected standard Codex login, contacted OpenAI under the user's standing test authorization, invoked already-installed `mcp-agent-ops` 0.9.0 `reference_load` exactly once with a verified `LOADED` outcome, produced only `rewritten-document.md` and `eval-result.md`, returned `semantic-green`, and passed functional-isolation checks. The target-omitted and wrong-skill controls ran concurrently through the same harness, received no terminology MCP contract, returned the expected `semantic-red` outcomes, and passed functional-isolation checks.
+
+Terminal Disposition: Completed locally on main. No shared-user publication, remote push, release, deployment, additional evaluation case, alternative tool runtime, or unrelated baseline correction was performed.
