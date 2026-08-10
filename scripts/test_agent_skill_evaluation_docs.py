@@ -432,7 +432,7 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
             "PASS",
             "FAIL",
             "BLOCKED",
-            "Missing campaign evidence",
+            "No result in the selected Test report",
             "Historical ID alignment; definition freshness unknown",
             "Manual observation",
             "Uncalibrated Model Judge",
@@ -448,6 +448,61 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
         ):
             with self.subTest(text=text):
                 self.assertIn(text, self.page)
+
+    def test_filter_and_card_labels_share_the_visible_evidence_contract(self) -> None:
+        """Filter options and repeated card states must use the same precise labels."""
+        expected_options = {
+            "historical-unknown": "Historical ID alignment; definition freshness unknown",
+            "snapshot-aligned": "Historical snapshot aligned",
+            "historical-drift": "Historical definition drift",
+            "missing": "No result in the selected Test report",
+            "direct-governed": "Direct governed skill result",
+            "direct-probe": "Direct diagnostic probe declaration",
+            "indirect-only": "Indirect agent-scenario evidence only",
+            "none": "No recorded evaluation evidence",
+        }
+        for value, label in expected_options.items():
+            with self.subTest(value=value):
+                self.assertIn(f'<option value="{value}">{label}</option>', self.page)
+
+        missing_agent = next(
+            agent for agent in self.model["agents"] if agent["freshness"] == "missing"
+        )
+        rendered_agent = self.generator.render_agent_card(
+            missing_agent, self.model["campaign"]
+        )
+        self.assertIn(
+            '<span class="status status--missing">'
+            "No result in the selected Test report</span>",
+            rendered_agent,
+        )
+        self.assertIn(
+            f'{missing_agent["missingScenarioCount"]} current scenario(s) with no '
+            "result in the selected Test report",
+            rendered_agent,
+        )
+        self.assertIn(
+            "selected Test report did not retain scenario definitions or their digests",
+            self.page,
+        )
+        self.assertIn("Governed agent-suite Campaign", self.page)
+        for legacy_phrase in (
+            "Missing campaign evidence",
+            "Missing Campaign evidence",
+            "without campaign evidence",
+            "campaign did not retain scenario definitions",
+            "Governed agent-suite campaign",
+            "Direct governed Evaluation result",
+            "Direct diagnostic probe</option>",
+            "Indirect Test suite only",
+            "No recorded evidence</option>",
+            "Historical, definition unknown",
+            "Snapshot aligned</option>",
+            "Definition drift</option>",
+            "<option value=\"missing\">Missing</option>",
+        ):
+            with self.subTest(legacy_phrase=legacy_phrase):
+                self.assertNotIn(legacy_phrase, self.page)
 
     def test_rendered_copy_uses_preferred_evaluation_terms(self) -> None:
         """Visible copy must distinguish the Campaign, Test report, Test suites, and Evaluation results."""

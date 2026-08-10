@@ -42,7 +42,7 @@ CAMPAIGN_PATH = (
 MANUAL_OBSERVATION_PATH = (
     REPOSITORY_ROOT / "evals" / "results" / "2026-07-09-live-agent-evaluations.md"
 )
-CAMPAIGN_EVIDENCE_LEVEL = "Governed agent-suite campaign"
+CAMPAIGN_EVIDENCE_LEVEL = "Governed agent-suite Campaign"
 VERDICTS = ("PASS", "BLOCKED", "FAIL")
 SUCCESS_EXIT_CODE = 0
 ERROR_EXIT_CODE = 1
@@ -870,7 +870,10 @@ def render_skill_card(skill: dict[str, object]) -> str:
                     "historical-snapshot-aligned": "Historical snapshot aligned",
                     "historical-drift": "Historical definition drift",
                     "historical-removed": "Campaign-only / removed",
-                }.get(str(item["evidenceState"]), "Missing campaign evidence"),
+                }.get(
+                    str(item["evidenceState"]),
+                    "No result in the selected Test report",
+                ),
                 str(item["evidenceState"]),
             )
             + "</li>"
@@ -926,14 +929,14 @@ def render_agent_card(agent: dict[str, object], campaign: dict[str, object]) -> 
         "historical-unknown": "Historical ID alignment; definition freshness unknown",
         "snapshot-aligned": "Historical snapshot aligned",
         "historical-drift": "Historical definition drift",
-        "missing": "Missing campaign evidence",
+        "missing": "No result in the selected Test report",
     }
     scenario_evidence_labels = {
         "historical-id-only": "Historical ID alignment; definition freshness unknown",
         "historical-snapshot-aligned": "Historical snapshot aligned",
         "historical-drift": "Historical definition drift",
         "historical-removed": "Campaign-only / removed from current catalog",
-        "missing": "Missing campaign evidence",
+        "missing": "No result in the selected Test report",
     }
     scenario_rows = []
     for scenario in agent["scenarios"]:
@@ -941,7 +944,7 @@ def render_agent_card(agent: dict[str, object], campaign: dict[str, object]) -> 
         verdict_html = (
             status_badge(str(verdict), str(verdict))
             if verdict is not None
-            else status_badge("Missing campaign evidence", "missing")
+            else status_badge("No result in the selected Test report", "missing")
         )
         alignment_html = status_badge(
             scenario_evidence_labels[str(scenario["evidenceState"])],
@@ -978,15 +981,20 @@ def render_agent_card(agent: dict[str, object], campaign: dict[str, object]) -> 
             f"{agent['campaignVerdicts']['BLOCKED']} BLOCKED Evaluation result(s)"
         )
     if agent["missingScenarioCount"]:
-        unresolved.append(f"{agent['missingScenarioCount']} current scenario(s) without campaign evidence")
+        unresolved.append(
+            f"{agent['missingScenarioCount']} current scenario(s) with no result in "
+            "the selected Test report"
+        )
     if agent["freshness"] == "historical-unknown":
-        unresolved.append("campaign did not retain scenario definitions or their digests")
+        unresolved.append(
+            "selected Test report did not retain scenario definitions or their digests"
+        )
     if agent["freshness"] == "historical-drift":
-        unresolved.append("campaign and current scenario catalogs do not align")
+        unresolved.append("selected Campaign and current scenario catalogs do not align")
     if agent["removedScenarioCount"]:
-        unresolved.append(f"{agent['removedScenarioCount']} campaign-only row(s)")
+        unresolved.append(f"{agent['removedScenarioCount']} Campaign-only row(s)")
     if not unresolved:
-        unresolved.append("No unresolved result category recorded in the selected campaign")
+        unresolved.append("No unresolved result category recorded in the selected Campaign")
     search_text = " ".join(
         [
             str(agent["id"]),
@@ -1231,15 +1239,15 @@ def render_page(model: dict[str, object]) -> str:
       <article class="method-card"><h3>Evidence that does not prove a pass</h3><ul><li>The selected Test report contains {campaign['verdicts']['BLOCKED']} BLOCKED results. They are governed boundaries or unavailable semantic acceptance, not PASS or FAIL.</li><li>The selected Test report contains {campaign['verdicts']['FAIL']} FAIL results. They are reproducible defects, not verified passes.</li><li>Missing, historical-only, removed, or drifted current-catalog evidence does not inherit a current PASS.</li><li>Manual observations and uncalibrated semantic Judge results do not establish verified passes.</li></ul></article>
     </div>
     <div class="legend" aria-label="Status legend">
-      {status_badge('PASS', 'pass')}{status_badge('FAIL', 'fail')}{status_badge('BLOCKED', 'blocked')}{status_badge('Missing campaign evidence', 'missing')}{status_badge('Historical ID alignment; definition freshness unknown', 'historical-id-only')}{status_badge('Campaign-only / removed', 'historical-removed')}{status_badge('Diagnostic declaration', 'declared')}
+      {status_badge('PASS', 'pass')}{status_badge('FAIL', 'fail')}{status_badge('BLOCKED', 'blocked')}{status_badge('No result in the selected Test report', 'missing')}{status_badge('Historical ID alignment; definition freshness unknown', 'historical-id-only')}{status_badge('Campaign-only / removed', 'historical-removed')}{status_badge('Diagnostic declaration', 'declared')}
     </div>
   </section>
 
   <section class="section" id="history" aria-labelledby="history-title">
     <div class="section-heading"><h2 id="history-title">Historical evidence alignment</h2><p>Historical Campaign Evaluation results remain visible, while current definition freshness and current-scenario gaps are reported separately.</p></div>
     <div class="grid">
-      <article class="method-card"><h3>Alignment and strength</h3><ul><li><strong>Historical ID alignment; definition freshness unknown</strong> means the current catalog and Campaign ledger share a scenario ID, but the Test report retained no scenario-definition snapshot or digest.</li><li>Historical snapshot aligned is available only when a retained definition proves that <code>purpose</code>, <code>expectedTerminalStatus</code>, and <code>targetSkills</code> match.</li><li>Historical definition drift lists proved differences in those fields. Campaign-only / removed rows remain visible.</li><li>Missing Campaign evidence means that the current scenario has no result in the selected Test report.</li><li>A Manual observation in an older report is historical context, not governed verification.</li></ul></article>
-      <article class="method-card"><h3>Evidence alignment states</h3><ul><li>{summary['historicalIdOnlyResults']} Evaluation results have only historical id alignment; definition freshness is unknown.</li><li>{summary['snapshotAlignedResults']} Evaluation results are aligned to a retained definition snapshot.</li><li>{summary['definitionDriftResults']} Evaluation results have proved definition-field drift.</li><li>{summary['removedCampaignResults']} Campaign Evaluation results are Campaign-only / removed from the current catalog.</li><li>{summary['missingScenarioResults']} current scenarios have missing Campaign evidence.</li><li>{summary['historicalUnknownSuiteResults']} Test suites are historical-unknown, {summary['snapshotAlignedSuiteResults']} snapshot-aligned, {summary['definitionDriftSuiteResults']} drifted, and {summary['missingSuiteResults']} missing.</li></ul></article>
+      <article class="method-card"><h3>Alignment and strength</h3><ul><li><strong>Historical ID alignment; definition freshness unknown</strong> means the current catalog and Campaign ledger share a scenario ID, but the Test report retained no scenario-definition snapshot or digest.</li><li>Historical snapshot aligned is available only when a retained definition proves that <code>purpose</code>, <code>expectedTerminalStatus</code>, and <code>targetSkills</code> match.</li><li>Historical definition drift lists proved differences in those fields. Campaign-only / removed rows remain visible.</li><li><strong>No result in the selected Test report</strong> means that the current scenario is not represented in that report; other Campaign evidence is not assessed.</li><li>A Manual observation in an older report is historical context, not governed verification.</li></ul></article>
+      <article class="method-card"><h3>Evidence alignment states</h3><ul><li>{summary['historicalIdOnlyResults']} Evaluation results have only historical id alignment; definition freshness is unknown.</li><li>{summary['snapshotAlignedResults']} Evaluation results are aligned to a retained definition snapshot.</li><li>{summary['definitionDriftResults']} Evaluation results have proved definition-field drift.</li><li>{summary['removedCampaignResults']} Campaign Evaluation results are Campaign-only / removed from the current catalog.</li><li>{summary['missingScenarioResults']} current scenarios have no result in the selected Test report.</li><li>{summary['historicalUnknownSuiteResults']} Test suites are historical-unknown, {summary['snapshotAlignedSuiteResults']} snapshot-aligned, {summary['definitionDriftSuiteResults']} drifted, and {summary['missingSuiteResults']} missing.</li></ul></article>
     </div>
   </section>
 
@@ -1247,7 +1255,7 @@ def render_page(model: dict[str, object]) -> str:
     <div class="section-heading"><h2 id="agents-title">Agent-by-agent evidence</h2><p>All current conceptual agents are present. Each card includes current scenarios, any Campaign-only row, the expected target status when retained, the selected-report Evaluation result, evidence alignment, sources, and unresolved findings.</p></div>
     <div class="filters" data-filter-scope="agent">
       <label class="field" for="agent-search">Search agents or scenarios<input id="agent-search" type="search" autocomplete="off" data-filter-search="agent"></label>
-      <label class="field" for="agent-status">Evidence status<select id="agent-status" data-filter-status="agent"><option value="all">All statuses</option><option value="historical-unknown">Historical, definition unknown</option><option value="snapshot-aligned">Snapshot aligned</option><option value="historical-drift">Definition drift</option><option value="missing">Missing</option></select></label>
+      <label class="field" for="agent-status">Evidence status<select id="agent-status" data-filter-status="agent"><option value="all">All statuses</option><option value="historical-unknown">Historical ID alignment; definition freshness unknown</option><option value="snapshot-aligned">Historical snapshot aligned</option><option value="historical-drift">Historical definition drift</option><option value="missing">No result in the selected Test report</option></select></label>
       <button type="button" data-filter-clear="agent">Clear agent filters</button>
     </div>
     <p class="result-count" id="agent-result-count" aria-live="polite">Showing all {summary['roleCount']} agents.</p>
@@ -1259,7 +1267,7 @@ def render_page(model: dict[str, object]) -> str:
     <div class="section-heading"><h2 id="skills-title">Skill-by-skill evidence</h2><p>All bundled skills are present. Direct diagnostic probe declarations, linked selected-report scenarios, linked Evaluation result categories, evidence level, sources, and limitations remain distinct.</p></div>
     <div class="filters" data-filter-scope="skill">
       <label class="field" for="skill-search">Search skills or probes<input id="skill-search" type="search" autocomplete="off" data-filter-search="skill"></label>
-      <label class="field" for="skill-status">Coverage status<select id="skill-status" data-filter-status="skill"><option value="all">All statuses</option><option value="direct-governed">Direct governed Evaluation result</option><option value="direct-probe">Direct diagnostic probe</option><option value="indirect-only">Indirect Test suite only</option><option value="none">No recorded evidence</option></select></label>
+      <label class="field" for="skill-status">Coverage status<select id="skill-status" data-filter-status="skill"><option value="all">All statuses</option><option value="direct-governed">Direct governed skill result</option><option value="direct-probe">Direct diagnostic probe declaration</option><option value="indirect-only">Indirect agent-scenario evidence only</option><option value="none">No recorded evaluation evidence</option></select></label>
       <button type="button" data-filter-clear="skill">Clear skill filters</button>
     </div>
     <p class="result-count" id="skill-result-count" aria-live="polite">Showing all {summary['skillCount']} skills.</p>

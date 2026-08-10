@@ -164,7 +164,7 @@ Task-ID-Evidence: historical-unknown
       <div><dt>Execution range</dt><dd>2026-07-17 through 2026-07-18</dd></div>
       <div><dt>Harness</dt><dd>Codex</dd></div>
       <div><dt>Runtime</dt><dd>Codex in disposable synthetic workspaces with isolated user and Codex homes, staged custom-agent definitions, retained session evidence, bounded parallel supervisors, and runner-owned identity, ordering, capability, process, browser, cleanup, and checkpoint audits.</dd></div>
-      <div><dt>Evidence level</dt><dd>Governed agent-suite campaign</dd></div>
+      <div><dt>Evidence level</dt><dd>Governed agent-suite Campaign</dd></div>
       <div><dt>Source snapshot mode</dt><dd>Deterministic source snapshot</dd></div>
       <div><dt>Wall-clock build time</dt><dd>Not retained; deterministic output does not claim an unsupported generation timestamp</dd></div>
       <div><dt>Current source digest</dt><dd><code>e17fd321e7c79d2cf9441bc02cf9538510b61d5a24a05bad885bffe67a6dff82</code>; regenerated and compared by the focused check</dd></div>
@@ -189,19 +189,19 @@ Task-ID-Evidence: historical-unknown
   <section class="section" id="limitations" aria-labelledby="limitations-title">
     <div class="section-heading"><h2 id="limitations-title">Evidence limitations</h2><p>Result categories, harness context, containment claims, and skill-level evidence remain separate so the page does not promote incomplete evidence to a verified pass.</p></div>
     <div class="grid">
-      <article class="method-card"><h3>Harness and evidence breakdown</h3><ul><li>78 selected-report scenario results use Codex at the Governed agent-suite campaign evidence level.</li><li>42 current scenarios have no result in the selected Test report.</li><li>Per-scenario functional-isolation and security-containment fields are not published in the selected Test report. The report states clean suite-owned closeout globally.</li></ul></article>
+      <article class="method-card"><h3>Harness and evidence breakdown</h3><ul><li>78 selected-report scenario results use Codex at the Governed agent-suite Campaign evidence level.</li><li>42 current scenarios have no result in the selected Test report.</li><li>Per-scenario functional-isolation and security-containment fields are not published in the selected Test report. The report states clean suite-owned closeout globally.</li></ul></article>
       <article class="method-card"><h3>Evidence that does not prove a pass</h3><ul><li>The selected Test report contains 17 BLOCKED results. They are governed boundaries or unavailable semantic acceptance, not PASS or FAIL.</li><li>The selected Test report contains 9 FAIL results. They are reproducible defects, not verified passes.</li><li>Missing, historical-only, removed, or drifted current-catalog evidence does not inherit a current PASS.</li><li>Manual observations and uncalibrated semantic Judge results do not establish verified passes.</li></ul></article>
     </div>
     <div class="legend" aria-label="Status legend">
-      <span class="status status--pass">PASS</span><span class="status status--fail">FAIL</span><span class="status status--blocked">BLOCKED</span><span class="status status--missing">Missing campaign evidence</span><span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span><span class="status status--historical-removed">Campaign-only / removed</span><span class="status status--declared">Diagnostic declaration</span>
+      <span class="status status--pass">PASS</span><span class="status status--fail">FAIL</span><span class="status status--blocked">BLOCKED</span><span class="status status--missing">No result in the selected Test report</span><span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span><span class="status status--historical-removed">Campaign-only / removed</span><span class="status status--declared">Diagnostic declaration</span>
     </div>
   </section>
 
   <section class="section" id="history" aria-labelledby="history-title">
     <div class="section-heading"><h2 id="history-title">Historical evidence alignment</h2><p>Historical Campaign Evaluation results remain visible, while current definition freshness and current-scenario gaps are reported separately.</p></div>
     <div class="grid">
-      <article class="method-card"><h3>Alignment and strength</h3><ul><li><strong>Historical ID alignment; definition freshness unknown</strong> means the current catalog and Campaign ledger share a scenario ID, but the Test report retained no scenario-definition snapshot or digest.</li><li>Historical snapshot aligned is available only when a retained definition proves that <code>purpose</code>, <code>expectedTerminalStatus</code>, and <code>targetSkills</code> match.</li><li>Historical definition drift lists proved differences in those fields. Campaign-only / removed rows remain visible.</li><li>Missing Campaign evidence means that the current scenario has no result in the selected Test report.</li><li>A Manual observation in an older report is historical context, not governed verification.</li></ul></article>
-      <article class="method-card"><h3>Evidence alignment states</h3><ul><li>78 Evaluation results have only historical id alignment; definition freshness is unknown.</li><li>0 Evaluation results are aligned to a retained definition snapshot.</li><li>0 Evaluation results have proved definition-field drift.</li><li>0 Campaign Evaluation results are Campaign-only / removed from the current catalog.</li><li>42 current scenarios have missing Campaign evidence.</li><li>26 Test suites are historical-unknown, 0 snapshot-aligned, 0 drifted, and 6 missing.</li></ul></article>
+      <article class="method-card"><h3>Alignment and strength</h3><ul><li><strong>Historical ID alignment; definition freshness unknown</strong> means the current catalog and Campaign ledger share a scenario ID, but the Test report retained no scenario-definition snapshot or digest.</li><li>Historical snapshot aligned is available only when a retained definition proves that <code>purpose</code>, <code>expectedTerminalStatus</code>, and <code>targetSkills</code> match.</li><li>Historical definition drift lists proved differences in those fields. Campaign-only / removed rows remain visible.</li><li><strong>No result in the selected Test report</strong> means that the current scenario is not represented in that report; other Campaign evidence is not assessed.</li><li>A Manual observation in an older report is historical context, not governed verification.</li></ul></article>
+      <article class="method-card"><h3>Evidence alignment states</h3><ul><li>78 Evaluation results have only historical id alignment; definition freshness is unknown.</li><li>0 Evaluation results are aligned to a retained definition snapshot.</li><li>0 Evaluation results have proved definition-field drift.</li><li>0 Campaign Evaluation results are Campaign-only / removed from the current catalog.</li><li>42 current scenarios have no result in the selected Test report.</li><li>26 Test suites are historical-unknown, 0 snapshot-aligned, 0 drifted, and 6 missing.</li></ul></article>
     </div>
   </section>
 
@@ -209,7 +209,7 @@ Task-ID-Evidence: historical-unknown
     <div class="section-heading"><h2 id="agents-title">Agent-by-agent evidence</h2><p>All current conceptual agents are present. Each card includes current scenarios, any Campaign-only row, the expected target status when retained, the selected-report Evaluation result, evidence alignment, sources, and unresolved findings.</p></div>
     <div class="filters" data-filter-scope="agent">
       <label class="field" for="agent-search">Search agents or scenarios<input id="agent-search" type="search" autocomplete="off" data-filter-search="agent"></label>
-      <label class="field" for="agent-status">Evidence status<select id="agent-status" data-filter-status="agent"><option value="all">All statuses</option><option value="historical-unknown">Historical, definition unknown</option><option value="snapshot-aligned">Snapshot aligned</option><option value="historical-drift">Definition drift</option><option value="missing">Missing</option></select></label>
+      <label class="field" for="agent-status">Evidence status<select id="agent-status" data-filter-status="agent"><option value="all">All statuses</option><option value="historical-unknown">Historical ID alignment; definition freshness unknown</option><option value="snapshot-aligned">Historical snapshot aligned</option><option value="historical-drift">Historical definition drift</option><option value="missing">No result in the selected Test report</option></select></label>
       <button type="button" data-filter-clear="agent">Clear agent filters</button>
     </div>
     <p class="result-count" id="agent-result-count" aria-live="polite">Showing all 32 agents.</p>
@@ -229,10 +229,10 @@ Task-ID-Evidence: historical-unknown
       </p>
       <dl class="compact-list">
         <div><dt>Campaign Evaluation result aggregate</dt><dd>PASS 2, BLOCKED 1, FAIL 0</dd></div>
-        <div><dt>Evidence level</dt><dd>Governed agent-suite campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
+        <div><dt>Evidence level</dt><dd>Governed agent-suite Campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
         <div><dt>Execution context</dt><dd>Codex; disposable synthetic workspaces; per-scenario containment not reported</dd></div>
         <div><dt>Judge dimension</dt><dd>Governed Judge workflow or proved deterministic boundary; raw per-scenario Judge and calibration fields are not published in this report</dd></div>
-        <div><dt>Unresolved</dt><dd>1 BLOCKED Evaluation result(s); campaign did not retain scenario definitions or their digests</dd></div>
+        <div><dt>Unresolved</dt><dd>1 BLOCKED Evaluation result(s); selected Test report did not retain scenario definitions or their digests</dd></div>
       </dl>
 
       <div class="table-scroll" tabindex="0" aria-label="Scenario results for dev-coder">
@@ -287,10 +287,10 @@ Task-ID-Evidence: historical-unknown
       </p>
       <dl class="compact-list">
         <div><dt>Campaign Evaluation result aggregate</dt><dd>PASS 2, BLOCKED 0, FAIL 1</dd></div>
-        <div><dt>Evidence level</dt><dd>Governed agent-suite campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
+        <div><dt>Evidence level</dt><dd>Governed agent-suite Campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
         <div><dt>Execution context</dt><dd>Codex; disposable synthetic workspaces; per-scenario containment not reported</dd></div>
         <div><dt>Judge dimension</dt><dd>Governed Judge workflow or proved deterministic boundary; raw per-scenario Judge and calibration fields are not published in this report</dd></div>
-        <div><dt>Unresolved</dt><dd>1 FAIL Evaluation result(s); 1 current scenario(s) without campaign evidence; campaign did not retain scenario definitions or their digests</dd></div>
+        <div><dt>Unresolved</dt><dd>1 FAIL Evaluation result(s); 1 current scenario(s) with no result in the selected Test report; selected Test report did not retain scenario definitions or their digests</dd></div>
       </dl>
 
       <div class="table-scroll" tabindex="0" aria-label="Scenario results for dev-code-reviewer">
@@ -331,8 +331,8 @@ Task-ID-Evidence: historical-unknown
               <th scope="row">header-policy-authority-boundary</th>
               <td>Prove that final synthesis promotes a missing-header observation only when applicable authority and contradictory target evidence establish a defect.</td>
               <td>PASS</td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
               <td>current</td>
               <td>None proved</td>
             </tr>
@@ -355,10 +355,10 @@ Task-ID-Evidence: historical-unknown
       </p>
       <dl class="compact-list">
         <div><dt>Campaign Evaluation result aggregate</dt><dd>PASS 2, BLOCKED 0, FAIL 1</dd></div>
-        <div><dt>Evidence level</dt><dd>Governed agent-suite campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
+        <div><dt>Evidence level</dt><dd>Governed agent-suite Campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
         <div><dt>Execution context</dt><dd>Codex; disposable synthetic workspaces; per-scenario containment not reported</dd></div>
         <div><dt>Judge dimension</dt><dd>Governed Judge workflow or proved deterministic boundary; raw per-scenario Judge and calibration fields are not published in this report</dd></div>
-        <div><dt>Unresolved</dt><dd>1 FAIL Evaluation result(s); campaign did not retain scenario definitions or their digests</dd></div>
+        <div><dt>Unresolved</dt><dd>1 FAIL Evaluation result(s); selected Test report did not retain scenario definitions or their digests</dd></div>
       </dl>
 
       <div class="table-scroll" tabindex="0" aria-label="Scenario results for dev-runtime-diagnostician">
@@ -413,10 +413,10 @@ Task-ID-Evidence: historical-unknown
       </p>
       <dl class="compact-list">
         <div><dt>Campaign Evaluation result aggregate</dt><dd>PASS 1, BLOCKED 1, FAIL 1</dd></div>
-        <div><dt>Evidence level</dt><dd>Governed agent-suite campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
+        <div><dt>Evidence level</dt><dd>Governed agent-suite Campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
         <div><dt>Execution context</dt><dd>Codex; disposable synthetic workspaces; per-scenario containment not reported</dd></div>
         <div><dt>Judge dimension</dt><dd>Governed Judge workflow or proved deterministic boundary; raw per-scenario Judge and calibration fields are not published in this report</dd></div>
-        <div><dt>Unresolved</dt><dd>1 FAIL Evaluation result(s); 1 BLOCKED Evaluation result(s); 1 current scenario(s) without campaign evidence; campaign did not retain scenario definitions or their digests</dd></div>
+        <div><dt>Unresolved</dt><dd>1 FAIL Evaluation result(s); 1 BLOCKED Evaluation result(s); 1 current scenario(s) with no result in the selected Test report; selected Test report did not retain scenario definitions or their digests</dd></div>
       </dl>
       <h4>Recorded agent-mapped follow-ups</h4><ul class="link-list"><li><a href="../backlog/completed-backlog/defects/replace-bootstrapper-marathon-with-isolated-test-doubles.md">Replace Bootstrapper marathon with isolated test doubles</a></li></ul>
       <div class="table-scroll" tabindex="0" aria-label="Scenario results for project-bootstrapper">
@@ -447,8 +447,8 @@ Task-ID-Evidence: historical-unknown
               <th scope="row">whole-project-reverse-engineering-steady-state</th>
               <td>Prove that only whole-project reverse engineering runs the final Wiki Ingester evidence audit and routes every finding to the existing artifact owner.</td>
               <td>PASS</td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
               <td>current</td>
               <td>None proved</td>
             </tr>
@@ -481,10 +481,10 @@ Task-ID-Evidence: historical-unknown
       </p>
       <dl class="compact-list">
         <div><dt>Campaign Evaluation result aggregate</dt><dd>PASS 3, BLOCKED 0, FAIL 0</dd></div>
-        <div><dt>Evidence level</dt><dd>Governed agent-suite campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
+        <div><dt>Evidence level</dt><dd>Governed agent-suite Campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
         <div><dt>Execution context</dt><dd>Codex; disposable synthetic workspaces; per-scenario containment not reported</dd></div>
         <div><dt>Judge dimension</dt><dd>Governed Judge workflow or proved deterministic boundary; raw per-scenario Judge and calibration fields are not published in this report</dd></div>
-        <div><dt>Unresolved</dt><dd>campaign did not retain scenario definitions or their digests</dd></div>
+        <div><dt>Unresolved</dt><dd>selected Test report did not retain scenario definitions or their digests</dd></div>
       </dl>
 
       <div class="table-scroll" tabindex="0" aria-label="Scenario results for dev-verifier">
@@ -539,10 +539,10 @@ Task-ID-Evidence: historical-unknown
       </p>
       <dl class="compact-list">
         <div><dt>Campaign Evaluation result aggregate</dt><dd>PASS 2, BLOCKED 1, FAIL 0</dd></div>
-        <div><dt>Evidence level</dt><dd>Governed agent-suite campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
+        <div><dt>Evidence level</dt><dd>Governed agent-suite Campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
         <div><dt>Execution context</dt><dd>Codex; disposable synthetic workspaces; per-scenario containment not reported</dd></div>
         <div><dt>Judge dimension</dt><dd>Governed Judge workflow or proved deterministic boundary; raw per-scenario Judge and calibration fields are not published in this report</dd></div>
-        <div><dt>Unresolved</dt><dd>1 BLOCKED Evaluation result(s); 2 current scenario(s) without campaign evidence; campaign did not retain scenario definitions or their digests</dd></div>
+        <div><dt>Unresolved</dt><dd>1 BLOCKED Evaluation result(s); 2 current scenario(s) with no result in the selected Test report; selected Test report did not retain scenario definitions or their digests</dd></div>
       </dl>
 
       <div class="table-scroll" tabindex="0" aria-label="Scenario results for dev-orchestrator">
@@ -573,8 +573,8 @@ Task-ID-Evidence: historical-unknown
               <th scope="row">confirmed-issue-correction</th>
               <td>Complete the successful correction disposition for an independently confirmed issue.</td>
               <td>PASS</td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
               <td>current</td>
               <td>None proved</td>
             </tr>
@@ -593,8 +593,8 @@ Task-ID-Evidence: historical-unknown
               <th scope="row">skill-under-test-defect-routing</th>
               <td>Prove that a test orchestrator deliberately excludes a confirmed skill-under-test issue from the current delivery and invokes the configured work-item creation procedure instead of changing the target to make the scenario pass.</td>
               <td>PASS</td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
               <td>current</td>
               <td>None proved</td>
             </tr>
@@ -617,10 +617,10 @@ Task-ID-Evidence: historical-unknown
       </p>
       <dl class="compact-list">
         <div><dt>Campaign Evaluation result aggregate</dt><dd>PASS 3, BLOCKED 0, FAIL 0</dd></div>
-        <div><dt>Evidence level</dt><dd>Governed agent-suite campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
+        <div><dt>Evidence level</dt><dd>Governed agent-suite Campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
         <div><dt>Execution context</dt><dd>Codex; disposable synthetic workspaces; per-scenario containment not reported</dd></div>
         <div><dt>Judge dimension</dt><dd>Governed Judge workflow or proved deterministic boundary; raw per-scenario Judge and calibration fields are not published in this report</dd></div>
-        <div><dt>Unresolved</dt><dd>campaign did not retain scenario definitions or their digests</dd></div>
+        <div><dt>Unresolved</dt><dd>selected Test report did not retain scenario definitions or their digests</dd></div>
       </dl>
 
       <div class="table-scroll" tabindex="0" aria-label="Scenario results for project-configurator">
@@ -675,10 +675,10 @@ Task-ID-Evidence: historical-unknown
       </p>
       <dl class="compact-list">
         <div><dt>Campaign Evaluation result aggregate</dt><dd>PASS 1, BLOCKED 2, FAIL 0</dd></div>
-        <div><dt>Evidence level</dt><dd>Governed agent-suite campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
+        <div><dt>Evidence level</dt><dd>Governed agent-suite Campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
         <div><dt>Execution context</dt><dd>Codex; disposable synthetic workspaces; per-scenario containment not reported</dd></div>
         <div><dt>Judge dimension</dt><dd>Governed Judge workflow or proved deterministic boundary; raw per-scenario Judge and calibration fields are not published in this report</dd></div>
-        <div><dt>Unresolved</dt><dd>2 BLOCKED Evaluation result(s); campaign did not retain scenario definitions or their digests</dd></div>
+        <div><dt>Unresolved</dt><dd>2 BLOCKED Evaluation result(s); selected Test report did not retain scenario definitions or their digests</dd></div>
       </dl>
 
       <div class="table-scroll" tabindex="0" aria-label="Scenario results for dev-security-reviewer">
@@ -733,10 +733,10 @@ Task-ID-Evidence: historical-unknown
       </p>
       <dl class="compact-list">
         <div><dt>Campaign Evaluation result aggregate</dt><dd>PASS 2, BLOCKED 0, FAIL 1</dd></div>
-        <div><dt>Evidence level</dt><dd>Governed agent-suite campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
+        <div><dt>Evidence level</dt><dd>Governed agent-suite Campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
         <div><dt>Execution context</dt><dd>Codex; disposable synthetic workspaces; per-scenario containment not reported</dd></div>
         <div><dt>Judge dimension</dt><dd>Governed Judge workflow or proved deterministic boundary; raw per-scenario Judge and calibration fields are not published in this report</dd></div>
-        <div><dt>Unresolved</dt><dd>1 FAIL Evaluation result(s); 5 current scenario(s) without campaign evidence; campaign did not retain scenario definitions or their digests</dd></div>
+        <div><dt>Unresolved</dt><dd>1 FAIL Evaluation result(s); 5 current scenario(s) with no result in the selected Test report; selected Test report did not retain scenario definitions or their digests</dd></div>
       </dl>
 
       <div class="table-scroll" tabindex="0" aria-label="Scenario results for dev-backlog-steward">
@@ -777,8 +777,8 @@ Task-ID-Evidence: historical-unknown
               <th scope="row">blocked-unowned-running-shortcut</th>
               <td>Reject an unowned direct Running shortcut; this row declares project-selected resource coordination variants and does not claim both variants were executed.</td>
               <td>BLOCKED</td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
               <td>current</td>
               <td>None proved</td>
             </tr>
@@ -787,8 +787,8 @@ Task-ID-Evidence: historical-unknown
               <th scope="row">blocked-claimed-resumption</th>
               <td>Resume eligible blocked work; this row declares project-selected resource coordination variants and does not claim both variants were executed.</td>
               <td>PASS</td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
               <td>current</td>
               <td>None proved</td>
             </tr>
@@ -797,8 +797,8 @@ Task-ID-Evidence: historical-unknown
               <th scope="row">blocked-failed-claim-resumption</th>
               <td>Preserve an exact blocked resumption failure; this row declares project-selected resource coordination variants and does not claim both variants were executed.</td>
               <td>BLOCKED</td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
               <td>current</td>
               <td>None proved</td>
             </tr>
@@ -807,8 +807,8 @@ Task-ID-Evidence: historical-unknown
               <th scope="row">future-ideas-capture-and-promotion</th>
               <td>Capture and promote a Future Idea; this row declares project-selected resource coordination variants and does not claim both variants were executed.</td>
               <td>PASS</td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
               <td>current</td>
               <td>None proved</td>
             </tr>
@@ -817,8 +817,8 @@ Task-ID-Evidence: historical-unknown
               <th scope="row">future-ideas-inventory-and-validation</th>
               <td>Inventory and validate explicitly requested Future Ideas without entering work-item lifecycle management or starting a transaction.</td>
               <td>PASS</td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
               <td>current</td>
               <td>None proved</td>
             </tr>
@@ -841,10 +841,10 @@ Task-ID-Evidence: historical-unknown
       </p>
       <dl class="compact-list">
         <div><dt>Campaign Evaluation result aggregate</dt><dd>PASS 2, BLOCKED 1, FAIL 0</dd></div>
-        <div><dt>Evidence level</dt><dd>Governed agent-suite campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
+        <div><dt>Evidence level</dt><dd>Governed agent-suite Campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
         <div><dt>Execution context</dt><dd>Codex; disposable synthetic workspaces; per-scenario containment not reported</dd></div>
         <div><dt>Judge dimension</dt><dd>Governed Judge workflow or proved deterministic boundary; raw per-scenario Judge and calibration fields are not published in this report</dd></div>
-        <div><dt>Unresolved</dt><dd>1 BLOCKED Evaluation result(s); campaign did not retain scenario definitions or their digests</dd></div>
+        <div><dt>Unresolved</dt><dd>1 BLOCKED Evaluation result(s); selected Test report did not retain scenario definitions or their digests</dd></div>
       </dl>
 
       <div class="table-scroll" tabindex="0" aria-label="Scenario results for dev-merge-coordinator">
@@ -899,10 +899,10 @@ Task-ID-Evidence: historical-unknown
       </p>
       <dl class="compact-list">
         <div><dt>Campaign Evaluation result aggregate</dt><dd>PASS 2, BLOCKED 1, FAIL 0</dd></div>
-        <div><dt>Evidence level</dt><dd>Governed agent-suite campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
+        <div><dt>Evidence level</dt><dd>Governed agent-suite Campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
         <div><dt>Execution context</dt><dd>Codex; disposable synthetic workspaces; per-scenario containment not reported</dd></div>
         <div><dt>Judge dimension</dt><dd>Governed Judge workflow or proved deterministic boundary; raw per-scenario Judge and calibration fields are not published in this report</dd></div>
-        <div><dt>Unresolved</dt><dd>1 BLOCKED Evaluation result(s); campaign did not retain scenario definitions or their digests</dd></div>
+        <div><dt>Unresolved</dt><dd>1 BLOCKED Evaluation result(s); selected Test report did not retain scenario definitions or their digests</dd></div>
       </dl>
 
       <div class="table-scroll" tabindex="0" aria-label="Scenario results for dev-documentation-writer">
@@ -957,10 +957,10 @@ Task-ID-Evidence: historical-unknown
       </p>
       <dl class="compact-list">
         <div><dt>Campaign Evaluation result aggregate</dt><dd>PASS 3, BLOCKED 0, FAIL 0</dd></div>
-        <div><dt>Evidence level</dt><dd>Governed agent-suite campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
+        <div><dt>Evidence level</dt><dd>Governed agent-suite Campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
         <div><dt>Execution context</dt><dd>Codex; disposable synthetic workspaces; per-scenario containment not reported</dd></div>
         <div><dt>Judge dimension</dt><dd>Governed Judge workflow or proved deterministic boundary; raw per-scenario Judge and calibration fields are not published in this report</dd></div>
-        <div><dt>Unresolved</dt><dd>1 current scenario(s) without campaign evidence; campaign did not retain scenario definitions or their digests</dd></div>
+        <div><dt>Unresolved</dt><dd>1 current scenario(s) with no result in the selected Test report; selected Test report did not retain scenario definitions or their digests</dd></div>
       </dl>
       <h4>Recorded agent-mapped follow-ups</h4><ul class="link-list"><li><a href="../backlog/completed-backlog/defects/restore-wiki-ingester-on-verifier-interruption.md">Restore Wiki Ingester on verifier interruption</a></li></ul>
       <div class="table-scroll" tabindex="0" aria-label="Scenario results for wiki-ingester">
@@ -1001,8 +1001,8 @@ Task-ID-Evidence: historical-unknown
               <th scope="row">final-evidence-audit-read-only</th>
               <td>Audit a whole-project reverse-engineering result without claiming or mutating its integrated tree.</td>
               <td>PASS</td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
               <td>current</td>
               <td>None proved</td>
             </tr>
@@ -1025,10 +1025,10 @@ Task-ID-Evidence: historical-unknown
       </p>
       <dl class="compact-list">
         <div><dt>Campaign Evaluation result aggregate</dt><dd>PASS 2, BLOCKED 1, FAIL 0</dd></div>
-        <div><dt>Evidence level</dt><dd>Governed agent-suite campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
+        <div><dt>Evidence level</dt><dd>Governed agent-suite Campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
         <div><dt>Execution context</dt><dd>Codex; disposable synthetic workspaces; per-scenario containment not reported</dd></div>
         <div><dt>Judge dimension</dt><dd>Governed Judge workflow or proved deterministic boundary; raw per-scenario Judge and calibration fields are not published in this report</dd></div>
-        <div><dt>Unresolved</dt><dd>1 BLOCKED Evaluation result(s); 1 current scenario(s) without campaign evidence; campaign did not retain scenario definitions or their digests</dd></div>
+        <div><dt>Unresolved</dt><dd>1 BLOCKED Evaluation result(s); 1 current scenario(s) with no result in the selected Test report; selected Test report did not retain scenario definitions or their digests</dd></div>
       </dl>
 
       <div class="table-scroll" tabindex="0" aria-label="Scenario results for wiki-writer">
@@ -1069,8 +1069,8 @@ Task-ID-Evidence: historical-unknown
               <th scope="row">verifier-interruption</th>
               <td>Preserve validated writer edits and return role-owned evidence when independent verification is interrupted.</td>
               <td>BLOCKED</td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
               <td>current</td>
               <td>None proved</td>
             </tr>
@@ -1093,10 +1093,10 @@ Task-ID-Evidence: historical-unknown
       </p>
       <dl class="compact-list">
         <div><dt>Campaign Evaluation result aggregate</dt><dd>PASS 3, BLOCKED 0, FAIL 0</dd></div>
-        <div><dt>Evidence level</dt><dd>Governed agent-suite campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
+        <div><dt>Evidence level</dt><dd>Governed agent-suite Campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
         <div><dt>Execution context</dt><dd>Codex; disposable synthetic workspaces; per-scenario containment not reported</dd></div>
         <div><dt>Judge dimension</dt><dd>Governed Judge workflow or proved deterministic boundary; raw per-scenario Judge and calibration fields are not published in this report</dd></div>
-        <div><dt>Unresolved</dt><dd>campaign did not retain scenario definitions or their digests</dd></div>
+        <div><dt>Unresolved</dt><dd>selected Test report did not retain scenario definitions or their digests</dd></div>
       </dl>
 
       <div class="table-scroll" tabindex="0" aria-label="Scenario results for wiki-query-responder">
@@ -1151,10 +1151,10 @@ Task-ID-Evidence: historical-unknown
       </p>
       <dl class="compact-list">
         <div><dt>Campaign Evaluation result aggregate</dt><dd>PASS 1, BLOCKED 0, FAIL 2</dd></div>
-        <div><dt>Evidence level</dt><dd>Governed agent-suite campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
+        <div><dt>Evidence level</dt><dd>Governed agent-suite Campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
         <div><dt>Execution context</dt><dd>Codex; disposable synthetic workspaces; per-scenario containment not reported</dd></div>
         <div><dt>Judge dimension</dt><dd>Governed Judge workflow or proved deterministic boundary; raw per-scenario Judge and calibration fields are not published in this report</dd></div>
-        <div><dt>Unresolved</dt><dd>2 FAIL Evaluation result(s); campaign did not retain scenario definitions or their digests</dd></div>
+        <div><dt>Unresolved</dt><dd>2 FAIL Evaluation result(s); selected Test report did not retain scenario definitions or their digests</dd></div>
       </dl>
 
       <div class="table-scroll" tabindex="0" aria-label="Scenario results for dev-artifact-reviewer">
@@ -1209,10 +1209,10 @@ Task-ID-Evidence: historical-unknown
       </p>
       <dl class="compact-list">
         <div><dt>Campaign Evaluation result aggregate</dt><dd>PASS 3, BLOCKED 0, FAIL 0</dd></div>
-        <div><dt>Evidence level</dt><dd>Governed agent-suite campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
+        <div><dt>Evidence level</dt><dd>Governed agent-suite Campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
         <div><dt>Execution context</dt><dd>Codex; disposable synthetic workspaces; per-scenario containment not reported</dd></div>
         <div><dt>Judge dimension</dt><dd>Governed Judge workflow or proved deterministic boundary; raw per-scenario Judge and calibration fields are not published in this report</dd></div>
-        <div><dt>Unresolved</dt><dd>campaign did not retain scenario definitions or their digests</dd></div>
+        <div><dt>Unresolved</dt><dd>selected Test report did not retain scenario definitions or their digests</dd></div>
       </dl>
 
       <div class="table-scroll" tabindex="0" aria-label="Scenario results for dev-prompt-reviewer">
@@ -1267,10 +1267,10 @@ Task-ID-Evidence: historical-unknown
       </p>
       <dl class="compact-list">
         <div><dt>Campaign Evaluation result aggregate</dt><dd>PASS 0, BLOCKED 3, FAIL 0</dd></div>
-        <div><dt>Evidence level</dt><dd>Governed agent-suite campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
+        <div><dt>Evidence level</dt><dd>Governed agent-suite Campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
         <div><dt>Execution context</dt><dd>Codex; disposable synthetic workspaces; per-scenario containment not reported</dd></div>
         <div><dt>Judge dimension</dt><dd>Governed Judge workflow or proved deterministic boundary; raw per-scenario Judge and calibration fields are not published in this report</dd></div>
-        <div><dt>Unresolved</dt><dd>3 BLOCKED Evaluation result(s); campaign did not retain scenario definitions or their digests</dd></div>
+        <div><dt>Unresolved</dt><dd>3 BLOCKED Evaluation result(s); selected Test report did not retain scenario definitions or their digests</dd></div>
       </dl>
 
       <div class="table-scroll" tabindex="0" aria-label="Scenario results for dev-ux-specialist">
@@ -1325,10 +1325,10 @@ Task-ID-Evidence: historical-unknown
       </p>
       <dl class="compact-list">
         <div><dt>Campaign Evaluation result aggregate</dt><dd>PASS 0, BLOCKED 3, FAIL 0</dd></div>
-        <div><dt>Evidence level</dt><dd>Governed agent-suite campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
+        <div><dt>Evidence level</dt><dd>Governed agent-suite Campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
         <div><dt>Execution context</dt><dd>Codex; disposable synthetic workspaces; per-scenario containment not reported</dd></div>
         <div><dt>Judge dimension</dt><dd>Governed Judge workflow or proved deterministic boundary; raw per-scenario Judge and calibration fields are not published in this report</dd></div>
-        <div><dt>Unresolved</dt><dd>3 BLOCKED Evaluation result(s); campaign did not retain scenario definitions or their digests</dd></div>
+        <div><dt>Unresolved</dt><dd>3 BLOCKED Evaluation result(s); selected Test report did not retain scenario definitions or their digests</dd></div>
       </dl>
 
       <div class="table-scroll" tabindex="0" aria-label="Scenario results for dev-browser-operator">
@@ -1383,10 +1383,10 @@ Task-ID-Evidence: historical-unknown
       </p>
       <dl class="compact-list">
         <div><dt>Campaign Evaluation result aggregate</dt><dd>PASS 2, BLOCKED 1, FAIL 0</dd></div>
-        <div><dt>Evidence level</dt><dd>Governed agent-suite campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
+        <div><dt>Evidence level</dt><dd>Governed agent-suite Campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
         <div><dt>Execution context</dt><dd>Codex; disposable synthetic workspaces; per-scenario containment not reported</dd></div>
         <div><dt>Judge dimension</dt><dd>Governed Judge workflow or proved deterministic boundary; raw per-scenario Judge and calibration fields are not published in this report</dd></div>
-        <div><dt>Unresolved</dt><dd>1 BLOCKED Evaluation result(s); campaign did not retain scenario definitions or their digests</dd></div>
+        <div><dt>Unresolved</dt><dd>1 BLOCKED Evaluation result(s); selected Test report did not retain scenario definitions or their digests</dd></div>
       </dl>
 
       <div class="table-scroll" tabindex="0" aria-label="Scenario results for project-organiser">
@@ -1441,10 +1441,10 @@ Task-ID-Evidence: historical-unknown
       </p>
       <dl class="compact-list">
         <div><dt>Campaign Evaluation result aggregate</dt><dd>PASS 3, BLOCKED 0, FAIL 0</dd></div>
-        <div><dt>Evidence level</dt><dd>Governed agent-suite campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
+        <div><dt>Evidence level</dt><dd>Governed agent-suite Campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
         <div><dt>Execution context</dt><dd>Codex; disposable synthetic workspaces; per-scenario containment not reported</dd></div>
         <div><dt>Judge dimension</dt><dd>Governed Judge workflow or proved deterministic boundary; raw per-scenario Judge and calibration fields are not published in this report</dd></div>
-        <div><dt>Unresolved</dt><dd>campaign did not retain scenario definitions or their digests</dd></div>
+        <div><dt>Unresolved</dt><dd>selected Test report did not retain scenario definitions or their digests</dd></div>
       </dl>
 
       <div class="table-scroll" tabindex="0" aria-label="Scenario results for wiki-architect">
@@ -1499,10 +1499,10 @@ Task-ID-Evidence: historical-unknown
       </p>
       <dl class="compact-list">
         <div><dt>Campaign Evaluation result aggregate</dt><dd>PASS 3, BLOCKED 0, FAIL 0</dd></div>
-        <div><dt>Evidence level</dt><dd>Governed agent-suite campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
+        <div><dt>Evidence level</dt><dd>Governed agent-suite Campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
         <div><dt>Execution context</dt><dd>Codex; disposable synthetic workspaces; per-scenario containment not reported</dd></div>
         <div><dt>Judge dimension</dt><dd>Governed Judge workflow or proved deterministic boundary; raw per-scenario Judge and calibration fields are not published in this report</dd></div>
-        <div><dt>Unresolved</dt><dd>campaign did not retain scenario definitions or their digests</dd></div>
+        <div><dt>Unresolved</dt><dd>selected Test report did not retain scenario definitions or their digests</dd></div>
       </dl>
 
       <div class="table-scroll" tabindex="0" aria-label="Scenario results for wiki-topic-verifier">
@@ -1557,10 +1557,10 @@ Task-ID-Evidence: historical-unknown
       </p>
       <dl class="compact-list">
         <div><dt>Campaign Evaluation result aggregate</dt><dd>PASS 1, BLOCKED 0, FAIL 2</dd></div>
-        <div><dt>Evidence level</dt><dd>Governed agent-suite campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
+        <div><dt>Evidence level</dt><dd>Governed agent-suite Campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
         <div><dt>Execution context</dt><dd>Codex; disposable synthetic workspaces; per-scenario containment not reported</dd></div>
         <div><dt>Judge dimension</dt><dd>Governed Judge workflow or proved deterministic boundary; raw per-scenario Judge and calibration fields are not published in this report</dd></div>
-        <div><dt>Unresolved</dt><dd>2 FAIL Evaluation result(s); campaign did not retain scenario definitions or their digests</dd></div>
+        <div><dt>Unresolved</dt><dd>2 FAIL Evaluation result(s); selected Test report did not retain scenario definitions or their digests</dd></div>
       </dl>
 
       <div class="table-scroll" tabindex="0" aria-label="Scenario results for wiki-artifact-reviewer">
@@ -1615,10 +1615,10 @@ Task-ID-Evidence: historical-unknown
       </p>
       <dl class="compact-list">
         <div><dt>Campaign Evaluation result aggregate</dt><dd>PASS 2, BLOCKED 0, FAIL 1</dd></div>
-        <div><dt>Evidence level</dt><dd>Governed agent-suite campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
+        <div><dt>Evidence level</dt><dd>Governed agent-suite Campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
         <div><dt>Execution context</dt><dd>Codex; disposable synthetic workspaces; per-scenario containment not reported</dd></div>
         <div><dt>Judge dimension</dt><dd>Governed Judge workflow or proved deterministic boundary; raw per-scenario Judge and calibration fields are not published in this report</dd></div>
-        <div><dt>Unresolved</dt><dd>1 FAIL Evaluation result(s); campaign did not retain scenario definitions or their digests</dd></div>
+        <div><dt>Unresolved</dt><dd>1 FAIL Evaluation result(s); selected Test report did not retain scenario definitions or their digests</dd></div>
       </dl>
 
       <div class="table-scroll" tabindex="0" aria-label="Scenario results for wiki-researcher">
@@ -1673,10 +1673,10 @@ Task-ID-Evidence: historical-unknown
       </p>
       <dl class="compact-list">
         <div><dt>Campaign Evaluation result aggregate</dt><dd>PASS 2, BLOCKED 1, FAIL 0</dd></div>
-        <div><dt>Evidence level</dt><dd>Governed agent-suite campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
+        <div><dt>Evidence level</dt><dd>Governed agent-suite Campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
         <div><dt>Execution context</dt><dd>Codex; disposable synthetic workspaces; per-scenario containment not reported</dd></div>
         <div><dt>Judge dimension</dt><dd>Governed Judge workflow or proved deterministic boundary; raw per-scenario Judge and calibration fields are not published in this report</dd></div>
-        <div><dt>Unresolved</dt><dd>1 BLOCKED Evaluation result(s); campaign did not retain scenario definitions or their digests</dd></div>
+        <div><dt>Unresolved</dt><dd>1 BLOCKED Evaluation result(s); selected Test report did not retain scenario definitions or their digests</dd></div>
       </dl>
 
       <div class="table-scroll" tabindex="0" aria-label="Scenario results for wiki-source-collector">
@@ -1731,10 +1731,10 @@ Task-ID-Evidence: historical-unknown
       </p>
       <dl class="compact-list">
         <div><dt>Campaign Evaluation result aggregate</dt><dd>PASS 2, BLOCKED 1, FAIL 0</dd></div>
-        <div><dt>Evidence level</dt><dd>Governed agent-suite campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
+        <div><dt>Evidence level</dt><dd>Governed agent-suite Campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
         <div><dt>Execution context</dt><dd>Codex; disposable synthetic workspaces; per-scenario containment not reported</dd></div>
         <div><dt>Judge dimension</dt><dd>Governed Judge workflow or proved deterministic boundary; raw per-scenario Judge and calibration fields are not published in this report</dd></div>
-        <div><dt>Unresolved</dt><dd>1 BLOCKED Evaluation result(s); campaign did not retain scenario definitions or their digests</dd></div>
+        <div><dt>Unresolved</dt><dd>1 BLOCKED Evaluation result(s); selected Test report did not retain scenario definitions or their digests</dd></div>
       </dl>
 
       <div class="table-scroll" tabindex="0" aria-label="Scenario results for methodology-maintainer">
@@ -1789,10 +1789,10 @@ Task-ID-Evidence: historical-unknown
       </p>
       <dl class="compact-list">
         <div><dt>Campaign Evaluation result aggregate</dt><dd>PASS 3, BLOCKED 0, FAIL 0</dd></div>
-        <div><dt>Evidence level</dt><dd>Governed agent-suite campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
+        <div><dt>Evidence level</dt><dd>Governed agent-suite Campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
         <div><dt>Execution context</dt><dd>Codex; disposable synthetic workspaces; per-scenario containment not reported</dd></div>
         <div><dt>Judge dimension</dt><dd>Governed Judge workflow or proved deterministic boundary; raw per-scenario Judge and calibration fields are not published in this report</dd></div>
-        <div><dt>Unresolved</dt><dd>campaign did not retain scenario definitions or their digests</dd></div>
+        <div><dt>Unresolved</dt><dd>selected Test report did not retain scenario definitions or their digests</dd></div>
       </dl>
 
       <div class="table-scroll" tabindex="0" aria-label="Scenario results for methodology-artifact-reviewer">
@@ -1837,7 +1837,7 @@ Task-ID-Evidence: historical-unknown
       data-kind="agent" data-status="missing" data-search="dev-backlog-coordinator acts as the parent backlog coordinator across the effective work-item provider, maintaining the active queue, directly executing authorized coordinator-owned lifecycle operations through the selected management skill, diagnosing and correcting blocked work, owning declared solo crisis delivery, and cleaning up terminal executions. missing provider-selected-ten-item-dispatch blockage-entry-disables-secondary-dispatch selected-commit-retry-and-closeout ambiguous-dispatch-and-user-decision-integrity provider-selector-boundaries same-thread-user-action-resumption exhausted-correction-disposition combined-regression-after-independent-merges blockage-recovery-resumes-secondary-dispatch pass 0, blocked 0, fail 0">
       <div class="card-heading">
         <div><span class="card-kicker">Conceptual agent</span><h3>dev-backlog-coordinator</h3></div>
-        <span class="status status--missing">Missing campaign evidence</span>
+        <span class="status status--missing">No result in the selected Test report</span>
       </div>
       <p>Acts as the parent backlog coordinator across the effective work-item provider, maintaining the active queue, directly executing authorized Coordinator-owned lifecycle operations through the selected management skill, diagnosing and correcting Blocked work, owning declared SOLO crisis delivery, and cleaning up terminal executions.</p>
       <p class="source-row">
@@ -1847,10 +1847,10 @@ Task-ID-Evidence: historical-unknown
       </p>
       <dl class="compact-list">
         <div><dt>Campaign Evaluation result aggregate</dt><dd>PASS 0, BLOCKED 0, FAIL 0</dd></div>
-        <div><dt>Evidence level</dt><dd>Governed agent-suite campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
+        <div><dt>Evidence level</dt><dd>Governed agent-suite Campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
         <div><dt>Execution context</dt><dd>Codex; disposable synthetic workspaces; per-scenario containment not reported</dd></div>
         <div><dt>Judge dimension</dt><dd>Governed Judge workflow or proved deterministic boundary; raw per-scenario Judge and calibration fields are not published in this report</dd></div>
-        <div><dt>Unresolved</dt><dd>9 current scenario(s) without campaign evidence</dd></div>
+        <div><dt>Unresolved</dt><dd>9 current scenario(s) with no result in the selected Test report</dd></div>
       </dl>
 
       <div class="table-scroll" tabindex="0" aria-label="Scenario results for dev-backlog-coordinator">
@@ -1861,8 +1861,8 @@ Task-ID-Evidence: historical-unknown
               <th scope="row">provider-selected-ten-item-dispatch</th>
               <td>Restore ten Running items from a selected durable provider without a separate registry.</td>
               <td>PASS</td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
               <td>current</td>
               <td>None proved</td>
             </tr>
@@ -1871,8 +1871,8 @@ Task-ID-Evidence: historical-unknown
               <th scope="row">blockage-entry-disables-secondary-dispatch</th>
               <td>Enter sequential blockage recovery after disabling only new dispatch to secondary threads.</td>
               <td>PASS</td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
               <td>current</td>
               <td>None proved</td>
             </tr>
@@ -1881,8 +1881,8 @@ Task-ID-Evidence: historical-unknown
               <th scope="row">selected-commit-retry-and-closeout</th>
               <td>Recover an unavailable delivery resource and complete through the effective Commit skill.</td>
               <td>PASS</td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
               <td>current</td>
               <td>None proved</td>
             </tr>
@@ -1891,8 +1891,8 @@ Task-ID-Evidence: historical-unknown
               <th scope="row">ambiguous-dispatch-and-user-decision-integrity</th>
               <td>Contain a delayed duplicate while preserving one provider identity and one resolved user answer.</td>
               <td>BLOCKED</td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
               <td>current</td>
               <td>None proved</td>
             </tr>
@@ -1901,8 +1901,8 @@ Task-ID-Evidence: historical-unknown
               <th scope="row">provider-selector-boundaries</th>
               <td>Preserve provider-specific identities and ask a clear file-provider question when Persistence is UNSET.</td>
               <td>BLOCKED</td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
               <td>current</td>
               <td>None proved</td>
             </tr>
@@ -1911,8 +1911,8 @@ Task-ID-Evidence: historical-unknown
               <th scope="row">same-thread-user-action-resumption</th>
               <td>Resume an answered User Action Required item in its existing canonical execution without discarding early work.</td>
               <td>PASS</td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
               <td>current</td>
               <td>None proved</td>
             </tr>
@@ -1921,8 +1921,8 @@ Task-ID-Evidence: historical-unknown
               <th scope="row">exhausted-correction-disposition</th>
               <td>End exhausted correction loops with exactly one concrete evidence-backed disposition.</td>
               <td>PASS</td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
               <td>current</td>
               <td>None proved</td>
             </tr>
@@ -1931,8 +1931,8 @@ Task-ID-Evidence: historical-unknown
               <th scope="row">combined-regression-after-independent-merges</th>
               <td>Run focused verification per item and one combined regression after all selected items reach main.</td>
               <td>PASS</td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
               <td>current</td>
               <td>None proved</td>
             </tr>
@@ -1941,8 +1941,8 @@ Task-ID-Evidence: historical-unknown
               <th scope="row">blockage-recovery-resumes-secondary-dispatch</th>
               <td>Resume new secondary-thread dispatch only after every blockage exit condition passes.</td>
               <td>PASS</td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
               <td>current</td>
               <td>None proved</td>
             </tr>
@@ -1955,7 +1955,7 @@ Task-ID-Evidence: historical-unknown
       data-kind="agent" data-status="missing" data-search="dev-backlog-watchdog observes a sustained work-item queue on a schedule and reports only actionable evidence or one concise healthy-cycle result without mutating coordination state. missing healthy-cycle-stays-quiet suspected-stall-alert satisfied-exit-condition-alert blocked-inventory-reconciliation active-blockage-continues-without-repeat blockage-exit-condition-recovery-alert terminal-archive-pause-does-not-pause-cleanup terminal-default-archival-notification terminal-preserved-branch-removable-worktree terminal-aggregate-all-anomalies terminal-complete-no-action terminal-preservation-alert-deduplication terminal-failed-abandoned-status-aware terminal-claim-applicability-evidence pass 0, blocked 0, fail 0">
       <div class="card-heading">
         <div><span class="card-kicker">Conceptual agent</span><h3>dev-backlog-watchdog</h3></div>
-        <span class="status status--missing">Missing campaign evidence</span>
+        <span class="status status--missing">No result in the selected Test report</span>
       </div>
       <p>Observes a sustained work-item queue on a schedule and reports only actionable evidence or one concise healthy-cycle result without mutating coordination state.</p>
       <p class="source-row">
@@ -1965,10 +1965,10 @@ Task-ID-Evidence: historical-unknown
       </p>
       <dl class="compact-list">
         <div><dt>Campaign Evaluation result aggregate</dt><dd>PASS 0, BLOCKED 0, FAIL 0</dd></div>
-        <div><dt>Evidence level</dt><dd>Governed agent-suite campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
+        <div><dt>Evidence level</dt><dd>Governed agent-suite Campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
         <div><dt>Execution context</dt><dd>Codex; disposable synthetic workspaces; per-scenario containment not reported</dd></div>
         <div><dt>Judge dimension</dt><dd>Governed Judge workflow or proved deterministic boundary; raw per-scenario Judge and calibration fields are not published in this report</dd></div>
-        <div><dt>Unresolved</dt><dd>14 current scenario(s) without campaign evidence</dd></div>
+        <div><dt>Unresolved</dt><dd>14 current scenario(s) with no result in the selected Test report</dd></div>
       </dl>
 
       <div class="table-scroll" tabindex="0" aria-label="Scenario results for dev-backlog-watchdog">
@@ -1979,8 +1979,8 @@ Task-ID-Evidence: historical-unknown
               <th scope="row">healthy-cycle-stays-quiet</th>
               <td>Observe healthy active work without interrupting the parent or mutating coordination state.</td>
               <td>PASS</td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
               <td>current</td>
               <td>None proved</td>
             </tr>
@@ -1989,8 +1989,8 @@ Task-ID-Evidence: historical-unknown
               <th scope="row">suspected-stall-alert</th>
               <td>Alert on a crossed progress boundary while preserving unknown-cause and read-only boundaries.</td>
               <td>PASS</td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
               <td>current</td>
               <td>None proved</td>
             </tr>
@@ -1999,8 +1999,8 @@ Task-ID-Evidence: historical-unknown
               <th scope="row">satisfied-exit-condition-alert</th>
               <td>Surface satisfied Stalled and Blocked exit conditions while leaving disposition to the Coordinator.</td>
               <td>PASS</td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
               <td>current</td>
               <td>None proved</td>
             </tr>
@@ -2009,8 +2009,8 @@ Task-ID-Evidence: historical-unknown
               <th scope="row">blocked-inventory-reconciliation</th>
               <td>Retain one complete reconciliation for every Blocked item while alerting only on actionable evidence.</td>
               <td>PASS</td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
               <td>current</td>
               <td>None proved</td>
             </tr>
@@ -2019,8 +2019,8 @@ Task-ID-Evidence: historical-unknown
               <th scope="row">active-blockage-continues-without-repeat</th>
               <td>Observe continued sequential blockage recovery without repeating an unchanged alert or changing dispatch mode.</td>
               <td>PASS</td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
               <td>current</td>
               <td>None proved</td>
             </tr>
@@ -2029,8 +2029,8 @@ Task-ID-Evidence: historical-unknown
               <th scope="row">blockage-exit-condition-recovery-alert</th>
               <td>Surface completed blockage-recovery exit conditions without resuming dispatch or mutating lifecycle.</td>
               <td>PASS</td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
               <td>current</td>
               <td>None proved</td>
             </tr>
@@ -2039,8 +2039,8 @@ Task-ID-Evidence: historical-unknown
               <th scope="row">terminal-archive-pause-does-not-pause-cleanup</th>
               <td>Keep clean worktree and branch cleanup actionable while a valid named-task archival pause is active.</td>
               <td>PASS</td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
               <td>current</td>
               <td>None proved</td>
             </tr>
@@ -2049,8 +2049,8 @@ Task-ID-Evidence: historical-unknown
               <th scope="row">terminal-default-archival-notification</th>
               <td>Require archival by default after merge and every ordinary terminal gate passes.</td>
               <td>PASS</td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
               <td>current</td>
               <td>None proved</td>
             </tr>
@@ -2059,8 +2059,8 @@ Task-ID-Evidence: historical-unknown
               <th scope="row">terminal-preserved-branch-removable-worktree</th>
               <td>Preserve an evidence-backed non-equivalent source branch without retaining its clean terminal worktree.</td>
               <td>PASS</td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
               <td>current</td>
               <td>None proved</td>
             </tr>
@@ -2069,8 +2069,8 @@ Task-ID-Evidence: historical-unknown
               <th scope="row">terminal-aggregate-all-anomalies</th>
               <td>Aggregate every actionable anomaly across the complete campaign terminal set.</td>
               <td>PASS</td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
               <td>current</td>
               <td>None proved</td>
             </tr>
@@ -2079,8 +2079,8 @@ Task-ID-Evidence: historical-unknown
               <th scope="row">terminal-complete-no-action</th>
               <td>Permit NO_ACTION only after every terminal dimension is completely reconciled.</td>
               <td>PASS</td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
               <td>current</td>
               <td>None proved</td>
             </tr>
@@ -2089,8 +2089,8 @@ Task-ID-Evidence: historical-unknown
               <th scope="row">terminal-preservation-alert-deduplication</th>
               <td>Suppress repeat alerts for unchanged acknowledged preservation and alert again when evidence or cleanup action changes.</td>
               <td>PASS</td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
               <td>current</td>
               <td>None proved</td>
             </tr>
@@ -2099,8 +2099,8 @@ Task-ID-Evidence: historical-unknown
               <th scope="row">terminal-failed-abandoned-status-aware</th>
               <td>Reconcile Failed and Abandoned terminal tasks without inventing a merged delivery gate.</td>
               <td>PASS</td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
               <td>current</td>
               <td>None proved</td>
             </tr>
@@ -2109,8 +2109,8 @@ Task-ID-Evidence: historical-unknown
               <th scope="row">terminal-claim-applicability-evidence</th>
               <td>Require explicit claim applicability before terminal reconciliation can return NO_ACTION.</td>
               <td>PASS</td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
               <td>current</td>
               <td>None proved</td>
             </tr>
@@ -2123,7 +2123,7 @@ Task-ID-Evidence: historical-unknown
       data-kind="agent" data-status="missing" data-search="dev-document-topic-editor analyzes document topic structure without mutation and, when separately authorized, revises document structure while preserving complete source meaning. missing source-grounded-topic-analysis pass 0, blocked 0, fail 0">
       <div class="card-heading">
         <div><span class="card-kicker">Conceptual agent</span><h3>dev-document-topic-editor</h3></div>
-        <span class="status status--missing">Missing campaign evidence</span>
+        <span class="status status--missing">No result in the selected Test report</span>
       </div>
       <p>Analyzes document topic structure without mutation and, when separately authorized, revises document structure while preserving complete source meaning.</p>
       <p class="source-row">
@@ -2133,10 +2133,10 @@ Task-ID-Evidence: historical-unknown
       </p>
       <dl class="compact-list">
         <div><dt>Campaign Evaluation result aggregate</dt><dd>PASS 0, BLOCKED 0, FAIL 0</dd></div>
-        <div><dt>Evidence level</dt><dd>Governed agent-suite campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
+        <div><dt>Evidence level</dt><dd>Governed agent-suite Campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
         <div><dt>Execution context</dt><dd>Codex; disposable synthetic workspaces; per-scenario containment not reported</dd></div>
         <div><dt>Judge dimension</dt><dd>Governed Judge workflow or proved deterministic boundary; raw per-scenario Judge and calibration fields are not published in this report</dd></div>
-        <div><dt>Unresolved</dt><dd>1 current scenario(s) without campaign evidence</dd></div>
+        <div><dt>Unresolved</dt><dd>1 current scenario(s) with no result in the selected Test report</dd></div>
       </dl>
 
       <div class="table-scroll" tabindex="0" aria-label="Scenario results for dev-document-topic-editor">
@@ -2147,8 +2147,8 @@ Task-ID-Evidence: historical-unknown
               <th scope="row">source-grounded-topic-analysis</th>
               <td>Analyze weak topic structure without changing the document or inventing content.</td>
               <td>PASS</td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
               <td>current</td>
               <td>None proved</td>
             </tr>
@@ -2161,7 +2161,7 @@ Task-ID-Evidence: historical-unknown
       data-kind="agent" data-status="missing" data-search="dev-skill-lint-reviewer reviews agent skills for critical directive, clarity, redundancy, ownership, dependency, and harness-boundary defects while ignoring minor style nits. missing critical-directive-review pass 0, blocked 0, fail 0">
       <div class="card-heading">
         <div><span class="card-kicker">Conceptual agent</span><h3>dev-skill-lint-reviewer</h3></div>
-        <span class="status status--missing">Missing campaign evidence</span>
+        <span class="status status--missing">No result in the selected Test report</span>
       </div>
       <p>Reviews Agent Skills for critical directive, clarity, redundancy, ownership, dependency, and harness-boundary defects while ignoring minor style nits.</p>
       <p class="source-row">
@@ -2171,10 +2171,10 @@ Task-ID-Evidence: historical-unknown
       </p>
       <dl class="compact-list">
         <div><dt>Campaign Evaluation result aggregate</dt><dd>PASS 0, BLOCKED 0, FAIL 0</dd></div>
-        <div><dt>Evidence level</dt><dd>Governed agent-suite campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
+        <div><dt>Evidence level</dt><dd>Governed agent-suite Campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
         <div><dt>Execution context</dt><dd>Codex; disposable synthetic workspaces; per-scenario containment not reported</dd></div>
         <div><dt>Judge dimension</dt><dd>Governed Judge workflow or proved deterministic boundary; raw per-scenario Judge and calibration fields are not published in this report</dd></div>
-        <div><dt>Unresolved</dt><dd>1 current scenario(s) without campaign evidence</dd></div>
+        <div><dt>Unresolved</dt><dd>1 current scenario(s) with no result in the selected Test report</dd></div>
       </dl>
 
       <div class="table-scroll" tabindex="0" aria-label="Scenario results for dev-skill-lint-reviewer">
@@ -2185,8 +2185,8 @@ Task-ID-Evidence: historical-unknown
               <th scope="row">critical-directive-review</th>
               <td>Report critical skill defects without manufacturing minor style findings.</td>
               <td>PASS</td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
               <td>current</td>
               <td>None proved</td>
             </tr>
@@ -2199,7 +2199,7 @@ Task-ID-Evidence: historical-unknown
       data-kind="agent" data-status="missing" data-search="methodology-design-system-checklist-runner applies one supplied documentation design system checklist to one supplied page and returns complete item-level evidence without an integrated verdict. missing one-page-one-checklist-report incomplete-evidence-remains-not-tested exact-assignment-and-output-boundary pass 0, blocked 0, fail 0">
       <div class="card-heading">
         <div><span class="card-kicker">Conceptual agent</span><h3>methodology-design-system-checklist-runner</h3></div>
-        <span class="status status--missing">Missing campaign evidence</span>
+        <span class="status status--missing">No result in the selected Test report</span>
       </div>
       <p>Applies one supplied Documentation Design System checklist to one supplied page and returns complete item-level evidence without an integrated verdict.</p>
       <p class="source-row">
@@ -2209,10 +2209,10 @@ Task-ID-Evidence: historical-unknown
       </p>
       <dl class="compact-list">
         <div><dt>Campaign Evaluation result aggregate</dt><dd>PASS 0, BLOCKED 0, FAIL 0</dd></div>
-        <div><dt>Evidence level</dt><dd>Governed agent-suite campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
+        <div><dt>Evidence level</dt><dd>Governed agent-suite Campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
         <div><dt>Execution context</dt><dd>Codex; disposable synthetic workspaces; per-scenario containment not reported</dd></div>
         <div><dt>Judge dimension</dt><dd>Governed Judge workflow or proved deterministic boundary; raw per-scenario Judge and calibration fields are not published in this report</dd></div>
-        <div><dt>Unresolved</dt><dd>3 current scenario(s) without campaign evidence</dd></div>
+        <div><dt>Unresolved</dt><dd>3 current scenario(s) with no result in the selected Test report</dd></div>
       </dl>
 
       <div class="table-scroll" tabindex="0" aria-label="Scenario results for methodology-design-system-checklist-runner">
@@ -2223,8 +2223,8 @@ Task-ID-Evidence: historical-unknown
               <th scope="row">one-page-one-checklist-report</th>
               <td>Prove complete exactly-once item evidence for one supplied page and one supplied checklist without delegation or integrated acceptance.</td>
               <td>PASS</td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
               <td>current</td>
               <td>None proved</td>
             </tr>
@@ -2233,8 +2233,8 @@ Task-ID-Evidence: historical-unknown
               <th scope="row">incomplete-evidence-remains-not-tested</th>
               <td>Prove that unavailable rendered or keyboard evidence remains explicit instead of being inferred as passing.</td>
               <td>PASS</td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
               <td>current</td>
               <td>None proved</td>
             </tr>
@@ -2243,8 +2243,8 @@ Task-ID-Evidence: historical-unknown
               <th scope="row">exact-assignment-and-output-boundary</th>
               <td>Prove that unavailable review evidence after an exact assignment does not weaken identity or output validation.</td>
               <td>PASS</td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
               <td>current</td>
               <td>None proved</td>
             </tr>
@@ -2257,7 +2257,7 @@ Task-ID-Evidence: historical-unknown
       data-kind="agent" data-status="missing" data-search="methodology-design-system-review-coordinator coordinates bounded documentation design system checklist assignments, validates complete runner evidence, reconciles findings, and alone returns the integrated verdict. missing complete-reconciliation-and-ranking malformed-unavailable-and-conflicting-evidence accuracy-cost-band-speed-and-unpriced-ranking pass 0, blocked 0, fail 0">
       <div class="card-heading">
         <div><span class="card-kicker">Conceptual agent</span><h3>methodology-design-system-review-coordinator</h3></div>
-        <span class="status status--missing">Missing campaign evidence</span>
+        <span class="status status--missing">No result in the selected Test report</span>
       </div>
       <p>Coordinates bounded Documentation Design System checklist assignments, validates complete runner evidence, reconciles findings, and alone returns the integrated verdict.</p>
       <p class="source-row">
@@ -2267,10 +2267,10 @@ Task-ID-Evidence: historical-unknown
       </p>
       <dl class="compact-list">
         <div><dt>Campaign Evaluation result aggregate</dt><dd>PASS 0, BLOCKED 0, FAIL 0</dd></div>
-        <div><dt>Evidence level</dt><dd>Governed agent-suite campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
+        <div><dt>Evidence level</dt><dd>Governed agent-suite Campaign; scenario Evaluation results are not skill Evaluation results</dd></div>
         <div><dt>Execution context</dt><dd>Codex; disposable synthetic workspaces; per-scenario containment not reported</dd></div>
         <div><dt>Judge dimension</dt><dd>Governed Judge workflow or proved deterministic boundary; raw per-scenario Judge and calibration fields are not published in this report</dd></div>
-        <div><dt>Unresolved</dt><dd>3 current scenario(s) without campaign evidence</dd></div>
+        <div><dt>Unresolved</dt><dd>3 current scenario(s) with no result in the selected Test report</dd></div>
       </dl>
 
       <div class="table-scroll" tabindex="0" aria-label="Scenario results for methodology-design-system-review-coordinator">
@@ -2281,8 +2281,8 @@ Task-ID-Evidence: historical-unknown
               <th scope="row">complete-reconciliation-and-ranking</th>
               <td>Prove bounded runner dispatch, complete evidence reconciliation, integrated acceptance, and deterministic candidate ranking.</td>
               <td>PASS</td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
               <td>current</td>
               <td>None proved</td>
             </tr>
@@ -2291,8 +2291,8 @@ Task-ID-Evidence: historical-unknown
               <th scope="row">malformed-unavailable-and-conflicting-evidence</th>
               <td>Prove one malformed-report retry, unavailable-runner handling, and conflict preservation without local substitution.</td>
               <td>PASS</td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
               <td>current</td>
               <td>None proved</td>
             </tr>
@@ -2301,8 +2301,8 @@ Task-ID-Evidence: historical-unknown
               <th scope="row">accuracy-cost-band-speed-and-unpriced-ranking</th>
               <td>Prove exact ranking precedence, the inclusive priced-cost boundary, cached-token accounting, and provisional unpriced behavior.</td>
               <td>PASS</td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
-              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
+              <td><span class="status status--missing">No result in the selected Test report</span></td>
               <td>current</td>
               <td>None proved</td>
             </tr>
@@ -2317,7 +2317,7 @@ Task-ID-Evidence: historical-unknown
     <div class="section-heading"><h2 id="skills-title">Skill-by-skill evidence</h2><p>All bundled skills are present. Direct diagnostic probe declarations, linked selected-report scenarios, linked Evaluation result categories, evidence level, sources, and limitations remain distinct.</p></div>
     <div class="filters" data-filter-scope="skill">
       <label class="field" for="skill-search">Search skills or probes<input id="skill-search" type="search" autocomplete="off" data-filter-search="skill"></label>
-      <label class="field" for="skill-status">Coverage status<select id="skill-status" data-filter-status="skill"><option value="all">All statuses</option><option value="direct-governed">Direct governed Evaluation result</option><option value="direct-probe">Direct diagnostic probe</option><option value="indirect-only">Indirect Test suite only</option><option value="none">No recorded evidence</option></select></label>
+      <label class="field" for="skill-status">Coverage status<select id="skill-status" data-filter-status="skill"><option value="all">All statuses</option><option value="direct-governed">Direct governed skill result</option><option value="direct-probe">Direct diagnostic probe declaration</option><option value="indirect-only">Indirect agent-scenario evidence only</option><option value="none">No recorded evaluation evidence</option></select></label>
       <button type="button" data-filter-clear="skill">Clear skill filters</button>
     </div>
     <p class="result-count" id="skill-result-count" aria-live="polite">Showing all 144 skills.</p>
