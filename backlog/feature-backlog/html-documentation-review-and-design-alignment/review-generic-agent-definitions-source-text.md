@@ -36,19 +36,19 @@ Next Reconciliation At: 2026-08-10T00:59:00Z
 
 Condition Type: delegated-work
 
-Owner: Dev Orchestrator task 019fe929-3695-7d20-93dc-63852ced1020 coordinating fresh Dev Artifact Reviewer task /root/review_combined_generic_agent_html and Dev Code Reviewer task /root/review_combined_generic_agent_test
+Owner: Dev Orchestrator task 019fe929-3695-7d20-93dc-63852ced1020 coordinating original Dev Coder task /root/fix_generic_agent_test_contract
 
-Evidence: Dev Merge Coordinator produced clean immutable combined candidate e40a50fae05f8e26264269b7a6970512abf416e4 with parent 9488c71873e19c99b523927bce14ec64da634158 and exactly design/generic-agent-definitions-source.html plus scripts/test_bundle_content.py. Fresh-context artifact and code reviewers are independently reviewing the two changed surfaces and the disposition of every prior finding.
+Evidence: Fresh code review returned GOOD. Fresh artifact review confirmed all three prior findings resolved in the HTML but returned NEEDS CORRECTION because test_context_budget_ownership_and_runtime_evidence_are_documented still requires the retired July 2026 Junie wording. The original Dev Coder is applying only that source-backed test-contract correction on immutable combined candidate e40a50fae05f8e26264269b7a6970512abf416e4.
 
-Observed At: 2026-08-10T01:25:52Z
+Observed At: 2026-08-10T01:32:15Z
 
-Started At: 2026-08-10T01:25:52Z
+Started At: 2026-08-10T01:32:15Z
 
-Deadline or Expires At: 2026-08-10T01:42:00Z
+Deadline or Expires At: 2026-08-10T01:47:00Z
 
-Next Action: Require terminal GOOD from both fresh reviewers, resolve any confirmed finding, then dispatch an independent Dev Verifier against the same immutable commit.
+Next Action: Collect the one-path test correction, combine it into a new immutable candidate, and repeat fresh artifact and code review before independent verification.
 
-Next Reconciliation At: 2026-08-10T01:35:00Z
+Next Reconciliation At: 2026-08-10T01:43:00Z
 
 Codex Task ID: 019fe929-3695-7d20-93dc-63852ced1020
 
@@ -58,11 +58,11 @@ Root Role: Dev Orchestrator
 
 Parent Task ID: 019fb057-1767-7ef2-b5fa-41f4417b20b3
 
-Branch: codex/review-generic-agent-definitions-combined-019fe929
+Branch: codex/review-generic-agent-definitions-test-contract-round2-019fe929
 
-Worktree: /private/tmp/review-generic-agent-definitions-combined-019fe929
+Worktree: /private/tmp/review-generic-agent-definitions-test-contract-round2-019fe929
 
-Phase: Fresh post-combination review
+Phase: Correction round 2
 
 ## Summary
 
