@@ -834,7 +834,7 @@ DOCUMENT_REQUIRED_CONTENT_LINKS = {
         "../skills/route-documentation-work/assets/templates/project-template.yaml",
     ),
     "generic-agent-definitions-source.html": (
-        "../README.md#explicit-target-deployment",
+        "../README.md#scoped-target-deployment",
     ),
     "orchestrated-development-lifecycle.html": (
         "../skills/create-work-item-file/SKILL.md",
@@ -3445,7 +3445,7 @@ class BundleContentTests(unittest.TestCase):
             README_PATH.read_text(encoding="utf-8"),
         )
         self.assertIn(
-            "Focused pull requests separate shared foundations from independently reviewable changes",
+            "Delivery is therefore separate from provider lifecycle closure.",
             (REPOSITORY_ROOT / "design" / "agent-and-skill-definitions.html").read_text(
                 encoding="utf-8"
             ),
@@ -3606,7 +3606,7 @@ class BundleContentTests(unittest.TestCase):
             README_PATH.read_text(encoding="utf-8"),
         )
         self.assertIn(
-            "Publication is therefore a resumable handoff rather than completion.",
+            "Delivery is therefore separate from provider lifecycle closure.",
             (
                 REPOSITORY_ROOT / "design" / "agent-and-skill-definitions.html"
             ).read_text(encoding="utf-8"),
@@ -11976,8 +11976,8 @@ Visible after.
             "Codex CLI 0.144.1",
             "Claude Code 2.1.104",
             "Gemini CLI 0.39.1",
-            "dated 05 August 2026",
-            "separately dated July 2026 subagent page",
+            "The official model-selection and custom-subagent pages are dated 05 August 2026.",
+            "The subagent frontmatter table exposes no native per-agent context-limit field.",
             "https://developers.openai.com/codex/subagents",
             "https://code.claude.com/docs/en/sub-agents",
             "https://geminicli.com/docs/core/subagents/",
@@ -13235,7 +13235,7 @@ Visible after.
                 self.assertIn(f"<h3>{heading}</h3>", catalog)
 
             self.assertNotIn(
-                "Dev Coder returns a clean verified candidate commit without applying terminal delivery. Dev Orchestrator obtains",
+                "Dev Coder returns a clean verified candidate commit without applying terminal Commit delivery or provider mutation. Dev Orchestrator obtains",
                 catalog,
             )
 
@@ -13246,14 +13246,17 @@ Visible after.
             delivery_ordered = tag_containers(delivery_section, "ol")
             self.assertEqual(1, len(delivery_ordered))
             self.assertEqual([], tag_containers(delivery_section, "ul"))
-            delivery_items = list_item_texts(delivery_ordered[0], 6)
+            delivery_items = list_item_texts(delivery_ordered[0], 9)
             self.assertEqual(
                 [
-                    "Dev Coder returns a clean verified candidate commit without applying terminal delivery.",
+                    "Dev Coder returns a clean verified candidate commit without applying terminal Commit delivery or provider mutation.",
                     "Dev Orchestrator obtains fresh independent review and source verification, combines accepted candidates when needed, then applies or resumes the effective Commit-selected skill referenced by applicable AGENTS.md guidance.",
-                    "The deliver-work-item-feature-branch completion contract consumes the accepted candidate without modifying source and preserves one delivery identity through host review and corrections.",
+                    "The deliver-work-item interface gives the selected Commit provider one accepted input and requires the provider to consume, not author or amend, the accepted source change.",
+                    "deliver-work-item-main-branch integrates and verifies the accepted change on configured main when the effective completion selector is main-branch.",
+                    "deliver-work-item-feature-branch publishes one reviewable branch when the selected completion process is feature-branch or the request requires reviewed branch delivery through merge.",
+                    "Feature-branch delivery uses create-pull-request only for GitHub or another configured host whose contract accurately uses pull-request terminology; GitLab delivery requires merge-request evidence from a configured capability.",
                     "Every source correction returns through Dev Orchestrator to the original Dev Coder for a replacement candidate, fresh independent review, and verification before delivery resumes.",
-                    "The completion contract loads create-pull-request only as its subordinate GitHub publication capability and returns AWAITING_REVIEW until required review, checks, dependency order, merge, and configured base-branch reachability are observed.",
+                    "The effective Commit provider returns READY, AWAITING_REVIEW, or BLOCKED with state-keyed evidence. Publication alone is AWAITING_REVIEW, not completion.",
                     "Persistence closure begins only after Commit returns READY.",
                 ],
                 delivery_items,
@@ -13264,7 +13267,7 @@ Visible after.
                 delivery_paragraphs,
             )
             self.assertIn(
-                "Publication is therefore a resumable handoff rather than completion. Focused pull requests separate shared foundations from independently reviewable changes.",
+                "Delivery is therefore separate from provider lifecycle closure. Main-branch integration, feature-branch publication, host review, and Persistence closure each keep their own evidence boundary.",
                 delivery_paragraphs,
             )
 
@@ -13368,7 +13371,7 @@ Visible after.
 
         first_delivery_item = (
             "<li>Dev Coder returns a clean verified candidate commit without "
-            "applying terminal delivery.</li>"
+            "applying terminal Commit delivery or provider mutation.</li>"
         )
         last_delivery_item = (
             "<li>Persistence closure begins only after Commit returns READY.</li>"
@@ -13403,13 +13406,13 @@ Visible after.
         paragraph_moves = (
             (
                 "<p>Candidate creation and terminal delivery are separate responsibilities:</p>",
-                "Dev Coder returns a clean verified candidate commit without applying terminal delivery.",
+                "Dev Coder returns a clean verified candidate commit without applying terminal Commit delivery or provider mutation.",
                 "Candidate creation and terminal delivery are separate responsibilities:",
             ),
             (
-                "<p>Publication is therefore a resumable handoff rather than completion. Focused pull requests separate shared foundations from independently reviewable changes.</p>",
+                "<p>Delivery is therefore separate from provider lifecycle closure. Main-branch integration, feature-branch publication, host review, and Persistence closure each keep their own evidence boundary.</p>",
                 "Persistence closure begins only after Commit returns READY.",
-                "Publication is therefore a resumable handoff rather than completion. Focused pull requests separate shared foundations from independently reviewable changes.",
+                "Delivery is therefore separate from provider lifecycle closure. Main-branch integration, feature-branch publication, host review, and Persistence closure each keep their own evidence boundary.",
             ),
             (
                 "<p>Work-item Persistence is an independent project selection:</p>",
@@ -13463,6 +13466,10 @@ Visible after.
                 ),
             ],
             re.findall(r'<h2 id="([^"]+)">([^<]+)</h2>', page_text),
+        )
+        self.assertIn(
+            "Dev Coder receives the work-item identifier or source reference, base and dependency information, source scope, acceptance criteria, and required candidate-evidence expectations through orchestration. It produces candidate evidence, but neither applies provider-specific create or manage skills nor mutates provider lifecycle.",
+            page_text,
         )
 
         outline_coordination_heading = re.search(

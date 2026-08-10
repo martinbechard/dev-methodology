@@ -1,8 +1,8 @@
 # Review and Correct Coding-Agent Runtime Configuration Text
 
-Owner: Dev Orchestrator
+Owner: Unowned
 
-Status: Running
+Status: User Action Required
 
 Type: Feature
 
@@ -32,23 +32,23 @@ Last Contact: 2026-08-10T00:44:00Z
 
 Next Reconciliation At: 2026-08-10T00:59:00Z
 
-## Active Execution Evidence
+## Prior Active Execution Evidence
 
 Condition Type: root-execution
 
 Owner: Dev Orchestrator in Codex task 019fe928-fc32-73c2-af60-791087327934
 
-Evidence: Visible canonical Codex task 019fe928-fc32-73c2-af60-791087327934 accepted the clean handoff from stopped internal task /root/review_agentic_config. The prior task made no source mutation, released its exact claims, and preserved branch codex/review-agentic-configuration-text-019fb057 with isolated worktree /Users/martinbechard/dev/dev-methodology/.worktrees/review-agentic-configuration-text-work-019fb057.
+Evidence: Dev Documentation Writer produced clean replacement candidate 6f346e3ab36da01a1d5df51f6632fb9ac904d0f2 for bounded correction attempt 1. Five source-backed corrections are present, but the candidate is not accepted: the trusted maintained-document policy rejected removal of the reviewer-disallowed historical provenance block, and focused page-content tests expose stale assertions that require exact scope classification before fresh review.
 
-Observed At: 2026-08-10T00:57:13Z
+Observed At: 2026-08-10T01:35:00Z
 
 Started At: 2026-08-10T00:49:42Z
 
 Deadline or Expires At: 2026-08-10T04:49:42Z
 
-Next Action: Acquire the exact activity=work claim, inventory the target page and its authoritative sources, then dispatch bounded documentation production.
+Next Action: Reacquire the exact activity=work claim, reconcile the trusted provenance-policy rejection without bypassing it, classify only the focused page-content assertions implicated by accepted terminology, and retain the candidate until every correction is supportably resolved.
 
-Next Reconciliation At: 2026-08-10T01:12:13Z
+Next Reconciliation At: 2026-08-10T01:50:00Z
 
 Canonical Conversation: 019fe928-fc32-73c2-af60-791087327934
 
@@ -58,7 +58,25 @@ Branch: codex/review-agentic-configuration-text-019fb057
 
 Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/review-agentic-configuration-text-work-019fb057
 
-Phase: Canonical execution reconciliation and source inventory
+Phase: Bounded correction attempt 1 reconciliation
+
+## User Action Required
+
+Question: Do you approve restoring `design/agentic-configuration.html` to its pre-candidate state with no provenance block, while retaining the supported text corrections?
+
+Why User Input Is Required: Both bounded correction attempts reached the same trusted maintained-document guard. The provenance block exists only in unaccepted candidate history, but removing it still requires explicit user or trusted project authority. No historical migration provenance values are available to support retaining and correcting the block instead.
+
+Preserved Evidence: Candidate `6f346e3ab36da01a1d5df51f6632fb9ac904d0f2` is clean and unaccepted on branch `codex/review-agentic-configuration-text-019fb057`. Earlier reviewed candidate `ce62ec83604b9ba9a775e78398d666f660177dc5` remains preserved. No verifier run or delivery occurred.
+
+Prohibited Unattended Action: Do not remove, invent, or alter provenance; do not resume source correction or lifecycle execution until the user answers this exact question.
+
+Asked At: 2026-08-10T01:42:00Z
+
+Asked In: Parent coordination task 019fb057-1767-7ef2-b5fa-41f4417b20b3
+
+Resolution: Pending
+
+Approval Resolution: Pending
 
 ## Summary
 

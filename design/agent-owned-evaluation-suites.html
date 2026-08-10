@@ -1,9 +1,26 @@
 <!doctype html>
+<!--
+Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+Artifact-ID: 79fcfb30-aad5-4db5-81c6-bc06f54a248a
+Created-UTC: 2026-08-08T17:55:01Z
+Creating-Agent: historical-unknown
+Runtime: Codex
+Dispatched-Model: gpt-5.6-sol
+Reasoning-Effort: medium
+Task-ID: 019fe259-c565-7162-b147-3abf004e4b04
+Artifact-ID-Evidence: migration-assigned
+Created-UTC-Evidence: git-derived
+Creating-Agent-Evidence: historical-unknown
+Runtime-Evidence: retained-rollout-evidence
+Dispatched-Model-Evidence: retained-rollout-evidence
+Reasoning-Effort-Evidence: retained-rollout-evidence
+Task-ID-Evidence: retained-rollout-evidence
+-->
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="A visual guide to the governed Agent-Owned Evaluation Suites workflow, evidence model, runner commands, and browser containment rules.">
+  <meta name="description" content="A visual guide to the current 32-suite Agent-Owned Evaluation Suites catalog, historical 26-suite rollout, evidence model, runner commands, and browser containment rules.">
   <title>Agent-Owned Evaluation Suites</title>
   <style>
     :root {
@@ -199,8 +216,8 @@
     <div class="hero-copy">
       <span class="eyebrow">Governed behavioral evaluation</span>
       <h1 id="page-title">Agent-Owned Evaluation Suites</h1>
-      <p class="lede">Each conceptual agent has an executable suite. The suite runs selected behavior, binds identity to retained evidence, applies exact checks, and uses an independent Judge.</p>
-      <p class="hero-note"><strong>Evidence boundary.</strong> A task label or diagnostic summary cannot prove a verdict. Exact receipts, digests, identities, dispositions, and cleanup evidence determine the result.</p>
+      <p class="lede">The current catalog maps each conceptual agent to an executable suite. Each suite runs selected behavior, binds identity to retained evidence, applies exact checks, and uses an independent Judge.</p>
+      <p class="hero-note"><strong>Evidence boundary.</strong> A task label or diagnostic summary cannot prove a verdict. Exact receipts, digests, identities, dispositions, and cleanup evidence determine the result. The July 2026 report is historical evidence for a completed 26-suite rollout, not the current catalog size.</p>
     </div>
     <figure class="hero-visual" aria-labelledby="evidence-spine-title">
       <svg viewBox="0 0 620 520" role="img" aria-labelledby="evidence-spine-title evidence-spine-desc">
@@ -248,21 +265,21 @@
   </section>
 
   <div class="metric-strip" aria-label="Evaluation suite limits">
-    <div class="metric"><strong>1:1</strong><span>One executable suite for each conceptual agent</span></div>
-    <div class="metric"><strong>4</strong><span>Maximum concurrent supervisors</span></div>
-    <div class="metric"><strong>9</strong><span>Normal active-agent ceiling</span></div>
-    <div class="metric"><strong>+1</strong><span>Declared nested dependency allowance</span></div>
+    <div class="metric"><strong>32</strong><span>Current suites in suite-index.yaml</span></div>
+    <div class="metric"><strong>1:1</strong><span>One executable suite for each conceptual agent definition</span></div>
+    <div class="metric"><strong>26 / 78</strong><span>Historical July 2026 rollout suites and scenarios</span></div>
+    <div class="metric"><strong>9 + 1</strong><span>Normal ceiling plus declared nested dependency allowance</span></div>
   </div>
 
   <nav class="chapter-nav" aria-label="Page sections">
     <a href="#suite">Suite anatomy</a>
     <a href="#execution">Execution</a>
+    <a href="#commands">Commands</a>
     <a href="#harnesses">Harnesses</a>
     <a href="#verdicts">Verdicts</a>
-    <a href="#commands">Commands</a>
-    <a href="#reporting">Reporting</a>
     <a href="#runtime">Runtime isolation</a>
     <a href="#browser">Browser proof</a>
+    <a href="#reporting">Reporting</a>
     <a href="#source">Source boundary</a>
   </nav>
 
@@ -277,11 +294,11 @@
       <article class="card target"><span class="card-kicker">Behavior</span><h3>Scenario catalog</h3><p>One authoritative scenarios.yaml file derives a small set of high-value cases from the complete canonical agent definition.</p></article>
       <article class="card"><span class="card-kicker">Coordination</span><h3>Supervisor</h3><p>Coordinates one suite under the common protocol and keeps only one child active at a time.</p></article>
       <article class="card target"><span class="card-kicker">Subject</span><h3>Target agent</h3><p>The standard generated agent performs the behavior under evaluation.</p></article>
-      <article class="card judge"><span class="card-kicker">Judgment</span><h3>Independent Judge</h3><p>Returns the governed semantic disposition after required deterministic gates.</p></article>
       <article class="card control"><span class="card-kicker">Acceptance</span><h3>Contract skill</h3><p>Defines the acceptance rules that apply to the target agent.</p></article>
+      <article class="card judge"><span class="card-kicker">Judgment</span><h3>Independent Judge</h3><p>Returns the governed semantic disposition after required deterministic gates.</p></article>
     </div>
     <div class="two-column" style="margin-top: 1rem;">
-      <div class="panel"><h3>Catalog and coverage</h3><p>Suites are ordered by descending direct end-user value. Existing catalogs and the runner remain the execution and evidence foundation during migration to the agent-owned layout.</p><p>A skill probe is a targeted diagnostic selected by an agent scenario. Skill probes are not the units used to plan exhaustive coverage.</p></div>
+      <div class="panel"><h3>Catalog and historical coverage</h3><p>The current suite index contains 32 suites ordered by descending direct end-user value. Existing catalogs and the runner remain the execution and evidence foundation during migration to the agent-owned layout.</p><p>The 2026-07-17 complete report records a historical 26-suite, 78-scenario rollout. It does not state the current catalog size.</p><p>A skill probe is a targeted diagnostic selected by an agent scenario. Skill probes are not the units used to plan exhaustive coverage.</p></div>
       <div class="panel"><h3>Runtime identity</h3><p>Codex project-agent names contain lowercase letters, digits, and underscores. Retained session evidence must prove that every child loaded the staged project-agent definition.</p><p>Task labels and final prose do not prove that identity.</p></div>
     </div>
     <figure class="diagram" aria-labelledby="concurrency-title">
@@ -330,6 +347,25 @@
       <article class="card judge"><span class="mono-label">04 / RETAIN</span><h3>Keep failure evidence</h3><p>Preserve partial failures and governed checkpoints.</p></article>
       <article class="card"><span class="mono-label">05 / TIME</span><h3>Record two clocks</h3><p>Store UTC completion time and monotonic elapsed time.</p></article>
       <article class="card target"><span class="mono-label">06 / CLEAN</span><h3>Remove isolated state</h3><p>Remove disposable workspaces and isolated authentication state after each batch.</p></article>
+    </div>
+  </section>
+
+  <section class="section" id="commands" aria-labelledby="commands-title">
+    <div class="section-heading">
+      <span class="eyebrow">Evidence-producing entry points</span>
+      <h2 id="commands-title">Commands select, run, rebuild, and update</h2>
+      <p>Browser suites use the exact Playwright version from package.json and package-lock.json plus the repository-designated Chromium revision.</p>
+    </div>
+    <div class="command-grid">
+      <article class="command-card"><div class="command-copy"><strong>Install browser dependencies</strong><span>Locked local package and Chromium revision</span></div><pre><code>cd evals/agent-tests
+npm ci
+npx playwright install chromium</code></pre></article>
+      <article class="command-card"><div class="command-copy"><strong>Run one Codex suite</strong><span>Update its report and the global report</span></div><pre><code>python3 evals/agent-tests/runner.py reporting run --harness codex --suite dev-coder</code></pre></article>
+      <article class="command-card"><div class="command-copy"><strong>Run selected Codex suites</strong><span>Apply a lower worker limit</span></div><pre><code>python3 evals/agent-tests/runner.py reporting run --harness codex --suite dev-coder --suite dev-code-reviewer --max-workers 2</code></pre></article>
+      <article class="command-card"><div class="command-copy"><strong>Run the complete Codex catalog</strong><span>Omit suite selectors</span></div><pre><code>python3 evals/agent-tests/runner.py reporting run --harness codex</code></pre></article>
+      <article class="command-card"><div class="command-copy"><strong>Run one Junie smoke suite</strong><span>No full-catalog authorization required</span></div><pre><code>python3 evals/agent-tests/runner.py reporting run --harness junie --suite dev-coder</code></pre></article>
+      <article class="command-card"><div class="command-copy"><strong>Rebuild Codex reports</strong><span>Do not invoke a harness</span></div><pre><code>python3 evals/agent-tests/runner.py reporting rebuild --harness codex</code></pre></article>
+      <article class="command-card"><div class="command-copy"><strong>Update global Codex HTML</strong><span>Do not run or rewrite suite reports</span></div><pre><code>python3 evals/agent-tests/runner.py reporting update --harness codex</code></pre></article>
     </div>
   </section>
 
@@ -406,41 +442,6 @@
     </div>
   </section>
 
-  <section class="section" id="commands" aria-labelledby="commands-title">
-    <div class="section-heading">
-      <span class="eyebrow">Runner entry points</span>
-      <h2 id="commands-title">Install, run, rebuild, and update</h2>
-      <p>Browser suites use the exact Playwright version from package.json and package-lock.json plus the repository-designated Chromium revision.</p>
-    </div>
-    <div class="command-grid">
-      <article class="command-card"><div class="command-copy"><strong>Install browser dependencies</strong><span>Locked local package and Chromium revision</span></div><pre><code>cd evals/agent-tests
-npm ci
-npx playwright install chromium</code></pre></article>
-      <article class="command-card"><div class="command-copy"><strong>Run one Codex suite</strong><span>Update its report and the global report</span></div><pre><code>python3 evals/agent-tests/runner.py reporting run --harness codex --suite dev-coder</code></pre></article>
-      <article class="command-card"><div class="command-copy"><strong>Run selected Codex suites</strong><span>Apply a lower worker limit</span></div><pre><code>python3 evals/agent-tests/runner.py reporting run --harness codex --suite dev-coder --suite dev-code-reviewer --max-workers 2</code></pre></article>
-      <article class="command-card"><div class="command-copy"><strong>Run the complete Codex catalog</strong><span>Omit suite selectors</span></div><pre><code>python3 evals/agent-tests/runner.py reporting run --harness codex</code></pre></article>
-      <article class="command-card"><div class="command-copy"><strong>Run one Junie smoke suite</strong><span>No full-catalog authorization required</span></div><pre><code>python3 evals/agent-tests/runner.py reporting run --harness junie --suite dev-coder</code></pre></article>
-      <article class="command-card"><div class="command-copy"><strong>Rebuild Codex reports</strong><span>Do not invoke a harness</span></div><pre><code>python3 evals/agent-tests/runner.py reporting rebuild --harness codex</code></pre></article>
-      <article class="command-card"><div class="command-copy"><strong>Update global Codex HTML</strong><span>Do not run or rewrite suite reports</span></div><pre><code>python3 evals/agent-tests/runner.py reporting update --harness codex</code></pre></article>
-    </div>
-  </section>
-
-  <section class="section" id="reporting" aria-labelledby="reporting-title">
-    <div class="section-heading">
-      <span class="eyebrow">Immutable publication</span>
-      <h2 id="reporting-title">A report is an evidence package</h2>
-      <p>Each suite generation stores self-contained HTML, machine-readable metadata, and a content-addressed evidence bundle in one immutable directory.</p>
-    </div>
-    <div class="grid">
-      <article class="card"><span class="mono-label">PACKAGE</span><h3>Build one generation</h3><p>Write only the selected suite generation and its stable manifest. Update aggregate counts and the suite's global entry deterministically.</p></article>
-      <article class="card target"><span class="mono-label">RE-HASH</span><h3>Reopen every object</h3><p>Resolve checkpoint and identity roots, then re-hash receipts, bound artifacts, Judge rollout, extracted response, and output artifact.</p></article>
-      <article class="card control"><span class="mono-label">BIND</span><h3>Bind the manifests</h3><p>Metadata and the stable suite manifest bind the evidence-manifest digest. The generation digest covers metadata, HTML, and evidence manifest.</p></article>
-      <article class="card judge"><span class="mono-label">VALIDATE</span><h3>Validate before replacement</h3><p>Validate the complete pending generation and bundled objects before replacing the stable manifest.</p></article>
-      <article class="card target"><span class="mono-label">REBUILD</span><h3>Validate again</h3><p>Aggregate rebuild validates the same bundle before counting CURRENT PASS or FAIL.</p></article>
-      <article class="card control"><span class="mono-label">EXPOSE</span><h3>Keep bad inputs visible</h3><p>Missing, mutated, stale, malformed, duplicate, incompatible-revision, and mixed-harness evidence remains non-passing.</p></article>
-    </div>
-  </section>
-
   <section class="section" id="runtime" aria-labelledby="runtime-title">
     <div class="section-heading">
       <span class="eyebrow">Declared runtime capabilities</span>
@@ -493,6 +494,16 @@ npx playwright install chromium</code></pre></article>
     <p class="callout blocked"><strong>Preflight failure.</strong> If Chromium cannot launch or observe the configured local page, the runner returns an infrastructure-blocked batch result before coordinator or target invocation. The runner retains preflight cleanup evidence.</p>
     <div class="two-column" style="margin-top: 1rem;">
       <div class="panel">
+        <h3>Runner-owned isolation</h3>
+        <ul>
+          <li>No Chrome channel, persistent profile, desktop browser, existing tab, or inherited authentication state.</li>
+          <li>Scenario evidence, broker identities, and ports have independent roots.</li>
+          <li>Browser-capable suites run as isolated single-supervisor batches.</li>
+          <li>Concurrent work cannot share browser context, profile, evidence, authority, or port state.</li>
+          <li>Unused brokers close after failure or interruption, and closure receipts remain retained.</li>
+        </ul>
+      </div>
+      <div class="panel">
         <h3>Bounded interaction rules</h3>
         <ul>
           <li>The supervisor passes browser assignment fields without renaming or paraphrasing.</li>
@@ -503,16 +514,6 @@ npx playwright install chromium</code></pre></article>
           <li>The wrapper does not accept arbitrary target evaluation or sleep actions.</li>
           <li>A role name is an accessible name. Unlabeled alert or status content uses exact visible text.</li>
           <li>Focus and accessibility-attribute observations can retain an intentionally seeded UX defect.</li>
-        </ul>
-      </div>
-      <div class="panel">
-        <h3>Runner-owned isolation</h3>
-        <ul>
-          <li>No Chrome channel, persistent profile, desktop browser, existing tab, or inherited authentication state.</li>
-          <li>Scenario evidence, broker identities, and ports have independent roots.</li>
-          <li>Browser-capable suites run as isolated single-supervisor batches.</li>
-          <li>Concurrent work cannot share browser context, profile, evidence, authority, or port state.</li>
-          <li>Unused brokers close after failure or interruption, and closure receipts remain retained.</li>
         </ul>
       </div>
     </div>
@@ -532,6 +533,22 @@ npx playwright install chromium</code></pre></article>
     <p class="callout blocked"><strong>BLOCKED does not waive cleanup.</strong> The missing-runtime-evidence UX case remains a static-evidence BLOCKED path. The blocked-route-owned-cleanup case must still prove complete runtime cleanup.</p>
   </section>
 
+  <section class="section" id="reporting" aria-labelledby="reporting-title">
+    <div class="section-heading">
+      <span class="eyebrow">Immutable publication</span>
+      <h2 id="reporting-title">A report is an evidence package</h2>
+      <p>After execution evidence is retained, each suite generation stores self-contained HTML, machine-readable metadata, and a content-addressed evidence bundle in one immutable directory.</p>
+    </div>
+    <div class="grid">
+      <article class="card"><span class="mono-label">PACKAGE</span><h3>Build one generation</h3><p>Write only the selected suite generation and its stable manifest. Update aggregate counts and the suite's global entry deterministically.</p></article>
+      <article class="card target"><span class="mono-label">RE-HASH</span><h3>Reopen every object</h3><p>Resolve checkpoint and identity roots, then re-hash receipts, bound artifacts, Judge rollout, extracted response, and output artifact.</p></article>
+      <article class="card control"><span class="mono-label">BIND</span><h3>Bind the manifests</h3><p>Metadata and the stable suite manifest bind the evidence-manifest digest. The generation digest covers metadata, HTML, and evidence manifest.</p></article>
+      <article class="card judge"><span class="mono-label">VALIDATE</span><h3>Validate before replacement</h3><p>Validate the complete pending generation and bundled objects before replacing the stable manifest.</p></article>
+      <article class="card target"><span class="mono-label">REBUILD</span><h3>Validate again</h3><p>Aggregate rebuild validates the same bundle before counting CURRENT PASS or FAIL.</p></article>
+      <article class="card control"><span class="mono-label">EXPOSE</span><h3>Keep bad inputs visible</h3><p>Missing, mutated, stale, malformed, duplicate, incompatible-revision, and mixed-harness evidence remains non-passing.</p></article>
+    </div>
+  </section>
+
   <section class="section" id="source" aria-labelledby="source-title">
     <div class="section-heading">
       <span class="eyebrow">Source and limit</span>
@@ -541,6 +558,12 @@ npx playwright install chromium</code></pre></article>
     <div class="source-panel">
       <div><h3>Agent-Owned Evaluation Suites source</h3><p>Use the source strategy for the complete operating text and inspect stable reports and durable results for current generation states.</p></div>
       <a class="source-path" href="../evals/agent-tests/README.md">evals/agent-tests/README.md</a>
+    </div>
+    <div class="grid" style="margin-top: 1rem;">
+      <article class="card"><span class="card-kicker">Primary strategy</span><h3>Operating contract</h3><p>The strategy page explains suite ownership, runner commands, evidence binding, runtime facilities, browser proof, and reporting limits.</p><a class="source-path" href="../evals/agent-tests/README.md">evals/agent-tests/README.md</a></article>
+      <article class="card control"><span class="card-kicker">Current catalog</span><h3>32-suite index</h3><p>The suite index is the current source for suite count, ordering, concurrency policy, and suite paths.</p><a class="source-path" href="../evals/agent-tests/suite-index.yaml">evals/agent-tests/suite-index.yaml</a></article>
+      <article class="card target"><span class="card-kicker">Common protocol</span><h3>Suite obligations</h3><p>The common protocol defines source authority, suite structure, supervision, judging, mutation, claims, and status vocabulary.</p><a class="source-path" href="../evals/agent-tests/AGENTS.md">evals/agent-tests/AGENTS.md</a></article>
+      <article class="card judge"><span class="card-kicker">Historical result</span><h3>26 suites and 78 scenarios</h3><p>The complete July 2026 report records governed terminal results for the initial rollout. It is historical evidence, not the current catalog source.</p><a class="source-path" href="../evals/agent-tests/results/2026-07-17-complete-agent-suites.md">evals/agent-tests/results/2026-07-17-complete-agent-suites.md</a></article>
     </div>
     <p class="callout boundary"><strong>Direct answer.</strong> The system maps each conceptual agent to an executable suite, binds runtime identity to retained evidence, limits concurrency, applies exact checks and independent judging, publishes immutable evidence bundles, and isolates exceptional runtime facilities. Missing proof remains non-passing or BLOCKED.</p>
   </section>

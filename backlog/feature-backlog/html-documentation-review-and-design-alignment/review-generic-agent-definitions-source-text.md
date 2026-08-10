@@ -34,21 +34,21 @@ Next Reconciliation At: 2026-08-10T00:59:00Z
 
 ## Active Execution Evidence
 
-Condition Type: root-execution
+Condition Type: delegated-work
 
-Owner: Dev Orchestrator in visible Codex task 019fe929-3695-7d20-93dc-63852ced1020
+Owner: Dev Orchestrator task 019fe929-3695-7d20-93dc-63852ced1020 coordinating Dev Merge Coordinator task /root/combine_generic_agent_candidate
 
-Evidence: The visible canonical root execution accepted the existing Running handoff, adopted isolated branch codex/review-generic-agent-definitions-source-text-orchestrator at main commit 9488c71873e19c99b523927bce14ec64da634158, confirmed that the stopped internal subagent left no source mutation or live claim, and acquired the exact file-provider update and backlog-path claims for this identity reconciliation.
+Evidence: Independent verification returned WARN only for the pre-existing historical provenance migration gap and confirmed every scoped content, source-mapping, lifecycle, link, accessibility, terminology, documentation freshness, and focused test criterion passes for accepted commit 82c88a17e17ce407ba225f491ba5ba59a2150d3a. Dev Merge Coordinator is preparing a fresh integration branch from current main for exact two-path delivery and integrated re-verification.
 
-Observed At: 2026-08-10T00:56:44Z
+Observed At: 2026-08-10T02:12:26Z
 
-Started At: 2026-08-10T00:56:44Z
+Started At: 2026-08-10T02:12:26Z
 
-Deadline or Expires At: 2026-08-10T04:56:44Z
+Deadline or Expires At: 2026-08-10T02:30:00Z
 
-Next Action: Acquire the exact activity=work claim, inventory the target page and authoritative sources, then dispatch the bounded source-text correction lane.
+Next Action: Integrate accepted commit 82c88a17e17ce407ba225f491ba5ba59a2150d3a on a fresh current-main branch, repeat focused checks there, merge to main, and observe exact delivery.
 
-Next Reconciliation At: 2026-08-10T01:10:44Z
+Next Reconciliation At: 2026-08-10T02:24:00Z
 
 Codex Task ID: 019fe929-3695-7d20-93dc-63852ced1020
 
@@ -58,11 +58,11 @@ Root Role: Dev Orchestrator
 
 Parent Task ID: 019fb057-1767-7ef2-b5fa-41f4417b20b3
 
-Branch: codex/review-generic-agent-definitions-source-text-orchestrator
+Branch: codex/integrate-review-generic-agent-definitions-source-text-019fe929
 
-Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/review-generic-agent-definitions-source-text-start-update
+Worktree: /private/tmp/review-generic-agent-definitions-main-integration-019fe929
 
-Phase: Provider identity reconciliation and implementation dispatch
+Phase: Main integration
 
 ## Summary
 

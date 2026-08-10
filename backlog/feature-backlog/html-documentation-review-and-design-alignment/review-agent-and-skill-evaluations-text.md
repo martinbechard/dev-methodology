@@ -1,6 +1,6 @@
 # Review and Correct Agent and Skill Evaluations Text
 
-Owner: Dev Orchestrator
+Owner: Dev Orchestrator (019fe928-e2d9-73d3-a647-7fac38731628)
 
 Status: Running
 
@@ -22,7 +22,9 @@ Branch: codex/review-agent-and-skill-evaluations-text-019fb057
 
 Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/review-agent-skill-evals-text-work-019fb057
 
-Phase: Canonical handoff reconciliation and source inventory
+Candidate Commit: 5043884e3a2d31ca0c86be33338447a306004578
+
+Phase: Narrow Codex reference configuration recovery
 
 Started At: 2026-08-10T00:49:58Z
 
@@ -32,17 +34,67 @@ Condition Type: root-execution
 
 Owner: Dev Orchestrator 019fe928-e2d9-73d3-a647-7fac38731628
 
-Evidence: Visible Codex task 019fe928-e2d9-73d3-a647-7fac38731628 is the active canonical root execution. The prior internal execution stopped without source mutation and released its claims; the retained isolated checkout codex/review-agent-and-skill-evaluations-text-019fb057 is clean at baseline 292b55f9578d04438ce5c8d3b34c64b11af0f907.
+Evidence: The same visible canonical Codex task accepted the durable recovery handoff after User Action Required to Ready commit f78028f7 and Ready to Starting commit bc144e64. The user's exact approved recovery is limited to adding MCP_AGENT_OPS_REFERENCE_ROOTS and MCP_AGENT_OPS_REFERENCE_NAMES to the existing mcp-agent-ops environment table in /Users/martinbechard/.codex/config.toml, with backup, TOML validation, and a fresh service/session reference_load verification. The broad user-scope installer is explicitly excluded. Clean candidate 5043884e3a2d31ca0c86be33338447a306004578 and all prior review and verification evidence remain preserved.
 
-Observed At: 2026-08-10T00:57:00Z
+Observed At: 2026-08-10T02:21:06Z
+
+Started At: 2026-08-10T02:20:43Z
+
+Deadline or Expires At: 2026-08-10T03:20:43Z
+
+Next Action: Commit this Starting to Running transition, acquire activity=work and the exact shared-install configuration resource, apply and verify only the two-line configuration repair, then correct the preserved singular-grammar finding and repeat fresh independent gates.
+
+Next Reconciliation At: 2026-08-10T02:35:43Z
+
+## Recovery Handoff Evidence
+
+Canonical Task: 019fe928-e2d9-73d3-a647-7fac38731628
+
+Recovery Scope: Narrow configuration-only repair of the existing Codex mcp-agent-ops environment, followed by a fresh service/session terminology load, the preserved singular-grammar correction, and completion of the remaining fresh review and verification gates.
+
+Excluded Action: Do not run the user-scope installer or replace installed skills and Agent definitions.
+
+Requested At: 2026-08-10T02:19:00Z
+
+Next Action: The same Dev Orchestrator records Starting to Running, acquires the exact Work Item activity=work claim and the shared configuration resource, performs the two-line documented repair with backup and TOML validation, then resumes the preserved candidate.
+
+Required Task Title: Implementing — Review Agent and Skill Evaluations Text
+
+## Prior Active Execution Evidence
+
+Condition Type: root-execution
+
+Owner: Dev Orchestrator 019fe928-e2d9-73d3-a647-7fac38731628
+
+Evidence: Visible Codex task 019fe928-e2d9-73d3-a647-7fac38731628 remains the active canonical root execution. Dev Coder assignment /root/evaluation_text_producer committed clean correction candidate 5043884e3a2d31ca0c86be33338447a306004578 after the fresh reviewer finding. The cumulative candidate remains limited to the same generator, focused test, and generated HTML paths; its 29 directly applicable tests, generator freshness, historical provenance validation, legacy-phrase rejection scan, and exact diff checks pass. The known unrelated Dev Backlog Steward source-contract test remains explicitly excluded without source or test weakening. Exact source claim review-agent-and-skill-evaluations-text-019fe928-source-paths-7 was released at clean candidate boundary. Fresh read-only Methodology Artifact Reviewer /root/evaluation_text_rereview and Dev Verifier /root/evaluation_text_reverify are independently evaluating the cumulative candidate from original baseline 292b55f9578d04438ce5c8d3b34c64b11af0f907, including a required retry of the aggregate terminology-provider load.
+
+Observed At: 2026-08-10T02:04:14Z
 
 Started At: 2026-08-10T00:57:00Z
 
 Deadline or Expires At: 2026-08-10T04:57:00Z
 
-Next Action: Acquire the exact Work Item activity=work claim, inventory the target page and authoritative sources, then dispatch the exact text correction lane.
+Next Action: Reconcile the fresh rereviewer and reverifier terminal verdicts against candidate 5043884e3a2d31ca0c86be33338447a306004578, then either enter an explicitly bounded correction or begin main-branch delivery only after both acceptance gates are GOOD.
 
-Next Reconciliation At: 2026-08-10T01:11:00Z
+Next Reconciliation At: 2026-08-10T02:19:14Z
+
+## User Direction Resolution
+
+Question: Do you approve running `python3 scripts/install-skills.py --adapter codex --scope user --install-agents --replace` to refresh the repository-owned user-level Codex skills and agents and update `/Users/martinbechard/.codex/config.toml` with the required `MCP_AGENT_OPS_REFERENCE_ROOTS` and `MCP_AGENT_OPS_REFERENCE_NAMES=terminology.md` configuration?
+
+Why User Input Is Required: The active Codex MCP configuration omits both terminology reference settings, causing the mandatory aggregate `reference_load` review to fail with `reference_not_allowed`. The repository-supported installer is the available configuration repair, but its atomic user-scope operation also replaces the bundle-owned installed skills and Agent definitions and installs newly available bundle-owned artifacts. That persistent user-level mutation requires explicit approval.
+
+Preserved Evidence: Clean candidate `5043884e3a2d31ca0c86be33338447a306004578` changes exactly `design/agent-and-skill-evaluations.html`, `scripts/build-agent-skill-evaluation-docs.py`, and `scripts/test_agent_skill_evaluation_docs.py`. Producer checks pass; the replacement reviewer reproduced only the provider configuration failure at catalog revision `bb1c7440506ced28c4ffa8fb00c89d9cb031a1208a80fbac12e4db2bce862ea7` and reported no candidate source defect before the provider gate stopped review.
+
+Prohibited Unattended Action: Do not run the user-scope installer, hand-edit the Codex configuration, bypass the reference provider, or resume review until the user answers this exact question.
+
+Asked At: 2026-08-10T02:12:00Z
+
+Asked In: Parent coordination task 019fb057-1767-7ef2-b5fa-41f4417b20b3
+
+Resolution: Approved narrow configuration-only recovery. Add exactly `MCP_AGENT_OPS_REFERENCE_ROOTS=/Users/martinbechard/.agents/references:/Users/martinbechard/.codex/references` and `MCP_AGENT_OPS_REFERENCE_NAMES=terminology.md` to the existing `[mcp_servers.mcp-agent-ops.env]` table in `/Users/martinbechard/.codex/config.toml`, with backup and TOML validation. Do not run the broad installer.
+
+Approval Resolution: User explicitly approved exposing `terminology.md` to the existing service and directed the narrow config-only repair in canonical task `019fe928-e2d9-73d3-a647-7fac38731628` on 2026-08-10.
 
 ## Starting Handoff Evidence
 

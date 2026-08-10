@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: Blocked
+Status: Ready
 
 Type: Feature
 
@@ -58,6 +58,8 @@ Target page: design/documentation-templates.html
 Blocker owner: Work Item review-documentation-templates-text.
 
 Blocked to Ready condition: review-documentation-templates-text is Completed with corrected content, fresh independent acceptance, and an immutable content baseline for design/documentation-templates.html.
+
+Dependency Resolution: Satisfied by completed Work Item `review-documentation-templates-text`, archived in provider commit `c708a2ffda95c467f423b639def5b0d1ab689b88`. Accepted content baseline `21be57cd695973578ad62203b92e9f4930f4c026` was delivered to main as `ce00efff7e299bc4ec1d1fa8993c1dc973726d53` with fresh documentation and methodology review PASS plus candidate and delivered-commit verification GOOD.
 
 ## Verification
 

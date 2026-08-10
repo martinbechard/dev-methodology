@@ -29,12 +29,12 @@ Pages may proceed independently. A design-alignment item may not start merely be
 ## Text Review Items
 
 - [Review AI-Assisted Coding Toolkit Index Text](review-index-page-text.md)
-- [Review Conceptual Agent and Skill Definitions Text](review-agent-and-skill-definitions-text.md)
+- [Review Conceptual Agent and Skill Definitions Text](../../completed-backlog/features/review-agent-and-skill-definitions-text.md)
 - [Review Agent and Skill Evaluations Text](review-agent-and-skill-evaluations-text.md)
-- [Review Agent-Owned Evaluation Suites Text](review-agent-owned-evaluation-suites-text.md)
+- [Review Agent-Owned Evaluation Suites Text](../../completed-backlog/features/review-agent-owned-evaluation-suites-text.md)
 - [Review Agent and Skill Specialization Examples Text](review-agent-skill-specialization-examples-text.md)
 - [Review Coding-Agent Runtime Configuration Text](review-agentic-configuration-text.md)
-- [Review Documentation Templates Text](review-documentation-templates-text.md)
+- [Review Documentation Templates Text](../../completed-backlog/features/review-documentation-templates-text.md)
 - [Review Generic Agent Definitions Source Text](review-generic-agent-definitions-source-text.md)
 - [Review Orchestrated Development Lifecycle Text](review-orchestrated-development-lifecycle-text.md)
 - [Review Agent Skill Architecture Text](review-skills-modularization-text.md)
