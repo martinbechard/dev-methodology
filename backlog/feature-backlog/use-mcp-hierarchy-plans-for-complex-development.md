@@ -30,17 +30,17 @@ Condition Type: delegated-work
 
 Owner: Dev Coder (/root/implement_complex_plan_skill), coordinated by Dev Orchestrator (019fe928-e31e-71e2-aaa8-7f9bef12c7b0)
 
-Evidence: The canonical execution remains active. Its bounded Dev Coder lane completed discovery and is implementing focused helper tests and the repository-owned package-API wrapper in the preserved source worktree. The first owned test artifact is present under skills/manage-complex-development-plan/scripts, and no shared source integration has started.
+Evidence: The canonical execution remains active. Its bounded Dev Coder lane implemented the repository-owned helper, planning skill, conditional Dev Orchestrator routing, focused assertions, and generator-owned projections in the preserved source worktree. Helper, skill, provenance, bundle, and generator checks pass; final diff inspection and candidate commit preparation are active, and no shared source integration has started.
 
-Observed At: 2026-08-10T01:44:54Z
+Observed At: 2026-08-10T01:59:25Z
 
 Started At: 2026-08-10T01:27:38Z
 
 Deadline or Expires At: 2026-08-10T02:27:38Z
 
-Next Action: Dev Coder completes the helper, skill, role routing, generated projections, focused verification, and a clean candidate commit; Dev Orchestrator then dispatches fresh independent source and methodology review.
+Next Action: Dev Coder records the clean candidate commit and exact verification evidence; Dev Orchestrator then dispatches fresh independent source and methodology review followed by independent verification.
 
-Next Reconciliation At: 2026-08-10T01:59:00Z
+Next Reconciliation At: 2026-08-10T02:13:30Z
 
 Codex Task ID: 019fe928-e31e-71e2-aaa8-7f9bef12c7b0
 
@@ -58,11 +58,11 @@ Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/use-mcp-hierarchy-
 
 Starting Head: 9488c71873e19c99b523927bce14ec64da634158
 
-Phase: helper implementation and focused tests
+Phase: candidate finalization
 
-Provider Update Claim: mcp-hierarchy-plans-evidence-update-019fe928; outcome SHARED_CHECKOUT_ACQUIRED; claim event 6681adb8-e2eb-4c80-acec-61dff8e82a15.
+Provider Update Claim: mcp-hierarchy-plans-evidence-update2-019fe928; outcome SHARED_CHECKOUT_ACQUIRED; claim event e0c5fcdd-6d58-491a-9dc3-0c44fe83d02e.
 
-Provider Path Claim: mcp-hierarchy-plans-evidence-path-019fe928; outcome SHARED_CHECKOUT_ACQUIRED; claim event 74a675f1-7144-475c-950b-a9f08ac7ca5c.
+Provider Path Claim: mcp-hierarchy-plans-evidence-path2-019fe928; outcome SHARED_CHECKOUT_ACQUIRED; claim event 208e0f27-cc32-4fa4-b703-4a6cb00884c0.
 
 ## Starting Handoff Evidence
 
