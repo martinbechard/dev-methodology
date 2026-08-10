@@ -2,7 +2,7 @@
 
 Owner: Dev Orchestrator task /root/create_document_outline
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
@@ -152,3 +152,19 @@ Approved at creation. The user explicitly requested on 2026-08-09 in canonical t
 - The HTML outline is a preparation and review artifact, not the final document.
 - The public renderer does not parse Markdown. The skill must create structured data from source evidence before invoking MCP.
 - Creation of this work item does not dispatch it while backlog crisis recovery remains active.
+
+## Completion Evidence
+
+Completed At: 2026-08-10T21:13:18Z
+
+Accepted Source Commit: 28627c0b421717b787035d82180cbddac6383c62
+
+Main Delivery Commit: 6e9ad25976beb349220b13cff5c3df93e0c3df7c
+
+Independent Review: Fresh methodology review returned GOOD. Fresh bounded final verification returned PASS / GOOD.
+
+Verification Result: Focused helper, evaluation-documentation, bundle-routing, skill, provenance, metadata, generated-documentation, hierarchy, support-checklist, and diff checks accepted the candidate. Integrated-main checks confirmed the affected tests and generated projections. The current integration Python reports CAPABILITY_UNAVAILABLE when mcp-agent-ops is absent, as required, instead of installing or discovering another runtime.
+
+Delivery Result: The accepted source commits were replayed onto a fresh integration branch and merged into main. The integrated skill, conditional role routing, focused probe, generated projections, and tests match the accepted candidate.
+
+Archive Path: backlog/completed-backlog/features/create-html-document-outlines-from-raw-information.md
