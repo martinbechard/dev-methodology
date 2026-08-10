@@ -38,17 +38,17 @@ Condition Type: root-execution
 
 Owner: Dev Orchestrator
 
-Evidence: Visible canonical root execution 019fe928-e317-7942-87c0-1a9235a9d2c8 remains active and owns the live exact activity=work claim visible-specialization-work-019fe928. Corrected cumulative candidate 8b93e9867d40a3f808e1662c65ccb824fe7f6bff has fresh independent review verdict GOOD and independent final verification PASS. The required main-integration project-files acquisition returned CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED on live claim review-generic-agent-definitions-source-text-integration-paths-019fe929. That claim owner acknowledged the wait and will explicitly notify this canonical task after its accepted main delivery is observed and both of its integration claims are released. No integration retry will occur before that notification, and completed review or verification gates will not be repeated.
+Evidence: Visible canonical root execution 019fe928-e317-7942-87c0-1a9235a9d2c8 remains active and owns the live exact activity=work claim visible-specialization-work-019fe928. Corrected cumulative candidate 8b93e9867d40a3f808e1662c65ccb824fe7f6bff has fresh independent review verdict GOOD and independent final verification PASS. After the contention owner supplied an explicit release notice, registry reconciliation confirmed both conflicting integration claims absent and the required project-files claim specialization-main-integration-019fe928 was acquired. Accepted commits were cherry-picked onto current main as f9495507b190d8503b06d11881bf8d8012ff13b8, e2c9cf9bf30d565444bc5a2add5a7bf2747a6c73, c2a061fd9dd64a34a4ecf2c8e7da339048b58723, and d0d6a16d6c88449e3ad5c7955f8498998c6f89c3; the integrated target blob equals the accepted source-tip blob. An independent read-only integrated-tree verifier is now running. Completed review, correction, and candidate-verification gates will not be repeated.
 
-Observed At: 2026-08-10T02:16:00Z
+Observed At: 2026-08-10T02:23:30Z
 
 Started At: 2026-08-10T00:56:30Z
 
 Deadline or Expires At: 2026-08-10T04:56:30Z
 
-Next Action: Wait for the explicit release notification from canonical task 019fe929-3695-7d20-93dc-63852ced1020; then recheck current main and retry the required project-files acquisition once before integrating the accepted candidate.
+Next Action: Receive the integrated-tree verifier's PASS or FAIL; on PASS, release the project-files claim and begin the terminal provider completion transaction, and on FAIL, preserve the delivered commits and reconcile only the reported integration defect.
 
-Next Reconciliation At: 2026-08-10T02:31:00Z
+Next Reconciliation At: 2026-08-10T02:38:30Z
 
 Canonical Conversation: 019fe928-e317-7942-87c0-1a9235a9d2c8
 
