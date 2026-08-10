@@ -34,19 +34,19 @@ Next Reconciliation At: 2026-08-10T00:59:00Z
 
 Condition Type: delegated-work
 
-Owner: Dev Coder /root/windows_portability_coder under visible Root Dev Orchestrator 019fe928-e2d8-7f91-91b2-bd27990a7414
+Owner: Fresh Dev Code Reviewer /root/windows_portability_code_review and Methodology Artifact Reviewer /root/windows_portability_artifact_review under visible Root Dev Orchestrator 019fe928-e2d8-7f91-91b2-bd27990a7414
 
-Evidence: Dev Coder task /root/windows_portability_coder completed the local candidate verification checkpoint: twelve portability tests and seventeen command smokes pass, and 39 of 51 classified test entry points pass. Twelve source-baseline methodology contract/import failures are preserved without out-of-scope mutation; isolated resource-claim reporting confirms a pre-existing missing outcome field unrelated to the portability lock diff. The owning evaluation-documentation generator produced one required source-snapshot digest update and its freshness check passes. The coder is paused during this evidence transaction.
+Evidence: Both fresh read-only reviewers confirmed candidate 512aeb37d47f84884c62a63da27bf8255fd6c5a1 and its clean source worktree, loaded the required contracts, and reached safe checkpoints. Code review is evaluating whole-file platform exclusions and Windows crash-release locking coverage; methodology review confirmed exact governed scope, generator-derived projections, unchanged historical provenance, and 160-of-160 inventory coverage while evaluating whether the supported-test workflow and README claims are truthful with twelve retained baseline failures.
 
-Observed At: 2026-08-10T01:45:05Z
+Observed At: 2026-08-10T01:58:27Z
 
-Started At: 2026-08-10T01:08:15Z
+Started At: 2026-08-10T01:58:27Z
 
 Deadline or Expires At: 2026-08-10T04:49:31Z
 
-Next Action: Complete this short provider transaction, reacquire the visible root's exact activity=work claim, then release Dev Coder to commit the scoped candidate and return a clean handoff for fresh independent review.
+Next Action: Complete this short provider transaction, reacquire the visible root's exact activity=work claim, then release both fresh reviewers to finish terminal verdicts and route every confirmed finding to an explicit disposition.
 
-Next Reconciliation At: 2026-08-10T02:00:05Z
+Next Reconciliation At: 2026-08-10T02:13:27Z
 
 ## Execution Identity
 
@@ -64,7 +64,7 @@ Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/make-python-window
 
 Current Phase: Implementing
 
-Work-Item Claim: Visible claim python-windows-portability-visible-work-4-019fe928 was released with handoff at the final-verification checkpoint only for this progress-evidence refresh; source mutation remains paused until the visible root reacquires the exact activity=work claim.
+Work-Item Claim: Visible claim python-windows-portability-visible-work-5-019fe928 was released with handoff at both reviewers' safe read-only checkpoints only for this review-evidence refresh; review resumes after the visible root reacquires the exact activity=work claim.
 
 ## Execution Handoff Reconciliation
 
