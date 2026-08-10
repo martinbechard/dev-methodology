@@ -1,8 +1,8 @@
 # Review and Correct Agent and Skill Evaluations Text
 
-Owner: Dev Orchestrator
+Owner: Unowned
 
-Status: Running
+Status: User Action Required
 
 Type: Feature
 
@@ -28,7 +28,7 @@ Phase: Fresh independent rereview and reverification
 
 Started At: 2026-08-10T00:49:58Z
 
-## Active Execution Evidence
+## Prior Active Execution Evidence
 
 Condition Type: root-execution
 
@@ -45,6 +45,24 @@ Deadline or Expires At: 2026-08-10T04:57:00Z
 Next Action: Reconcile the fresh rereviewer and reverifier terminal verdicts against candidate 5043884e3a2d31ca0c86be33338447a306004578, then either enter an explicitly bounded correction or begin main-branch delivery only after both acceptance gates are GOOD.
 
 Next Reconciliation At: 2026-08-10T02:19:14Z
+
+## User Action Required
+
+Question: Do you approve running `python3 scripts/install-skills.py --adapter codex --scope user --install-agents --replace` to refresh the repository-owned user-level Codex skills and agents and update `/Users/martinbechard/.codex/config.toml` with the required `MCP_AGENT_OPS_REFERENCE_ROOTS` and `MCP_AGENT_OPS_REFERENCE_NAMES=terminology.md` configuration?
+
+Why User Input Is Required: The active Codex MCP configuration omits both terminology reference settings, causing the mandatory aggregate `reference_load` review to fail with `reference_not_allowed`. The repository-supported installer is the available configuration repair, but its atomic user-scope operation also replaces the bundle-owned installed skills and Agent definitions and installs newly available bundle-owned artifacts. That persistent user-level mutation requires explicit approval.
+
+Preserved Evidence: Clean candidate `5043884e3a2d31ca0c86be33338447a306004578` changes exactly `design/agent-and-skill-evaluations.html`, `scripts/build-agent-skill-evaluation-docs.py`, and `scripts/test_agent_skill_evaluation_docs.py`. Producer checks pass; the replacement reviewer reproduced only the provider configuration failure at catalog revision `bb1c7440506ced28c4ffa8fb00c89d9cb031a1208a80fbac12e4db2bce862ea7` and reported no candidate source defect before the provider gate stopped review.
+
+Prohibited Unattended Action: Do not run the user-scope installer, hand-edit the Codex configuration, bypass the reference provider, or resume review until the user answers this exact question.
+
+Asked At: 2026-08-10T02:12:00Z
+
+Asked In: Parent coordination task 019fb057-1767-7ef2-b5fa-41f4417b20b3
+
+Resolution: Pending
+
+Approval Resolution: Pending
 
 ## Starting Handoff Evidence
 
