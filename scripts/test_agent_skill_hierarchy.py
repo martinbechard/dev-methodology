@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 import re
 import unittest
 import xml.etree.ElementTree as element_tree
@@ -19,6 +20,12 @@ SCRIPT_PATH = REPOSITORY_ROOT / "scripts" / "build-agent-skill-hierarchy.py"
 OUTPUT_PATH = REPOSITORY_ROOT / "design" / "agent-skill-hierarchy.svg"
 ROLE_MAP_PATH = REPOSITORY_ROOT / "design" / "agent-and-skill-definitions.html"
 ROLES_ROOT = REPOSITORY_ROOT / "agents" / "roles"
+GENERATED_TECHNOLOGY_REGISTRY_PATH = (
+    REPOSITORY_ROOT
+    / "design"
+    / "generated"
+    / "technology-skill-detection-registry.js"
+)
 DETECTION_REGISTRY_PATH = (
     REPOSITORY_ROOT
     / "skills"
@@ -38,6 +45,15 @@ def _load_module() -> ModuleType:
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
+
+
+def _read_javascript_assignment(path: Path) -> dict[str, object]:
+    text = path.read_text(encoding="utf-8")
+    payload = text.split(" = ", maxsplit=1)[1].rstrip(";\n")
+    value = json.loads(payload)
+    if not isinstance(value, dict):
+        raise AssertionError(f"Expected generated object in {path}")
+    return value
 
 
 class AgentSkillHierarchyTests(unittest.TestCase):
@@ -293,11 +309,41 @@ class AgentSkillHierarchyTests(unittest.TestCase):
         self.assertIn("Amber lines show skills an agent always uses", hierarchy_section)
         self.assertIn("Blue arrows show direct dependencies between agents", hierarchy_section)
         self.assertIn(
-            "Blue skill cards in the generated skill catalog have a separate meaning: they identify technology skills available for setup-time selection through technology detection.",
+            "Blue skill cards in the generated skill catalog have a separate meaning: they identify specialized technology and domain skills available for setup-time detection.",
             hierarchy_section,
         )
         self.assertNotIn("Role Agent Categories", role_map)
         self.assertNotIn("The role model has four operating categories", role_map)
+
+    def test_generated_catalog_marks_exact_detected_specialized_skills(self) -> None:
+        """Blue generated-catalog labels must come from the detection registry."""
+        role_map = ROLE_MAP_PATH.read_text(encoding="utf-8")
+        expected_skills = {
+            str(entry["skill"])
+            for entry in yaml.safe_load(
+                DETECTION_REGISTRY_PATH.read_text(encoding="utf-8")
+            )["skills"]
+            if entry["kind"] in {"technology", "domain"}
+        }
+        generated_registry = _read_javascript_assignment(
+            GENERATED_TECHNOLOGY_REGISTRY_PATH
+        )
+        generated_skills = {
+            str(entry["skill"])
+            for entry in generated_registry["skills"]
+            if entry["kind"] in {"technology", "domain"}
+        }
+
+        self.assertEqual(expected_skills, generated_skills)
+        self.assertIn("const technologySkills = new Set(", role_map)
+        self.assertIn(
+            "technologyData.skills.map((entry) => entry.skill)",
+            role_map,
+        )
+        self.assertIn(
+            'technologySkills.has(skill.name) ? "technology-skill" : "skill"',
+            role_map,
+        )
 
     def test_default_edges_are_balanced_and_selected_edges_use_full_intensity(self) -> None:
         """Unselected relationship types should be comparable while selected paths remain prominent."""
