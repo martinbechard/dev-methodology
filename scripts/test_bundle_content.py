@@ -1217,6 +1217,57 @@ def _scan_stale_identities(
 
 
 class BundleContentTests(unittest.TestCase):
+    def test_python_skill_requires_native_cross_platform_resource_handling(self) -> None:
+        """Keep Python temporary, path, process, and OS branching guidance portable."""
+
+        skill_text = (SKILLS_ROOT / "python" / "SKILL.md").read_text(encoding="utf-8")
+        normalized = " ".join(skill_text.split())
+
+        for clause in (
+            "standard-library tempfile APIs",
+            "TMPDIR, TEMP, or TMP",
+            "context managers for deterministic cleanup",
+            "pathlib",
+            "drive and UNC paths",
+            "shell-free subprocess argument vectors",
+            "shutil.which",
+            "sys.executable",
+            "explicit operating-system branch",
+        ):
+            with self.subTest(clause=clause):
+                self.assertIn(clause, normalized)
+        self.assertIn("Do not shell out to mktemp", normalized)
+
+    def test_native_windows_python_verification_is_documented_and_ci_owned(self) -> None:
+        """Keep the native workflow, supported runtimes, and local command aligned."""
+
+        workflow_path = REPOSITORY_ROOT / ".github/workflows/python-windows.yml"
+        verifier_path = REPOSITORY_ROOT / "scripts/test_python_windows_portability.py"
+        self.assertTrue(workflow_path.is_file())
+        self.assertTrue(verifier_path.is_file())
+
+        workflow = workflow_path.read_text(encoding="utf-8")
+        for clause in (
+            "runs-on: windows-2022",
+            '- "3.11"',
+            '- "3.12"',
+            '- "3.13"',
+            "python scripts/test_python_windows_portability.py --run-supported-tests",
+        ):
+            with self.subTest(clause=clause):
+                self.assertIn(clause, workflow)
+        self.assertNotIn("bash", workflow.lower())
+
+        readme = README_PATH.read_text(encoding="utf-8")
+        for clause in (
+            "Windows 11 and Windows Server 2022",
+            "CPython 3.11 through 3.13",
+            "python scripts/test_python_windows_portability.py --run-supported-tests",
+            "does not require WSL, Git Bash, mktemp, or Unix command emulation",
+        ):
+            with self.subTest(clause=clause):
+                self.assertIn(clause, readme)
+
     def test_run_agent_tournament_package_and_probe_are_aligned(self) -> None:
         """Keep tournament activation, limits, retry identity, and reporting aligned."""
 

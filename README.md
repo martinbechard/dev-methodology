@@ -766,3 +766,16 @@ python3 scripts/run-agent-skill-evals.py --validate-catalogs
 python3 -m unittest discover scripts
 PYTHONPATH=skills/project-wiki/scripts python3 -m unittest discover skills/project-wiki/scripts
 ```
+
+### Native Windows Python Portability
+
+Repository Python maintenance supports native Windows 11 and Windows Server 2022 with CPython 3.11 through 3.13. The python-windows workflow verifies the same contract on Windows Server 2022 for each supported Python version.
+
+Install the one test dependency and run the local verification from the repository root:
+
+```text
+python -m pip install PyYAML==6.0.2
+python scripts/test_python_windows_portability.py --run-supported-tests
+```
+
+The command compiles every tracked Python file and rejects an unclassified file. It imports corrected entry points, runs supported command smokes, and runs every test file classified for native Windows. The result reports each bounded POSIX-only evaluation exclusion and the host symbolic-link capability. The command does not require WSL, Git Bash, mktemp, or Unix command emulation.

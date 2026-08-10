@@ -5,6 +5,7 @@
 
 from __future__ import annotations
 
+import ast
 import gzip
 import importlib.util
 import io
@@ -24,6 +25,22 @@ from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[1]
 CLAIM_SCRIPT = ROOT / "skills" / "resource-claim-helper-command" / "scripts" / "claim.py"
+
+
+def _symlinks_are_available() -> bool:
+    """Return whether this host can create file-system symbolic links."""
+    with tempfile.TemporaryDirectory() as directory:
+        root = Path(directory)
+        target = root / "target"
+        target.write_text("target\n", encoding="utf-8")
+        try:
+            (root / "link").symlink_to(target.name)
+        except OSError:
+            return False
+        return True
+
+
+SYMLINKS_AVAILABLE = _symlinks_are_available()
 
 
 class ResourceClaimTests(unittest.TestCase):
@@ -54,6 +71,20 @@ class ResourceClaimTests(unittest.TestCase):
         self.git("config", "user.name", "Claim Test")
         self.git("add", ".")
         self.git("commit", "-m", "baseline")
+
+    def test_claim_helper_has_no_unconditional_platform_lock_import(self) -> None:
+        """Keep the command importable when either fcntl or msvcrt is unavailable."""
+
+        tree = ast.parse(CLAIM_SCRIPT.read_text(encoding="utf-8"), filename=str(CLAIM_SCRIPT))
+        imported_at_module_scope = {
+            alias.name
+            for node in tree.body
+            if isinstance(node, ast.Import)
+            for alias in node.names
+        }
+
+        self.assertNotIn("fcntl", imported_at_module_scope)
+        self.assertNotIn("msvcrt", imported_at_module_scope)
 
     def git(self, *arguments: str, worktree: Path | None = None) -> subprocess.CompletedProcess[str]:
         """Run Git in the requested temporary worktree and require success."""
@@ -1744,6 +1775,7 @@ class ResourceClaimTests(unittest.TestCase):
         self.assertEqual(registry_inode, self.registry_path().stat().st_ino)
         self.assertFalse((self.common_directory() / "resource-claims.lock").exists())
 
+    @unittest.skipIf(os.name == "nt", "The fixture directly exercises POSIX fcntl crash cleanup.")
     def test_registry_os_lock_is_released_when_holder_process_crashes(self) -> None:
         acquired = self.claim(*self.acquire_arguments("first"), "--file", "README.md")
         self.assertEqual(0, acquired.returncode, acquired.stderr)
@@ -3007,6 +3039,7 @@ class ResourceClaimTests(unittest.TestCase):
             ],
         )
 
+    @unittest.skipUnless(SYMLINKS_AVAILABLE, "Symbolic-link creation is unavailable.")
     def test_dangling_symlink_and_missing_target_remain_distinct_stable_paths(self) -> None:
         alias_path = self.repository / "src" / "future-alias.py"
         target_path = self.repository / "src" / "future-target.py"
@@ -3029,6 +3062,7 @@ class ResourceClaimTests(unittest.TestCase):
             self.output(acquired)["claim"]["files"],
         )
 
+    @unittest.skipUnless(SYMLINKS_AVAILABLE, "Symbolic-link creation is unavailable.")
     def test_absolute_symlink_scope_preserves_lexical_path_without_following_target(self) -> None:
         alias_path = self.repository / "src" / "guide-alias.md"
         alias_path.symlink_to("../docs/guide.md")
@@ -3053,6 +3087,7 @@ class ResourceClaimTests(unittest.TestCase):
         )
         self.assertEqual(0, target.returncode, target.stderr)
 
+    @unittest.skipUnless(SYMLINKS_AVAILABLE, "Symbolic-link creation is unavailable.")
     def test_exact_file_symlink_does_not_inherit_target_directory_kind(self) -> None:
         alias_path = self.repository / "src" / "docs-alias"
         alias_path.symlink_to("../docs")
