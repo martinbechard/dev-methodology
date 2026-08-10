@@ -12,6 +12,34 @@ Work Item ID: make-python-skill-and-project-scripts-windows-portable
 
 Completion: main-branch
 
+## Active Crisis Epoch
+
+Epoch ID: backlog-crisis-2026-08-10T06-32-31Z
+
+Declared At: 2026-08-10T06:32:31Z
+
+Coordinator: Dev Backlog Coordinator task 019fb057-1767-7ef2-b5fa-41f4417b20b3
+
+Trigger: The user explicitly retained crisis mode until all blocked work is completed, and current inventory contains six Blocked items.
+
+Current Crisis Set:
+
+- make-python-skill-and-project-scripts-windows-portable — corrected candidate is User Action Required only for external native-Windows workflow authority; it remains in the crisis set until terminal.
+- create-html-document-outlines-from-raw-information
+- render-structured-explanations-as-html
+- use-mcp-hierarchy-plans-for-complex-development
+- align-orchestrated-development-lifecycle-with-documentation-design-system
+- align-skills-modularization-with-documentation-design-system
+- align-wiki-skills-and-project-context-with-documentation-design-system
+
+Other Mutator Preservation: Canonical task 019fe9f2-a42b-77f2-9c2a-96c29e5f4e38 stopped at a safe boundary. Its source HEAD 1ac2a92e retains an unstaged ten-line scripts/test_bundle_content.py correction; primary main retains its staged provider-only phase update. No lifecycle, review, verification, integration, or cleanup continued after the pause.
+
+Entry Reset: The configured live claim registry was reset exactly once after preservation. Reset outcome RESET; event d92acd9e-8839-43b6-aea0-116b74ab4751; live claims empty; audit journal retained.
+
+Claim Boundary: No claim status, acquire, extend, heartbeat, release, report, maintenance, or additional reset operation is permitted after the entry reset until this crisis epoch exits.
+
+Exit Condition: Every crisis-set item is Completed, Abandoned, or Superseded; no active item remains Blocked; no crisis or unrelated item is being changed; every crisis change is committed; and every combined regression has a concrete disposition.
+
 ## Starting Handoff Evidence
 
 Parent Coordination Task: 019fb057-1767-7ef2-b5fa-41f4417b20b3
