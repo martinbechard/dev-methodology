@@ -5,13 +5,17 @@
 from __future__ import annotations
 
 import copy
+import importlib.util
 import json
+import os
 import shutil
 import subprocess
 import sys
 import tempfile
 import unittest
+from argparse import Namespace
 from pathlib import Path
+from types import ModuleType
 
 
 _HELPER_PATH = Path(__file__).with_name("outline.py")
@@ -26,10 +30,12 @@ class OutlineHelperTests(unittest.TestCase):
         self.temporary_directory = tempfile.TemporaryDirectory()
         self.addCleanup(self.temporary_directory.cleanup)
         self.workspace = Path(self.temporary_directory.name).resolve()
-        self.definition = self.workspace / "outline-definition.json"
-        shutil.copyfile(_EXAMPLE_PATH, self.definition)
         self.output_folder = Path(".codex/outlines/task-123")
         self.outline_name = "service-reliability"
+        output_root = self.workspace / self.output_folder
+        output_root.mkdir(parents=True)
+        self.definition = output_root / f"{self.outline_name}.json"
+        shutil.copyfile(_EXAMPLE_PATH, self.definition)
 
     def _arguments(self) -> list[str]:
         return [
@@ -87,6 +93,19 @@ class OutlineHelperTests(unittest.TestCase):
         root = self.workspace / self.output_folder
         return root / f"{self.outline_name}.json", root / f"{self.outline_name}.html"
 
+    def _load_helper_module(self) -> ModuleType:
+        """Load the helper without running its command-line entry point."""
+        module_name = f"outline_helper_under_test_{id(self)}"
+        spec = importlib.util.spec_from_file_location(module_name, _HELPER_PATH)
+        self.assertIsNotNone(spec)
+        self.assertIsNotNone(spec.loader if spec is not None else None)
+        module = importlib.util.module_from_spec(spec)
+        sys.modules[module_name] = module
+        self.addCleanup(sys.modules.pop, module_name, None)
+        assert spec.loader is not None
+        spec.loader.exec_module(module)
+        return module
+
     def test_capability_check_finds_the_installed_renderer_from_system_python(self) -> None:
         """The portable helper can re-exec through the installed mcp-agent-ops interpreter."""
         result, completed = self._invoke("capabilities")
@@ -108,6 +127,10 @@ class OutlineHelperTests(unittest.TestCase):
         self.assertGreaterEqual(int(built["section_count"]), 10)
         self.assertEqual(2, built["unresolved_question_count"])
         self.assertEqual(definition_before, self.definition.read_bytes())
+        self.assertEqual(
+            [html_path.name, json_path.name],
+            sorted(path.name for path in json_path.parent.iterdir()),
+        )
         canonical = json.loads(json_path.read_text(encoding="utf-8"))
         self.assertEqual("dev-methodology-document-outline", canonical["schema"])
         self.assertEqual(
@@ -147,11 +170,31 @@ class OutlineHelperTests(unittest.TestCase):
         for label, payload in cases:
             with self.subTest(label=label):
                 self._write_payload(payload)
+                definition_before = self.definition.read_bytes()
                 rejected = self._build(expected_exit=2)
                 self.assertEqual("INVALID_OUTLINE", rejected["outcome"])
                 json_path, html_path = self._artifact_paths()
-                self.assertFalse(json_path.exists())
+                self.assertEqual(self.definition, json_path)
+                self.assertEqual(definition_before, json_path.read_bytes())
                 self.assertFalse(html_path.exists())
+
+    def test_build_requires_the_canonical_json_path(self) -> None:
+        """Build rejects a staging definition so the outline has exactly two artifacts."""
+        staging = self.workspace / "staging-outline.json"
+        shutil.copyfile(self.definition, staging)
+
+        rejected, _ = self._invoke(
+            *self._arguments(),
+            "build",
+            "--definition",
+            str(staging),
+            expected_exit=2,
+        )
+
+        self.assertEqual("INVALID_DEFINITION_PATH", rejected["outcome"])
+        json_path, html_path = self._artifact_paths()
+        self.assertFalse(html_path.exists())
+        self.assertEqual([json_path.name], [path.name for path in json_path.parent.iterdir()])
 
     def test_duplicate_skipped_branch_text_and_empty_leaf_are_rejected(self) -> None:
         """The outline keeps one unambiguous heading tree with text only on nonempty leaves."""
@@ -180,6 +223,22 @@ class OutlineHelperTests(unittest.TestCase):
                 rejected = self._build(expected_exit=2)
                 self.assertEqual("INVALID_OUTLINE", rejected["outcome"])
                 self.assertIn(label.split()[0], str(rejected["error"]).lower())
+
+    def test_schema_version_requires_an_integer_not_bool_or_float(self) -> None:
+        """JSON values equal to one do not satisfy the integer version contract."""
+        original = self._payload()
+
+        for version in (True, 1.0):
+            with self.subTest(version=version):
+                payload = copy.deepcopy(original)
+                payload["version"] = version
+                self._write_payload(payload)
+                rejected = self._build(expected_exit=2)
+                self.assertEqual("INVALID_OUTLINE", rejected["outcome"])
+                self.assertIn("version", str(rejected["error"]).lower())
+
+        self._write_payload(original)
+        self.assertEqual("BUILT", self._build()["outcome"])
 
     def test_output_paths_cannot_escape_or_traverse_the_workspace(self) -> None:
         """Unsafe output folders and names fail before any outline artifact is written."""
@@ -210,6 +269,74 @@ class OutlineHelperTests(unittest.TestCase):
                     {"PATH_OUTSIDE_WORKSPACE", "INVALID_NAME"},
                 )
         self.assertFalse((self.workspace.parent / "escape").exists())
+
+    def test_html_output_rejects_hard_link_aliases_and_directories(self) -> None:
+        """Existing HTML targets must be unaliased regular files before publication."""
+        _json_path, html_path = self._artifact_paths()
+        outside = self.workspace / "outside.html"
+        outside.write_text("retained outside bytes\n", encoding="utf-8")
+        try:
+            os.link(outside, html_path)
+        except OSError as error:
+            self.skipTest(f"Hard links are unavailable: {error}")
+
+        rejected, _ = self._invoke(*self._arguments(), "inspect", expected_exit=2)
+        self.assertEqual("HARD_LINK_PATH_REJECTED", rejected["outcome"])
+        self.assertEqual("retained outside bytes\n", outside.read_text(encoding="utf-8"))
+
+        html_path.unlink()
+        html_path.mkdir()
+        rejected, _ = self._invoke(*self._arguments(), "inspect", expected_exit=2)
+        self.assertEqual("INVALID_OUTPUT_TARGET", rejected["outcome"])
+
+    def test_failed_renderer_write_keeps_the_previous_html_complete(self) -> None:
+        """A renderer failure in temporary storage does not alter the published HTML."""
+        self._build()
+        json_path, html_path = self._artifact_paths()
+        json_before = json_path.read_bytes()
+        html_before = html_path.read_bytes()
+        helper = self._load_helper_module()
+
+        def failing_renderer(_source: object, **options: object) -> str | Path:
+            output_folder = options.get("output_folder")
+            if output_folder is None:
+                return "<!doctype html><title>candidate</title>"
+            output_path = Path(str(output_folder)) / str(options["output_filename"])
+            output_path.write_text("partial renderer bytes", encoding="utf-8")
+            raise RuntimeError("renderer stopped before completion")
+
+        context = helper._context(
+            Namespace(
+                workspace=str(self.workspace),
+                output_folder=self.output_folder.as_posix(),
+                name=self.outline_name,
+            )
+        )
+        api = helper._OutlineApi(failing_renderer, "test", "test signature")
+
+        with self.assertRaisesRegex(RuntimeError, "stopped before completion"):
+            helper._build(context, Namespace(definition=str(json_path)), api)
+
+        self.assertEqual(json_before, json_path.read_bytes())
+        self.assertEqual(html_before, html_path.read_bytes())
+        self.assertEqual(
+            [html_path.name, json_path.name],
+            sorted(path.name for path in json_path.parent.iterdir()),
+        )
+
+    def test_native_windows_console_launcher_resolves_its_package_interpreter(self) -> None:
+        """A Windows console launcher uses the sibling package Python interpreter."""
+        helper = self._load_helper_module()
+        scripts = self.workspace / "Scripts"
+        scripts.mkdir()
+        launcher = scripts / "mcp-agent-ops.exe"
+        interpreter = scripts / "python.exe"
+        launcher.write_bytes(b"launcher")
+        interpreter.write_bytes(b"python")
+
+        self.assertEqual((interpreter, []), helper._windows_interpreter(launcher))
+        interpreter.unlink()
+        self.assertIsNone(helper._windows_interpreter(launcher))
 
     def test_inspect_detects_stale_html_and_rebuild_restores_sync(self) -> None:
         """A changed or missing projection is stale until regenerated from authoritative JSON."""

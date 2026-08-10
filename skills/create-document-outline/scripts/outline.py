@@ -13,6 +13,7 @@ import os
 import re
 import shlex
 import shutil
+import stat
 import sys
 import tempfile
 from collections.abc import Callable, Mapping, Sequence
@@ -141,6 +142,8 @@ def _reexec_interpreter() -> tuple[Path, list[str]] | None:
     if command is None:
         return None
     command_path = Path(command)
+    if os.name == "nt":
+        return _windows_interpreter(command_path)
     try:
         with command_path.open("r", encoding="utf-8") as executable:
             first_line = executable.readline().rstrip("\r\n")
@@ -166,6 +169,13 @@ def _reexec_interpreter() -> tuple[Path, list[str]] | None:
     if "python" not in interpreter.name.lower():
         return None
     return interpreter, interpreter_arguments
+
+
+def _windows_interpreter(command_path: Path) -> tuple[Path, list[str]] | None:
+    interpreter = command_path.with_name("python.exe")
+    if not interpreter.is_absolute() or not interpreter.is_file():
+        return None
+    return interpreter, []
 
 
 def _maybe_reexec(argv: Sequence[str]) -> None:
@@ -313,13 +323,48 @@ def _context(arguments: argparse.Namespace) -> _OutlineContext:
     html_path = output_root / f"{arguments.name}.html"
     _reject_symlink_components(workspace, json_path)
     _reject_symlink_components(workspace, html_path)
-    return _OutlineContext(
+    context = _OutlineContext(
         workspace=workspace,
         output_root=output_root,
         outline_name=arguments.name,
         json_path=json_path,
         html_path=html_path,
     )
+    _validate_html_target(context)
+    return context
+
+
+def _validate_html_target(context: _OutlineContext) -> None:
+    try:
+        target = os.lstat(context.html_path)
+    except FileNotFoundError:
+        return
+    except OSError as error:
+        raise _OutlineHelperError(
+            "INVALID_OUTPUT_TARGET",
+            "The HTML output target could not be inspected safely.",
+            path=str(context.html_path),
+            cause=str(error),
+        ) from error
+    if stat.S_ISLNK(target.st_mode):
+        raise _OutlineHelperError(
+            "SYMLINK_PATH_REJECTED",
+            "The HTML output target must not be a symbolic link.",
+            path=str(context.html_path),
+        )
+    if not stat.S_ISREG(target.st_mode):
+        raise _OutlineHelperError(
+            "INVALID_OUTPUT_TARGET",
+            "The HTML output target must be a regular file when it exists.",
+            path=str(context.html_path),
+        )
+    if target.st_nlink != 1:
+        raise _OutlineHelperError(
+            "HARD_LINK_PATH_REJECTED",
+            "The HTML output target must not have hard-link aliases.",
+            path=str(context.html_path),
+            link_count=target.st_nlink,
+        )
 
 
 def _make_safe_directory(context: _OutlineContext) -> None:
@@ -410,7 +455,7 @@ def _validate_section(
     section = _mapping(raw_section, path)
     required = {"title", "level", "kind", "scope", "sourceRefs", "children"}
     _exact_keys(section, required, path, optional={"reviewText"})
-    title = _string(section["title"], f"{path}.title")
+    _string(section["title"], f"{path}.title")
     level = section["level"]
     if not isinstance(level, int) or isinstance(level, bool) or level != expected_level:
         raise ValueError(
@@ -509,7 +554,11 @@ def _validate_outline(payload: dict[str, object]) -> _ValidatedOutline:
         },
         "outline",
     )
-    if payload["schema"] != _OUTLINE_SCHEMA or payload["version"] != _OUTLINE_VERSION:
+    if (
+        payload["schema"] != _OUTLINE_SCHEMA
+        or type(payload["version"]) is not int
+        or payload["version"] != _OUTLINE_VERSION
+    ):
         raise ValueError("outline has an unsupported schema or version.")
     title = _string(payload["title"], "outline.title")
     document_type = _string(payload["documentType"], "outline.documentType")
@@ -686,6 +735,13 @@ def _definition_path(value: str, context: _OutlineContext) -> Path:
             "--definition must use a .json extension.",
             definition=value,
         )
+    if path.resolve() != context.json_path.resolve():
+        raise _OutlineHelperError(
+            "INVALID_DEFINITION_PATH",
+            "--definition must identify the canonical JSON outline path.",
+            definition=value,
+            expected=str(context.json_path),
+        )
     return path
 
 
@@ -707,24 +763,70 @@ def _render_html(outline: _ValidatedOutline, api: _OutlineApi) -> str:
     return rendered
 
 
-def _canonical_json(payload: Mapping[str, object]) -> str:
-    return json.dumps(payload, indent=2, ensure_ascii=False) + "\n"
-
-
-def _atomic_write(path: Path, content: str) -> None:
-    descriptor, temporary_name = tempfile.mkstemp(
-        prefix=f".{path.name}.", suffix=".tmp", dir=path.parent
-    )
-    temporary_path = Path(temporary_name)
-    try:
-        with os.fdopen(descriptor, "w", encoding="utf-8", newline="\n") as output:
-            output.write(content)
-            output.flush()
-            os.fsync(output.fileno())
-        os.replace(temporary_path, path)
-    except Exception:
-        temporary_path.unlink(missing_ok=True)
-        raise
+def _render_validated_html(
+    context: _OutlineContext,
+    outline: _ValidatedOutline,
+    api: _OutlineApi,
+    expected_html: str,
+) -> str:
+    with tempfile.TemporaryDirectory(
+        prefix=f".{context.outline_name}-render-", dir=context.output_root
+    ) as temporary_directory:
+        temporary_root = Path(temporary_directory)
+        expected_path = temporary_root / context.html_path.name
+        rendered_path = api.render_hierarchy_html(
+            outline.render_source,
+            title=f"{outline.title} outline",
+            theme="outline",
+            numbering=True,
+            checkboxes=False,
+            completed_items=(),
+            output_filename=expected_path.name,
+            output_folder=temporary_root,
+        )
+        try:
+            observed_path = Path(rendered_path)
+        except TypeError as error:
+            raise _OutlineHelperError(
+                "CAPABILITY_UNAVAILABLE",
+                "The renderer did not return an HTML output path.",
+                exit_code=3,
+            ) from error
+        if observed_path.resolve() != expected_path.resolve():
+            raise _OutlineHelperError(
+                "CAPABILITY_UNAVAILABLE",
+                "The renderer returned an unexpected HTML output path.",
+                exit_code=3,
+                expected=str(expected_path),
+                observed=str(rendered_path),
+            )
+        try:
+            rendered_target = os.lstat(expected_path)
+        except OSError as error:
+            raise _OutlineHelperError(
+                "CAPABILITY_UNAVAILABLE",
+                "The renderer did not create a readable temporary HTML file.",
+                exit_code=3,
+                cause=str(error),
+            ) from error
+        if not stat.S_ISREG(rendered_target.st_mode) or rendered_target.st_nlink != 1:
+            raise _OutlineHelperError(
+                "CAPABILITY_UNAVAILABLE",
+                "The renderer did not create one unaliased regular temporary HTML file.",
+                exit_code=3,
+            )
+        actual_html = expected_path.read_text(encoding="utf-8")
+        if actual_html != expected_html:
+            raise _OutlineHelperError(
+                "STALE_HTML",
+                "The renderer output differs from the expected in-memory projection.",
+                exit_code=4,
+                json_path=str(context.json_path),
+                html_path=str(context.html_path),
+            )
+        _validate_html_target(context)
+        os.replace(expected_path, context.html_path)
+        return actual_html
 
 
 def _sha256(content: bytes) -> str:
@@ -749,41 +851,14 @@ def _build(
     except (OSError, UnicodeError, ValueError) as error:
         raise _OutlineHelperError("INVALID_OUTLINE", str(error)) from error
     expected_html = _render_html(outline, api)
-    canonical_json = _canonical_json(outline.payload)
     _make_safe_directory(context)
-    _atomic_write(context.json_path, canonical_json)
-    rendered_path = api.render_hierarchy_html(
-        outline.render_source,
-        title=f"{outline.title} outline",
-        theme="outline",
-        numbering=True,
-        checkboxes=False,
-        completed_items=(),
-        output_filename=context.html_path.name,
-        output_folder=context.output_root,
-    )
-    if Path(rendered_path).resolve() != context.html_path.resolve():
-        raise _OutlineHelperError(
-            "CAPABILITY_UNAVAILABLE",
-            "The renderer returned an unexpected HTML output path.",
-            exit_code=3,
-            expected=str(context.html_path),
-            observed=str(rendered_path),
-        )
-    actual_html = context.html_path.read_text(encoding="utf-8")
-    if actual_html != expected_html:
-        raise _OutlineHelperError(
-            "STALE_HTML",
-            "The renderer output differs from the expected in-memory projection.",
-            exit_code=4,
-            json_path=str(context.json_path),
-            html_path=str(context.html_path),
-        )
+    actual_html = _render_validated_html(context, outline, api, expected_html)
+    canonical_bytes = definition_path.read_bytes()
     return _result(
         "BUILT",
         json_path=str(context.json_path),
         html_path=str(context.html_path),
-        json_sha256=_sha256(canonical_json.encode("utf-8")),
+        json_sha256=_sha256(canonical_bytes),
         html_sha256=_sha256(actual_html.encode("utf-8")),
         synchronized=True,
         **_summary(outline),
@@ -859,8 +934,9 @@ def execute(argv: Sequence[str] | None = None) -> tuple[int, dict[str, object]]:
         projection state respectively.
 
     Side effects:
-        Build writes one canonical JSON file and one sibling HTML projection inside the
-        selected workspace. Capabilities and inspect do not modify outline artifacts.
+        Build validates one canonical JSON file and atomically replaces its sibling HTML
+        projection inside the selected workspace. Capabilities and inspect do not modify
+        outline artifacts.
     """
     try:
         arguments = _parser().parse_args(list(sys.argv[1:] if argv is None else argv))

@@ -139,8 +139,8 @@ Task-ID-Evidence: historical-unknown
     <div class="section-heading"><h2 id="coverage-title">Coverage and case catalogs</h2><p>Current catalog inventory remains separate from the selected historical Campaign Evaluation results. Probe records retain executable-case, agent-scenario, and Workflow associations without turning declarations into verified runs.</p></div>
     <h3>Current catalog inventory</h3>
     <div class="grid" style="margin-top:1rem">
-      <article class="metric"><strong>144</strong><span>Bundled skills</span></article>
-      <article class="metric"><strong>142</strong><span>Diagnostic probe records</span></article>
+      <article class="metric"><strong>146</strong><span>Bundled skills</span></article>
+      <article class="metric"><strong>143</strong><span>Diagnostic probe records</span></article>
       <article class="metric"><strong>32</strong><span>Conceptual agents</span></article>
       <article class="metric"><strong>32</strong><span>Current Test suites</span></article>
       <article class="metric"><strong>120</strong><span>Current Test suite scenarios</span></article>
@@ -152,7 +152,7 @@ Task-ID-Evidence: historical-unknown
       <article class="metric"><strong>5</strong><span>Workflow packs</span></article>
     </div>
     <div class="grid" style="margin-top:1rem">
-      <article class="method-card"><h3>Skill catalog states</h3><ul><li>0 skills have a direct governed Evaluation result.</li><li>142 skills have a direct diagnostic probe declaration but no direct Evaluation result.</li><li>1 skill has only indirect current Test suite coverage without a direct probe or Evaluation result.</li><li>1 skill has no recorded evaluation evidence.</li><li>56 skills are named by at least one scenario in the selected Campaign; 88 skills are not.</li></ul><p><strong>No skill-level Evaluation result:</strong> The selected Test report publishes no skill-level Evaluation results. Linked PASS results remain agent-scenario evidence.</p></article>
+      <article class="method-card"><h3>Skill catalog states</h3><ul><li>0 skills have a direct governed Evaluation result.</li><li>143 skills have a direct diagnostic probe declaration but no direct Evaluation result.</li><li>1 skill has only indirect current Test suite coverage without a direct probe or Evaluation result.</li><li>2 skills have no recorded evaluation evidence.</li><li>56 skills are named by at least one scenario in the selected Campaign; 90 skills are not.</li></ul><p><strong>No skill-level Evaluation result:</strong> The selected Test report publishes no skill-level Evaluation results. Linked PASS results remain agent-scenario evidence.</p></article>
     </div>
   </section>
 
@@ -167,7 +167,7 @@ Task-ID-Evidence: historical-unknown
       <div><dt>Evidence level</dt><dd>Governed agent-suite Campaign</dd></div>
       <div><dt>Source snapshot mode</dt><dd>Deterministic source snapshot</dd></div>
       <div><dt>Wall-clock build time</dt><dd>Not retained; deterministic output does not claim an unsupported generation timestamp</dd></div>
-      <div><dt>Current source digest</dt><dd><code>d64ede7b16e39f811ec1da3e80798fc95050d3c1c9ec7569ecde762f7be33e8b</code>; regenerated and compared by the focused check</dd></div>
+      <div><dt>Current source digest</dt><dd><code>ffc40c4a397fbaad4eb8a109d340f92e5bdd0599227f8a10d3fa03b732d88556</code>; regenerated and compared by the focused check</dd></div>
     </dl>
     <div style="margin-top:2rem"><h3>Evaluation results</h3></div>
     <div class="grid" style="margin-top:1rem">
@@ -1834,12 +1834,12 @@ Task-ID-Evidence: historical-unknown
     </article>
 
     <article class="evaluation-card agent-card" id="agent-dev-backlog-coordinator"
-      data-kind="agent" data-status="missing" data-search="dev-backlog-coordinator acts as the parent backlog coordinator across the effective work-item provider, maintaining the active queue, directly executing authorized coordinator-owned lifecycle operations through the selected management skill, diagnosing and correcting blocked work, owning declared solo crisis delivery, and cleaning up terminal executions. missing provider-selected-ten-item-dispatch blockage-entry-disables-secondary-dispatch selected-commit-retry-and-closeout ambiguous-dispatch-and-user-decision-integrity provider-selector-boundaries same-thread-user-action-resumption exhausted-correction-disposition combined-regression-after-independent-merges blockage-recovery-resumes-secondary-dispatch pass 0, blocked 0, fail 0">
+      data-kind="agent" data-status="missing" data-search="dev-backlog-coordinator acts as the parent backlog coordinator across the effective work-item provider, maintaining the active queue, directly executing authorized coordinator-owned lifecycle operations through the selected management skill, diagnosing and correcting blocked work, coordinating declared solo crisis delivery, and cleaning up terminal executions. missing provider-selected-ten-item-dispatch blockage-entry-disables-secondary-dispatch selected-commit-retry-and-closeout ambiguous-dispatch-and-user-decision-integrity provider-selector-boundaries same-thread-user-action-resumption exhausted-correction-disposition combined-regression-after-independent-merges blockage-recovery-resumes-secondary-dispatch pass 0, blocked 0, fail 0">
       <div class="card-heading">
         <div><span class="card-kicker">Conceptual agent</span><h3>dev-backlog-coordinator</h3></div>
         <span class="status status--missing">No result in the selected Test report</span>
       </div>
-      <p>Acts as the parent backlog coordinator across the effective work-item provider, maintaining the active queue, directly executing authorized Coordinator-owned lifecycle operations through the selected management skill, diagnosing and correcting Blocked work, owning declared SOLO crisis delivery, and cleaning up terminal executions.</p>
+      <p>Acts as the parent backlog coordinator across the effective work-item provider, maintaining the active queue, directly executing authorized Coordinator-owned lifecycle operations through the selected management skill, diagnosing and correcting Blocked work, coordinating declared SOLO crisis delivery, and cleaning up terminal executions.</p>
       <p class="source-row">
         <a href="../agents/roles/dev-activities/dev-backlog-coordinator.role.yaml">Role source</a> &middot;
         <a href="../evals/agent-tests/dev-backlog-coordinator/suite.yaml">Suite</a> &middot;
@@ -1952,12 +1952,12 @@ Task-ID-Evidence: historical-unknown
     </article>
 
     <article class="evaluation-card agent-card" id="agent-dev-backlog-watchdog"
-      data-kind="agent" data-status="missing" data-search="dev-backlog-watchdog observes a sustained work-item queue on a schedule and reports only actionable evidence or one concise healthy-cycle result without mutating coordination state. missing healthy-cycle-stays-quiet suspected-stall-alert satisfied-exit-condition-alert blocked-inventory-reconciliation active-blockage-continues-without-repeat blockage-exit-condition-recovery-alert terminal-archive-pause-does-not-pause-cleanup terminal-default-archival-notification terminal-preserved-branch-removable-worktree terminal-aggregate-all-anomalies terminal-complete-no-action terminal-preservation-alert-deduplication terminal-failed-abandoned-status-aware terminal-claim-applicability-evidence pass 0, blocked 0, fail 0">
+      data-kind="agent" data-status="missing" data-search="dev-backlog-watchdog observes a sustained work-item queue and reports only a specific coordinator decision that requires attention. missing healthy-cycle-stays-quiet suspected-stall-alert satisfied-exit-condition-alert blocked-inventory-reconciliation active-blockage-continues-without-repeat blockage-exit-condition-recovery-alert terminal-archive-pause-does-not-pause-cleanup terminal-default-archival-notification terminal-preserved-branch-removable-worktree terminal-aggregate-all-anomalies terminal-complete-no-action terminal-preservation-alert-deduplication terminal-failed-abandoned-status-aware terminal-claim-applicability-evidence pass 0, blocked 0, fail 0">
       <div class="card-heading">
         <div><span class="card-kicker">Conceptual agent</span><h3>dev-backlog-watchdog</h3></div>
         <span class="status status--missing">No result in the selected Test report</span>
       </div>
-      <p>Observes a sustained work-item queue on a schedule and reports only actionable evidence or one concise healthy-cycle result without mutating coordination state.</p>
+      <p>Observes a sustained work-item queue and reports only a specific Coordinator decision that requires attention.</p>
       <p class="source-row">
         <a href="../agents/roles/dev-activities/dev-backlog-watchdog.role.yaml">Role source</a> &middot;
         <a href="../evals/agent-tests/dev-backlog-watchdog/suite.yaml">Suite</a> &middot;
@@ -2320,7 +2320,7 @@ Task-ID-Evidence: historical-unknown
       <label class="field" for="skill-status">Coverage status<select id="skill-status" data-filter-status="skill"><option value="all">All statuses</option><option value="direct-governed">Direct governed skill result</option><option value="direct-probe">Direct diagnostic probe declaration</option><option value="indirect-only">Indirect agent-scenario evidence only</option><option value="none">No recorded evaluation evidence</option></select></label>
       <button type="button" data-filter-clear="skill">Clear skill filters</button>
     </div>
-    <p class="result-count" id="skill-result-count" aria-live="polite">Showing all 144 skills.</p>
+    <p class="result-count" id="skill-result-count" aria-live="polite">Showing all 146 skills.</p>
     <noscript><p class="scope-note">JavaScript is disabled. All skill entries remain visible; text and status filtering are optional enhancements.</p></noscript>
     <div class="catalog" id="skill-catalog">
     <article class="evaluation-card skill-card" id="skill-agent-harness"
@@ -2907,6 +2907,36 @@ Task-ID-Evidence: historical-unknown
       <ul class="link-list"><li><a href="../evals/agent-tests/dev-documentation-writer/scenarios.yaml">dev-documentation-writer / source-gaps</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li></ul>
       <dl class="compact-list">
         <div><dt>Linked Campaign Evaluation results</dt><dd>Linked agent-scenario Evaluation result categories: BLOCKED</dd></div>
+        <div><dt>Evidence level</dt><dd>Agent-scenario evidence only; no skill-level Evaluation result</dd></div>
+        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-scenario Evaluation result does not establish a skill-level Evaluation result. The selected Test report publishes no skill-level Evaluation result.</dd></div>
+      </dl>
+    </article>
+
+    <article class="evaluation-card skill-card" id="skill-create-document-outline"
+      data-kind="skill" data-status="direct-probe" data-search="create-document-outline create a source-traceable json document outline and synchronized review html before writing a large or complex document. documentation-methodology probe-create-document-outline no selected campaign evaluation result link">
+      <div class="card-heading">
+        <div><span class="card-kicker">Skill</span><h3>create-document-outline</h3></div>
+        <span class="status status--direct-probe">Direct diagnostic probe declaration</span>
+      </div>
+      <p>Create a source-traceable JSON document outline and synchronized review HTML before writing a large or complex document.</p>
+      <p class="source-row"><a href="../skills/create-document-outline/SKILL.md">Skill source</a></p>
+      <h4>Direct diagnostic probe declaration</h4>
+
+        <dl class="compact-list">
+          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-create-document-outline</a></dd></div>
+          <div><dt>Coverage state</dt><dd>declared: catalog declaration, not a verified run</dd></div>
+          <div><dt>Kind</dt><dd>artifact-contract</dd></div>
+          <div><dt>Executable cases</dt><dd>None declared</dd></div>
+          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-documentation-writer-happy</a>, <a href="../evals/agent-scenarios.yaml">methodology-maintainer-happy</a>, <a href="../evals/agent-scenarios.yaml">wiki-ingester-happy</a>, <a href="../evals/agent-scenarios.yaml">wiki-writer-happy</a></dd></div>
+          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">documentation-methodology</a>, <a href="../evals/workflow-packs.yaml">wiki-lifecycle</a></dd></div>
+          <div><dt>Deterministic checks</dt><dd>skill-read-trace, artifact-structure, source-link-resolution, no-sensitive-output, readiness-consistency</dd></div>
+          <div><dt>Model rubric</dt><dd>artifact-contract</dd></div>
+        </dl>
+
+      <h4>Selected Campaign scenario links</h4>
+      <p><span class="status status--missing">No selected Campaign scenario link</span></p><p>No scenario in the selected Campaign currently names this skill as a target skill.</p>
+      <dl class="compact-list">
+        <div><dt>Linked Campaign Evaluation results</dt><dd>No selected Campaign Evaluation result link</dd></div>
         <div><dt>Evidence level</dt><dd>Agent-scenario evidence only; no skill-level Evaluation result</dd></div>
         <div><dt>Limitation</dt><dd>A probe declaration or linked agent-scenario Evaluation result does not establish a skill-level Evaluation result. The selected Test report publishes no skill-level Evaluation result.</dd></div>
       </dl>
@@ -4142,6 +4172,25 @@ Task-ID-Evidence: historical-unknown
       </dl>
     </article>
 
+    <article class="evaluation-card skill-card" id="skill-manage-complex-development-plan"
+      data-kind="skill" data-status="none" data-search="manage-complex-development-plan maintain a task-owned json and html execution plan for complex development through deterministic mcp-agent-ops hierarchy commands. development-practice none no selected campaign evaluation result link">
+      <div class="card-heading">
+        <div><span class="card-kicker">Skill</span><h3>manage-complex-development-plan</h3></div>
+        <span class="status status--none">No recorded evaluation evidence</span>
+      </div>
+      <p>Maintain a task-owned JSON and HTML execution plan for complex development through deterministic mcp-agent-ops hierarchy commands.</p>
+      <p class="source-row"><a href="../skills/manage-complex-development-plan/SKILL.md">Skill source</a></p>
+      <h4>Direct diagnostic probe declaration</h4>
+      <p><span class="status status--missing">No direct probe declaration</span></p><p>No diagnostic probe is declared for this skill.</p>
+      <h4>Selected Campaign scenario links</h4>
+      <p><span class="status status--missing">No selected Campaign scenario link</span></p><p>No scenario in the selected Campaign currently names this skill as a target skill.</p>
+      <dl class="compact-list">
+        <div><dt>Linked Campaign Evaluation results</dt><dd>No selected Campaign Evaluation result link</dd></div>
+        <div><dt>Evidence level</dt><dd>Agent-scenario evidence only; no skill-level Evaluation result</dd></div>
+        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-scenario Evaluation result does not establish a skill-level Evaluation result. The selected Test report publishes no skill-level Evaluation result.</dd></div>
+      </dl>
+    </article>
+
     <article class="evaluation-card skill-card" id="skill-manage-future-ideas"
       data-kind="skill" data-status="direct-probe" data-search="manage-future-ideas capture, inventory, validate, and deliberately promote lightweight file-backed future ideas without treating them as work items. development-practice probe-manage-future-ideas no selected campaign evaluation result link">
       <div class="card-heading">
@@ -5193,12 +5242,12 @@ Task-ID-Evidence: historical-unknown
     </article>
 
     <article class="evaluation-card skill-card" id="skill-resolve-backlog-blockage"
-      data-kind="skill" data-status="direct-probe" data-search="resolve-backlog-blockage resolve a declared backlog blockage sequentially in one coordinator task without claims or delegated delivery. development-practice probe-resolve-backlog-blockage no selected campaign evaluation result link">
+      data-kind="skill" data-status="direct-probe" data-search="resolve-backlog-blockage resolve a declared backlog blockage through one separate work-item task at a time while the coordinator dispatches and monitors. development-practice probe-resolve-backlog-blockage no selected campaign evaluation result link">
       <div class="card-heading">
         <div><span class="card-kicker">Skill</span><h3>resolve-backlog-blockage</h3></div>
         <span class="status status--direct-probe">Direct diagnostic probe declaration</span>
       </div>
-      <p>Resolve a declared backlog blockage sequentially in one Coordinator task without claims or delegated delivery.</p>
+      <p>Resolve a declared backlog blockage through one separate work-item task at a time while the Coordinator dispatches and monitors.</p>
       <p class="source-row"><a href="../skills/resolve-backlog-blockage/SKILL.md">Skill source</a></p>
       <h4>Direct diagnostic probe declaration</h4>
 
@@ -5742,12 +5791,12 @@ available.
     </article>
 
     <article class="evaluation-card skill-card" id="skill-set-multitask-mode"
-      data-kind="skill" data-status="direct-probe" data-search="set-multitask-mode enable dispatch to secondary threads after the condition requiring solo work has ended. development-practice probe-set-multitask-mode linked agent-scenario evaluation result categories: fail">
+      data-kind="skill" data-status="direct-probe" data-search="set-multitask-mode re-enable parallel dispatch after the condition requiring serialized work has ended. development-practice probe-set-multitask-mode linked agent-scenario evaluation result categories: fail">
       <div class="card-heading">
         <div><span class="card-kicker">Skill</span><h3>set-multitask-mode</h3></div>
         <span class="status status--direct-probe">Direct diagnostic probe declaration</span>
       </div>
-      <p>Enable dispatch to secondary threads after the condition requiring solo work has ended.</p>
+      <p>Re-enable parallel dispatch after the condition requiring serialized work has ended.</p>
       <p class="source-row"><a href="../skills/set-multitask-mode/SKILL.md">Skill source</a></p>
       <h4>Direct diagnostic probe declaration</h4>
 
@@ -5772,12 +5821,12 @@ available.
     </article>
 
     <article class="evaluation-card skill-card" id="skill-set-solo-mode"
-      data-kind="skill" data-status="direct-probe" data-search="set-solo-mode disable dispatch to secondary threads while the current agent continues work itself. development-practice probe-set-solo-mode linked agent-scenario evaluation result categories: fail">
+      data-kind="skill" data-status="direct-probe" data-search="set-solo-mode serialize dispatch so the dispatcher runs exactly one separate work-item task at a time. development-practice probe-set-solo-mode linked agent-scenario evaluation result categories: fail">
       <div class="card-heading">
         <div><span class="card-kicker">Skill</span><h3>set-solo-mode</h3></div>
         <span class="status status--direct-probe">Direct diagnostic probe declaration</span>
       </div>
-      <p>Disable dispatch to secondary threads while the current Agent continues work itself.</p>
+      <p>Serialize dispatch so the dispatcher runs exactly one separate work-item task at a time.</p>
       <p class="source-row"><a href="../skills/set-solo-mode/SKILL.md">Skill source</a></p>
       <h4>Direct diagnostic probe declaration</h4>
 

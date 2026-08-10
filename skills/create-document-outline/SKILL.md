@@ -77,6 +77,10 @@ Use scripts/outline.py from this skill package. The helper imports and signature
 
 Do not improvise another parser, renderer wrapper, or HTML writer. Do not install, emulate, or change mcp-agent-ops when the capability is unavailable.
 
+On native Windows, the helper can use python.exe beside the installed mcp-agent-ops.exe console launcher. The helper returns CAPABILITY_UNAVAILABLE when neither the active interpreter nor that installed package interpreter provides the API.
+
+The helper renders to a validated temporary directory. It rejects symbolic links, hard-link aliases, and non-file HTML targets. It atomically replaces the final HTML only after the temporary bytes match the in-memory rendering. A renderer failure leaves the previous HTML unchanged.
+
 Run the capability check first:
 
 ```bash
@@ -97,6 +101,8 @@ Use the ignored task-owned path by default:
 
 Supply the canonical absolute workspace path, the project-relative output folder, and a safe outline name. Keep the definition JSON inside that workspace.
 
+Create the JSON definition directly at the authoritative path in this pair. The helper accepts only this canonical JSON path. It does not create or retain a staging definition.
+
 Build the synchronized pair:
 
 ```bash
@@ -104,10 +110,10 @@ python3 [skill-root]/scripts/outline.py \
   --workspace /absolute/project \
   --output-folder .codex/outlines/task-123 \
   --name document-outline \
-  build --definition /absolute/project/outline-definition.json
+  build --definition /absolute/project/.codex/outlines/task-123/document-outline.json
 ```
 
-BUILT means the canonical JSON and derived HTML bytes are synchronized. Decide from the structured outcome, not only the process exit code.
+BUILT means the unchanged canonical JSON and derived HTML bytes are synchronized. The output folder contains no third outline artifact. Decide from the structured outcome, not only the process exit code.
 
 ## Evidence Synthesis
 
@@ -141,7 +147,7 @@ Give the reviewer the self-contained HTML and the source inventory. Ask for:
 - conflicts that need clearer separation; and
 - questions and evidence gaps that remain open.
 
-Apply feedback only to the JSON definition. Do not modify original evidence to make the outline pass review. Rebuild HTML after each correction and run inspect again.
+Apply feedback only to the canonical JSON. Do not modify original evidence to make the outline pass review. Rebuild HTML after each correction and run inspect again.
 
 Set review.status to accepted only when:
 

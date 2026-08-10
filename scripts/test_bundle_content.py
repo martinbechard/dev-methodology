@@ -3092,6 +3092,19 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("- create-document-outline", readme_text)
         self.assertIn("source-traceable JSON outline", readme_text)
 
+        probes = load_yaml_object(REPOSITORY_ROOT / "evals" / "skill-probes.yaml")
+        probe = next(
+            entry
+            for entry in probes["probes"]
+            if entry["id"] == "probe-create-document-outline"
+        )
+        self.assertEqual("create-document-outline", probe["skill"])
+        self.assertIn("large or complex document", probe["activationCondition"])
+        self.assertIn("short single-source document", probe["negativeCondition"])
+        self.assertIn("canonical JSON", probe["expectedBehavior"])
+        self.assertIn("original source evidence", probe["expectedBehavior"])
+        self.assertEqual("declared", probe["coverageStatus"])
+
     def test_work_item_creation_interface_and_provider_names_are_canonical(self) -> None:
         """Creation uses one interface stem and provider implementations preserve it."""
         interface_name = "create-work-item"
