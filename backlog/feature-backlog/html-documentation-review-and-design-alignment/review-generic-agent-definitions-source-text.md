@@ -2,7 +2,7 @@
 
 Owner: Dev Orchestrator
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -31,6 +31,38 @@ Launch Result: Reserved; canonical root launch follows this committed transition
 Last Contact: 2026-08-10T00:44:00Z
 
 Next Reconciliation At: 2026-08-10T00:59:00Z
+
+## Active Execution Evidence
+
+Condition Type: root-execution
+
+Owner: Dev Orchestrator in Codex task /root/review_generic_agent_defs
+
+Evidence: The canonical root execution accepted the reserved item, created isolated branch codex/review-generic-agent-definitions-source-text-orchestrator at main commit 9488c71873e19c99b523927bce14ec64da634158, and acquired the exact file-provider update claim.
+
+Observed At: 2026-08-10T00:50:12Z
+
+Started At: 2026-08-10T00:49:51Z
+
+Deadline or Expires At: 2026-08-10T04:49:51Z
+
+Next Action: Inventory the target page and authoritative sources, then dispatch the bounded source-text correction lane.
+
+Next Reconciliation At: 2026-08-10T00:59:00Z
+
+Codex Task ID: /root/review_generic_agent_defs
+
+Conversation ID: Not exposed by the Codex task runtime
+
+Root Role: Dev Orchestrator
+
+Parent Task ID: 019fb057-1767-7ef2-b5fa-41f4417b20b3
+
+Branch: codex/review-generic-agent-definitions-source-text-orchestrator
+
+Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/review-generic-agent-definitions-source-text-start-update
+
+Phase: Inventory and implementation dispatch
 
 ## Summary
 
