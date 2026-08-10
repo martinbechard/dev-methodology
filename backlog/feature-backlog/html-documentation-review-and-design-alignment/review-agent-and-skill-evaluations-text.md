@@ -22,9 +22,9 @@ Branch: codex/review-agent-and-skill-evaluations-text-019fb057
 
 Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/review-agent-skill-evals-text-work-019fb057
 
-Candidate Commit: 5043884e3a2d31ca0c86be33338447a306004578
+Candidate Commit: 34a69070b4c1f86d38190b3cde9fbcff35604ddd
 
-Phase: Applying preserved singular-grammar correction
+Phase: Fresh final independent review and verification
 
 Started At: 2026-08-10T00:49:58Z
 
@@ -34,17 +34,17 @@ Condition Type: root-execution
 
 Owner: Dev Orchestrator 019fe928-e2d9-73d3-a647-7fac38731628
 
-Evidence: The same visible canonical Codex task completed the user's narrow configuration-only recovery without running the broad installer. The active config now differs from task-specific backup /Users/martinbechard/.codex/config.toml.bak.review-agent-and-skill-evaluations-text.20260810T022232Z by exactly MCP_AGENT_OPS_REFERENCE_ROOTS and MCP_AGENT_OPS_REFERENCE_NAMES. TOML validation passed. A genuinely fresh mcp-agent-ops 0.9.0 stdio process using the active configured values returned ok true, project-scope terminology.md, catalog revision 2388741065caa47c5c032fc72db2b953d23607d1ef18c0548b3d6446de495aff, and digest 4bf18f7862b783170600a88dd1ebbb4351389133099db24464101df42ece751d. The current Codex host retains its pre-change MCP environment, which explains the unchanged built-in probe result but does not invalidate the fresh-process verification. Shared config claim review-agent-and-skill-evaluations-text-codex-config-install-9 is released. The earlier exact source-path request waited on specialization-main-integration-019fe928; its owner now reports RELEASED after independently verified main commit d0d6a16d6c88449e3ad5c7955f8498998c6f89c3, so the same task is proceeding to guarded reacquisition and the preserved one-label correction.
+Evidence: The same visible canonical Codex task completed the user's narrow configuration-only recovery without running the broad installer. The active config differs from its task-specific backup by exactly the two approved reference allowlist assignments, TOML validation passes, and a genuinely fresh mcp-agent-ops 0.9.0 stdio process loaded project-scope terminology.md successfully at catalog revision 2388741065caa47c5c032fc72db2b953d23607d1ef18c0548b3d6446de495aff. Original Dev Coder /root/evaluation_text_producer then committed clean final correction candidate 34a69070b4c1f86d38190b3cde9fbcff35604ddd, limited to the same generator, focused test, and generated HTML paths. Its new singular-grammar test failed red on the prior output, then all 30 applicable focused tests, generator freshness, Python compilation, historical provenance, exact diff checks, and clean status passed. Exact source claim review-agent-and-skill-evaluations-text-019fe928-source-paths-13 was released at candidate boundary. Fresh read-only Methodology Artifact Reviewer /root/evaluation_text_final_review and Dev Verifier /root/evaluation_text_final_verify are independently evaluating the cumulative candidate from original baseline 292b55f9578d04438ce5c8d3b34c64b11af0f907; each uses the actual configured provider through a fresh stdio process rather than the current host's cached pre-change MCP environment.
 
-Observed At: 2026-08-10T02:31:20Z
+Observed At: 2026-08-10T02:38:52Z
 
-Started At: 2026-08-10T02:31:20Z
+Started At: 2026-08-10T02:38:40Z
 
 Deadline or Expires At: 2026-08-10T03:20:43Z
 
-Next Action: Reacquire the exact generator, focused test, and generated HTML paths; apply only the preserved singular-grammar fix and focused assertion; regenerate the HTML; then repeat fresh independent review and verification.
+Next Action: Reconcile both fresh terminal verdicts against final candidate 34a69070b4c1f86d38190b3cde9fbcff35604ddd and begin main-branch delivery only if methodology review and verification are both GOOD.
 
-Next Reconciliation At: 2026-08-10T02:46:20Z
+Next Reconciliation At: 2026-08-10T02:53:52Z
 
 ## Recovery Handoff Evidence
 
