@@ -64,6 +64,10 @@ This independently identified defect is outside the authorized text-correction l
 
 Do you authorize this category-order defect to enter active backlog work?
 
+Asked At: 2026-08-10T01:44:01Z
+
+Asked In: Parent coordination task 019fb057-1767-7ef2-b5fa-41f4417b20b3
+
 ## Why User Input Is Required
 
 The current task authorized review and correction of page text. Resolving this defect can change a Python generator, a generated SVG, and a durable outline contract, so the work must not be added to the active queue without separate authority.
