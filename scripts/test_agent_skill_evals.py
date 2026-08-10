@@ -2910,6 +2910,38 @@ class HarnessAndJudgeTests(unittest.TestCase):
                     evidence,
                 )
 
+    def test_codex_authentication_discovers_the_standard_protected_login(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            codex_home = base / "codex-home"
+            codex_home.mkdir()
+            auth_source = codex_home / "auth.json"
+            auth_source.write_text('{"auth_mode":"test"}\n', encoding="utf-8")
+            auth_source.chmod(0o600)
+            explicit = base / "dedicated-evaluation-auth.json"
+
+            with mock.patch.dict(
+                os.environ,
+                {"CODEX_HOME": str(codex_home)},
+                clear=False,
+            ):
+                self.assertEqual(
+                    auth_source,
+                    self.module._resolve_codex_auth_file(None),
+                )
+                self.assertEqual(
+                    explicit,
+                    self.module._resolve_codex_auth_file(explicit),
+                )
+
+            auth_source.unlink()
+            with mock.patch.dict(
+                os.environ,
+                {"CODEX_HOME": str(codex_home)},
+                clear=False,
+            ):
+                self.assertIsNone(self.module._resolve_codex_auth_file(None))
+
     def test_junie_read_only_result_path_is_runner_owned(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             base = Path(directory)

@@ -683,6 +683,21 @@ def _load_codex_auth_file(
     return content
 
 
+def _resolve_codex_auth_file(explicit_path: Path | None) -> Path | None:
+    """Use an explicit Codex login or discover the standard protected login."""
+
+    if explicit_path is not None:
+        return explicit_path
+    configured_home = os.environ.get("CODEX_HOME")
+    codex_home = (
+        Path(configured_home).expanduser()
+        if configured_home
+        else Path.home() / ".codex"
+    )
+    candidate = codex_home / "auth.json"
+    return candidate if candidate.is_file() else None
+
+
 def _redact_approved_environment(
     text: str,
     redactions: Mapping[str, str],
@@ -1881,10 +1896,15 @@ def _handle_harness_invocation_in_workspace(
     )
     codex_auth_content: bytes | None = None
     codex_home: Path | None = None
-    if args.codex_auth_file is not None:
+    codex_auth_file = (
+        _resolve_codex_auth_file(args.codex_auth_file)
+        if args.harness == "codex"
+        else None
+    )
+    if codex_auth_file is not None:
         try:
             codex_auth_content = _load_codex_auth_file(
-                args.codex_auth_file,
+                codex_auth_file,
                 active_root,
                 evidence_root,
             )
