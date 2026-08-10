@@ -1,4 +1,21 @@
 <!doctype html>
+<!--
+Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+Artifact-ID: 709121d8-72d5-4ebb-8df2-d253fd0adb9c
+Created-UTC: 2026-07-08T20:59:35Z
+Creating-Agent: historical-unknown
+Runtime: historical-unknown
+Dispatched-Model: historical-unknown
+Reasoning-Effort: historical-unknown
+Task-ID: historical-unknown
+Artifact-ID-Evidence: migration-assigned
+Created-UTC-Evidence: git-derived
+Creating-Agent-Evidence: historical-unknown
+Runtime-Evidence: historical-unknown
+Dispatched-Model-Evidence: historical-unknown
+Reasoning-Effort-Evidence: historical-unknown
+Task-ID-Evidence: historical-unknown
+-->
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -486,7 +503,7 @@
 
   <section class="hero" aria-labelledby="page-title">
     <h1 id="page-title">Agent And Skill Specialization Examples</h1>
-    <p class="callout">Current project examples use Persistence and Commit as independent selectors, by-reference core and technology delivery by default, and user-confirmed folder technology evidence. Legacy Provider and Completion fields migrate deterministically without changing recorded intent.</p>
+    <p class="callout">These examples show how PROJECT.yaml can keep root guidance, nested guidance, folder technology skillsets, and workflow-specific conceptual roles explicit for different repository structures.</p>
     <p class="lede">
       This page uses three customer-safe configurations to demonstrate project-structure specialization: a root-only tool, a multi-tier application with nested guidance, and a wiki repository with separate source and synthesis workflows.
     </p>
@@ -498,7 +515,7 @@
 
   <section class="section" aria-labelledby="examples-title">
     <h2 id="examples-title">Configuration Examples By Project Structure</h2>
-    <p class="note">Each example contains one focused PROJECT.yaml excerpt and only the decision that distinguishes it. The <a href="../skills/route-documentation-work/assets/templates/project-template.yaml">linked template</a> owns the full schema.</p>
+    <p class="note">Each example is a focused PROJECT.yaml excerpt. The snippets omit full source-evidence, confirmation, and validation fields. The <a href="../skills/route-documentation-work/assets/templates/project-template.yaml">linked template</a> defines the complete configuration shape, while create-project-configuration and the renderer validate behavior.</p>
     <div class="grid">
       <article class="card case">
         <h3><a href="#northwind-title">Northwind Tools: Root-Only Guidance</a></h3>
@@ -517,7 +534,7 @@
     <article class="example" aria-labelledby="northwind-title">
       <h3 id="northwind-title">Northwind Tools: Root-Only Guidance</h3>
       <p class="note">This example demonstrates root-only guidance. A single TypeScript runtime and common test workflow do not justify nested AGENTS.md files. Technology skills remain scoped to source and tests.</p>
-      <pre class="config-block"><code>schema: project
+      <pre class="config-block" aria-label="Northwind Tools PROJECT.yaml excerpt"><code>schema: project
 schema_version: 1
 project_setup:
   mode: basic
@@ -540,9 +557,12 @@ root_agents_reference:
   file: AGENTS.md
 nested_agents_files: []
 technology_skill_loadouts:
-  - scope: source and tests
-    pathPattern: "{src,test,tests}/**"
-    skills: [node-cli, typescript-esm, typescript-strict, vitest]
+  - scope: source
+    pathPattern: src/**
+    skills: [node-cli, typescript, typescript-esm, typescript-strict]
+  - scope: tests
+    pathPattern: tests/**
+    skills: [node-cli, typescript, typescript-esm, typescript-strict, vitest]
 workflow_selection:
   persistence:
     default: none
@@ -558,8 +578,8 @@ validation_plan:
 
     <article class="example" aria-labelledby="acme-title">
       <h3 id="acme-title">Acme Ledger: Nested Tier Guidance</h3>
-      <p class="note">This example demonstrates tier-specific specialization. Repository-wide rules stay at the root. API contracts and database migration rules require nested guidance and specialized skill loadouts.</p>
-      <pre class="config-block"><code>schema: project
+      <p class="note">This example demonstrates tier-specific specialization. The front-end tier gives taxonomy context. API contracts and database migration rules require nested guidance and specialized skill loadouts.</p>
+      <pre class="config-block" aria-label="Acme Ledger PROJECT.yaml excerpt"><code>schema: project
 schema_version: 1
 project_taxonomy:
   family: web-application
@@ -582,58 +602,101 @@ nested_agents_files:
   - path: db/AGENTS.md
     needed: true
     reason: migration, rollback, and sensitive-data rules
+  - path: drizzle/AGENTS.md
+    needed: true
+    reason: migration generation and schema-change review rules
 technology_skill_loadouts:
   - scope: API
     pathPattern: app/api/**
-    skills: [api-routes, clerk-auth, postgres-drizzle]
+    skills: [api-routes, clerk-auth, postgres-drizzle, sql]
   - scope: DB
     pathPattern: db/**
-    skills: [postgres-drizzle, typescript-strict, jest]</code></pre>
+    skills: [postgres-drizzle, sql, typescript, typescript-strict, jest]
+  - scope: Drizzle schema
+    pathPattern: drizzle/**
+    skills: [postgres-drizzle, sql, typescript, typescript-strict, jest]</code></pre>
     </article>
 
     <article class="example" aria-labelledby="beacon-title">
       <h3 id="beacon-title">Beacon Knowledge Base: Workflow Separation</h3>
-      <p class="note">This example demonstrates workflow specialization within one root guidance file. Routing keeps raw collection separate from durable wiki maintenance and ingest. Each workflow has a distinct conceptual role, required skills, and verification commands.</p>
-      <pre class="config-block"><code>schema: project
+      <p class="note">This example demonstrates workflow specialization within one root guidance file. Role ownership keeps human source notes, unprocessed raw sources, processed sources, and durable wiki synthesis separate.</p>
+      <pre class="config-block" aria-label="Beacon Knowledge Base PROJECT.yaml excerpt"><code>schema: project
 schema_version: 1
 project_taxonomy:
   family: documentation-and-project-wiki
   application_tiers:
-    - name: Source collection
-      paths: [raw/inbox/**]
-      stacks: [Public web sources]
-    - name: Ingest queue
-      paths: [raw/Clippings/**]
-      stacks: [Queued Markdown sources]
+    - name: Human source notes
+      paths: [Clippings/**]
+      stacks: [Human-saved source notes]
+    - name: Raw source folder
+      paths: [raw/**]
+      stacks: [Raw source artifacts]
+      notes: contains unprocessed sources until ingest completes
+    - name: Completed source boundary
+      paths: [raw/processed/**]
+      stacks: [Processed source artifacts]
+      notes: contains sources that passed the required ingest gates
     - name: Wiki synthesis
       paths: [docs/wiki/**]
       stacks: [Markdown project wiki]
 root_agents_reference:
   file: AGENTS.md
 nested_agents_files: []
-folder_routing:
-  - pattern: raw/inbox/**
-    tier_or_workflow: raw-only source collection
-    primary_role: Wiki Source Collector
-    required_skills: [project-wiki-research]
-    verification_commands: [wiki_ops.py status]
-  - pattern: raw/Clippings/**
-    tier_or_workflow: raw-to-durable ingest
-    primary_role: Wiki Ingester
-    required_skills: [project-wiki]
-    verification_commands: [wiki_ops.py status]
-  - pattern: docs/wiki/**
-    tier_or_workflow: ordinary durable wiki maintenance
-    primary_role: Wiki Writer
-    required_skills: [project-wiki, project-wiki-topic-write]
-    verification_commands:
-      - wiki_ops.py lint
-      - wiki_ops.py okf-validate</code></pre>
+role_agent_set:
+  - role: wiki-source-collector
+    purpose: collect public raw source artifacts and leave docs/wiki unchanged
+    owns:
+      - raw source artifacts with source URLs, visible dates, and exclusions
+    hands_off:
+      - raw evidence inventory to wiki-ingester for durable synthesis
+    skills: [project-wiki-research, project-wiki]
+    completion_checks:
+      - raw evidence, exclusions, and collection window recorded
+      - docs/wiki unchanged
+  - role: wiki-ingester
+    purpose: process approved raw inputs into durable wiki coverage
+    owns:
+      - docs/wiki edits, raw/processed moves, source-link corrections, and ingest state
+    hands_off:
+      - topic-page verification to wiki-topic-verifier with read-only authority
+    skills: [project-wiki, project-wiki-topic-write]
+    conditional_skills:
+      - skill: code-project-wiki
+        condition: when durable wiki claims depend on implementation behavior
+      - skill: terminology-standard
+        condition: when ingest creates or revises governed durable wiki prose
+    completion_checks:
+      - leaf linking, lint, OKF validation, and GOOD pre-move verifier verdict
+      - source moved to raw/processed only after GOOD pre-move verdict
+      - processed-source links validated with any required post-move verifier gate
+  - role: wiki-writer
+    purpose: maintain durable wiki topic pages outside raw-source ingest
+    owns:
+      - docs/wiki topic pages, hubs, links, digests, and code-aware knowledge
+    hands_off:
+      - changed-page review to wiki-topic-verifier with read-only authority
+    skills: [project-wiki, project-wiki-topic-write]
+    conditional_skills:
+      - skill: code-project-wiki
+        condition: when wiki maintenance depends on code, tests, procedures, or backlog state
+      - skill: terminology-standard
+        condition: when creating or revising governed durable wiki prose
+    completion_checks:
+      - leaf linking, lint, applicable OKF validation, and GOOD verifier verdict
+wiki_validation_commands:
+  - command: python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" status
+    proves: wiki root, raw queue, and source state are inspectable
+  - command: python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" link-leaves
+    proves: durable leaf references are linked
+  - command: python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" lint
+    proves: wiki structure and source links are valid
+  - command: python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" okf-validate
+    proves: OKF topic metadata is valid</code></pre>
     </article>
   </section>
 </main>
 <footer class="site-footer">
-  <p>Copyright 2026 (c) Martin.Bechard@DevConsult.ca - <a href="../LICENSE">MIT License</a></p>
+  <p>Copyright (c) 2026 Martin.Bechard@DevConsult.ca - <a href="../LICENSE">MIT License</a></p>
 </footer>
 <script src="documentation-settings.js"></script>
 </body>
