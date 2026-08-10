@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: User Action Required
+Status: Blocked
 
 Type: Feature
 
@@ -24,7 +24,7 @@ Trigger: The user explicitly retained crisis mode until all blocked work is comp
 
 Current Crisis Set:
 
-- make-python-skill-and-project-scripts-windows-portable — corrected candidate is User Action Required only for external native-Windows workflow authority; it remains in the crisis set until terminal.
+- make-python-skill-and-project-scripts-windows-portable — native-Windows execution is no longer required; candidate reconciliation remains before terminal delivery.
 - create-html-document-outlines-from-raw-information
 - render-structured-explanations-as-html
 - use-mcp-hierarchy-plans-for-complex-development
@@ -66,41 +66,31 @@ Corrected Findings: Both Windows CreateProcessW wrappers now pass inherited stan
 
 Local Verification: 28 portability contracts, two agent-skill cleanup tests, one Project Bootstrapper root-and-child cleanup test, the native-Windows README/workflow bundle assertion, Python 3.11 compilation, focused Ruff, and Git diff validation pass. The broader bundle file retains two unrelated existing unused-variable Ruff findings. No native Windows pass is claimed.
 
-Remaining Gate: Push the corrected candidate branch to the configured GitHub origin and invoke the existing Python Windows portability workflow against that exact ref. The workflow runs Windows Server 2022 with Python 3.11, 3.12, and 3.13. External branch publication and workflow dispatch require explicit user authority.
+Remaining Gate: Reconcile the preserved 13-path candidate with current main without importing its long stale ancestry or replacing newer generated documentation. Then rerun the recorded macOS portability contracts and focused consumers before delivery.
 
-Preserved Review Evidence: The terminal review findings are fully represented by the corrected source and focused contracts. Native Windows execution, fresh acceptance review after that evidence, main delivery, and provider closure remain outstanding.
+Preserved Review Evidence: The terminal review findings are fully represented by the corrected source and focused contracts. Native Windows execution is explicitly waived. Candidate-to-current-main reconciliation, focused macOS verification, delivery, and provider closure remain outstanding.
 
-## User Action Required
+## User Resolution
 
-The corrected candidate is ready for the repository's native Windows workflow, but running it requires publishing the branch to the configured GitHub origin and invoking an external workflow.
+User Answer: "we're down to 5% of tokens - let's leave it at ensuring you only use documented portable APIs and that they work on mac"
 
-## Question for the User
+Resolved At: 2026-08-10
 
-Do you authorize pushing branch codex/make-python-skill-and-project-scripts-windows-portable to origin and invoking the configured Python Windows portability workflow against that branch?
+Acceptance Disposition: Require documented portable APIs, deterministic portability contracts, and successful macOS execution. Do not require or claim native Windows execution, the Windows Server workflow, or a three-version Windows matrix.
 
-Asked At: 2026-08-10T06:21:44Z
+External Attempt Evidence: Candidate branch 9eb990c0 was published after approval. Manual workflow dispatch returned HTTP 404 because python-windows.yml is absent from the remote default branch. Draft pull request 10 produced no checks for the same reason and was closed without merge. The candidate branch remains published.
 
-Asked In: Parent coordination task 019fb057-1767-7ef2-b5fa-41f4417b20b3
+## Current Blocker
 
-## Why User Input Is Required
+Exact Blocker: A direct merge of the stale candidate ancestry into current main produced one generated-HTML conflict. Managed review rejected resolving and committing that broad merge because it would import Windows-specific changes beyond the newly narrowed acceptance without reviewed reconciliation. The merge was aborted cleanly; current main remains unchanged by the candidate.
 
-The local source correction and deterministic macOS verification are complete. A push and GitHub Actions dispatch mutate an external repository and consume external CI resources; that authority is not inferred from local implementation authority.
+Blocker Owner: Dev Backlog Coordinator under active SOLO crisis recovery.
 
-## Options and Tradeoffs
+Unblock Condition: Reconcile only the approved documented-portable-API and macOS-tested behavior from candidate 9eb990c0 onto current main, preserve newer generated documentation, run focused macOS checks, and complete delivery without claiming native Windows evidence.
 
-- Authorize: Push only the preserved candidate branch and invoke the existing workflow against its exact ref. Continue to fresh acceptance review and main delivery only if all three native Windows jobs pass.
-- Defer: Move the item to Holding with candidate 9eb990c0 preserved locally.
-- Decline: Keep the item out of external CI and archive it without claiming native Windows acceptance.
+Next Action: Continue this exact item as the current sequential crisis recovery when sufficient execution context is available. Do not repeat the rejected broad merge or reintroduce the external Windows gate.
 
-## Resolution
-
-Pending.
-
-## Unattended Work Boundary
-
-Do not push the branch, invoke GitHub Actions, integrate the candidate, or claim native Windows acceptance until the user answers this exact question.
-
-Claim Disposition: Crisis-mode SOLO recovery used no claim mechanism. No native Windows pass, fresh post-recovery acceptance verdict, or integration is claimed.
+Claim Disposition: Crisis-mode SOLO recovery uses no claim mechanism. No native Windows pass or integration is claimed.
 
 ## Exceptional Recovery Manifest
 
