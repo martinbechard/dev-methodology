@@ -28,7 +28,7 @@ Pages may proceed independently. A design-alignment item may not start merely be
 
 ## Text Review Items
 
-- [Review AI-Assisted Coding Toolkit Index Text](review-index-page-text.md)
+- [Review AI-Assisted Coding Toolkit Index Text](../../completed-backlog/features/review-index-page-text.md)
 - [Review Conceptual Agent and Skill Definitions Text](../../completed-backlog/features/review-agent-and-skill-definitions-text.md)
 - [Review Agent and Skill Evaluations Text](../../completed-backlog/features/review-agent-and-skill-evaluations-text.md)
 - [Review Agent-Owned Evaluation Suites Text](../../completed-backlog/features/review-agent-owned-evaluation-suites-text.md)
