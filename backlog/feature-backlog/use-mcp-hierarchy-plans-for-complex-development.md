@@ -26,21 +26,21 @@ Required Task Title: Implementing — Use MCP hierarchy plans for complex develo
 
 ## Active Execution Evidence
 
-Condition Type: delegated-work
+Condition Type: root-execution
 
-Owner: Dev Code Reviewer (/root/final_review_complex_plan_code) and Methodology Artifact Reviewer (/root/final_review_complex_plan_methodology), coordinated by Dev Orchestrator (019fe928-e31e-71e2-aaa8-7f9bef12c7b0)
+Owner: Dev Orchestrator (019fe928-e31e-71e2-aaa8-7f9bef12c7b0)
 
-Evidence: Clean immutable final-attempt candidate 3ad236c3a1017e7ec9b2238e4ba2e8dcec7f4ead is committed above preserved corrections 07b8f090d4a5f895785c3d279589fe3edaa1f218 and d72e1a284a9b832295f2cd9e796f49f21404b6e2. The final correction changes exactly five authorized paths and retains the aggregate 16-path boundary. Coder verification is green for the 19-case installed-package helper suite, two focused bundle cases, all 175 bundle tests, Ruff, compilation, generator freshness, skill validation, metadata, provenance, and diff checks; the two known role-mutation-policy failures remain tied to an unchanged out-of-scope delivery skill. Fresh independent functional source and methodology reviewers are now evaluating the complete candidate and every final correction category. Independent verification has not started.
+Evidence: Both final independent reviewers returned NEEDS_CORRECTION for preserved clean candidate 3ad236c3a1017e7ec9b2238e4ba2e8dcec7f4ead after reproducing a repeated high prepared-recovery token defect, strict update-record validation gaps, and cited Markdown rule drift. The required two-attempt stop was reported to the parent Dev Backlog Coordinator. The Coordinator explicitly kept lifecycle Running and authorized one exceptional bounded recovery cycle with a fresh Dev Coder, failing-regression-first evidence, the existing exact 16-path ceiling, fresh code and methodology review, and independent verification. No recovery source mutation has started.
 
-Observed At: 2026-08-10T04:07:39Z
+Observed At: 2026-08-10T04:22:11Z
 
-Started At: 2026-08-10T04:07:39Z
+Started At: 2026-08-10T04:22:11Z
 
-Deadline or Expires At: 2026-08-10T04:45:00Z
+Deadline or Expires At: 2026-08-10T05:10:00Z
 
-Next Action: Both fresh reviewers return terminal verdicts for candidate 3ad236c3; accepted review evidence then routes to a new independent Dev Verifier, while any repeated confirmed defect triggers the bounded correction blocker rule.
+Next Action: Reacquire the exact activity=work claim, dispatch one fresh Dev Coder for the three Coordinator-authorized corrections, require red evidence for both behavioral defects before mutation, and stop for Coordinator Blocked disposition if this exceptional recovery fails materially.
 
-Next Reconciliation At: 2026-08-10T04:21:39Z
+Next Reconciliation At: 2026-08-10T04:36:11Z
 
 Codex Task ID: 019fe928-e31e-71e2-aaa8-7f9bef12c7b0
 
@@ -58,11 +58,25 @@ Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/use-mcp-hierarchy-
 
 Starting Head: 9488c71873e19c99b523927bce14ec64da634158
 
-Phase: final correction fresh independent review
+Phase: exceptional Coordinator-authorized recovery dispatch
 
-Provider Update Claim: mcp-hierarchy-plans-final-review-update-019fe928; outcome SHARED_CHECKOUT_ACQUIRED; claim event 00e792d1-38de-40b1-8232-13e0e8a31726.
+Provider Update Claim: mcp-hierarchy-plans-exceptional-recovery-update-019fe928; outcome SHARED_CHECKOUT_ACQUIRED; claim event c8ae12f0-5c97-45fe-8e91-0a3bdac2119f.
 
-Provider Path Claim: mcp-hierarchy-plans-final-review-path-019fe928; outcome SHARED_CHECKOUT_ACQUIRED; claim event 62a1d332-de93-446a-b20e-1d5380f45ce5.
+Provider Path Claim: mcp-hierarchy-plans-exceptional-recovery-path-019fe928; outcome SHARED_CHECKOUT_ACQUIRED; claim event f39df764-d1fc-43e6-82d5-c3ccb78e347a.
+
+## Coordinator Recovery Disposition
+
+Decision: Keep Status Running and authorize one exceptional, explicitly bounded recovery cycle after the required two-attempt stop and Coordinator handoff.
+
+Recorded At: 2026-08-10T04:22:11Z
+
+Preserved Candidates: d72e1a284a9b832295f2cd9e796f49f21404b6e2, 07b8f090d4a5f895785c3d279589fe3edaa1f218, and 3ad236c3a1017e7ec9b2238e4ba2e8dcec7f4ead, together with both final NEEDS_CORRECTION packets.
+
+Authorized Scope: Use a fresh Dev Coder and remain within the existing exact 16 paths. First prove red that resumed prepared cleanup accepts inputs different from decision.input_recovery_token and can delete changed synchronized JSON and HTML. Also prove red that empty update metadata, target, or mutation can terminalize. Correct only those behavioral defects and the cited Markdown inline-code rule drift.
+
+Recovery Gates: Require focused and full gates, fresh independent functional source and methodology review, then independent verification. No additional path, generated surface, integration, or fourth correction cycle is authorized.
+
+Failure Disposition: If this exceptional recovery fails materially, release claims and return to the Dev Backlog Coordinator for Blocked disposition.
 
 ## Starting Handoff Evidence
 
