@@ -126,7 +126,7 @@ class SkillLifecycleDocumentationTests(unittest.TestCase):
             pages["agentic configuration"],
         )
         self.assertIn(
-            "deliver their instructions through the applicable harness lifecycle",
+            "deliver their instructions through the applicable Agent harness lifecycle",
             pages["agentic configuration"],
         )
         self.assertIn(

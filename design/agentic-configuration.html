@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Coding-Agent Runtime Configuration and Its Cross-Harness Evaluation</title>
+  <title>Coding-Agent Runtime Configuration And Evaluation Across Agent harnesses</title>
   <style>
     :root {
       --color-ink: #18212f;
@@ -472,15 +472,15 @@
   <main>
     <nav class="document-nav" aria-label="Documentation navigation">
       <div class="document-sequence">
-        <a href="agent-and-skill-evaluations.html" rel="prev"><span aria-hidden="true">&larr;</span> Previous: Evaluation Evidence</a>
+        <a href="agent-owned-evaluation-suites.html" rel="prev"><span aria-hidden="true">&larr;</span> Previous: Agent-Owned Evaluation Suites</a>
         <a href="skills-modularization.html" rel="next">Next: Agent Skill Architecture <span aria-hidden="true">&rarr;</span></a>
       </div>
     </nav>
 
     <section class="hero" aria-labelledby="page-title">
-      <h1 id="page-title">Coding-Agent Runtime Configuration And Its Cross-Harness Evaluation</h1>
-      <p class="callout"><code>PROJECT.yaml</code> records selected conceptual agents, installed core-skill delivery, user-confirmed folder technologies, Persistence, Commit, and technology delivery. It maps those selections to root and nested <code>AGENTS.md</code> guidance. Basic setup fixes concurrency, Persistence, Commit, and technology delivery. It exposes those choices as Set values. Advanced exposes the supported choices. Most-specific folder guidance wins across supported harnesses. Thin Claude bridges import the same colocated guidance.</p>
-      <p class="boundary">This page describes how coding agent runtimes use generated files and how cross-harness evaluations configure and audit those runtimes.</p>
+      <h1 id="page-title">Coding-Agent Runtime Configuration And Evaluation Across Agent harnesses</h1>
+      <p class="callout"><code>PROJECT.yaml</code> records selected conceptual agents, installed core-skill delivery, user-confirmed folder technologies, Persistence, Commit, and technology delivery. It maps those selections to root and nested <code>AGENTS.md</code> guidance. Basic setup sets concurrent tasking to No, Persistence to none, Commit to main-branch, and technology delivery to by-reference. It displays those choices as Set values. Advanced exposes the supported choices. Most-specific folder guidance wins across supported Agent harnesses. When Claude Code is used, thin Claude bridges import the same colocated guidance.</p>
+      <p class="boundary">This page describes how coding agent runtimes use generated files and how evaluations across Agent harnesses configure and audit those runtimes.</p>
     </section>
 
     <nav class="page-section-nav" aria-label="Page sections">
@@ -497,7 +497,7 @@
       <p class="lede">These terms separate user-facing coding tools from the internal implementation that generates and installs their files.</p>
       <ul>
         <li><strong>Coding agent runtime</strong>: a tool that runs an AI coding agent, such as Codex, Claude Code, Gemini CLI, Junie CLI, or GitHub Copilot. Each runtime has its own files and rules for discovering skills, agent definitions, project instructions, and optional MCP configuration.</li>
-        <li><strong>Harness</strong>: the part of a coding agent runtime that loads files and applies runtime rules. Harness comparisons on this page cover discovery, precedence, and instruction delivery across runtimes.</li>
+        <li><strong>Agent harness</strong>: software that supplies the runtime, tools, context, and lifecycle controls needed to run arbitrary Agent Workflows. Agent harness comparisons on this page cover discovery, precedence, and instruction delivery for the listed coding agent runtimes.</li>
         <li><strong>Adapter</strong>: this repository's internal layer for generating and installing files for one coding agent runtime. The term appears in implementation identifiers such as <code>adapters/&lt;runtime&gt;/...</code>, <code>--adapter</code>, and adapter-owned skills.</li>
         <li><strong>Bundle installer</strong>: the <code>scripts/install-skills.py</code> command. It copies selected shared skills, runtime-specific skills, generated agent definitions, ownership manifests, and optional MCP configuration into a selected user or project destination.</li>
         <li><strong>Adapter-owned skill</strong>: a runtime-specific skill source under <code>adapters/&lt;runtime&gt;/skills/&lt;skill-name&gt;/SKILL.md</code>. It uses the portable <code>SKILL.md</code> package format but installs only for the runtime that needs it.</li>
@@ -506,7 +506,7 @@
 
     <section class="section" aria-labelledby="context-title">
       <h2 id="context-title">Knowledge Structure</h2>
-      <p class="lede">Usable generated code needs relevant context that steers the agent toward the project's standards. The main problem is choosing the relevant context from many possible information units. The solution is to split the information into focused files, select only the skills relevant to the work, and deliver their instructions through the applicable harness lifecycle. The <a href="skills-modularization.html#skill-lifecycle-title">cross-harness skill lifecycle</a> owns the difference between availability, instruction delivery, behavioral application, and verification. Dynamic load-by-name guidance appears only when technology inlining is explicitly disabled. Generated project guidance otherwise embeds the complete selected technology instructions.</p>
+      <p class="lede">Usable generated code needs relevant context that steers the agent toward the project's standards. The main problem is choosing the relevant context from many possible information units. The solution is to split the information into focused files, select only the skills relevant to the work, and deliver their instructions through the applicable Agent harness lifecycle. The <a href="skills-modularization.html#skill-lifecycle-title">skill lifecycle across Agent harnesses</a> owns the difference between availability, instruction delivery, behavioral application, and verification. Dynamic load-by-name guidance appears only when technology inlining is explicitly disabled. Generated project guidance otherwise embeds the complete selected technology instructions.</p>
     </section>
 
     <section class="section" aria-labelledby="layers-title">
@@ -515,18 +515,18 @@
         <li class="context-layer">
           <div class="layer-copy">
             <h3>Shared Definitions</h3>
-            <p>Definitions installed for a harness are available to all projects that use that harness.</p>
+            <p>Definitions installed for an Agent harness are available to all projects that use that Agent harness.</p>
             <ol class="nested-layers">
               <li class="nested-layer">
                 <div class="nested-copy">
                   <h4>Skill Definition Files</h4>
-                  <p>The Agent Skills format uses a text file named <code>SKILL.md</code> to describe how to perform actions. It is adopted by all vendors and is the most granular unit of description. Adapter-owned skill definitions use the same <code>SKILL.md</code> format but are installed only for their matching coding agent runtime.</p>
+                  <p>The Agent Skills format uses a text file named <code>SKILL.md</code> to describe how to perform actions. The listed Agent harnesses use this package format, and it is the most granular unit of description. Adapter-owned skill definitions use the same <code>SKILL.md</code> format but are installed only for their matching coding agent runtime.</p>
                 </div>
               </li>
               <li class="nested-layer">
                 <div class="nested-copy">
                   <h4>Agent Definition Files</h4>
-                  <p>Harness-specific agent definition files describe an agent's purpose, skills, other agent dependencies, and other directives. Each agent operates with its own context and history. That isolation partitions the active information through an agent hierarchy.</p>
+                  <p>Agent harness-specific agent definition files describe an agent's purpose, skills, other agent dependencies, and other directives. Each agent operates with its own context and history. That isolation partitions the active information through an agent hierarchy.</p>
                 </div>
               </li>
             </ol>
@@ -546,7 +546,7 @@
               <li class="nested-layer">
                 <div class="nested-copy">
                   <h4>Project Agent Definition Files</h4>
-                  <p>Project agent definition files define project-specific agents or customize shared harness-specific agent definitions for the project.</p>
+                  <p>Project agent definition files define project-specific agents or customize shared Agent harness-specific agent definitions for the project.</p>
                 </div>
               </li>
               <li class="nested-layer">
@@ -573,12 +573,12 @@
 
     <section class="section" aria-labelledby="locations-title">
       <h2 id="locations-title">Runtime Configuration File Locations</h2>
-      <p class="lede">The table lists where each harness discovers shared or user-level files, where project-level files live, and which runtime-specific file format or precedence rule applies.</p>
+      <p class="lede">The table lists where each Agent harness discovers shared or user-level files, where project-level files live, and which runtime-specific file format or precedence rule applies. The bundle installer currently deploys generated agents for Codex, Claude Code, Gemini CLI, and Junie CLI. GitHub Copilot rows are documentation-only because the installer has no Copilot adapter.</p>
       <div class="table-controls">
         <div class="filter-field">
-          <label for="harness-filter">Show harness</label>
+          <label for="harness-filter">Show Agent harness</label>
           <select id="harness-filter">
-            <option value="all">All harnesses</option>
+            <option value="all">All Agent harnesses</option>
             <option value="codex">Codex</option>
             <option value="claude">Claude Code</option>
             <option value="gemini">Gemini CLI</option>
@@ -586,20 +586,20 @@
             <option value="copilot">GitHub Copilot</option>
           </select>
         </div>
-        <p id="harness-filter-status" class="filter-status" aria-live="polite">Showing 20 rows across 5 harnesses.</p>
+        <p id="harness-filter-status" class="filter-status" aria-live="polite">Showing 20 rows across 5 Agent harnesses.</p>
       </div>
       <table>
         <thead>
           <tr>
-            <th scope="col">Harness</th>
+            <th scope="col">Agent harness</th>
             <th scope="col">Shared Or User Location</th>
             <th scope="col">Project Location</th>
-            <th scope="col">Harness Rule Or File Format</th>
+            <th scope="col">Agent harness rule or file format</th>
           </tr>
         </thead>
         <tbody class="purpose-group">
           <tr class="purpose-heading">
-            <th colspan="4" scope="rowgroup">Skill Definition Files<span class="purpose-summary">Package reusable action guidance whose selection and instruction delivery follow the applicable harness lifecycle. Generated project technology guidance embeds complete skill instructions by default and uses load-by-name only when technology inlining is disabled. Every harness uses the same portable Agent Skills package: a skill directory containing <code>SKILL.md</code> with YAML frontmatter and Markdown instructions. Skill locations and precedence vary; the <code>SKILL.md</code> format does not.</span></th>
+            <th colspan="4" scope="rowgroup">Skill Definition Files<span class="purpose-summary">Package reusable action guidance whose selection and instruction delivery follow the applicable Agent harness lifecycle. Generated project technology guidance embeds complete skill instructions by default and uses load-by-name only when technology inlining is disabled. Each listed Agent harness uses the same portable Agent Skills package: a skill directory containing <code>SKILL.md</code> with YAML frontmatter and Markdown instructions. Skill locations and precedence vary; the <code>SKILL.md</code> format does not.</span></th>
           </tr>
           <tr data-harness-row data-harness="codex">
             <td><a href="https://developers.openai.com/codex/skills">Codex</a></td>
@@ -623,7 +623,7 @@
             <td><a href="https://junie.jetbrains.com/docs/agent-skills.html">Junie CLI</a></td>
             <td><code>~/.junie/skills/&lt;skill-name&gt;/SKILL.md</code></td>
             <td><code>&lt;project-root&gt;/.junie/skills/&lt;skill-name&gt;/SKILL.md</code></td>
-            <td>A matching project skill takes precedence over a user skill. Junie uses the same portable <code>SKILL.md</code> package as the other harnesses.</td>
+            <td>A matching project skill takes precedence over a user skill. Junie uses the same portable <code>SKILL.md</code> package as the other Agent harnesses.</td>
           </tr>
           <tr data-harness-row data-harness="copilot">
             <td><a href="https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-skills">GitHub Copilot</a></td>
@@ -640,7 +640,7 @@
             <td><a href="https://learn.chatgpt.com/docs/agent-configuration/subagents?surface=app">Codex</a></td>
             <td><code>~/.codex/agents/&lt;agent-name&gt;.toml</code></td>
             <td><code>&lt;project-root&gt;/.codex/agents/&lt;agent-name&gt;.toml</code></td>
-            <td>One standalone TOML file per agent. Harness-specific fields include the name, description, developer instructions, model, reasoning, sandbox, optional MCP configuration, and <code>[[skills.config]]</code> enablement entries. Those entries select catalog availability; they do not preload skill content.</td>
+            <td>One standalone TOML file per agent. Agent harness-specific fields include the name, description, developer instructions, model, reasoning, sandbox, optional MCP configuration, and <code>[[skills.config]]</code> enablement entries. Those entries select catalog availability; they do not preload skill content.</td>
           </tr>
           <tr class="format-heading" data-harness-format="claude gemini junie copilot">
             <th colspan="4">Markdown Agent Definition Files</th>
@@ -672,7 +672,7 @@
         </tbody>
         <tbody class="purpose-group">
           <tr class="purpose-heading">
-            <th colspan="4" scope="rowgroup">Root Project Instruction Files<span class="purpose-summary">Provide project-wide context and routing instructions that the harness loads for every applicable task.</span></th>
+            <th colspan="4" scope="rowgroup">Root Project Instruction Files<span class="purpose-summary">Provide project-wide context and routing instructions that the Agent harness loads for every applicable task.</span></th>
           </tr>
           <tr data-harness-row data-harness="codex">
             <td><a href="https://developers.openai.com/codex/guides/agents-md">Codex</a></td>
@@ -684,7 +684,7 @@
             <td><a href="https://code.claude.com/docs/en/memory">Claude Code</a></td>
             <td><code>~/.claude/CLAUDE.md</code></td>
             <td><code>&lt;project-root&gt;/AGENTS.md</code> with colocated <code>&lt;project-root&gt;/CLAUDE.md</code></td>
-            <td>The thin <code>CLAUDE.md</code> imports the colocated <code>AGENTS.md</code> with <code>@AGENTS.md</code> so Claude uses the same portable root guidance as other harnesses.</td>
+            <td>The thin <code>CLAUDE.md</code> imports the colocated <code>AGENTS.md</code> with <code>@AGENTS.md</code> so Claude uses the same portable root guidance as other Agent harnesses.</td>
           </tr>
           <tr data-harness-row data-harness="gemini">
             <td><a href="https://github.com/google-gemini/gemini-cli/blob/main/docs/reference/configuration.md#context-files-hierarchical-instructional-context">Gemini CLI</a></td>
@@ -702,7 +702,7 @@
             <td><a href="https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-custom-instructions">GitHub Copilot</a></td>
             <td><code>~/.copilot/copilot-instructions.md</code></td>
             <td><code>&lt;project-root&gt;/.github/copilot-instructions.md</code> and/or <code>&lt;project-root&gt;/AGENTS.md</code></td>
-            <td>Markdown. Copilot CLI uses repository-wide instructions and treats root <code>AGENTS.md</code> as primary agent instructions when present.</td>
+            <td>Markdown. Copilot CLI combines applicable personal, repository, and agent instruction files, including repository-wide custom instructions and <code>AGENTS.md</code>. It defines no general precedence between them.</td>
           </tr>
         </tbody>
         <tbody class="purpose-group">
@@ -719,7 +719,7 @@
             <td><a href="https://code.claude.com/docs/en/memory">Claude Code</a></td>
             <td>Inherited through the applicable <code>CLAUDE.md</code> bridge</td>
             <td><code>&lt;folder-path&gt;/AGENTS.md</code> with a colocated <code>&lt;folder-path&gt;/CLAUDE.md</code></td>
-            <td>The thin <code>CLAUDE.md</code> imports the colocated <code>AGENTS.md</code> so Claude uses the same portable folder guidance as other harnesses.</td>
+            <td>The thin <code>CLAUDE.md</code> imports the colocated <code>AGENTS.md</code> so Claude uses the same portable folder guidance as other Agent harnesses.</td>
           </tr>
           <tr data-harness-row data-harness="gemini">
             <td><a href="https://github.com/google-gemini/gemini-cli/blob/main/docs/reference/configuration.md#context-files-hierarchical-instructional-context">Gemini CLI</a></td>
@@ -731,7 +731,7 @@
             <td><a href="https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-custom-instructions">GitHub Copilot</a></td>
             <td>Inherited from <code>~/.copilot/copilot-instructions.md</code></td>
             <td><code>&lt;project-root&gt;/.github/instructions/&lt;rule-name&gt;.instructions.md</code> or <code>&lt;folder-path&gt;/AGENTS.md</code></td>
-            <td>Path-specific instruction files require YAML <code>applyTo</code> frontmatter. Non-root <code>AGENTS.md</code> files are additional rather than primary instructions.</td>
+            <td>Path-specific instruction files require YAML <code>applyTo</code> frontmatter and apply only to matching files. Copilot CLI discovers <code>AGENTS.md</code> in the repository root, current working directory, intermediate directories, and relevant nested paths.</td>
           </tr>
           <tr data-harness-row data-harness="junie">
             <td><a href="https://junie.jetbrains.com/docs/guidelines-and-memory.html">Junie CLI</a></td>
@@ -741,7 +741,7 @@
           </tr>
         </tbody>
       </table>
-      <p class="table-note">The <a href="generic-agent-definitions-source.html">Generic Agent Definitions Source</a> page owns conceptual-to-harness-specific conversion details. This table covers only what each runtime file contributes, where the harness discovers it, and which incompatible harness-specific rule or format applies.</p>
+      <p class="table-note">The <a href="generic-agent-definitions-source.html">Generic Agent Definitions Source</a> page owns conversion from conceptual definitions to Agent harness-specific outputs. This table covers only what each runtime file contributes, where the Agent harness discovers it, and which incompatible Agent harness-specific rule or format applies.</p>
     </section>
 
     <section class="section" aria-labelledby="bundle-runtime-title">
@@ -754,26 +754,26 @@
       <p>A non-dry-run refresh stages complete destination trees and ownership manifests beside the live destinations before changing them. Skills and optional generated agents commit as one in-process transaction. A handled staging or destination-swap failure restores every previously live destination when rollback succeeds. If rollback cannot fully restore the destinations, the installer retains the transaction backups and reports their locations for recovery. A successful commit removes the transaction backups.</p>
       <p>Use project-level skill and agent directories only when the project needs customized definitions, deliberate project-only scoping, or a checked-in team configuration. An unchanged generic bundle belongs in the coding agent runtime's user-level directories. The same scoped-default and explicit-override rules apply to every supported runtime, including Gemini CLI and Junie CLI.</p>
       <h3 class="boundary-heading">Install Command Examples</h3>
-      <p>Deploy a user-level bundle by selecting the target coding agent runtime with <code>--adapter</code>, <code>--scope user</code>, <code>--install-agents</code>, and <code>--replace</code>. The value for <code>--adapter</code> is <code>codex</code>, <code>claude</code>, <code>gemini</code>, or <code>junie</code>. For example, deploy the Codex bundle globally with <code>python3 scripts/install-skills.py --adapter codex --scope user --install-agents --replace</code>. Use the same command shape with <code>--adapter claude</code>, <code>--adapter gemini</code>, or <code>--adapter junie</code> to deploy the Claude Code, Gemini CLI, or Junie CLI bundle globally.</p>
+      <p>Deploy a user-level bundle with generated agents by selecting the target coding agent runtime with <code>--adapter</code>, <code>--scope user</code>, <code>--install-agents</code>, and <code>--replace</code>. Generated-agent deployment must select <code>codex</code>, <code>claude</code>, <code>gemini</code>, or <code>junie</code>. The default <code>generic</code> adapter installs skills only and rejects <code>--install-agents</code>. For example, deploy the Codex bundle globally with <code>python3 scripts/install-skills.py --adapter codex --scope user --install-agents --replace</code>. Use the same command shape with <code>--adapter claude</code>, <code>--adapter gemini</code>, or <code>--adapter junie</code> to deploy the Claude Code, Gemini CLI, or Junie CLI bundle globally.</p>
       <p>Deploy the Codex bundle to the current project with <code>python3 scripts/install-skills.py --adapter codex --scope project --install-agents --replace</code>. Deploy it to another existing project without changing directories by adding <code>--project-root /absolute/path/to/another-project</code>.</p>
       <p>Remove bundle-owned artifacts from an explicit skills destination and optional agent destination with <code>--remove-owned</code>, for example <code>python3 scripts/install-skills.py --adapter codex --scope user --remove-owned</code>. A caller that supplies a custom generic source may also supply an explicit adapter source with <code>--adapter-skills-source</code>.</p>
       <p>The Codex MCP skill root must match the selected installer destination. A user-scope Codex deployment therefore uses the resolved <code>~/.agents/skills</code> path for both the catalog root and its detection registry. Other MCP-backed deployments follow the same rule when they bind a server to the installed skill catalog. A manifest-owned deployment from an earlier bundle under <code>~/.codex/skills</code> is removed only after the standard deployment, MCP reconfiguration, catalog refresh, and catalog verification succeed.</p>
       <h3 class="boundary-heading">Adapter-Owned Skills</h3>
       <p class="table-note">Adapter-owned skills are runtime-specific additions installed beside the shared skill catalog only for the coding agent runtime that needs them. Today, a Codex deployment includes the adapter-owned <code>codex-harness-directives</code> skill in addition to shared skills. Mutation-capable Codex agents reference it by default and instruct the agent to load it before acting. Explicit inline core delivery embeds it with the other required core skills. Read-only Codex agents and non-Codex runtimes do not receive it.</p>
-      <p class="table-note">The <a href="generic-agent-definitions-source.html">source-model page</a> owns the generation rule for adapter-owned skills. The <a href="skills-modularization.html#skill-lifecycle-title">cross-harness lifecycle</a> owns the difference between availability and instruction delivery.</p>
+      <p class="table-note">The <a href="generic-agent-definitions-source.html">source-model page</a> owns the generation rule for adapter-owned skills. The <a href="skills-modularization.html#skill-lifecycle-title">skill lifecycle across Agent harnesses</a> owns the difference between availability and instruction delivery.</p>
       <h3 class="boundary-heading">MCP Server Configuration</h3>
       <p class="table-note">The preferred mcp-agent-ops connection remains host or session configuration. It is not a duplicated property in every generated agent. Scoped Codex and Junie deployments configure mcp-agent-ops by default. The bundle installer locates the installed executable, binds the server to the deployed skill catalog and technology registry, and uses the selected project or current working directory as the least-privilege workspace root. One or more explicit <code>--mcp-workspace-root</code> values replace that default workspace-root set. Use <code>--mcp-agent-ops-executable</code> when the executable is not discoverable on <code>PATH</code>. Deployments that use only explicit destinations must also supply <code>--mcp-config</code> because a custom skill destination does not identify the host configuration location. With project scope, an explicit <code>--mcp-config</code> overrides the project configuration path without changing the selected project used by the remaining defaults. Use <code>--configure-mcp false</code> when the host should remain unchanged.</p>
       <p class="table-note">During scoped Codex and Junie skill deployment, the bundle installer creates the host configuration when it is absent or has no MCP servers. If other servers are already configured, the installer writes a separately named candidate and asks before activation. An accepted replacement preserves the previous active file with a <code>.bak</code> extension. Rejection leaves the active file unchanged and preserves the candidate for review. A noninteractive deployment never replaces an active configuration that already contains other servers.</p>
       <p class="table-note">Codex defines the stdio server in user or trusted-project <code>config.toml</code>. A Codex agent inherits parent servers when it omits <code>mcp_servers</code>. An override must contain full runtime-specific server configuration. Junie defines the server in user or project <code>mcp.json</code>. A nonempty agent <code>mcpServers</code> field is a names-only allowlist, and omission uses the servers configured for the session.</p>
-      <p class="table-note">The bundle installer configures an existing mcp-agent-ops server; it does not install the executable. Install and verify mcp-agent-ops before selecting it as the claim helper. Published release 0.4.0 does not support the required claim results and must not be selected for claims.</p>
+      <p class="table-note">The bundle installer configures an existing mcp-agent-ops server; it does not install the executable. Install and verify mcp-agent-ops before selecting it as the claim helper. This repository selects the command-line claim helper until complete MCP Resource Claim Helper interface parity is reverified. Published release 0.4.0 does not support the required claim results and must not be selected for claims.</p>
       <p class="table-note"><code>coordinate-work-items</code> is the provider-neutral authority for lifecycle, active-execution eligibility, capacity, scheduling, recovery, delivery, and reporting. Running eligibility requires both its finite condition deadline and next-reconciliation boundary to remain in the future. <code>coordinate-codex-tasks</code> maps that policy to Codex task capability, creation, resumption, identity, titles, follow-up, reconciliation, Watchdog operation, and archival. A conversation title remains display state and never creates provider lifecycle or active-execution evidence.</p>
       <p class="table-note">The <a href="orchestrated-development-lifecycle.html#runtime-coordination-title">orchestrated development lifecycle</a> owns runtime coordination surfaces and the identity, evidence, and cleanup rules for terminal tasks and execution contexts.</p>
     </section>
 
     <section class="section" aria-labelledby="evaluation-title">
-      <h2 id="evaluation-title">Cross-Harness Evaluation Environment, Permission Profiles, And Audit Evidence</h2>
+      <h2 id="evaluation-title">Evaluation Environment, Permission Profiles, And Audit Evidence Across Agent harnesses</h2>
       <h3 class="boundary-heading">Evaluation Environment And Retained Evidence</h3>
-      <p class="table-note">The cross-harness evaluation runner uses the same separation between installed catalog, runtime configuration, and retained evidence. It pins the mcp-agent-ops release and installed-runtime digest. It stages an exact catalog beneath a disposable context root and supplies one isolated Codex or external Junie server configuration. It retains session-bound process streams plus exact configuration, catalog, authorization, and allowed output evidence outside the product workspace.</p>
+      <p class="table-note">The evaluation runner across Agent harnesses uses the same separation between installed catalog, runtime configuration, and retained evidence. It pins the mcp-agent-ops release and installed-runtime digest. It stages an exact catalog beneath a disposable context root and supplies isolated Codex server configuration. For the Junie MCP base case, it supplies an explicit external configuration folder. The current Codex and Junie Evaluation runs are local. The runner retains session-bound process streams plus exact configuration, catalog, authorization, and allowed output evidence outside the product workspace.</p>
       <h3 class="boundary-heading">Permission Profiles And Containment Limits</h3>
       <p class="table-note">The MCP Git-lifecycle case gives Codex an exact digest-bound permission profile. It gives Junie an owner-only action policy for the same fifteen MCP operations plus Git add and Git commit. The Codex profile denies network, host-home, and evidence-root access. It grants writes to the disposable workspace, its Git metadata, and the unique evaluator temporary directory. Other system paths remain read-only. The Junie policy controls capabilities but is not filesystem containment.</p>
       <h3 class="boundary-heading">Audit Validity And Protection Limits</h3>
@@ -781,7 +781,7 @@
     </section>
   </main>
   <footer class="site-footer">
-    <p>Copyright 2026 (c) Martin.Bechard@DevConsult.ca - <a href="../LICENSE">MIT License</a></p>
+    <p>Copyright (c) 2026 Martin.Bechard@DevConsult.ca - <a href="../LICENSE">MIT License</a></p>
   </footer>
   <script src="documentation-settings.js"></script>
   <script>
@@ -812,7 +812,7 @@
       }
 
       if (selectedHarness === "all") {
-        harnessFilterStatus.textContent = "Showing 20 rows across 5 harnesses.";
+        harnessFilterStatus.textContent = "Showing 20 rows across 5 Agent harnesses.";
         return;
       }
 
