@@ -24,27 +24,27 @@ Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/review-agent-skill
 
 Candidate Commit: 2565d1149be07b4aedc58412880bf5b48344195e
 
-Phase: Independent review and verification
+Phase: Awaiting exact source-path claim for bounded correction
 
 Started At: 2026-08-10T00:49:58Z
 
 ## Active Execution Evidence
 
-Condition Type: root-execution
+Condition Type: owned-wait
 
 Owner: Dev Orchestrator 019fe928-e2d9-73d3-a647-7fac38731628
 
-Evidence: Visible Codex task 019fe928-e2d9-73d3-a647-7fac38731628 remains the active canonical root execution. Dev Coder assignment /root/evaluation_text_producer committed clean candidate 2565d1149be07b4aedc58412880bf5b48344195e with 28 directly applicable focused tests, generator freshness, historical provenance validation, and exact-path diff checks passing. The full focused module retains one distinct pre-existing Dev Backlog Steward source-contract failure outside this item; the exact source claim is released and its waiting owner was notified.
+Evidence: Visible Codex task 019fe928-e2d9-73d3-a647-7fac38731628 remains the active canonical root execution. Fresh Dev Verifier assignment /root/evaluation_text_verify returned GOOD for clean candidate 2565d1149be07b4aedc58412880bf5b48344195e, with the one unchanged Dev Backlog Steward source-contract failure preserved as unrelated baseline evidence. Fresh Methodology Artifact Reviewer assignment /root/evaluation_text_review returned NEEDS_CORRECTION: legacy filter labels still blur declarations, indirect Agent-scenario evidence, and absence from the selected Test report; focused rejection assertions and regenerated HTML are required. Its aggregate terminology load also returned reference_not_allowed, so terminology review remains unavailable and cannot be treated as passing. Correction remains bounded to the existing three candidate paths. Exact source-path acquisition is waiting on live broad claim review-agent-owned-evaluation-suites-text-main-integration-019fe928; the previously competing documentation-templates integration claim was explicitly released at verified commit ce00efff7e299bc4ec1d1fa8993c1dc973726d53.
 
-Observed At: 2026-08-10T01:30:20Z
+Observed At: 2026-08-10T01:47:37Z
 
 Started At: 2026-08-10T00:57:00Z
 
 Deadline or Expires At: 2026-08-10T04:57:00Z
 
-Next Action: Dispatch one fresh methodology reviewer and one fresh verifier against candidate 2565d1149be07b4aedc58412880bf5b48344195e, then reconcile their terminal verdicts before delivery.
+Next Action: Wait event-driven for release of review-agent-owned-evaluation-suites-text-main-integration-019fe928, reacquire the exact three source paths under activity=work ownership, apply only the reviewer-required wording and focused assertion corrections, regenerate the HTML, and obtain fresh replacement review and verification.
 
-Next Reconciliation At: 2026-08-10T01:44:20Z
+Next Reconciliation At: 2026-08-10T02:02:37Z
 
 ## Starting Handoff Evidence
 
