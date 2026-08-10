@@ -46,19 +46,19 @@ Branch: codex/review-index-page-text-20260809
 
 Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/review-index-page-text-work-root
 
-Phase: Awaiting adjacent navigation delivery and replacement gates
+Phase: Awaiting user-approved adjacent navigation recovery
 
-Evidence: Replacement candidate commit 44bc5025dad21c40101f4d82150385d31fb1d9b9 is clean and preserves candidate 8dd2610ca1bfef88c60ffa8013cc17275d0999e2 as its direct parent. Fresh review found no candidate-file defect and returned NEEDS_CORRECTION only because the strengthened ten-page navigation contract still requires delivery from tasks 019fe928-e2d9-73d3-a647-7fac38731628 and 019fe928-fc32-73c2-af60-791087327934. Fresh verification returned NOT_VERIFIED on the same two adjacent links; all candidate-local checks passed. Both owners accepted the coordination boundary and retain their exact page paths.
+Evidence: Replacement candidate commit 44bc5025dad21c40101f4d82150385d31fb1d9b9 remains clean and immutable; all candidate-local checks passed. Final combined review and verification still require delivered adjacent-link commits from tasks 019fe928-e2d9-73d3-a647-7fac38731628 and 019fe928-fc32-73c2-af60-791087327934. The latter task preserved its correct previous-link candidate but encountered a trusted maintained-document guard while removing an unauthorized provenance block from its unaccepted candidate. Parent Coordinator task 019fb057-1767-7ef2-b5fa-41f4417b20b3 selected User Action Required and asked for explicit approval to restore the peer page to its pre-candidate no-provenance state while retaining supported text corrections. This task retains only index-owned files and has not absorbed either adjacent page.
 
-Observed At: 2026-08-10T01:31:40Z
+Observed At: 2026-08-10T01:44:20Z
 
 Started At: 2026-08-10T01:31:40Z
 
 Deadline or Expires At: 2026-08-10T03:00:00Z
 
-Next Action: Reacquire exact activity=work ownership, monitor the two named tasks for delivered main commits, then obtain fresh replacement review and verification on the reconciled combined tree.
+Next Action: Reacquire exact activity=work ownership, monitor the parent Coordinator for the explicit user decision and both adjacent tasks for delivered main commits, then obtain fresh replacement review and verification on the reconciled combined tree.
 
-Next Reconciliation At: 2026-08-10T01:46:40Z
+Next Reconciliation At: 2026-08-10T01:59:20Z
 
 ## Summary
 
