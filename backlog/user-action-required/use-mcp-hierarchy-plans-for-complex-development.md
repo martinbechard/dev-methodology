@@ -1,8 +1,8 @@
 # Use MCP Hierarchy Plans for Complex Development
 
-Owner: Dev Orchestrator (019fe928-e31e-71e2-aaa8-7f9bef12c7b0)
+Owner: Unowned
 
-Status: Running
+Status: User Action Required
 
 Type: Feature
 
@@ -30,7 +30,7 @@ Last Contact: 2026-08-10T00:44:00Z
 
 Next Reconciliation At: 2026-08-10T00:59:00Z
 
-## Active Execution Evidence
+## Prior Active Execution Evidence
 
 Condition Type: root-execution
 
@@ -63,6 +63,38 @@ Branch: codex/use-mcp-hierarchy-plans-for-complex-development
 Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/use-mcp-hierarchy-plans-work-019fb057
 
 Phase: implementation dispatch
+
+## User Action Required
+
+Question: Should this work (1) create a separate mcp-agent-ops work item to expose, release, and install typed hierarchy-plan MCP tools before resuming, or (2) revise this work item's acceptance criteria to permit direct use of the existing Python hierarchy-plan API?
+
+Why User Input Is Required: The original request requires plan creation and mutation through the configured MCP server. Independent inspection of configured mcp-agent-ops v0.9.0 found 22 tools and no hierarchy-plan creation, update, or generic mutation tool. The Python API exists, but using it would materially change the requested integration boundary. Adding MCP wrappers is a separate cross-repository feature and release.
+
+Prohibited Unattended Action: Do not implement direct Python API use, add mcp-agent-ops tools, change either repository, or resume this work item until the user selects one option.
+
+Independent Work That May Continue: Other non-overlapping backlog work may continue normally.
+
+Asked At: 2026-08-10T01:07:00Z
+
+Asked In: Parent coordination task 019fb057-1767-7ef2-b5fa-41f4417b20b3
+
+Resolution: Pending
+
+Approval Resolution: Pending
+
+## Blocking Evidence
+
+Configured Runtime: mcp-agent-ops v0.9.0 at upstream commit 1cece77, runtime digest 912980522356193c6bb06e8b29e9e0a9fe7c910a3ad48d273febf443d2c66aee.
+
+Tool Discovery: Direct stdio list_tools returned exactly 22 tools and planOrHierarchyTools was empty.
+
+Source Verification: Installed and source server.py were byte-identical with SHA-256 058d853fd0fb021e334b0b055221353e5d2cf400c9baaf2754f67dcd88f48f4a.
+
+Available Non-MCP Capability: Python create_hierarchy_plan and update_hierarchy_plan APIs exist, but there are no MCP wrappers or generic mutation tool.
+
+Claim Release: Exact work claim mcp-hierarchy-plans-work-019fe928 was released with disposition blocked and blocker reference missing-configured-hierarchy-plan-mcp-tools in event 4c4be3de-da8c-4d1d-8d64-ff3cc82c2cf5.
+
+Canonical Task: 019fe928-e31e-71e2-aaa8-7f9bef12c7b0 remains the preserved resumption context.
 
 ## Summary
 
