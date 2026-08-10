@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: Blocked
+Status: Ready
 
 Type: Feature
 
@@ -58,6 +58,8 @@ Target page: design/agent-and-skill-evaluations.html
 Blocker owner: Work Item review-agent-and-skill-evaluations-text.
 
 Blocked to Ready condition: review-agent-and-skill-evaluations-text is Completed with corrected content, fresh independent acceptance, and an immutable content baseline for design/agent-and-skill-evaluations.html.
+
+Dependency Resolution: Satisfied by completed Work Item `review-agent-and-skill-evaluations-text`, archived through provider commits `de909811` and `5723fe60`. Accepted candidate `34a69070` was delivered to main by merge commit `99b45140658962664814e1fd62bd4c985ea435d6` with fresh review GOOD and verification GOOD; the narrow terminology configuration repair also completed without a broad installer.
 
 ## Verification
 
