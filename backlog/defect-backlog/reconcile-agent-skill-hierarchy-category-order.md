@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: User Action Required
+Status: Ready
 
 Type: Defect
 
@@ -80,11 +80,11 @@ The current task authorized review and correction of page text. Resolving this d
 
 ## Resolution
 
-Pending.
+Approved by the user on 2026-08-10 in parent coordination task 019fb057-1767-7ef2-b5fa-41f4417b20b3. The user confirmed that the generator and related tools may be updated where necessary.
 
 ## Unattended Work Boundary
 
-Do not change the hierarchy generator, generated SVG, category source, outline order contract, or related category-order assertions for this defect until the user authorizes it. The current agent-and-skill definitions text review may continue through its independent correction, verification, delivery, and provider closeout because its candidate does not create this pre-existing conflict.
+Authorization is satisfied. Dispatch remains sequential: do not start this item until the currently running SOLO crisis work item reaches a terminal outcome.
 
 ## Notes
 
