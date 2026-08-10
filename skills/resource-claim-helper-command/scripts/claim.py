@@ -7,7 +7,7 @@
 from __future__ import annotations
 
 import argparse
-import fcntl
+import errno
 import gzip
 import hashlib
 import json
@@ -76,6 +76,51 @@ LEGACY_OUTCOME_ALIASES = {
     "ISOLATE_REQUIRED": "ISOLATED_CHECKOUT_SETUP_REQUIRED",
     "RECOVERY_REQUIRED": "DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED",
 }
+
+
+def _lock_file(file: TextIO) -> None:
+    """Acquire one blocking whole-file coordination lock on the current platform."""
+    if os.name != "nt":
+        import fcntl
+
+        fcntl.flock(file.fileno(), fcntl.LOCK_EX)
+        return
+
+    import msvcrt
+
+    retryable_errors = {errno.EACCES, errno.EAGAIN, errno.EDEADLK}
+    while True:
+        position = file.tell()
+        file.flush()
+        file.seek(0)
+        try:
+            msvcrt.locking(file.fileno(), msvcrt.LK_NBLCK, 1)
+            return
+        except OSError as error:
+            if error.errno not in retryable_errors:
+                raise
+        finally:
+            file.seek(position)
+        time.sleep(0.05)
+
+
+def _unlock_file(file: TextIO) -> None:
+    """Release the whole-file coordination lock acquired by _lock_file."""
+    if os.name != "nt":
+        import fcntl
+
+        fcntl.flock(file.fileno(), fcntl.LOCK_UN)
+        return
+
+    import msvcrt
+
+    position = file.tell()
+    file.flush()
+    file.seek(0)
+    try:
+        msvcrt.locking(file.fileno(), msvcrt.LK_UNLCK, 1)
+    finally:
+        file.seek(position)
 
 
 class _ScopeError(ValueError):
@@ -459,7 +504,7 @@ def _tombstone_windows_legacy_registry(
             legacy_registry=str(legacy_registry),
         ) from error
     with os.fdopen(descriptor, "r+", encoding="utf-8") as legacy_file:
-        fcntl.flock(legacy_file.fileno(), fcntl.LOCK_EX)
+        _lock_file(legacy_file)
         try:
             if not _legacy_descriptor_matches_path(legacy_file, legacy_registry):
                 raise _ClaimStateError(
@@ -471,7 +516,7 @@ def _tombstone_windows_legacy_registry(
             _require_exact_empty_legacy_payload(legacy_data, legacy_registry)
             _write_locked_legacy_registry_tombstone(legacy_file, legacy_registry)
         finally:
-            fcntl.flock(legacy_file.fileno(), fcntl.LOCK_UN)
+            _unlock_file(legacy_file)
 
 
 def _windows_in_progress_live_legacy_registry(
@@ -488,7 +533,7 @@ def _windows_in_progress_live_legacy_registry(
     except (FileNotFoundError, IsADirectoryError, NotADirectoryError):
         return None
     with os.fdopen(descriptor, "r+", encoding="utf-8") as legacy_file:
-        fcntl.flock(legacy_file.fileno(), fcntl.LOCK_EX)
+        _lock_file(legacy_file)
         try:
             if not _legacy_descriptor_matches_path(legacy_file, legacy_registry):
                 return None
@@ -506,7 +551,7 @@ def _windows_in_progress_live_legacy_registry(
                 allowed_operation="release",
             )
         finally:
-            fcntl.flock(legacy_file.fileno(), fcntl.LOCK_UN)
+            _unlock_file(legacy_file)
 
 
 def _move_legacy_events(repository: Path) -> None:
@@ -549,7 +594,7 @@ def _migration_lock(repository: Path) -> Iterator[tuple[Path, TextIO]]:
         except (FileNotFoundError, IsADirectoryError, NotADirectoryError):
             continue
         with os.fdopen(descriptor, "r+", encoding="utf-8") as registry_file:
-            fcntl.flock(registry_file.fileno(), fcntl.LOCK_EX)
+            _lock_file(registry_file)
             try:
                 locked = os.fstat(registry_file.fileno())
                 try:
@@ -569,7 +614,7 @@ def _migration_lock(repository: Path) -> Iterator[tuple[Path, TextIO]]:
                 yield registry_path, registry_file
                 return
             finally:
-                fcntl.flock(registry_file.fileno(), fcntl.LOCK_UN)
+                _unlock_file(registry_file)
     raise _ClaimStateError(
         "registry_lock_race",
         "Canonical claim registry storage kept changing during migration.",
@@ -717,7 +762,7 @@ def _resolve_registry_path_once(
             return None
         with os.fdopen(descriptor, "r+", encoding="utf-8") as legacy_file:
             _pause_release_after_legacy_open_for_test(operation)
-            fcntl.flock(legacy_file.fileno(), fcntl.LOCK_EX)
+            _lock_file(legacy_file)
             try:
                 locked = os.fstat(legacy_file.fileno())
                 try:
@@ -783,7 +828,7 @@ def _resolve_registry_path_once(
                     ) from error
                 return registry_path
             finally:
-                fcntl.flock(legacy_file.fileno(), fcntl.LOCK_UN)
+                _unlock_file(legacy_file)
 
     with _migration_lock(repository) as (_locked_registry_path, registry_file):
         _registry_payload_from_file(registry_file, registry_path)
@@ -875,7 +920,7 @@ def _read_only_registry_once(
             return None
         with os.fdopen(descriptor, "r+", encoding="utf-8") as legacy_file:
             _pause_read_only_after_legacy_open_for_test()
-            fcntl.flock(legacy_file.fileno(), fcntl.LOCK_EX)
+            _lock_file(legacy_file)
             try:
                 locked = os.fstat(legacy_file.fileno())
                 try:
@@ -916,7 +961,7 @@ def _read_only_registry_once(
                     )
                 return registry_path, {"claims": []}
             finally:
-                fcntl.flock(legacy_file.fileno(), fcntl.LOCK_UN)
+                _unlock_file(legacy_file)
 
     if not os.path.lexists(legacy_registry) and os.path.lexists(legacy_events):
         raise _ClaimStateError(
@@ -930,7 +975,7 @@ def _read_only_registry_once(
         return registry_path, {"claims": []}
     descriptor = os.open(registry_path, os.O_RDWR)
     with os.fdopen(descriptor, "r+", encoding="utf-8") as registry_file:
-        fcntl.flock(registry_file.fileno(), fcntl.LOCK_EX)
+        _lock_file(registry_file)
         try:
             registry_file.seek(0)
             raw = registry_file.read()
@@ -949,7 +994,7 @@ def _read_only_registry_once(
                 registry=str(registry_path),
             ) from error
         finally:
-            fcntl.flock(registry_file.fileno(), fcntl.LOCK_UN)
+            _unlock_file(registry_file)
 
 
 def _read_only_registry(repository: Path) -> tuple[Path, dict[str, Any]]:
@@ -1044,7 +1089,7 @@ def _locked_registry_file(
         except (FileNotFoundError, IsADirectoryError, NotADirectoryError):
             continue
         with os.fdopen(registry_descriptor, "r+", encoding="utf-8") as registry_file:
-            fcntl.flock(registry_file.fileno(), fcntl.LOCK_EX)
+            _lock_file(registry_file)
             try:
                 locked = os.fstat(registry_file.fileno())
                 try:
@@ -1064,7 +1109,7 @@ def _locked_registry_file(
                 yield registry_path, registry_file
                 return
             finally:
-                fcntl.flock(registry_file.fileno(), fcntl.LOCK_UN)
+                _unlock_file(registry_file)
     raise _ClaimStateError(
         "registry_lock_race",
         "Claim registry storage kept changing while its operational lock was acquired.",
@@ -1096,11 +1141,11 @@ def _maintenance_lock(common_directory: Path) -> Iterator[None]:
     root, _hot, _archive, _journal = _journal_paths(common_directory)
     root.mkdir(parents=True, exist_ok=True)
     with (root / "maintenance.lock").open("a+", encoding="utf-8") as lock_file:
-        fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX)
+        _lock_file(lock_file)
         try:
             yield
         finally:
-            fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
+            _unlock_file(lock_file)
 
 
 def _write_registry(registry_file: TextIO, data: dict[str, Any]) -> None:

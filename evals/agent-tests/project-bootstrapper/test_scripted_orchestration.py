@@ -7,9 +7,13 @@ from __future__ import annotations
 
 import importlib.util
 import os
+import subprocess
 import sys
+import tempfile
+import time
 import unittest
 from pathlib import Path
+from unittest import mock
 
 
 _MODULE_PATH = Path(__file__).with_name("scripted_orchestration.py")
@@ -740,13 +744,62 @@ class ScriptedBootstrapperTests(unittest.TestCase):
         self.assertIn("malformed handoff", malformed["reason"])
 
     def test_timeout_kills_the_owned_process_group_and_cleans_workspace(self) -> None:
-        result = scripted.run_isolated({"project-configurator": ["TIMEOUT"]}, timeout_seconds=0.1)
+        self.assertTrue(callable(getattr(scripted, "_start_owned_process", None)))
+        self.assertTrue(callable(getattr(scripted, "_terminate_owned_process_tree", None)))
+        timed_out_process = mock.Mock(pid=12345)
+        timed_out_process.wait.side_effect = subprocess.TimeoutExpired(
+            [sys.executable, "worker"],
+            0.1,
+        )
+        with (
+            mock.patch.object(
+                scripted,
+                "_start_owned_process",
+                return_value=timed_out_process,
+            ),
+            mock.patch.object(scripted, "_terminate_owned_process_tree") as terminate,
+        ):
+            result = scripted.run_isolated(timeout_seconds=0.1)
+        terminate.assert_called_once_with(timed_out_process)
         self.assertEqual("INFRASTRUCTURE_FAILED", result["status"])
         self.assertEqual("wall-clock timeout", result["reason"])
         self.assertEqual("complete", result["ownedProcessCleanup"])
         self.assertTrue(result["workspaceRemoved"])
-        with self.assertRaises(ProcessLookupError):
-            os.kill(result["workerPid"], 0)
+
+        with tempfile.TemporaryDirectory(prefix="project-bootstrapper-timeout-test-") as directory:
+            root = Path(directory)
+            descendant_started = root / "descendant-started"
+            descendant_completed = root / "descendant-completed"
+            descendant_script = (
+                "import pathlib, time; "
+                f"pathlib.Path({str(descendant_started)!r}).write_text('started', encoding='utf-8'); "
+                "time.sleep(0.5); "
+                f"pathlib.Path({str(descendant_completed)!r}).write_text('survived', encoding='utf-8')"
+            )
+            root_script = (
+                "import subprocess, sys, time; "
+                f"subprocess.Popen([sys.executable, '-c', {descendant_script!r}]); "
+                "time.sleep(3600)"
+            )
+            process = scripted._start_owned_process([sys.executable, "-c", root_script])
+            try:
+                for _ in range(100):
+                    if descendant_started.exists():
+                        break
+                    time.sleep(0.01)
+                else:
+                    self.fail("owned descendant did not start")
+                scripted._terminate_owned_process_tree(process)
+            finally:
+                if process.poll() is None:
+                    process.kill()
+                    process.wait(timeout=10)
+            self.assertIsNotNone(process.returncode)
+            time.sleep(0.75)
+            self.assertFalse(
+                descendant_completed.exists(),
+                "timeout cleanup left its owned descendant running",
+            )
 
 
 if __name__ == "__main__":
