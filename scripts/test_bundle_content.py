@@ -670,6 +670,10 @@ AGENTIC_CONFIGURATION_REQUIRED_PHRASES = (
     "&lt;project-root&gt;/.github/agents/&lt;agent-name&gt;.agent.md",
     "&lt;project-root&gt;/.github/copilot-instructions.md",
     "&lt;project-root&gt;/.github/instructions/&lt;rule-name&gt;.instructions.md",
+    "Copilot CLI combines applicable personal, repository, and agent instruction files, including repository-wide custom instructions and <code>AGENTS.md</code>.",
+    "It defines no general precedence between them.",
+    "Path-specific instruction files require YAML <code>applyTo</code> frontmatter and apply only to matching files.",
+    "Copilot CLI discovers <code>AGENTS.md</code> in the repository root, current working directory, intermediate directories, and relevant nested paths.",
     "&lt;project-root&gt;/AGENTS.md</code> with colocated <code>&lt;project-root&gt;/CLAUDE.md",
     "Inherited through the applicable <code>CLAUDE.md</code> bridge",
     "&lt;folder-path&gt;/AGENTS.md</code> with a colocated <code>&lt;folder-path&gt;/CLAUDE.md",
@@ -13673,6 +13677,8 @@ Visible after.
         self.assertNotIn("agents/*.toml", configuration_text)
         self.assertNotIn("agents/*.md", configuration_text)
         self.assertNotIn("Generated Code", configuration_text)
+        self.assertNotIn("primary agent instructions", configuration_text)
+        self.assertNotIn("additional rather than primary", configuration_text)
 
         layer_section = configuration_text.split(
             '<ol class="context-layers">', maxsplit=1
