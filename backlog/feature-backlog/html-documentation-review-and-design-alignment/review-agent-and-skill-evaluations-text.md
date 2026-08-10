@@ -2,7 +2,7 @@
 
 Owner: Dev Orchestrator (019fe928-e2d9-73d3-a647-7fac38731628)
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -24,9 +24,27 @@ Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/review-agent-skill
 
 Candidate Commit: 5043884e3a2d31ca0c86be33338447a306004578
 
-Phase: Fresh independent rereview and reverification
+Phase: Narrow Codex reference configuration recovery
 
 Started At: 2026-08-10T00:49:58Z
+
+## Active Execution Evidence
+
+Condition Type: root-execution
+
+Owner: Dev Orchestrator 019fe928-e2d9-73d3-a647-7fac38731628
+
+Evidence: The same visible canonical Codex task accepted the durable recovery handoff after User Action Required to Ready commit f78028f7 and Ready to Starting commit bc144e64. The user's exact approved recovery is limited to adding MCP_AGENT_OPS_REFERENCE_ROOTS and MCP_AGENT_OPS_REFERENCE_NAMES to the existing mcp-agent-ops environment table in /Users/martinbechard/.codex/config.toml, with backup, TOML validation, and a fresh service/session reference_load verification. The broad user-scope installer is explicitly excluded. Clean candidate 5043884e3a2d31ca0c86be33338447a306004578 and all prior review and verification evidence remain preserved.
+
+Observed At: 2026-08-10T02:21:06Z
+
+Started At: 2026-08-10T02:20:43Z
+
+Deadline or Expires At: 2026-08-10T03:20:43Z
+
+Next Action: Commit this Starting to Running transition, acquire activity=work and the exact shared-install configuration resource, apply and verify only the two-line configuration repair, then correct the preserved singular-grammar finding and repeat fresh independent gates.
+
+Next Reconciliation At: 2026-08-10T02:35:43Z
 
 ## Recovery Handoff Evidence
 
