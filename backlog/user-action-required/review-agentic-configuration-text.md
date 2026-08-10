@@ -1,8 +1,8 @@
 # Review and Correct Coding-Agent Runtime Configuration Text
 
-Owner: Dev Orchestrator
+Owner: Unowned
 
-Status: Running
+Status: User Action Required
 
 Type: Feature
 
@@ -32,7 +32,7 @@ Last Contact: 2026-08-10T00:44:00Z
 
 Next Reconciliation At: 2026-08-10T00:59:00Z
 
-## Active Execution Evidence
+## Prior Active Execution Evidence
 
 Condition Type: root-execution
 
@@ -59,6 +59,24 @@ Branch: codex/review-agentic-configuration-text-019fb057
 Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/review-agentic-configuration-text-work-019fb057
 
 Phase: Bounded correction attempt 1 reconciliation
+
+## User Action Required
+
+Question: Do you approve restoring `design/agentic-configuration.html` to its pre-candidate state with no provenance block, while retaining the supported text corrections?
+
+Why User Input Is Required: Both bounded correction attempts reached the same trusted maintained-document guard. The provenance block exists only in unaccepted candidate history, but removing it still requires explicit user or trusted project authority. No historical migration provenance values are available to support retaining and correcting the block instead.
+
+Preserved Evidence: Candidate `6f346e3ab36da01a1d5df51f6632fb9ac904d0f2` is clean and unaccepted on branch `codex/review-agentic-configuration-text-019fb057`. Earlier reviewed candidate `ce62ec83604b9ba9a775e78398d666f660177dc5` remains preserved. No verifier run or delivery occurred.
+
+Prohibited Unattended Action: Do not remove, invent, or alter provenance; do not resume source correction or lifecycle execution until the user answers this exact question.
+
+Asked At: 2026-08-10T01:42:00Z
+
+Asked In: Parent coordination task 019fb057-1767-7ef2-b5fa-41f4417b20b3
+
+Resolution: Pending
+
+Approval Resolution: Pending
 
 ## Summary
 
