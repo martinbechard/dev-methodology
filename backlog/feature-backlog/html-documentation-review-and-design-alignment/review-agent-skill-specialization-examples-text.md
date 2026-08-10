@@ -38,17 +38,17 @@ Condition Type: root-execution
 
 Owner: Dev Orchestrator
 
-Evidence: Visible canonical root execution 019fe928-e317-7942-87c0-1a9235a9d2c8 remains active and owns the live exact activity=work claim visible-specialization-work-019fe928. Verifier-bounded correction commit 8b93e9867d40a3f808e1662c65ccb824fe7f6bff removed the sole non-schema role entry; its exact child claim was released and independently confirmed absent. A new fresh independent cumulative methodology review returned GOOD with no findings, including zero template-unknown recursive paths. A different independent verifier is now re-running the complete final gate on corrected tip 8b93e9867d40a3f808e1662c65ccb824fe7f6bff. Completed inventory, implementation, review, and prior correction gates will not be repeated.
+Evidence: Visible canonical root execution 019fe928-e317-7942-87c0-1a9235a9d2c8 remains active and owns the live exact activity=work claim visible-specialization-work-019fe928. Corrected cumulative candidate 8b93e9867d40a3f808e1662c65ccb824fe7f6bff has fresh independent review verdict GOOD and independent final verification PASS. The required main-integration project-files acquisition returned CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED on live claim review-generic-agent-definitions-source-text-integration-paths-019fe929. That claim owner acknowledged the wait and will explicitly notify this canonical task after its accepted main delivery is observed and both of its integration claims are released. No integration retry will occur before that notification, and completed review or verification gates will not be repeated.
 
-Observed At: 2026-08-10T02:05:30Z
+Observed At: 2026-08-10T02:16:00Z
 
 Started At: 2026-08-10T00:56:30Z
 
 Deadline or Expires At: 2026-08-10T04:56:30Z
 
-Next Action: Receive the new independent verifier's final PASS or FAIL; on PASS, acquire the main-integration claim and integrate the accepted cumulative candidate, and on FAIL, authorize only the verifier-bounded correction.
+Next Action: Wait for the explicit release notification from canonical task 019fe929-3695-7d20-93dc-63852ced1020; then recheck current main and retry the required project-files acquisition once before integrating the accepted candidate.
 
-Next Reconciliation At: 2026-08-10T02:20:30Z
+Next Reconciliation At: 2026-08-10T02:31:00Z
 
 Canonical Conversation: 019fe928-e317-7942-87c0-1a9235a9d2c8
 
