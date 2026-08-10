@@ -46,6 +46,60 @@ The user requested on 2026-08-10 in task 019fb057-1767-7ef2-b5fa-41f4417b20b3: â
 - Add focused positive and boundary evaluation coverage for the role and its routing.
 - Regenerate all supported native Agent projections and repository-owned role documentation from canonical sources.
 
+## Planned Workflow
+
+```mermaid
+flowchart TD
+    A["New development request"] --> B["Dev Orchestrator<br/>defines the bounded assignment"]
+    B --> C{"User explicitly requested<br/>coding without planning?"}
+    C -- "Yes" --> H
+    C -- "No" --> D["Dev Coder<br/>creates the implementation and TDD plan"]
+
+    D --> E{"Methodology artifact?"}
+    E -- "Yes" --> F["Methodology Artifact Reviewer<br/>optionally reviews methodology alignment"]
+    F --> F1{"Methodology review accepted?"}
+    F1 -- "No" --> R1["Record failed plan review"]
+    F1 -- "Yes" --> G
+    E -- "No" --> G["Dev Architect<br/>reviews technical soundness,<br/>reuse, and proportionality"]
+
+    G --> G1{"Architect decision"}
+    G1 -- "Accepted" --> H
+    G1 -- "Correction required" --> R1
+    G1 -- "Larger design is justified" --> U1["Ask user to confirm the larger scope<br/>and show the smaller alternative"]
+    U1 -- "Approved" --> H
+    U1 -- "Not approved" --> D
+    R1 --> R1A{"Third failed review?"}
+    R1A -- "No" --> D
+    R1A -- "Yes" --> X["User Action Required<br/>with the unresolved review decision"]
+
+    subgraph Development_Loop["Coding and TDD loop"]
+        H["Dev Coder<br/>writes tests and implementation"] --> I{"Complex test infrastructure<br/>planned or discovered?"}
+
+        I -- "Yes" --> J["Dev Coder<br/>updates the complex test-infrastructure plan"]
+        J --> K["Dev Architect<br/>reviews necessity, reuse,<br/>scope, and proportionality"]
+        K --> L{"Test design decision"}
+        L -- "Accepted" --> H
+        L -- "Correction required" --> R2["Record failed test-design review"]
+        L -- "Larger design is justified" --> U2["Ask user to confirm the larger scope<br/>and show the bounded alternative"]
+        U2 -- "Approved" --> H
+        U2 -- "Not approved" --> J
+        R2 --> R2A{"Third failed review?"}
+        R2A -- "No" --> J
+        R2A -- "Yes" --> X
+
+        I -- "No" --> M["Dev Code Reviewer<br/>reviews code and tests"]
+        M --> N{"Code accepted?"}
+        N -- "No" --> R3["Record failed implementation review"]
+        N -- "Yes" --> O["Dev Verifier<br/>runs independent verification"]
+        O --> P{"Verification passes?"}
+        P -- "No" --> R3
+        P -- "Yes" --> Q["Dev Orchestrator<br/>coordinates delivery"]
+        R3 --> R3A{"Third failed review?"}
+        R3A -- "No" --> H
+        R3A -- "Yes" --> X
+    end
+```
+
 ## Acceptance Criteria
 
 - The role catalog contains dev-architect with repository mutation, skills, instructions, examples, dependencies, and output contracts valid under role schema version 8.
