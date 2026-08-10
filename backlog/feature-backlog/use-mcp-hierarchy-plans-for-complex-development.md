@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: User Action Required
+Status: Ready
 
 Type: Feature
 
@@ -64,23 +64,15 @@ Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/use-mcp-hierarchy-
 
 Phase: implementation dispatch
 
-## User Action Required
+## User Direction Resolution
 
-Question: Should this work (1) create a separate mcp-agent-ops work item to expose, release, and install typed hierarchy-plan MCP tools before resuming, or (2) revise this work item's acceptance criteria to permit direct use of the existing Python hierarchy-plan API?
+Resolution: The user confirmed that the documented hierarchy-plan functions in the mcp-agent-ops project are the tools this work item must use. No FastMCP protocol wrapper or mcp-agent-ops source change is required.
 
-Why User Input Is Required: The original request requires plan creation and mutation through the configured MCP server. Independent inspection of configured mcp-agent-ops v0.9.0 found 22 tools and no hierarchy-plan creation, update, or generic mutation tool. The Python API exists, but using it would materially change the requested integration boundary. Adding MCP wrappers is a separate cross-repository feature and release.
+Resolved At: 2026-08-10T01:19:00Z
 
-Prohibited Unattended Action: Do not implement direct Python API use, add mcp-agent-ops tools, change either repository, or resume this work item until the user selects one option.
+Resolved In: Parent coordination task 019fb057-1767-7ef2-b5fa-41f4417b20b3
 
-Independent Work That May Continue: Other non-overlapping backlog work may continue normally.
-
-Asked At: 2026-08-10T01:07:00Z
-
-Asked In: Parent coordination task 019fb057-1767-7ef2-b5fa-41f4417b20b3
-
-Resolution: Pending
-
-Approval Resolution: Pending
+Implementation Boundary: Use the supported `mcp_agent_ops.hierarchy` package API documented by the project. Do not add or redesign MCP protocol tools.
 
 ## Blocking Evidence
 
@@ -104,7 +96,7 @@ Add a portable planning skill for complex development work and route it to Dev O
 
 The mcp-agent-ops repository at commit ebc26f060c4a70d82a3a0cd4495ed37f76fefe62 includes durable hierarchy-plan creation and mutation APIs in src/mcp_agent_ops/hierarchy/plan.py. The public examples create a JSON plan beside its HTML rendering, mark an item complete, add a child, replace children, and add a peer. Every mutation regenerates the HTML projection.
 
-The user clarified on 2026-08-09 that the required structured-plan tools already exist and that this work needs a plan for using them, not new mcp-agent-ops functionality. Implementation must discover the configured server's exact current tool schemas and use the existing structured-plan creation, mutation, and HTML-rendering operations without changing the server's public contract.
+The user clarified on 2026-08-09 and again on 2026-08-10 that the required structured-plan tools already exist and that this work needs a plan for using them, not new mcp-agent-ops functionality. Implementation must use the documented `create_hierarchy_plan`, `update_hierarchy_plan`, and HTML-rendering package APIs without changing the server's public contract.
 
 The plan is an execution aid for one complex delivery. It must not replace the file-provider work item, provider lifecycle, source-control evidence, or the Dev Orchestrator's responsibility for decomposition and handoffs.
 
@@ -127,9 +119,9 @@ That repository documentation was the basis for the initial User Action Required
 
 - Add one portable manage-complex-development-plan skill and route it to Dev Orchestrator for work whose scope, dependency structure, duration, or discovery risk makes an externalized plan materially useful.
 - Define a complexity gate so routine one-step or otherwise easily tracked work does not create plan artifacts.
-- Create the initial plan through the configured mcp-agent-ops server as a canonical JSON file with a synchronized sibling HTML file.
+- Create the initial plan through the installed mcp-agent-ops package API as a canonical JSON file with a synchronized sibling HTML file.
 - Represent the delivery objective, ordered tasks, subtasks, dependencies, current state, and relevant evidence references without duplicating the complete provider record.
-- Update the plan through the MCP server when a task or subtask completes.
+- Update the plan through the mcp-agent-ops package API when a task or subtask completes.
 - Add a child task when discovery expands an existing task and add a peer task when discovery introduces a new workstream.
 - Preserve completed work and prior structure when discovery adds work. Do not rewrite history merely to make the plan appear linear.
 - Regenerate the HTML projection after every accepted JSON mutation and keep the JSON source authoritative.
@@ -137,13 +129,13 @@ That repository documentation was the basis for the initial User Action Required
 - Keep provider lifecycle, work-item status, review verdicts, verification results, and Commit delivery authoritative when they differ from the plan. Reconcile the plan to those sources rather than treating it as a shadow backlog.
 - Define plan initialization, update cadence, recovery, final reconciliation, retention, and cleanup responsibilities for Dev Orchestrator.
 - Exclude credentials, personal information, proprietary content not authorized for the configured server, and unnecessary source or prompt payloads from plan artifacts.
-- Discover and record the exact schemas of the existing structured-plan MCP tools before the skill invokes them; do not add, redesign, or publish mcp-agent-ops server functionality under this work item.
+- Verify the installed mcp-agent-ops version exposes the documented hierarchy-plan API before the skill invokes it; stop with a clear missing-capability error if the API is unavailable. Do not add, redesign, or publish mcp-agent-ops server functionality under this work item.
 - Update the relevant skill catalog, Dev Orchestrator definition, generated adapters and documentation, and focused bundle assertions from canonical sources.
 
 ## Acceptance Criteria
 
-- A complex-work example creates one canonical JSON plan and one synchronized standalone HTML plan through MCP, without Python or shell code generated by the model.
-- The example marks a task complete, adds a newly discovered subtask, and adds a newly discovered peer task through typed MCP calls; both files reflect every accepted change.
+- A complex-work example creates one canonical JSON plan and one synchronized standalone HTML plan through a repository-owned skill/helper that calls the documented mcp-agent-ops package API; the model does not improvise Python or shell code.
+- The example marks a task complete, adds a newly discovered subtask, and adds a newly discovered peer task through the documented plan API; both files reflect every accepted change.
 - Ambiguous or missing targets, paths outside configured workspace roots, invalid plan documents, and multi-mutation requests fail without silently changing either artifact.
 - The planning skill states when a plan is required, when it is unnecessary, which source is authoritative, and how Dev Orchestrator reconciles it with provider lifecycle and delivery evidence.
 - The Dev Orchestrator consumes the planning skill for qualifying complex work and does not create a second work-item ledger.
@@ -157,7 +149,7 @@ None.
 
 ## Verification
 
-- Read the configured mcp-agent-ops structured-plan tool schemas and verify that the skill maps its creation and mutation operations to those existing inputs and structured results.
+- Verify the installed mcp-agent-ops package exposes the documented hierarchy-plan function signatures and that the skill maps creation and mutation operations to those inputs and results.
 - Verify plan creation and each supported existing-tool mutation inside an allowed temporary workspace, including paired JSON and HTML byte changes.
 - Verify structured rejection for workspace escape, ambiguous targets, missing targets, invalid schemas, and calls requesting more than one mutation.
 - Validate skills/manage-complex-development-plan/SKILL.md through the configured skill validator.
@@ -194,10 +186,10 @@ Resolved on 2026-08-09 by the user's direct clarification in canonical parent ta
 
 > the tools are already there - you just need a plan to use them
 
-The work item therefore requires no mcp-agent-ops source mutation, new tool contract, server release, or cross-repository publication. It may proceed by discovering and using the configured server's existing structured-plan tools. The approved dev-methodology governed manifest and all prior exclusions remain unchanged.
+The work item therefore requires no mcp-agent-ops source mutation, new tool contract, server release, or cross-repository publication. It must proceed by using the documented `mcp_agent_ops.hierarchy` package API. The approved dev-methodology governed manifest and all prior exclusions remain unchanged.
 
 ## Notes
 
 - Existing structured-plan behavior is the implementation dependency. This work item owns the Dev Orchestrator usage plan and skill integration, not server capability development.
-- The HTML completion markers are read-only by design. All durable changes must flow through the MCP plan mutation tool and authoritative JSON source.
+- The HTML completion markers are read-only by design. All durable changes must flow through `update_hierarchy_plan` and the authoritative JSON source.
 - This item does not authorize mcp-agent-ops source changes, shared installation, release, publication, or unrelated server work.
