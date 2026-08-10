@@ -1,8 +1,8 @@
 # Review and Correct Orchestrated Development Lifecycle Text
 
-Owner: Dev Backlog Coordinator
+Owner: Dev Orchestrator
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -13,6 +13,38 @@ Work Item ID: review-orchestrated-development-lifecycle-text
 Completion: main-branch
 
 Series: backlog/feature-backlog/html-documentation-review-and-design-alignment/index.md
+
+## Active Execution Evidence
+
+Condition Type: root-execution
+
+Owner: Root Dev Orchestrator task 019fe9f2-a42b-77f2-9c2a-96c29e5f4e38
+
+Canonical Conversation: Codex task 019fe9f2-a42b-77f2-9c2a-96c29e5f4e38; the runtime exposes one visible task/thread identifier for this execution
+
+Root Agent Task: 019fe9f2-a42b-77f2-9c2a-96c29e5f4e38
+
+Root Role: Dev Orchestrator
+
+Parent Task ID: 019fb057-1767-7ef2-b5fa-41f4417b20b3
+
+Branch: codex/review-orchestrated-development-lifecycle-text-019fe9f2
+
+Worktree: /Users/martinbechard/.codex/worktrees/f5a9/dev-methodology
+
+Phase: Authoritative-source inventory
+
+Evidence: The canonical root execution accepted the committed Starting handoff at main commit cfa63d57f446a22e792e72e0c22870c50fd0de70, set the required Implementing title, acquired exact activity=work ownership, created the dedicated delivery branch from that handoff, and entered this isolated worktree with the target source still unmodified. The governed work claim is handed to this atomic provider update and will be reacquired before source work begins.
+
+Observed At: 2026-08-10T04:38:10Z
+
+Started At: 2026-08-10T04:35:39Z
+
+Deadline or Expires At: 2026-08-10T06:38:10Z
+
+Next Action: Commit this Starting to Running transition, release the update and exact backlog-path claims, reacquire exact activity=work ownership, then inventory authoritative sources before dispatching the documentation writing lane.
+
+Next Reconciliation At: 2026-08-10T04:53:10Z
 
 ## Summary
 
