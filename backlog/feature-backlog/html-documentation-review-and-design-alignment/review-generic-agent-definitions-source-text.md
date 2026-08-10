@@ -36,19 +36,19 @@ Next Reconciliation At: 2026-08-10T00:59:00Z
 
 Condition Type: delegated-work
 
-Owner: Dev Orchestrator task 019fe929-3695-7d20-93dc-63852ced1020 coordinating Dev Merge Coordinator task /root/combine_generic_agent_candidate
+Owner: Dev Orchestrator task 019fe929-3695-7d20-93dc-63852ced1020 coordinating fresh Dev Artifact Reviewer task /root/review_combined_generic_agent_html and Dev Code Reviewer task /root/review_combined_generic_agent_test
 
-Evidence: The original writer resolved both HTML findings in f1e7cc28a71ace5d6ae1ff5e520aab38d6c7a7a0 and the Dev Coder resolved the non-overlapping stale link assertion in 9516308b86a448d8bb5226200a6f2925cbb726f5. A Dev Merge Coordinator is combining those accepted corrections with initial candidate e82a8b0fc284faa9fa9cdeacc3ede896a56bd5fb into one immutable two-path candidate from base 9488c71873e19c99b523927bce14ec64da634158.
+Evidence: Dev Merge Coordinator produced clean immutable combined candidate e40a50fae05f8e26264269b7a6970512abf416e4 with parent 9488c71873e19c99b523927bce14ec64da634158 and exactly design/generic-agent-definitions-source.html plus scripts/test_bundle_content.py. Fresh-context artifact and code reviewers are independently reviewing the two changed surfaces and the disposition of every prior finding.
 
-Observed At: 2026-08-10T01:21:40Z
+Observed At: 2026-08-10T01:25:52Z
 
-Started At: 2026-08-10T01:21:40Z
+Started At: 2026-08-10T01:25:52Z
 
-Deadline or Expires At: 2026-08-10T01:40:00Z
+Deadline or Expires At: 2026-08-10T01:42:00Z
 
-Next Action: Collect the clean combined commit, then dispatch new fresh-context artifact and code reviewers before independent verification.
+Next Action: Require terminal GOOD from both fresh reviewers, resolve any confirmed finding, then dispatch an independent Dev Verifier against the same immutable commit.
 
-Next Reconciliation At: 2026-08-10T01:32:00Z
+Next Reconciliation At: 2026-08-10T01:35:00Z
 
 Codex Task ID: 019fe929-3695-7d20-93dc-63852ced1020
 
@@ -58,11 +58,11 @@ Root Role: Dev Orchestrator
 
 Parent Task ID: 019fb057-1767-7ef2-b5fa-41f4417b20b3
 
-Branch: codex/review-generic-agent-definitions-source-text-orchestrator
+Branch: codex/review-generic-agent-definitions-combined-019fe929
 
-Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/review-generic-agent-definitions-source-text-start-update
+Worktree: /private/tmp/review-generic-agent-definitions-combined-019fe929
 
-Phase: Candidate combination
+Phase: Fresh post-combination review
 
 ## Summary
 
