@@ -36,17 +36,17 @@ Condition Type: exceptional-recovery
 
 Owner: Original Dev Coder /root/windows_portability_coder under visible Root Dev Orchestrator 019fe928-e2d8-7f91-91b2-bd27990a7414
 
-Evidence: Final-recovery TDD has a clean RED checkpoint on exactly three directly traceable test paths. Twenty of 22 focused portability contracts pass; the two expected failures prove that both corrected production launchers still contain taskkill and lack kill-on-close Windows Job Object ownership. The Project Bootstrapper and agent-skill-evaluation cleanup fixtures now use deterministic root-plus-child completion sentinels, both Windows exclusions are removed, and a verifier contract prevents those cases from re-entering the exclusion table. No recovery implementation mutation has started, and source is paused.
+Evidence: The final-recovery Windows process-ownership lane is green at a safe checkpoint on exactly five directly traceable implementation, test, and verifier paths. Both corrected launchers now create the real child suspended, assign it before first instruction to a kill-on-close Windows Job Object, resume it, use bounded waits, and fail closed on Assign, Resume, Terminate, or Wait errors; taskkill is absent. Deterministic root-plus-child cleanup tests pass for Project Bootstrapper timeout cleanup (1/1) and agent-skill-evaluation successful-root descendant plus output-cap cleanup (2/2). Python compilation passes, and the portability verifier passes 22/22 focused contracts plus command smokes with only the two authorized inherited command failures. No native Windows pass is claimed. Source is paused before the separately bounded ordinary-skip and diagnostic-signature lane.
 
-Observed At: 2026-08-10T04:41:22Z
+Observed At: 2026-08-10T04:53:38Z
 
 Started At: 2026-08-10T04:41:22Z
 
 Deadline or Expires At: 2026-08-10T06:11:22Z
 
-Next Action: Complete this provider transaction, reacquire the visible root's exact activity=work claim, then release the original Dev Coder to implement durable Windows Job Object ownership before completing skip accounting, stable diagnostic signatures, README truthfulness, and full verification.
+Next Action: Complete this provider transaction, reacquire the visible root's exact activity=work claim, then release the original Dev Coder to capture and reject unclassified ordinary unittest skips, bind the 118 authorized inherited identities to stable sanitized diagnostics, keep README claims evidence-bounded, and run complete verification.
 
-Next Reconciliation At: 2026-08-10T04:56:22Z
+Next Reconciliation At: 2026-08-10T05:08:38Z
 
 ## Exceptional Recovery Manifest
 
@@ -84,7 +84,7 @@ Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/make-python-window
 
 Current Phase: Implementing
 
-Work-Item Claim: Visible claim python-windows-portability-visible-work-19-019fe928 was released with handoff for this final-recovery RED checkpoint; source remains frozen until the visible root reacquires the exact activity=work claim.
+Work-Item Claim: Visible claim python-windows-portability-visible-work-20-019fe928 was released with handoff for this final-recovery process-ownership checkpoint; source remains frozen until the visible root reacquires the exact activity=work claim.
 
 ## Execution Handoff Reconciliation
 
