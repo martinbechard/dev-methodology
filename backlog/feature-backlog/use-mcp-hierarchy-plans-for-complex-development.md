@@ -26,21 +26,21 @@ Required Task Title: Implementing — Use MCP hierarchy plans for complex develo
 
 ## Active Execution Evidence
 
-Condition Type: root-execution
+Condition Type: delegated-work
 
-Owner: Dev Orchestrator (019fe928-e31e-71e2-aaa8-7f9bef12c7b0)
+Owner: Dev Coder (/root/exceptional_recovery_complex_plan), coordinated by Dev Orchestrator (019fe928-e31e-71e2-aaa8-7f9bef12c7b0)
 
-Evidence: Both final independent reviewers returned NEEDS_CORRECTION for preserved clean candidate 3ad236c3a1017e7ec9b2238e4ba2e8dcec7f4ead after reproducing a repeated high prepared-recovery token defect, strict update-record validation gaps, and cited Markdown rule drift. The required two-attempt stop was reported to the parent Dev Backlog Coordinator. The Coordinator explicitly kept lifecycle Running and authorized one exceptional bounded recovery cycle with a fresh Dev Coder, failing-regression-first evidence, the existing exact 16-path ceiling, fresh code and methodology review, and independent verification. No recovery source mutation has started.
+Evidence: The fresh exceptional-recovery Dev Coder completed the mandatory red gate before any production or documentation mutation. Three new focused regression methods produced ten expected failures: changed synchronized canonical JSON and HTML after a prepared cleanup, each of four changed prior recovery fingerprints, and five empty, unsupported, or inconsistent update-journal cases all incorrectly returned success instead of a stale or unresolved result. Only the authorized helper test file is dirty; candidate 3ad236c3 and every preserved predecessor remain immutable. The fresh coder has no blocker or authority expansion.
 
-Observed At: 2026-08-10T04:22:11Z
+Observed At: 2026-08-10T04:35:48Z
 
-Started At: 2026-08-10T04:22:11Z
+Started At: 2026-08-10T04:23:40Z
 
 Deadline or Expires At: 2026-08-10T05:10:00Z
 
-Next Action: Reacquire the exact activity=work claim, dispatch one fresh Dev Coder for the three Coordinator-authorized corrections, require red evidence for both behavioral defects before mutation, and stop for Coordinator Blocked disposition if this exceptional recovery fails materially.
+Next Action: Reacquire the exact activity=work claim, resume the same fresh Dev Coder, implement only the proven prepared-decision binding, strict update-record validation, cited Markdown and exit-code wording corrections, then run the complete focused and full gates and commit one clean recovery candidate.
 
-Next Reconciliation At: 2026-08-10T04:36:11Z
+Next Reconciliation At: 2026-08-10T04:49:48Z
 
 Codex Task ID: 019fe928-e31e-71e2-aaa8-7f9bef12c7b0
 
@@ -58,11 +58,11 @@ Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/use-mcp-hierarchy-
 
 Starting Head: 9488c71873e19c99b523927bce14ec64da634158
 
-Phase: exceptional Coordinator-authorized recovery dispatch
+Phase: exceptional recovery red-to-green implementation
 
-Provider Update Claim: mcp-hierarchy-plans-exceptional-recovery-update-019fe928; outcome SHARED_CHECKOUT_ACQUIRED; claim event c8ae12f0-5c97-45fe-8e91-0a3bdac2119f.
+Provider Update Claim: mcp-hierarchy-plans-recovery-red-update-019fe928; outcome SHARED_CHECKOUT_ACQUIRED; claim event a7de41e2-a77b-42b4-81d2-f89a0b6d250f.
 
-Provider Path Claim: mcp-hierarchy-plans-exceptional-recovery-path-019fe928; outcome SHARED_CHECKOUT_ACQUIRED; claim event f39df764-d1fc-43e6-82d5-c3ccb78e347a.
+Provider Path Claim: mcp-hierarchy-plans-recovery-red-path-019fe928; outcome SHARED_CHECKOUT_ACQUIRED; claim event 3faec461-389c-4f7c-9f14-111cfd6016fb.
 
 ## Coordinator Recovery Disposition
 
