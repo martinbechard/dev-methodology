@@ -1,6 +1,6 @@
 # Minimize Collaboration Subagent Context Inheritance
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
@@ -131,3 +131,31 @@ Approved at creation by the user's explicit request to update Codex subagent-dis
 
 - This item changes dispatch context, not the responsibility or authority of any Agent.
 - The implementation should remain concise and centralized; role changes should reference the common rule rather than duplicate its full procedure.
+
+## Completion Evidence
+
+Completed At: 2026-08-11T01:56:21Z
+
+Completion Disposition: READY
+
+Accepted Candidate Commit: 88bb551d3545e64d777a39d1a3f44d2e51ffc0e0
+
+Accepted Candidate Branch: codex/minimize-collaboration-subagent-context-inheritance
+
+Independent Review: GOOD after the original Dev Coder corrected the read-only dispatcher loading finding and the Coordinator corrected the governed adapter-source path in main commit 1e46e4a4638fff54b95dda007aa782e471de78b9. The final fresh reviewer approved all 42 authorized paths with no findings or open questions.
+
+Source Verification: VERIFIED. Five focused contract tests passed; both changed Agent Skills passed repository-authorized validation; the Agent projection freshness check passed; the exact-range Git diff check passed; and the candidate worktree remained clean at the accepted commit.
+
+Integration Strategy: Replayed the two accepted candidate commits onto current main without importing unrelated ancestry.
+
+Source-to-Integration Mapping: d362897a0ca127254937d74423c9daaab8cebc2c -> 54007ecb and 88bb551d3545e64d777a39d1a3f44d2e51ffc0e0 -> 86dbd1085f93aa639d22159a43986cd732d7720e.
+
+Integrated Verification: On main, five focused contract tests passed with Python 3.11; both changed Agent Skills passed validation; scripts/build-skill-docs.py --check passed; git diff --check passed; and accepted non-backlog paths were byte-equivalent to the candidate. Earlier invocations with Python runtimes missing tomllib or PyYAML were classified as runtime-selection errors before the passing project-compatible run.
+
+Main Observation: main at 86dbd1085f93aa639d22159a43986cd732d7720e contains the replayed integration commits and is clean. Remote publication is not configured as a completion requirement and no push was performed.
+
+Coordination Evidence: Integration claims were released before this terminal provider transaction. The exact work-item update claim and source/destination backlog path claim protect this status-and-archive commit and are released after it.
+
+Terminal Backlog Commit: This status-and-archive commit.
+
+Completed Archive Path: backlog/completed-backlog/defects/minimize-collaboration-subagent-context-inheritance.md
