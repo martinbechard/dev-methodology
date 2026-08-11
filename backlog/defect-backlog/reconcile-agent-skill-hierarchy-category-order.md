@@ -1,8 +1,8 @@
 # Reconcile Agent-Skill Hierarchy Category Order
 
-Owner: Unowned
+Owner: Unowned pending accepted execution
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -90,3 +90,21 @@ Authorization is satisfied. Dispatch remains sequential: do not start this item 
 
 - Related Work Item: review-agent-and-skill-definitions-text.
 - The dependent page-design alignment item remains separate.
+
+## Starting Handoff Evidence
+
+Starting Recorded At: 2026-08-11T20:21:30Z
+
+Coordinator: Codex task 019ff271-bb29-7cd2-95da-7b4b9766a1e6
+
+Normalized Objective: Establish and implement one source-backed category-order contract across the hierarchy generator, generated hierarchy, definitions outline, README guidance, and focused assertions while preserving catalog membership, accessibility, and interactive behavior; then complete independent review, verification, main-branch delivery, provider closure, and cleanup.
+
+Intended Root Role: Dev Orchestrator
+
+Launch Result: Requested
+
+Canonical Execution: None
+
+Last Contact At: 2026-08-11T20:21:30Z
+
+Next Reconciliation At: 2026-08-11T20:36:30Z
