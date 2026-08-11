@@ -27,6 +27,7 @@ Keep backlog mutations with Dev Backlog Steward. Keep each work item's artifact 
 - PROJECT.yaml is the source for generated project guidance.
 - AGENTS.md is generated operational guidance.
 - .agents/skills contains skills used only to maintain this repository.
+- .agents/temp contains ignored, disposable files and scripts created for an agent's own work.
 - skills contains portable skills distributed to other projects and machines.
 - agents contains customer-independent conceptual agent schemas and source definitions.
 - detection.yaml beside a technology or domain skill owns setup-time detection metadata.
@@ -38,6 +39,12 @@ Keep backlog mutations with Dev Backlog Steward. Keep each work item's artifact 
 - scripts contains installation, refresh, generation, validation, and regression support.
 
 Do not put repository-specific procedures in distributed skills.
+
+## Temporary Agent Files
+
+When an agent needs repository-local temporary files or scripts, create them under .agents/temp/<agent-name>/<utc-timestamp>/. Use a filesystem-safe UTC timestamp in YYYYMMDDTHHMMSSZ form.
+
+Treat every file in this location as disposable. Do not store secrets, durable evidence, deliverables, or source files there. Remove the agent's temporary subfolder when it is no longer needed.
 
 ## Before Editing
 

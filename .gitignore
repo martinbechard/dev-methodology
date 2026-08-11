@@ -2,6 +2,8 @@
 __pycache__/
 *.py[cod]
 .agents/agent-claims.json
+.agents/temp/*
+!.agents/temp/.gitkeep
 .codex/
 .obsidian/
 /.worktrees/

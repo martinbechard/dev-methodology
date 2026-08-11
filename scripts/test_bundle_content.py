@@ -964,6 +964,8 @@ REPOSITORY_MAINTENANCE_REQUIRED_PHRASES = (
     "Correct a trivial unrelated failure immediately without creating a work item",
     "Record the failure as a distinct defect when any of those conditions is absent",
     ".worktrees contains ignored operational checkouts under the primary worktree. Resolve this directory from the primary worktree, never from another linked checkout.",
+    ".agents/temp/<agent-name>/<utc-timestamp>/",
+    "Use a filesystem-safe UTC timestamp in YYYYMMDDTHHMMSSZ form.",
 )
 
 
@@ -14092,6 +14094,11 @@ Visible after.
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, maintenance_skill_text)
                 self.assertNotIn(phrase, agents_text)
+
+        gitignore_lines = GITIGNORE_PATH.read_text(encoding="utf-8").splitlines()
+        self.assertIn(".agents/temp/*", gitignore_lines)
+        self.assertIn("!.agents/temp/.gitkeep", gitignore_lines)
+        self.assertTrue((REPOSITORY_ROOT / ".agents" / "temp" / ".gitkeep").is_file())
 
     def test_revise_document_topics_preserves_honest_scores(self) -> None:
         skill_text = REVISE_DOCUMENT_TOPICS_SKILL_PATH.read_text(encoding="utf-8")
