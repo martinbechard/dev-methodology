@@ -660,7 +660,7 @@
     <section class="section" aria-labelledby="flow-title">
       <h2 id="flow-title">Compiled Context Flow</h2>
       <div class="flow-shell">
-        <p>In the raw-ingest route, approved public or project evidence moves through three explicit ownership stages.</p>
+        <p>The raw-ingest process separates approved public evidence and bounded research reports across three ownership areas.</p>
         <div class="flow">
           <article class="flow-stage sources">
             <h3>Raw evidence producers</h3>
@@ -689,8 +689,8 @@
             </ul>
           </article>
         </div>
-        <p class="flow-caption"><strong>Separate query-gap route:</strong> the read-only Wiki Query Responder hands missing or stale durable coverage to the Wiki Researcher. The Researcher checks local and federated coverage, saves a confirmed gap as a sourced raw report, and leaves that report for the ingest route.</p>
-        <div class="code-rail" aria-label="Direct wiki maintenance inputs">
+        <p class="flow-caption"><strong>Separate query-gap route:</strong> the read-only Wiki Query Responder hands missing or stale durable coverage to the Wiki Researcher. The Query Responder does not create a raw fragment or edit the wiki. The Researcher checks local and federated coverage, saves a confirmed gap as a sourced raw report, and leaves that report for the ingest route. Direct use of the project-wiki-query skill may create a raw query fragment when repository mutation is allowed.</p>
+        <div class="code-rail" aria-label="Authoritative project evidence inputs for direct wiki maintenance">
           <span class="code-input">Code and tests</span>
           <span class="code-input">Specifications and procedures</span>
           <span class="code-input">Architecture and plans</span>
@@ -729,20 +729,21 @@
       <h2 id="separation-title">Separation Of Work</h2>
       <div class="matrix">
         <table>
+          <caption>Ownership boundaries for wiki collection, research, ingest, writing, verification, and query use</caption>
           <thead>
             <tr>
-              <th>Stage</th>
-              <th>Owns</th>
-              <th>Does not own</th>
-              <th>Durable result</th>
+              <th scope="col">Stage</th>
+              <th scope="col">Owns</th>
+              <th scope="col">Does not own</th>
+              <th scope="col">Durable result</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td><strong>Raw collection</strong></td>
-              <td>Public or project source capture, dates, provenance, exclusions, and follow-up notes.</td>
-              <td>Direct edits to durable docs/wiki synthesis.</td>
-              <td>Unprocessed evidence under raw or Clippings.</td>
+              <td>Approved public source capture, dates, provenance, exclusions, and follow-up notes.</td>
+              <td>Authoritative project evidence collection or direct edits to durable docs/wiki synthesis.</td>
+              <td>One raw-only public source artifact under raw.</td>
             </tr>
             <tr>
               <td><strong>Bounded research</strong></td>
@@ -752,7 +753,7 @@
             </tr>
             <tr>
               <td><strong>Raw-source ingest</strong></td>
-              <td>Source-backed topic leaves, hubs, indexes, digests, cross-links, and open questions.</td>
+              <td>Assigned raw or Clippings evidence reconciled with authoritative project evidence, then synthesized into topic leaves, hubs, indexes, digests, cross-links, and open questions.</td>
               <td>Replacing higher-authority project artifacts.</td>
               <td>Verified durable coverage and processed-source provenance.</td>
             </tr>
@@ -769,10 +770,16 @@
               <td>GOOD or actionable NEEDS_CORRECTION verdict.</td>
             </tr>
             <tr>
-              <td><strong>Query-time use</strong></td>
-              <td>Wiki-first discovery followed by verification against authoritative files or fresh public sources.</td>
-              <td>Silently rewriting docs/wiki from a conversational answer.</td>
-              <td>A verified answer and a bounded gap handoff; mutation-capable direct skill use may save a raw fragment only when allowed.</td>
+              <td><strong>Read-only query response</strong></td>
+              <td>The Wiki Query Responder owns wiki-first discovery, source verification, and bounded research handoffs.</td>
+              <td>Research, raw-fragment creation, or any wiki edit.</td>
+              <td>A verified answer and a bounded research handoff for missing or stale durable coverage.</td>
+            </tr>
+            <tr>
+              <td><strong>Direct project-wiki-query use</strong></td>
+              <td>Wiki-first discovery, source verification, and raw query-fragment creation when the durable-gap trigger passes and mutation is allowed.</td>
+              <td>Direct docs/wiki edits unless the requester explicitly asks for them.</td>
+              <td>A verified answer and, when permitted, one raw query fragment for later ingest.</td>
             </tr>
           </tbody>
         </table>
@@ -980,7 +987,7 @@
     </section>
   </main>
   <footer class="site-footer">
-    <p>Copyright 2026 (c) Martin.Bechard@DevConsult.ca - <a href="../LICENSE">MIT License</a></p>
+    <p>Copyright (c) 2026 Martin.Bechard@DevConsult.ca - <a href="../LICENSE">MIT License</a></p>
   </footer>
   <script src="documentation-settings.js"></script>
 </body>
