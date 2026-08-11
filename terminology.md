@@ -80,6 +80,22 @@ Definition: An Agent that performs an Evaluation.
 
 Definition: Retained information that supports or contradicts a claim about an Artifact, action, or result.
 
+### Generated Agent configuration
+
+Definition: A tool-specific Agent configuration produced by an authorized generator from a canonical Agent definition.
+
+Use for:
+
+- A generated Codex, Claude, Gemini, or Junie Agent file that adapts one canonical Agent definition to that tool's supported format.
+
+Avoid:
+
+- Projection: Do not use merely to mean a generated file or generated Agent configuration. Name the generated configuration or generated adapter file directly.
+
+### Generated adapter file
+
+Definition: A generated file that converts a canonical methodology definition into the format required by a specific supported tool or harness.
+
 ### Provider
 
 Definition: In software design, an implementation of an interface that supplies a concrete service behind an abstraction, commonly selected or constructed through a Factory.
