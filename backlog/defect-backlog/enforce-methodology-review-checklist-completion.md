@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -119,3 +119,15 @@ Candidate: 795b3616
 Exact blocker: Q012-Q016:runner-safe-relative-file-accepts-windows-path-escape.
 
 Required correction: reject paths such as ..\\escape.md and C:/escape.md before resolving checklist or findings artifact locations.
+
+## Resumption Handoff Evidence
+
+Starting Recorded At: 2026-08-11T04:06:46Z
+
+Coordinator: Dev Backlog Coordinator task 019fb057-1767-7ef2-b5fa-41f4417b20b3
+
+Canonical Execution: 019feea3-4792-7991-89c8-bcf35f814f25
+
+Normalized Objective: Deliver and complete the verified checklist-enforcement candidate without adding the declined Windows-path hardening requirement.
+
+Next Reconciliation At: 2026-08-11T04:21:46Z
