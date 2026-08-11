@@ -4078,6 +4078,49 @@ class BundleContentTests(unittest.TestCase):
         ):
             self.assertFalse((SKILLS_ROOT / retired_skill).exists())
 
+    def test_development_planning_confirms_missing_requested_premises(self) -> None:
+        """Planning must stop when reality does not match a material requested boundary."""
+        careful_coding_text = (
+            SKILLS_ROOT / "careful-coding" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        coder_text = json.dumps(
+            load_yaml_object(ROLES_ROOT / "dev-activities" / "dev-coder.role.yaml"),
+            sort_keys=True,
+        )
+        orchestrator_text = json.dumps(
+            load_yaml_object(
+                ROLES_ROOT / "dev-activities" / "dev-orchestrator.role.yaml"
+            ),
+            sort_keys=True,
+        )
+
+        for phrase in (
+            "Confirm Requested Reality Before Planning",
+            "a Python library function does not satisfy a request to use an MCP tool",
+            "Treat a likely typo as a clarification to confirm",
+            "Do not install another implementation, import an adjacent library, create an adapter or helper",
+        ):
+            with self.subTest(source="careful-coding", phrase=phrase):
+                self.assertIn(phrase, careful_coding_text)
+
+        for phrase in (
+            "Before producing an implementation plan or changing source",
+            "An adjacent library or similarly named capability is not equivalent",
+            "ask the user to confirm the intended boundary or spelling",
+            "Do not silently reinterpret the request",
+        ):
+            with self.subTest(source="dev-coder", phrase=phrase):
+                self.assertIn(phrase, coder_text)
+
+        for phrase in (
+            "Before accepting an implementation plan",
+            "likely misspelled",
+            "obtain user confirmation before approving a substitute",
+            "Reject a plan that silently replaces a requested interface",
+        ):
+            with self.subTest(source="dev-orchestrator", phrase=phrase):
+                self.assertIn(phrase, orchestrator_text)
+
     def test_dev_coder_and_orchestrator_preserve_candidate_review_commit_order(self) -> None:
         """Terminal Commit delivery must begin only after independent candidate acceptance."""
         coder = load_yaml_object(

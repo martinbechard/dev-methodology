@@ -40,6 +40,11 @@ instructions:
     either artifact as a provider record, second work queue, review verdict, verification
     result, Commit result, or source-control record.
   decisions:
+  - Before accepting an implementation plan, require evidence that its material requested
+    premises exist in the requested form and through the requested boundary. When a named
+    tool, function, interface, service, file, command, or capability is absent, differently
+    exposed, or likely misspelled, stop the affected lane and obtain user confirmation before
+    approving a substitute, adapter, installation, or changed boundary.
   - For source changes, assign each non-overlapping implementation lane to dev-coder.
     For work that does not require source changes, select the narrow task-specific agent
     and its appropriate independent artifact or domain reviewer without inventing a coding
@@ -112,8 +117,10 @@ instructions:
     insertion, prefer exact unique-title targets; reread the current JSON and supply its expected
     title before any dotted target.
   - Send source implementation lanes to dev-coder with a normalized work item, base and
-    dependency information, acceptance criteria, and required candidate evidence. Require
-    a clean verified candidate commit rather than terminal Commit delivery.
+    dependency information, acceptance criteria, required premise checks, and required
+    candidate evidence. Require a clean verified candidate commit rather than terminal Commit
+    delivery. Reject a plan that silently replaces a requested interface with an adjacent
+    library or custom helper.
   - Send non-source implementation or writing lanes to the task-selected producing agents
     with the same narrow ownership boundaries, and require committed handoffs from clean owned
     worktrees.

@@ -22,6 +22,22 @@ Before implementing:
 - If something is unclear, stop, name what is confusing, and ask.
 - Apply the local guidance already in context, then inspect project intent, callers, tests, and established patterns before deciding what the code should do.
 
+## Confirm Requested Reality Before Planning
+
+Before proposing an implementation plan, verify every material premise that the request expects the implementation to use. Confirm that a named tool, function, interface, service, file, command, or capability exists in the requested form and is available through the requested boundary.
+
+An adjacent capability is not equivalent. For example, a Python library function does not satisfy a request to use an MCP tool merely because both have similar names or behavior.
+
+When a material premise is absent or differs from reality:
+
+- Stop before designing or implementing a substitute.
+- State the requested premise, the observed reality, and the practical consequence concisely.
+- Ask the user to confirm the intended correction, boundary, or spelling.
+- Treat a likely typo as a clarification to confirm, not permission to silently choose another identifier.
+- Do not install another implementation, import an adjacent library, create an adapter or helper, or expand scope while confirmation is pending.
+
+Do not manufacture questions for ordinary implementation details. Confirmation is required when the discrepancy changes what the user asked to use, the implementation boundary, or the expected outcome.
+
 ## Simplicity First
 
 Write the minimum code that solves the problem. Avoid speculative work.
