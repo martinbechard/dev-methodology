@@ -62,7 +62,7 @@ instructions:
     no-findings marker.
 agentDependencies:
 - wiki-topic-verifier
-modelProfile: documentation
+modelProfile: implementation
 examples:
 - purpose: Restructure an overloaded wiki page into granular durable topics while
     preserving navigation, source traceability, and the digest that surfaces the change.

@@ -14,12 +14,12 @@
               "contextBudgetMechanismEvidence": "https://code.claude.com/docs/en/sub-agents",
               "contextBudgetTokens": 750000,
               "contextCapacityEvidence": [
-                "https://platform.claude.com/docs/en/about-claude/models/introducing-claude-fable-5-and-claude-mythos-5"
+                "https://platform.claude.com/docs/en/release-notes/overview"
               ],
               "contextCapacityTokens": 1000000,
               "headroomTokens": 250000,
-              "model": "fable-5",
-              "modelProfile": "documentation"
+              "model": "opus-4.8",
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -31,7 +31,7 @@
             "review-structured-artifact",
             "verify-documentation-page"
           ],
-          "sha256": "ba8677bc1efd7ff525ede6caaa349b1d0fa2d3865d080ec5aab712a62b91cd93",
+          "sha256": "23bfcabb7e18e77d10be0af7c52d40ef0b182635419f8a82ad921444bbaf0170",
           "source": "agents/roles/dev-activities/dev-artifact-reviewer.role.yaml"
         },
         {
@@ -50,7 +50,7 @@
               "contextCapacityTokens": 1000000,
               "headroomTokens": 650000,
               "model": "opus-4.8",
-              "modelProfile": "advanced-long"
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -61,7 +61,7 @@
             "ste-technical-writing",
             "manage-work-items"
           ],
-          "sha256": "a5dd6751d348fe1290ff4cc96d8a9a306d50b5aabf40877bcf12729c58e05a0d",
+          "sha256": "f422ecd1882b95c0d23f92ffb370c74ceda2c890c2e87d195c41e820fa21997f",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
@@ -269,12 +269,12 @@
               "contextBudgetMechanismEvidence": "https://code.claude.com/docs/en/sub-agents",
               "contextBudgetTokens": 750000,
               "contextCapacityEvidence": [
-                "https://platform.claude.com/docs/en/about-claude/models/introducing-claude-fable-5-and-claude-mythos-5"
+                "https://platform.claude.com/docs/en/release-notes/overview"
               ],
               "contextCapacityTokens": 1000000,
               "headroomTokens": 250000,
-              "model": "fable-5",
-              "modelProfile": "documentation"
+              "model": "opus-4.8",
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -286,7 +286,7 @@
             "analyze-document-topics",
             "revise-document-topics"
           ],
-          "sha256": "8d98e4c3092f7162feec082a6af473964056c28eb6a35c5d4bfd1ef16fed3e3d",
+          "sha256": "3cfc5d5e50812a89a09cf7cccff263263cf4f030e10faa6572c4de82c0d5da37",
           "source": "agents/roles/dev-activities/dev-document-topic-editor.role.yaml"
         },
         {
@@ -300,12 +300,12 @@
               "contextBudgetMechanismEvidence": "https://code.claude.com/docs/en/sub-agents",
               "contextBudgetTokens": 500000,
               "contextCapacityEvidence": [
-                "https://platform.claude.com/docs/en/about-claude/models/introducing-claude-fable-5-and-claude-mythos-5"
+                "https://platform.claude.com/docs/en/release-notes/overview"
               ],
               "contextCapacityTokens": 1000000,
               "headroomTokens": 500000,
-              "model": "fable-5",
-              "modelProfile": "documentation"
+              "model": "opus-4.8",
+              "modelProfile": "implementation"
             },
             "rounding": "floor"
           },
@@ -316,7 +316,7 @@
             "ste-technical-writing",
             "route-documentation-work"
           ],
-          "sha256": "9fb0fa32d73e728113beff601ddc266c82f6a9281c4239c85deb039fe69c2b16",
+          "sha256": "20b661e9717103f7e5933f58507f79800a47f4c012ec6fbae63654cfd8bdbcc6",
           "source": "agents/roles/dev-activities/dev-documentation-writer.role.yaml"
         },
         {
@@ -335,7 +335,7 @@
               "contextCapacityTokens": 1000000,
               "headroomTokens": 250000,
               "model": "opus-4.8",
-              "modelProfile": "advanced"
+              "modelProfile": "implementation"
             },
             "rounding": "floor"
           },
@@ -348,7 +348,7 @@
             "review-structured-artifact",
             "explain-code-fix"
           ],
-          "sha256": "8d0a0037d15ac545a0bb114d1e61fc52c148aba649a6ea089f6f076d7f9d4998",
+          "sha256": "16f5b485e5e4dc0fe621505a9889a5d3c6cc39c52c887fb32ef341f3dd3752d8",
           "source": "agents/roles/dev-activities/dev-merge-coordinator.role.yaml"
         },
         {
@@ -367,7 +367,7 @@
               "contextCapacityTokens": 1000000,
               "headroomTokens": 250000,
               "model": "opus-4.8",
-              "modelProfile": "advanced-long"
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -380,7 +380,7 @@
             "deliver-work-item",
             "structured-design"
           ],
-          "sha256": "651229fea97a30e25587cf32a267ce244360aa053b584335a7affd324f0cd620",
+          "sha256": "6b39e60aca9f2f5a350eafa1ddcff4fc5a2b19c7e2dc8f1ff27b1dcc86907138",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -399,7 +399,7 @@
               "contextCapacityTokens": 1000000,
               "headroomTokens": 250000,
               "model": "opus-4.8",
-              "modelProfile": "advanced"
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -411,7 +411,7 @@
             "review-prompt-contracts",
             "review-structured-artifact"
           ],
-          "sha256": "fd8b6dd465fa460efb75b0644d8f1eff217ddabc344de62df3fb526920e2ba23",
+          "sha256": "063fac48dd63243fb41c802870a57e4dfa551e3fad3bc64ec167f6bf7c1880f0",
           "source": "agents/roles/dev-activities/dev-prompt-reviewer.role.yaml"
         },
         {
@@ -463,7 +463,7 @@
               "contextCapacityTokens": 1000000,
               "headroomTokens": 250000,
               "model": "opus-4.8",
-              "modelProfile": "advanced"
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -475,7 +475,7 @@
             "application-security",
             "review-structured-artifact"
           ],
-          "sha256": "22620e3d3d013ef21444747b7d23e49b562275e36b53d8fc6821b668d0d7814e",
+          "sha256": "53da08874248143555da52acf41eac4a72e791ffee2ba1b6855d6948cfc57b07",
           "source": "agents/roles/dev-activities/dev-security-reviewer.role.yaml"
         },
         {
@@ -519,7 +519,7 @@
               "contextCapacityTokens": 1000000,
               "headroomTokens": 250000,
               "model": "opus-4.8",
-              "modelProfile": "intermediate"
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -531,7 +531,7 @@
             "skill-authoring",
             "review-structured-artifact"
           ],
-          "sha256": "13edbb463166699c6608f1fd115cba69d0e065a756f3c8970572fb5060607a1e",
+          "sha256": "e1b0c7bfc17bfa6d7b0df9d3e7cbadf43496e2c99152413c5e7bc3b128345dfd",
           "source": "agents/roles/dev-activities/dev-skill-lint-reviewer.role.yaml"
         },
         {
@@ -638,7 +638,7 @@
               "contextCapacityTokens": 1000000,
               "headroomTokens": 250000,
               "model": "opus-4.8",
-              "modelProfile": "advanced"
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -654,7 +654,7 @@
             "verify-documentation-page",
             "route-documentation-work"
           ],
-          "sha256": "e26cd99d92747c24f96921b6bb6c972509bd9bbf2a9127c9c1301920bb0e060c",
+          "sha256": "547ec6812b7c6ebb6d5863cf69f9e511490633056ef878f286cd3ac1e428e457",
           "source": "agents/roles/methodology-maintenance/methodology-artifact-reviewer.role.yaml"
         },
         {
@@ -732,7 +732,7 @@
               "contextCapacityTokens": 1000000,
               "headroomTokens": 250000,
               "model": "opus-4.8",
-              "modelProfile": "advanced"
+              "modelProfile": "implementation"
             },
             "rounding": "floor"
           },
@@ -747,7 +747,7 @@
             "name-methodology-artifacts",
             "route-documentation-work"
           ],
-          "sha256": "5e7d628ea1a021c1c6e6e32e096de5a95aeb285cd9ae38a9ce52637e81378778",
+          "sha256": "a016e9544a8b47f453c845a9a1244e02ca6591820724b9372b2641772e4c990b",
           "source": "agents/roles/methodology-maintenance/methodology-maintainer.role.yaml"
         },
         {
@@ -915,7 +915,7 @@
               "contextCapacityTokens": 1000000,
               "headroomTokens": 250000,
               "model": "opus-4.8",
-              "modelProfile": "advanced"
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -927,7 +927,7 @@
             "project-wiki-review",
             "verify-documentation-page"
           ],
-          "sha256": "cffd5213e4bd68da8cd8de3d25e359e5d9fc8ee94c1ea4d67937d479f69844dd",
+          "sha256": "dbbdb1e9726229a90098437f8b0c897e8ddff1574a2207cd329266ff34c88087",
           "source": "agents/roles/wiki-activities/wiki-artifact-reviewer.role.yaml"
         },
         {
@@ -941,12 +941,12 @@
               "contextBudgetMechanismEvidence": "https://code.claude.com/docs/en/sub-agents",
               "contextBudgetTokens": 750000,
               "contextCapacityEvidence": [
-                "https://platform.claude.com/docs/en/about-claude/models/introducing-claude-fable-5-and-claude-mythos-5"
+                "https://platform.claude.com/docs/en/release-notes/overview"
               ],
               "contextCapacityTokens": 1000000,
               "headroomTokens": 250000,
-              "model": "fable-5",
-              "modelProfile": "documentation"
+              "model": "opus-4.8",
+              "modelProfile": "implementation"
             },
             "rounding": "floor"
           },
@@ -958,7 +958,7 @@
             "project-wiki",
             "project-wiki-topic-write"
           ],
-          "sha256": "57466d3057406f2e6375d3b76c28563d829a86e95d4d73158fb2b32cf13bacac",
+          "sha256": "40e122d1f5f021b6d4e6f77dc7e9cedc5057e9739183091a97682a18e39b77f3",
           "source": "agents/roles/wiki-activities/wiki-ingester.role.yaml"
         },
         {
@@ -1033,12 +1033,12 @@
               "contextBudgetMechanismEvidence": "https://code.claude.com/docs/en/sub-agents",
               "contextBudgetTokens": 750000,
               "contextCapacityEvidence": [
-                "https://platform.claude.com/docs/en/about-claude/models/introducing-claude-fable-5-and-claude-mythos-5"
+                "https://platform.claude.com/docs/en/release-notes/overview"
               ],
               "contextCapacityTokens": 1000000,
               "headroomTokens": 250000,
-              "model": "fable-5",
-              "modelProfile": "documentation"
+              "model": "opus-4.8",
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -1050,7 +1050,7 @@
             "project-wiki-research",
             "project-wiki"
           ],
-          "sha256": "cbe873be1154d6cce38ce1dd639f05043b82dc7196394de1484bad63d32b4a50",
+          "sha256": "d7393105c93b9112198df127626f6e59c35c1fa01c65c77dcaf9e78d13a630e7",
           "source": "agents/roles/wiki-activities/wiki-source-collector.role.yaml"
         },
         {
@@ -1094,7 +1094,7 @@
               "contextCapacityTokens": 1000000,
               "headroomTokens": 250000,
               "model": "opus-4.8",
-              "modelProfile": "advanced"
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -1105,7 +1105,7 @@
             "ste-technical-writing",
             "project-wiki-topic-verify"
           ],
-          "sha256": "7cc80da093d25d51700c819a3335537a86d7ea9fbc9dee8d8120c3927f244994",
+          "sha256": "2cc84d3d10cf3196571e865c65222ef9c9121f0cd625eb4a280edd3a4ea8c789",
           "source": "agents/roles/wiki-activities/wiki-topic-verifier.role.yaml"
         },
         {
@@ -1119,12 +1119,12 @@
               "contextBudgetMechanismEvidence": "https://code.claude.com/docs/en/sub-agents",
               "contextBudgetTokens": 750000,
               "contextCapacityEvidence": [
-                "https://platform.claude.com/docs/en/about-claude/models/introducing-claude-fable-5-and-claude-mythos-5"
+                "https://platform.claude.com/docs/en/release-notes/overview"
               ],
               "contextCapacityTokens": 1000000,
               "headroomTokens": 250000,
-              "model": "fable-5",
-              "modelProfile": "documentation"
+              "model": "opus-4.8",
+              "modelProfile": "implementation"
             },
             "rounding": "floor"
           },
@@ -1136,7 +1136,7 @@
             "project-wiki",
             "project-wiki-topic-write"
           ],
-          "sha256": "eb3cd9e4b6595a957a8513f5d2053fc335a18da875ec87e1e8b6a5bf69fe81be",
+          "sha256": "0424cfcb0c183e9d4e4f9035c6374bdf464b2bee257dd90494f772815a6a064f",
           "source": "agents/roles/wiki-activities/wiki-writer.role.yaml"
         }
       ],
@@ -1158,12 +1158,12 @@
               "contextBudgetMechanismEvidence": "https://developers.openai.com/codex/subagents",
               "contextBudgetTokens": 787500,
               "contextCapacityEvidence": [
-                "https://developers.openai.com/api/docs/models/gpt-5.5"
+                "https://developers.openai.com/api/docs/models"
               ],
               "contextCapacityTokens": 1050000,
               "headroomTokens": 262500,
-              "model": "gpt-5.5",
-              "modelProfile": "documentation"
+              "model": "gpt-5.6-sol",
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -1176,7 +1176,7 @@
             "verify-documentation-page",
             "codex-harness-directives"
           ],
-          "sha256": "c3e03fe414106403d0c403c120d7363e0964f309b68df8b4a83ad8c27671a765",
+          "sha256": "a07623090a9cb7dbe2bc3282d90ad8b2e4b3e2e75ef8db34657c4c2cc2335eaf",
           "source": "agents/roles/dev-activities/dev-artifact-reviewer.role.yaml"
         },
         {
@@ -1195,7 +1195,7 @@
               "contextCapacityTokens": 1050000,
               "headroomTokens": 682500,
               "model": "gpt-5.6-sol",
-              "modelProfile": "advanced-long"
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -1207,7 +1207,7 @@
             "manage-work-items",
             "codex-harness-directives"
           ],
-          "sha256": "c2d303b537d37e1c78a5762e309e43128ecd4ea2c1d8e192e07365e71e84dc42",
+          "sha256": "df6d616092649c1667b76e5b4bfe2b53e6822b11b513480308b020de1b5a681f",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
@@ -1419,12 +1419,12 @@
               "contextBudgetMechanismEvidence": "https://developers.openai.com/codex/subagents",
               "contextBudgetTokens": 787500,
               "contextCapacityEvidence": [
-                "https://developers.openai.com/api/docs/models/gpt-5.5"
+                "https://developers.openai.com/api/docs/models"
               ],
               "contextCapacityTokens": 1050000,
               "headroomTokens": 262500,
-              "model": "gpt-5.5",
-              "modelProfile": "documentation"
+              "model": "gpt-5.6-sol",
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -1437,7 +1437,7 @@
             "revise-document-topics",
             "codex-harness-directives"
           ],
-          "sha256": "1c25f57779383756e3677ff062121c9f919e47107f81c2653fe9a28b9d4e1baf",
+          "sha256": "f075341745c6597b640c5fb9b1ad853bd4e6178b9a940ecf8ec6f8f1eaad3da5",
           "source": "agents/roles/dev-activities/dev-document-topic-editor.role.yaml"
         },
         {
@@ -1451,12 +1451,12 @@
               "contextBudgetMechanismEvidence": "https://developers.openai.com/codex/subagents",
               "contextBudgetTokens": 525000,
               "contextCapacityEvidence": [
-                "https://developers.openai.com/api/docs/models/gpt-5.5"
+                "https://developers.openai.com/api/docs/models"
               ],
               "contextCapacityTokens": 1050000,
               "headroomTokens": 525000,
-              "model": "gpt-5.5",
-              "modelProfile": "documentation"
+              "model": "gpt-5.6-sol",
+              "modelProfile": "implementation"
             },
             "rounding": "floor"
           },
@@ -1468,7 +1468,7 @@
             "route-documentation-work",
             "codex-harness-directives"
           ],
-          "sha256": "d8ec155538cec8799a8df2b2e7d88ceb5e911767cc3787546b4bf12cb4960ff7",
+          "sha256": "5e7e08972983d45f9747eabc46e16d55b134346718f21d925fa6d0d06c8c9b3a",
           "source": "agents/roles/dev-activities/dev-documentation-writer.role.yaml"
         },
         {
@@ -1487,7 +1487,7 @@
               "contextCapacityTokens": 1050000,
               "headroomTokens": 262500,
               "model": "gpt-5.6-sol",
-              "modelProfile": "advanced"
+              "modelProfile": "implementation"
             },
             "rounding": "floor"
           },
@@ -1501,7 +1501,7 @@
             "explain-code-fix",
             "codex-harness-directives"
           ],
-          "sha256": "816f9b8a13f8705318d29614f564c58bbb3174bd764385f8d053162aecb9e90a",
+          "sha256": "329246ae0bc80ff88a57637469beb82a36c6e3160b04b199e7c4393810bbaa79",
           "source": "agents/roles/dev-activities/dev-merge-coordinator.role.yaml"
         },
         {
@@ -1520,7 +1520,7 @@
               "contextCapacityTokens": 1050000,
               "headroomTokens": 262500,
               "model": "gpt-5.6-sol",
-              "modelProfile": "advanced-long"
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -1534,7 +1534,7 @@
             "structured-design",
             "codex-harness-directives"
           ],
-          "sha256": "eb0d0b3d01cec78b1a6c15e755d2660928fe2ec9df7c9673d740dc89630fedd5",
+          "sha256": "713756460213ed6a6f697d263d3e6446a5ace7ed71ce550b52eee475ff388607",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -1553,7 +1553,7 @@
               "contextCapacityTokens": 1050000,
               "headroomTokens": 262500,
               "model": "gpt-5.6-sol",
-              "modelProfile": "advanced"
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -1566,7 +1566,7 @@
             "review-structured-artifact",
             "codex-harness-directives"
           ],
-          "sha256": "80278a3d6b6daaf59e15436bff82f47c2e9feb90eb8ee6bc72d66f8ed3111a0a",
+          "sha256": "abb9d133f00b38ffa1ae4742b1f7ea41165b129b57a2ac7d6e57445d78e0dbc9",
           "source": "agents/roles/dev-activities/dev-prompt-reviewer.role.yaml"
         },
         {
@@ -1619,7 +1619,7 @@
               "contextCapacityTokens": 1050000,
               "headroomTokens": 262500,
               "model": "gpt-5.6-sol",
-              "modelProfile": "advanced"
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -1632,7 +1632,7 @@
             "review-structured-artifact",
             "codex-harness-directives"
           ],
-          "sha256": "6809b637e3633df6b99317508658cd588ab032884af925cae0b50cdc65c388ca",
+          "sha256": "cce205eb4e4dbcec8827d6d5209f8066ca8913a0ea4b29d64310547ce8554cde",
           "source": "agents/roles/dev-activities/dev-security-reviewer.role.yaml"
         },
         {
@@ -1675,8 +1675,8 @@
               ],
               "contextCapacityTokens": 1050000,
               "headroomTokens": 262500,
-              "model": "gpt-5.6-luna",
-              "modelProfile": "intermediate"
+              "model": "gpt-5.6-sol",
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -1689,7 +1689,7 @@
             "review-structured-artifact",
             "codex-harness-directives"
           ],
-          "sha256": "e60260dccf17f470c92399afd5ea1ec17ad0d61976bf2c6257d0b4b967ee84eb",
+          "sha256": "7efb7b48e33d121bf2a54ed00268457f9de2120301311aa10d2171b9b0d4380d",
           "source": "agents/roles/dev-activities/dev-skill-lint-reviewer.role.yaml"
         },
         {
@@ -1798,7 +1798,7 @@
               "contextCapacityTokens": 1050000,
               "headroomTokens": 262500,
               "model": "gpt-5.6-sol",
-              "modelProfile": "advanced"
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -1815,7 +1815,7 @@
             "route-documentation-work",
             "codex-harness-directives"
           ],
-          "sha256": "7779b8189d222dc0a714332ec54c047cf87c04aac5c5f04bc80c44b28908d976",
+          "sha256": "c507450c3e8b1ae049688a428710a0a9a3b2ef7786537a05cd5e41f389c6fb0b",
           "source": "agents/roles/methodology-maintenance/methodology-artifact-reviewer.role.yaml"
         },
         {
@@ -1893,7 +1893,7 @@
               "contextCapacityTokens": 1050000,
               "headroomTokens": 262500,
               "model": "gpt-5.6-sol",
-              "modelProfile": "advanced"
+              "modelProfile": "implementation"
             },
             "rounding": "floor"
           },
@@ -1909,7 +1909,7 @@
             "route-documentation-work",
             "codex-harness-directives"
           ],
-          "sha256": "d1c646a9752c3354ac115a9892c5d5b2edb0251985394daf79168f71d58fd4e9",
+          "sha256": "4b08b11a3e4a53136c7e007c0f601cad16d58ecf85b1c1bbbc151e09a8e106a4",
           "source": "agents/roles/methodology-maintenance/methodology-maintainer.role.yaml"
         },
         {
@@ -2081,7 +2081,7 @@
               "contextCapacityTokens": 1050000,
               "headroomTokens": 262500,
               "model": "gpt-5.6-sol",
-              "modelProfile": "advanced"
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -2094,7 +2094,7 @@
             "verify-documentation-page",
             "codex-harness-directives"
           ],
-          "sha256": "40951fb3f2835999272752ffe31f013aafc60174bbde351be2fc794f24074111",
+          "sha256": "80cd228198d193ac604ef37781591a86e939775c20f09bc4793968565ba2c7fd",
           "source": "agents/roles/wiki-activities/wiki-artifact-reviewer.role.yaml"
         },
         {
@@ -2108,12 +2108,12 @@
               "contextBudgetMechanismEvidence": "https://developers.openai.com/codex/subagents",
               "contextBudgetTokens": 787500,
               "contextCapacityEvidence": [
-                "https://developers.openai.com/api/docs/models/gpt-5.5"
+                "https://developers.openai.com/api/docs/models"
               ],
               "contextCapacityTokens": 1050000,
               "headroomTokens": 262500,
-              "model": "gpt-5.5",
-              "modelProfile": "documentation"
+              "model": "gpt-5.6-sol",
+              "modelProfile": "implementation"
             },
             "rounding": "floor"
           },
@@ -2126,7 +2126,7 @@
             "project-wiki-topic-write",
             "codex-harness-directives"
           ],
-          "sha256": "226ec5db8c16994fc17537722a939cc02bad388ad70390acddd1696e29c154e2",
+          "sha256": "ce34b932fa5c32ba5777a5863e9e2dcff0a1321ce7b48af8dfee738809fd6226",
           "source": "agents/roles/wiki-activities/wiki-ingester.role.yaml"
         },
         {
@@ -2202,12 +2202,12 @@
               "contextBudgetMechanismEvidence": "https://developers.openai.com/codex/subagents",
               "contextBudgetTokens": 787500,
               "contextCapacityEvidence": [
-                "https://developers.openai.com/api/docs/models/gpt-5.5"
+                "https://developers.openai.com/api/docs/models"
               ],
               "contextCapacityTokens": 1050000,
               "headroomTokens": 262500,
-              "model": "gpt-5.5",
-              "modelProfile": "documentation"
+              "model": "gpt-5.6-sol",
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -2220,7 +2220,7 @@
             "project-wiki",
             "codex-harness-directives"
           ],
-          "sha256": "ab7f9bd6db2de04973d56bfef3feef8362240c9a1beacf7819c80306a1ccc626",
+          "sha256": "c655fd6f49df7e547b1b2f42f4c6477bbaeefa5ef609370f3464c15e528accef",
           "source": "agents/roles/wiki-activities/wiki-source-collector.role.yaml"
         },
         {
@@ -2264,7 +2264,7 @@
               "contextCapacityTokens": 1050000,
               "headroomTokens": 262500,
               "model": "gpt-5.6-sol",
-              "modelProfile": "advanced"
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -2275,7 +2275,7 @@
             "ste-technical-writing",
             "project-wiki-topic-verify"
           ],
-          "sha256": "29161f6beb170504ecfcbdfd5f32d49be7d950c6798dd3b3913d73ba0a2f605d",
+          "sha256": "b84b6a8ecd856f4eb28ef969b385f1dd8e2c04aabe63663dacdead23ed39601d",
           "source": "agents/roles/wiki-activities/wiki-topic-verifier.role.yaml"
         },
         {
@@ -2289,12 +2289,12 @@
               "contextBudgetMechanismEvidence": "https://developers.openai.com/codex/subagents",
               "contextBudgetTokens": 787500,
               "contextCapacityEvidence": [
-                "https://developers.openai.com/api/docs/models/gpt-5.5"
+                "https://developers.openai.com/api/docs/models"
               ],
               "contextCapacityTokens": 1050000,
               "headroomTokens": 262500,
-              "model": "gpt-5.5",
-              "modelProfile": "documentation"
+              "model": "gpt-5.6-sol",
+              "modelProfile": "implementation"
             },
             "rounding": "floor"
           },
@@ -2307,7 +2307,7 @@
             "project-wiki-topic-write",
             "codex-harness-directives"
           ],
-          "sha256": "6bf0f44a0b5b707236f5ec7ac7ad39e499e04423fdc218bc2e4e62dacab461d5",
+          "sha256": "49dc6ad9e3839ef39312bc5fdfa8a77f403023947df9a78c4c22b83903c2dac5",
           "source": "agents/roles/wiki-activities/wiki-writer.role.yaml"
         }
       ],
@@ -2340,8 +2340,8 @@
               ],
               "contextCapacityTokens": 1048576,
               "headroomTokens": 262144,
-              "model": "auto",
-              "modelProfile": "documentation"
+              "model": "pro",
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -2353,7 +2353,7 @@
             "review-structured-artifact",
             "verify-documentation-page"
           ],
-          "sha256": "ff9dbfde50c946e0d5a15df7c91e5b40a2f89bb3ebda543c96f3b6ba069db986",
+          "sha256": "07484ae72db5051634a6efde5a661a1a8c51cefd2924689a017c6b8594ce0986",
           "source": "agents/roles/dev-activities/dev-artifact-reviewer.role.yaml"
         },
         {
@@ -2373,7 +2373,7 @@
               "contextCapacityTokens": 1048576,
               "headroomTokens": 681575,
               "model": "pro",
-              "modelProfile": "advanced-long"
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -2384,7 +2384,7 @@
             "ste-technical-writing",
             "manage-work-items"
           ],
-          "sha256": "68a0afa882d75c26e6f95a33dcb4fd8c8bd4c2773365ade399151d5460762cc1",
+          "sha256": "e1a74f606bdd4e77693028b46d1da4d4e57b7e9b355471ccf32829ed06e61bc2",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
@@ -2605,8 +2605,8 @@
               ],
               "contextCapacityTokens": 1048576,
               "headroomTokens": 262144,
-              "model": "auto",
-              "modelProfile": "documentation"
+              "model": "pro",
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -2618,7 +2618,7 @@
             "analyze-document-topics",
             "revise-document-topics"
           ],
-          "sha256": "d3baed65616a6816bd1d3ee100d48318b720a7a707764667d84ba64f029b31f4",
+          "sha256": "c0000c19aa887da6ddc29aaca5e793a62a20ec30097666a7d2fbf8acb0ddf06d",
           "source": "agents/roles/dev-activities/dev-document-topic-editor.role.yaml"
         },
         {
@@ -2637,8 +2637,8 @@
               ],
               "contextCapacityTokens": 1048576,
               "headroomTokens": 524288,
-              "model": "auto",
-              "modelProfile": "documentation"
+              "model": "pro",
+              "modelProfile": "implementation"
             },
             "rounding": "floor"
           },
@@ -2649,7 +2649,7 @@
             "ste-technical-writing",
             "route-documentation-work"
           ],
-          "sha256": "7af0a9ecb6015584e8caed9065b6c38b6005a2eed765d838d0966128da43a9e0",
+          "sha256": "636fa260f0ec19c2a0590a7553b8617477056c7d4cd1cacf8cf6d5dbdf2a3807",
           "source": "agents/roles/dev-activities/dev-documentation-writer.role.yaml"
         },
         {
@@ -2669,7 +2669,7 @@
               "contextCapacityTokens": 1048576,
               "headroomTokens": 262144,
               "model": "pro",
-              "modelProfile": "advanced"
+              "modelProfile": "implementation"
             },
             "rounding": "floor"
           },
@@ -2682,7 +2682,7 @@
             "review-structured-artifact",
             "explain-code-fix"
           ],
-          "sha256": "bd24e01bddf0249ba6cd37a18a49a67172eb431b94dfc4ad123ccda7be98b971",
+          "sha256": "fa32fe25dd8bd25afabe96b35bcf8331498d2c49a533440576ab5b9629dea350",
           "source": "agents/roles/dev-activities/dev-merge-coordinator.role.yaml"
         },
         {
@@ -2702,7 +2702,7 @@
               "contextCapacityTokens": 1048576,
               "headroomTokens": 262144,
               "model": "pro",
-              "modelProfile": "advanced-long"
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -2715,7 +2715,7 @@
             "deliver-work-item",
             "structured-design"
           ],
-          "sha256": "eb4b7cc48766695fcc5999eca08ff387d10e7b949ffc57aa90490af927a9f721",
+          "sha256": "774ffff799b86c21ab9f180af7473b41d5ac17167cc4bdaa8818ea12e8611e18",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -2735,7 +2735,7 @@
               "contextCapacityTokens": 1048576,
               "headroomTokens": 262144,
               "model": "pro",
-              "modelProfile": "advanced"
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -2747,7 +2747,7 @@
             "review-prompt-contracts",
             "review-structured-artifact"
           ],
-          "sha256": "11ef1fcc4ec88e751530c68faee6b5c3f2eb18d11650829efb657986ebf426fa",
+          "sha256": "f44bd30f8b6c0904fffa952a775444c244fb4a7778f7e64d22e9f7ad0d315e00",
           "source": "agents/roles/dev-activities/dev-prompt-reviewer.role.yaml"
         },
         {
@@ -2801,7 +2801,7 @@
               "contextCapacityTokens": 1048576,
               "headroomTokens": 262144,
               "model": "pro",
-              "modelProfile": "advanced"
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -2813,7 +2813,7 @@
             "application-security",
             "review-structured-artifact"
           ],
-          "sha256": "2c3d34678dd49767bc8c2be27dd8a0d69279f8ac9bb54f39451d47bdfe181f6d",
+          "sha256": "58840a3b5760a4ec9edfc7afd5d6f203e1935deb23bd18a1597827fe40b3f08b",
           "source": "agents/roles/dev-activities/dev-security-reviewer.role.yaml"
         },
         {
@@ -2860,7 +2860,7 @@
               "contextCapacityTokens": 1048576,
               "headroomTokens": 262144,
               "model": "pro",
-              "modelProfile": "intermediate"
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -2872,7 +2872,7 @@
             "skill-authoring",
             "review-structured-artifact"
           ],
-          "sha256": "23159fca2b0b30e7d69dbe46e50383e1806e967026eebd5883f6c3e82a742a4e",
+          "sha256": "62294c81967f6fe8afd54d3a6fd861a96fa1d1ddb5961d8fe6f04f00ba7f40a3",
           "source": "agents/roles/dev-activities/dev-skill-lint-reviewer.role.yaml"
         },
         {
@@ -2984,7 +2984,7 @@
               "contextCapacityTokens": 1048576,
               "headroomTokens": 262144,
               "model": "pro",
-              "modelProfile": "advanced"
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -3000,7 +3000,7 @@
             "verify-documentation-page",
             "route-documentation-work"
           ],
-          "sha256": "86f6bb0141757a0285dadfa15ae232f9729ce0180d4a828749372484bc0496d8",
+          "sha256": "55b711757f9ff24e77d6ac68e5e949dc375ebc9831ba7423828c79f5f86a09e4",
           "source": "agents/roles/methodology-maintenance/methodology-artifact-reviewer.role.yaml"
         },
         {
@@ -3081,7 +3081,7 @@
               "contextCapacityTokens": 1048576,
               "headroomTokens": 262144,
               "model": "pro",
-              "modelProfile": "advanced"
+              "modelProfile": "implementation"
             },
             "rounding": "floor"
           },
@@ -3096,7 +3096,7 @@
             "name-methodology-artifacts",
             "route-documentation-work"
           ],
-          "sha256": "43140edd81ce69be2851b87dab904912d849bda5215973a71f1a1b17737fcc56",
+          "sha256": "63ea6110a60eae6db2723606429054df846c0b7a4bb0a0854980ece42550ec7e",
           "source": "agents/roles/methodology-maintenance/methodology-maintainer.role.yaml"
         },
         {
@@ -3271,7 +3271,7 @@
               "contextCapacityTokens": 1048576,
               "headroomTokens": 262144,
               "model": "pro",
-              "modelProfile": "advanced"
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -3283,7 +3283,7 @@
             "project-wiki-review",
             "verify-documentation-page"
           ],
-          "sha256": "2175c2be0f15bed16a5436d8d95fd92cbcb06efdd1cfa1e44f65f6af5224540d",
+          "sha256": "0bb57191015f5eba44c42e71d5bcdd93532753bb7b7c533cf01132c517775d2a",
           "source": "agents/roles/wiki-activities/wiki-artifact-reviewer.role.yaml"
         },
         {
@@ -3302,8 +3302,8 @@
               ],
               "contextCapacityTokens": 1048576,
               "headroomTokens": 262144,
-              "model": "auto",
-              "modelProfile": "documentation"
+              "model": "pro",
+              "modelProfile": "implementation"
             },
             "rounding": "floor"
           },
@@ -3315,7 +3315,7 @@
             "project-wiki",
             "project-wiki-topic-write"
           ],
-          "sha256": "a6e7bbbe92c58fce18bcdcc8b1f4e2083eb117e780803a10457924118ff61f5c",
+          "sha256": "1faa2a4042ceaaeac6b4e7326123379c60c64351ced85bf852956ca208dad32f",
           "source": "agents/roles/wiki-activities/wiki-ingester.role.yaml"
         },
         {
@@ -3397,8 +3397,8 @@
               ],
               "contextCapacityTokens": 1048576,
               "headroomTokens": 262144,
-              "model": "auto",
-              "modelProfile": "documentation"
+              "model": "pro",
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -3410,7 +3410,7 @@
             "project-wiki-research",
             "project-wiki"
           ],
-          "sha256": "15671d51bb63d906761ecdd92af159f15872b97e439fd8452fd12d4390f1959b",
+          "sha256": "443afb9bff02e538c0729fcfb7eacec1cfe15fa68c6aaf9ad20d6d96f74bf9f3",
           "source": "agents/roles/wiki-activities/wiki-source-collector.role.yaml"
         },
         {
@@ -3457,7 +3457,7 @@
               "contextCapacityTokens": 1048576,
               "headroomTokens": 262144,
               "model": "pro",
-              "modelProfile": "advanced"
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -3468,7 +3468,7 @@
             "ste-technical-writing",
             "project-wiki-topic-verify"
           ],
-          "sha256": "b45def76bb162b0529e8f16a1cd59df70c4c685613f5fd7ce4cd89f62c814a4b",
+          "sha256": "5286b0ac86ee339b34c8612cba88439390fb750daaaaa476c68d45fc6da5d77c",
           "source": "agents/roles/wiki-activities/wiki-topic-verifier.role.yaml"
         },
         {
@@ -3487,8 +3487,8 @@
               ],
               "contextCapacityTokens": 1048576,
               "headroomTokens": 262144,
-              "model": "auto",
-              "modelProfile": "documentation"
+              "model": "pro",
+              "modelProfile": "implementation"
             },
             "rounding": "floor"
           },
@@ -3500,7 +3500,7 @@
             "project-wiki",
             "project-wiki-topic-write"
           ],
-          "sha256": "0645ac1d9e4eabba5f55f79b3cb5c603c16175752f14fa6d9b7a13a344814094",
+          "sha256": "57bc4360970ca6b9aed1139f56ee3a7dc8bf39ed337c62c12da53507fe3f1724",
           "source": "agents/roles/wiki-activities/wiki-writer.role.yaml"
         }
       ],
@@ -3520,15 +3520,15 @@
             "primary": {
               "contextBudgetMechanism": "instruction",
               "contextBudgetMechanismEvidence": "https://junie.jetbrains.com/docs/junie-cli-subagents.html",
-              "contextBudgetTokens": 787500,
+              "contextBudgetTokens": 750000,
               "contextCapacityEvidence": [
                 "https://junie.jetbrains.com/docs/junie-cli-model-selection.html",
-                "https://developers.openai.com/api/docs/models"
+                "https://platform.claude.com/docs/en/release-notes/overview"
               ],
-              "contextCapacityTokens": 1050000,
-              "headroomTokens": 262500,
-              "model": "gpt-5.6-sol",
-              "modelProfile": "documentation"
+              "contextCapacityTokens": 1000000,
+              "headroomTokens": 250000,
+              "model": "opus",
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -3540,7 +3540,7 @@
             "review-structured-artifact",
             "verify-documentation-page"
           ],
-          "sha256": "c3c898b61fd1cc2724e02ad272c5de24d13c1da296a7ed3a2a291bfeb945f204",
+          "sha256": "4f49efdf4bb9982b5b4612183b779eabbc1637134568e983bb2f4d762c46db3e",
           "source": "agents/roles/dev-activities/dev-artifact-reviewer.role.yaml"
         },
         {
@@ -3560,7 +3560,7 @@
               "contextCapacityTokens": 1000000,
               "headroomTokens": 650000,
               "model": "opus",
-              "modelProfile": "advanced-long"
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -3571,7 +3571,7 @@
             "ste-technical-writing",
             "manage-work-items"
           ],
-          "sha256": "33287524274e5ded646413058511efecefc25099f6ab235f2dd013abfdd1ca0b",
+          "sha256": "d297f9ffdc22e549fb5c5a22945de1f52033c787d2a223b268b81f2b3d06b2e3",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
@@ -3785,15 +3785,15 @@
             "primary": {
               "contextBudgetMechanism": "instruction",
               "contextBudgetMechanismEvidence": "https://junie.jetbrains.com/docs/junie-cli-subagents.html",
-              "contextBudgetTokens": 787500,
+              "contextBudgetTokens": 750000,
               "contextCapacityEvidence": [
                 "https://junie.jetbrains.com/docs/junie-cli-model-selection.html",
-                "https://developers.openai.com/api/docs/models"
+                "https://platform.claude.com/docs/en/release-notes/overview"
               ],
-              "contextCapacityTokens": 1050000,
-              "headroomTokens": 262500,
-              "model": "gpt-5.6-sol",
-              "modelProfile": "documentation"
+              "contextCapacityTokens": 1000000,
+              "headroomTokens": 250000,
+              "model": "opus",
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -3805,7 +3805,7 @@
             "analyze-document-topics",
             "revise-document-topics"
           ],
-          "sha256": "94bca395b60f19be81dcc4cf1588e3284f26448ea034104d74b35238f4261296",
+          "sha256": "48c59e18d710856378662b584d868a7b12591c41cc845c497c8e060981ac0720",
           "source": "agents/roles/dev-activities/dev-document-topic-editor.role.yaml"
         },
         {
@@ -3817,15 +3817,15 @@
             "primary": {
               "contextBudgetMechanism": "instruction",
               "contextBudgetMechanismEvidence": "https://junie.jetbrains.com/docs/junie-cli-subagents.html",
-              "contextBudgetTokens": 525000,
+              "contextBudgetTokens": 500000,
               "contextCapacityEvidence": [
                 "https://junie.jetbrains.com/docs/junie-cli-model-selection.html",
-                "https://developers.openai.com/api/docs/models"
+                "https://platform.claude.com/docs/en/release-notes/overview"
               ],
-              "contextCapacityTokens": 1050000,
-              "headroomTokens": 525000,
-              "model": "gpt-5.6-sol",
-              "modelProfile": "documentation"
+              "contextCapacityTokens": 1000000,
+              "headroomTokens": 500000,
+              "model": "opus",
+              "modelProfile": "implementation"
             },
             "rounding": "floor"
           },
@@ -3836,7 +3836,7 @@
             "ste-technical-writing",
             "route-documentation-work"
           ],
-          "sha256": "5188f3bdef3c04f28f166e0c17895386226a0fcb59dd00f55604fb50eb8abf07",
+          "sha256": "2a0b7d1bb728c8cbe1ece1cb90eb7d675d30ed4712aa5130e44cae2a94aca422",
           "source": "agents/roles/dev-activities/dev-documentation-writer.role.yaml"
         },
         {
@@ -3856,7 +3856,7 @@
               "contextCapacityTokens": 1000000,
               "headroomTokens": 250000,
               "model": "opus",
-              "modelProfile": "advanced"
+              "modelProfile": "implementation"
             },
             "rounding": "floor"
           },
@@ -3869,7 +3869,7 @@
             "review-structured-artifact",
             "explain-code-fix"
           ],
-          "sha256": "1a752049d1e8e1b6e3e372f10fb44e1ec97022d2af757efba425b543793c481f",
+          "sha256": "473a059dd879c0a4c2ea2df6a4993ab33dc2779fe23e2598b61397c0f216146b",
           "source": "agents/roles/dev-activities/dev-merge-coordinator.role.yaml"
         },
         {
@@ -3889,7 +3889,7 @@
               "contextCapacityTokens": 1000000,
               "headroomTokens": 250000,
               "model": "opus",
-              "modelProfile": "advanced-long"
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -3902,7 +3902,7 @@
             "deliver-work-item",
             "structured-design"
           ],
-          "sha256": "23f8194617f0b7b0c7b065553a78beb4fc6aad13643380d88f712c04afe6f0ef",
+          "sha256": "1b7f9b65106543ced7ddd511f0f7458c5c62fa8a0afa0b72f4cc09e7d325710a",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -3922,7 +3922,7 @@
               "contextCapacityTokens": 1000000,
               "headroomTokens": 250000,
               "model": "opus",
-              "modelProfile": "advanced"
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -3934,7 +3934,7 @@
             "review-prompt-contracts",
             "review-structured-artifact"
           ],
-          "sha256": "31d8c54cd91db72f748486df2fff6884d0adc08e205fdc8b43f450d79aaf8c45",
+          "sha256": "142ee20ed7fad47fe5f816821df9142c3e1b540bc22c157a6f491a95e9126038",
           "source": "agents/roles/dev-activities/dev-prompt-reviewer.role.yaml"
         },
         {
@@ -3988,7 +3988,7 @@
               "contextCapacityTokens": 1000000,
               "headroomTokens": 250000,
               "model": "opus",
-              "modelProfile": "advanced"
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -4000,7 +4000,7 @@
             "application-security",
             "review-structured-artifact"
           ],
-          "sha256": "ed741eec38d6c5094a9f5b1f55545b189e45598d239cf4c3e5b4bab4c321a68d",
+          "sha256": "d387486441d2332c80ea54abfd7638b4dd871d749684f06abdbc256e27de1a39",
           "source": "agents/roles/dev-activities/dev-security-reviewer.role.yaml"
         },
         {
@@ -4047,7 +4047,7 @@
               "contextCapacityTokens": 1000000,
               "headroomTokens": 250000,
               "model": "opus",
-              "modelProfile": "intermediate"
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -4059,7 +4059,7 @@
             "skill-authoring",
             "review-structured-artifact"
           ],
-          "sha256": "87e1883d30a3f6fecbdd57bdccb828fd794c5fc1c0ce342be618dce598cbb6d0",
+          "sha256": "b4de57390adf03f99c2b4165468e73c1dfd0e1ad2a753995ed9d7a3fae5a5b3e",
           "source": "agents/roles/dev-activities/dev-skill-lint-reviewer.role.yaml"
         },
         {
@@ -4171,7 +4171,7 @@
               "contextCapacityTokens": 1000000,
               "headroomTokens": 250000,
               "model": "opus",
-              "modelProfile": "advanced"
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -4187,7 +4187,7 @@
             "verify-documentation-page",
             "route-documentation-work"
           ],
-          "sha256": "e972293b9dcce5dcf270cd8e4608211d8d732f9bc8e3dad8f5190136c0ef3f29",
+          "sha256": "e1fcb01a040276c3249becea6e238e99c14550ed7784ee9b39691a3cd9838dc5",
           "source": "agents/roles/methodology-maintenance/methodology-artifact-reviewer.role.yaml"
         },
         {
@@ -4268,7 +4268,7 @@
               "contextCapacityTokens": 1000000,
               "headroomTokens": 250000,
               "model": "opus",
-              "modelProfile": "advanced"
+              "modelProfile": "implementation"
             },
             "rounding": "floor"
           },
@@ -4283,7 +4283,7 @@
             "name-methodology-artifacts",
             "route-documentation-work"
           ],
-          "sha256": "4022eee2d2db2b2dfa11684314445069a0b7b674b18a4653b00e8d877f94cbc9",
+          "sha256": "ae4943eb2df946e6534c7def81a62b1bfe0f4f384b4bdd5762100a600b8b40ac",
           "source": "agents/roles/methodology-maintenance/methodology-maintainer.role.yaml"
         },
         {
@@ -4458,7 +4458,7 @@
               "contextCapacityTokens": 1000000,
               "headroomTokens": 250000,
               "model": "opus",
-              "modelProfile": "advanced"
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -4470,7 +4470,7 @@
             "project-wiki-review",
             "verify-documentation-page"
           ],
-          "sha256": "fab4a4eaf0c2c8a5021b003818fc9f1e3dba945a76abbe178ee608e230db0fc0",
+          "sha256": "e05cbb022f8652de08d18d65ca45d2625a0659f7bb9d56550dd0b117d1fb2d61",
           "source": "agents/roles/wiki-activities/wiki-artifact-reviewer.role.yaml"
         },
         {
@@ -4482,15 +4482,15 @@
             "primary": {
               "contextBudgetMechanism": "instruction",
               "contextBudgetMechanismEvidence": "https://junie.jetbrains.com/docs/junie-cli-subagents.html",
-              "contextBudgetTokens": 787500,
+              "contextBudgetTokens": 750000,
               "contextCapacityEvidence": [
                 "https://junie.jetbrains.com/docs/junie-cli-model-selection.html",
-                "https://developers.openai.com/api/docs/models"
+                "https://platform.claude.com/docs/en/release-notes/overview"
               ],
-              "contextCapacityTokens": 1050000,
-              "headroomTokens": 262500,
-              "model": "gpt-5.6-sol",
-              "modelProfile": "documentation"
+              "contextCapacityTokens": 1000000,
+              "headroomTokens": 250000,
+              "model": "opus",
+              "modelProfile": "implementation"
             },
             "rounding": "floor"
           },
@@ -4502,7 +4502,7 @@
             "project-wiki",
             "project-wiki-topic-write"
           ],
-          "sha256": "ce0a20ad4c4a77b87db4f6c77d3c6efc8849a1e9e0fd419d86a1668125fec176",
+          "sha256": "b8c44a25f0b4a71cbf79ef0e299b987e109f6ddb8538fa5cdd357e3760e9e554",
           "source": "agents/roles/wiki-activities/wiki-ingester.role.yaml"
         },
         {
@@ -4577,15 +4577,15 @@
             "primary": {
               "contextBudgetMechanism": "instruction",
               "contextBudgetMechanismEvidence": "https://junie.jetbrains.com/docs/junie-cli-subagents.html",
-              "contextBudgetTokens": 787500,
+              "contextBudgetTokens": 750000,
               "contextCapacityEvidence": [
                 "https://junie.jetbrains.com/docs/junie-cli-model-selection.html",
-                "https://developers.openai.com/api/docs/models"
+                "https://platform.claude.com/docs/en/release-notes/overview"
               ],
-              "contextCapacityTokens": 1050000,
-              "headroomTokens": 262500,
-              "model": "gpt-5.6-sol",
-              "modelProfile": "documentation"
+              "contextCapacityTokens": 1000000,
+              "headroomTokens": 250000,
+              "model": "opus",
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -4597,7 +4597,7 @@
             "project-wiki-research",
             "project-wiki"
           ],
-          "sha256": "d563fd22ffde60004159564a33cadff8b88a1cc972e87dc1470160ebbd3b52ad",
+          "sha256": "64598bee5d0f28b155d7a49ccaf9986c41112d8b392dd12672b0043709ed55f9",
           "source": "agents/roles/wiki-activities/wiki-source-collector.role.yaml"
         },
         {
@@ -4644,7 +4644,7 @@
               "contextCapacityTokens": 1000000,
               "headroomTokens": 250000,
               "model": "opus",
-              "modelProfile": "advanced"
+              "modelProfile": "verification"
             },
             "rounding": "floor"
           },
@@ -4655,7 +4655,7 @@
             "ste-technical-writing",
             "project-wiki-topic-verify"
           ],
-          "sha256": "aa6006a71472589836dfeb343e20bf953f169efd3a5b43139a1abc9aacee5717",
+          "sha256": "8a36c19157f9d92dc8449428d002964dd08d8d0d22e58330a4a450d4582a7106",
           "source": "agents/roles/wiki-activities/wiki-topic-verifier.role.yaml"
         },
         {
@@ -4667,15 +4667,15 @@
             "primary": {
               "contextBudgetMechanism": "instruction",
               "contextBudgetMechanismEvidence": "https://junie.jetbrains.com/docs/junie-cli-subagents.html",
-              "contextBudgetTokens": 787500,
+              "contextBudgetTokens": 750000,
               "contextCapacityEvidence": [
                 "https://junie.jetbrains.com/docs/junie-cli-model-selection.html",
-                "https://developers.openai.com/api/docs/models"
+                "https://platform.claude.com/docs/en/release-notes/overview"
               ],
-              "contextCapacityTokens": 1050000,
-              "headroomTokens": 262500,
-              "model": "gpt-5.6-sol",
-              "modelProfile": "documentation"
+              "contextCapacityTokens": 1000000,
+              "headroomTokens": 250000,
+              "model": "opus",
+              "modelProfile": "implementation"
             },
             "rounding": "floor"
           },
@@ -4687,7 +4687,7 @@
             "project-wiki",
             "project-wiki-topic-write"
           ],
-          "sha256": "8370e6fc8fd06fb3fff10f211041dcf732353d77932e5e61d06491c2a1edb64d",
+          "sha256": "f7583cc91011f2472d89bb41cc83d0385ba53e122ad0465798f4a50e4f2a2e44",
           "source": "agents/roles/wiki-activities/wiki-writer.role.yaml"
         }
       ],

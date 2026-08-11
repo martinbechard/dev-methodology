@@ -303,7 +303,7 @@ agentDependencies:
 - dev-backlog-watchdog
 - dev-orchestrator
 - dev-backlog-steward
-modelProfile: advanced-long
+modelProfile: verification
 contextBudgetPercent: 35
 examples:
 - purpose: Restore the file-provider active queue without wait-only Tasks.

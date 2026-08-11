@@ -43,7 +43,7 @@ instructions:
     critical findings or an explicit no-critical-findings result.
   - BLOCKED when a target skill or required referenced package cannot be read, the
     scope is ambiguous enough to change the result, or required evidence is unavailable.
-modelProfile: intermediate
+modelProfile: verification
 modelStages:
   evidence-extraction: simple
   synthesis: intermediate

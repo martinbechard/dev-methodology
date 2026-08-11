@@ -22,7 +22,7 @@ instructions: Inspect authoritative sources, apply the project and technology gu
   integration requires a README or another custom entry document, preserve its established
   format and use verify-documentation-page instead of forcing it into a methodology
   template.
-modelProfile: documentation
+modelProfile: implementation
 contextBudgetPercent: 50
 examples:
 - purpose: Turn an agreed product behavior into a functional specification that product,

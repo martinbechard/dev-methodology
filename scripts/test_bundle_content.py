@@ -12429,31 +12429,47 @@ Visible after.
         self.assertIn("schema-owned default", catalog_design)
         self.assertIn("role.contextBudgetPercent", catalog_design)
 
-    def test_dev_documentation_writer_uses_dedicated_model_profile(self) -> None:
+    def test_reviewer_editor_and_writer_roles_use_requested_model_profiles(self) -> None:
         build_skill_docs = load_build_skill_docs_module()
         skill_names = set(build_skill_docs.build_payload()["skills"])
         roles = build_skill_docs.load_role_definitions(skill_names)
-        writer = next(role for role in roles if role.name == "dev-documentation-writer")
+        roles_by_name = {role.name: role for role in roles}
         source_profile_ids = set(build_skill_docs.load_model_profiles())
 
-        self.assertEqual("documentation", writer.model_profile)
-        self.assertEqual(
-            {
-                "dev-artifact-reviewer",
-                "dev-document-topic-editor",
-                "dev-documentation-writer",
-                "wiki-architect",
-                "wiki-ingester",
-                "wiki-researcher",
-                "wiki-source-collector",
-                "wiki-writer",
-            },
-            {
-                role.name
-                for role in roles
-                if role.model_profile == "documentation"
-            },
-        )
+        for role in roles:
+            role_name_parts = set(role.name.split("-"))
+            if role_name_parts & {"reviewer", "editor"}:
+                with self.subTest(role=role.name):
+                    self.assertEqual("verification", role.model_profile)
+            if "writer" in role_name_parts:
+                with self.subTest(role=role.name):
+                    self.assertEqual("implementation", role.model_profile)
+
+        expected_role_profiles = {
+            "dev-artifact-reviewer": "verification",
+            "dev-backlog-coordinator": "verification",
+            "dev-code-reviewer": "verification",
+            "dev-document-topic-editor": "verification",
+            "dev-documentation-writer": "implementation",
+            "dev-merge-coordinator": "implementation",
+            "dev-orchestrator": "verification",
+            "dev-prompt-reviewer": "verification",
+            "dev-security-reviewer": "verification",
+            "dev-skill-lint-reviewer": "verification",
+            "methodology-artifact-reviewer": "verification",
+            "methodology-maintainer": "implementation",
+            "wiki-artifact-reviewer": "verification",
+            "wiki-ingester": "implementation",
+            "wiki-source-collector": "verification",
+            "wiki-topic-verifier": "verification",
+            "wiki-writer": "implementation",
+        }
+        for role_name, expected_profile in expected_role_profiles.items():
+            with self.subTest(role=role_name):
+                self.assertEqual(
+                    expected_profile,
+                    roles_by_name[role_name].model_profile,
+                )
 
         expected_profiles = {
             "codex": {
@@ -12516,35 +12532,31 @@ Visible after.
                     },
                 )
 
-        codex_text = build_skill_docs.render_codex_agent(
-            writer,
-            profiles_by_adapter["codex"],
-            known_role_names=tuple(role.name for role in roles),
-        )
-        self.assertIn('model = "gpt-5.5"', codex_text)
-        self.assertIn('model_reasoning_effort = "high"', codex_text)
-
-        claude_frontmatter = yaml.safe_load(
-            build_skill_docs.render_claude_agent(
-                writer, profiles_by_adapter["claude"]
-            ).split("---", 2)[1]
-        )
-        self.assertEqual("fable-5", claude_frontmatter["model"])
-
-        gemini_frontmatter = yaml.safe_load(
-            build_skill_docs.render_gemini_agent(
-                writer, profiles_by_adapter["gemini"]
-            ).split("---", 2)[1]
-        )
-        self.assertEqual("auto", gemini_frontmatter["model"])
-
-        junie_frontmatter = yaml.safe_load(
-            build_skill_docs.render_junie_agent(
-                writer, profiles_by_adapter["junie"]
-            ).split("---", 2)[1]
-        )
-        self.assertEqual("gpt-5.6-sol", junie_frontmatter["model"])
-        self.assertEqual("high", junie_frontmatter["reasoningLevel"])
+        expected_efforts = {
+            "verification": "low",
+            "implementation": "medium",
+        }
+        known_role_names = tuple(roles_by_name)
+        for role_name, expected_profile in expected_role_profiles.items():
+            role = roles_by_name[role_name]
+            expected_effort = expected_efforts[expected_profile]
+            with self.subTest(adapter="codex", role=role_name):
+                codex_text = build_skill_docs.render_codex_agent(
+                    role,
+                    profiles_by_adapter["codex"],
+                    known_role_names=known_role_names,
+                )
+                self.assertIn(
+                    f'model_reasoning_effort = "{expected_effort}"',
+                    codex_text,
+                )
+            with self.subTest(adapter="junie", role=role_name):
+                junie_frontmatter = yaml.safe_load(
+                    build_skill_docs.render_junie_agent(
+                        role, profiles_by_adapter["junie"]
+                    ).split("---", 2)[1]
+                )
+                self.assertEqual(expected_effort, junie_frontmatter["reasoningLevel"])
 
     def test_agent_skill_evals_cover_implementation_and_independent_review(self) -> None:
         """Code-delivery fixtures keep coding contracts without imposing them on other workflows."""

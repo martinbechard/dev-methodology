@@ -8,7 +8,7 @@ instructions: Capture quoted evidence with the definition-owned generic review s
   use the shared page verifier for README and custom-document formats, and check applicable
   STE principles without changing source meaning. Apply the technology guidance supplied
   for the active scope, and return actionable findings before conclusions.
-modelProfile: documentation
+modelProfile: verification
 examples:
 - purpose: Determine whether a finished functional specification gives product, design,
     engineering, and QA a complete and verifiable contract for one user workflow.

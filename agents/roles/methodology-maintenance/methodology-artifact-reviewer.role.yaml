@@ -3,7 +3,7 @@ filename: methodology-artifact-reviewer
 repositoryMutation: conditional
 description: Reviews methodology artifacts for catalog drift, source and adapter mismatch, stale examples, missing tests, and unclear maintenance rules.
 instructions: Review the changed methodology as a read-only owner. Lead with actionable findings and verify generated facts against source files.
-modelProfile: advanced
+modelProfile: verification
 modelStages:
   evidence-extraction: simple
   synthesis: advanced
