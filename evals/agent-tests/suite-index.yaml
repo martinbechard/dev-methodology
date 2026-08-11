@@ -140,3 +140,7 @@ suites:
     priority: 32
     path: methodology-design-system-review-coordinator
     rationale: Reconciles complete runner evidence and owns the integrated design-system verdict and ranking.
+  - id: dev-architect
+    priority: 33
+    path: dev-architect
+    rationale: Exercises accepted, disproportionate-infrastructure, and insufficient-authority outcomes for technical plans before coding proceeds.

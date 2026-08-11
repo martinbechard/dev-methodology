@@ -1,0 +1,243 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 3300" role="img" aria-labelledby="development-orchestration-title development-orchestration-description">
+  <title id="development-orchestration-title">Development orchestration process</title>
+  <desc id="development-orchestration-description">A flowchart showing the explicit coding-without-planning path; Dev Coder planning; optional methodology review; Dev Architect plan, architecture, and complex-test design review; user confirmation for justified larger designs; independent code review and verification; lane-specific correction returns; and one shared third-failed-review exit to User Action Required.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 Z" fill="#315b72"/>
+    </marker>
+    <marker id="correction-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 Z" fill="#a33649"/>
+    </marker>
+    <style>
+      .background { fill: #f8fbfc; }
+      .heading { fill: #14213d; font: 700 42px system-ui, sans-serif; }
+      .subheading { fill: #536176; font: 21px system-ui, sans-serif; }
+      .section-label { fill: #005b59; font: 700 18px system-ui, sans-serif; letter-spacing: 1.4px; }
+      .node rect, .decision polygon { stroke: #315b72; stroke-width: 3; }
+      .node rect { fill: #ffffff; rx: 17; }
+      .planning rect { fill: #e6eefb; stroke: #2f5ea8; }
+      .architect rect { fill: #eee9f8; stroke: #674ea7; stroke-width: 5; }
+      .accepted rect { fill: #e0f2e9; stroke: #277257; }
+      .correction rect { fill: #fbe4e8; stroke: #b93f52; }
+      .confirmation rect { fill: #fff0cf; stroke: #9a5900; }
+      .terminal rect { fill: #14213d; stroke: #14213d; }
+      .decision polygon { fill: #dff4f2; stroke: #007f7b; }
+      .review-decision polygon { fill: #fff7df; stroke: #9a5900; }
+      .failure-decision polygon { fill: #fbe4e8; stroke: #b93f52; stroke-width: 5; }
+      .node-title { fill: #14213d; font: 700 24px system-ui, sans-serif; text-anchor: middle; }
+      .node-copy { fill: #536176; font: 18px system-ui, sans-serif; text-anchor: middle; }
+      .decision-title { fill: #14213d; font: 700 21px system-ui, sans-serif; text-anchor: middle; }
+      .terminal .node-title, .terminal .node-copy { fill: #ffffff; }
+      .connector { fill: none; stroke: #315b72; stroke-width: 4; marker-end: url(#arrow); }
+      .optional { fill: none; stroke: #674ea7; stroke-width: 4; stroke-dasharray: 12 9; marker-end: url(#arrow); }
+      .correction-edge { fill: none; stroke: #a33649; stroke-width: 4; stroke-dasharray: 12 9; marker-end: url(#correction-arrow); }
+      .collector { fill: none; stroke: #a33649; stroke-width: 5; marker-end: url(#correction-arrow); }
+      .label { fill: #315b72; font: 700 17px system-ui, sans-serif; }
+      .correction-label { fill: #8d2d3d; font: 700 17px system-ui, sans-serif; }
+      .rail-label { fill: #8d2d3d; font: 700 16px system-ui, sans-serif; letter-spacing: 0.7px; }
+    </style>
+  </defs>
+
+  <rect class="background" width="1800" height="3300"/>
+  <text class="heading" x="70" y="70">Development orchestration</text>
+  <text class="subheading" x="70" y="108">Every review gate has an explicit decision and one bounded third-failure exit.</text>
+
+  <text class="section-label" x="70" y="165">ASSIGNMENT AND PLANNING</text>
+  <g id="normalized-assignment" class="node planning" transform="translate(620 195)">
+    <rect width="560" height="110"/>
+    <text class="node-title" x="280" y="43">Dev Orchestrator normalizes the assignment</text>
+    <text class="node-copy" x="280" y="76">Requirements · boundaries · dependencies · verification</text>
+  </g>
+  <path class="connector" data-from="normalized-assignment" data-to="no-planning-decision" d="M900 305 V345"/>
+
+  <g id="no-planning-decision" class="decision" transform="translate(900 445)">
+    <polygon points="0,-100 280,0 0,100 -280,0"/>
+    <text class="decision-title" x="0" y="-12">Explicit user direction to</text>
+    <text class="decision-title" x="0" y="18">code without planning?</text>
+  </g>
+  <text class="label" x="910" y="570">No · use planning gate</text>
+  <path class="connector" data-from="no-planning-decision" data-to="dev-coder-plan" d="M900 545 V595"/>
+  <text class="label" x="1200" y="425">Yes · preserve exact direction</text>
+  <path class="connector" data-from="no-planning-decision" data-to="implementation" d="M1180 445 H1740 V1575 H1180"/>
+
+  <g id="dev-coder-plan" class="node planning" transform="translate(620 595)">
+    <rect width="560" height="130"/>
+    <text class="node-title" x="280" y="42">Dev Coder creates a bounded plan</text>
+    <text class="node-copy" x="280" y="75">Implementation · TDD · reuse · smallest approach</text>
+    <text class="node-copy" x="280" y="103">Requirements trace and focused verification</text>
+  </g>
+
+  <text class="label" x="85" y="760">When the plan is a methodology artifact</text>
+  <path class="optional" data-from="dev-coder-plan" data-to="methodology-review" d="M620 660 H330 V805"/>
+  <g id="methodology-review" class="node planning" transform="translate(90 805)">
+    <rect width="480" height="115"/>
+    <text class="node-title" x="240" y="42">Methodology Artifact Review</text>
+    <text class="node-copy" x="240" y="74">Optional, separate conformance review</text>
+  </g>
+  <path class="connector" data-from="methodology-review" data-to="methodology-review-decision" d="M330 920 V955"/>
+  <g id="methodology-review-decision" class="decision review-decision" transform="translate(330 1060)">
+    <polygon points="0,-105 235,0 0,105 -235,0"/>
+    <text class="decision-title" x="0" y="-12">Methodology review</text>
+    <text class="decision-title" x="0" y="18">accepted?</text>
+  </g>
+  <text class="label" x="500" y="970">Accepted</text>
+  <path class="connector" data-from="methodology-review-decision" data-to="plan-architecture-review" d="M565 1060 H595 V895 H620"/>
+  <text class="correction-label" x="575" y="1090">Correction required</text>
+  <path class="collector" data-from="methodology-review-decision" data-to="third-failed-review-decision" d="M565 1060 H1115 V2430 H1165"/>
+
+  <text class="label" x="1195" y="685">Otherwise</text>
+  <path class="connector" data-from="dev-coder-plan" data-to="plan-architecture-review" d="M1180 660 H1220 V895 H1180"/>
+  <g id="plan-architecture-review" class="node architect" transform="translate(620 830)">
+    <rect width="560" height="130"/>
+    <text class="node-title" x="280" y="42">Dev Architect Plan And Architecture Review</text>
+    <text class="node-copy" x="280" y="75">Traceability · soundness · reuse · implementability</text>
+    <text class="node-copy" x="280" y="103">Smallest viable approach · proportionality</text>
+  </g>
+  <path class="connector" data-from="plan-architecture-review" data-to="plan-architecture-decision" d="M900 960 V1010"/>
+  <g id="plan-architecture-decision" class="decision review-decision" transform="translate(900 1130)">
+    <polygon points="0,-120 255,0 0,120 -255,0"/>
+    <text class="decision-title" x="0" y="-28">Plan and architecture</text>
+    <text class="decision-title" x="0" y="2">accepted within</text>
+    <text class="decision-title" x="0" y="32">proportionate scope?</text>
+  </g>
+  <text class="label" x="912" y="1278">Accepted</text>
+  <path class="connector" data-from="plan-architecture-decision" data-to="implementation" d="M900 1250 V1510"/>
+  <text class="label" x="315" y="1220">Larger design justified</text>
+  <path class="connector" data-from="plan-architecture-decision" data-to="scale-confirmation" d="M645 1130 H330 V1300"/>
+  <text class="correction-label" x="1170" y="1110">Correction required</text>
+  <path class="collector" data-from="plan-architecture-decision" data-to="third-failed-review-decision" d="M1155 1130 H1140 V2430 H1165"/>
+
+  <g id="scale-confirmation" class="decision" transform="translate(330 1405)">
+    <polygon points="0,-105 235,0 0,105 -235,0"/>
+    <text class="decision-title" x="0" y="-12">User confirms the</text>
+    <text class="decision-title" x="0" y="18">larger scale?</text>
+  </g>
+  <text class="label" x="520" y="1390">Yes</text>
+  <path class="connector" data-from="scale-confirmation" data-to="implementation" d="M565 1405 H595 V1575 H620"/>
+  <text class="correction-label" x="80" y="1540">No · return for a smaller plan</text>
+  <path class="correction-edge" data-from="scale-confirmation" data-to="dev-coder-plan" d="M330 1510 V1545 H45 V660 H620"/>
+
+  <text class="section-label" x="70" y="1625">IMPLEMENTATION AND TEST-DESIGN GATE</text>
+  <g id="implementation" class="node planning" transform="translate(620 1510)">
+    <rect width="560" height="130"/>
+    <text class="node-title" x="280" y="43">Dev Coder implements the accepted scope</text>
+    <text class="node-copy" x="280" y="76">Focused tests, fixtures, and suite cases stay in coding</text>
+    <text class="node-copy" x="280" y="104">Existing runners, harnesses, and frameworks remain unchanged</text>
+  </g>
+  <path class="connector" data-from="implementation" data-to="complex-test-decision" d="M900 1640 V1685"/>
+  <g id="complex-test-decision" class="decision" transform="translate(900 1795)">
+    <polygon points="0,-110 260,0 0,110 -260,0"/>
+    <text class="decision-title" x="0" y="-14">Complex test infrastructure</text>
+    <text class="decision-title" x="0" y="16">planned or discovered?</text>
+  </g>
+  <text class="label" x="910" y="1935">No · continue</text>
+  <path class="connector" data-from="complex-test-decision" data-to="code-review" d="M900 1905 V1980"/>
+  <text class="label" x="360" y="1770">Yes · update and review the plan</text>
+  <path class="connector" data-from="complex-test-decision" data-to="complex-test-plan-update" d="M640 1795 H330 V1870"/>
+
+  <g id="complex-test-plan-update" class="node planning" transform="translate(90 1870)">
+    <rect width="480" height="120"/>
+    <text class="node-title" x="240" y="34">Dev Coder</text>
+    <text class="node-title" x="240" y="62">Complex-Test Plan Update</text>
+    <text class="node-copy" x="240" y="92">Need · reuse · scope · maintenance cost</text>
+  </g>
+  <path class="connector" data-from="complex-test-plan-update" data-to="test-design-review" d="M330 1990 V2030"/>
+  <g id="test-design-review" class="node architect" transform="translate(90 2030)">
+    <rect width="480" height="120"/>
+    <text class="node-title" x="240" y="42">Dev Architect Test-Design Review</text>
+    <text class="node-copy" x="240" y="74">Necessity · reuse · scope · proportionality</text>
+  </g>
+  <path class="connector" data-from="test-design-review" data-to="test-design-decision" d="M330 2150 V2190"/>
+  <g id="test-design-decision" class="decision review-decision" transform="translate(330 2310)">
+    <polygon points="0,-120 245,0 0,120 -245,0"/>
+    <text class="decision-title" x="0" y="-12">Complex test design</text>
+    <text class="decision-title" x="0" y="18">accepted?</text>
+  </g>
+  <text class="label" x="510" y="2195">Accepted · resume coding</text>
+  <path class="connector" data-from="test-design-decision" data-to="implementation" d="M575 2310 H605 V1575 H620"/>
+  <text class="label" x="345" y="2510">Larger design justified</text>
+  <path class="connector" data-from="test-design-decision" data-to="complex-test-scale-confirmation" d="M330 2430 V2575"/>
+  <text class="correction-label" x="590" y="2340">Correction required</text>
+  <path class="collector" data-from="test-design-decision" data-to="third-failed-review-decision" d="M575 2310 H1090 V2430 H1165"/>
+
+  <g id="complex-test-scale-confirmation" class="decision" transform="translate(330 2680)">
+    <polygon points="0,-105 245,0 0,105 -245,0"/>
+    <text class="decision-title" x="0" y="-28">User confirms the larger</text>
+    <text class="decision-title" x="0" y="2">complex-test</text>
+    <text class="decision-title" x="0" y="32">design?</text>
+  </g>
+  <text class="label" x="585" y="2660">Yes · resume coding</text>
+  <path class="connector" data-from="complex-test-scale-confirmation" data-to="implementation" d="M575 2680 H600 V1575 H620"/>
+  <text class="correction-label" x="80" y="2640">No · Dev Coder revises the plan</text>
+  <path class="correction-edge" data-from="complex-test-scale-confirmation" data-to="complex-test-plan-update" d="M85 2680 H55 V1930 H90"/>
+
+  <g id="code-review" class="node" transform="translate(620 1980)">
+    <rect width="560" height="115"/>
+    <text class="node-title" x="280" y="43">Dev Code Reviewer</text>
+    <text class="node-copy" x="280" y="76">Fresh-context review of the exact candidate</text>
+  </g>
+  <path class="connector" data-from="code-review" data-to="code-review-decision" d="M900 2095 V2140"/>
+  <g id="code-review-decision" class="decision review-decision" transform="translate(900 2250)">
+    <polygon points="0,-110 250,0 0,110 -250,0"/>
+    <text class="decision-title" x="0" y="-12">Code review</text>
+    <text class="decision-title" x="0" y="18">accepted?</text>
+  </g>
+  <text class="label" x="912" y="2385">Accepted</text>
+  <path class="connector" data-from="code-review-decision" data-to="verification" d="M900 2360 V2495"/>
+  <text class="correction-label" x="1160" y="2230">Correction required</text>
+  <path class="collector" data-from="code-review-decision" data-to="third-failed-review-decision" d="M1150 2250 H1160 V2430 H1165"/>
+
+  <g id="verification" class="node" transform="translate(620 2495)">
+    <rect width="560" height="115"/>
+    <text class="node-title" x="280" y="43">Dev Verifier</text>
+    <text class="node-copy" x="280" y="76">Focused behavior, risk, and acceptance checks</text>
+  </g>
+  <path class="connector" data-from="verification" data-to="verification-decision" d="M900 2610 V2650"/>
+  <g id="verification-decision" class="decision review-decision" transform="translate(900 2760)">
+    <polygon points="0,-110 250,0 0,110 -250,0"/>
+    <text class="decision-title" x="0" y="-12">Verification</text>
+    <text class="decision-title" x="0" y="18">accepted?</text>
+  </g>
+  <text class="label" x="912" y="2895">Accepted</text>
+  <path class="connector" data-from="verification-decision" data-to="configured-delivery" d="M900 2870 V3010"/>
+  <text class="correction-label" x="1160" y="2795">Correction required</text>
+  <path class="collector" data-from="verification-decision" data-to="third-failed-review-decision" d="M1150 2760 H1170 V2430 H1165"/>
+
+  <text class="rail-label" x="1190" y="2060">ALL MANAGED REVIEW FAILURES USE THIS ONE LIMIT</text>
+  <g id="third-failed-review-decision" class="decision failure-decision" transform="translate(1450 2430)">
+    <polygon points="0,-140 285,0 0,140 -285,0"/>
+    <text class="decision-title" x="0" y="-28">Third failed review</text>
+    <text class="decision-title" x="0" y="2">for the same</text>
+    <text class="decision-title" x="0" y="32">unresolved issue?</text>
+  </g>
+  <text class="correction-label" x="1475" y="1540" transform="rotate(90 1475 1540)">No · methodology or plan findings</text>
+  <path class="correction-edge" data-lane="methodology-plan" data-from="third-failed-review-decision" data-to="dev-coder-plan" d="M1450 2290 V660 H1180"/>
+  <text class="correction-label" x="35" y="3165">No · test-design findings return to the Dev Coder plan update</text>
+  <path class="correction-edge" data-lane="test-design" data-from="third-failed-review-decision" data-to="complex-test-plan-update" d="M1265 2525 H1190 V3180 H20 V1930 H90"/>
+  <text class="correction-label" x="1210" y="2615">No · code-review finding</text>
+  <path class="correction-edge" data-lane="code-review" data-from="third-failed-review-decision" data-to="implementation-correction" d="M1365 2550 V2625 H1330 V2640"/>
+  <text class="correction-label" x="1480" y="2615">No · verification finding</text>
+  <path class="correction-edge" data-lane="verification" data-from="third-failed-review-decision" data-to="implementation-correction" d="M1535 2550 V2625 H1570 V2640"/>
+  <g id="implementation-correction" class="node correction" transform="translate(1210 2640)">
+    <rect width="480" height="120"/>
+    <text class="node-title" x="240" y="34">Dev Coder Corrects</text>
+    <text class="node-title" x="240" y="62">The Implementation</text>
+    <text class="node-copy" x="240" y="92">Then fresh code review and reverification</text>
+  </g>
+  <path class="correction-edge" data-from="implementation-correction" data-to="code-review" d="M1210 2700 H1195 V2037 H1180"/>
+  <text class="correction-label" x="1670" y="2640">Yes · no fourth cycle</text>
+  <path class="collector" data-from="third-failed-review-decision" data-to="user-action-required" d="M1735 2430 H1770 V2940 H1690"/>
+  <g id="user-action-required" class="node terminal" transform="translate(1210 2880)">
+    <rect width="480" height="130"/>
+    <text class="node-title" x="240" y="45">User Action Required</text>
+    <text class="node-copy" x="240" y="79">Coordinator records the state, then asks</text>
+    <text class="node-copy" x="240" y="105">one concrete user-owned decision</text>
+  </g>
+
+  <g id="configured-delivery" class="node terminal" transform="translate(620 3010)">
+    <rect width="560" height="130"/>
+    <text class="node-title" x="280" y="45">Configured Delivery</text>
+    <text class="node-copy" x="280" y="79">Accepted commit · clean state · lifecycle closure</text>
+  </g>
+  <text class="subheading" x="70" y="3230">Writing, completed-artifact review, coding, code review, verification, and delivery retain independent owners.</text>
+</svg>

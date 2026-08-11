@@ -28,9 +28,18 @@ resourceCoordination:
       closeoutScope: [backlog/feature-backlog/update-dependency-health-summary.md]
       requiredHandoffReceiptFields: [lane, role, commit, review, verification]
 lanes:
+  planning:
+    owner: dev-coder
+    reviewer: dev-architect
+    shortcutAuthorized: false
+    requiredEvidence:
+      - Bounded implementation and TDD plan aligned with the assignment.
+      - Requirements traceability, reuse, smallest viable approach, and proportionality decision.
+      - Dev Architect ACCEPTED before source mutation.
   source:
     owner: dev-coder
     reviewer: dev-code-reviewer
+    requiresAcceptedPlan: true
     input: src/dependency_status.py
     requestedBehavior: Return degraded status with lexically sorted unavailable dependency names.
     acceptanceCriteria:
@@ -50,15 +59,17 @@ lanes:
       - python3 validate_fixture.py
 orchestration:
   dependencyOrder:
-    - {step: 1, role: dev-coder, lane: source, fresh: true}
-    - {step: 2, role: dev-code-reviewer, lane: source-review, fresh: true}
-    - {step: 3, role: dev-documentation-writer, lane: documentation, fresh: true}
-    - {step: 4, role: dev-artifact-reviewer, lane: documentation-review, fresh: true}
-    - {step: 5, role: dev-verifier, lane: contribution-verification, fresh: true}
-    - {step: 6, role: dev-merge-coordinator, lane: integration, fresh: true}
-    - {step: 7, role: dev-code-reviewer, lane: post-integration-source-review, fresh: true}
-    - {step: 8, role: dev-artifact-reviewer, lane: post-integration-documentation-review, fresh: true}
-    - {step: 9, role: dev-verifier, lane: final-verification, fresh: true}
+    - {step: 1, role: dev-coder, lane: planning, fresh: true}
+    - {step: 2, role: dev-architect, lane: plan-review, fresh: true}
+    - {step: 3, role: dev-coder, lane: source, fresh: true}
+    - {step: 4, role: dev-code-reviewer, lane: source-review, fresh: true}
+    - {step: 5, role: dev-documentation-writer, lane: documentation, fresh: true}
+    - {step: 6, role: dev-artifact-reviewer, lane: documentation-review, fresh: true}
+    - {step: 7, role: dev-verifier, lane: contribution-verification, fresh: true}
+    - {step: 8, role: dev-merge-coordinator, lane: integration, fresh: true}
+    - {step: 9, role: dev-code-reviewer, lane: post-integration-source-review, fresh: true}
+    - {step: 10, role: dev-artifact-reviewer, lane: post-integration-documentation-review, fresh: true}
+    - {step: 11, role: dev-verifier, lane: final-verification, fresh: true}
   integration:
     owner: dev-merge-coordinator
     requiresAcceptedSource: true

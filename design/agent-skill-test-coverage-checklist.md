@@ -20,11 +20,11 @@ This page is generated from the live conceptual agent and skill inventories, all
 
 ## Summary
 
-- [x] 32 conceptual agents and 145 bundled skills have structural coverage.
-- [x] 31 agents are scenario-declared and 142 skills are probe-declared.
+- [x] 33 conceptual agents and 145 bundled skills have structural coverage.
+- [x] 32 agents are scenario-declared and 142 skills are probe-declared.
 - Agents missing scenario declarations: dev-skill-lint-reviewer.
 - Skills missing probe declarations: analyze-document-topics, manage-complex-development-plan, revise-document-topics.
-- [x] 72 agent scenarios and 5 workflow packs are declared.
+- [x] 75 agent scenarios and 5 workflow packs are declared.
 - 5 workflow packs have associated cases; 5 are partial and 0 have end-to-end fixture coverage.
 - 17 cases are fixture-backed and 17 fixtures are structurally executable before harness readiness is considered.
 - 17 cases can run locally through Codex and 17 can run locally through Junie.
@@ -33,7 +33,7 @@ This page is generated from the live conceptual agent and skill inventories, all
 - 33 skills have positive-case support, 0 have negative-activation cases, 0 have executable paired controls, and 0 satisfy the full probe contract.
 - 2 agents and 0 skills have executable full fixtures.
 - 0 agents and 0 skills have calibrated Model Judge status.
-- 31 agents and 118 skills have pending Model Judge status.
+- 32 agents and 118 skills have pending Model Judge status.
 - 0 agents and 24 skills use Deterministic Judges only and do not require Model Judge calibration.
 - 0 agents and 0 skills have classified executions.
 - 0 agents and 0 skills have Judge-passed evidence.
@@ -57,38 +57,39 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 
 | Agent | Profile | Structural | Scenario-declared | Case-backed scenarios | All scenarios backed | Executable full fixture | Judge calibration | Executed | Judge-passed | Security-contained | Stale-by-digest |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| dev-artifact-reviewer | documentation | [x] | [x] dev-artifact-reviewer-boundary, dev-artifact-reviewer-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
-| dev-backlog-coordinator | advanced-long | [x] | [x] dev-backlog-coordinator-boundary, dev-backlog-coordinator-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
+| dev-architect | architecture | [x] | [x] dev-architect-ambitious-simulator, dev-architect-happy, dev-architect-insufficient-requirements | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
+| dev-artifact-reviewer | verification | [x] | [x] dev-artifact-reviewer-boundary, dev-artifact-reviewer-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
+| dev-backlog-coordinator | verification | [x] | [x] dev-backlog-coordinator-boundary, dev-backlog-coordinator-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
 | dev-backlog-steward | simple | [x] | [x] dev-backlog-steward-boundary, dev-backlog-steward-happy, dev-backlog-steward-provider-boundary | [x] dev-backlog-steward-boundary, dev-backlog-steward-happy, dev-backlog-steward-provider-boundary | [x] backlog-lifecycle, file-work-item-no-mutation, file-work-item-template-contract, github-work-item-provider, provider-placeholder-matrix, work-item-management-provider-operations | [x] backlog-lifecycle, file-work-item-no-mutation, file-work-item-template-contract, github-work-item-provider, provider-placeholder-matrix, work-item-management-provider-operations | pending | none | none | none | none |
 | dev-backlog-watchdog | simple | [x] | [x] dev-backlog-watchdog-boundary, dev-backlog-watchdog-exit-condition, dev-backlog-watchdog-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
 | dev-browser-operator | advanced | [x] | [x] dev-browser-operator-boundary, dev-browser-operator-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
 | dev-code-reviewer | verification | [x] | [x] dev-code-reviewer-boundary, dev-code-reviewer-happy | [x] dev-code-reviewer-happy | [ ] none | [ ] none | pending | none | none | none | none |
 | dev-coder | implementation | [x] | [x] dev-coder-boundary, dev-coder-happy | [x] dev-coder-happy | [ ] none | [ ] none | pending | none | none | none | none |
-| dev-document-topic-editor | documentation | [x] | [x] dev-document-topic-editor-authorized-revision, dev-document-topic-editor-read-only | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
-| dev-documentation-writer | documentation | [x] | [x] dev-documentation-writer-boundary, dev-documentation-writer-happy, dev-documentation-writer-terminology-exclusion, dev-documentation-writer-terminology-rewrite | [x] dev-documentation-writer-happy, dev-documentation-writer-terminology-exclusion, dev-documentation-writer-terminology-rewrite | [ ] none | [ ] none | pending | none | none | none | none |
-| dev-merge-coordinator | advanced | [x] | [x] dev-merge-coordinator-boundary, dev-merge-coordinator-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
-| dev-orchestrator | advanced-long | [x] | [x] dev-orchestrator-boundary, dev-orchestrator-happy | [x] dev-orchestrator-boundary, dev-orchestrator-happy | [x] main-branch-unrelated-dirty-contract | [x] main-branch-unrelated-dirty-contract | pending | none | none | none | none |
-| dev-prompt-reviewer | advanced | [x] | [x] dev-prompt-reviewer-boundary, dev-prompt-reviewer-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
+| dev-document-topic-editor | verification | [x] | [x] dev-document-topic-editor-authorized-revision, dev-document-topic-editor-read-only | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
+| dev-documentation-writer | implementation | [x] | [x] dev-documentation-writer-boundary, dev-documentation-writer-happy, dev-documentation-writer-terminology-exclusion, dev-documentation-writer-terminology-rewrite | [x] dev-documentation-writer-happy, dev-documentation-writer-terminology-exclusion, dev-documentation-writer-terminology-rewrite | [ ] none | [ ] none | pending | none | none | none | none |
+| dev-merge-coordinator | implementation | [x] | [x] dev-merge-coordinator-boundary, dev-merge-coordinator-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
+| dev-orchestrator | verification | [x] | [x] dev-orchestrator-boundary, dev-orchestrator-happy | [x] dev-orchestrator-boundary, dev-orchestrator-happy | [x] main-branch-unrelated-dirty-contract | [x] main-branch-unrelated-dirty-contract | pending | none | none | none | none |
+| dev-prompt-reviewer | verification | [x] | [x] dev-prompt-reviewer-boundary, dev-prompt-reviewer-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
 | dev-runtime-diagnostician | advanced | [x] | [x] dev-runtime-diagnostician-boundary, dev-runtime-diagnostician-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
-| dev-security-reviewer | advanced | [x] | [x] dev-security-reviewer-boundary, dev-security-reviewer-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
-| dev-skill-lint-reviewer | intermediate | [x] | [ ] none | [ ] none | [ ] none | [ ] none | missing | none | none | none | none |
+| dev-security-reviewer | verification | [x] | [x] dev-security-reviewer-boundary, dev-security-reviewer-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
+| dev-skill-lint-reviewer | verification | [x] | [ ] none | [ ] none | [ ] none | [ ] none | missing | none | none | none | none |
 | dev-ux-specialist | default | [x] | [x] dev-ux-specialist-boundary, dev-ux-specialist-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
 | dev-verifier | verification | [x] | [x] dev-verifier-boundary, dev-verifier-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
-| methodology-artifact-reviewer | advanced | [x] | [x] methodology-artifact-reviewer-boundary, methodology-artifact-reviewer-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
+| methodology-artifact-reviewer | verification | [x] | [x] methodology-artifact-reviewer-boundary, methodology-artifact-reviewer-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
 | methodology-design-system-checklist-runner | simple | [x] | [x] methodology-design-system-checklist-runner-boundary, methodology-design-system-checklist-runner-happy | [x] methodology-design-system-checklist-runner-happy | [ ] none | [ ] none | pending | none | none | none | none |
 | methodology-design-system-review-coordinator | coordination | [x] | [x] methodology-design-system-review-coordinator-boundary, methodology-design-system-review-coordinator-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
-| methodology-maintainer | advanced | [x] | [x] methodology-maintainer-boundary, methodology-maintainer-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
+| methodology-maintainer | implementation | [x] | [x] methodology-maintainer-boundary, methodology-maintainer-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
 | project-bootstrapper | advanced-long | [x] | [x] project-bootstrapper-boundary, project-bootstrapper-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
 | project-configurator | default | [x] | [x] project-configurator-advanced-setup, project-configurator-basic-setup, project-configurator-boundary, project-configurator-conceptual-role-technology-exclusion, project-configurator-dev-coder-provider-dependency-exclusion, project-configurator-documentation-roots, project-configurator-happy, project-configurator-persisted-technology-confirmation | [x] project-configurator-happy | [ ] none | [ ] none | pending | none | none | none | none |
 | project-organiser | default | [x] | [x] project-organiser-boundary, project-organiser-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
 | wiki-architect | documentation | [x] | [x] wiki-architect-boundary, wiki-architect-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
-| wiki-artifact-reviewer | advanced | [x] | [x] wiki-artifact-reviewer-boundary, wiki-artifact-reviewer-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
-| wiki-ingester | documentation | [x] | [x] wiki-ingester-boundary, wiki-ingester-happy | [x] wiki-ingester-happy | [ ] none | [ ] none | pending | none | none | none | none |
+| wiki-artifact-reviewer | verification | [x] | [x] wiki-artifact-reviewer-boundary, wiki-artifact-reviewer-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
+| wiki-ingester | implementation | [x] | [x] wiki-ingester-boundary, wiki-ingester-happy | [x] wiki-ingester-happy | [ ] none | [ ] none | pending | none | none | none | none |
 | wiki-query-responder | default | [x] | [x] wiki-query-responder-boundary, wiki-query-responder-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
 | wiki-researcher | documentation | [x] | [x] wiki-researcher-boundary, wiki-researcher-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
-| wiki-source-collector | documentation | [x] | [x] wiki-source-collector-boundary, wiki-source-collector-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
-| wiki-topic-verifier | advanced | [x] | [x] wiki-topic-verifier-boundary, wiki-topic-verifier-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
-| wiki-writer | documentation | [x] | [x] wiki-writer-boundary, wiki-writer-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
+| wiki-source-collector | verification | [x] | [x] wiki-source-collector-boundary, wiki-source-collector-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
+| wiki-topic-verifier | verification | [x] | [x] wiki-topic-verifier-boundary, wiki-topic-verifier-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
+| wiki-writer | implementation | [x] | [x] wiki-writer-boundary, wiki-writer-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
 
 ## Bundled Skill Checklist
 

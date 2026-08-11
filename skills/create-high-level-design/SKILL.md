@@ -4,6 +4,23 @@ description: Use when creating or substantially rewriting a high-level design ar
 metadata:
   category: artifact-creation
 ---
+<!--
+Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+Artifact-ID: a39d0e32-12d4-481c-8ac9-f3c6f0e0928a
+Created-UTC: 2026-07-09T15:36:02Z
+Creating-Agent: historical-unknown
+Runtime: historical-unknown
+Dispatched-Model: historical-unknown
+Reasoning-Effort: historical-unknown
+Task-ID: historical-unknown
+Artifact-ID-Evidence: migration-assigned
+Created-UTC-Evidence: git-derived
+Creating-Agent-Evidence: historical-unknown
+Runtime-Evidence: historical-unknown
+Dispatched-Model-Evidence: historical-unknown
+Reasoning-Effort-Evidence: historical-unknown
+Task-ID-Evidence: historical-unknown
+-->
 
 # Create High-Level Design
 
@@ -36,6 +53,10 @@ Documentation acceptance asks whether the HLD accurately synthesizes accepted lo
 You must create a high-level solution that satisfies the functional requirements and parent architecture. Elaborate it sufficiently for module designs through software architecture principles and appropriate design patterns. For planned development, make reasonable justified HLD propositions for undefined but resolvable choices; state basis, necessity, and decision ownership without presenting propositions as accepted requirements.
 
 A central goal of the HLD is to avoid chaos at the next level of detail. Establish one shared coordination frame for component vocabulary, ownership boundaries, contracts, dependencies, source and test locations, package or module names, integration seams, and implementation order. Do not leave separate module designers to invent conflicting names, paths, responsibilities, or contracts.
+
+When planned work creates or materially revises a subsystem boundary, component split, interaction, contract, dependency, or implementation-order choice, Dev Architect selects or reviews the choice before document acceptance. Dev Architect traces it to requirements, constraints, repository evidence, or an explicit assumption and compares materially larger proposals with the smallest viable approach. Dev Documentation Writer retains document structure, source use, template conformance, and prose quality. Dev Artifact Reviewer retains independent artifact review.
+
+If a larger HLD is technically justified, stop before treating it as accepted. Return a user-confirmation request through Dev Orchestrator that states the smaller viable approach, additional scope, and practical cost difference. Return an unjustified outsized choice for correction. Do not infer scale approval from the original documentation or implementation request.
 
 Precise artifact placement is required. For every planned component, contract, data type, adapter, configuration surface, migration, and test surface, specify a complete repository-relative path and complete package or module name when applicable. Build an artifact-placement ledger. Reject `...`, a Unicode ellipsis, wildcards, omitted intermediate directories, abbreviated package segments, `TBD`, and similar placeholders. If a source root or base package is undefined, choose a coherent labeled proposition with basis, necessity, and decision owner.
 

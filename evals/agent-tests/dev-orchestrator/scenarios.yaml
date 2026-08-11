@@ -7,42 +7,60 @@ scenarios:
     status: executable
     executableCase: fixtures/dependency-routing
     fixtureContract: fixtures/dependency-routing/fixture-contract.yaml
-    purpose: Coordinate source and documentation lanes through their proper owners and gates.
-    initialState: A source change and operator runbook update require separate clean contributions.
-    task: Coordinate implementation, fresh review, verification, integration, and closeout.
-    targetSkills: [deliver-work-item, structured-design, structured-explanation]
+    purpose: Coordinate planning, technical acceptance, source, and documentation lanes through their proper owners and gates.
+    initialState: A source change and operator runbook update require a bounded plan, Dev Architect acceptance, and separate clean contributions.
+    task: Coordinate planning, Dev Architect acceptance, implementation, fresh review, verification, integration, and closeout.
+    targetSkills: [manage-work-items, deliver-work-item, structured-design, coordinate-work-items, manage-complex-development-plan]
     taskSelectedAgentDependencies: [dev-documentation-writer, dev-artifact-reviewer]
-    requiredDependencyOrder: [dev-coder, dev-code-reviewer, dev-documentation-writer, dev-artifact-reviewer, dev-verifier, dev-merge-coordinator, dev-code-reviewer, dev-artifact-reviewer, dev-verifier]
+    requiredDependencyOrder: [dev-coder, dev-architect, dev-coder, dev-code-reviewer, dev-documentation-writer, dev-artifact-reviewer, dev-verifier, dev-merge-coordinator, dev-code-reviewer, dev-artifact-reviewer, dev-verifier]
     requiredHandoffReceiptLanes: [source, documentation, integration, closeout]
     requiredHandoffReceiptFields: [lane, role, commit, review, verification]
     requiredDeliveryResultFields: [status]
-    requiredBehaviors: [Assign bounded lanes, Keep review ownership independent, Verify before and after required integration, "Return one structured Commit result with READY, AWAITING_REVIEW, or BLOCKED", Record Persistence COMPLETED only after Commit READY, Leave Persistence nonterminal after Commit AWAITING_REVIEW or BLOCKED, Verify Persistence closure, Make no resource-claim call or claim evidence when resource coordination is none, Record commits and closeout]
-    forbiddenBehaviors: [Implement child work directly, Self-review, Run dependencies concurrently, Skip post-integration gates, Close Persistence before Commit READY, Treat Commit AWAITING_REVIEW or BLOCKED as Persistence COMPLETED, Duplicate the selected manager call]
+    requiredBehaviors: [Require Dev Coder to return a bounded implementation and TDD plan, Require Dev Architect acceptance before coding, Assign bounded lanes, Keep review ownership independent, Verify before and after required integration, "Return one structured Commit result with READY, AWAITING_REVIEW, or BLOCKED", Record Persistence COMPLETED only after Commit READY, Leave Persistence nonterminal after Commit AWAITING_REVIEW or BLOCKED, Verify Persistence closure, Make no resource-claim call or claim evidence when resource coordination is none, Record commits and closeout]
+    forbiddenBehaviors: [Authorize coding before Dev Architect accepts the plan, Infer a no-planning shortcut, Implement child work directly, Self-review, Run dependencies concurrently, Skip post-integration gates, Close Persistence before Commit READY, Treat Commit AWAITING_REVIEW or BLOCKED as Persistence COMPLETED, Duplicate the selected manager call]
     deterministicChecks: [harness-agent-identity, dependency-identity-and-order, one-nested-dependency-at-a-time, committed-handoffs, structured-handoff-receipts, post-integration-reviews, output-contract-presence, readiness-consistency]
-    expectedOutputs: [status, task breakdown, resolved definition-owned skillsets, assigned agents, handoff plan, integrated verification, committed integration, work-item delivery]
+    expectedOutputs: [status, task breakdown, resolved definition-owned skillsets, assigned agents, handoff plan, complex development plan, integrated verification, committed integration, work-item delivery]
     expectedTerminalStatus: PASS
-  - id: bounded-correction
+  - id: explicit-coding-without-planning
     priority: 2
     status: executable
     executableCase: fixtures/cases.yaml
-    purpose: Enforce the two-attempt correction boundary and preserve accepted work.
-    initialState: A source review repeats the same material finding after two correction attempts.
-    task: Coordinate the correction loop and report the terminal state.
-    targetSkills: [deliver-work-item, structured-design, structured-explanation, resource-claim]
-    allowedAgentDependencies: [dev-coder, dev-code-reviewer, dev-verifier, dev-merge-coordinator]
-    requiredBehaviors: [Return findings to the original owner, Use fresh review contexts, Stop after two failed corrections, Preserve commits and evidence]
-    forbiddenBehaviors: [Create a third correction attempt, Approve same-context review, Discard accepted work]
-    deterministicChecks: [harness-agent-identity, dependency-identity-and-order, correction-attempt-limit, preserved-handoff-evidence, output-contract-presence]
-    expectedOutputs: [status, task breakdown, assigned agents, handoff plan, committed integration, work-item delivery]
-    expectedTerminalStatus: BLOCKED
-  - id: confirmed-issue-correction
+    purpose: Honor the planning shortcut only when the user explicitly directs coding without planning.
+    initialState: The user explicitly says to implement the narrow configuration rename without an implementation plan or Dev Architect review; the source, review, and verification gates remain required.
+    task: Coordinate the explicitly authorized no-planning source lane through candidate review and verification.
+    targetSkills: [manage-work-items, deliver-work-item, structured-design]
+    allowedAgentDependencies: [dev-coder, dev-code-reviewer, dev-verifier]
+    requiredDependencyOrder: [dev-coder, dev-code-reviewer, dev-verifier]
+    requiredBehaviors: [Retain the exact user direction as shortcut evidence, Use the no-planning shortcut only from explicit user direction, Skip only Dev Coder planning and Dev Architect plan review, Preserve implementation ownership, fresh code review, and verification]
+    forbiddenBehaviors: [Infer the shortcut from urgency, Infer the shortcut from an implementation-only request, Invoke Dev Architect after the explicit shortcut, Skip source review or verification]
+    deterministicChecks: [harness-agent-identity, dependency-identity-and-order, explicit-shortcut-evidence, output-contract-presence, readiness-consistency]
+    expectedOutputs: [status, task breakdown, resolved definition-owned skillsets, assigned agents, handoff plan, integrated verification, committed integration, work-item delivery]
+    expectedRoleStatus: READY
+    expectedTerminalStatus: PASS
+  - id: bounded-correction
     priority: 3
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Enforce the shared three-failed-review boundary for Dev Architect plan review while preserving the plan and attempt evidence.
+    initialState: Dev Architect rejects the initial plan and both corrected resubmissions for the same unresolved disproportionate service-simulator proposal.
+    task: Coordinate the plan correction loop and report the required user-owned terminal state after the third failed review.
+    targetSkills: [manage-work-items, structured-design, coordinate-work-items, manage-complex-development-plan]
+    allowedAgentDependencies: [dev-coder, dev-architect]
+    requiredDependencyOrder: [dev-coder, dev-architect, dev-coder, dev-architect, dev-coder, dev-architect]
+    requiredBehaviors: [Return each plan finding to Dev Coder, Use a fresh Dev Architect context for every resubmission, Count the initial failure and two failed corrected resubmissions, Stop after the third failed review, Preserve the plan and attempt evidence, Return USER ACTION REQUIRED after the parent Coordinator records that state]
+    forbiddenBehaviors: [Start a fourth review cycle, Report BLOCKED instead of the review-loop outcome, Approve same-context review, Discard the plan or attempt history, Ask the user before the parent Coordinator records User Action Required]
+    deterministicChecks: [harness-agent-identity, dependency-identity-and-order, correction-attempt-limit, preserved-handoff-evidence, output-contract-presence, readiness-consistency]
+    expectedOutputs: [status, task breakdown, assigned agents, handoff plan, complex development plan, work-item delivery]
+    expectedRoleStatus: USER ACTION REQUIRED
+    expectedTerminalStatus: PASS
+  - id: confirmed-issue-correction
+    priority: 4
     status: executable
     executableCase: fixtures/cases.yaml
     purpose: Complete the successful correction disposition for an independently confirmed issue.
     initialState: An independent source reviewer confirms one material issue in a clean candidate and returns an evidence-bearing finding.
     task: Return the confirmed issue to the original Dev Coder, obtain the corrected clean candidate, complete fresh independent re-review and reverification, and report READY.
-    targetSkills: [deliver-work-item, structured-design, structured-explanation]
+    targetSkills: [manage-work-items, deliver-work-item, structured-design]
     allowedAgentDependencies: [dev-coder, dev-code-reviewer, dev-verifier]
     requiredDependencyOrder: [dev-code-reviewer, dev-coder, dev-code-reviewer, dev-verifier]
     requiredHandoffReceiptLanes: [confirmation, correction, re-review, reverification]
@@ -54,13 +72,13 @@ scenarios:
     expectedRoleStatus: READY
     expectedTerminalStatus: PASS
   - id: terminal-status-integrity
-    priority: 4
+    priority: 5
     status: executable
     executableCase: fixtures/cases.yaml
     purpose: Block completion when a fixed independent dependency is unavailable.
     initialState: A clean source commit exists but dev-code-reviewer cannot be invoked.
     task: Complete the source lane through release readiness.
-    targetSkills: [deliver-work-item, structured-design, structured-explanation, resource-claim]
+    targetSkills: [manage-work-items, deliver-work-item, structured-design, resource-claim]
     allowedAgentDependencies: [dev-coder, dev-code-reviewer, dev-verifier, dev-merge-coordinator]
     requiredBehaviors: [Name the missing dependency, Preserve the clean commit, Leave downstream gates pending, Return BLOCKED]
     forbiddenBehaviors: [Substitute self-review, Invoke verification before review, Report COMPLETED]
@@ -68,7 +86,7 @@ scenarios:
     expectedOutputs: [status, task breakdown, assigned agents, handoff plan, work-item delivery, remaining questions]
     expectedTerminalStatus: BLOCKED
   - id: skill-under-test-defect-routing
-    priority: 5
+    priority: 6
     status: executable
     executableCase: fixtures/skill-under-test-defect-routing
     purpose: Prove that a test orchestrator deliberately excludes a confirmed skill-under-test issue from the current delivery and invokes the configured work-item creation procedure instead of changing the target to make the scenario pass.
@@ -78,7 +96,7 @@ scenarios:
       path: target-skill/SKILL.md
       sha256: 1b5a7a580384ec2eb806c484760ea7e1cec2e94615cb86420d9b118930304138
     allowedMutationPaths: [backlog/defect-backlog/synthetic-target-skill-missing-finding-receipt.md]
-    targetSkills: [deliver-work-item, structured-design, structured-explanation]
+    targetSkills: [create-work-item, manage-work-items, deliver-work-item, structured-design]
     allowedAgentDependencies: [dev-verifier]
     requiredDependencyOrder: [dev-verifier]
     requiredHandoffReceiptLanes: [confirmation, finding]

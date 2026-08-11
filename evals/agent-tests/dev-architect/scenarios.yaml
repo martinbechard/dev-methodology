@@ -1,0 +1,49 @@
+schema: dev-methodology-agent-suite-scenarios
+version: 1
+suite: dev-architect
+scenarios:
+  - id: accepted-design
+    priority: 1
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Accept the smallest technically sound design when the plan is traceable, implementable, reusable, and proportionate.
+    initialState: A bounded notification-retry plan uses the repository's existing queue adapter, focused fixtures, and accepted retry requirements without introducing new infrastructure.
+    task: Review the plan for technical soundness, requirements traceability, reuse, smallest viable scope, testability, and proportionality before coding.
+    targetSkills: [route-documentation-work, careful-coding, test-driven-development]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Trace every material choice to accepted requirements and repository evidence, Confirm that the existing queue adapter is the smallest viable approach, Keep focused fixtures and ordinary tests in the coding loop, Return ACCEPTED with bounded implementation and verification obligations]
+    forbiddenBehaviors: [Invent requirements, Add infrastructure beyond the accepted plan, Implement production code, Replace document-writing or completed-artifact-review ownership]
+    deterministicChecks: [harness-agent-identity, no-forbidden-mutation, output-contract-presence, readiness-consistency]
+    expectedOutputs: [status, technical design decision, requirements and proportionality evidence, candidate handoff]
+    expectedRoleStatus: ACCEPTED
+    expectedTerminalStatus: PASS
+  - id: ambitious-service-simulator
+    priority: 2
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Reject a custom service simulator when focused fixtures at an existing seam prove the requested behavior with less scope and maintenance cost.
+    initialState: A webhook retry plan proposes a new custom GitHub service simulator even though the repository already exposes an adapter seam and deterministic request fixtures for the one required retry rule.
+    task: Review the simulator proposal for necessity, reuse, scope, testability, and proportionality and return the smallest responsible approach.
+    targetSkills: [route-documentation-work, careful-coding, test-driven-development]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Distinguish ordinary fixtures from shared test infrastructure, Compare the simulator with the existing adapter seam, Reject the disproportionate simulator, Return CORRECTION REQUIRED with the bounded fixture approach]
+    forbiddenBehaviors: [Treat ambition as technical necessity, Infer approval for a simulator from the implementation request, Escalate an unjustified larger plan for user confirmation, Implement the simulator]
+    deterministicChecks: [harness-agent-identity, no-forbidden-mutation, output-contract-presence, readiness-consistency]
+    expectedOutputs: [status, technical design decision, requirements and proportionality evidence, candidate handoff]
+    expectedRoleStatus: CORRECTION REQUIRED
+    expectedTerminalStatus: PASS
+  - id: insufficient-requirements-and-constraints
+    priority: 3
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Block a material topology decision when accepted requirements and constraints cannot support a responsible choice.
+    initialState: A persistence-topology request omits retention, recovery, consistency, deployment, and failure-tolerance constraints and supplies no repository evidence that resolves them.
+    task: Determine whether a persistence topology can be selected without inventing product or operational requirements.
+    targetSkills: [route-documentation-work, careful-coding]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Preserve the known request, Identify the material missing requirements and unresolved constraints, Decline to present a datastore preference as accepted, Return BLOCKED with the exact decision owner and evidence needed to proceed]
+    forbiddenBehaviors: [Invent retention or recovery requirements, Select a topology from preference alone, Silently widen the requested system, Claim ACCEPTED or USER CONFIRMATION REQUIRED without a technically supported design]
+    deterministicChecks: [harness-agent-identity, no-forbidden-mutation, output-contract-presence, readiness-consistency]
+    expectedOutputs: [status, technical design decision, requirements and proportionality evidence, candidate handoff]
+    expectedRoleStatus: BLOCKED
+    expectedTerminalStatus: BLOCKED

@@ -65,6 +65,15 @@ profiles:
     - https://junie.jetbrains.com/docs/junie-cli-model-selection.html
     - https://platform.claude.com/docs/en/release-notes/overview
     contextBudgetMechanismEvidence: https://junie.jetbrains.com/docs/junie-cli-subagents.html
+  architecture:
+    model: opus
+    effort: high
+    contextCapacityTokens: 1000000
+    contextBudgetMechanism: instruction
+    contextCapacityEvidence:
+    - https://junie.jetbrains.com/docs/junie-cli-model-selection.html
+    - https://platform.claude.com/docs/en/release-notes/overview
+    contextBudgetMechanismEvidence: https://junie.jetbrains.com/docs/junie-cli-subagents.html
   advanced-long:
     model: opus
     effort: high

@@ -1,0 +1,20 @@
+schema: synthetic-dev-architect-suite-cases
+version: 1
+cases:
+  accepted-design:
+    assignment: Add bounded notification retry behavior.
+    acceptedRequirements: [Retry one transient delivery failure, Preserve existing queue ownership, Keep deterministic focused coverage]
+    repositoryEvidence: [Existing queue adapter, Existing request fixtures, Existing focused test runner]
+    proposedApproach: Extend the queue adapter and its focused fixtures without adding a service or shared test system.
+  ambitious-service-simulator:
+    assignment: Prove one GitHub webhook retry rule.
+    acceptedRequirements: [Retry one transient webhook response, Preserve the existing adapter contract]
+    repositoryEvidence: [Existing GitHub adapter seam, Deterministic request and response fixtures, Existing focused test runner]
+    proposedApproach: Create a shared custom GitHub service simulator, lifecycle controller, and reusable scenario registry.
+    boundedAlternative: Extend the adapter fixtures with the retry response sequence and assert the observable result.
+  insufficient-requirements-and-constraints:
+    assignment: Select a persistence topology.
+    knownRequirements: [Persist submitted records]
+    missingRequirements: [Retention, Recovery objectives, Consistency, Deployment topology, Failure tolerance]
+    repositoryEvidence: []
+    decisionOwner: User through Dev Orchestrator after requirements are supplied.

@@ -9,6 +9,13 @@ instructions: Inspect authoritative sources, apply the project and technology gu
   prose. Write the resulting artifact in steady-state language. Use route-documentation-work
   to select exactly one creation route for a template-owned methodology artifact. Keep
   the selected creation skill responsible for artifact structure and required sections.
+  For planned architecture or high-level-design work, preserve accepted Dev Architect
+  technical decisions and their requirements trace. Do not replace an accepted choice with
+  a prose preference or invent a material technical choice when Dev Architect review remains
+  required. Retain ownership of document structure, authoritative source use, template
+  conformance, and prose quality. Dev Architect owns technical soundness and proportionality;
+  Dev Artifact Reviewer remains the independent artifact reviewer. Return an unresolved
+  material technical choice to Dev Orchestrator instead of filling it silently.
   Use structured-explanation only when an artifact or bounded rationale section must
   expose facts, hypotheses, unknowns, technical causes, decisions, or the reasoning
   behind a plan. Do not require QUERY, FACT, or ANSWER items in ordinary technical

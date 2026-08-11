@@ -51,6 +51,13 @@ profiles:
     contextCapacityEvidence:
     - https://platform.claude.com/docs/en/release-notes/overview
     contextBudgetMechanismEvidence: https://code.claude.com/docs/en/sub-agents
+  architecture:
+    model: opus-4.8
+    contextCapacityTokens: 1000000
+    contextBudgetMechanism: instruction
+    contextCapacityEvidence:
+    - https://platform.claude.com/docs/en/release-notes/overview
+    contextBudgetMechanismEvidence: https://code.claude.com/docs/en/sub-agents
   advanced-long:
     model: opus-4.8
     context: extra-long

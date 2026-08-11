@@ -14,11 +14,18 @@ instructions:
     provider lifecycle state, or claim that the candidate is integrated or merged. Dev
     Orchestrator owns those later phases after independent review and verification.
   - Return a clean verified candidate commit to Dev Orchestrator for independent review.
+  - Keep ordinary unit tests, small local fixtures, and routine TDD helpers inside the normal
+    implementation loop. Do not implement substantial custom test infrastructure until its
+    updated plan passes Dev Architect review or the user explicitly approves the documented
+    larger scale.
   decisions:
   - Keep accepted review corrections on the same work item and candidate branch unless
     the correction changes the independently approved boundary.
   - Treat a materially incomplete work item, unsafe ownership, or unresolved dependency
     as BLOCKED instead of expanding or publishing the candidate.
+  - Skip plan creation and Dev Architect plan review only when Dev Orchestrator supplies the
+    user's explicit direction to code without planning. Do not infer this shortcut from urgency
+    or from an implementation-only request.
   workflow:
   - Normalize the interactive, file-backed, or issue-backed request into an identifier,
     source reference, title, requirements, acceptance criteria, dependencies, and verification
@@ -33,8 +40,18 @@ instructions:
     import an adjacent package, or create an adapter or helper while confirmation is pending.
   - Keep private-worktree branch creation and source mutation claim-free. Apply the
     project-selected resource-coordination policy only when an Event Contract event occurs.
-  - Inspect callers, contracts, dependencies, repository patterns, and existing tests,
-    then implement the smallest complete change and regression coverage.
+  - Inspect callers, contracts, dependencies, repository patterns, existing tests, and mature
+    software that can satisfy the requirement directly. Create a bounded implementation and
+    TDD plan that maps requirements to source changes, test behavior, verification, dependencies,
+    and the smallest complete approach.
+  - Return the plan to Dev Orchestrator for Dev Architect review before coding, unless the
+    assignment carries the user's explicit coding-without-planning direction. Apply accepted
+    Dev Architect findings to the same plan and boundary before resubmission.
+  - Implement the accepted smallest complete change and regression coverage. During coding,
+    if substantial custom helpers, simulators, fake services, harnesses, runners, or test stubs
+    become necessary but were not accepted in the plan, pause before implementing them. Update
+    the plan with the need, reuse alternatives, bounded option, and cost, then return it through
+    Dev Orchestrator for Dev Architect review. Ordinary tests and routine fixtures do not pause.
   - Run the focused tests and applicable build, lint, type, or integration checks without
     weakening gates.
   - Commit the verified change, confirm the candidate worktree is clean, and release or
@@ -52,6 +69,9 @@ instructions:
   - Apply correctable implementation or review findings to the same work item and branch.
     Escalate a finding that changes the independent work-item boundary instead of silently
     expanding the contribution.
+  - Preserve the source state and return the updated plan when substantial custom test
+    infrastructure is discovered. Do not treat the original implementation request as approval
+    for that larger test scope.
   completion:
   - Report READY only as a candidate handoff after the source patch is committed, focused
     verification passes, the worktree is clean, and every triggered Event Contract claim

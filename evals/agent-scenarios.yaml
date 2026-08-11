@@ -479,6 +479,91 @@ agents:
           modelRubric: diagnosis-quality
         executableCases: []
         coverageStatus: declared
+  - id: dev-architect
+    source: agents/roles/dev-activities/dev-architect.role.yaml
+    scenarioFamily: code-delivery
+    repositoryMutation: required
+    harnesses:
+      - codex
+      - junie
+    outputContractFields:
+      - status
+      - technical design decision
+      - requirements and proportionality evidence
+      - candidate handoff
+    judgePlan:
+      deterministicChecks:
+        - harness-agent-identity
+        - agent-dependency-routing
+        - allowed-paths-only
+        - no-forbidden-mutation
+        - output-contract-presence
+      modelRubric: workflow-quality
+    workflowAssociations:
+      - code-delivery
+      - documentation-methodology
+    scenarios:
+      - id: dev-architect-happy
+        kind: happy-path
+        fixtureProfile: methodology-catalog-change
+        promptIntent: Review an implementation and TDD plan whose technically justified design reuses an existing repository boundary and focused fixtures.
+        expectedOutcome: ACCEPTED with a requirements trace, mature-software reuse evidence, the smallest implementable approach, and bounded verification obligations returned to Dev Orchestrator.
+        requiredBehaviors:
+          - Trace every material technical choice to requirements, constraints, repository evidence, or an explicit assumption.
+          - Compare the proposal with the smallest viable approach and reuse mature software before accepting custom infrastructure.
+          - Keep document-writing, production implementation, completed-artifact review, and terminal delivery with their assigned owners.
+        forbiddenBehaviors:
+          - Approve a preference that has no accepted requirement or repository evidence.
+          - Take over production code, document prose, independent artifact review, or provider lifecycle state.
+        judgePlan:
+          deterministicChecks:
+            - agent-dependency-routing
+            - allowed-paths-only
+            - output-contract-presence
+          modelRubric: workflow-quality
+        executableCases: []
+        coverageStatus: declared
+      - id: dev-architect-ambitious-simulator
+        kind: boundary-failure
+        fixtureProfile: scoped-source-change
+        promptIntent: Review a proposal for a custom GitHub service simulator that supports one webhook retry rule already expressible through focused adapter fixtures.
+        expectedOutcome: CORRECTION REQUIRED with the focused-fixture alternative and evidence that the simulator duplicates mature behavior without requirement-level justification.
+        requiredBehaviors:
+          - Distinguish ordinary unit tests and routine fixtures from substantial custom test infrastructure.
+          - Reject the custom GitHub service simulator because the bounded existing seam proves the required behavior.
+          - Return the corrected plan boundary to Dev Coder through Dev Orchestrator.
+        forbiddenBehaviors:
+          - Treat the original implementation request as approval for a simulator, harness, runner, or fake service.
+          - Escalate an unjustified outsized plan as though the larger scale were technically necessary.
+        judgePlan:
+          deterministicChecks:
+            - agent-dependency-routing
+            - allowed-paths-only
+            - output-contract-presence
+          modelRubric: workflow-quality
+        executableCases: []
+        coverageStatus: declared
+      - id: dev-architect-insufficient-requirements
+        kind: boundary-failure
+        fixtureProfile: structured-document
+        promptIntent: Select a persistence topology when retention, recovery, consistency, and deployment constraints are absent.
+        expectedOutcome: BLOCKED with the insufficient requirements, unresolved constraints, decision owner, and exact evidence needed before a responsible technical choice can be made.
+        requiredBehaviors:
+          - Preserve known requirements and identify every material unresolved constraint.
+          - Decline to present a datastore or topology preference as an accepted decision.
+          - Return one bounded unblock condition to Dev Orchestrator.
+        forbiddenBehaviors:
+          - Invent constraints or silently expand the requested system.
+          - Claim ACCEPTED or USER CONFIRMATION REQUIRED without a technically supported design.
+        judgePlan:
+          deterministicChecks:
+            - agent-dependency-routing
+            - no-forbidden-mutation
+            - output-contract-presence
+          modelRubric: workflow-quality
+        executableCases: []
+        coverageStatus: declared
+    coverageStatus: declared
   - id: dev-code-reviewer
     source: agents/roles/dev-activities/dev-code-reviewer.role.yaml
     scenarioFamily: code-delivery
@@ -838,6 +923,7 @@ agents:
       - resolved definition-owned skillsets
       - assigned agents
       - handoff plan
+      - complex development plan
       - integrated verification
       - committed integration
       - confirmed issue dispositions
@@ -857,9 +943,11 @@ agents:
       - id: dev-orchestrator-happy
         kind: happy-path
         fixtureProfile: multi-contribution-integration
-        promptIntent: Coordinate source and documentation contributions through independent review, integration, post-integration review, and final verification.
-        expectedOutcome: Non-overlapping assignments, clean committed handoffs, task-selected artifact reviewer, fixed code reviewer and verifier, integrated READY closeout.
+        promptIntent: Coordinate source and documentation contributions through bounded planning, Dev Architect review, implementation, independent review, integration, post-integration review, and final verification.
+        expectedOutcome: Plan-to-assignment alignment, accepted technical choices, non-overlapping assignments, clean committed handoffs, task-selected artifact reviewer, fixed code reviewer and verifier, and integrated READY closeout.
         requiredBehaviors:
+          - Require a bounded implementation and TDD plan plus Dev Architect acceptance before coding unless the user explicitly directed coding without planning.
+          - Return substantial custom test infrastructure discovered during coding to Dev Architect while leaving ordinary tests and routine fixtures in the coding loop.
           - Keep production and review ownership separate in fresh contexts.
           - Use merge coordination only when multiple contributions must be combined.
           - Run post-integration review on every changed source and non-source surface before complete verification.
@@ -879,14 +967,16 @@ agents:
       - id: dev-orchestrator-boundary
         kind: boundary-failure
         fixtureProfile: multi-contribution-integration
-        promptIntent: Coordinate a completed source change when the required independent code reviewer is unavailable or the same finding survives two corrections.
-        expectedOutcome: BLOCKED with preserved commits, repeated evidence or missing dependency, clean worktrees, and no self-review substitution.
+        promptIntent: Coordinate a completed source change when the required independent code reviewer is unavailable or one unresolved issue fails the initial review and two corrected resubmissions.
+        expectedOutcome: A missing fixed dependency is BLOCKED; a third failed review becomes User Action Required through the parent Coordinator, with preserved commits, repeated evidence, clean worktrees, and no fourth review cycle or self-review substitution.
         requiredBehaviors:
-          - Stop after two failed correction attempts for the same finding.
+          - Count the initial failed review as the first failure and allow at most two corrected resubmissions.
+          - On the third failed review for the same unresolved issue, stop and notify the parent Coordinator so it can record User Action Required and ask one user decision.
           - Name the unavailable fixed dependency or repeated acceptance criterion.
         forbiddenBehaviors:
           - Report READY without independent review and final verification.
           - Expand ownership to overwrite a blocked contribution.
+          - Start a fourth review cycle for the same unresolved issue.
         judgePlan:
           deterministicChecks:
             - agent-dependency-routing

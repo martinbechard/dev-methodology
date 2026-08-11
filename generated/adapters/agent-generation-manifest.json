@@ -1,8 +1,40 @@
 {
   "adapters": {
     "claude": {
-      "agentCount": 32,
+      "agentCount": 33,
       "agents": [
+        {
+          "contextAllocation": {
+            "additionalReserveTokens": 0,
+            "contextBudgetPercent": 75,
+            "headroomPercent": 25,
+            "modelStages": {},
+            "primary": {
+              "contextBudgetMechanism": "instruction",
+              "contextBudgetMechanismEvidence": "https://code.claude.com/docs/en/sub-agents",
+              "contextBudgetTokens": 750000,
+              "contextCapacityEvidence": [
+                "https://platform.claude.com/docs/en/release-notes/overview"
+              ],
+              "contextCapacityTokens": 1000000,
+              "headroomTokens": 250000,
+              "model": "opus-4.8",
+              "modelProfile": "architecture"
+            },
+            "rounding": "floor"
+          },
+          "name": "dev-architect",
+          "output": "generated/adapters/claude/agents/dev-architect.md",
+          "referencedFixedSkills": [
+            "effective-communication",
+            "ste-technical-writing",
+            "route-documentation-work",
+            "careful-coding",
+            "test-driven-development"
+          ],
+          "sha256": "2ffbfbee6d2c14356bc99f1a4710c112e350aaffa4ab4db3c75b1c74a46343bf",
+          "source": "agents/roles/dev-activities/dev-architect.role.yaml"
+        },
         {
           "contextAllocation": {
             "additionalReserveTokens": 0,
@@ -255,7 +287,7 @@
             "code-discovery",
             "explain-code-fix"
           ],
-          "sha256": "13771d01dda283d1663e7b0af4cb6f1d10807ad89fb241b22df04359a0b383dd",
+          "sha256": "e4f6c88342fbe84c9e5c46b041b21cd01d7e781c2ddd1cf4922c524e9795a917",
           "source": "agents/roles/dev-activities/dev-coder.role.yaml"
         },
         {
@@ -316,7 +348,7 @@
             "ste-technical-writing",
             "route-documentation-work"
           ],
-          "sha256": "20b661e9717103f7e5933f58507f79800a47f4c012ec6fbae63654cfd8bdbcc6",
+          "sha256": "10959d361e1986f106f2eb36ee9777430c57f179ed783b65bc87480532237d0b",
           "source": "agents/roles/dev-activities/dev-documentation-writer.role.yaml"
         },
         {
@@ -380,7 +412,7 @@
             "deliver-work-item",
             "structured-design"
           ],
-          "sha256": "6b39e60aca9f2f5a350eafa1ddcff4fc5a2b19c7e2dc8f1ff27b1dcc86907138",
+          "sha256": "49cac02078a7acde6d0f1d131c4ae484d0fedbbb0678204a7ee807e18744432c",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -1145,8 +1177,41 @@
       "outputRoot": "generated/adapters/claude/agents"
     },
     "codex": {
-      "agentCount": 32,
+      "agentCount": 33,
       "agents": [
+        {
+          "contextAllocation": {
+            "additionalReserveTokens": 0,
+            "contextBudgetPercent": 75,
+            "headroomPercent": 25,
+            "modelStages": {},
+            "primary": {
+              "contextBudgetMechanism": "instruction",
+              "contextBudgetMechanismEvidence": "https://developers.openai.com/codex/subagents",
+              "contextBudgetTokens": 787500,
+              "contextCapacityEvidence": [
+                "https://developers.openai.com/api/docs/models"
+              ],
+              "contextCapacityTokens": 1050000,
+              "headroomTokens": 262500,
+              "model": "gpt-5.6-sol",
+              "modelProfile": "architecture"
+            },
+            "rounding": "floor"
+          },
+          "name": "dev-architect",
+          "output": "generated/adapters/codex/agents/dev-architect.toml",
+          "referencedFixedSkills": [
+            "effective-communication",
+            "ste-technical-writing",
+            "route-documentation-work",
+            "careful-coding",
+            "test-driven-development",
+            "codex-harness-directives"
+          ],
+          "sha256": "9c47b84a6a96663479dca830cc82dd799eb2aeecc71bb140be0507ae89a1fcb5",
+          "source": "agents/roles/dev-activities/dev-architect.role.yaml"
+        },
         {
           "contextAllocation": {
             "additionalReserveTokens": 0,
@@ -1405,7 +1470,7 @@
             "explain-code-fix",
             "codex-harness-directives"
           ],
-          "sha256": "773a5a841ff348e52b7e345031de04410c8c2850ac840c8f572caa8699f33fec",
+          "sha256": "c28c11beda4521047611c5ac3fb3502e53cc923d6bc34d40d3494920f18e11f1",
           "source": "agents/roles/dev-activities/dev-coder.role.yaml"
         },
         {
@@ -1468,7 +1533,7 @@
             "route-documentation-work",
             "codex-harness-directives"
           ],
-          "sha256": "5e7e08972983d45f9747eabc46e16d55b134346718f21d925fa6d0d06c8c9b3a",
+          "sha256": "adbad5ac331f2ce37b604458f4fe9c98bd080a0288ccf32964586672d940cab5",
           "source": "agents/roles/dev-activities/dev-documentation-writer.role.yaml"
         },
         {
@@ -1534,7 +1599,7 @@
             "structured-design",
             "codex-harness-directives"
           ],
-          "sha256": "713756460213ed6a6f697d263d3e6446a5ace7ed71ce550b52eee475ff388607",
+          "sha256": "a12043004c5eb75722377a017109ff4f26f7fbb533714e492d05bf2a086ab1ff",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -2322,8 +2387,41 @@
       "outputRoot": "generated/adapters/codex/agents"
     },
     "gemini": {
-      "agentCount": 32,
+      "agentCount": 33,
       "agents": [
+        {
+          "contextAllocation": {
+            "additionalReserveTokens": 0,
+            "contextBudgetPercent": 75,
+            "headroomPercent": 25,
+            "modelStages": {},
+            "primary": {
+              "contextBudgetMechanism": "instruction",
+              "contextBudgetMechanismEvidence": "https://geminicli.com/docs/core/subagents/",
+              "contextBudgetTokens": 786432,
+              "contextCapacityEvidence": [
+                "https://geminicli.com/docs/cli/model/",
+                "https://ai.google.dev/gemini-api/docs/models"
+              ],
+              "contextCapacityTokens": 1048576,
+              "headroomTokens": 262144,
+              "model": "pro",
+              "modelProfile": "architecture"
+            },
+            "rounding": "floor"
+          },
+          "name": "dev-architect",
+          "output": "generated/adapters/gemini/agents/dev-architect.md",
+          "referencedFixedSkills": [
+            "effective-communication",
+            "ste-technical-writing",
+            "route-documentation-work",
+            "careful-coding",
+            "test-driven-development"
+          ],
+          "sha256": "aa3e16746fa52df1942c87fc870e862bb0322127f057e436782dd3666832cae6",
+          "source": "agents/roles/dev-activities/dev-architect.role.yaml"
+        },
         {
           "contextAllocation": {
             "additionalReserveTokens": 0,
@@ -2586,7 +2684,7 @@
             "code-discovery",
             "explain-code-fix"
           ],
-          "sha256": "59d748c94c69fbc41a31d24991ee6c8475085083a33a8ad5fcd0f7faa275d833",
+          "sha256": "9753f1f5edff1aefb0e01f715f8fbb6ff736e5ca561e776df33be0783b1e0a0c",
           "source": "agents/roles/dev-activities/dev-coder.role.yaml"
         },
         {
@@ -2649,7 +2747,7 @@
             "ste-technical-writing",
             "route-documentation-work"
           ],
-          "sha256": "636fa260f0ec19c2a0590a7553b8617477056c7d4cd1cacf8cf6d5dbdf2a3807",
+          "sha256": "da71ae7a012df52640aff84dde0837f50cb96c9f89e0677c85847b68855a900f",
           "source": "agents/roles/dev-activities/dev-documentation-writer.role.yaml"
         },
         {
@@ -2715,7 +2813,7 @@
             "deliver-work-item",
             "structured-design"
           ],
-          "sha256": "774ffff799b86c21ab9f180af7473b41d5ac17167cc4bdaa8818ea12e8611e18",
+          "sha256": "839a6611c2ea2fad97fcba2099165d5e9b7ccd95275b7cafda3df548db0580d9",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -3509,8 +3607,41 @@
       "outputRoot": "generated/adapters/gemini/agents"
     },
     "junie": {
-      "agentCount": 32,
+      "agentCount": 33,
       "agents": [
+        {
+          "contextAllocation": {
+            "additionalReserveTokens": 0,
+            "contextBudgetPercent": 75,
+            "headroomPercent": 25,
+            "modelStages": {},
+            "primary": {
+              "contextBudgetMechanism": "instruction",
+              "contextBudgetMechanismEvidence": "https://junie.jetbrains.com/docs/junie-cli-subagents.html",
+              "contextBudgetTokens": 750000,
+              "contextCapacityEvidence": [
+                "https://junie.jetbrains.com/docs/junie-cli-model-selection.html",
+                "https://platform.claude.com/docs/en/release-notes/overview"
+              ],
+              "contextCapacityTokens": 1000000,
+              "headroomTokens": 250000,
+              "model": "opus",
+              "modelProfile": "architecture"
+            },
+            "rounding": "floor"
+          },
+          "name": "dev-architect",
+          "output": "generated/adapters/junie/agents/dev-architect.md",
+          "referencedFixedSkills": [
+            "effective-communication",
+            "ste-technical-writing",
+            "route-documentation-work",
+            "careful-coding",
+            "test-driven-development"
+          ],
+          "sha256": "5f67bfc35f576271fd5b8ef48cf7ed5ab65e31b04d03dcd7f81e47d3a64a575f",
+          "source": "agents/roles/dev-activities/dev-architect.role.yaml"
+        },
         {
           "contextAllocation": {
             "additionalReserveTokens": 0,
@@ -3773,7 +3904,7 @@
             "code-discovery",
             "explain-code-fix"
           ],
-          "sha256": "3468b54c810ee9f15a75a4154fd53ea24a500d3b6b997ea22ecd318f20b066e7",
+          "sha256": "d236641c761e764e875c3e3f002d59617e7ee63d5ae7695c0ab6896695fa01cc",
           "source": "agents/roles/dev-activities/dev-coder.role.yaml"
         },
         {
@@ -3836,7 +3967,7 @@
             "ste-technical-writing",
             "route-documentation-work"
           ],
-          "sha256": "2a0b7d1bb728c8cbe1ece1cb90eb7d675d30ed4712aa5130e44cae2a94aca422",
+          "sha256": "becbef17e2d1be3edcc0846b2f40111d4200d4adcd30f97b9c598e808fecdf3f",
           "source": "agents/roles/dev-activities/dev-documentation-writer.role.yaml"
         },
         {
@@ -3902,7 +4033,7 @@
             "deliver-work-item",
             "structured-design"
           ],
-          "sha256": "1b7f9b65106543ced7ddd511f0f7458c5c62fa8a0afa0b72f4cc09e7d325710a",
+          "sha256": "5d3167b6b99bef9c0466d1f672284de0952d8aa698d86f0282ac276e78163a22",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -4696,7 +4827,7 @@
       "outputRoot": "generated/adapters/junie/agents"
     }
   },
-  "canonicalRoleCount": 32,
+  "canonicalRoleCount": 33,
   "generationOptions": {
     "coreSkillDelivery": "by-reference",
     "inlineCoreSkills": false

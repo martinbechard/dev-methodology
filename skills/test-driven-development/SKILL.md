@@ -4,6 +4,23 @@ description: Use when implementing behavior through a framework-neutral red-gree
 metadata:
   category: development-practice
 ---
+<!--
+Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+Artifact-ID: 20be5019-a369-407b-a620-bb880c21b03f
+Created-UTC: 2026-07-10T03:47:10Z
+Creating-Agent: historical-unknown
+Runtime: historical-unknown
+Dispatched-Model: historical-unknown
+Reasoning-Effort: historical-unknown
+Task-ID: historical-unknown
+Artifact-ID-Evidence: migration-assigned
+Created-UTC-Evidence: git-derived
+Creating-Agent-Evidence: historical-unknown
+Runtime-Evidence: historical-unknown
+Dispatched-Model-Evidence: historical-unknown
+Reasoning-Effort-Evidence: historical-unknown
+Task-ID-Evidence: historical-unknown
+-->
 
 # Test-Driven Development
 
@@ -27,3 +44,17 @@ metadata:
 - Exercise representative values across every authorized domain; an inclusive numeric range does not imply whole numbers. Test internal rounding through observable outputs without rejecting permitted fractional inputs.
 - Keep a materially ambiguous validity rule as an explicit decision or blocker when the broader authorized behavior cannot be implemented safely.
 - When a test fails unexpectedly, switch to Root Cause Analysis before changing production behavior.
+
+## Substantial Test Infrastructure Gate
+
+Ordinary unit tests, small local fixtures, framework-native doubles, and routine TDD helpers remain inside the normal coding loop. They do not require separate architectural review.
+
+Before implementing substantial custom helpers, service simulators, fake services, harnesses, runners, test stubs, or equivalent test infrastructure, pause the coding loop. Dev Coder updates the plan with:
+
+- the behavior that needs proof;
+- why focused existing tools, fixtures, mocks, or adapters are insufficient;
+- the smallest viable test approach;
+- reuse alternatives; and
+- the scope and maintenance cost of the proposed infrastructure.
+
+Dev Architect reviews necessity, reuse, scope, and proportionality before implementation. A disproportionate proposal returns for correction. A technically justified larger approach proceeds only after the user explicitly confirms its documented scale through Dev Orchestrator. The original implementation request does not imply that approval.

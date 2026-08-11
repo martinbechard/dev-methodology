@@ -5,6 +5,14 @@ cases:
     lanes: [dependency status source, operator runbook]
     requiresIntegration: true
     allDependenciesAvailable: true
-  bounded-correction: {finding: missing authorization denial test, correctionVerdicts: [NEEDS_CORRECTION, NEEDS_CORRECTION]}
+  explicit-coding-without-planning:
+    userDirection: Implement this narrow configuration rename without planning or Dev Architect review.
+    shortcutScope: [Dev Coder implementation plan, Dev Architect plan review]
+    preservedGates: [Dev Coder implementation, fresh Dev Code Reviewer, Dev Verifier]
+  bounded-correction:
+    planFinding: Disproportionate custom service simulator remains in the plan.
+    correctionVerdicts: [CORRECTION REQUIRED, CORRECTION REQUIRED, CORRECTION REQUIRED]
+    attempts: [initial plan, corrected resubmission one, corrected resubmission two]
+    expectedRoleStatus: USER ACTION REQUIRED
   confirmed-issue-correction: {confirmationOwner: dev-code-reviewer, correctionOwner: dev-coder, reReviewVerdict: ACCEPTED, reverificationVerdict: PASS, expectedRoleStatus: READY}
   terminal-status-integrity: {handoff: clean committed source, unavailable: dev-code-reviewer, pending: [review, verification]}

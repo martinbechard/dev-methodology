@@ -29,6 +29,7 @@ packs:
   - id: code-delivery
     agents:
       - dev-coder
+      - dev-architect
       - dev-code-reviewer
       - dev-verifier
       - dev-browser-operator
@@ -106,12 +107,22 @@ packs:
       - probe-user-experience-review
       - probe-vitest
     phases:
+      - id: plan-and-architectural-review
+        agents:
+          - dev-coder
+          - dev-architect
+          - dev-orchestrator
+        requiredEvidence:
+          - bounded implementation and TDD plan aligned with the assignment
+          - accepted requirements trace, reuse evidence, smallest viable approach, and proportionality decision
+          - explicit user coding-without-planning direction when the planning gate is skipped
       - id: scoped-production
         agents:
           - dev-coder
         requiredEvidence:
           - narrow claim and clean committed handoff
           - focused regression and build evidence
+          - Dev Architect re-review before any substantial custom test infrastructure is implemented
       - id: independent-contribution-review
         agents:
           - dev-code-reviewer
@@ -163,6 +174,7 @@ packs:
   - id: documentation-methodology
     agents:
       - dev-documentation-writer
+      - dev-architect
       - dev-artifact-reviewer
       - dev-verifier
       - methodology-maintainer
@@ -200,10 +212,12 @@ packs:
       - id: route-and-author
         agents:
           - dev-documentation-writer
+          - dev-architect
           - methodology-maintainer
         requiredEvidence:
           - exactly one applicable artifact route
           - source-backed artifact or aligned methodology source and derived outputs
+          - accepted Dev Architect decision trace for planned material architecture or high-level-design choices
       - id: independent-artifact-review
         agents:
           - dev-artifact-reviewer

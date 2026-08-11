@@ -4,12 +4,33 @@ description: Use when creating or substantially rewriting an architecture artifa
 metadata:
   category: artifact-creation
 ---
+<!--
+Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+Artifact-ID: 858c50d3-95a2-4a5f-a549-bfabc1b4843a
+Created-UTC: 2026-07-09T15:36:02Z
+Creating-Agent: historical-unknown
+Runtime: historical-unknown
+Dispatched-Model: historical-unknown
+Reasoning-Effort: historical-unknown
+Task-ID: historical-unknown
+Artifact-ID-Evidence: migration-assigned
+Created-UTC-Evidence: git-derived
+Creating-Agent-Evidence: historical-unknown
+Runtime-Evidence: historical-unknown
+Dispatched-Model-Evidence: historical-unknown
+Reasoning-Effort-Evidence: historical-unknown
+Task-ID-Evidence: historical-unknown
+-->
 
 # Create Architecture
 
 Use this skill to create or substantially rewrite one architecture artifact. The artifact explains a whole system, project-wide boundary, or cross-cutting concern without duplicating every module detail.
 
 For planned development, treat architecture as solution design rather than only a summary of upstream decisions. Make reasonable, explicitly labeled justified architecture propositions for undefined but resolvable technology, boundary, ownership, topology, or file-organization choices. State each proposition's basis, why it is necessary to complete the system frame or unblock HLD work, and the role that owns or may revise it. Do not present propositions as accepted requirements.
+
+When planned work creates or materially revises one of these technical choices, Dev Architect selects or reviews the choice before document acceptance. Dev Architect traces it to requirements, constraints, repository evidence, or an explicit assumption and compares materially larger proposals with the smallest viable approach. Dev Documentation Writer retains document structure, source use, template conformance, and prose quality. Dev Artifact Reviewer retains independent artifact review.
+
+If a larger architecture is technically justified, stop before treating it as accepted. Return a user-confirmation request through Dev Orchestrator that states the smaller viable approach, additional scope, and practical cost difference. Return an unjustified outsized choice for correction. Do not infer scale approval from the original documentation or implementation request.
 
 ## Template
 

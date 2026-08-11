@@ -1,0 +1,33 @@
+schema: dev-methodology-agent-suite
+version: 1
+id: dev-architect
+priority: 33
+target:
+  conceptualRole: agents/roles/dev-activities/dev-architect.role.yaml
+  nativeAgent: generated/adapters/codex/agents/dev-architect.toml
+  repositoryMutation: required
+  requiredSkills: [route-documentation-work, careful-coding, test-driven-development]
+  conditionalSkills:
+    create-architecture: Material system-wide technical choices require creation or revision.
+    create-high-level-design: Material subsystem technical choices require creation or revision.
+  allowedAgentDependencies: []
+  requiredOutputs: [status, technical design decision, requirements and proportionality evidence, candidate handoff]
+projectAgents:
+  supervisor: agents/supervisor.toml
+  judge: agents/judge.toml
+projectSkills:
+  shared: [../skills/agent-suite-supervision/SKILL.md, ../skills/agent-scenario-design/SKILL.md, ../skills/agent-evidence-judging/SKILL.md]
+  suite: [skills/dev-architect-suite-contract/SKILL.md]
+execution:
+  maximumActiveChildren: 1
+  nestedAgentLimit: 0
+  scenarioCatalog: scenarios.yaml
+  supervisorInvocation: dev_architect_suite_supervisor
+  targetInvocation: dev_architect
+  judgeInvocation: dev_architect_suite_judge
+  requireCodexIdentityEvidence: true
+acceptance:
+  deterministicFirst: true
+  criticalFailureSkipsJudge: true
+  semanticRubric: workflow-quality
+  terminalStatuses: [PASS, FAIL, BLOCKED, STALE]

@@ -6,13 +6,17 @@ target:
   conceptualRole: agents/roles/dev-activities/dev-orchestrator.role.yaml
   nativeAgent: generated/adapters/codex/agents/dev-orchestrator.toml
   repositoryMutation: required
-  requiredSkills: [deliver-work-item, structured-design, structured-explanation]
+  requiredSkills: [manage-work-items, deliver-work-item, structured-design]
   conditionalSkills:
+    create-work-item: A confirmed issue is deliberately excluded and needs a durable provider-owned item.
+    coordinate-work-items: The root execution owns a coordinated work item.
+    coordinate-codex-tasks: The coordinated root execution runs as a Codex task.
     organise-project-files: Orchestration creates a project file or directory.
     resource-claim: Resource coordination selects resource-claim.
-  allowedAgentDependencies: [dev-coder, dev-code-reviewer, dev-verifier, dev-merge-coordinator]
+    manage-complex-development-plan: The canonical complexity gate requires an externalized execution plan.
+  allowedAgentDependencies: [dev-coder, dev-architect, dev-code-reviewer, dev-verifier, dev-merge-coordinator]
   taskSelectableAgentDependencies: [dev-documentation-writer, dev-artifact-reviewer]
-  requiredOutputs: [status, task breakdown, resolved definition-owned skillsets, assigned agents, handoff plan, integrated verification, committed integration, work-item delivery]
+  requiredOutputs: [status, task breakdown, resolved definition-owned skillsets, assigned agents, handoff plan, complex development plan, integrated verification, committed integration, confirmed issue dispositions, work-item delivery]
 projectAgents:
   supervisor: agents/supervisor.toml
   judge: agents/judge.toml

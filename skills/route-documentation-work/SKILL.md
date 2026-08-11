@@ -117,6 +117,14 @@ Use this route table when the task is to create or substantially rewrite a metho
 - Terminology Standard artifact: use terminology-standard-update for the exact terminology.md filename and terminology-standard-review for conformance. It has no reusable template, defaults to project scope, and uses shared user scope only when explicitly selected.
 Use project-wiki-topic-write for ordinary docs/wiki topic pages that summarize or link source material without becoming one of the specialized methodology artifacts. Use reverse-engineer-project-documentation when the user asks for a source-derived documentation set rather than one artifact.
 
+## Planned Technical Decision Ownership
+
+When planned architecture or high-level-design work creates or materially revises a technical choice, route that choice through Dev Architect. Dev Architect owns technical soundness, implementability, requirements traceability, reuse, and proportionality.
+
+Dev Documentation Writer retains the selected artifact structure, authoritative source use, template conformance, and prose quality. The writer applies accepted Dev Architect decisions without silently replacing them. Dev Artifact Reviewer retains the independent artifact review after the document is complete.
+
+Documenting current implementation evidence without selecting a new technical approach does not create a separate architectural decision gate. An unresolved material choice blocks planned downstream work until Dev Architect accepts a bounded decision or the user confirms a technically justified larger scale through Dev Orchestrator.
+
 ## Template Assets
 
 Template assets live under skills/route-documentation-work/assets/templates. Read an already staged template directly. When the required template is not staged and mcp-agent-ops is available, retrieve it through skill_resource_load. Use the direct skill-relative asset as the fallback only when the tool is absent or its server cannot initialize or connect before dispatch; do not bypass a structured policy rejection.

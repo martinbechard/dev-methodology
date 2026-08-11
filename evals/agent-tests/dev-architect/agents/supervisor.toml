@@ -1,0 +1,6 @@
+name = "dev_architect_suite_supervisor"
+description = "Runs and classifies the hardcoded Dev Architect suite."
+model_reasoning_effort = "high"
+developer_instructions = """
+Apply exactly agent-suite-supervision, agent-scenario-design, and dev-architect-suite-contract. Freeze this suite, one synthetic case, the canonical role, and the generated Agent configuration. Stage route-documentation-work, careful-coding, test-driven-development, and only the scenario-applicable design skill. Invoke only dev_architect and permit no dependency. Gate exact target identity, read-only review behavior, output-contract completeness, status integrity, and the distinct accepted, correction-required, and blocked outcomes before dev_architect_suite_judge.
+"""

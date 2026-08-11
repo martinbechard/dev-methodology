@@ -44,27 +44,32 @@ Implement one normalized work item as the smallest complete source change, verif
 - Preserve unrelated work and keep the implementation, tests, commits, and delivery artifacts within the accepted work-item boundary.
 - Do not apply the effective Commit-selected skill, publish terminal delivery, mutate provider lifecycle state, or claim that the candidate is integrated or merged. Dev Orchestrator owns those later phases after independent review and verification.
 - Return a clean verified candidate commit to Dev Orchestrator for independent review.
+- Keep ordinary unit tests, small local fixtures, and routine TDD helpers inside the normal implementation loop. Do not implement substantial custom test infrastructure until its updated plan passes Dev Architect review or the user explicitly approves the documented larger scale.
 
 ## Decisions
 
 - Keep accepted review corrections on the same work item and candidate branch unless the correction changes the independently approved boundary.
 - Treat a materially incomplete work item, unsafe ownership, or unresolved dependency as BLOCKED instead of expanding or publishing the candidate.
+- Skip plan creation and Dev Architect plan review only when Dev Orchestrator supplies the user's explicit direction to code without planning. Do not infer this shortcut from urgency or from an implementation-only request.
 
 ## Workflow
 
 1. Normalize the interactive, file-backed, or issue-backed request into an identifier, source reference, title, requirements, acceptance criteria, dependencies, and verification expectations.
 2. Before producing an implementation plan or changing source, verify every material premise the request expects the implementation to use. Confirm that named tools, functions, interfaces, services, files, commands, and capabilities exist in the requested form and are available through the requested boundary. An adjacent library or similarly named capability is not equivalent. When reality differs, stop before designing a substitute, report the requested premise and observed reality, and ask the user to confirm the intended boundary or spelling. Do not silently reinterpret the request, install an alternative, import an adjacent package, or create an adapter or helper while confirmation is pending.
 3. Keep private-worktree branch creation and source mutation claim-free. Apply the project-selected resource-coordination policy only when an Event Contract event occurs.
-4. Inspect callers, contracts, dependencies, repository patterns, and existing tests, then implement the smallest complete change and regression coverage.
-5. Run the focused tests and applicable build, lint, type, or integration checks without weakening gates.
-6. Commit the verified change, confirm the candidate worktree is clean, and release or truthfully hand off every Event Contract claim the task actually triggered.
-7. Return the candidate commit, branch and changed paths, focused checks, omissions, clean-worktree evidence, and disposition of every Event Contract claim actually triggered to Dev Orchestrator.
+4. Inspect callers, contracts, dependencies, repository patterns, existing tests, and mature software that can satisfy the requirement directly. Create a bounded implementation and TDD plan that maps requirements to source changes, test behavior, verification, dependencies, and the smallest complete approach.
+5. Return the plan to Dev Orchestrator for Dev Architect review before coding, unless the assignment carries the user's explicit coding-without-planning direction. Apply accepted Dev Architect findings to the same plan and boundary before resubmission.
+6. Implement the accepted smallest complete change and regression coverage. During coding, if substantial custom helpers, simulators, fake services, harnesses, runners, or test stubs become necessary but were not accepted in the plan, pause before implementing them. Update the plan with the need, reuse alternatives, bounded option, and cost, then return it through Dev Orchestrator for Dev Architect review. Ordinary tests and routine fixtures do not pause.
+7. Run the focused tests and applicable build, lint, type, or integration checks without weakening gates.
+8. Commit the verified change, confirm the candidate worktree is clean, and release or truthfully hand off every Event Contract claim the task actually triggered.
+9. Return the candidate commit, branch and changed paths, focused checks, omissions, clean-worktree evidence, and disposition of every Event Contract claim actually triggered to Dev Orchestrator.
 
 ## Failure Handling
 
 - Report BLOCKED with one concrete user-confirmation question when a material requested premise is missing or exists only through a different interface and resolving that discrepancy would change the requested implementation boundary or outcome.
 - Stop and report BLOCKED when the work item is materially incomplete, ownership overlaps, a dependency is unresolved, verification cannot complete safely, or a clean candidate commit cannot be preserved.
 - Apply correctable implementation or review findings to the same work item and branch. Escalate a finding that changes the independent work-item boundary instead of silently expanding the contribution.
+- Preserve the source state and return the updated plan when substantial custom test infrastructure is discovered. Do not treat the original implementation request as approval for that larger test scope.
 
 ## Completion
 

@@ -14,6 +14,7 @@ import sys
 import tempfile
 import tomllib
 import unittest
+import xml.etree.ElementTree as ET
 from dataclasses import replace
 from html.parser import HTMLParser
 from pathlib import Path
@@ -2884,7 +2885,13 @@ class BundleContentTests(unittest.TestCase):
             role_skill_entries["manage-complex-development-plan"]["condition"],
         )
         self.assertEqual(
-            ["dev-coder", "dev-code-reviewer", "dev-verifier", "dev-merge-coordinator"],
+            [
+                "dev-coder",
+                "dev-architect",
+                "dev-code-reviewer",
+                "dev-verifier",
+                "dev-merge-coordinator",
+            ],
             role["agentDependencies"],
         )
         instructions = role["instructions"]
@@ -9623,6 +9630,7 @@ Visible after.
             ),
             "dev-orchestrator": (
                 "dev-coder",
+                "dev-architect",
                 "dev-code-reviewer",
                 "dev-verifier",
                 "dev-merge-coordinator",
@@ -9695,10 +9703,12 @@ Visible after.
                 ]
                 for dependency in dependencies:
                     self.assertIn(dependency, routing_text)
-                self.assertRegex(
-                    failure_text,
-                    r"(?i)(?:after|at most).*two.*correction attempts",
+                correction_limit_pattern = (
+                    r"(?i)initial failed review.*two corrected resubmissions"
+                    if role_name == "dev-orchestrator"
+                    else r"(?i)(?:after|at most).*two.*correction attempts"
                 )
+                self.assertRegex(failure_text, correction_limit_pattern)
                 self.assertRegex(
                     failure_text,
                     r"(?i)(?:unavailable|cannot provide a required agent)",
@@ -10004,8 +10014,27 @@ Visible after.
         exclusion = next(
             item for item in scenarios if item["id"] == "skill-under-test-defect-routing"
         )
-        self.assertEqual("BLOCKED", bounded["expectedTerminalStatus"])
-        self.assertIn("Stop after two failed corrections", bounded["requiredBehaviors"])
+        self.assertEqual("PASS", bounded["expectedTerminalStatus"])
+        self.assertEqual("USER ACTION REQUIRED", bounded["expectedRoleStatus"])
+        self.assertIn(
+            "Count the initial failure and two failed corrected resubmissions",
+            bounded["requiredBehaviors"],
+        )
+        self.assertIn(
+            "Stop after the third failed review",
+            bounded["requiredBehaviors"],
+        )
+        self.assertEqual(
+            [
+                "dev-coder",
+                "dev-architect",
+                "dev-coder",
+                "dev-architect",
+                "dev-coder",
+                "dev-architect",
+            ],
+            bounded["requiredDependencyOrder"],
+        )
         self.assertNotIn(
             "Complete correction, fresh re-review, and reverification before closeout",
             bounded["requiredBehaviors"],
@@ -10415,6 +10444,7 @@ Visible after.
         self.assertEqual(
             (
                 "dev-coder",
+                "dev-architect",
                 "dev-code-reviewer",
                 "dev-verifier",
                 "dev-merge-coordinator",
@@ -10556,7 +10586,7 @@ Visible after.
         failure_text = " ".join(role.instruction_sections["failureHandling"])
         self.assertRegex(
             failure_text,
-            r"(?i)after two failed correction attempts",
+            r"(?i)initial failed review.*two corrected resubmissions",
         )
 
         artifact_aware_examples = [
@@ -10994,7 +11024,7 @@ Visible after.
 
         self.assertEqual(1, lifecycle_text.count('class="lifecycle-rail"'))
         self.assertEqual(1, lifecycle_text.count('class="status-figure"'))
-        self.assertEqual(3, lifecycle_text.count('class="sequence-figure"'))
+        self.assertEqual(4, lifecycle_text.count('class="sequence-figure"'))
         self.assertEqual(1, lifecycle_text.count('class="thread-model-figure"'))
         self.assertEqual(1, lifecycle_text.count('class="steward-sequence-figure"'))
         self.assertEqual(1, lifecycle_text.count('class="branch-figure"'))
@@ -11978,7 +12008,7 @@ Visible after.
     def test_model_profiles_are_semantic_and_adapter_complete(self) -> None:
         source_profiles = load_yaml_object(MODEL_PROFILES_PATH)["profiles"]
         self.assertEqual(
-            {"simple", "coordination", "default", "implementation", "verification", "documentation", "advanced", "advanced-long", "intermediate"},
+            {"simple", "coordination", "default", "implementation", "verification", "documentation", "advanced", "architecture", "advanced-long", "intermediate"},
             set(source_profiles),
         )
 
@@ -12002,6 +12032,7 @@ Visible after.
                 "verification": "gpt-5.6-sol",
                 "documentation": "gpt-5.5",
                 "advanced": "gpt-5.6-sol",
+                "architecture": "gpt-5.6-sol",
                 "advanced-long": "gpt-5.6-sol",
                 "intermediate": "gpt-5.6-luna",
             },
@@ -12030,6 +12061,459 @@ Visible after.
                 "verification",
                 load_yaml_object(dev_roles / f"{role_name}.role.yaml")["modelProfile"],
             )
+
+    def test_dev_architect_role_routing_and_lifecycle_contract(self) -> None:
+        """Keep technical design review, proportionality gates, and review limits aligned."""
+
+        architect_path = ROLES_ROOT / "dev-activities" / "dev-architect.role.yaml"
+        architect = load_yaml_object(architect_path)
+        self.assertEqual("dev-architect", architect["name"])
+        self.assertEqual("dev-architect", architect["filename"])
+        self.assertEqual("required", architect["repositoryMutation"])
+        self.assertEqual("architecture", architect["modelProfile"])
+        self.assertEqual(
+            [
+                "route-documentation-work",
+                "careful-coding",
+                "create-architecture",
+                "create-high-level-design",
+                "test-driven-development",
+            ],
+            [next(iter(entry)) for entry in architect["skills"]],
+        )
+        architect_skills = {
+            next(iter(entry)): entry[next(iter(entry))]
+            for entry in architect["skills"]
+        }
+        self.assertIn(
+            "proportionality review",
+            architect_skills["careful-coding"]["justification"],
+        )
+        architect_contract = yaml.safe_dump(
+            {
+                "instructions": architect["instructions"],
+                "examples": architect["examples"],
+                "outputContract": architect["outputContract"],
+            },
+            sort_keys=False,
+        )
+        for phrase in (
+            "smallest approach",
+            "mature software",
+            "requirements traceability",
+            "USER CONFIRMATION REQUIRED",
+            "custom GitHub service simulator",
+            "insufficient requirements",
+            "unresolved constraints",
+            "clean worktree",
+        ):
+            with self.subTest(architect_phrase=phrase):
+                self.assertIn(phrase, architect_contract)
+
+        source_profiles = set(load_yaml_object(MODEL_PROFILES_PATH)["profiles"])
+        expected_architecture_profiles = {
+            "codex": ("gpt-5.6-sol", "xhigh"),
+            "claude": ("opus-4.8", None),
+            "gemini": ("pro", None),
+            "junie": ("opus", "high"),
+        }
+        for adapter, expected in expected_architecture_profiles.items():
+            profile = load_yaml_object(ADAPTER_MODEL_PROFILE_PATHS[adapter])["profiles"][
+                "architecture"
+            ]
+            with self.subTest(adapter=adapter):
+                self.assertEqual(expected, (profile["model"], profile.get("effort")))
+                self.assertIn("architecture", source_profiles)
+
+        coder = load_yaml_object(ROLES_ROOT / "dev-activities" / "dev-coder.role.yaml")
+        orchestrator = load_yaml_object(
+            ROLES_ROOT / "dev-activities" / "dev-orchestrator.role.yaml"
+        )
+        writer = load_yaml_object(
+            ROLES_ROOT / "dev-activities" / "dev-documentation-writer.role.yaml"
+        )
+        coder_contract = yaml.safe_dump(coder["instructions"], sort_keys=False)
+        orchestrator_contract = yaml.safe_dump(orchestrator["instructions"], sort_keys=False)
+        writer_contract = yaml.safe_dump(writer["instructions"], sort_keys=False)
+        normalized_coder_contract = re.sub(r"\s+", " ", coder_contract)
+        normalized_orchestrator_contract = re.sub(r"\s+", " ", orchestrator_contract)
+        normalized_writer_contract = re.sub(r"\s+", " ", writer_contract)
+        self.assertIn("bounded implementation and TDD plan", normalized_coder_contract)
+        self.assertIn("explicit coding-without-planning direction", normalized_coder_contract)
+        self.assertIn("substantial custom helpers", normalized_coder_contract)
+        self.assertIn("Dev Architect", normalized_writer_contract)
+        self.assertIn("document structure", normalized_writer_contract)
+        self.assertIn("dev-architect", orchestrator["agentDependencies"])
+        for phrase in (
+            "route it through Dev Architect before coding",
+            "user explicitly directs coding without planning",
+            "Methodology Artifact Reviewer",
+            "larger design technically justified",
+            "On the third failed review",
+            "User Action Required",
+            "substantial custom test helpers",
+            "focused test cases, test fixtures, and test-suite definitions",
+            "normal TDD and evaluation content",
+            "generic reusable test infrastructure",
+            "wait for the Agent completion or decision signal by default",
+            "Do not repeatedly poll Git, processes, claims, or worktree state",
+            "no more frequently than once every five minutes",
+        ):
+            with self.subTest(orchestrator_phrase=phrase):
+                self.assertIn(phrase, normalized_orchestrator_contract)
+
+        architect_suite_root = AGENT_TEST_SUITES_ROOT / "dev-architect"
+        architect_suite = load_yaml_object(architect_suite_root / "suite.yaml")
+        architect_suite_scenarios = load_yaml_object(
+            architect_suite_root / "scenarios.yaml"
+        )["scenarios"]
+        architect_suite_by_id = {
+            scenario["id"]: scenario for scenario in architect_suite_scenarios
+        }
+        self.assertEqual(
+            {
+                "accepted-design",
+                "ambitious-service-simulator",
+                "insufficient-requirements-and-constraints",
+            },
+            set(architect_suite_by_id),
+        )
+        self.assertTrue(
+            all(
+                scenario["status"] == "executable"
+                and scenario["executableCase"] == "fixtures/cases.yaml"
+                for scenario in architect_suite_scenarios
+            )
+        )
+        self.assertIn("careful-coding", architect_suite["target"]["requiredSkills"])
+        self.assertEqual(
+            "ACCEPTED",
+            architect_suite_by_id["accepted-design"]["expectedRoleStatus"],
+        )
+        self.assertEqual(
+            "CORRECTION REQUIRED",
+            architect_suite_by_id["ambitious-service-simulator"]["expectedRoleStatus"],
+        )
+        self.assertEqual(
+            "BLOCKED",
+            architect_suite_by_id["insufficient-requirements-and-constraints"][
+                "expectedRoleStatus"
+            ],
+        )
+        architect_cases = load_yaml_object(
+            architect_suite_root / "fixtures" / "cases.yaml"
+        )["cases"]
+        self.assertEqual(set(architect_suite_by_id), set(architect_cases))
+        architect_judge = tomllib.loads(
+            (architect_suite_root / "agents" / "judge.toml").read_text(
+                encoding="utf-8"
+            )
+        )["developer_instructions"]
+        for phrase in (
+            "Accept the bounded design",
+            "custom service simulator",
+            "retention, recovery, consistency, deployment, and failure-tolerance",
+        ):
+            with self.subTest(architect_judge_phrase=phrase):
+                self.assertIn(phrase, architect_judge)
+        suite_index = load_yaml_object(AGENT_TEST_SUITES_ROOT / "suite-index.yaml")
+        architect_index_entry = next(
+            entry for entry in suite_index["suites"] if entry["id"] == "dev-architect"
+        )
+        self.assertIn("disproportionate-infrastructure", architect_index_entry["rationale"])
+        self.assertIn("insufficient-authority", architect_index_entry["rationale"])
+
+        orchestrator_suite_root = AGENT_TEST_SUITES_ROOT / "dev-orchestrator"
+        orchestrator_suite = load_yaml_object(orchestrator_suite_root / "suite.yaml")
+        orchestrator_suite_scenarios = load_yaml_object(
+            orchestrator_suite_root / "scenarios.yaml"
+        )["scenarios"]
+        orchestrator_suite_by_id = {
+            scenario["id"]: scenario for scenario in orchestrator_suite_scenarios
+        }
+        self.assertIn(
+            "manage-complex-development-plan",
+            orchestrator_suite["target"]["conditionalSkills"],
+        )
+        self.assertEqual(
+            ["manage-work-items", "deliver-work-item", "structured-design"],
+            orchestrator_suite["target"]["requiredSkills"],
+        )
+        dependency_routing = orchestrator_suite_by_id["dependency-routing"]
+        self.assertEqual(
+            ["dev-coder", "dev-architect", "dev-coder"],
+            dependency_routing["requiredDependencyOrder"][:3],
+        )
+        self.assertIn(
+            "Require Dev Architect acceptance before coding",
+            dependency_routing["requiredBehaviors"],
+        )
+        shortcut = orchestrator_suite_by_id["explicit-coding-without-planning"]
+        self.assertIn(
+            "Use the no-planning shortcut only from explicit user direction",
+            shortcut["requiredBehaviors"],
+        )
+        self.assertNotIn("dev-architect", shortcut["requiredDependencyOrder"])
+        exhausted = orchestrator_suite_by_id["bounded-correction"]
+        self.assertEqual("USER ACTION REQUIRED", exhausted["expectedRoleStatus"])
+        self.assertEqual(
+            [
+                "dev-coder",
+                "dev-architect",
+                "dev-coder",
+                "dev-architect",
+                "dev-coder",
+                "dev-architect",
+            ],
+            exhausted["requiredDependencyOrder"],
+        )
+        orchestrator_cases = load_yaml_object(
+            orchestrator_suite_root / "fixtures" / "cases.yaml"
+        )["cases"]
+        self.assertEqual(
+            ["CORRECTION REQUIRED", "CORRECTION REQUIRED", "CORRECTION REQUIRED"],
+            orchestrator_cases["bounded-correction"]["correctionVerdicts"],
+        )
+        dependency_fixture = load_yaml_object(
+            orchestrator_suite_root
+            / "fixtures"
+            / "dependency-routing"
+            / "fixture-contract.yaml"
+        )
+        self.assertEqual(
+            "dev-architect",
+            dependency_fixture["lanes"]["planning"]["reviewer"],
+        )
+        self.assertTrue(dependency_fixture["lanes"]["source"]["requiresAcceptedPlan"])
+        orchestrator_judge = tomllib.loads(
+            (orchestrator_suite_root / "agents" / "judge.toml").read_text(
+                encoding="utf-8"
+            )
+        )["developer_instructions"]
+        orchestrator_suite_contract = (
+            orchestrator_suite_root
+            / "skills"
+            / "dev-orchestrator-suite-contract"
+            / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        for contract_text in (orchestrator_judge, orchestrator_suite_contract):
+            for phrase in (
+                "Dev Architect acceptance before coding",
+                "initial failed Dev Architect review",
+                "two failed corrected resubmissions",
+                "USER ACTION REQUIRED",
+            ):
+                with self.subTest(orchestrator_suite_phrase=phrase):
+                    self.assertIn(phrase, contract_text)
+
+        skill_contracts = {
+            name: (SKILLS_ROOT / name / "SKILL.md").read_text(encoding="utf-8")
+            for name in (
+                "route-documentation-work",
+                "create-architecture",
+                "create-high-level-design",
+                "test-driven-development",
+            )
+        }
+        for name, text in skill_contracts.items():
+            with self.subTest(skill=name):
+                self.assertIn("Dev Architect", text)
+        self.assertIn("Ordinary unit tests", skill_contracts["test-driven-development"])
+        self.assertIn("substantial custom helpers", skill_contracts["test-driven-development"])
+
+        scenarios = load_yaml_object(REPOSITORY_ROOT / "evals" / "agent-scenarios.yaml")
+        architect_scenario = next(
+            agent for agent in scenarios["agents"] if agent["id"] == "dev-architect"
+        )
+        scenario_text = yaml.safe_dump(architect_scenario, sort_keys=False)
+        self.assertIn("technically justified", scenario_text)
+        self.assertIn("custom GitHub service simulator", scenario_text)
+        self.assertIn("insufficient requirements", scenario_text)
+
+        workflow = load_yaml_object(REPOSITORY_ROOT / "evals" / "workflow-packs.yaml")
+        code_delivery = next(pack for pack in workflow["packs"] if pack["id"] == "code-delivery")
+        self.assertIn("dev-architect", code_delivery["agents"])
+
+        lifecycle_path = REPOSITORY_ROOT / "design" / "orchestrated-development-lifecycle.html"
+        lifecycle = lifecycle_path.read_text(encoding="utf-8")
+        svg_path = REPOSITORY_ROOT / "design" / "development-orchestration-process.svg"
+        svg_text = svg_path.read_text(encoding="utf-8")
+        root = ET.fromstring(svg_text)
+        self.assertEqual("img", root.attrib["role"])
+        self.assertEqual(
+            "development-orchestration-title development-orchestration-description",
+            root.attrib["aria-labelledby"],
+        )
+        svg_namespace = "{http://www.w3.org/2000/svg}"
+        title = root.find(f"{svg_namespace}title")
+        description = root.find(f"{svg_namespace}desc")
+        self.assertIsNotNone(title)
+        self.assertIsNotNone(description)
+        self.assertEqual("Development orchestration process", title.text)
+        self.assertIn("A flowchart showing", description.text or "")
+        self.assertIn("development-orchestration-process.svg", lifecycle)
+        self.assertIn('class="process-diagram"', lifecycle)
+        self.assertIn('class="process-diagram-scroll"', lifecycle)
+        self.assertIn('class="process-diagram-full-size"', lifecycle)
+        self.assertIn('tabindex="0"', lifecycle)
+        self.assertIn("min-width: 75rem", lifecycle)
+        self.assertIn('alt="Development orchestration flow', lifecycle)
+        self.assertIn("Dev Architect Planning Gate", lifecycle)
+        self.assertIn("Third failed review", lifecycle)
+        self.assertIn("coding without planning", lifecycle)
+        for label in (
+            "Accepted",
+            "Correction required",
+            "Larger design justified",
+            "Complex test infrastructure",
+            "User confirms the larger",
+            "User Action Required",
+        ):
+            with self.subTest(svg_label=label):
+                self.assertIn(label, svg_text)
+        groups_by_id = {
+            group.attrib["id"]: group
+            for group in root.findall(f".//{svg_namespace}g")
+            if group.attrib.get("id")
+        }
+        plan_update_text = " ".join(
+            " ".join(groups_by_id["complex-test-plan-update"].itertext()).split()
+        )
+        self.assertIn("Dev Coder Complex-Test Plan Update", plan_update_text)
+        connections = {
+            (path.attrib.get("data-from"), path.attrib.get("data-to"))
+            for path in root.findall(f".//{svg_namespace}path")
+            if path.attrib.get("data-from") and path.attrib.get("data-to")
+        }
+        expected_review_connections = {
+            ("methodology-review", "methodology-review-decision"),
+            ("plan-architecture-review", "plan-architecture-decision"),
+            ("complex-test-plan-update", "test-design-review"),
+            ("test-design-review", "test-design-decision"),
+            ("code-review", "code-review-decision"),
+            ("verification", "verification-decision"),
+        }
+        self.assertTrue(expected_review_connections <= connections)
+        for decision in (
+            "methodology-review-decision",
+            "plan-architecture-decision",
+            "test-design-decision",
+            "code-review-decision",
+            "verification-decision",
+        ):
+            with self.subTest(review_failure_exit=decision):
+                self.assertIn(
+                    (decision, "third-failed-review-decision"),
+                    connections,
+                )
+        self.assertIn(
+            ("third-failed-review-decision", "user-action-required"),
+            connections,
+        )
+        expected_complex_test_scale_connections = {
+            ("test-design-decision", "complex-test-scale-confirmation"),
+            ("complex-test-scale-confirmation", "implementation"),
+            ("complex-test-scale-confirmation", "complex-test-plan-update"),
+        }
+        self.assertTrue(expected_complex_test_scale_connections <= connections)
+        lane_connections = {
+            (
+                path.attrib.get("data-from"),
+                path.attrib.get("data-to"),
+                path.attrib.get("data-lane"),
+            )
+            for path in root.findall(f".//{svg_namespace}path")
+            if path.attrib.get("data-lane")
+        }
+        expected_correction_returns = {
+            (
+                "third-failed-review-decision",
+                "dev-coder-plan",
+                "methodology-plan",
+            ),
+            (
+                "third-failed-review-decision",
+                "complex-test-plan-update",
+                "test-design",
+            ),
+            (
+                "third-failed-review-decision",
+                "implementation-correction",
+                "code-review",
+            ),
+            (
+                "third-failed-review-decision",
+                "implementation-correction",
+                "verification",
+            ),
+        }
+        self.assertTrue(expected_correction_returns <= lane_connections)
+        self.assertIn(("implementation-correction", "code-review"), connections)
+        self.assertIn(("code-review-decision", "verification"), connections)
+        correction_nodes = {
+            group.attrib["id"]
+            for group in root.findall(f".//{svg_namespace}g")
+            if "correction" in group.attrib.get("class", "").split()
+            and group.attrib.get("id")
+        }
+        nodes_with_outgoing_connections = {
+            connection_from
+            for connection_from, _ in connections
+            if connection_from is not None
+        }
+        self.assertFalse(correction_nodes - nodes_with_outgoing_connections)
+
+    def test_dev_architect_legacy_documents_have_bounded_historical_provenance(
+        self,
+    ) -> None:
+        """Preserve Git-derived creation time without inventing historical runtime identity."""
+
+        historical_documents = {
+            SKILLS_ROOT / "create-architecture" / "SKILL.md": (
+                "858c50d3-95a2-4a5f-a549-bfabc1b4843a",
+                "2026-07-09T15:36:02Z",
+                "front-matter",
+            ),
+            SKILLS_ROOT / "create-high-level-design" / "SKILL.md": (
+                "a39d0e32-12d4-481c-8ac9-f3c6f0e0928a",
+                "2026-07-09T15:36:02Z",
+                "front-matter",
+            ),
+            SKILLS_ROOT / "test-driven-development" / "SKILL.md": (
+                "20be5019-a369-407b-a620-bb880c21b03f",
+                "2026-07-10T03:47:10Z",
+                "front-matter",
+            ),
+            REPOSITORY_ROOT / "design" / "orchestrated-development-lifecycle.html": (
+                "cd842c6c-ecfa-4963-bab5-56002a097cd0",
+                "2026-07-08T20:59:35Z",
+                "doctype",
+            ),
+        }
+        for path, (artifact_id, created_utc, placement) in historical_documents.items():
+            with self.subTest(path=path.relative_to(REPOSITORY_ROOT).as_posix()):
+                text = path.read_text(encoding="utf-8")
+                provenance = text[text.index("<!--\n") : text.index("-->\n") + 4]
+                if placement == "front-matter":
+                    closing_frontmatter = text.index("\n---\n", len("---\n")) + len(
+                        "\n---\n"
+                    )
+                    self.assertEqual(closing_frontmatter, text.index("<!--\n"))
+                else:
+                    self.assertTrue(text.startswith("<!doctype html>\n<!--\n"))
+                self.assertIn(f"Artifact-ID: {artifact_id}", provenance)
+                self.assertIn(f"Created-UTC: {created_utc}", provenance)
+                self.assertIn("Artifact-ID-Evidence: migration-assigned", provenance)
+                self.assertIn("Created-UTC-Evidence: git-derived", provenance)
+                for field in (
+                    "Creating-Agent",
+                    "Runtime",
+                    "Dispatched-Model",
+                    "Reasoning-Effort",
+                    "Task-ID",
+                ):
+                    self.assertIn(f"{field}: historical-unknown", provenance)
+                    self.assertIn(f"{field}-Evidence: historical-unknown", provenance)
 
     def test_documentation_design_system_roles_and_checklists_are_complete(self) -> None:
         """The bounded runner and coordinator must retain their distinct skill and evidence contracts."""
@@ -12408,6 +12892,7 @@ Visible after.
                 "verification": 750_000,
                 "documentation": 787_500,
                 "advanced": 750_000,
+                "architecture": 750_000,
                 "advanced-long": 750_000,
                 "intermediate": 750_000,
             },
@@ -12639,6 +13124,7 @@ Visible after.
                 "verification": ("gpt-5.6-sol", "low"),
                 "documentation": ("gpt-5.5", "high"),
                 "advanced": ("gpt-5.6-sol", "high"),
+                "architecture": ("gpt-5.6-sol", "xhigh"),
                 "advanced-long": ("gpt-5.6-sol", "high"),
                 "intermediate": ("gpt-5.6-luna", "high"),
             },
@@ -12650,6 +13136,7 @@ Visible after.
                 "verification": ("opus-4.8", None),
                 "documentation": ("fable-5", None),
                 "advanced": ("opus-4.8", None),
+                "architecture": ("opus-4.8", None),
                 "advanced-long": ("opus-4.8", None),
                 "intermediate": ("opus-4.8", None),
             },
@@ -12661,6 +13148,7 @@ Visible after.
                 "verification": ("pro", None),
                 "documentation": ("auto", None),
                 "advanced": ("pro", None),
+                "architecture": ("pro", None),
                 "advanced-long": ("pro", None),
                 "intermediate": ("pro", None),
             },
@@ -12672,6 +13160,7 @@ Visible after.
                 "verification": ("opus", "low"),
                 "documentation": ("gpt-5.6-sol", "high"),
                 "advanced": ("opus", "high"),
+                "architecture": ("opus", "high"),
                 "advanced-long": ("opus", "high"),
                 "intermediate": ("opus", "high"),
             },
@@ -12827,10 +13316,11 @@ Visible after.
             "dev-skill-lint-reviewer",
             "methodology-design-system-checklist-runner",
             "methodology-design-system-review-coordinator",
+            "dev-architect",
         ]
         suite_entries = index["suites"]
         self.assertEqual(expected_suites, [entry["id"] for entry in suite_entries])
-        self.assertEqual(list(range(1, 33)), [entry["priority"] for entry in suite_entries])
+        self.assertEqual(list(range(1, 34)), [entry["priority"] for entry in suite_entries])
         suite_directories = {
             path.name
             for path in AGENT_TEST_SUITES_ROOT.iterdir()
@@ -13031,7 +13521,7 @@ Visible after.
                 elif entry["id"] == "dev-backlog-watchdog":
                     self.assertEqual(14, len(scenarios["scenarios"]))
                 elif entry["id"] == "dev-orchestrator":
-                    self.assertEqual(5, len(scenarios["scenarios"]))
+                    self.assertEqual(6, len(scenarios["scenarios"]))
                 else:
                     self.assertEqual(3, len(scenarios["scenarios"]))
 

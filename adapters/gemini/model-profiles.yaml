@@ -58,6 +58,14 @@ profiles:
     - https://geminicli.com/docs/cli/model/
     - https://ai.google.dev/gemini-api/docs/models
     contextBudgetMechanismEvidence: https://geminicli.com/docs/core/subagents/
+  architecture:
+    model: pro
+    contextCapacityTokens: 1048576
+    contextBudgetMechanism: instruction
+    contextCapacityEvidence:
+    - https://geminicli.com/docs/cli/model/
+    - https://ai.google.dev/gemini-api/docs/models
+    contextBudgetMechanismEvidence: https://geminicli.com/docs/core/subagents/
   advanced-long:
     model: pro
     context: extra-long

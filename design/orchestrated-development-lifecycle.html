@@ -1,4 +1,21 @@
 <!doctype html>
+<!--
+Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+Artifact-ID: cd842c6c-ecfa-4963-bab5-56002a097cd0
+Created-UTC: 2026-07-08T20:59:35Z
+Creating-Agent: historical-unknown
+Runtime: historical-unknown
+Dispatched-Model: historical-unknown
+Reasoning-Effort: historical-unknown
+Task-ID: historical-unknown
+Artifact-ID-Evidence: migration-assigned
+Created-UTC-Evidence: git-derived
+Creating-Agent-Evidence: historical-unknown
+Runtime-Evidence: historical-unknown
+Dispatched-Model-Evidence: historical-unknown
+Reasoning-Effort-Evidence: historical-unknown
+Task-ID-Evidence: historical-unknown
+-->
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -49,7 +66,7 @@
     }
 
     a { color: var(--teal-deep); }
-    a:focus-visible, summary:focus-visible {
+    a:focus-visible, summary:focus-visible, .process-diagram-scroll:focus-visible {
       outline: 3px solid var(--amber);
       outline-offset: 3px;
     }
@@ -245,6 +262,19 @@
     }
     figcaption { margin-bottom: 1.4rem; color: var(--ink); font-family: var(--display); font-size: 1.25rem; font-weight: 850; }
     figcaption span { display: block; margin-top: 0.35rem; color: var(--muted); font-family: var(--body); font-size: 0.88rem; font-weight: 500; }
+    .process-diagram-scroll {
+      overflow-x: auto;
+      overscroll-behavior-inline: contain;
+      border: 1px solid var(--line);
+      border-radius: 0.6rem;
+      background: #f8fbfc;
+    }
+    .process-diagram-link {
+      display: block;
+      min-width: 75rem;
+    }
+    .process-diagram { display: block; width: 100%; min-width: 75rem; height: auto; }
+    .process-diagram-full-size { display: inline-block; margin-top: 0.75rem; font-weight: 800; }
     .state-map {
       display: grid;
       gap: 0.75rem;
@@ -728,6 +758,7 @@
         <article class="role-card"><h3>Dev Backlog Coordinator</h3><p>The parent coordination Agent reserves capacity, dispatches one Thread per Work item, reconciles duplicates, and cleans up terminal execution contexts.</p></article>
         <article class="role-card"><h3>Dev Backlog Watchdog</h3><p>A standing read-only Agent observes provider and execution evidence, stays quiet on healthy cycles, and alerts the Coordinator only when investigation or disposition is required.</p></article>
         <article class="role-card"><h3>Dev Orchestrator</h3><p>The root Agent in a work-item Thread owns production, review, verification, integration, and the terminal provider request.</p></article>
+        <article class="role-card"><h3>Dev Architect</h3><p>This child Agent selects or reviews material technical choices, requirements traceability, reuse, the smallest viable approach, and proportionality before planned work proceeds.</p></article>
         <article class="role-card"><h3>Dev Backlog Steward</h3><p>An optional Agent performs provider-wide inventory, normalization, archival audits, and recovery without taking over ordinary lifecycle delivery.</p></article>
         <article class="role-card"><h3>Production And Implementation Agents</h3><p>These child Agents complete bounded coding, writing, design, or other production assignments and return committed evidence.</p></article>
         <article class="role-card"><h3>Independent Reviewers</h3><p>These child Agents assess source, documentation, security, UX, or other artifacts from fresh contexts without producing the correction.</p></article>
@@ -888,7 +919,7 @@
         <section><h4>Coordinator Sequence</h4><ol><li>Acknowledge and reconcile the complete handoff.</li><li>After exhausted corrections, return exactly one immutable decision: a recovery with evidence linked to every finding, one similarly linked bounded retry, one explained genuine user decision with options and tradeoffs, or one continuing external or technical dependency with an observable trigger.</li><li>Reject indefinite Blocked and directly apply the resulting authorized provider mutation through the effective Persistence manager. Consume a bounded retry before reconciling again, and do not repeat it.</li></ol></section>
       </div>
     </aside>
-    <details><summary>Execution Safeguards</summary><div><p>Findings return to the original producer. After two failed correction attempts for the same criterion, preserve the canonical execution, candidate, review, verification, Git, claim, and attempt history in durable records before requesting exactly one concrete Coordinator decision. When coordinate-codex-tasks is active, also preserve its canonical task and conversation identities. A fresh retry is bounded to one attempt and is consumed before another reconciliation.</p><p>Before a phase expected to exceed five minutes, record the active unit, estimate, hard stop, retained evidence path, and distinct acceptance criterion locally. Do not send a routine progress message. After an expensive failure, classify retained evidence, add the smallest offline regression, and run one cheapest representative first.</p></div></details>
+    <details><summary>Execution Safeguards</summary><div><p>Findings return to the original producer. Count the initial failed review as the first failure and allow at most two corrected resubmissions. Third failed review: preserve the canonical execution, candidate, review, verification, Git, claim, and attempt history, stop the loop, and notify the parent Coordinator. The Coordinator records User Action Required before asking one concrete user decision; no fourth review cycle begins. When coordinate-codex-tasks is active, also preserve its canonical task and conversation identities.</p><p>Before a phase expected to exceed five minutes, record the active unit, estimate, hard stop, retained evidence path, and distinct acceptance criterion locally. Do not send a routine progress message. After an expensive failure, classify retained evidence, add the smallest offline regression, and run one cheapest representative first.</p></div></details>
   </section>
 
   <section class="section" id="decisions" aria-labelledby="decisions-title">
@@ -937,8 +968,17 @@
       <div class="design-stage"><strong>Module design</strong><p>Implementable contracts, states, failure behavior, and verification obligations.</p></div>
       <div class="design-stage"><strong>Implementation</strong><p>Code and tests preserve the accepted design through review and verification.</p></div>
     </div>
+    <figure class="sequence-figure" aria-labelledby="architect-planning-gate-title">
+      <figcaption id="architect-planning-gate-title">Dev Architect Planning Gate<span>Planning adds one bounded technical decision gate without transferring coding, writing, completed-artifact review, verification, or delivery authority.</span></figcaption>
+      <div class="process-diagram-scroll" role="region" aria-label="Scrollable development orchestration diagram" tabindex="0">
+        <a class="process-diagram-link" href="development-orchestration-process.svg">
+          <img class="process-diagram" src="development-orchestration-process.svg" alt="Development orchestration flow from planning through Dev Architect review, coding, independent review, verification, delivery, and bounded user-decision exits.">
+        </a>
+      </div>
+      <a class="process-diagram-full-size" href="development-orchestration-process.svg">Open the full-size development orchestration diagram</a>
+    </figure>
     <div class="two-column" style="margin-top: 2rem;">
-      <div><h3>Planned Development</h3><p>Accepted functional specifications and architecture are upstream authority. Create and review high-level and module designs before dependent implementation. Documentation acceptance and implementation readiness are separate decisions: an accurate document may be accepted while an unresolved high-impact contract blocks downstream work.</p></div>
+      <div><h3>Planned Development</h3><p>Accepted functional specifications and architecture are upstream authority. Create and review high-level and module designs before dependent implementation.</p><p>Unless the user explicitly directs coding without planning, Dev Coder prepares a bounded implementation and TDD plan. Dev Architect reviews assignment alignment, requirements traceability, mature-software reuse, the smallest viable approach, and proportionality before coding. A methodology artifact may receive a separate optional methodology-conformance review.</p><p>Accepted plans enter coding. Correctable plans return to Dev Coder. A technically justified larger design pauses for user confirmation with the smaller viable approach and practical cost difference visible. Ordinary tests and routine fixtures remain inside coding; substantial custom test infrastructure returns to the planning gate before implementation.</p><p>Documentation acceptance and implementation readiness are separate decisions: an accurate document may be accepted while an unresolved high-impact contract blocks downstream work.</p></div>
       <div><h3>Whole-Project Reverse Engineering</h3><p>The persisted hybrid-specifications-and-wiki mode keeps structured specifications authoritative. Work proceeds bottom-up from source and module evidence, then performs a final top-down semantic reconciliation through wiki, functional specifications, architecture, high-level designs, module designs, and source.</p></div>
     </div>
     <p class="source-note">See <a href="documentation-templates.html">Documentation Templates</a>, <a href="wiki-skills-and-project-context.html">Wiki Skills And Project Context</a>, and the generated <a href="agent-and-skill-definitions.html">Agent And Skill Catalog</a> for the detailed authoring and review contracts.</p>

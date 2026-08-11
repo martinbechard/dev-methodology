@@ -105,6 +105,25 @@ class RoleMutationPolicyTests(unittest.TestCase):
                 self.assertNotIn("resource-claim", role.skills)
                 self.assertNotIn("resource-claim", role.skill_conditions)
 
+    def test_dev_architect_mutation_is_bounded_to_design_sources(self) -> None:
+        """Allow committed design candidates without granting unrelated production ownership."""
+
+        source = (
+            ROOT
+            / "agents"
+            / "roles"
+            / "dev-activities"
+            / "dev-architect.role.yaml"
+        )
+        role = yaml.safe_load(source.read_text(encoding="utf-8"))
+        contract = yaml.safe_dump(role["instructions"], sort_keys=False)
+
+        self.assertEqual("required", role["repositoryMutation"])
+        self.assertNotIn("resource-claim", {next(iter(entry)) for entry in role["skills"]})
+        self.assertIn("Do not silently expand requirements", contract)
+        self.assertIn("Do not apply terminal Commit delivery", contract)
+        self.assertIn("unrelated production code", contract)
+
     def test_core_roles_do_not_require_unconditional_claim_lifecycle_evidence(self) -> None:
         """Keep broad mutation claims absent while allowing Event Contract branches."""
 

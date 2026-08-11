@@ -15,6 +15,9 @@ profiles:
     purpose: Source-backed documentation authoring that requires advanced synthesis without changing unrelated default-profile agents.
   advanced:
     purpose: Review synthesis, architecture, diagnosis, and difficult implementation work.
+  architecture:
+    purpose: High-capability technical design and proportionality review that requires the
+      strongest explicitly supported reasoning setting.
   advanced-long:
     purpose: Advanced reasoning over unusually large evidence sets or cross-project context.
   intermediate:
