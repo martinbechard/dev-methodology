@@ -561,6 +561,7 @@ def _mcp_reference_configuration(
     skill_plan: _SkillInstallPlan,
     skills_destination: Path,
     cleanup: bool,
+    project_root: Path | None,
 ) -> tuple[tuple[Path, ...], tuple[str, ...]]:
     reference_enabled = bool(
         MCP_REFERENCE_SKILL_NAMES.intersection(skill_plan.current_skill_names)
@@ -575,9 +576,14 @@ def _mcp_reference_configuration(
         )
     if not reference_enabled:
         return (), ()
-    reference_roots = tuple(
+    user_reference_roots = tuple(
         (Path.home() / relative_path).resolve()
         for relative_path in MCP_USER_REFERENCE_RELATIVE_PATHS
+    )
+    reference_roots = (
+        (project_root, *user_reference_roots)
+        if project_root is not None
+        else user_reference_roots
     )
     return reference_roots, MCP_REFERENCE_NAMES
 
@@ -938,6 +944,7 @@ def _prepare_mcp_config(
         skill_plan,
         skills_destination,
         cleanup,
+        project_root,
     )
     expected_environment = _mcp_environment(
         skills_destination,

@@ -655,8 +655,13 @@ class InstallSkillsTests(unittest.TestCase):
                 self.assertEqual(installer.SUCCESS_EXIT_CODE, exit_code)
                 config = (project / ".codex/config.toml").read_text(encoding="utf-8")
                 expected_roots = os.pathsep.join(
-                    str((user_home / relative_path).resolve())
-                    for relative_path in installer.MCP_USER_REFERENCE_RELATIVE_PATHS
+                    (
+                        str(project.resolve()),
+                        *(
+                            str((user_home / relative_path).resolve())
+                            for relative_path in installer.MCP_USER_REFERENCE_RELATIVE_PATHS
+                        ),
+                    )
                 )
                 self.assertIn(
                     f'MCP_AGENT_OPS_REFERENCE_ROOTS = "{expected_roots}"',
@@ -902,6 +907,23 @@ class InstallSkillsTests(unittest.TestCase):
                 self.assertIn("MCP_AGENT_OPS_REFERENCE_ROOTS", active)
                 self.assertIn("MCP_AGENT_OPS_REFERENCE_NAMES", active)
                 self.assertIn("terminology.md", active)
+                expected_roots = os.pathsep.join(
+                    str((user_home / relative_path).resolve())
+                    for relative_path in installer.MCP_USER_REFERENCE_RELATIVE_PATHS
+                )
+                if adapter_name == "codex":
+                    self.assertIn(
+                        f'MCP_AGENT_OPS_REFERENCE_ROOTS = "{expected_roots}"',
+                        active,
+                    )
+                else:
+                    environment = json.loads(active)["mcpServers"][
+                        installer.MCP_AGENT_OPS_SERVER_NAME
+                    ]["env"]
+                    self.assertEqual(
+                        expected_roots,
+                        environment["MCP_AGENT_OPS_REFERENCE_ROOTS"],
+                    )
 
     def test_codex_deployment_updates_config_without_mcp_servers_and_saves_backup(self) -> None:
         installer = load_installer()
@@ -2186,9 +2208,11 @@ class InstallSkillsTests(unittest.TestCase):
             config_path = root / "custom-config" / "config.toml"
             executable = root / "mcp-agent-ops"
             workspace_root = root / "explicit-workspace"
+            user_home = Path.home()
             project.mkdir()
             workspace_root.mkdir()
             self.create_skill(source, "alpha")
+            self.create_skill(source, "terminology-standard")
             agents_source.mkdir()
             (agents_source / "reviewer.toml").write_text(
                 AGENT_FILE_CONTENT,
@@ -2233,6 +2257,19 @@ class InstallSkillsTests(unittest.TestCase):
             )
             self.assertIn(
                 f'MCP_AGENT_OPS_WORKSPACE_ROOTS = "{workspace_root.resolve()}"',
+                config,
+            )
+            expected_reference_roots = os.pathsep.join(
+                (
+                    str(project.resolve()),
+                    *(
+                        str((user_home / relative_path).resolve())
+                        for relative_path in installer.MCP_USER_REFERENCE_RELATIVE_PATHS
+                    ),
+                )
+            )
+            self.assertIn(
+                f'MCP_AGENT_OPS_REFERENCE_ROOTS = "{expected_reference_roots}"',
                 config,
             )
             self.assertFalse((project / ".agents").exists())
