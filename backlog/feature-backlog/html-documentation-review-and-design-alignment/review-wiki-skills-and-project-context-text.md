@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -74,3 +74,21 @@ None.
 
 - The dependent design item is align-wiki-skills-and-project-context-with-documentation-design-system.
 - Creation of this work item does not dispatch it while backlog crisis recovery remains active.
+
+## Starting Handoff Evidence
+
+Starting Recorded At: 2026-08-11T22:33:36Z
+
+Coordinator: Codex task 019ff26f-25d0-7381-88f7-74d52717ff59
+
+Normalized Objective: Review and correct all text-bearing content in design/wiki-skills-and-project-context.html against current authoritative sources and the Terminology Standard, preserve design scope and generated ownership boundaries, establish an immutable accepted baseline, then complete independent review, focused verification, main-branch delivery, provider closure, and cleanup.
+
+Intended Root Role: Dev Orchestrator
+
+Launch Result: Requested after this durable reservation
+
+Canonical Execution: None
+
+Last Contact At: 2026-08-11T22:33:36Z
+
+Next Reconciliation At: 2026-08-11T22:48:36Z
