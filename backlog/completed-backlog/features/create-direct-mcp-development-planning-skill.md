@@ -1,6 +1,6 @@
 # Create Direct MCP Development Planning Skill
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
@@ -10,7 +10,7 @@ Work Item ID: create-direct-mcp-development-planning-skill
 
 Completion: main-branch
 
-Owner: Dev Orchestrator
+Owner: Dev Orchestrator /root/direct_mcp_planning_restart
 
 Canonical Conversation: Not exposed by runtime
 
@@ -18,11 +18,11 @@ Canonical Task: /root/direct_mcp_planning_restart
 
 Parent Task: /root
 
-Branch: candidate/create-direct-mcp-development-planning-skill
+Branch: main
 
-Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/direct-mcp-development-planning-coder
+Worktree: /Users/martinbechard/dev/dev-methodology
 
-Phase: Planning
+Phase: Completed
 
 Accepted Candidate Commit: f7d880b5fe14c2ef19d21018523344c208bea770
 
@@ -216,3 +216,16 @@ Phase: Planning
 Accepted Execution Evidence: The fresh post-restart Dev Orchestrator acquired the exact work-item activity boundary and accepted the preserved correction for plan review before source mutation.
 
 Conversation Title Handoff: Runtime rename capability is unavailable; the canonical title remains unsynchronized.
+
+## Completion Evidence
+
+- Accepted source: `fe7bbe147ef69f7364f4572a4787122a6a2f4058` on `candidate/create-direct-mcp-development-planning-skill`.
+- Review: fresh independent review accepted the complete 24-path candidate after the activation-semantics correction.
+- Source verification: direct configured MCP creation and all six targeted updates passed; focused Skill, routing, metadata, projection-freshness, and diff checks passed.
+- Integration mapping: `23333278` to `f79ddbcb`, `dab77fad` to `8a61576c`, and `fe7bbe14` to `e648c430`.
+- Main observation: `e648c430bd55a6d5fbddc9fa491f66ea63cc2da6` is the observed clean `main` tip and contains the accepted 24-path bytes.
+- Integrated verification: focused routing, evaluation-document, Skill validation, metadata, four projection-freshness, content-mapping, and diff checks passed on `e648c430`.
+- Confirmed issue disposition: the activation-semantics issue was corrected and accepted. The unrelated pre-existing future-ideas evaluation defect was excluded and recorded as Work Item `fix-future-ideas-evaluation-projection`.
+- Commit delivery: the configured main-branch delivery contract returned READY from the accepted source-to-integration mapping and clean main observation.
+- Completion recorded at: 2026-08-11T16:25:56Z.
+- Conversation title handoff: runtime rename capability is unavailable; terminal title synchronization remains unsupported.
