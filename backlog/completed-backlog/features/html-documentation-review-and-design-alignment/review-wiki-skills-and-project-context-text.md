@@ -2,9 +2,9 @@
 
 Owner: Dev Orchestrator
 
-Status: Running
+Status: Completed
 
-Phase: Integrating
+Phase: Completed
 
 Branch: codex/review-wiki-skills-and-project-context-text
 
@@ -132,3 +132,25 @@ Methodology Content Assessment: PASS. Fresh read-only assessment found no materi
 Focused Verification: PASS. Candidate 331196689e4349ae57c51cef44142d6e0ea117d2 changes only design/wiki-skills-and-project-context.html; three focused Python 3.11 documentation tests, HTML and local-link parsing, fragment and accessibility-text assertions, required wording checks, copyright validation, and git diff checks passed from a clean source worktree.
 
 Residual Provenance Gap: The pre-existing page lacks a creation-provenance block. No authorized runtime or historical-migration envelope was supplied, so the content-only candidate does not invent or alter creation metadata.
+
+## Completion Evidence
+
+Completed At: 2026-08-11T22:54:40Z
+
+Completion Disposition: READY
+
+Accepted Source Commit: 331196689e4349ae57c51cef44142d6e0ea117d2
+
+Integrated Delivery Commit: 97c27b5c8c3c5d2d9a650b1b2c6a2c3f5a657689
+
+Main Observation: The accepted HTML content was replayed onto current main as 97c27b5c8c3c5d2d9a650b1b2c6a2c3f5a657689. That integration commit is reachable from the observed current main tip, and the candidate and main HTML blob SHA-256 values are identical at 131d8322e353566192f8e58fed1b6d8faaa5a0ccfb559bcc2cd896ab36216566.
+
+Post-Integration Verification: A clean detached checkout at the integration commit passed the three focused Python 3.11 documentation tests and git diff checks. The authoritative primary checkout retained scripts/test_audit_worktree_completion_links.py with worktree SHA-256 320e038708924aa76df21cf8055319a4756294b48462a32c3c53ce4e2f5bab7f, index blob 3971d41c5681e60ee1827687fd6841a43f8cb3b3, and binary diff SHA-256 a5c02982c25be424220b44df4d9052250f22fc7c9049bd86e4eb7daa590ef66f before and after integration.
+
+Remote Observation: Publication was not part of the configured local main-branch completion selector; origin/main was not changed.
+
+Archive Path: backlog/completed-backlog/features/html-documentation-review-and-design-alignment/review-wiki-skills-and-project-context-text.md
+
+Dependent Baseline: Work Item align-wiki-skills-and-project-context-with-documentation-design-system may use integrated delivery commit 97c27b5c8c3c5d2d9a650b1b2c6a2c3f5a657689 as its immutable semantic baseline after the parent Coordinator records its dependency transition.
+
+Terminal Backlog Commit: The commit containing this status-and-archive transaction.
