@@ -28,9 +28,9 @@ Do not create a separate parent ledger, baton registry, waiting-execution regist
 
 An explicit user-authorized work item that names exact skill definition paths is sufficient user direction to create or modify those named skill definitions. Do not ask for a second approval for those same named definitions.
 
-Each named path still requires an auditable provenance record and the supported per-path pre-mutation check before mutation. Preserve the authorizing work-item identity, exact named scope, and user-direction provenance in that record. Proceed only when every named path returns ALLOWED_APPROVED_DEFINITION_CHANGE.
+Each named path still requires auditable approval provenance before mutation. Preserve the authorizing work-item identity, exact named scope, and user-direction provenance in the provider record. The exact approved manifest and provenance are the mutation authority; do not require a separate executable approval checker.
 
-A definition outside the work item's exact named scope is additional work and requires new explicit user approval, its own auditable provenance, and its own successful per-path pre-mutation check. Never widen named scope through a directory, wildcard, artifact category, generated mirror, related definition, failing test, or general repository mutation authority. Other governed definition categories continue to follow applicable project authority.
+A definition outside the work item's exact named scope is additional work and requires new explicit user approval and its own auditable provenance. Never widen named scope through a directory, wildcard, artifact category, generated mirror, related definition, failing test, or general repository mutation authority. Other governed definition categories continue to follow applicable project authority.
 
 ## Active Execution And Capacity
 

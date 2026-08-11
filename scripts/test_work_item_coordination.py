@@ -147,9 +147,9 @@ class WorkItemCoordinationPackageTests(unittest.TestCase):
         for clause in (
             "explicit user-authorized work item",
             "Do not ask for a second approval",
-            "auditable provenance record",
-            "supported per-path pre-mutation check",
-            "ALLOWED_APPROVED_DEFINITION_CHANGE",
+            "auditable approval provenance",
+            "exact approved manifest and provenance are the mutation authority",
+            "do not require a separate executable approval checker",
             "outside the work item's exact named scope is additional work",
         ):
             with self.subTest(clause=clause):
@@ -209,7 +209,7 @@ class WorkItemCoordinationRoleRoutingTests(unittest.TestCase):
             "Starting Recorded At:",
             "Condition Type:",
             "Count no more than ten actively eligible work items",
-            "ALLOWED_APPROVED_DEFINITION_CHANGE",
+            "exact approved manifest and provenance are the mutation authority",
         )
         for name, role in self.roles.items():
             role_text = json.dumps(role, sort_keys=True)
