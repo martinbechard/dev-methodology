@@ -1,4 +1,21 @@
 <!doctype html>
+<!--
+Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+Artifact-ID: 75dfcbb9-38dc-4f6f-8ea8-3accb6f2d48c
+Created-UTC: 2026-07-14T06:06:33Z
+Creating-Agent: historical-unknown
+Runtime: historical-unknown
+Dispatched-Model: historical-unknown
+Reasoning-Effort: historical-unknown
+Task-ID: historical-unknown
+Artifact-ID-Evidence: migration-assigned
+Created-UTC-Evidence: git-derived
+Creating-Agent-Evidence: historical-unknown
+Runtime-Evidence: historical-unknown
+Dispatched-Model-Evidence: historical-unknown
+Reasoning-Effort-Evidence: historical-unknown
+Task-ID-Evidence: historical-unknown
+-->
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -534,12 +551,13 @@
 
   <section class="section" aria-labelledby="agent-skills-title">
     <h2 id="agent-skills-title">Core Skill Categories and Ownership</h2>
-    <p class="lede">An agent definition may directly reference both required and optional core skills. A required skill has no condition and is selected for every invocation of that agent. An optional skill has a human-readable condition and is selected only when the request and available evidence make it applicable.</p>
-    <p class="lede">The role schema supplies effective-communication and ste-technical-writing to every conceptual agent. PROJECT.yaml separately records conditional skills whose applicability rule is shared by every agent. <a href="agents/general-agent-skills.md">General Agent Skills</a> explains both loading mechanisms and their narrower operating boundaries.</p>
+    <p class="lede">An agent definition may directly reference both unconditional and conditional core skills. An unconditional skill has no condition and is selected for every invocation of that agent. A conditional skill has a human-readable condition and is selected only when the request and available evidence make it applicable.</p>
+    <p class="lede">The role schema supplies effective-communication, ste-technical-writing, and terminology-standard to every conceptual Agent. PROJECT.yaml separately records conditional skills whose applicability rule is shared by every Agent. <a href="agents/general-agent-skills.md">General Agent Skills</a> explains both loading mechanisms and their narrower operating boundaries.</p>
     <p class="lede">Selection does not by itself say whether a harness preloads, dynamically reads, or applies the skill; the <a href="#skill-lifecycle-title">cross-harness lifecycle</a> makes those states explicit.</p>
     <p class="lede">Both kinds of directly referenced skills must be technology-agnostic so the generic agent definition can be reused across programming languages, frameworks, project types, and agentic coding vendors. View their complete definitions in the <a href="agent-and-skill-definitions.html#skills-title">Skill Catalog on the Core Agent and Skills page</a>. The <a href="wiki-skills-and-project-context.html">Wiki Skills And Project Context page</a> explains the operating relationships within the wiki skill family without duplicating that catalog.</p>
     <div class="matrix">
       <table>
+        <caption>Definition-owned core skill relationships</caption>
         <thead>
           <tr>
             <th>Skill relationship</th>
@@ -550,13 +568,13 @@
         </thead>
         <tbody>
           <tr>
-            <td><span class="name">Required core skill</span></td>
+            <td><span class="name">Unconditional core skill</span></td>
             <td>A skill entry in the agent definition without a condition.</td>
             <td>Every invocation of that agent needs the capability.</td>
             <td>Dev Coder always uses careful-coding, code-comments, code-discovery, and explain-code-fix to produce a clean candidate. Project guidance selects resource-claim independently. When that skill is loaded, agents use its Claim Events table. After independent review and verification, Dev Orchestrator applies the effective Commit-selected skill referenced by applicable AGENTS.md guidance.</td>
           </tr>
           <tr>
-            <td><span class="name">Optional core skill</span></td>
+            <td><span class="name">Conditional core skill</span></td>
             <td>A skill entry in the agent definition with a human-readable condition.</td>
             <td>The request and available evidence satisfy the rule; the agent applies judgment rather than matching prompt words.</td>
             <td>Dev Coder uses test-driven-development when behavior can be expressed through executable tests. Feature-branch completion loads create-pull-request only when its provider-accurate GitHub publication boundary requires it.</td>
@@ -568,6 +586,7 @@
     <p>Document Topic Editor separates read-only structural diagnosis from mutation. <span class="tag" data-skill-definition="analyze-document-topics">analyze-document-topics</span> inventories and scores the complete topic hierarchy without changing source bytes. <span class="tag" data-skill-definition="revise-document-topics">revise-document-topics</span> consumes that analysis only with explicit revision authority, preserves every substantive topic, and retains a durable before-and-after artifact only when requested.</p>
     <div class="matrix">
       <table>
+        <caption>Technical-document composition responsibilities</caption>
         <thead>
           <tr>
             <th>Owner</th>
@@ -603,6 +622,7 @@
     <p>The generic pattern family covers all 23 Gang of Four object-oriented patterns: five creational, seven structural, and eleven behavioral. The <a href="https://www.informit.com/store/design-patterns-elements-of-reusable-object-oriented-software-9780201633610">original catalog</a> describes reusable object-oriented designs and presents examples in C++ and Smalltalk rather than defining one implementation language. The skills below are request-specific assignments for Dev Documentation Writer and Dev Artifact Reviewer when design authoring or review selects a matching pattern.</p>
     <div class="matrix">
       <table>
+        <caption>Generic design pattern skill conditions</caption>
         <thead>
           <tr>
             <th>Generic skill</th>
@@ -666,6 +686,7 @@
     <p class="lede">Skill discovery, selection, instruction delivery, behavioral use, and proof are separate events. This section owns those distinctions for the bundle. The native runtime files described on the <a href="generic-agent-definitions-source.html">source-model page</a> and the project context layers described on the <a href="agentic-configuration.html">agentic configuration page</a> link here instead of redefining them.</p>
     <div class="matrix">
       <table>
+        <caption>Skill lifecycle states and evidence boundaries</caption>
         <thead>
           <tr>
             <th>Lifecycle state</th>
@@ -711,6 +732,7 @@
     <h3 class="section-subheading">Native Runtime Mechanisms</h3>
     <div class="matrix">
       <table>
+        <caption>Native Agent harness skill-delivery mechanisms</caption>
         <thead>
           <tr>
             <th>Harness mechanism</th>
@@ -741,8 +763,8 @@
           </tr>
           <tr>
             <td><span class="name">Codex <code>skills.config</code></span></td>
-            <td>Enables or disables a catalog entry by name or absolute path. It changes availability; it does not preload instructions.</td>
-            <td>The published <a href="https://developers.openai.com/codex/config-reference#skillsconfig">configuration reference</a> documents path-based enablement. The installed app-server schema also accepts a name selector, and generated adapter tests exercise that schema form. Neither form is counted as content-read or behavioral evidence.</td>
+            <td>Enables or disables a catalog entry by its skill-folder path. It changes availability; it does not preload instructions.</td>
+            <td>The published <a href="https://learn.chatgpt.com/docs/config-file/config-reference">configuration reference</a> documents path-based enablement. Enablement is not content-read or behavioral evidence.</td>
           </tr>
           <tr>
             <td><span class="name">Codex app-server <code>skill</code> input item</span></td>
@@ -756,6 +778,7 @@
     <h3 class="section-subheading">Bundle Selection and Instruction Delivery</h3>
     <div class="matrix">
       <table>
+        <caption>Bundle skill selection and default instruction delivery</caption>
         <thead>
           <tr>
             <th>Skill category</th>
@@ -767,7 +790,7 @@
           <tr>
             <td><span class="name">Definition-owned core skill</span></td>
             <td>The conceptual agent definition declares an unconditional technology-agnostic skill.</td>
-            <td>The generator emits each required core skill as a native or instruction-driven reference by default. Explicit inline core delivery appends the complete body to every supported native agent definition.</td>
+            <td>The generator emits each unconditional core skill as a native or instruction-driven reference by default. Explicit inline core delivery appends the complete body to every supported native Agent definition.</td>
           </tr>
           <tr>
             <td><span class="name">Request-specific core or tool skill</span></td>
@@ -797,6 +820,7 @@
     <p>Java, TypeScript, and Python pattern examples remain setup-detected technology skills, so any agent acting in a matching folder can use idiomatic implementations without making one language shape canonical. They provide implementation forms for all 23 patterns; selection, tradeoffs, and review criteria remain with the generic skills above.</p>
     <div class="matrix">
       <table>
+        <caption>Detected technology and domain skill examples</caption>
         <thead>
           <tr>
             <th>Shared skill</th>
@@ -961,11 +985,12 @@
 
   <section class="section" aria-labelledby="technology-boundary-title">
     <h2 id="technology-boundary-title">Skill Selection Ownership and Technology Boundaries</h2>
-    <p class="lede">Required versus optional is not the architectural split. Both are valid forms of technology-agnostic skill references inside an agent definition. The actual boundary is technology dependence. No finite agent definition can list every language, framework, library, runtime, database, and tool that may exist now or be added later. Listing technology skills in generic agents would also require every relevant agent definition to change whenever the technology catalog grows.</p>
-    <p>The toolkit therefore uses three independent skill-selection mechanisms. Agent definitions provide their own required and optional technology-agnostic skills. Generated adapters statically append the required core skill instructions by default, while optional request-specific skills remain subject to their conditions and the native lifecycle described above.</p>
-    <p>Project setup can also declare ordered project-wide skill references that apply through root AGENTS.md without changing agent definitions. Separately, setup considers only technology and domain skills that actually exist in the available skill collection. It detects which ones match each project or folder scope and statically embeds those skills under the applicable AGENTS.md scope by default. New technology skills can be added without editing every generic agent definition.</p>
+    <p class="lede">Unconditional versus conditional is not the architectural split. Both are valid forms of technology-agnostic skill references inside an Agent definition. The actual boundary is technology dependence. No finite Agent definition can list every language, framework, library, runtime, database, and tool that may exist now or be added later. Listing technology skills in generic Agents would also require every relevant Agent definition to change whenever the technology catalog grows.</p>
+    <p>The toolkit therefore uses independent skill-selection mechanisms. Agent definitions provide their own unconditional and conditional technology-agnostic skills. Generated adapters reference unconditional core skills by default. Conditional request-specific skills remain subject to their conditions and the native lifecycle described above. Explicit inline core delivery appends the complete unconditional skill instructions.</p>
+    <p>Project setup can also declare ordered project-wide skill references that apply through root AGENTS.md without changing Agent definitions. Separately, setup considers only technology and domain skills that actually exist in the available skill collection. It detects which ones match each project or folder scope and references those skills under the applicable AGENTS.md route by default. Advanced setup can explicitly select inline technology delivery. New technology skills can be added without editing every generic Agent definition.</p>
     <div class="matrix">
       <table>
+        <caption>Skill selection owners and configuration boundaries</caption>
         <thead>
           <tr>
             <th>Selection mechanism</th>
@@ -977,8 +1002,8 @@
         <tbody>
           <tr>
             <td><span class="name">Agent-definition selection</span></td>
-            <td>Required and optional technology-agnostic skills declared directly in the conceptual agent definition.</td>
-            <td>A required entry is emitted through the adapter's native or instruction-driven reference mechanism by default. An optional entry is selected when its human-readable condition applies to the request and available evidence. The harness-specific lifecycle above determines how selected content reaches context. Explicit inline core delivery embeds required skill bodies.</td>
+            <td>Unconditional and conditional technology-agnostic skills declared directly in the conceptual Agent definition.</td>
+            <td>An unconditional entry is emitted through the adapter's native or instruction-driven reference mechanism by default. A conditional entry is selected when its human-readable condition applies to the request and available evidence. The harness-specific lifecycle above determines how selected content reaches context. Explicit inline core delivery embeds unconditional skill bodies.</td>
             <td>These skills describe stable responsibilities and methods that remain useful regardless of the project's technology stack.</td>
           </tr>
           <tr>
@@ -1006,11 +1031,12 @@
     <p>These rows show only dependencies that distinguish an Agent role. The universal and project-wide conditional dependencies omitted from the rows are defined in <a href="agents/general-agent-skills.md">General Agent Skills</a>.</p>
     <div class="matrix">
       <table>
+        <caption>Role-specific core skills in selected conceptual Agent definitions</caption>
         <thead>
           <tr>
             <th>Agent definition</th>
-            <th>Required technology-agnostic skills</th>
-            <th>Optional technology-agnostic skills and conditions</th>
+            <th>Unconditional technology-agnostic skills</th>
+            <th>Conditional technology-agnostic skills and conditions</th>
           </tr>
         </thead>
         <tbody>
@@ -1046,12 +1072,12 @@
 
   <section class="section" aria-labelledby="inlining-benefits-title">
     <h2 id="inlining-benefits-title">Skill Instruction Delivery and Inlining</h2>
-    <p class="lede">Inlining places skill instructions in agent context during generation or project configuration when the selection is already certain. The agent starts with the guidance it must use instead of spending context and output tokens constructing calls to retrieve known instructions.</p>
+    <p class="lede">Instruction delivery follows the configured mode after skill selection. By-reference delivery is the default for generated core skills and folder technology skills. Explicit inline delivery places the complete selected instructions in generated Agent definitions or project guidance.</p>
     <div class="grid">
       <article class="card skill">
         <div class="tag-row"><span class="tag skill">Known instructions</span></div>
         <h3>Avoiding known-skill retrieval tokens</h3>
-        <p>Unconditional core skills are already selected by the conceptual agent definition. Technology skills embedded in AGENTS.md are already selected from repository evidence for that folder. A later read call cannot improve either decision, so inlining avoids the tokens needed to choose a loading tool, construct its arguments, emit the call, and receive its response envelope.</p>
+        <p>Unconditional core skills are already selected by the conceptual Agent definition. Inline folder technology skills are already selected from repository evidence. In either explicit inline mode, a later read call cannot improve the selection. Inlining avoids the tokens needed to choose a loading tool, construct its arguments, emit the call, and receive its response envelope.</p>
       </article>
       <article class="card agent">
         <div class="tag-row"><span class="tag agent">Continuous work</span></div>
@@ -1062,7 +1088,7 @@
     <aside class="note">
       <div class="tag-row"><span class="tag reference">Conditional MCP delivery path</span></div>
       <p>Generated Codex Agents load their initial fixed skill set and each later request-specific selection through one bounded <code>skill_load</code> call when mcp-agent-ops is configured and the content is not already in context. They use <code>skill_resource_load</code> only for supporting resources identified as required by the loaded instructions.</p>
-      <p>This <a href="../README.md#preferred-mcp-operations-layer">MCP path</a> avoids catalog listing, individual retrieval calls, terminal command construction, truncated bulk reads, and rereading instructions already in context. Supplied filesystem-backed <code>SKILL.md</code> paths remain the fallback when the configured operation is unavailable or cannot connect.</p>
+      <p>This conditional <a href="../README.md#preferred-mcp-operations-layer">MCP path</a> is a bundle procedure rather than a universal harness mechanism. It avoids catalog listing, individual retrieval calls, terminal command construction, truncated bulk reads, and rereading instructions already in context. Supplied filesystem-backed <code>SKILL.md</code> paths remain the fallback when the configured operation is unavailable or cannot connect.</p>
     </aside>
   </section>
 
@@ -1100,13 +1126,14 @@
       <p>For each scoped file, the detector walks upward to the nearest supported owning project boundary. Supported owner files include package.json, pyproject.toml, requirements files, pom.xml, and Gradle build files. This prevents a child package from inheriting an unrelated dependency from a parent workspace. If one requested scope crosses multiple owning project directories, detection stops with a BLOCKED result and asks Project Configurator to analyze those owners as separate scopes.</p>
 
       <h3>Detection Rule Sources</h3>
-      <p>Every bundled technology or domain skill has a detection.yaml file beside its SKILL.md. A build step validates those files and combines them into the generated detection registry consumed by the detector. Each rule names the skill it can select, the evidence that is sufficient, any companion skills that must be added, and whether the skill competes with alternatives in an exclusive group.</p>
+      <p>Each setup-detectable technology or domain skill has a detection.yaml file beside its SKILL.md. A build step validates those files and combines them into the generated detection registry consumed by the detector. Each rule names the skill it can select, the evidence that is sufficient, any companion skills that must be added, and whether the skill competes with alternatives in an exclusive group.</p>
       <p>For example, the FastAPI rule succeeds when the scope contains Python code and the nearest owning manifest declares fastapi, or when parsed Python code contains a real FastAPI import. If FastAPI is selected, its python companion skill is added to the same loadout. A comment or string containing an example FastAPI import does not count.</p>
 
       <h3>Rule Matching</h3>
       <p>Every rule has a root anyOf list. At least one branch in that list must succeed. A branch can contain an allOf list, in which case every check in that branch must succeed. The detector keeps the concrete file, manifest, dependency, or import that satisfied the branch so Project Configurator can review why a skill was selected.</p>
       <div class="matrix">
         <table>
+          <caption>Technology detection rule mechanisms</caption>
           <thead>
             <tr>
               <th>Rule mechanism</th>
@@ -1151,6 +1178,7 @@
       <h3>Detection Results</h3>
       <div class="matrix">
         <table>
+          <caption>Technology detection results and next actions</caption>
           <thead>
             <tr>
               <th>Status</th>
@@ -1178,12 +1206,12 @@
         </table>
       </div>
 
-      <p>After reviewing the result, Project Configurator writes the intended skillsets and their evidence to PROJECT.yaml. It then renders the complete detected skill instructions under their matching routes in root or nested AGENTS.md files by default. Ordinary coding, review, diagnosis, and verification agents consume that established guidance and never run the detector during normal work. Project Configurator reruns detection only when project setup or a technology boundary changes.</p>
+      <p>After reviewing the result, Project Configurator writes the intended skillsets and their evidence to PROJECT.yaml. It then references each detected skill under its matching route in root or nested AGENTS.md files by default. Advanced setup can explicitly select inline technology delivery. Ordinary coding, review, diagnosis, and verification Agents consume that established guidance and never run the detector during normal work. Project Configurator reruns detection only when project setup or a technology boundary changes.</p>
     </div>
   </section>
 </main>
 <footer class="site-footer">
-  <p>Copyright 2026 (c) Martin.Bechard@DevConsult.ca - <a href="../LICENSE">MIT License</a></p>
+  <p>Copyright (c) 2026 Martin.Bechard@DevConsult.ca - <a href="../LICENSE">MIT License</a></p>
 </footer>
 <script src="documentation-settings.js"></script>
 <script src="generated/skill-definitions.js"></script>

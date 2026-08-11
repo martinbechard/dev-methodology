@@ -46,7 +46,7 @@ class SkillLifecycleDocumentationTests(unittest.TestCase):
             "https://code.claude.com/docs/en/sub-agents#preload-skills-into-subagents",
             "https://code.claude.com/docs/en/slash-commands#restrict-claudes-skill-access",
             "https://developers.openai.com/codex/skills#how-codex-uses-skills",
-            "https://developers.openai.com/codex/config-reference#skillsconfig",
+            "https://learn.chatgpt.com/docs/config-file/config-reference",
             "https://developers.openai.com/codex/app-server#skills",
         ):
             with self.subTest(target=target):
@@ -57,7 +57,7 @@ class SkillLifecycleDocumentationTests(unittest.TestCase):
             text,
         )
         self.assertIn(
-            "Enables or disables a catalog entry by name or absolute path.",
+            "Enables or disables a catalog entry by its skill-folder path.",
             text,
         )
         self.assertIn(
