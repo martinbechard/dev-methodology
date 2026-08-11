@@ -1,6 +1,6 @@
 # Remediate Inherited Supported-Test Baseline Failures
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -84,3 +84,21 @@ None.
 
 - Related Work Item: `make-python-skill-and-project-scripts-windows-portable`.
 - This item owns baseline remediation, not Windows portability behavior or the portability workflow itself.
+
+## Starting Handoff Evidence
+
+Starting Recorded At: 2026-08-11T22:32:45Z
+
+Coordinator: Codex task 019ff26f-25d0-7381-88f7-74d52717ff59
+
+Normalized Objective: Reproduce and remediate the authorized inherited supported-test baseline from a clean full-history checkout without exclusions or signature masking, preserve platform behavior, update only authoritative owners and directly affected projections or expectations, then complete fresh independent review, focused verification, main-branch delivery, provider closure, and cleanup.
+
+Intended Root Role: Dev Orchestrator
+
+Launch Result: Requested after this durable reservation
+
+Canonical Execution: None
+
+Last Contact At: 2026-08-11T22:32:45Z
+
+Next Reconciliation At: 2026-08-11T22:47:45Z
