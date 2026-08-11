@@ -1,10 +1,10 @@
 # Review and Enforce Read-Only Reviewer Runtime Access
 
-Status: Blocked
+Status: Ready
 
 Owner: Unowned
 
-Phase: Coordinator runtime-enforcement decision
+Phase: Recovered for canonical resumption
 
 Type: Feature
 
@@ -41,7 +41,7 @@ On 2026-08-11, the user directed the Dev Backlog Coordinator to create a separat
 - Compare the effective runtime, sandbox, permission, and tool configuration of independent reviewer roles with Dev Backlog Coordinator and Dev Orchestrator roles, including nested Codex collaboration contexts.
 - Identify the mechanism that currently omits mcp-agent-ops reference_load or other required read capabilities from reviewer contexts.
 - Distinguish parent-runtime capability, collaboration-child capability, Agent-profile capability, and fresh top-level task capability instead of treating one successful surface as proof for another.
-- Define an enforceable reviewer boundary that permits reading any repository or project file and required configured external or reference source.
+- Define a reviewer role and instruction boundary that permits reading any repository or project file and required configured external or reference source while prohibiting reviewer mutation. Native read-only filesystem sandboxing may enforce file immutability; inherited tool availability does not grant reviewer authority to use mutation operations.
 - Keep reviewers strictly read-only: they must not create, modify, overwrite, or delete files or artifacts, including review checklists, reports, fixtures, temporary outputs, or isolated review artifacts.
 - Preserve prohibitions on provider lifecycle mutation, claim operations, integration, delivery, branch changes, worktree changes, task dispatch, and changes to another task's runtime state.
 - Keep artifact-producer sandbox constraints unchanged.
@@ -53,11 +53,11 @@ On 2026-08-11, the user directed the Dev Backlog Coordinator to create a separat
 - A source-backed comparison identifies the earliest configuration or runtime divergence that prevents required reviewer read access.
 - Every independent reviewer role that requires project or reference evidence can read repository and project files and invoke its configured read-only reference capability from the exact runtime path used by real reviews, whether that path is a collaboration child or a top-level reviewer task.
 - Capability evidence from a coordinator, orchestrator, parent task, or different Agent profile is rejected as a substitute for an exact-path reviewer pilot.
-- Reviewer runtimes have no file or artifact write capability; focused negative checks demonstrate that creation, modification, overwrite, and deletion are unavailable or rejected, including attempts to write review artifacts.
-- Reviewer runtimes cannot mutate provider lifecycle, claims, integration, delivery, branches, worktrees, or another task's runtime state.
+- Reviewer executions create, modify, overwrite, or delete no file or artifact; focused negative checks demonstrate that attempted file mutation is rejected by the native read-only sandbox or refused by the reviewer role, including attempts to write review artifacts.
+- Reviewer executions do not mutate provider lifecycle, claims, integration, delivery, branches, worktrees, or another task's runtime state. Tool presence alone is not a failure when the reviewer role prohibits its use and the exact-path pilot produces no mutation side effect.
 - Artifact-producer sandbox and permission profiles are unchanged unless a separately authorized work item changes them.
 - Conceptual role sources, runtime configuration, generated adapters, and documentation agree on the same read-only reviewer boundary.
-- Focused regression coverage fails when required reviewer reference access is absent and fails when any prohibited reviewer mutation capability is introduced.
+- Focused regression coverage fails when required reviewer reference access is absent or when reviewer instructions, sandboxing, or exact-path behavior permit a prohibited mutation.
 - Generated-output freshness, applicable configuration validation, focused runtime capability probes, and independent review and verification pass before main-branch delivery.
 
 ## Dependencies
@@ -69,7 +69,7 @@ None.
 - Run a nested reviewer capability probe that reads representative repository and project files and invokes mcp-agent-ops reference_load for an allowlisted reference.
 - Run a fresh top-level reviewer capability probe after MCP configuration activation and compare its tool result with the collaboration-child path so runtime initialization and Agent-profile effects are explicit.
 - Run focused negative permission tests for file creation, modification, overwrite, and deletion, including review-artifact paths.
-- Run focused negative authority tests for provider lifecycle, claim, integration, delivery, branch, worktree, and cross-task mutation operations.
+- Run focused negative authority tests that confirm the reviewer refuses provider lifecycle, claim, integration, delivery, branch, worktree, and cross-task mutation operations and produces no mutation side effect.
 - Confirm artifact-producer permission-profile fixtures and generated adapters remain byte-equivalent unless explicitly in the accepted manifest.
 - Run the targeted conceptual-role, generated-adapter, configuration, and freshness tests selected by the changed source paths.
 - Obtain fresh independent source review and independent verification of the final candidate.
@@ -77,7 +77,7 @@ None.
 ## Open Questions
 
 - Which source-owned Codex runtime or agent-profile setting controls nested reviewer MCP tool exposure independently from filesystem write authority?
-- Can every required external/reference reader be expressed as an explicitly read-only tool allowlist without granting unrelated MCP operations?
+- Do the reviewer role instructions and native read-only filesystem sandbox consistently preserve zero-write behavior across collaboration-child and top-level reviewer paths?
 
 ## Notes
 
@@ -174,3 +174,17 @@ Dependency Owner: Codex runtime capability owner.
 Observable Unblock Trigger: A supported Codex release and exact-path reviewer pilot demonstrate required repository, project, and configured-reference reads while each prohibited mutation capability is absent or rejected by the runtime boundary.
 
 Preserved Evidence: Keep canonical task 019ff2f9-085e-7202-8099-8f35425278a0, branch codex/reviewer-runtime-permissions-019ff2f9, its clean isolated worktree, and candidate 08554484859c0bdb66d83ef973266f6765e49e58. The candidate remains unreviewed and undelivered. Its project-reference-root correction may be resumed only after this runtime dependency and the recorded overlap are reconciled.
+
+## User Policy Clarification And Recovery
+
+Clarification Recorded At: 2026-08-11T23:13:54Z
+
+Authority: Direct user clarification relayed through parent Coordinator task 019ff26f-25d0-7381-88f7-74d52717ff59
+
+Clarified Boundary: Reviewer zero-write authority is a role-division and instruction boundary. It is not a security policy requiring mutation-capable tools to be absent from the reviewer tool inventory. Reviewers must still create, modify, overwrite, or delete no artifact and must perform no provider, claim, Git integration, task-dispatch, cross-task, branch, or worktree mutation. Producers remain sandbox-constrained.
+
+Superseded Decision: The Coordinator Runtime-Enforcement Decision above is retained as history but is superseded. Codex per-agent tool scoping is not an unblock prerequisite.
+
+Confirmed Blocker Resolution: The false runtime tool-scoping blocker is removed. Candidate 08554484859c0bdb66d83ef973266f6765e49e58 remains clean and focused on scripts/install-skills.py and scripts/test_install_skills.py. The concurrently Running baseline-remediation item owns no live path claim on either file, and its declared 49-identity scope does not include either file. Exact-path overlap is therefore not present for bounded candidate review and verification.
+
+Recovery Action: Blocked -> Ready with Owner: Unowned. Preserve canonical task 019ff2f9-085e-7202-8099-8f35425278a0, branch codex/reviewer-runtime-permissions-019ff2f9, clean isolated worktree, candidate 08554484859c0bdb66d83ef973266f6765e49e58, and all prior evidence. Resume only through a separate Ready -> Starting reservation followed by the same root Dev Orchestrator accepting Starting -> Running.
