@@ -1,6 +1,6 @@
 # Create Direct MCP Development Planning Skill
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -10,19 +10,19 @@ Work Item ID: create-direct-mcp-development-planning-skill
 
 Completion: main-branch
 
-Owner: Unowned
+Owner: Dev Orchestrator
 
 Canonical Conversation: Not exposed by runtime
 
-Canonical Task: Prior execution /root/direct_mcp_planning_orchestrator
+Canonical Task: /root/direct_mcp_planning_restart
 
 Parent Task: /root
 
-Branch: main
+Branch: candidate/create-direct-mcp-development-planning-skill
 
-Worktree: /Users/martinbechard/dev/dev-methodology
+Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/direct-mcp-development-planning-coder
 
-Phase: Reviewing
+Phase: Planning
 
 Accepted Candidate Commit: f7d880b5fe14c2ef19d21018523344c208bea770
 
@@ -196,3 +196,23 @@ Normalized Objective: Resume the preserved direct MCP planning Skill candidate u
 Launch Result: Requested
 
 Canonical Execution: Pending fresh post-restart execution
+
+## Restart Running Evidence
+
+Accepted At: 2026-08-11T15:30:44Z
+
+Canonical Conversation: Not exposed by runtime
+
+Canonical Task: /root/direct_mcp_planning_restart
+
+Root Owner: Dev Orchestrator
+
+Branch: candidate/create-direct-mcp-development-planning-skill
+
+Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/direct-mcp-development-planning-coder
+
+Phase: Planning
+
+Accepted Execution Evidence: The fresh post-restart Dev Orchestrator acquired the exact work-item activity boundary and accepted the preserved correction for plan review before source mutation.
+
+Conversation Title Handoff: Runtime rename capability is unavailable; the canonical title remains unsynchronized.
