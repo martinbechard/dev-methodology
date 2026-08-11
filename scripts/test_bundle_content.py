@@ -9257,6 +9257,84 @@ Visible after.
         self.assertIn("saved completed review checklist", output_names)
         self.assertIn("review verdict", output_names)
 
+    def test_methodology_reviewer_suite_rejects_invalid_review_results(self) -> None:
+        """Keep evaluation acceptance aligned with the review-result contract."""
+
+        suite_root = AGENT_TEST_SUITES_ROOT / "methodology-artifact-reviewer"
+        suite = load_yaml_object(suite_root / "suite.yaml")
+        scenarios = load_yaml_object(suite_root / "scenarios.yaml")["scenarios"]
+        contract = (
+            suite_root
+            / "skills"
+            / "methodology-artifact-reviewer-suite-contract"
+            / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        expected_outputs = [
+            "saved completed review checklist",
+            "review verdict",
+            "finding-first review",
+            "required corrections",
+            "residual risk",
+        ]
+
+        self.assertEqual(expected_outputs, suite["target"]["requiredOutputs"])
+        for scenario in scenarios:
+            with self.subTest(scenario=scenario["id"]):
+                self.assertEqual(expected_outputs, scenario["expectedOutputs"])
+                self.assertIn(
+                    "checklist-completeness",
+                    scenario["deterministicChecks"],
+                )
+                self.assertIn(
+                    "read-only-boundary",
+                    scenario["deterministicChecks"],
+                )
+                self.assertNotIn(
+                    "no-forbidden-mutation",
+                    scenario["deterministicChecks"],
+                )
+                self.assertIn(
+                    "Complete and save the existing structured-review checklist "
+                    "before findings or verdict.",
+                    scenario["requiredBehaviors"],
+                )
+                self.assertIn(
+                    "Write only the authorized completed checklist and findings "
+                    "artifacts, and leave the candidate unchanged.",
+                    scenario["requiredBehaviors"],
+                )
+                self.assertIn(
+                    "Return GOOD or NEEDS_CORRECTION with a missing or incomplete "
+                    "saved checklist.",
+                    scenario["forbiddenBehaviors"],
+                )
+                self.assertIn(
+                    "Return a NEEDS_CORRECTION finding without its existing checklist "
+                    "question, authority, evidence, correction, or impact.",
+                    scenario["forbiddenBehaviors"],
+                )
+                self.assertIn(
+                    "Add, redesign, expand, or rewrite an existing checklist question.",
+                    scenario["forbiddenBehaviors"],
+                )
+
+        for required_contract in (
+            "Complete and save the existing structured-review checklist before writing "
+            "findings or returning a verdict.",
+            "For every NEEDS_CORRECTION finding, identify the existing checklist "
+            "question and include authority, evidence, correction, and impact.",
+            "Use existing checklist questions unchanged. Do not add, redesign, expand, "
+            "or rewrite them.",
+            "Treat the candidate as read-only while allowing only authorized checklist "
+            "and findings artifact writes.",
+            "Return GOOD or NEEDS_CORRECTION when the saved checklist is missing or "
+            "incomplete.",
+            "Return a NEEDS_CORRECTION finding that omits its existing checklist "
+            "question, authority, evidence, correction, or impact.",
+        ):
+            with self.subTest(required_contract=required_contract):
+                self.assertIn(required_contract, contract)
+
     def test_codex_read_only_sandbox_is_reserved_for_never_mutating_roles(self) -> None:
         """Keep evidence-writing reviewers writable while preserving true read-only agents."""
         build_skill_docs = load_build_skill_docs_module()
