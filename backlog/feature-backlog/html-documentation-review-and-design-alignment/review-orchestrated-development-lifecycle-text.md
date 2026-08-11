@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: Holding
+Status: Ready
 
 Type: Feature
 
@@ -13,6 +13,12 @@ Work Item ID: review-orchestrated-development-lifecycle-text
 Completion: main-branch
 
 Series: backlog/feature-backlog/html-documentation-review-and-design-alignment/index.md
+
+## Scheduling
+
+Coordinator Priority: Next
+
+Reason: This is preserved finish-lane work. Its Dev Architect dependency is complete, the page correction is already accepted, and only the bounded test correction, final gates, delivery, and cleanup remain.
 
 ## Crisis Pause Evidence
 
@@ -32,7 +38,7 @@ Branch: codex/review-orchestrated-development-lifecycle-text-019fe9f2
 
 Worktree: /Users/martinbechard/.codex/worktrees/f5a9/dev-methodology
 
-Phase: Holding — Deferred with later HTML text reviews
+Phase: Ready — Resume preserved finish-lane work
 
 Evidence: The Coordinator paused this unrelated mutator before formal crisis entry. Accepted page commit 704ae8ea4dcab0212c035542adb5ecc857ebe9fc retains final documentation and methodology VERDICT: GOOD. Test mirror commit 1ac2a92e5d0b2590a983072c2ba9ae8564d1538b has fresh code re-review NEEDS CORRECTION only for two missing accessibility-label protections. The source worktree preserves exactly ten unstaged insertions in scripts/test_bundle_content.py for the current execution-context positives and retired-label negatives. Those bytes are unverified and unreviewed. No correction commit, provider commit, verification, integration, or cleanup followed the pause instruction.
 
@@ -42,9 +48,9 @@ Paused At: 2026-08-10T06:30:00Z
 
 Preserved Source Worktree: /Users/martinbechard/.codex/worktrees/f5a9/dev-methodology on branch codex/review-orchestrated-development-lifecycle-text-019fe9f2 at HEAD 1ac2a92e5d0b2590a983072c2ba9ae8564d1538b
 
-Resumption Condition: Resume with the later HTML text-review group after Work Item add-dev-architect-agent is Completed, so the page review can reconcile the final Dev Architect planning workflow before delivery.
+Resumption Condition: Satisfied. Work Item add-dev-architect-agent is Completed. Resume before starting a new backlog item.
 
-Safe Resumption Point: Reconcile the preserved ten-line test correction against current main, run focused tests, commit it if green, obtain a fresh code review and independent verification, then continue ordinary delivery. Do not reacquire claims or mutate during the active crisis epoch.
+Safe Resumption Point: Reconcile the accepted page and preserved ten-line test correction against current main, including the delivered Dev Architect and direct MCP planning workflow. Run focused tests, commit the correction if green, obtain fresh code review and independent verification, then continue ordinary delivery and cleanup.
 
 ## Summary
 
@@ -105,7 +111,7 @@ None.
 ## Notes
 
 - The dependent design item is align-orchestrated-development-lifecycle-with-documentation-design-system.
-- The user explicitly deferred this item with the later text reviews on 2026-08-10. It is not an efficiency prerequisite for the direct MCP outline or planning skills.
+- The user moved this preserved finish-lane item to the top of the active queue on 2026-08-11 after its Dev Architect dependency was completed.
 
 ## Starting Handoff Evidence
 
