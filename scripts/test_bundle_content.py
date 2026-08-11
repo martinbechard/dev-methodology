@@ -8456,15 +8456,28 @@ Visible after.
                     self.assertNotIn(f"BEGIN INLINED CORE SKILL: {skill}", codex_agent_text)
                 codex_payload = tomllib.loads(codex_agent_text)
                 configured_skills = codex_payload.get("skills", {}).get("config", [])
+                configured_skill_names = [
+                    item.get("name") for item in configured_skills
+                ]
                 if role.repository_mutation == "never":
-                    self.assertNotIn(CODEX_HARNESS_SKILL_NAME, codex_agent_text)
                     self.assertNotIn(
                         CODEX_HARNESS_SKILL_NAME,
-                        [item.get("name") for item in configured_skills],
+                        codex_payload["developer_instructions"],
+                    )
+                    explicit_skill_names = [
+                        item.get("name")
+                        for item in role.optional_fields.get(
+                            "skillAvailability", []
+                        )
+                        if item.get("enabled")
+                    ]
+                    self.assertEqual(
+                        CODEX_HARNESS_SKILL_NAME in explicit_skill_names,
+                        CODEX_HARNESS_SKILL_NAME in configured_skill_names,
                     )
                 else:
                     self.assertNotIn(f"BEGIN INLINED CORE SKILL: {CODEX_HARNESS_SKILL_NAME}", codex_agent_text)
-                    self.assertIn(CODEX_HARNESS_SKILL_NAME, [item.get("name") for item in configured_skills])
+                    self.assertIn(CODEX_HARNESS_SKILL_NAME, configured_skill_names)
                 fixed_skills = list(build_skill_docs.fixed_role_skills(role))
                 if fixed_skills:
                     self.assertIn(
@@ -9282,8 +9295,8 @@ Visible after.
         for role_path in ROLES_ROOT.rglob("*.role.yaml"):
             self.assertNotIn("mcp-agent-ops", role_path.read_text(encoding="utf-8"))
 
-    def test_codex_harness_directives_are_adapter_owned_and_mutation_scoped(self) -> None:
-        """Keep Codex-only routing policy out of portable roles and other harness outputs."""
+    def test_codex_harness_directives_are_adapter_owned_and_loaded_when_required(self) -> None:
+        """Load the Codex-only contract for mutators and direct collaboration dispatchers."""
 
         build_skill_docs = load_build_skill_docs_module()
         skill_text = (CODEX_HARNESS_SKILL_ROOT / "SKILL.md").read_text(encoding="utf-8")
@@ -9301,24 +9314,30 @@ Visible after.
         codex_profiles = build_skill_docs.load_adapter_model_profiles(
             "codex", set(build_skill_docs.load_model_profiles())
         )
+        collaboration_dispatchers = {
+            "dev-backlog-coordinator",
+            "dev-orchestrator",
+            "methodology-maintainer",
+            "methodology-design-system-review-coordinator",
+            "project-bootstrapper",
+            "wiki-ingester",
+            "wiki-writer",
+        }
         for role in roles:
             with self.subTest(role=role.name, mutation=role.repository_mutation):
                 rendered = build_skill_docs.render_codex_agent(role, codex_profiles)
                 parsed = tomllib.loads(rendered)
                 instructions = parsed["developer_instructions"]
                 configured = parsed.get("skills", {}).get("config", [])
-                if role.repository_mutation == "never":
+                configured_names = [item.get("name") for item in configured]
+                if role.name in collaboration_dispatchers:
+                    self.assertIn(CODEX_HARNESS_SKILL_NAME, configured_names)
+                elif role.repository_mutation == "never":
                     self.assertNotIn(CODEX_HARNESS_SKILL_NAME, instructions)
-                    self.assertNotIn(
-                        CODEX_HARNESS_SKILL_NAME,
-                        [item.get("name") for item in configured],
-                    )
+                    self.assertNotIn(CODEX_HARNESS_SKILL_NAME, configured_names)
                 else:
                     self.assertNotIn("BEGIN INLINED CORE SKILL", instructions)
-                    self.assertIn(
-                        CODEX_HARNESS_SKILL_NAME,
-                        [item.get("name") for item in configured],
-                    )
+                    self.assertIn(CODEX_HARNESS_SKILL_NAME, configured_names)
 
         for adapter_name, extension in (("claude", ".md"), ("gemini", ".md"), ("junie", ".md")):
             for path in (GENERATED_ADAPTERS_ROOT / adapter_name / "agents").glob(f"*{extension}"):
@@ -9407,6 +9426,13 @@ Visible after.
                 ).read_text(encoding="utf-8")
                 self.assertIn(central_reference, generated)
                 self.assertIn(fresh_context, generated)
+                generated_config = tomllib.loads(generated).get("skills", {}).get(
+                    "config", []
+                )
+                self.assertIn(
+                    {"name": CODEX_HARNESS_SKILL_NAME, "enabled": True},
+                    generated_config,
+                )
 
         backlog_role = load_yaml_object(role_paths[0])
         backlog_text = json.dumps(backlog_role, sort_keys=True)
@@ -9415,6 +9441,14 @@ Visible after.
             backlog_text,
         )
         self.assertIn("no implicit parent-conversation inheritance", backlog_text)
+
+        read_only_coordinator = load_yaml_object(role_paths[3])
+        self.assertEqual("never", read_only_coordinator["repositoryMutation"])
+        self.assertEqual("read-only", read_only_coordinator["isolation"])
+        self.assertIn(
+            {"name": CODEX_HARNESS_SKILL_NAME, "enabled": True},
+            read_only_coordinator["skillAvailability"],
+        )
 
     def test_direct_agent_dependencies_have_complete_routing_contracts(self) -> None:
         """Every maintained direct dependency should have an explicit orchestration contract."""

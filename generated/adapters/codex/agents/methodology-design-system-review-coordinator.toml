@@ -485,3 +485,7 @@ Strict output JSON Schema:
 model = "gpt-5.6-terra"
 model_reasoning_effort = "low"
 sandbox_mode = "read-only"
+
+[[skills.config]]
+name = "codex-harness-directives"
+enabled = true

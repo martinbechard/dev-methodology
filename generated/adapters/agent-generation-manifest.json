@@ -1874,7 +1874,7 @@
             "effective-communication",
             "ste-technical-writing"
           ],
-          "sha256": "b076c5177a9547fcc4306be83398121f4f94df09fc2420cd2cb69a81ce95eee3",
+          "sha256": "6841b642701c6678d751a555020acbba5883b69c30d08478f9e402404a86f5eb",
           "source": "agents/roles/methodology-maintenance/methodology-design-system-review-coordinator.role.yaml"
         },
         {

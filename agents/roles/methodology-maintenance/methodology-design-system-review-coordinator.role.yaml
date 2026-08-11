@@ -126,6 +126,9 @@ examples:
           findings: []
           limits: []
 skills: []
+skillAvailability:
+  - name: codex-harness-directives
+    enabled: true
 isolation: read-only
 outputContract:
   - status:
