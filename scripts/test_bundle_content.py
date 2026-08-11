@@ -460,9 +460,9 @@ MODULARIZATION_REQUIRED_PHRASES = (
     "Avoiding known-skill retrieval tokens",
     "Reducing tool-call interruptions",
     "Conditional MCP delivery path",
-    "directs the agent to load the complete selected set in one bounded <code>skill_load</code> call",
-    "avoids constructing shell commands or helper code for retrieval",
-    "preserving native Claude Code and Codex invocation paths",
+    "Generated Codex Agents load their initial fixed skill set and each later request-specific selection through one bounded <code>skill_load</code> call",
+    "avoids catalog listing, individual retrieval calls, terminal command construction, truncated bulk reads, and rereading instructions already in context",
+    "filesystem-backed <code>SKILL.md</code> paths remain the fallback",
     "Development precursor — outside setup",
     "Actor: Project Configurator",
     "reviewable intent log",
@@ -8456,7 +8456,15 @@ Visible after.
                     tomllib.loads(codex_agent_text)["developer_instructions"],
                 )
                 self.assertIn(
-                    "Before acting, load these definition-owned skills completely; they govern the work:",
+                    "use one bounded mcp_agent_ops skill_load call",
+                    codex_agent_text,
+                )
+                self.assertIn(
+                    "Use the supplied filesystem-backed SKILL.md paths only when that MCP operation is unavailable",
+                    codex_agent_text,
+                )
+                self.assertIn(
+                    "Before acting, load these skills completely:",
                     codex_agent_text,
                 )
                 for skill in build_skill_docs.fixed_role_skills(role):
@@ -8488,7 +8496,12 @@ Visible after.
                 fixed_skills = list(build_skill_docs.fixed_role_skills(role))
                 if fixed_skills:
                     self.assertIn(
-                        "Before acting, load these definition-owned skills completely; they govern the work: "
+                        "Before acting, load these skills completely: "
+                        + (
+                            f"{CODEX_HARNESS_SKILL_NAME}, "
+                            if role.repository_mutation != "never"
+                            else ""
+                        )
                         + ", ".join(fixed_skills)
                         + ".",
                         codex_agent_text,

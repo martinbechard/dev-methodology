@@ -7,6 +7,13 @@ description: Apply Codex-specific safeguard and routing directives. Use when a g
 
 This skill owns directives that apply to Codex-generated agents but do not belong in portable conceptual roles or cross-harness skills.
 
+## Skill Instruction Loading
+
+- When the configured mcp-agent-ops skill_load operation is available, load the complete selected set of skills that is not already in context in one bounded skill_load call.
+- Do not list the catalog before loading known skill names. Do not load known skills individually, construct terminal commands for their retrieval, or reread skills already returned in the current context.
+- Use the supplied filesystem-backed SKILL.md paths when skill_load is unavailable or the configured server cannot initialize or connect. Read each fallback file completely, using bounded reads that do not require repeating truncated bulk output.
+- Apply the same rule when later routing selects request-specific skills. Load supporting resources only after their owning skill instructions identify those resources as required.
+
 ## Collaboration Subagent Launch Contract
 
 A collaboration subagent is a bounded internal Codex dispatch owned by the launching Agent. It is not a separate user-visible Codex work-item task.

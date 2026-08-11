@@ -1061,8 +1061,8 @@
     </div>
     <aside class="note">
       <div class="tag-row"><span class="tag reference">Conditional MCP delivery path</span></div>
-      <p>Request-specific optional skills are selected only after their conditions are evaluated against the current request and evidence. Delivery then follows the harness-specific lifecycle above. Within the route-documentation-work workflow, when mcp-agent-ops is configured and selected content is not already in context, that skill directs the agent to load the complete selected set in one bounded <code>skill_load</code> call and to use <code>skill_resource_load</code> only for required supporting resources.</p>
-      <p>This conditional <a href="../README.md#preferred-mcp-operations-layer">MCP path</a> is a bundle procedure rather than a universal harness mechanism. It avoids constructing shell commands or helper code for retrieval while preserving native Claude Code and Codex invocation paths when MCP is absent or not selected.</p>
+      <p>Generated Codex Agents load their initial fixed skill set and each later request-specific selection through one bounded <code>skill_load</code> call when mcp-agent-ops is configured and the content is not already in context. They use <code>skill_resource_load</code> only for supporting resources identified as required by the loaded instructions.</p>
+      <p>This <a href="../README.md#preferred-mcp-operations-layer">MCP path</a> avoids catalog listing, individual retrieval calls, terminal command construction, truncated bulk reads, and rereading instructions already in context. Supplied filesystem-backed <code>SKILL.md</code> paths remain the fallback when the configured operation is unavailable or cannot connect.</p>
     </aside>
   </section>
 

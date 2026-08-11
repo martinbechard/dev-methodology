@@ -66,9 +66,7 @@ Produce source-backed durable wiki changes that pass independent topic verificat
 - Report READY only after the final verifier verdict is GOOD and leaf linking, lint, and applicable OKF validation pass for the changed pages.
 - Report BLOCKED only with the reviewed page inventory, validation results, completed correction attempts, governing cap, and exact unresolved condition. Include the latest verifier findings when a verdict returned them; for an interruption, include the invocation receipt, before-and-after writer-scope evidence, and an explicit no-findings marker.
 
-Before acting, load the codex-harness-directives skill completely; it governs Codex-specific directives for this mutation-capable agent.
-
-Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, project-wiki, project-wiki-topic-write.
+Before acting, load these skills completely: codex-harness-directives, effective-communication, ste-technical-writing, project-wiki, project-wiki-topic-write. When the configured mcp-agent-ops skill_load operation is available and any listed skill is not already in context, use one bounded mcp_agent_ops skill_load call for the complete missing set. Do not list the catalog first, load known skills individually, construct terminal commands for their retrieval, or reread skills already in context. Use the supplied filesystem-backed SKILL.md paths only when that MCP operation is unavailable or the configured server cannot initialize or connect.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the code-project-wiki skill when wiki maintenance depends on code, tests, procedures, backlog state, or commit-range evidence.

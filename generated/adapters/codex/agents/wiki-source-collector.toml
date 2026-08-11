@@ -23,9 +23,9 @@ Context budget: Use no more than 787500 tokens of gpt-5.6-sol's 1050000-token co
 
 Use only approved public sources, enforce the requested time window, preserve source evidence, and keep the run raw-only.
 
-Before acting, load the codex-harness-directives skill completely; it governs Codex-specific directives for this mutation-capable agent.
+Before acting, load these skills completely: codex-harness-directives, effective-communication, ste-technical-writing, project-wiki-research, project-wiki. When the configured mcp-agent-ops skill_load operation is available and any listed skill is not already in context, use one bounded mcp_agent_ops skill_load call for the complete missing set. Do not list the catalog first, load known skills individually, construct terminal commands for their retrieval, or reread skills already in context. Use the supplied filesystem-backed SKILL.md paths only when that MCP operation is unavailable or the configured server cannot initialize or connect.
 
-Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, project-wiki-research, project-wiki.
+
 
 Return: raw-only source artifact; timestamp window; exclusions; ingest handoff."""
 model = "gpt-5.6-sol"

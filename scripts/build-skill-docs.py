@@ -1869,6 +1869,27 @@ def render_inlined_core_skills(
     return "\n".join(sections)
 
 
+def codex_initial_skill_loading_instruction(role: RoleDefinition) -> str:
+    """Return one MCP-first initial skill-loading instruction for Codex."""
+
+    skill_names = list(fixed_role_skills(role))
+    if role.repository_mutation != "never":
+        skill_names.insert(0, CODEX_HARNESS_DIRECTIVES_SKILL_NAME)
+    if not skill_names:
+        return ""
+    return (
+        "Before acting, load these skills completely: "
+        + ", ".join(skill_names)
+        + ". When the configured mcp-agent-ops skill_load operation is available "
+        "and any listed skill is not already in context, use one bounded "
+        "mcp_agent_ops skill_load call for the complete missing set. Do not list "
+        "the catalog first, load known skills individually, construct terminal "
+        "commands for their retrieval, or reread skills already in context. Use "
+        "the supplied filesystem-backed SKILL.md paths only when that MCP operation "
+        "is unavailable or the configured server cannot initialize or connect."
+    )
+
+
 def role_identity_instruction(role: RoleDefinition) -> str:
     """Return the generated identity statement shared by every native adapter."""
 
@@ -2136,12 +2157,15 @@ def codex_role_instruction_text(
     if role.repository_mutation == "never":
         loading_instructions = role_loading_instruction_text(
             role,
-            include_fixed_skills=True,
+            include_fixed_skills=False,
         )
         sections = [identity_instruction]
         if context_instruction:
             sections.append(context_instruction)
         sections.append(role_instructions)
+        initial_skill_loading = codex_initial_skill_loading_instruction(role)
+        if initial_skill_loading:
+            sections.append(initial_skill_loading)
         if loading_instructions:
             sections.append(loading_instructions)
         sections.append(f"{ROLE_OUTPUT_INSTRUCTION_PREFIX} {output_text}.")
@@ -2154,18 +2178,15 @@ def codex_role_instruction_text(
                 )
             )
         return "\n\n".join(sections)
-    harness_instruction = (
-        f"Before acting, load the {CODEX_HARNESS_DIRECTIVES_SKILL_NAME} skill completely; "
-        "it governs Codex-specific directives for this mutation-capable agent."
-    )
+    initial_skill_loading = codex_initial_skill_loading_instruction(role)
     sections = [identity_instruction]
     if context_instruction:
         sections.append(context_instruction)
     sections.extend(
         [
             role_instructions,
-            harness_instruction,
-            role_loading_instruction_text(role),
+            initial_skill_loading,
+            role_loading_instruction_text(role, include_fixed_skills=False),
             f"{ROLE_OUTPUT_INSTRUCTION_PREFIX} {output_text}.",
         ]
     )

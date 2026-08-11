@@ -1209,7 +1209,7 @@
             "test-driven-development",
             "codex-harness-directives"
           ],
-          "sha256": "9c47b84a6a96663479dca830cc82dd799eb2aeecc71bb140be0507ae89a1fcb5",
+          "sha256": "8fafe5856b32db887dc5ae398229fdda6ee835f549f9188a0e7cac777473db69",
           "source": "agents/roles/dev-activities/dev-architect.role.yaml"
         },
         {
@@ -1241,7 +1241,7 @@
             "verify-documentation-page",
             "codex-harness-directives"
           ],
-          "sha256": "a07623090a9cb7dbe2bc3282d90ad8b2e4b3e2e75ef8db34657c4c2cc2335eaf",
+          "sha256": "30f8802e15fdd0945531b5441fe588a2334ed3d4c15b1fd1a25714c68c10dd72",
           "source": "agents/roles/dev-activities/dev-artifact-reviewer.role.yaml"
         },
         {
@@ -1272,7 +1272,7 @@
             "manage-work-items",
             "codex-harness-directives"
           ],
-          "sha256": "df6d616092649c1667b76e5b4bfe2b53e6822b11b513480308b020de1b5a681f",
+          "sha256": "edb2b291302a18f2e45d66eab580b1ac2a110995b788859a4ac02649c121f512",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
@@ -1303,7 +1303,7 @@
             "manage-work-items",
             "codex-harness-directives"
           ],
-          "sha256": "6dbc35bd0448a6e281a20a2a573f41e20baf912307cfe2afbee09e789c537794",
+          "sha256": "7475a824d0ff1273eebd5f3bb16c6f8d2cc56cf3d14857efd9bf2fb1668a709f",
           "source": "agents/roles/dev-activities/dev-backlog-steward.role.yaml"
         },
         {
@@ -1334,7 +1334,7 @@
             "manage-work-items",
             "coordinate-work-items"
           ],
-          "sha256": "8422ffcb8fce261dc09ebbe5ad8d946e830e99f209696a7c9e54d1cbffc0dc70",
+          "sha256": "66d56a1c31b1ff29b3ed2e14e981f4185bb988eaa9754a5c6d58d2980d1b31b3",
           "source": "agents/roles/dev-activities/dev-backlog-watchdog.role.yaml"
         },
         {
@@ -1365,7 +1365,7 @@
             "verify-end-to-end-workflow",
             "codex-harness-directives"
           ],
-          "sha256": "78b1674a235cf24a569f1dd2efd366632be69cb90beb2ad5809e62c7d232ff4d",
+          "sha256": "296f8ea2189827a7ffa4c75b35ad04a1d3b6150ee195b26ffa3c6cb1db8cddda",
           "source": "agents/roles/dev-activities/dev-browser-operator.role.yaml"
         },
         {
@@ -1436,7 +1436,7 @@
             "code-comments",
             "codex-harness-directives"
           ],
-          "sha256": "14d54849f31a5edaf1598766dd9a285a8391b173912fe1e26cd8e82d58bb5158",
+          "sha256": "88bf5c1b13ffbb821f7a51b8dceffedab7fd8ae93e2b489027a66450fbf2ed54",
           "source": "agents/roles/dev-activities/dev-code-reviewer.role.yaml"
         },
         {
@@ -1470,7 +1470,7 @@
             "explain-code-fix",
             "codex-harness-directives"
           ],
-          "sha256": "c28c11beda4521047611c5ac3fb3502e53cc923d6bc34d40d3494920f18e11f1",
+          "sha256": "45cab0f2b83aed51ac3b0b2c600f953684397d1db1c2f49225b3405ae63f4a1b",
           "source": "agents/roles/dev-activities/dev-coder.role.yaml"
         },
         {
@@ -1502,7 +1502,7 @@
             "revise-document-topics",
             "codex-harness-directives"
           ],
-          "sha256": "f075341745c6597b640c5fb9b1ad853bd4e6178b9a940ecf8ec6f8f1eaad3da5",
+          "sha256": "6d0f3a1f758648eed0752e1835c77091d4585e29e6709850bfbb073e040c44a6",
           "source": "agents/roles/dev-activities/dev-document-topic-editor.role.yaml"
         },
         {
@@ -1533,7 +1533,7 @@
             "route-documentation-work",
             "codex-harness-directives"
           ],
-          "sha256": "adbad5ac331f2ce37b604458f4fe9c98bd080a0288ccf32964586672d940cab5",
+          "sha256": "96f85130a4543165f86f4c2706295cc78875545fdbfc99bccf6d8b50a30bfe6f",
           "source": "agents/roles/dev-activities/dev-documentation-writer.role.yaml"
         },
         {
@@ -1566,7 +1566,7 @@
             "explain-code-fix",
             "codex-harness-directives"
           ],
-          "sha256": "329246ae0bc80ff88a57637469beb82a36c6e3160b04b199e7c4393810bbaa79",
+          "sha256": "2083dd86ae4d394d92cd62097ab4d7f3ad9cdd2408b837a177d9c54efa5134cd",
           "source": "agents/roles/dev-activities/dev-merge-coordinator.role.yaml"
         },
         {
@@ -1599,7 +1599,7 @@
             "structured-design",
             "codex-harness-directives"
           ],
-          "sha256": "a12043004c5eb75722377a017109ff4f26f7fbb533714e492d05bf2a086ab1ff",
+          "sha256": "c9f9e0c618e6fd8cafb1a4648b2b4da003a25114475d095d8a1e9d708d55a8b2",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -1631,7 +1631,7 @@
             "review-structured-artifact",
             "codex-harness-directives"
           ],
-          "sha256": "abb9d133f00b38ffa1ae4742b1f7ea41165b129b57a2ac7d6e57445d78e0dbc9",
+          "sha256": "d91f944e5cb67cbf98d3107fce4554a8abfc99c9aa0d69db52f50928a72ab6d9",
           "source": "agents/roles/dev-activities/dev-prompt-reviewer.role.yaml"
         },
         {
@@ -1665,7 +1665,7 @@
             "trace-code-execution",
             "codex-harness-directives"
           ],
-          "sha256": "f9f68c7df78b68c4c8299d42218406cd243f69f80f923c7e8db68610da79f214",
+          "sha256": "2fbb15146c608785f96586742653365ef165dfeebfbd9de0fc40913b8662ae3e",
           "source": "agents/roles/dev-activities/dev-runtime-diagnostician.role.yaml"
         },
         {
@@ -1697,7 +1697,7 @@
             "review-structured-artifact",
             "codex-harness-directives"
           ],
-          "sha256": "cce205eb4e4dbcec8827d6d5209f8066ca8913a0ea4b29d64310547ce8554cde",
+          "sha256": "feb90faf68ddfa6e47b3d82c188854f71d8e915b2c2adf7f772cc0f375231267",
           "source": "agents/roles/dev-activities/dev-security-reviewer.role.yaml"
         },
         {
@@ -1754,7 +1754,7 @@
             "review-structured-artifact",
             "codex-harness-directives"
           ],
-          "sha256": "7efb7b48e33d121bf2a54ed00268457f9de2120301311aa10d2171b9b0d4380d",
+          "sha256": "3b20af583a792b203baa523a91c390f7e82b9a4a222893da68e2fb4ad5203c11",
           "source": "agents/roles/dev-activities/dev-skill-lint-reviewer.role.yaml"
         },
         {
@@ -1787,7 +1787,7 @@
             "review-structured-artifact",
             "codex-harness-directives"
           ],
-          "sha256": "f832d10ccda85a580590d4bc2f2c096af2ebb2ef366fca861f94f4b4ff00b5c1",
+          "sha256": "f30f1ff578ba526a84ce750d8da3e92be24c9199605d1ba6d4a50b1823e46e3a",
           "source": "agents/roles/dev-activities/dev-ux-specialist.role.yaml"
         },
         {
@@ -1819,7 +1819,7 @@
             "review-structured-artifact",
             "codex-harness-directives"
           ],
-          "sha256": "d683dde1873225f440c1df946022175c8ffd9b3f9dbefefbfa464dc931cf1d1e",
+          "sha256": "4aa3dd16e3ca1b7a331f771461595650184b6a5ee0d66bdbb041a8bc553b8c10",
           "source": "agents/roles/dev-activities/dev-verifier.role.yaml"
         },
         {
@@ -1880,7 +1880,7 @@
             "route-documentation-work",
             "codex-harness-directives"
           ],
-          "sha256": "cf96c92dcb81221542b02cab74858373c11e4691ad754dbc9ca48a329e9d4663",
+          "sha256": "2c47b2b21bfe9869ac83919fa446f48b22764f4e71db1b64504061255e9c7c8d",
           "source": "agents/roles/methodology-maintenance/methodology-artifact-reviewer.role.yaml"
         },
         {
@@ -1910,7 +1910,7 @@
             "ste-technical-writing",
             "review-documentation-design-system"
           ],
-          "sha256": "0c7d960d16314a2238289c412cc193835caa947d5a81cbad81453217a1d28d2c",
+          "sha256": "f52d4414803bc5eb0e371eb383e569ae760e60e186a310a90809f9a4cb57c7ae",
           "source": "agents/roles/methodology-maintenance/methodology-design-system-checklist-runner.role.yaml"
         },
         {
@@ -1939,7 +1939,7 @@
             "effective-communication",
             "ste-technical-writing"
           ],
-          "sha256": "6841b642701c6678d751a555020acbba5883b69c30d08478f9e402404a86f5eb",
+          "sha256": "4ab64cc888eebd0f90364ce12b2d61a5c2b2975ba5389a1a52254ae5ecd80e8c",
           "source": "agents/roles/methodology-maintenance/methodology-design-system-review-coordinator.role.yaml"
         },
         {
@@ -1974,7 +1974,7 @@
             "route-documentation-work",
             "codex-harness-directives"
           ],
-          "sha256": "4b08b11a3e4a53136c7e007c0f601cad16d58ecf85b1c1bbbc151e09a8e106a4",
+          "sha256": "a5e7af217d4331b3d5536e71a721034a3d7fb1311c879832d488b1f49badc1d0",
           "source": "agents/roles/methodology-maintenance/methodology-maintainer.role.yaml"
         },
         {
@@ -2006,7 +2006,7 @@
             "route-documentation-work",
             "codex-harness-directives"
           ],
-          "sha256": "03620ebf7c3970d84c6d6510929bd8b40246002cdea0fe79e4cb6f98aa87df1b",
+          "sha256": "9aa1296742e07192d4a563e42e6eff5642d1bf2cbfe2694fc77c6cd987fa35b7",
           "source": "agents/roles/project-setup/project-bootstrapper.role.yaml"
         },
         {
@@ -2040,7 +2040,7 @@
             "verify-documentation-page",
             "codex-harness-directives"
           ],
-          "sha256": "b91ec4a865ce7aabeb5fed55bf53799f22781fe66fc988132f1d618eb6709446",
+          "sha256": "e056ef5f647c394e79d3f6d1c227211f90bb1dbaae4b402e3b80028cb182f9c1",
           "source": "agents/roles/project-setup/project-configurator.role.yaml"
         },
         {
@@ -2071,7 +2071,7 @@
             "structured-design",
             "codex-harness-directives"
           ],
-          "sha256": "64a863b05a118dfe1639c636625a50fdba1d6143cad76e2fa94dfd3ffb553eef",
+          "sha256": "e776aad82c8e92826eb04ac706b48502a8d9d909825304486a7dca43d5145a71",
           "source": "agents/roles/project-setup/project-organiser.role.yaml"
         },
         {
@@ -2102,7 +2102,7 @@
             "project-wiki",
             "codex-harness-directives"
           ],
-          "sha256": "bfbdca284c2eb0596bd03440a2505d540c54f97c53de5d92623049794fbf2dec",
+          "sha256": "da0f9c46549fc02b6d8d107e273439a416c18ccac52f203e1af09431307a308b",
           "source": "agents/roles/wiki-activities/wiki-architect.role.yaml"
         },
         {
@@ -2159,7 +2159,7 @@
             "verify-documentation-page",
             "codex-harness-directives"
           ],
-          "sha256": "80cd228198d193ac604ef37781591a86e939775c20f09bc4793968565ba2c7fd",
+          "sha256": "ea2067e221f479cd83498dd9a9208cb7d885505b9cedc4f7890a51f63f363769",
           "source": "agents/roles/wiki-activities/wiki-artifact-reviewer.role.yaml"
         },
         {
@@ -2191,7 +2191,7 @@
             "project-wiki-topic-write",
             "codex-harness-directives"
           ],
-          "sha256": "ce34b932fa5c32ba5777a5863e9e2dcff0a1321ce7b48af8dfee738809fd6226",
+          "sha256": "6b6d69d920bb7731759bd13487e31fccf51e48ec36e45463795277fa624ac731",
           "source": "agents/roles/wiki-activities/wiki-ingester.role.yaml"
         },
         {
@@ -2221,7 +2221,7 @@
             "ste-technical-writing",
             "project-wiki-query"
           ],
-          "sha256": "3b78e634c325c2559efdcb96dba24394de9bbbd7190776a2047dd7d2172b5607",
+          "sha256": "1e57b72cd03d080f06f669c51f5fb5c8872f459b8aa9942745a0f58219be0741",
           "source": "agents/roles/wiki-activities/wiki-query-responder.role.yaml"
         },
         {
@@ -2253,7 +2253,7 @@
             "project-wiki-research",
             "codex-harness-directives"
           ],
-          "sha256": "05a79da1e3d8623bec2aad8e80805acaf937546d90f9a223324415da4cc8b45c",
+          "sha256": "04feb27211c1ae2cbc000032de7b4eee762175c777a4e91e437d9fe9f3cb9287",
           "source": "agents/roles/wiki-activities/wiki-researcher.role.yaml"
         },
         {
@@ -2285,7 +2285,7 @@
             "project-wiki",
             "codex-harness-directives"
           ],
-          "sha256": "c655fd6f49df7e547b1b2f42f4c6477bbaeefa5ef609370f3464c15e528accef",
+          "sha256": "c16b584519475c8a0b0c3d3ad69ba649efdbefeecddcae7eb4e447ee3fdb91b6",
           "source": "agents/roles/wiki-activities/wiki-source-collector.role.yaml"
         },
         {
@@ -2340,7 +2340,7 @@
             "ste-technical-writing",
             "project-wiki-topic-verify"
           ],
-          "sha256": "b84b6a8ecd856f4eb28ef969b385f1dd8e2c04aabe63663dacdead23ed39601d",
+          "sha256": "79c373d604cfa999ea62f3e29ecfd79eecba1d9317e90515e1783320f7f82d47",
           "source": "agents/roles/wiki-activities/wiki-topic-verifier.role.yaml"
         },
         {
@@ -2372,7 +2372,7 @@
             "project-wiki-topic-write",
             "codex-harness-directives"
           ],
-          "sha256": "49dc6ad9e3839ef39312bc5fdfa8a77f403023947df9a78c4c22b83903c2dac5",
+          "sha256": "aef9b95abc17becbaaf479df3f3da868a716a9683f877e367977775c28637900",
           "source": "agents/roles/wiki-activities/wiki-writer.role.yaml"
         }
       ],
@@ -2380,7 +2380,7 @@
       "harnessSkills": [
         {
           "name": "codex-harness-directives",
-          "sha256": "a648c00d54926014ff065aef1d319fc8fd03f4fd4d6dd2b95fe24e047a2a3a6f",
+          "sha256": "dcc019fb83eea9fdc793b8ff4e3974a2b937b4ea1634a8bdb6cab657c589fdf0",
           "source": "adapters/codex/skills/codex-harness-directives"
         }
       ],

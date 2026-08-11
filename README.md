@@ -360,7 +360,7 @@ The installer configures Junie in the user or project mcp.json file. A generated
 
 Use the operating-system path separator when more than one root is required. Every model-supplied repository, project, worktree, verification, and validation path must be absolute and resolve beneath a configured root. A configured skill symlink may target another location only when that resolved target is also configured as a skill root.
 
-The server reuses one immutable catalog snapshot. After an explicit deployment updates installed skills, start a new host session or call skill_refresh. Normal routing must not reread skills already preloaded by the host. When selected skill content is not yet in context, load the complete selected set with one skill_load call and retrieve only required supporting resources with skill_resource_load.
+The server reuses one immutable catalog snapshot. After an explicit deployment updates installed skills, start a new host session or call skill_refresh. Normal routing must not reread skills already preloaded by the host. Generated Codex Agents direct the initial fixed skill set and each later request-specific selection through one skill_load call when the configured operation is available. They use supplied filesystem-backed SKILL.md paths only when the server operation is unavailable or cannot connect. Retrieve only required supporting resources with skill_resource_load.
 
 See the [Codex MCP configuration reference](https://learn.chatgpt.com/docs/extend/mcp) and [Junie MCP configuration reference](https://junie.jetbrains.com/docs/junie-cli-mcp-configuration.html) for the host-owned configuration surfaces.
 
