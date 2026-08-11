@@ -1,6 +1,6 @@
 # Minimize Collaboration Subagent Context Inheritance
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -59,6 +59,24 @@ None.
 ## Open Questions
 
 None.
+
+## Starting Handoff Evidence
+
+Starting Recorded At: 2026-08-11T01:01:51Z
+
+Coordinator: Dev Backlog Coordinator task 019fb057-1767-7ef2-b5fa-41f4417b20b3
+
+Normalized Objective: Make no inherited conversation history the default for collaboration subagents, require bounded self-contained assignments and concise launch announcements, preserve explicit Codex work-item task handoffs, and verify generated guidance without reintroducing routine progress messages.
+
+Launch Result: Not attempted
+
+Canonical Execution: None
+
+Last Contact At: None
+
+Next Reconciliation At: 2026-08-11T01:16:51Z
+
+Intended Root Role: Dev Orchestrator
 
 ## Governed Definition Approval
 
