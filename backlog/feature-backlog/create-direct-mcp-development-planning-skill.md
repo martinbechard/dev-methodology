@@ -1,6 +1,6 @@
 # Create Direct MCP Development Planning Skill
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -9,6 +9,20 @@ Provider: file
 Work Item ID: create-direct-mcp-development-planning-skill
 
 Completion: main-branch
+
+Owner: Dev Orchestrator
+
+Canonical Conversation: Not exposed by runtime
+
+Canonical Task: /root/direct_mcp_planning_orchestrator
+
+Parent Task: /root
+
+Branch: main
+
+Worktree: /Users/martinbechard/dev/dev-methodology
+
+Phase: Implementing
 
 ## Summary
 
@@ -134,5 +148,23 @@ Launch Result: Requested
 Canonical Execution: Pending
 
 Last Contact At: 2026-08-11T14:32:00Z
+
+Next Reconciliation At: 2026-08-11T14:47:00Z
+
+## Active Execution Evidence
+
+Condition Type: root-execution
+
+Owner: Dev Orchestrator
+
+Evidence: Canonical Codex task /root/direct_mcp_planning_orchestrator accepted the Starting reservation and is reconciling existing implementation evidence before bounded Dev Coder dispatch.
+
+Observed At: 2026-08-11T14:34:23Z
+
+Started At: 2026-08-11T14:34:23Z
+
+Deadline or Expires At: 2026-08-11T14:49:00Z
+
+Next Action: Inspect the existing change and dispatch the approved implementation scope to Dev Coder.
 
 Next Reconciliation At: 2026-08-11T14:47:00Z
