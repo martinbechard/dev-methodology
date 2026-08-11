@@ -121,6 +121,20 @@ Branch: codex/remediate-inherited-supported-test-baseline-failures
 
 Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/remediate-inherited-supported-test-baseline-failures
 
-Phase: Reproducing the authorized baseline
+Phase: Implementing reconciled historical repairs
 
 Accepted Execution Evidence: The exact opaque Work Item ID was acquired with activity work. A clean, non-shallow full-history worktree was created from observed current main f1490b80e856df9cc08d24027acd3252734aac18 before implementation. The dispatch SHA f1490b80d6df33fe92f88905e8b92cacb596967d was not present in the repository; the full observed main identity is retained here without substituting the historical candidate.
+
+## Baseline Reconciliation Evidence
+
+Reconciled At: 2026-08-11T22:55:27Z
+
+Runtime: CPython 3.11.13 in the clean full-history task worktree at f1490b80e856df9cc08d24027acd3252734aac18
+
+Historical Result: 69 of the authorized 118 identities were already resolved before implementation; 49 historical identities remained and are the complete mutation scope.
+
+Already Resolved Owners: All 60 Dev Orchestrator identities, all 8 Codex task-control identities, and 1 of 2 agent-skill evaluation documentation identities.
+
+Separate Current-Main Defects: The supported command stops before its 63-entry loop because scripts/audit-worktree-completion-links.py and scripts/test_audit_worktree_completion_links.py are unclassified. Direct loop execution then stops because stale Playwright exclusions name 13 undiscovered evals/agent-tests/test_runner.py cases. Independent owner execution also found nine new identities outside the authorized baseline: one bundle-content terminology-family case, one role-mutation public-lifecycle case, one STE shared-contract case, and six work-item-coordination Active Execution Evidence or reporting cases. None is authorized for correction by this item.
+
+Implementation Boundary: Correct only the 49 remaining historical identities and their exact authoritative causes. Preserve the separate current-main defects without exclusions, allowlists, normalization changes, or platform bypasses.
