@@ -1,6 +1,6 @@
 # Create Direct MCP Development Planning Skill
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -184,3 +184,15 @@ Disposition: Correct in the current delivery through the original Dev Coder, fol
 Coordinator Scope Resolution: scripts/test_agent_skill_evaluation_docs.py is a non-governed directly affected focused contract test already authorized by this work item's focused-test requirement. Change exactly that path for the 143-probe and two-missing-probe expectations. Do not widen any other scope.
 
 Recovery Resolution: The updated methodology skills and Agent definitions were installed at user scope, and the user restarted Codex on 2026-08-11. Ordinary redispatch is safe. A new execution must review the preserved changes, obtain a bounded Dev Coder implementation and TDD plan, and require Dev Architect acceptance before further source mutation.
+
+## Restart Starting Handoff Evidence
+
+Starting Recorded At: 2026-08-11T15:27:00Z
+
+Coordinator: Codex task 019fb057-1767-7ef2-b5fa-41f4417b20b3
+
+Normalized Objective: Resume the preserved direct MCP planning Skill candidate under the newly installed Agent definitions, review current changes, obtain a Dev Coder implementation and TDD plan, require Dev Architect acceptance, then complete the bounded correction and delivery.
+
+Launch Result: Requested
+
+Canonical Execution: Pending fresh post-restart execution
