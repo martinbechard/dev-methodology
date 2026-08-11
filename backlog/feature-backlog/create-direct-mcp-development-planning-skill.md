@@ -157,14 +157,14 @@ Condition Type: root-execution
 
 Owner: Dev Orchestrator
 
-Evidence: Canonical Codex task /root/direct_mcp_planning_orchestrator accepted the Starting reservation and is reconciling existing implementation evidence before bounded Dev Coder dispatch.
+Evidence: Canonical Codex task /root/direct_mcp_planning_orchestrator remains active. Main commit 670c273c removes the retired checker prerequisite and restores exact-manifest authorization for the bounded Dev Coder lane.
 
-Observed At: 2026-08-11T14:34:23Z
+Observed At: 2026-08-11T14:44:01Z
 
 Started At: 2026-08-11T14:34:23Z
 
-Deadline or Expires At: 2026-08-11T14:49:00Z
+Deadline or Expires At: 2026-08-11T14:59:00Z
 
-Next Action: Inspect the existing change and dispatch the approved implementation scope to Dev Coder.
+Next Action: Resume the original Dev Coder on current main and obtain one clean verified candidate commit.
 
-Next Reconciliation At: 2026-08-11T14:47:00Z
+Next Reconciliation At: 2026-08-11T14:56:00Z
