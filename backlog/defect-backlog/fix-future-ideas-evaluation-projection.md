@@ -1,6 +1,6 @@
 # Fix Future Ideas Evaluation Projection
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -10,7 +10,7 @@ Work Item ID: fix-future-ideas-evaluation-projection
 
 Completion: main-branch
 
-Owner: Unowned
+Owner: Unowned pending accepted execution
 
 ## Summary
 
@@ -53,3 +53,21 @@ None.
 ## Open Questions
 
 - Which authoritative scenario or projection input currently disagrees with the focused expectation?
+
+## Starting Handoff Evidence
+
+Starting Recorded At: 2026-08-11T20:20:49Z
+
+Coordinator: Codex task 019ff271-bb29-7cd2-95da-7b4b9766a1e6
+
+Normalized Objective: Reconcile the future-ideas-capture-and-promotion scenario source, generated evaluation projection, and focused expectation; correct only the authoritative mismatch and directly affected projection or assertion; then complete focused review, verification, main-branch delivery, provider closure, and cleanup.
+
+Intended Root Role: Dev Orchestrator
+
+Launch Result: Requested
+
+Canonical Execution: None
+
+Last Contact At: 2026-08-11T20:20:49Z
+
+Next Reconciliation At: 2026-08-11T20:35:49Z
