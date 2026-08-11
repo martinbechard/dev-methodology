@@ -1,8 +1,14 @@
 # Review and Correct Wiki Skills and Project Context Text
 
-Owner: Unowned
+Owner: Dev Orchestrator
 
-Status: Starting
+Status: Running
+
+Phase: Implementing
+
+Branch: codex/review-wiki-skills-and-project-context-text
+
+Worktree: /Users/martinbechard/.codex/worktrees/4f4b/dev-methodology
 
 Type: Feature
 
@@ -87,8 +93,24 @@ Intended Root Role: Dev Orchestrator
 
 Launch Result: Requested after this durable reservation
 
-Canonical Execution: None
+Canonical Execution: 019ff2f9-0863-7133-aac0-ff3cb81dab14
 
 Last Contact At: 2026-08-11T22:33:36Z
 
 Next Reconciliation At: 2026-08-11T22:48:36Z
+
+## Running Execution Evidence
+
+Started At: 2026-08-11T22:38:30Z
+
+Canonical Conversation: 019ff2f9-0863-7133-aac0-ff3cb81dab14
+
+Codex Task ID: 019ff2f9-0863-7133-aac0-ff3cb81dab14
+
+Conversation ID: 019ff2f9-0863-7133-aac0-ff3cb81dab14
+
+Root Role: Dev Orchestrator
+
+Parent Task ID: 019ff26f-25d0-7381-88f7-74d52717ff59
+
+Accepted Execution Evidence: The delegated canonical root execution acquired the exact Work Item ID with activity work, adopted the isolated task worktree at the dispatch baseline, created the dedicated branch, and accepted responsibility for implementation, review, verification, main-branch delivery, provider closure, and cleanup.
