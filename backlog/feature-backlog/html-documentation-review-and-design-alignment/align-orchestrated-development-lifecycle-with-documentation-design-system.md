@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: Blocked
+Status: Ready
 
 Type: Feature
 
@@ -53,11 +53,7 @@ Target page: design/orchestrated-development-lifecycle.html
 
 ## Dependencies
 
-- review-orchestrated-development-lifecycle-text
-
-Blocker owner: Work Item review-orchestrated-development-lifecycle-text.
-
-Blocked to Ready condition: review-orchestrated-development-lifecycle-text is Completed with corrected content, fresh independent acceptance, and an immutable content baseline for design/orchestrated-development-lifecycle.html.
+- Satisfied: review-orchestrated-development-lifecycle-text completed on main at immutable content baseline `81c430e04d3f628ceae9a7a521d43f6ea9e2371d` with fresh independent acceptance and verification.
 
 ## Verification
 
@@ -77,3 +73,4 @@ Blocked to Ready condition: review-orchestrated-development-lifecycle-text is Co
 
 - This item must not start before its page-specific text review is Completed.
 - Creation of this work item does not dispatch it while backlog crisis recovery remains active.
+- Dependency reconciliation recorded Ready at 2026-08-11T22:10:25Z. This notification does not dispatch or perform the design-system migration.
