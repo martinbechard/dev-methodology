@@ -1,10 +1,10 @@
 # Review and Enforce Read-Only Reviewer Runtime Access
 
-Status: Running
+Status: Completed
 
-Owner: Dev Orchestrator task 019ff2f9-085e-7202-8099-8f35425278a0
+Owner: Unowned
 
-Phase: Preserved candidate review and verification
+Phase: Completed on main
 
 Type: Feature
 
@@ -236,3 +236,33 @@ Preserved Candidate: 08554484859c0bdb66d83ef973266f6765e49e58
 Started At Evidence: The configured helper returned SHARED_CHECKOUT_ACQUIRED for exact Work Item ID review-reviewer-runtime-permissions-and-artifact-boundaries with activity work at 2026-08-11T23:15:49.635926Z. The clean preserved worktree remained at candidate 08554484859c0bdb66d83ef973266f6765e49e58.
 
 Accepted Execution Evidence: The same canonical Dev Orchestrator accepted the durable Starting reservation at main commit 0288eb0b5de86f77c0457dbcffefeefd49bb55fc under the user clarification recorded in provider commit 7f5eec27. Reviewers retain zero mutation authority by instruction and role division; inherited tool presence is not itself a failure. Exact current overlap reconciliation found no live claim or declared baseline-remediation scope on scripts/install-skills.py or scripts/test_install_skills.py.
+
+## Completion Evidence
+
+Completed At: 2026-08-11T23:22:59Z
+
+Lifecycle Disposition: Completed
+
+Completed Provider Reference: backlog/completed-backlog/features/review-reviewer-runtime-permissions-and-artifact-boundaries.md
+
+Accepted Source Commit: 08554484859c0bdb66d83ef973266f6765e49e58 on branch codex/reviewer-runtime-permissions-019ff2f9.
+
+Main Integration Commit: 538c9420896dacf520c04175d3091e01bc478edb. The reviewed two-path candidate was replayed onto current main and both integrated files compare byte-for-byte with the accepted source commit.
+
+Delivered Change: Project-scope Codex installation now prepends the selected project root to configured reference roots while preserving user-scope behavior and explicit workspace-root precedence. No reviewer role definition, generated adapter, producer sandbox, or inherited tool inventory was changed.
+
+Independent Review: A fresh Dev Code Reviewer returned GOOD with no findings after checking project-root ordering, user-scope behavior, explicit workspace independence, portability, focused tests, and diff hygiene. The reviewer performed no artifact, provider, claim, Git, task, branch, worktree, integration, or cross-task mutation.
+
+Independent Verification: A fresh Dev Verifier returned READY. The three focused terminology-reference tests passed, the complete scripts.test_install_skills module passed all 89 tests, Git diff validation passed, the candidate worktree was clean, and the verifier performed no mutation.
+
+Integrated Verification: A clean temporary clone at integration commit 538c9420896dacf520c04175d3091e01bc478edb passed the same three focused tests and all 89 installer tests. Git diff validation and clean-status checks passed. The integrated scripts/install-skills.py and scripts/test_install_skills.py are byte-equivalent to candidate 08554484859c0bdb66d83ef973266f6765e49e58.
+
+Authority Evidence: Exact-path reviewer pilots read repository files and invoked the configured read-only reference operation without producing mutation side effects. Under the durable user clarification in provider commit 7f5eec27, inherited tool presence is not a failure; reviewer zero-write behavior remains an instruction and role-division boundary.
+
+Overlap Reconciliation: Before source review and again before integration, no live claim or accepted baseline-remediation path overlapped scripts/install-skills.py or scripts/test_install_skills.py. Deferred conceptual roles, generated adapters, and shared runtime-policy tests were not changed.
+
+Primary Checkout Preservation: The unrelated modification scripts/test_audit_worktree_completion_links.py remained byte-for-byte and diff-for-diff unchanged. Its file SHA-256 remained 320e038708924aa76df21cf8055319a4756294b48462a32c3c53ce4e2f5bab7f and its binary-diff SHA-256 remained a5c02982c25be424220b44df4d9052250f22fc7c9049bd86e4eb7daa590ef66f before and after integration.
+
+Claim Evidence: Work claim review-reviewer-runtime-permissions-work-review-019ff2f9 was released with handoff after verification. Exact integration-path claim review-reviewer-runtime-permissions-main-integration-019ff2f9 was released after clean-main verification. Terminal update claim review-reviewer-runtime-permissions-terminal-update-019ff2f9 and exact provider-path claim review-reviewer-runtime-permissions-terminal-paths-019ff2f9 own this archive transaction and are released after its commit.
+
+Cleanup Eligibility: The isolated worktree is clean at accepted candidate 08554484859c0bdb66d83ef973266f6765e49e58. After this terminal provider commit, the worktree and source branch may be removed because the complete accepted two-path content is preserved on main at integration commit 538c9420896dacf520c04175d3091e01bc478edb and the source-to-integration mapping is durable here.
