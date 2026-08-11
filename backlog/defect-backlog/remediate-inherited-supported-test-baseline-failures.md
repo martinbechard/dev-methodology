@@ -121,7 +121,7 @@ Branch: codex/remediate-inherited-supported-test-baseline-failures
 
 Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/remediate-inherited-supported-test-baseline-failures
 
-Phase: Implementing reconciled historical repairs
+Phase: Reviewing candidate 84861e84eca27c2dd25ef9238401834fca5418b7
 
 Accepted Execution Evidence: The exact opaque Work Item ID was acquired with activity work. A clean, non-shallow full-history worktree was created from observed current main f1490b80e856df9cc08d24027acd3252734aac18 before implementation. The dispatch SHA f1490b80d6df33fe92f88905e8b92cacb596967d was not present in the repository; the full observed main identity is retained here without substituting the historical candidate.
 
@@ -138,3 +138,19 @@ Already Resolved Owners: All 60 Dev Orchestrator identities, all 8 Codex task-co
 Separate Current-Main Defects: The supported command stops before its 63-entry loop because scripts/audit-worktree-completion-links.py and scripts/test_audit_worktree_completion_links.py are unclassified. Direct loop execution then stops because stale Playwright exclusions name 13 undiscovered evals/agent-tests/test_runner.py cases. Independent owner execution also found nine new identities outside the authorized baseline: one bundle-content terminology-family case, one role-mutation public-lifecycle case, one STE shared-contract case, and six work-item-coordination Active Execution Evidence or reporting cases. None is authorized for correction by this item.
 
 Implementation Boundary: Correct only the 49 remaining historical identities and their exact authoritative causes. Preserve the separate current-main defects without exclusions, allowlists, normalization changes, or platform bypasses.
+
+## Candidate Evidence
+
+Accepted Candidate Commit: 84861e84eca27c2dd25ef9238401834fca5418b7
+
+Candidate Recorded At: 2026-08-11T23:26:59Z
+
+Candidate State: Clean isolated worktree on codex/remediate-inherited-supported-test-baseline-failures
+
+Historical Verification: All 16 owner modules ran through the comparator child entry point, covering 809 tests. All 118 historical identities are absent and all 16 resolved owner rows remain. The nine separately classified current identities remain visible.
+
+Focused Verification: Resource claim 141 of 141 passed; Project Bootstrapper 24 of 24 passed; the core fixture group passed 91 with 4 skips; JSON and text report checks passed; documentation generation check passed; comparator 16-owner, synthetic-new-identity, and cause-drift checks passed.
+
+Known External Gate Failures: The complete supported entry point still stops on the two unclassified audit-worktree paths. The direct supported loop still encounters the stale Playwright exclusion identities. These are preserved as separate current-main defects and were not changed by the candidate.
+
+Overlap Handoff: Reviewer-runtime task 019ff2f9-085e-7202-8099-8f35425278a0 received commit 84861e84eca27c2dd25ef9238401834fca5418b7 and the exact scripts/test_role_mutation_policy.py content boundary before beginning overlapping mutation.
