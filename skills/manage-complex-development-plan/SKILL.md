@@ -1,6 +1,6 @@
 ---
 name: manage-complex-development-plan
-description: Maintain a task-owned JSON and HTML execution plan for complex development through deterministic mcp-agent-ops hierarchy commands.
+description: Create and update an implementation hierarchy through configured MCP plan operations, keeping its authoritative JSON and rendered HTML current.
 metadata:
   category: development-practice
 ---
@@ -24,232 +24,85 @@ Task-ID-Evidence: runtime-supplied
 
 # Manage Complex Development Plan
 
-Use one task-owned hierarchy plan to keep a complex delivery visible while its decomposition changes. The JSON file is authoritative. Its sibling HTML file is a synchronized read-only projection.
+Use this Skill when Dev Coder's assignment requires an implementation plan. Dev Coder owns the plan semantics and decomposition. The configured MCP operations own persistence and rendering. A user instruction to code without planning bypasses plan creation.
 
-This plan is an execution aid. It is not a provider record, work-item queue, source-control record, review verdict, verification result, or Commit result.
+The returned JSON plan is authoritative, and its same-named HTML file is the synchronized rendering. The plan is an implementation aid, not a provider record, work-item queue, review verdict, verification result, Commit result, or source-control record.
 
-## Complexity Gate
+## Required Capabilities
 
-Create a plan when at least one of these conditions is true:
+Before creating a plan, confirm that all three capabilities are available:
 
-- The initial decomposition has four or more actionable tasks and at least one dependency between them.
-- The delivery needs three or more independently owned contribution lanes.
-- The delivery is expected to cross a task resumption or more than one bounded review, correction, or integration cycle.
-- Material discovery can add or reorder work after the first contributor dispatch.
+- The configured MCP `create_hierarchy_plan` operation.
+- A runtime file-read capability that can read the returned JSON plan and its sibling HTML.
+- The configured MCP `update_hierarchy_plan` operation.
 
-Do not create a plan for one routine contribution lane with its ordinary review, verification, and Commit steps. Do not count those standard gates alone as complexity.
+If creation, plan reading, or targeted update is unavailable, stop with `PLAN_TOOL_UNAVAILABLE` and name the missing capability. Do not install or import a package, call server code directly, create another adapter, or use a local substitute.
 
-## Helper Boundary
+## Create The Plan
 
-Use the repository-owned scripts/plan.py helper in this skill package. Run its commands directly. Never improvise Python snippets, ad hoc shell mutation logic, or alternate hierarchy wrappers.
+Turn the bounded implementation and TDD plan into the `source` hierarchy accepted by `create_hierarchy_plan`. Keep requirements, dependencies, implementation tasks, and focused verification visible without copying the full provider record.
 
-The helper imports and signature-checks these public package APIs:
-
-- mcp_agent_ops.hierarchy.create_hierarchy_plan
-- mcp_agent_ops.hierarchy.update_hierarchy_plan
-- mcp_agent_ops.hierarchy.render_hierarchy_html
-
-If the current Python cannot import the package, the helper can re-exec through the discovered mcp-agent-ops executable interpreter. If capabilities remain unavailable, stop and report CAPABILITY_UNAVAILABLE. Do not install, change, release, or emulate mcp-agent-ops.
-
-Run the capability check before plan initialization:
-
-```bash
-python3 [skill-root]/scripts/plan.py capabilities
-```
-
-Every completed helper command writes one JSON result. Decide from outcome, not only from the process exit code.
-
-## Task-Owned Paths
-
-Supply a canonical absolute workspace path, a safe root task ID, and a safe plan name. The helper fixes the plan location to this project-relative root:
-
-```text
-.codex/plans/<root-task-id>/
-├── <plan-name>.json
-├── <plan-name>.html
-├── .history/<plan-name>/
-└── .locks/<plan-name>.lock
-```
-
-The history directory is bounded operational evidence. It is not a backlog or provider ledger. Before every create, update, or reconcile effect, the helper creates an operation directory, writes a pending operation record, and preserves the available pre-mutation files. A missing, malformed, pending, or otherwise nonterminal result remains unresolved and is never silently skipped or pruned. The helper retains at most 20 operation directories by pruning only terminal history when space is needed. Explicit final removal is immediate and does not create a resumable operation record.
-
-The lock file coordinates one selected plan across processes. The helper holds its standard-library POSIX or Windows lock from inspection and target validation through package dispatch, artifact checks, and terminal result persistence. LOCK_TIMEOUT means another writer retained that boundary; do not bypass the lock or improvise a mutation. An unsupported lock backend fails with CAPABILITY_UNAVAILABLE.
-
-Keep the complete plan root ignored as operational state. Do not commit the plan, copy it into backlog, or use it to control provider lifecycle.
-
-## Plan Initialization
-
-Initialize the plan before detailed decomposition or contributor dispatch. Start with the accepted objective and the coarse tasks that justify the complexity gate. Add detailed work as discovery proceeds.
-
-Create a temporary definition file inside the absolute workspace with this schema:
+This generic source produces the requested display numbering 1, 2, 2.1, 2.2, and 3. A single outer mapping supplies the root label without adding another numbered level.
 
 ```json
 {
-  "schema": "dev-methodology-complex-plan-input",
-  "version": 1,
-  "title": "Delivery plan",
-  "objective": "Deliver the accepted outcome",
-  "tasks": [
+  "Development plan": [
+    "First item",
     {
-      "title": "Discovery",
-      "dependsOn": [],
-      "evidence": ["work-item:example"],
-      "complete": false,
-      "children": []
+      "Second item": [
+        "First child of the second item",
+        "Second child of the second item"
+      ]
     },
-    {
-      "title": "Implementation",
-      "dependsOn": ["Discovery"],
-      "evidence": [],
-      "complete": false,
-      "children": []
-    }
+    "Third item"
   ]
 }
 ```
 
-Use ordinary structured file editing for the definition. Do not assemble it with shell text or a Python snippet. Keep references concise. Exclude credentials, personal information, unauthorized proprietary content, prompt bodies, and unnecessary source payloads.
+Invoke the configured MCP `create_hierarchy_plan` operation directly with:
 
-Do not use `Dependency reference: ` or `Evidence reference: ` at the start of an actionable task title. The helper reserves both prefixes for complete structural reference leaves and rejects them in task definitions and discovered child or peer text.
+- `source`: the inline mapping, sequence, JSON, YAML, or authorized absolute source path.
+- `output_filename`: a base `.html` filename; the operation creates same-named JSON and HTML files.
+- `title`: the plan title, such as `Development plan`.
+- `output_folder`: an authorized absolute workspace folder when the configured default is not appropriate.
+- Optional `theme`, `themes_folder`, or `completed_items` only when the assignment requires them.
 
-Create the canonical plan through the helper:
+The operation returns the authoritative JSON plan path. Read that JSON and its `htmlFilename` sibling. Confirm that both artifacts exist, their root and items match the intended hierarchy, and the rendered numbering is 1, 2, 2.1, 2.2, and 3. Return the authoritative JSON plan path to Dev Orchestrator so plan review and later progress tracking use this same record.
 
-```bash
-python3 [skill-root]/scripts/plan.py \
-  --workspace /absolute/workspace \
-  --root-task-id task-123 \
-  --plan-name delivery \
-  create --definition /absolute/workspace/plan-definition.json
+## Apply One Targeted Update
+
+Read the current authoritative JSON plan before every update. Resolve the intended item from the current state by an exact dotted path or an exact unique title. When a title is duplicated or structural insertion may have shifted numbering, reread and use the current dotted path; never guess a target.
+
+Invoke the configured MCP `update_hierarchy_plan` operation directly with the absolute `plan_path`, the resolved `target`, and exactly one of `completed`, `text`, `add_child`, `replace_children`, or `add_peer_after`. Each of these is one separate valid call:
+
+```text
+completed=true
+completed=false
+text="Revised item"
+add_child="Discovered child"
+replace_children=["First replacement", "Second replacement"]
+add_peer_after="Discovered peer"
 ```
 
-The helper calls create_hierarchy_plan and returns CREATED only when the canonical JSON and sibling HTML are synchronized. Remove the temporary definition after CREATED. Preserve it when creation is uncertain.
+Use `add_child` for newly discovered work within the target and `add_peer_after` for a newly discovered adjacent workstream. Use `replace_children` only when the accepted decomposition deliberately replaces that target's children. Do not rewrite the full plan to conceal when work was discovered.
 
-## Plan Updates
+Set `completed=true` only when completed development evidence supports the item. Set `completed=false` when authoritative evidence reopens it. Parent completion may cascade when every child completes; treat the operation's `automatically_completed` and `next_task` fields as current navigation results, not as lifecycle authority.
 
-Update the plan when discovery changes the decomposition and when authoritative evidence completes a task. Each update invocation calls update_hierarchy_plan exactly once and accepts exactly one mutation.
+After every update:
 
-Prefer an exact unique item title. Structural insertions can shift dotted paths, so prefer unique titles after any child or peer insertion. Before every dotted target, reread the current authoritative JSON and supply the title currently found at that path through `--expected-title`. The helper fails without mutation when the expected title is absent or the path has shifted.
+1. Require `success=true` and confirm the returned `plan_path` is the selected authoritative plan.
+2. Reread the authoritative JSON plan and its sibling HTML.
+3. Confirm the requested field or structure changed at the resolved target and that unaffected items remain unchanged from the pre-update read.
+4. Confirm the HTML names the current items, numbering, text, and completion state represented by the JSON so the synchronized current artifact/result reflects the update.
 
-Mark one item complete:
+If the result is ambiguous, the target no longer resolves, either artifact cannot be read, or the intended and unaffected-state checks fail, stop without retrying a guessed mutation. Report the observed state and leave the authoritative plan for explicit reconciliation.
 
-```bash
-python3 [skill-root]/scripts/plan.py \
-  --workspace /absolute/workspace \
-  --root-task-id task-123 \
-  --plan-name delivery \
-  update --target 2 --expected-title Discovery --complete
-```
+## Shared Plan Progress
 
-Add one discovered subtask beneath an existing task:
+Dev Orchestrator may require this plan, compare it with the bounded assignment, and follow material progress. It must inspect the authoritative path returned by Dev Coder without creating a second plan record. Provider lifecycle, accepted commits, independent review, verification, integration, Persistence, and Commit evidence remain authoritative when they differ from plan state.
 
-```bash
-python3 [skill-root]/scripts/plan.py \
-  --workspace /absolute/workspace \
-  --root-task-id task-123 \
-  --plan-name delivery \
-  update --target Discovery --add-child "Verify the discovered boundary"
-```
-
-Add one discovered peer workstream after an existing task:
-
-```bash
-python3 [skill-root]/scripts/plan.py \
-  --workspace /absolute/workspace \
-  --root-task-id task-123 \
-  --plan-name delivery \
-  update --target Implementation --add-peer-after "Document the new interface"
-```
-
-Do not rewrite completed items or prior structure to make discovery appear linear. Add the new child or peer at the point where it became necessary. Use separate invocations for separate discoveries.
-
-## Authority And Cadence
-
-Update the plan after each material discovery, accepted contribution, independent review result, verification result, integration result, and Commit or Persistence transition that changes what remains actionable.
-
-Provider lifecycle, work-item state, Git commits, independent review, verification, and the effective Commit result have precedence over plan state. If they differ, reconcile the plan to those sources. Never change an authoritative source to match the plan.
-
-Record concise evidence references in task text or the initial definition. Do not duplicate the complete provider record or review report.
-
-## Inspection And Recovery
-
-Inspect without changing the JSON or HTML artifacts:
-
-```bash
-python3 [skill-root]/scripts/plan.py \
-  --workspace /absolute/workspace \
-  --root-task-id task-123 \
-  --plan-name delivery \
-  inspect
-```
-
-Inspect parses the authoritative JSON and uses render_hierarchy_html without an output file. It compares the rendered bytes with the sibling HTML and reads every operation record without changing either artifact.
-
-- SYNCED means the files match and no operation is unresolved.
-- ABSENT means neither selected artifact exists and no operation is unresolved, so create can retry.
-- DRIFT means valid authoritative JSON has missing or different sibling HTML.
-- RECOVERY_REQUIRED means at least one operation is unresolved, even when JSON and HTML already synchronize or both are absent.
-- ORPHANED_HTML means HTML exists without JSON and without a pending operation that authorizes recovery.
-- INVALID_PLAN means the JSON cannot be accepted as the hierarchy-plan authority.
-
-Recoverable inspect outcomes include artifact hashes, artifact state, unresolved operation details, and a recovery token bound to that exact state. INVALID_PLAN is instead a structured non-recoverable error and does not promise those recovery-envelope fields. For valid JSON with ordinary HTML drift, run the deterministic reconcile command with the current token. It records its own pending operation before rebuilding only the sibling HTML through render_hierarchy_html.
-
-```bash
-python3 [skill-root]/scripts/plan.py \
-  --workspace /absolute/workspace \
-  --root-task-id task-123 \
-  --plan-name delivery \
-  reconcile --recovery-token <token-from-inspect>
-```
-
-An exception after a create, update, or reconcile effect may have started returns UNCERTAIN_CREATE, UNCERTAIN_UPDATE, or UNCERTAIN_RECONCILIATION. A process stop can leave only the earlier pending record. Do not repeat the interrupted command, even when the artifacts appear synchronized. Run inspect, then pass its current recovery token to reconcile. A stale token fails before mutation; inspect again instead of guessing. Final removal is different: it never resumes automatically, and a later explicit remove invocation acts only on the then-current exact plan paths.
-
-```bash
-python3 [skill-root]/scripts/plan.py \
-  --workspace /absolute/workspace \
-  --root-task-id task-123 \
-  --plan-name delivery \
-  reconcile --recovery-token <token-from-inspect>
-```
-
-Reconcile excludes only its own current pending record while rechecking the recovery inputs. Before it settles a prior operation or changes a canonical artifact, it persists a prepared decision bound to the operation records, result records, snapshots, canonical artifact hashes, and expected rendered output. A later reconcile resumes that exact prepared decision after another interruption. It uses these deterministic recovery outcomes:
-
-- Valid JSON is retained as authority and HTML is rendered to match it. This covers JSON-only and synchronized interrupted creates, updates, and reconciliations.
-- An interrupted create with HTML only or without valid JSON is cleaned to confirmed absence so create can retry.
-- Cleanup is excluded from prepared recovery decisions. It has no cleanup recovery token, saved cleanup fingerprint, or automatic resume path.
-- Invalid or absent JSON for an interrupted update or reconciliation is restored only from a valid helper-owned pre-mutation JSON snapshot. Without one, recovery stops.
-
-Reconcile marks prior operations terminal only after it has confirmed synchronized retention or complete absence, then marks its own record terminal. Stop when JSON authority, snapshot validity, or synchronization cannot be established. Never delete partial artifacts or edit operation evidence by hand.
-
-## Final Reconciliation And Retention
-
-Before finalization, reconcile every plan item with provider state, accepted commits, independent review, verification, integration, and Commit evidence. Mark an item complete only when its authoritative evidence supports completion. Run inspect after the final update.
-
-Finalize with an explicit retention choice. The helper never removes artifacts by default.
-
-```bash
-python3 [skill-root]/scripts/plan.py \
-  --workspace /absolute/workspace \
-  --root-task-id task-123 \
-  --plan-name delivery \
-  finalize --retention keep
-```
-
-Use keep while the task can resume, review is pending, or local plan evidence is still needed. Use remove only after terminal provider and Commit evidence is secured, required review and verification are complete, and project policy does not require local retention.
-
-```bash
-python3 [skill-root]/scripts/plan.py \
-  --workspace /absolute/workspace \
-  --root-task-id task-123 \
-  --plan-name delivery \
-  finalize --retention remove
-```
-
-The remove choice deletes only the selected sibling HTML first, the selected plan JSON last, and then its bounded operational history after confirmed absence. It retains pending evidence until the absence result is terminal. It never changes provider state, another plan, source-control history, or delivery evidence.
-
-Finalization fails closed when an actionable item is incomplete, the artifacts drift, or any uncertain operation remains unresolved. Both reserved structural prefixes remain invalid for incomplete or parent items, so actionable text cannot be hidden from the completion check.
-
-Removal is explicit, immediate, and idempotent. It acts only on the selected task-owned JSON plan, sibling HTML, and bounded local history. On a permission or I/O failure, the helper returns CLEANUP_FAILED with every selected path that remains. It does not infer completion or resume automatically. Correct the reported filesystem problem and invoke finalize with retention remove again; that invocation acts on the current exact paths.
+Update the same plan after a material discovery or completed development result changes the actionable decomposition. Preserve completed work and unaffected structure.
 
 ## Result
 
-Return the complexity-gate decision, fixed task-owned paths, helper outcomes, before-and-after hashes for mutations, discovery additions, reconciliation evidence, final authority comparison, and explicit retention result.
+Return `CREATED`, `UPDATED`, or `PLAN_TOOL_UNAVAILABLE`; the authoritative JSON plan path; the invoked operation and target when applicable; the intended-change and unaffected-item checks; the current JSON and HTML check; discovered child or peer additions; and the development evidence supporting completion changes.

@@ -4,14 +4,18 @@ interface:
   # User-facing name shown in Codex skill surfaces.
   display_name: Manage Complex Development Plan
   # User-facing summary shown in Codex skill surfaces.
-  short_description: Maintain a task-owned JSON and HTML execution plan for complex development through deterministic...
+  short_description: Create and update an implementation hierarchy through configured MCP plan operations, keeping...
   # Prompt Codex can use when launching this skill directly.
-  default_prompt: Use $manage-complex-development-plan to maintain a task-owned JSON and synchronized HTML plan for qualifying complex development work.
+  default_prompt: Use $manage-complex-development-plan to create and update the implementation plan through the configured hierarchy MCP operations.
 
 # Optional invocation policy placeholder.
 # policy:
 #   allow_implicit_invocation: false
 
-# Optional tool dependency placeholder.
-# dependencies:
-#   tools: []
+# Tool dependencies Codex should install or wire for this skill.
+dependencies:
+  tools:
+    - type: mcp
+      value: mcp-agent-ops
+      description: Creates and updates the authoritative hierarchy plan through create_hierarchy_plan
+        and update_hierarchy_plan.

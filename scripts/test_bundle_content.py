@@ -2773,104 +2773,72 @@ class BundleContentTests(unittest.TestCase):
                 self.assertTrue(openai_metadata_path(skill_name).is_file())
 
     def test_complex_development_plan_uses_hierarchy_apis_and_routes_conditionally(self) -> None:
-        """Complex orchestration uses one task-owned plan without becoming a shadow queue."""
+        """Development planning uses the configured hierarchy MCP without a local helper."""
         skill_root = SKILLS_ROOT / "manage-complex-development-plan"
         skill_path = skill_root / "SKILL.md"
         helper_path = skill_root / "scripts" / "plan.py"
         helper_test_path = skill_root / "scripts" / "test_plan_helper.py"
         skill_text = skill_path.read_text(encoding="utf-8")
-        helper_text = helper_path.read_text(encoding="utf-8")
         frontmatter = load_yaml_object_from_frontmatter(skill_path)
+        metadata = load_yaml_object(skill_root / "agents" / "openai.yaml")
 
         self.assertEqual("manage-complex-development-plan", frontmatter["name"])
         self.assertEqual("development-practice", frontmatter["metadata"]["category"])
-        self.assertTrue(helper_path.is_file())
-        self.assertTrue(helper_test_path.is_file())
-        for api_name in (
-            "create_hierarchy_plan",
-            "update_hierarchy_plan",
-            "render_hierarchy_html",
-        ):
+        self.assertFalse(helper_path.exists())
+        self.assertFalse(helper_test_path.exists())
+        for api_name in ("create_hierarchy_plan", "update_hierarchy_plan"):
             with self.subTest(api_name=api_name):
                 self.assertIn(api_name, skill_text)
-                self.assertIn(api_name, helper_text)
-        for command in (
-            "capabilities",
-            "create",
-            "update",
-            "inspect",
-            "reconcile",
-            "finalize",
-        ):
-            with self.subTest(command=command):
-                self.assertIn(f'add_parser("{command}")', helper_text)
+        self.assertEqual(
+            ["mcp-agent-ops"],
+            [tool["value"] for tool in metadata["dependencies"]["tools"]],
+        )
         for required_contract in (
-            ".codex/plans/<root-task-id>/",
-            "exactly one mutation",
-            "UNCERTAIN_CREATE",
-            "UNCERTAIN_UPDATE",
-            "CLEANUP_FAILED",
-            "missing, malformed, pending, or otherwise nonterminal",
-            "--recovery-token",
-            "--expected-title",
-            "--retention keep",
-            "--retention remove",
-            "Never improvise Python snippets",
+            '"Development plan"',
+            '"First item"',
+            '"Second item"',
+            '"First child of the second item"',
+            '"Second child of the second item"',
+            '"Third item"',
+            "1, 2, 2.1, 2.2, and 3",
+            "authoritative JSON plan path",
+            "exact dotted path or an exact unique title",
+            "exactly one of `completed`, `text`, `add_child`, `replace_children`, or `add_peer_after`",
+            "Read the current authoritative JSON plan before every update",
+            "Reread the authoritative JSON plan and its sibling HTML",
+            "unaffected items remain unchanged",
+            "completed development evidence",
+            "Do not install or import",
             "not a provider record",
         ):
             with self.subTest(required_contract=required_contract):
                 self.assertIn(required_contract, skill_text)
-        self.assertNotIn("FastMCP", skill_text)
-        self.assertNotIn("FastMCP", helper_text)
-        self.assertIn(".codex/", GITIGNORE_PATH.read_text(encoding="utf-8"))
-        for mutation_function, package_call in (
-            ("_create", "api.create_hierarchy_plan("),
-            ("_update", "api.update_hierarchy_plan("),
+        for mutation in (
+            "completed=true",
+            "completed=false",
+            'text="Revised item"',
+            'add_child="Discovered child"',
+            'replace_children=["First replacement", "Second replacement"]',
+            'add_peer_after="Discovered peer"',
         ):
-            with self.subTest(mutation_function=mutation_function):
-                function_start = helper_text.index(f"def {mutation_function}(")
-                function_end = helper_text.find("\ndef ", function_start + 1)
-                function_text = helper_text[
-                    function_start : function_end if function_end != -1 else None
-                ]
-                self.assertLess(
-                    function_text.index("_start_operation("),
-                    function_text.index(package_call),
-                )
-        finalize_start = helper_text.index("def _finalize(")
-        finalize_end = helper_text.index("\ndef ", finalize_start + 1)
-        finalize_text = helper_text[finalize_start:finalize_end]
-        self.assertIn("_cleanup_artifacts(context)", finalize_text)
-        self.assertNotIn("_start_operation(", finalize_text)
-        self.assertIn('"CLEANUP_FAILED"', finalize_text)
-        reconcile_start = helper_text.index("def _reconcile(")
-        reconcile_end = helper_text.index("\ndef ", reconcile_start + 1)
-        reconcile_text = helper_text[reconcile_start:reconcile_end]
-        self.assertLess(
-            reconcile_text.index("_start_operation("),
-            reconcile_text.index("_prepare_recovery_operation("),
+            with self.subTest(mutation=mutation):
+                self.assertIn(mutation, skill_text)
+
+        coder_role = load_yaml_object(
+            ROLES_ROOT / "dev-activities" / "dev-coder.role.yaml"
         )
-        self.assertLess(
-            reconcile_text.index("_prepare_recovery_operation("),
-            reconcile_text.index("_execute_recovery_decision("),
+        coder_skill_entries = {
+            next(iter(entry)): entry[next(iter(entry))]
+            for entry in coder_role["skills"]
+        }
+        self.assertIn("manage-complex-development-plan", coder_skill_entries)
+        self.assertIn(
+            "assignment requires an implementation plan",
+            coder_skill_entries["manage-complex-development-plan"]["condition"],
         )
-        execute_start = helper_text.index("def execute(")
-        execute_end = helper_text.find("\ndef ", execute_start + 1)
-        execute_text = helper_text[
-            execute_start : execute_end if execute_end != -1 else None
-        ]
-        self.assertIn("with _plan_lock(context):", execute_text)
-        for recovery_input in (
-            '"operation.json"',
-            '"result.json"',
-            '"before.json"',
-            '"before.html"',
-            '"expected_html_sha256"',
-        ):
-            self.assertIn(recovery_input, helper_text)
-        self.assertIn('reconcile.add_argument("--recovery-token")', helper_text)
-        self.assertIn('update.add_argument("--expected-title")', helper_text)
-        self.assertIn('"terminal": terminal', helper_text)
+        coder_text = json.dumps(coder_role, sort_keys=True)
+        self.assertIn("create_hierarchy_plan", coder_text)
+        self.assertIn("same authoritative hierarchy plan", coder_text)
 
         role = load_yaml_object(
             ROLES_ROOT / "dev-activities" / "dev-orchestrator.role.yaml"
@@ -2931,17 +2899,28 @@ class BundleContentTests(unittest.TestCase):
         discovery_step = next(
             step for step in workflow if "newly discovered subtask" in step
         )
-        self.assertIn("exactly one deterministic helper update", discovery_step)
+        self.assertIn("exactly one update_hierarchy_plan call", discovery_step)
         final_step = next(
-            step for step in workflow if "perform final reconciliation" in step
+            step for step in workflow if "final plan check" in step
         )
-        self.assertIn("Inspect JSON and HTML synchronization", final_step)
+        self.assertIn("same authoritative plan", final_step)
+        plan_creation_step = next(
+            step for step in workflow if "Direct Dev Coder" in step and "create_hierarchy_plan" in step
+        )
+        self.assertIn("Do not create a second plan record", plan_creation_step)
+        self.assertTrue(
+            any(
+                "create_hierarchy_plan, plan-read capability, or update_hierarchy_plan"
+                in item
+                for item in instructions["failureHandling"]
+            )
+        )
 
         completion = instructions["completion"]
         ready_contract = next(
             item for item in completion if item.startswith("Report READY only")
         )
-        self.assertIn("explicit retention result", ready_contract)
+        self.assertIn("same authoritative plan", ready_contract)
         completion_output = next(
             item
             for item in completion
@@ -2949,10 +2928,9 @@ class BundleContentTests(unittest.TestCase):
         )
         for field in (
             "gate result and reasons",
-            "helper outcomes",
+            "authoritative plan path",
             "discovery additions",
-            "final synchronization",
-            "retention result",
+            "final current-state check",
         ):
             self.assertIn(field, completion_output)
 
@@ -2963,11 +2941,9 @@ class BundleContentTests(unittest.TestCase):
         )
         for output_field in (
             "complexity-gate decision",
-            "task-owned plan paths",
-            "synchronization",
+            "authoritative plan path",
+            "current-state checks",
             "discovery updates",
-            "final reconciliation",
-            "explicit retention result",
             "without duplicating provider authority",
         ):
             self.assertIn(output_field, complex_plan_output)
@@ -2978,11 +2954,9 @@ class BundleContentTests(unittest.TestCase):
             if "discovery-sensitive" in example["purpose"]
         )
         for evidence in (
-            "CAPABILITIES_AVAILABLE",
-            "CREATED",
-            "UPDATED",
-            "SYNCED",
-            "FINALIZED",
+            "create_hierarchy_plan returned",
+            "update_hierarchy_plan succeeded",
+            "same authoritative JSON and HTML",
         ):
             self.assertIn(evidence, complex_example["plausibleResponse"])
         routine_example = next(
@@ -2996,25 +2970,65 @@ class BundleContentTests(unittest.TestCase):
             "at least four actionable tasks",
             "before detailed decomposition or contributor dispatch",
             "one child for a newly discovered subtask",
-            "final reconciliation",
-            "explicit keep or remove retention choice",
+            "without creating a second plan record",
+            "follow material progress",
             "provider lifecycle",
         ):
             with self.subTest(role_phrase=phrase):
                 self.assertIn(phrase, role_text)
 
-        for relative_path in (
-            Path("codex/agents/dev-orchestrator.toml"),
-            Path("claude/agents/dev-orchestrator.md"),
-            Path("gemini/agents/dev-orchestrator.md"),
-            Path("junie/agents/dev-orchestrator.md"),
+        for role_name in ("dev-coder", "dev-orchestrator"):
+            for relative_path in (
+                Path("codex/agents") / f"{role_name}.toml",
+                Path("claude/agents") / f"{role_name}.md",
+                Path("gemini/agents") / f"{role_name}.md",
+                Path("junie/agents") / f"{role_name}.md",
+            ):
+                adapter = GENERATED_ADAPTERS_ROOT / relative_path
+                with self.subTest(adapter=relative_path):
+                    self.assertIn(
+                        "manage-complex-development-plan",
+                        adapter.read_text(encoding="utf-8"),
+                    )
+
+        readme_text = README_PATH.read_text(encoding="utf-8")
+        self.assertIn("direct configured MCP hierarchy operations", readme_text)
+        probes = load_yaml_object(REPOSITORY_ROOT / "evals" / "skill-probes.yaml")[
+            "probes"
+        ]
+        plan_probe = next(
+            probe
+            for probe in probes
+            if probe["skill"] == "manage-complex-development-plan"
+        )
+        self.assertEqual("activation-and-behavior", plan_probe["evaluationKind"])
+        self.assertEqual("declared", plan_probe["coverageStatus"])
+        self.assertEqual(
+            {"dev-coder-happy", "dev-orchestrator-happy", "dev-orchestrator-boundary"},
+            set(plan_probe["scenarioAssociations"]),
+        )
+        for behavior in (
+            "create_hierarchy_plan",
+            "update_hierarchy_plan",
+            "one targeted mutation",
+            "unaffected items",
+            "without package import, installation, or a substitute",
         ):
-            adapter = GENERATED_ADAPTERS_ROOT / relative_path
-            with self.subTest(adapter=relative_path):
-                self.assertIn(
-                    "manage-complex-development-plan",
-                    adapter.read_text(encoding="utf-8"),
-                )
+            with self.subTest(probe_behavior=behavior):
+                self.assertIn(behavior, plan_probe["expectedBehavior"])
+        obsolete_scope = "\n".join((skill_text, coder_text, role_text, readme_text))
+        for obsolete_term in (
+            "scripts/plan.py",
+            "repository-owned helper",
+            "recovery token",
+            ".locks",
+            ".history",
+            "operation record",
+            "before-and-after hashes",
+            "mcp_agent_ops.hierarchy",
+        ):
+            with self.subTest(obsolete_term=obsolete_term):
+                self.assertNotIn(obsolete_term, obsolete_scope)
 
     def test_work_item_creation_interface_and_provider_names_are_canonical(self) -> None:
         """Creation uses one interface stem and provider implementations preserve it."""

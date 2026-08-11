@@ -1269,6 +1269,20 @@ probes:
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: typescript}
+  - id: probe-manage-complex-development-plan
+    skill: manage-complex-development-plan
+    source: skills/manage-complex-development-plan/SKILL.md
+    evaluationCategory: development-practice
+    evaluationKind: activation-and-behavior
+    activationCondition: Dev Coder is assigned an implementation plan, or Dev Orchestrator's complexity gate requires an externalized plan.
+    negativeCondition: The user explicitly directs coding without planning, or the assignment does not require an implementation plan.
+    expectedBehavior: Confirm configured create_hierarchy_plan, plan-read, and update_hierarchy_plan capabilities; turn Dev Coder's accepted decomposition into the numbered hierarchy source; call create_hierarchy_plan directly; return the authoritative JSON path; read current state before each update; call update_hierarchy_plan with one targeted mutation; reread JSON and HTML to prove the intended change and unaffected items; share that same plan with Dev Orchestrator; and stop clearly without package import, installation, or a substitute when a capability is unavailable.
+    judgePlan: {deterministicChecks: [skill-read-trace, operation-coverage, tool-authority, no-forbidden-mutation, output-contract-presence], modelRubric: workflow-quality}
+    scenarioAssociations: [dev-coder-happy, dev-orchestrator-happy, dev-orchestrator-boundary]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
   - id: probe-manage-future-ideas
     skill: manage-future-ideas
     source: skills/manage-future-ideas/SKILL.md

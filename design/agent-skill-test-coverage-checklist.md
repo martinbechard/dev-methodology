@@ -21,9 +21,9 @@ This page is generated from the live conceptual agent and skill inventories, all
 ## Summary
 
 - [x] 33 conceptual agents and 145 bundled skills have structural coverage.
-- [x] 32 agents are scenario-declared and 142 skills are probe-declared.
+- [x] 32 agents are scenario-declared and 143 skills are probe-declared.
 - Agents missing scenario declarations: dev-skill-lint-reviewer.
-- Skills missing probe declarations: analyze-document-topics, manage-complex-development-plan, revise-document-topics.
+- Skills missing probe declarations: analyze-document-topics, revise-document-topics.
 - [x] 75 agent scenarios and 5 workflow packs are declared.
 - 5 workflow packs have associated cases; 5 are partial and 0 have end-to-end fixture coverage.
 - 17 cases are fixture-backed and 17 fixtures are structurally executable before harness readiness is considered.
@@ -33,7 +33,7 @@ This page is generated from the live conceptual agent and skill inventories, all
 - 33 skills have positive-case support, 0 have negative-activation cases, 0 have executable paired controls, and 0 satisfy the full probe contract.
 - 2 agents and 0 skills have executable full fixtures.
 - 0 agents and 0 skills have calibrated Model Judge status.
-- 32 agents and 118 skills have pending Model Judge status.
+- 32 agents and 119 skills have pending Model Judge status.
 - 0 agents and 24 skills use Deterministic Judges only and do not require Model Judge calibration.
 - 0 agents and 0 skills have classified executions.
 - 0 agents and 0 skills have Judge-passed evidence.
@@ -177,7 +177,7 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | effective-communication | [x] | [x] probe-effective-communication | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | explain-code-fix | [x] | [x] probe-explain-code-fix | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | integrate-agent-work | [x] | [x] probe-integrate-agent-work | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
-| manage-complex-development-plan | [x] | [ ] none | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | missing | none | none | none | none |
+| manage-complex-development-plan | [x] | [x] probe-manage-complex-development-plan | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | manage-future-ideas | [x] | [x] probe-manage-future-ideas | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | manage-work-items | [x] | [x] probe-manage-work-items | [x] work-item-management-provider-operations | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | manage-work-items-azure-devops | [x] | [x] probe-manage-work-items-azure-devops | [x] provider-placeholder-matrix, work-item-management-provider-operations | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
@@ -337,7 +337,7 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 
 ## Repository Verification Layers
 
-- [ ] Every live skill has exactly one probe declaration. Missing declarations: analyze-document-topics, manage-complex-development-plan, revise-document-topics.
+- [ ] Every live skill has exactly one probe declaration. Missing declarations: analyze-document-topics, revise-document-topics.
 - [ ] Every live conceptual agent has exactly one scenario declaration with at least one scenario. Missing declarations: dev-skill-lint-reviewer.
 - [x] Evaluation catalog references, fixture paths, Judge plans, harnesses, workflow links, and sandbox profiles are validated.
 - [x] Codex and Junie are the only supported evaluation harnesses.

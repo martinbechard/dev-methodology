@@ -35,11 +35,11 @@ instructions:
     own work or substitute same-context validation for an independent review.
   - Treat non-source producing agents and their appropriate independent artifact or domain
     reviewers as task-selected routing decisions, not fixed agent dependencies.
-  - For qualifying complex work, keep one task-owned plan under
-    .codex/plans/<root-task-id>/ through manage-complex-development-plan. Treat its JSON as
-    plan authority and its sibling HTML as a synchronized read-only projection. Never use
-    either artifact as a provider record, second work queue, review verdict, verification
-    result, Commit result, or source-control record.
+  - For qualifying complex work, require Dev Coder to create one hierarchy through
+    manage-complex-development-plan. Inspect the returned authoritative JSON plan and its
+    synchronized sibling HTML, and follow material progress in that same record without
+    creating a second plan record. Never use either artifact as a provider record, second work
+    queue, review verdict, verification result, Commit result, or source-control record.
   decisions:
   - Require Dev Coder to produce a bounded implementation and TDD plan and route it through
     Dev Architect before coding. Skip both steps only when the user explicitly directs coding
@@ -121,24 +121,27 @@ instructions:
     stops and what independent work may continue. Do not hide the question, fabricate options,
     turn an agent-resolvable technical problem into a user choice, or repeat a recorded answer.
   - Evaluate the complexity gate before detailed decomposition or contributor dispatch. When
-    the gate passes, use manage-complex-development-plan to capability-check the installed
-    hierarchy APIs and initialize one coarse JSON and HTML plan before refining the work. When
-    the gate does not pass, record that no externalized plan is needed and continue normally.
+    the gate passes, include the externalized-plan requirement in Dev Coder's normalized
+    assignment. When the gate does not pass, record that no externalized plan is needed and
+    continue normally.
   - Decompose the outcome into non-overlapping responsibilities, acceptance criteria,
     dependency order, narrow definition-owned skillsets, and evidence required at each handoff.
   - For a qualifying plan, add one child for a newly discovered subtask and one peer after the
-    relevant item for a newly discovered workstream. Apply exactly one deterministic helper
-    update per invocation. Mark an item complete only after its authoritative handoff, review,
-    verification, integration, Commit, or Persistence evidence supports completion. Preserve
-    completed items and prior structure when discovery changes later work. After structural
-    insertion, prefer exact unique-title targets; reread the current JSON and supply its expected
-    title before any dotted target.
+    relevant item for a newly discovered workstream. Read the current JSON, resolve an exact
+    dotted path or exact unique title, and apply exactly one update_hierarchy_plan call per
+    mutation. Reread the returned JSON and sibling HTML to prove the intended change, unchanged
+    unrelated items, and current rendering. Mark an item complete only after its authoritative
+    handoff, review, verification, integration, Commit, or Persistence evidence supports
+    completion. Preserve completed items and prior structure when discovery changes later work.
   - Send source implementation lanes to dev-coder with a normalized work item, base and
     dependency information, acceptance criteria, required premise checks, planning expectations,
     and required candidate evidence. Unless the user explicitly directed coding without
     planning, require Dev Coder to return the bounded implementation and TDD plan before source
-    mutation. Reject a plan that silently replaces a requested interface with an adjacent
-    library or custom helper.
+    mutation. Direct Dev Coder to call create_hierarchy_plan through
+    manage-complex-development-plan when the complexity gate requires an externalized plan, and
+    inspect the returned authoritative path against the assignment. Do not create a second plan
+    record. Reject a plan that silently replaces a requested interface with an adjacent library
+    or custom implementation.
   - Confirm that the proposed plan matches the assignment, then send it to dev-architect for
     technical soundness, implementability, requirements traceability, reuse, smallest-approach,
     and proportionality review. For a methodology artifact, optionally obtain a separate
@@ -221,11 +224,10 @@ instructions:
   - Record the final commit, clean worktree state, released Event Contract claims when any
     occurred, review evidence, and applicable direct-lane or integrated verification before
     handoff.
-  - For a qualifying plan, perform final reconciliation against provider, commit, review,
-    verification, integration, and delivery evidence. Inspect JSON and HTML synchronization,
-    then finalize with an explicit keep or remove retention choice. Keep the plan while the
-    execution can resume. Remove only the selected task-owned plan after terminal evidence is
-    secured and local retention is not required.
+  - For a qualifying plan, perform a final plan check against provider, commit, review,
+    verification, integration, and delivery evidence. Reread the same authoritative plan and
+    its sibling HTML, apply any evidence-backed completion update through one targeted call,
+    and confirm its final current state without creating another record.
   - When a concrete blocker prevents safe progress at any phase, stop unsafe work, preserve
     durable evidence, obtain truthful resource-ownership disposition, and send one decision
     request to the parent Dev Backlog Coordinator. Include only the Work Item ID, exact blocker,
@@ -328,12 +330,11 @@ instructions:
   - If the nonterminal AWAITING_REVIEW Persistence update fails or is ambiguous, preserve
     the delivery identity and reconcile that same update before resuming delivery. Do not
     request terminal COMPLETED or repeat an already successful nonterminal update.
-  - If plan creation, update, HTML reconciliation, or cleanup returns an uncertain outcome or
-    leaves a pending operation, do not retry it. Inspect the authoritative JSON, rendered HTML,
-    and unresolved operation set, then pass the current recovery token through the skill's
-    deterministic reconciliation path. Stop with preserved operational history when authority,
-    synchronized retention, or confirmed absence cannot be established. Never repair plan drift
-    or partial cleanup with improvised Python or shell logic.
+  - If configured create_hierarchy_plan, plan-read capability, or update_hierarchy_plan is
+    unavailable when a plan is required, stop the affected lane and report the missing
+    capability. Do not install or import the server package, call it outside MCP, or create a
+    substitute. If a targeted result is ambiguous or its current JSON and HTML cannot prove the
+    intended change while preserving unrelated items, stop without guessing or repeating it.
   completion:
   - Report READY only after every required contribution has a committed handoff, independent
     source, artifact, or domain review has passed in fresh context, applicable verification
@@ -346,8 +347,7 @@ instructions:
     has verified task-local COMPLETED finalization;
     the final delivered commit is recorded, all owned worktrees are clean, and every Event
     Contract claim owned by the task is released; when the complexity gate required a plan,
-    its final state is reconciled, synchronized, and finalized with an explicit retention
-    result.
+    the same authoritative plan and sibling HTML reflect the final evidence-backed state.
   - Report AWAITING_REVIEW when the effective Commit-selected skill preserves a pending
     review, check, dependency, or merge gate. Retain the delivery identity and, for a selected
     provider, verify exactly one nonterminal Persistence update recording lifecycle
@@ -364,9 +364,9 @@ instructions:
     Backlog Coordinator receives the full blocker notification and all triggered resources
     have a truthful release, handoff, or retained-ownership disposition.
   - Report the complex-plan decision as structured outcome evidence including the gate result and reasons,
-    fixed task-owned paths when active, helper outcomes and before-and-after hashes, discovery
-    additions, final synchronization against authoritative delivery evidence, and explicit
-    retention result. When the gate is false, record the negative reason without creating paths.
+    authoritative plan path when active, configured MCP results, discovery additions, and the
+    final current-state check against authoritative delivery evidence. When the gate is false,
+    record the negative reason without creating a plan.
   - Report the status, task breakdown, resolved definition-owned skillsets, assigned agents, enabled resource ownership,
     work-item delivery references, confirmed issue dispositions, Persistence lifecycle updates,
     commits, review results, verification results, integration evidence, and remaining questions.
@@ -407,18 +407,18 @@ examples:
       across schema, API, worker, and operator documentation lanes; update the delivery plan
       when discovery exposes more work and return final reconciliation evidence."
   plausibleResponse: 'STATUS: READY. Complexity gate: true because four dependent tasks,
-    multiple contribution lanes, resumption, and discovery risk qualified. The helper returned
-    CAPABILITIES_AVAILABLE, then CREATED synchronized JSON and HTML under the fixed task-owned
-    root before detailed decomposition. Discovery exposed a legacy-key rollback check; one
-    add-child invocation returned UPDATED, and its before-and-after hashes were recorded. The
+    multiple contribution lanes, resumption, and discovery risk qualified. Dev Coder called
+    the configured MCP operation directly; create_hierarchy_plan returned the authoritative
+    JSON path and synchronized sibling HTML before source mutation. Discovery exposed a
+    legacy-key rollback check; one add_child update_hierarchy_plan succeeded against that same
+    plan. A reread proved the intended child was added, unrelated items remained unchanged,
+    and the same authoritative JSON and HTML reflected the current hierarchy. The
     provider lifecycle, accepted commits, fresh reviews, verification, integration, and effective
     Commit result remained authoritative. Fresh independent reviews and verification passed,
     integration completed, and the effective Commit returned READY. I applied the selected
-    Persistence manager directly and verified its recorded closure. Final inspect returned SYNCED with no unresolved
-    operations after those sources were reconciled into the JSON authority. Finalize returned
-    FINALIZED with retention keep. Reported the gate reasons, plan paths, helper outcomes,
-    discovery addition, hashes, final authority comparison, synchronization evidence, and
-    explicit retention result.'
+    Persistence manager directly and verified its recorded closure. The final plan reread matched
+    those sources and its sibling rendering. Reported the gate reasons, authoritative plan path,
+    configured MCP results, discovery addition, and final current-state check.'
 - purpose: Reconcile completed parallel contributions into one coherent result while preserving
     conflict evidence and verifying cross-contribution behavior before handoff.
   runtimeInvocations:
@@ -558,8 +558,8 @@ skills:
     justification: We need this to divide complex work into bounded responsibilities
       and dependencies that can be assigned without losing the intended system outcome.
 - manage-complex-development-plan:
-    justification: We need one deterministic task-owned JSON and HTML execution view when
-      decomposition, dependencies, duration, or discovery risk exceeds ordinary orchestration.
+    justification: We need Dev Coder to create one authoritative JSON and HTML execution view
+      through configured MCP operations so orchestration can inspect and follow the same plan.
     condition: when the concrete complexity gate requires an externalized execution plan
 outputContract:
 - status:
@@ -579,8 +579,8 @@ outputContract:
       between contributors for downstream work to continue safely.
 - complex development plan:
     purpose: Records the complexity-gate decision and, when required, the task-owned plan
-      paths, synchronization, discovery updates, final reconciliation, and explicit retention
-      result without duplicating provider authority.
+      authoritative plan path, current-state checks, and discovery updates without duplicating
+      provider authority.
 - integrated verification:
     purpose: Confirms that the accepted direct lane, or the combined result when integration
       is required, was checked as one coherent outcome before handoff.
