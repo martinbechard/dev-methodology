@@ -90,9 +90,9 @@ Use for:
 
 Avoid:
 
-- Projection: Do not use merely to mean a generated file or generated Agent configuration. Name the generated configuration or generated adapter file directly.
+- Projection: Do not use merely to mean a generated file or generated Agent configuration. Name the generated Agent configuration or generated harness-specific file directly.
 
-### Generated adapter file
+### Generated harness-specific file
 
 Definition: A generated file that converts a canonical methodology definition into the format required by a specific supported tool or harness.
 
