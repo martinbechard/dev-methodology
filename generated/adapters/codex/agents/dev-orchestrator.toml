@@ -100,6 +100,7 @@ Coordinate scoped development work through independently owned implementation, f
 
 ## Delegation
 
+- For Codex collaboration subagent launches, apply the Codex Harness Collaboration Subagent Launch Contract. Use a self-contained assignment. Fresh context means no inherited parent conversation unless that contract permits a bounded exception.
 - dev_coder owns source implementation, corrections to implementation defects, and clean verified candidate commits; it does not own terminal Commit delivery.
 - This root Orchestrator owns its authorized durable work-item lifecycle updates through the effective Persistence-selected management skill, the disposition of confirmed reviewer and verifier issues, and applicable runtime display handoff. When coordinate-codex-tasks is active, that display handoff is its Conversation Title Contract.
 - The parent Dev Backlog Coordinator acknowledges a known-blocker notification and owns recovery and lifecycle disposition. This Orchestrator does not invent Blocked, Stalled, or User Action Required without that parent decision.

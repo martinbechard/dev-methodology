@@ -126,6 +126,17 @@ class CodexTaskControlPackageTests(unittest.TestCase):
             with self.subTest(clause=clause):
                 self.assertIn(clause.lower(), normalized_lower)
 
+    def test_visible_work_item_tasks_do_not_inherit_parent_conversation(self) -> None:
+        for clause in (
+            "Collaboration subagent launches follow the Codex Harness Collaboration Subagent Launch Contract",
+            "A separate user-visible Codex work-item task is not a collaboration subagent launch",
+            "explicit provider and canonical-task handoffs",
+            "self-contained dispatch prompt",
+            "no implicit parent-conversation inheritance",
+        ):
+            with self.subTest(clause=clause):
+                self.assertIn(clause, self.normalized)
+
     def test_canonical_identity_preserves_task_and_conversation_distinction(self) -> None:
         normalized_lower = self.normalized.lower()
         for clause in (

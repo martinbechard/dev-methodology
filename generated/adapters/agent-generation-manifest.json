@@ -61,7 +61,7 @@
             "ste-technical-writing",
             "manage-work-items"
           ],
-          "sha256": "f9b458a45078efd8cfd87ee8f88c85f6e5c8308022774cce96e964294ee8f6e6",
+          "sha256": "a5dd6751d348fe1290ff4cc96d8a9a306d50b5aabf40877bcf12729c58e05a0d",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
@@ -380,7 +380,7 @@
             "deliver-work-item",
             "structured-design"
           ],
-          "sha256": "acace91b017c744021911adcaf1a9d93e8a61b123a87a513f1f3dc36968e7d96",
+          "sha256": "651229fea97a30e25587cf32a267ce244360aa053b584335a7affd324f0cd620",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -713,7 +713,7 @@
             "effective-communication",
             "ste-technical-writing"
           ],
-          "sha256": "45393b9e30192ac99c178b1d2a428bb6caa4cc951ab65993ec37c0a17b4e393b",
+          "sha256": "5f3ae90a3c1efec787fdfbef026ed9a73458bb7e6a7da37e1a1db311af5eacf4",
           "source": "agents/roles/methodology-maintenance/methodology-design-system-review-coordinator.role.yaml"
         },
         {
@@ -747,7 +747,7 @@
             "name-methodology-artifacts",
             "route-documentation-work"
           ],
-          "sha256": "45680edd6c8753f7812ee94018f3b7659eabdc0112dd0878fbb1a8709ef75223",
+          "sha256": "5e7d628ea1a021c1c6e6e32e096de5a95aeb285cd9ae38a9ce52637e81378778",
           "source": "agents/roles/methodology-maintenance/methodology-maintainer.role.yaml"
         },
         {
@@ -778,7 +778,7 @@
             "bootstrap-project-documentation",
             "route-documentation-work"
           ],
-          "sha256": "b6f2ed7ec3336eecc8d12d63b18bbfb39876c0ef160251f7186539c7c3ac24aa",
+          "sha256": "14685d412b481c665b40ed319a0a75e0115746d70cc639a7978352eb631e0c35",
           "source": "agents/roles/project-setup/project-bootstrapper.role.yaml"
         },
         {
@@ -958,7 +958,7 @@
             "project-wiki",
             "project-wiki-topic-write"
           ],
-          "sha256": "165b37e06146665c605d063a545579c86cff1f5095d55ee6164b3d5d5eb1fddc",
+          "sha256": "57466d3057406f2e6375d3b76c28563d829a86e95d4d73158fb2b32cf13bacac",
           "source": "agents/roles/wiki-activities/wiki-ingester.role.yaml"
         },
         {
@@ -1136,7 +1136,7 @@
             "project-wiki",
             "project-wiki-topic-write"
           ],
-          "sha256": "c4ecb32a0e3ed87e15933692c70a37bd71160e653fbd4a5da11ff102368d2a18",
+          "sha256": "eb3cd9e4b6595a957a8513f5d2053fc335a18da875ec87e1e8b6a5bf69fe81be",
           "source": "agents/roles/wiki-activities/wiki-writer.role.yaml"
         }
       ],
@@ -1207,7 +1207,7 @@
             "manage-work-items",
             "codex-harness-directives"
           ],
-          "sha256": "d43f32e8c6d164adbe19d48a74d5664a58e35a0fa8edd11ac59dadee49430102",
+          "sha256": "c2d303b537d37e1c78a5762e309e43128ecd4ea2c1d8e192e07365e71e84dc42",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
@@ -1534,7 +1534,7 @@
             "structured-design",
             "codex-harness-directives"
           ],
-          "sha256": "4222c4cf55c1ccf9a3c5f243d76776fb12875d5fa52ed113fe5973c149243418",
+          "sha256": "eb0d0b3d01cec78b1a6c15e755d2660928fe2ec9df7c9673d740dc89630fedd5",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -1874,7 +1874,7 @@
             "effective-communication",
             "ste-technical-writing"
           ],
-          "sha256": "997881a3e00491786140feb01569f5873aef1b1859fe119a6f55fa14775c118d",
+          "sha256": "b076c5177a9547fcc4306be83398121f4f94df09fc2420cd2cb69a81ce95eee3",
           "source": "agents/roles/methodology-maintenance/methodology-design-system-review-coordinator.role.yaml"
         },
         {
@@ -1909,7 +1909,7 @@
             "route-documentation-work",
             "codex-harness-directives"
           ],
-          "sha256": "aef26b13ad0841da0a3ebca35d35534c0534bc185bc1c8f5c908cfb67acc7ea6",
+          "sha256": "d1c646a9752c3354ac115a9892c5d5b2edb0251985394daf79168f71d58fd4e9",
           "source": "agents/roles/methodology-maintenance/methodology-maintainer.role.yaml"
         },
         {
@@ -1941,7 +1941,7 @@
             "route-documentation-work",
             "codex-harness-directives"
           ],
-          "sha256": "11c8eaf2c7f3271b5eefbd0ad06d933df71653f8665d69f09414e97b4b39ccc6",
+          "sha256": "03620ebf7c3970d84c6d6510929bd8b40246002cdea0fe79e4cb6f98aa87df1b",
           "source": "agents/roles/project-setup/project-bootstrapper.role.yaml"
         },
         {
@@ -2126,7 +2126,7 @@
             "project-wiki-topic-write",
             "codex-harness-directives"
           ],
-          "sha256": "3990d5fd475e52a8cb85658339390fe722dbaa5f0866f754fc58e83fe5806203",
+          "sha256": "226ec5db8c16994fc17537722a939cc02bad388ad70390acddd1696e29c154e2",
           "source": "agents/roles/wiki-activities/wiki-ingester.role.yaml"
         },
         {
@@ -2307,7 +2307,7 @@
             "project-wiki-topic-write",
             "codex-harness-directives"
           ],
-          "sha256": "93f371bb7ff70ec7309287d3dd75745f2a6ce3c36b7a23f16f71dc923e25676d",
+          "sha256": "6bf0f44a0b5b707236f5ec7ac7ad39e499e04423fdc218bc2e4e62dacab461d5",
           "source": "agents/roles/wiki-activities/wiki-writer.role.yaml"
         }
       ],
@@ -2315,7 +2315,7 @@
       "harnessSkills": [
         {
           "name": "codex-harness-directives",
-          "sha256": "c389420403301c9872b39160393ef6adce5e1cd9c5ae0b97bb08892bdd1864d0",
+          "sha256": "a648c00d54926014ff065aef1d319fc8fd03f4fd4d6dd2b95fe24e047a2a3a6f",
           "source": "adapters/codex/skills/codex-harness-directives"
         }
       ],
@@ -2384,7 +2384,7 @@
             "ste-technical-writing",
             "manage-work-items"
           ],
-          "sha256": "b6276077beb129386e4ba746d0634612326efc51b862423ba4346b133c1b44ef",
+          "sha256": "68a0afa882d75c26e6f95a33dcb4fd8c8bd4c2773365ade399151d5460762cc1",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
@@ -2715,7 +2715,7 @@
             "deliver-work-item",
             "structured-design"
           ],
-          "sha256": "a3ea61915e1ddea4855bff35e362b14a0448c870181c5c0a5d2c76c873711618",
+          "sha256": "eb4b7cc48766695fcc5999eca08ff387d10e7b949ffc57aa90490af927a9f721",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -3061,7 +3061,7 @@
             "effective-communication",
             "ste-technical-writing"
           ],
-          "sha256": "d4f3a814fa8c77123ea5faeaa80287f77daf457d36da5ca308843d2c5083d085",
+          "sha256": "e2953d534ee6dc17c598d2d75ff1fb0268893c98e9f52861c8c6d559708caee4",
           "source": "agents/roles/methodology-maintenance/methodology-design-system-review-coordinator.role.yaml"
         },
         {
@@ -3096,7 +3096,7 @@
             "name-methodology-artifacts",
             "route-documentation-work"
           ],
-          "sha256": "67f2f72396a304f156720c6b0c0c287f7c3248ae2075ad792cccb4fa69003433",
+          "sha256": "43140edd81ce69be2851b87dab904912d849bda5215973a71f1a1b17737fcc56",
           "source": "agents/roles/methodology-maintenance/methodology-maintainer.role.yaml"
         },
         {
@@ -3128,7 +3128,7 @@
             "bootstrap-project-documentation",
             "route-documentation-work"
           ],
-          "sha256": "3e44dcc6827e60e5ebf29fce8491b7caa739e10cee723f70c96c29c29e03d7f1",
+          "sha256": "38dab93e95bd0e08625750400a87152e2f02af2523cc39a7ca5a5b43c7fcd1bf",
           "source": "agents/roles/project-setup/project-bootstrapper.role.yaml"
         },
         {
@@ -3315,7 +3315,7 @@
             "project-wiki",
             "project-wiki-topic-write"
           ],
-          "sha256": "535641f544ecee2e15cc3ebecc2d9a0b77317cff4a32497aab0b65f387e2e717",
+          "sha256": "a6e7bbbe92c58fce18bcdcc8b1f4e2083eb117e780803a10457924118ff61f5c",
           "source": "agents/roles/wiki-activities/wiki-ingester.role.yaml"
         },
         {
@@ -3500,7 +3500,7 @@
             "project-wiki",
             "project-wiki-topic-write"
           ],
-          "sha256": "ac145737dbcf15174c5bc9a59e141c99b51a8559f2d313f666b156ef9d49bc0e",
+          "sha256": "0645ac1d9e4eabba5f55f79b3cb5c603c16175752f14fa6d9b7a13a344814094",
           "source": "agents/roles/wiki-activities/wiki-writer.role.yaml"
         }
       ],
@@ -3571,7 +3571,7 @@
             "ste-technical-writing",
             "manage-work-items"
           ],
-          "sha256": "049479469a8e78c3f52c8c7a0a1f3fdd86c72d568e2b170fd60a88650ffd778f",
+          "sha256": "33287524274e5ded646413058511efecefc25099f6ab235f2dd013abfdd1ca0b",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
@@ -3902,7 +3902,7 @@
             "deliver-work-item",
             "structured-design"
           ],
-          "sha256": "bc3c0802bfdc73a0327e1871e1d04c27c11455efca90e5aade39903ed124d972",
+          "sha256": "23f8194617f0b7b0c7b065553a78beb4fc6aad13643380d88f712c04afe6f0ef",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -4248,7 +4248,7 @@
             "effective-communication",
             "ste-technical-writing"
           ],
-          "sha256": "f48b5f61446899d879ef53a16b2b02d97a97eec1316c4f02a2e370a952d95d58",
+          "sha256": "c35c9fc42df700072aa4202084c1858afbf15afc42c161d029b6cc78783191b1",
           "source": "agents/roles/methodology-maintenance/methodology-design-system-review-coordinator.role.yaml"
         },
         {
@@ -4283,7 +4283,7 @@
             "name-methodology-artifacts",
             "route-documentation-work"
           ],
-          "sha256": "ae5c511c6e193bff8bc8b87e39882586cd5fcab309f657cd9274e789e45dd96b",
+          "sha256": "4022eee2d2db2b2dfa11684314445069a0b7b674b18a4653b00e8d877f94cbc9",
           "source": "agents/roles/methodology-maintenance/methodology-maintainer.role.yaml"
         },
         {
@@ -4315,7 +4315,7 @@
             "bootstrap-project-documentation",
             "route-documentation-work"
           ],
-          "sha256": "7d6695852af7b5b2e72ee501d1ae7ff32b874f7362e73088b40f64df2650a545",
+          "sha256": "6a572a40453d952e351c8187da6e437701033482aca8e925e317c8447a9a2859",
           "source": "agents/roles/project-setup/project-bootstrapper.role.yaml"
         },
         {
@@ -4502,7 +4502,7 @@
             "project-wiki",
             "project-wiki-topic-write"
           ],
-          "sha256": "cf5f0992c42d00df797066f7bbb4f5bb6bc7a17be2838c33d10e6fbfa9c00626",
+          "sha256": "ce0a20ad4c4a77b87db4f6c77d3c6efc8849a1e9e0fd419d86a1668125fec176",
           "source": "agents/roles/wiki-activities/wiki-ingester.role.yaml"
         },
         {
@@ -4687,7 +4687,7 @@
             "project-wiki",
             "project-wiki-topic-write"
           ],
-          "sha256": "92c7bcda87964271ef9f4228dabc60a3c8568667861af07b82c093829d755698",
+          "sha256": "8370e6fc8fd06fb3fff10f211041dcf732353d77932e5e61d06491c2a1edb64d",
           "source": "agents/roles/wiki-activities/wiki-writer.role.yaml"
         }
       ],

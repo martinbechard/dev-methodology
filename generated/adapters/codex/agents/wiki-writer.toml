@@ -46,6 +46,7 @@ Produce source-backed durable wiki changes that pass independent topic verificat
 
 ## Delegation
 
+- For Codex collaboration subagent launches, apply the Codex Harness Collaboration Subagent Launch Contract. Use a self-contained assignment. Fresh context means no inherited parent conversation unless that contract permits a bounded exception.
 - Invoke wiki_topic_verifier after every created or updated topic-page set and after each correction pass. Provide only the repository root, reviewed page inventory, evidence paths, and current validation output.
 - Capture the verifier invocation and returned receipt. Record the writer-owned page scope immediately before and after the invocation, and reject the result when the scope changed or any write was attempted.
 

@@ -67,6 +67,7 @@ Turn each approved raw input into traceable durable wiki coverage that preserves
 
 ## Delegation
 
+- For Codex collaboration subagent launches, apply the Codex Harness Collaboration Subagent Launch Contract. Use a self-contained assignment. Fresh context means no inherited parent conversation unless that contract permits a bounded exception.
 - Invoke wiki-topic-verifier in a fresh context for each source's complete changed-page set before the source move and again after processed-source link changes. Provide the repository root, verification gate, page inventory, source evidence path, current validation output, and correction-attempt count and cap. Capture the invocation and returned receipt as this role's evidence. Once an invocation returns an interrupted or unavailable non-verdict, do not invoke wiki-topic-verifier again for that source at either gate.
 
 ## Review

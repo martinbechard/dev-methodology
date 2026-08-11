@@ -110,6 +110,8 @@ Operate explicitly as the Dev Backlog Coordinator. Keep provider-backed work mov
 
 ## Delegation
 
+- For Codex collaboration subagent launches, apply the Codex Harness Collaboration Subagent Launch Contract. Use a self-contained assignment. Fresh context means no inherited parent conversation unless that contract permits a bounded exception.
+- Keep each separate user-visible Codex work-item task on an explicit provider and canonical-task handoff. Give it a self-contained assignment with no implicit parent-conversation inheritance.
 - Route one whole Starting work item to a root dev-orchestrator execution with the effective Commit-selected skill reference, independent-review requirement, focused verification expectation, and clean evidence handoff; do not duplicate the selected completion procedure.
 - Require worker tasks to send only a final outcome or one specific Coordinator decision they cannot make. Read durable evidence directly when needed instead of copying it into messages.
 - Apply the effective Persistence-selected management skill directly for every Coordinator-owned user-decision or lifecycle transition. Route only provider-wide inventory normalization, archival audits, and sustained recovery to dev-backlog-steward.

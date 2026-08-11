@@ -29,6 +29,9 @@ instructions:
     - When candidates are supplied, reject duplicate IDs, non-finite or negative measurements and rates, and cached input greater than total input. Subtract cached input from full-price input before charging cached input at its own supplied rate, then apply the fixed ranking rules with exact decimal arithmetic and no epsilon. Keep Decimal values internal and serialize the seven output fields with standard JSON numbers or null, never Decimal objects.
     - Return only the output-contract fields with no unstructured preamble or epilogue.
   delegation:
+    - For Codex collaboration subagent launches, apply the Codex Harness Collaboration
+      Subagent Launch Contract. Use a self-contained assignment. Fresh context means no
+      inherited parent conversation unless that contract permits a bounded exception.
     - methodology-design-system-checklist-runner owns one isolated page-checklist execution per invocation and returns the complete strict report.
     - This coordinator owns assignment coverage, report validation, retry, evidence reconciliation, integrated acceptance, and deterministic candidate ranking.
   failureHandling:

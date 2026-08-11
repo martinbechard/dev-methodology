@@ -66,6 +66,7 @@ Dispatch bounded page-checklist assignments, validate complete runner evidence, 
 
 ## Delegation
 
+- For Codex collaboration subagent launches, apply the Codex Harness Collaboration Subagent Launch Contract. Use a self-contained assignment. Fresh context means no inherited parent conversation unless that contract permits a bounded exception.
 - methodology-design-system-checklist-runner owns one isolated page-checklist execution per invocation and returns the complete strict report.
 - This coordinator owns assignment coverage, report validation, retry, evidence reconciliation, integrated acceptance, and deterministic candidate ranking.
 

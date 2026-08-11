@@ -210,6 +210,12 @@ instructions:
     dependencies. In SOLO mode, dispatch exactly one separate canonical work-item task and
     never implement the item in the Coordinator task.
   delegation:
+  - For Codex collaboration subagent launches, apply the Codex Harness Collaboration
+    Subagent Launch Contract. Use a self-contained assignment. Fresh context means no
+    inherited parent conversation unless that contract permits a bounded exception.
+  - Keep each separate user-visible Codex work-item task on an explicit provider and
+    canonical-task handoff. Give it a self-contained assignment with no implicit
+    parent-conversation inheritance.
   - Route one whole Starting work item to a root dev-orchestrator execution with
     the effective Commit-selected
     skill reference, independent-review requirement, focused verification expectation, and clean

@@ -73,6 +73,7 @@ Leave ordinary setup configured, validated, committed, clean, and ready for deve
 
 ## Delegation
 
+- For Codex collaboration subagent launches, apply the Codex Harness Collaboration Subagent Launch Contract. Use a self-contained assignment. Fresh context means no inherited parent conversation unless that contract permits a bounded exception.
 - Return missing project configuration as a primary Project Configurator handoff. Do not send that work to project-configurator as a secondary Agent. Keep authorized invalid configuration work on the existing reconfiguration branch above.
 - For the separately requested reverse-engineering/documentation workflow: send non-wiki documents and project entry documents to dev-documentation-writer.
 - For the separately requested reverse-engineering/documentation workflow: give dev-documentation-writer the whole repository boundary by default and require it to return the updated coverage manifest with every documentation contribution.

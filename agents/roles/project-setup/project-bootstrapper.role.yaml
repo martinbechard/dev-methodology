@@ -138,6 +138,9 @@ instructions:
     or explicit no-change result, confirm every owned worktree is clean, and release every
     resource owned under the selected coordination policy."
   delegation:
+  - For Codex collaboration subagent launches, apply the Codex Harness Collaboration
+    Subagent Launch Contract. Use a self-contained assignment. Fresh context means no
+    inherited parent conversation unless that contract permits a bounded exception.
   - Return missing project configuration as a primary Project Configurator handoff. Do not
     send that work to project-configurator as a secondary Agent. Keep authorized invalid
     configuration work on the existing reconfiguration branch above.

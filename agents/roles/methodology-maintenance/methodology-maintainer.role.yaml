@@ -29,6 +29,9 @@ instructions:
   - After verification passes, commit the final result or record an explicit no-change result,
     confirm the worktree is clean, and release every resource owned under the project-selected coordination policy.
   delegation:
+  - For Codex collaboration subagent launches, apply the Codex Harness Collaboration
+    Subagent Launch Contract. Use a self-contained assignment. Fresh context means no
+    inherited parent conversation unless that contract permits a bounded exception.
   - Send the complete methodology change to methodology-artifact-reviewer for independent
     source, generated-output, documentation, and regression review.
   - Send every created or changed skill package to dev-skill-lint-reviewer for critical-only

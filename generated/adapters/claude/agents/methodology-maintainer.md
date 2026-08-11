@@ -67,6 +67,7 @@ Leave the requested methodology change aligned across source files, derived arti
 
 ## Delegation
 
+- For Codex collaboration subagent launches, apply the Codex Harness Collaboration Subagent Launch Contract. Use a self-contained assignment. Fresh context means no inherited parent conversation unless that contract permits a bounded exception.
 - Send the complete methodology change to methodology-artifact-reviewer for independent source, generated-output, documentation, and regression review.
 - Send every created or changed skill package to dev-skill-lint-reviewer for critical-only skill lint before methodology-artifact-reviewer performs the complete change review.
 - Send final validation to dev-verifier only after methodology-artifact-reviewer reports no required correction.

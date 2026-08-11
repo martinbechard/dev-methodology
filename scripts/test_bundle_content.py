@@ -9325,6 +9325,97 @@ Visible after.
                 with self.subTest(adapter=adapter_name, agent=path.stem):
                     self.assertNotIn(CODEX_HARNESS_SKILL_NAME, path.read_text(encoding="utf-8"))
 
+    def test_codex_harness_directives_define_bounded_collaboration_launches(self) -> None:
+        """Keep collaboration context and message limits in the Codex-owned contract."""
+
+        skill_text = (CODEX_HARNESS_SKILL_ROOT / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        normalized = " ".join(skill_text.split())
+
+        for heading in (
+            "Collaboration Subagent Launch Contract",
+            "Context Inheritance",
+            "Self-Contained Assignment",
+            "Launch Announcement",
+            "Subagent Return",
+            "Separate Codex Task Boundary",
+        ):
+            with self.subTest(heading=heading):
+                self.assertIn(f"## {heading}", skill_text)
+
+        for contract in (
+            "Set fork_turns to none for every collaboration subagent launch by default.",
+            "small positive recent-turn count",
+            "stated conversation-only dependency",
+            "unavailable in durable references",
+            "cannot be expressed adequately in the assignment prompt",
+            "Record the dependency and selected count in the launch announcement",
+            "Set fork_turns to all only when full parent-conversation inheritance is essential",
+            "explicit task-specific justification in the launch announcement",
+            "Fresh context means fork_turns none",
+            "objective, exact scope, durable references, required checks, expected result, and prohibitions",
+            "invalid and must not launch",
+            "exactly one concise user-visible launch announcement",
+            "subagent name, assignment, and context inheritance",
+            "role and model only when either value is overridden",
+            "Add no plan, progress, lifecycle history, evidence summary, or surrounding explanation",
+            "do not repeat the announcement",
+            "only a final outcome or one specific decision the owning Agent cannot make",
+            "Routine progress receipts, heartbeat messages, lifecycle-history summaries, or repeated evidence messages",
+            "Separate user-visible Codex work-item tasks",
+            "explicit provider and canonical-task handoffs",
+            "no implicit parent-conversation inheritance",
+        ):
+            with self.subTest(contract=contract):
+                self.assertIn(contract, normalized)
+
+    def test_direct_dispatch_roles_reference_the_codex_collaboration_contract(self) -> None:
+        """Keep detailed Codex launch mechanics centralized while roles require fresh context."""
+
+        role_paths = (
+            ROLES_ROOT / "dev-activities" / "dev-backlog-coordinator.role.yaml",
+            ROLES_ROOT / "dev-activities" / "dev-orchestrator.role.yaml",
+            ROLES_ROOT
+            / "methodology-maintenance"
+            / "methodology-maintainer.role.yaml",
+            ROLES_ROOT
+            / "methodology-maintenance"
+            / "methodology-design-system-review-coordinator.role.yaml",
+            ROLES_ROOT / "project-setup" / "project-bootstrapper.role.yaml",
+            ROLES_ROOT / "wiki-activities" / "wiki-ingester.role.yaml",
+            ROLES_ROOT / "wiki-activities" / "wiki-writer.role.yaml",
+        )
+        central_reference = (
+            "apply the Codex Harness Collaboration Subagent Launch Contract"
+        )
+        fresh_context = "Fresh context means no inherited parent conversation"
+
+        for role_path in role_paths:
+            role = load_yaml_object(role_path)
+            role_text = json.dumps(role, sort_keys=True)
+            with self.subTest(role=role["name"]):
+                self.assertIn(central_reference, role_text)
+                self.assertIn(fresh_context, role_text)
+                self.assertNotIn("fork_turns", role_text)
+
+                generated = (
+                    GENERATED_ADAPTERS_ROOT
+                    / "codex"
+                    / "agents"
+                    / f"{role['filename']}.toml"
+                ).read_text(encoding="utf-8")
+                self.assertIn(central_reference, generated)
+                self.assertIn(fresh_context, generated)
+
+        backlog_role = load_yaml_object(role_paths[0])
+        backlog_text = json.dumps(backlog_role, sort_keys=True)
+        self.assertIn(
+            "explicit provider and canonical-task handoff",
+            backlog_text,
+        )
+        self.assertIn("no implicit parent-conversation inheritance", backlog_text)
+
     def test_direct_agent_dependencies_have_complete_routing_contracts(self) -> None:
         """Every maintained direct dependency should have an explicit orchestration contract."""
         build_skill_docs = load_build_skill_docs_module()

@@ -23,6 +23,8 @@ If an ordinary required operation fails because the Agent lacks a capability, th
 
 The parent Dev Backlog Coordinator may create at most one root Dev Orchestrator task after coordinate-work-items records the Starting reservation and permits runtime dispatch. Use Codex task creation for that bounded root assignment. Record the returned task identifier and retained user-visible context as runtime evidence; neither result changes provider lifecycle.
 
+Collaboration subagent launches follow the Codex Harness Collaboration Subagent Launch Contract. A separate user-visible Codex work-item task is not a collaboration subagent launch. Create it only through explicit provider and canonical-task handoffs. Give it a self-contained dispatch prompt and no implicit parent-conversation inheritance.
+
 When an existing canonical task was preserved through User Action Required, Stalled, Blocked, or another resumable state, resume that task. Do not create a replacement merely because the task is idle. The portable lifecycle owner first records the required Starting handoff. The task then accepts Running through the portable contract.
 
 Do not create a task merely to wait for approval, a dependency, a reviewer, a shared resource, or a delivery window. Do not retry task creation after an error, timeout, disconnect, or ambiguous response. Reconcile the result first.
