@@ -654,7 +654,7 @@
             "verify-documentation-page",
             "route-documentation-work"
           ],
-          "sha256": "547ec6812b7c6ebb6d5863cf69f9e511490633056ef878f286cd3ac1e428e457",
+          "sha256": "27775648065be6e5b60e6278dd2d617e7daba8e77becf34bea85d4cbb213d4bd",
           "source": "agents/roles/methodology-maintenance/methodology-artifact-reviewer.role.yaml"
         },
         {
@@ -1815,7 +1815,7 @@
             "route-documentation-work",
             "codex-harness-directives"
           ],
-          "sha256": "c507450c3e8b1ae049688a428710a0a9a3b2ef7786537a05cd5e41f389c6fb0b",
+          "sha256": "cf96c92dcb81221542b02cab74858373c11e4691ad754dbc9ca48a329e9d4663",
           "source": "agents/roles/methodology-maintenance/methodology-artifact-reviewer.role.yaml"
         },
         {
@@ -3000,7 +3000,7 @@
             "verify-documentation-page",
             "route-documentation-work"
           ],
-          "sha256": "55b711757f9ff24e77d6ac68e5e949dc375ebc9831ba7423828c79f5f86a09e4",
+          "sha256": "1bed88fb5daea94582a98874e87b1c758bb48a333b10ae3a4db5b6af197c2516",
           "source": "agents/roles/methodology-maintenance/methodology-artifact-reviewer.role.yaml"
         },
         {
@@ -4187,7 +4187,7 @@
             "verify-documentation-page",
             "route-documentation-work"
           ],
-          "sha256": "e1fcb01a040276c3249becea6e238e99c14550ed7784ee9b39691a3cd9838dc5",
+          "sha256": "5ace7f55a60cea9532ea034768b564e57d3445133202a33e032bbe8d07d908d2",
           "source": "agents/roles/methodology-maintenance/methodology-artifact-reviewer.role.yaml"
         },
         {

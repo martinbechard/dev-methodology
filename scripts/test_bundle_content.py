@@ -9193,6 +9193,59 @@ Visible after.
                             )
                 self.assertNotIn(prohibited_contract, design_text)
 
+    def test_methodology_reviewer_requires_saved_checklist_before_verdict(self) -> None:
+        """Keep methodology verdicts traceable to a complete saved checklist."""
+
+        role = load_yaml_object(
+            ROLES_ROOT
+            / "methodology-maintenance"
+            / "methodology-artifact-reviewer.role.yaml"
+        )
+        instructions = role["instructions"]
+
+        self.assertIsInstance(instructions, dict)
+        boundaries = " ".join(instructions["boundaries"])
+        self.assertIn("review candidate", boundaries)
+        self.assertIn("authorized checklist and findings artifacts", boundaries)
+        self.assertIn("existing checklist questions", boundaries)
+
+        workflow = instructions["workflow"]
+        save_index = next(
+            index
+            for index, step in enumerate(workflow)
+            if "complete and save the checklist" in step
+        )
+        findings_index = next(
+            index
+            for index, step in enumerate(workflow)
+            if "Derive findings" in step
+        )
+        verdict_index = next(
+            index
+            for index, step in enumerate(workflow)
+            if "Return the review result" in step
+        )
+        self.assertLess(save_index, findings_index)
+        self.assertLess(findings_index, verdict_index)
+
+        decisions = " ".join(instructions["decisions"])
+        for required_contract in (
+            "NEEDS_CORRECTION",
+            "existing checklist question",
+            "authority, evidence, correction, and impact",
+        ):
+            with self.subTest(required_contract=required_contract):
+                self.assertIn(required_contract, decisions)
+
+        completion = " ".join(instructions["completion"])
+        self.assertIn("missing or incomplete", completion)
+        self.assertIn("BLOCKED", completion)
+        self.assertIn("invalid", completion)
+
+        output_names = [next(iter(entry)) for entry in role["outputContract"]]
+        self.assertIn("saved completed review checklist", output_names)
+        self.assertIn("review verdict", output_names)
+
     def test_codex_read_only_sandbox_is_reserved_for_never_mutating_roles(self) -> None:
         """Keep evidence-writing reviewers writable while preserving true read-only agents."""
         build_skill_docs = load_build_skill_docs_module()
