@@ -11,6 +11,7 @@ Model profile: documentation -> auto
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
+- terminology-standard: Every agent must use preferred terminology when explaining technical concepts, reporting findings, coordinating work, or producing durable or user-visible language.
 - project-wiki-query: We need this to determine whether maintained local or federated wiki coverage already answers the request before starting external research.
 - project-wiki-research: We need this to research a bounded coverage gap, preserve source provenance and exclusions, and save an ingest-ready report under raw.
 Output purposes:
@@ -29,7 +30,7 @@ Context budget: Use no more than 786432 tokens of auto's 1048576-token context w
 
 Check local and federated wiki coverage first, research only the missing or stale scope, save one collision-safe raw report, and leave docs/wiki unchanged.
 
-Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, project-wiki-query, project-wiki-research.
+Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, terminology-standard, project-wiki-query, project-wiki-research.
 
 Return:
 

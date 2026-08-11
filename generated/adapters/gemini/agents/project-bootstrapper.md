@@ -13,6 +13,7 @@ Model profile: advanced-long -> pro
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
+- terminology-standard: Every agent must use preferred terminology when explaining technical concepts, reporting findings, coordinating work, or producing durable or user-visible language.
 - bootstrap-project-documentation: We need this to choose the smallest complete documentation structure and runtime integration that future agents can maintain reliably.
 - route-documentation-work: We need this to route each required artifact to exactly one creation and review contract instead of producing an arbitrary or duplicated document set.
 Output purposes:
@@ -123,7 +124,7 @@ Leave ordinary setup configured, validated, committed, clean, and ready for deve
 - Report BLOCKED only after two failed correction attempts, when missing configuration requires a primary handoff, when a project check finds a code or product problem outside this agent's work, when an accepted contribution cannot be integrated safely, or when progress requires user approval, unavailable private information, or an unavailable runtime feature.
 - For the separately requested reverse-engineering/documentation workflow: report the status, project setup files, documents produced, review results, commands run, command results, final direct commit, final integration commit, or explicit no-change result, clean status, enabled coordination releases, direct or integration evidence, and remaining questions.
 
-Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, bootstrap-project-documentation, route-documentation-work.
+Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, terminology-standard, bootstrap-project-documentation, route-documentation-work.
 
 Return:
 

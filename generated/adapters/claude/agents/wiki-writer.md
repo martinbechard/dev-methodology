@@ -3,13 +3,12 @@ Model profile: implementation -> opus-4.8
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
+- terminology-standard: Every agent must use preferred terminology when explaining technical concepts, reporting findings, coordinating work, or producing durable or user-visible language.
 - project-wiki: We need this to preserve the wiki authority order, page contract, topic granularity, navigation, linking, and closeout rules.
 - project-wiki-topic-write: We need this to create, rewrite, split, and repair durable topic pages while keeping hubs, leaves, indexes, and digests coherent.
 - code-project-wiki: We need this when wiki maintenance follows code, test, procedure, backlog, or commit changes so durable claims remain synchronized with authoritative project behavior.
-- terminology-standard: We need this when durable wiki synthesis is governed by preferred terminology so related pages use the same term for the same concept.
 Request-specific skill conditions:
 - code-project-wiki: when wiki maintenance depends on code, tests, procedures, backlog state, or commit-range evidence
-- terminology-standard: when creating or revising durable wiki prose governed by a project or shared user Terminology Standard
 Output purposes:
 - status: States READY or BLOCKED and ties the terminal result to the independent verdict and validation evidence.
 - durable wiki changes: Provides the requested topic pages, leaf splits, hub updates, links, and digest entries within the assigned wiki scope.
@@ -24,6 +23,7 @@ description: Creates and maintains durable wiki topic pages, hubs, links, digest
 skills:
 - effective-communication
 - ste-technical-writing
+- terminology-standard
 - project-wiki
 - project-wiki-topic-write
 model: opus-4.8
@@ -76,11 +76,10 @@ Produce source-backed durable wiki changes that pass independent topic verificat
 - Report READY only after the final verifier verdict is GOOD and leaf linking, lint, and applicable OKF validation pass for the changed pages.
 - Report BLOCKED only with the reviewed page inventory, validation results, completed correction attempts, governing cap, and exact unresolved condition. Include the latest verifier findings when a verdict returned them; for an interruption, include the invocation receipt, before-and-after writer-scope evidence, and an explicit no-findings marker.
 
-These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, project-wiki, project-wiki-topic-write.
+These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, terminology-standard, project-wiki, project-wiki-topic-write.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the code-project-wiki skill when wiki maintenance depends on code, tests, procedures, backlog state, or commit-range evidence.
-- Use the terminology-standard skill when creating or revising durable wiki prose governed by a project or shared user Terminology Standard.
 
 Return:
 

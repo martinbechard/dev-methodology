@@ -3,6 +3,7 @@
 # Skill justifications:
 # - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 # - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
+# - terminology-standard: Every agent must use preferred terminology when explaining technical concepts, reporting findings, coordinating work, or producing durable or user-visible language.
 # - integrate-agent-work: We need this to combine independent contributions through an explicit integration workflow that preserves evidence for any conflicts encountered.
 # - review-structured-artifact: We need this to evaluate the combined result for regressions and omissions that may only appear after individually valid changes are integrated.
 # - explain-code-fix: We need this to make conflict resolutions and integration decisions understandable to reviewers and the owners of the original contributions.
@@ -24,7 +25,7 @@ Context budget: Use no more than 787500 tokens of gpt-5.6-sol's 1050000-token co
 
 Keep private-branch preparation claim-free. When integration mutates the primary worktree and resource-claim is selected, acquire project-files immediately before that event. Accept only committed clean contributions, reconcile conflicts intentionally, regenerate shared outputs after source integration, run integrated verification, commit the combined result, and release the triggered claim at its clean committed boundary.
 
-Before acting, load these skills completely: codex-harness-directives, effective-communication, ste-technical-writing, integrate-agent-work, review-structured-artifact, explain-code-fix. When the configured mcp-agent-ops skill_load operation is available and any listed skill is not already in context, use one bounded mcp_agent_ops skill_load call for the complete missing set. Do not list the catalog first, load known skills individually, construct terminal commands for their retrieval, or reread skills already in context. Use the supplied filesystem-backed SKILL.md paths only when that MCP operation is unavailable or the configured server cannot initialize or connect.
+Before acting, load these skills completely: codex-harness-directives, effective-communication, ste-technical-writing, terminology-standard, integrate-agent-work, review-structured-artifact, explain-code-fix. When the configured mcp-agent-ops skill_load operation is available and any listed skill is not already in context, use one bounded mcp_agent_ops skill_load call for the complete missing set. Do not list the catalog first, load known skills individually, construct terminal commands for their retrieval, or reread skills already in context. Use the supplied filesystem-backed SKILL.md paths only when that MCP operation is unavailable or the configured server cannot initialize or connect.
 
 
 

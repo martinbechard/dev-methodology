@@ -8250,7 +8250,11 @@ Visible after.
             for entry in role_schema["fixedBehavior"]["sharedSkills"]
         ]
         self.assertEqual(
-            ["effective-communication", "ste-technical-writing"],
+            [
+                "effective-communication",
+                "ste-technical-writing",
+                "terminology-standard",
+            ],
             shared_role_skills,
         )
         self.assertEqual(
@@ -11785,7 +11789,11 @@ Visible after.
                 "review-structured-artifact",
             },
             set(build_skill_docs.fixed_role_skills(role))
-            - {"effective-communication", "ste-technical-writing"},
+            - {
+                "effective-communication",
+                "ste-technical-writing",
+                "terminology-standard",
+            },
         )
         self.assertEqual(set(), set(role.skill_conditions))
         self.assertNotIn("resource-claim", role.skill_conditions)

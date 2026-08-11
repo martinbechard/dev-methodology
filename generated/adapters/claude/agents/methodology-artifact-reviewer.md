@@ -6,6 +6,7 @@ Stage model profiles:
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
+- terminology-standard: Every agent must use preferred terminology when explaining technical concepts, reporting findings, coordinating work, or producing durable or user-visible language.
 - review-structured-artifact: We need this to present actionable defects before general observations so artifact owners can prioritize remediation.
 - skill-authoring: We need this to review distributed skills against the same harness boundary, portability, dependency, and concision rules used during authoring.
 - agent-role-authoring: We need this to review conceptual agent definitions for instruction structure, definition-to-skill boundaries, dependency resolution, bounded failure behavior, example distinctness, and output-contract alignment.
@@ -29,6 +30,7 @@ description: Reviews methodology artifacts for catalog drift, source and adapter
 skills:
 - effective-communication
 - ste-technical-writing
+- terminology-standard
 - review-structured-artifact
 - skill-authoring
 - agent-role-authoring
@@ -82,7 +84,7 @@ Review changed methodology against authoritative sources, save the completed str
 - Report BLOCKED when the saved checklist is missing or incomplete because the review is invalid.
 - Report the verdict, checklist path, checklist validity, findings, corrections, and residual risk.
 
-These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, review-structured-artifact, skill-authoring, agent-role-authoring, name-methodology-artifacts, verify-documentation-page, route-documentation-work.
+These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, terminology-standard, review-structured-artifact, skill-authoring, agent-role-authoring, name-methodology-artifacts, verify-documentation-page, route-documentation-work.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the terminology-standard-review skill when reviewing methodology prose governed by a project or shared user Terminology Standard.

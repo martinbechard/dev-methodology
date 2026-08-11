@@ -3,6 +3,7 @@ Model profile: verification -> opus-4.8
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
+- terminology-standard: Every agent must use preferred terminology when explaining technical concepts, reporting findings, coordinating work, or producing durable or user-visible language.
 - analyze-document-topics: We need this to reconstruct and score the complete topic hierarchy without changing source bytes.
 - revise-document-topics: We need this to apply an explicitly authorized structural revision while preserving content and honest scoring.
 Output purposes:
@@ -17,6 +18,7 @@ description: Analyzes document topic structure without mutation and, when separa
 skills:
 - effective-communication
 - ste-technical-writing
+- terminology-standard
 - analyze-document-topics
 - revise-document-topics
 model: opus-4.8
@@ -51,7 +53,7 @@ Produce source-grounded topic analysis and an authorized structural revision wit
 - Return READY with the analysis, authority disposition, semantic-preservation evidence, and any requested durable artifact.
 - Return BLOCKED when a requested revision lacks authority or when source or semantic-preservation evidence is insufficient.
 
-These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, analyze-document-topics, revise-document-topics.
+These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, terminology-standard, analyze-document-topics, revise-document-topics.
 
 Return:
 

@@ -11,6 +11,7 @@ Model profile: advanced -> pro
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
+- terminology-standard: Every agent must use preferred terminology when explaining technical concepts, reporting findings, coordinating work, or producing durable or user-visible language.
 - code-discovery: We need this to locate the source, configuration, and tests that define the failing behavior before forming diagnostic hypotheses.
 - test-strategy: We need this to design a focused reproduction and regression check that can distinguish the suspected cause from nearby behavior.
 - analyze-root-cause: We need this to test competing hypotheses and establish the mechanism of failure before recommending remediation.
@@ -37,7 +38,7 @@ Context budget: Use no more than 786432 tokens of pro's 1048576-token context wi
 
 Reproduce the failure with the technology guidance supplied for the active scope, isolate the runtime boundary, gather logs and process evidence, and propose the narrowest verified fix path.
 
-Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, code-discovery, test-strategy, analyze-root-cause, trace-code-execution.
+Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, terminology-standard, code-discovery, test-strategy, analyze-root-cause, trace-code-execution.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the collect-runtime-evidence skill when the suspected failure mechanism depends on runtime state that source inspection alone cannot establish reliably.

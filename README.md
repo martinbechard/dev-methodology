@@ -48,7 +48,7 @@ The core methodology keeps one shared wiki-compatible page contract and six docu
 
 The shared page contract starts every durable page with Current Understanding, Authoritative Sources, Related Code, Related Tests, Related Backlog Items, Related Wiki Pages, Open Questions, and Maintenance Notes. Specialized documents keep those sections first, then add their own sections.
 
-The [General Agent Skills design](design/agents/general-agent-skills.md) explains the shared skills that apply across conceptual Agents. The role schema supplies ste-technical-writing and effective-communication universally. Project guidance supplies structured-explanation, organise-project-files, and document-provenance only when their conditions apply. Artifact-specific skills and templates continue to govern document structure, while STE preserves exact technical content and source meaning without claiming formal ASD-STE100 compliance.
+The [General Agent Skills design](design/agents/general-agent-skills.md) explains the shared skills that apply across conceptual Agents. The role schema supplies effective-communication, ste-technical-writing, and terminology-standard universally. Project guidance supplies structured-explanation, organise-project-files, and document-provenance only when their conditions apply. Artifact-specific skills and templates continue to govern document structure, while STE preserves exact technical content and source meaning without claiming formal ASD-STE100 compliance.
 
 The [Terminology Standard design](design/agents/terminology-standard.md) defines the positive-first terminology.md contract, shared user and project composition, evidence-based Avoid reinforcement, and the authoring, review, and maintenance Agents that use the three-skill family.
 

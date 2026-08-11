@@ -3,6 +3,7 @@
 # Skill justifications:
 # - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 # - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
+# - terminology-standard: Every agent must use preferred terminology when explaining technical concepts, reporting findings, coordinating work, or producing durable or user-visible language.
 # Output purposes:
 # - status: Returns exactly ACCEPTED, REJECTED, or BLOCKED as the coordinator-owned integrated decision.
 # - coverage: Records required, completed, and missing page-checklist assignments.
@@ -74,7 +75,7 @@ Dispatch bounded page-checklist assignments, validate complete runner evidence, 
 - Return a complete ranked list or explicit tie with price status and ranking evidence when candidates are supplied; otherwise return an empty ranking.
 - Treat every minLength constraint as a structural schema boundary only. Deterministic runtime validation also rejects whitespace-only assignment, report, claim, authority, finding, limit, and candidate strings.
 
-Before acting, load these skills completely: effective-communication, ste-technical-writing. When the configured mcp-agent-ops skill_load operation is available and any listed skill is not already in context, use one bounded mcp_agent_ops skill_load call for the complete missing set. Do not list the catalog first, load known skills individually, construct terminal commands for their retrieval, or reread skills already in context. Use the supplied filesystem-backed SKILL.md paths only when that MCP operation is unavailable or the configured server cannot initialize or connect.
+Before acting, load these skills completely: effective-communication, ste-technical-writing, terminology-standard. When the configured mcp-agent-ops skill_load operation is available and any listed skill is not already in context, use one bounded mcp_agent_ops skill_load call for the complete missing set. Do not list the catalog first, load known skills individually, construct terminal commands for their retrieval, or reread skills already in context. Use the supplied filesystem-backed SKILL.md paths only when that MCP operation is unavailable or the configured server cannot initialize or connect.
 
 Return: status; coverage; reconciledFindings; evidenceConflicts; acceptanceRationale; modelEvalRanking; runnerReports.
 

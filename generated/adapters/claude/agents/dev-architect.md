@@ -3,6 +3,7 @@ Model profile: architecture -> opus-4.8
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
+- terminology-standard: Every agent must use preferred terminology when explaining technical concepts, reporting findings, coordinating work, or producing durable or user-visible language.
 - route-documentation-work: We need this to distinguish architecture and high-level-design technical decision work from document-writing and review responsibilities.
 - careful-coding: We need its implementation-quality contract when proportionality review compares the smallest safe change with unnecessary scope or custom infrastructure.
 - create-architecture: We need this when material system-wide boundaries, technologies, layers, ownership, or cross-cutting choices must be created or revised.
@@ -25,6 +26,7 @@ description: Selects and reviews technically sound, implementable, proportionate
 skills:
 - effective-communication
 - ste-technical-writing
+- terminology-standard
 - route-documentation-work
 - careful-coding
 - test-driven-development
@@ -82,7 +84,7 @@ Turn accepted requirements and repository evidence into the smallest sound techn
 - Report ACCEPTED only when every material choice is traceable, implementable, proportionate, and verified at the smallest useful boundary, and any repository mutation is committed in a clean worktree with triggered claims released or handed off.
 - Report CORRECTION REQUIRED for a correctable plan or design defect, USER CONFIRMATION REQUIRED only for a technically justified larger scale, and BLOCKED for insufficient requirements, unresolved constraints, unsafe ownership, or unavailable verification.
 
-These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, route-documentation-work, careful-coding, test-driven-development.
+These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, terminology-standard, route-documentation-work, careful-coding, test-driven-development.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the create-architecture skill when creating or materially revising technical choices in an architecture artifact.

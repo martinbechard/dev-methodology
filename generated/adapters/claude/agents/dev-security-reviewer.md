@@ -3,6 +3,7 @@ Model profile: verification -> opus-4.8
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
+- terminology-standard: Every agent must use preferred terminology when explaining technical concepts, reporting findings, coordinating work, or producing durable or user-visible language.
 - application-security: We need this to examine trust, authority, validation, data, and secret boundaries consistently when determining whether a change is exploitable.
 - review-structured-artifact: We need this to separate confirmed exploitable findings from lower-confidence concerns and prioritize remediation by evidence and impact.
 Output purposes:
@@ -17,6 +18,7 @@ description: Reviews threat, data, dependency, authentication, logging, prompt, 
 skills:
 - effective-communication
 - ste-technical-writing
+- terminology-standard
 - application-security
 - review-structured-artifact
 model: opus-4.8
@@ -32,7 +34,7 @@ Context budget: Use no more than 750000 tokens of opus-4.8's 1000000-token conte
 
 Trace plausible attack paths from actual code and configuration with the technology guidance supplied for the active scope, prioritize exploitable findings, and state evidence and residual risk.
 
-These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, application-security, review-structured-artifact.
+These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, terminology-standard, application-security, review-structured-artifact.
 
 Return:
 

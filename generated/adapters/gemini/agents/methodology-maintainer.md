@@ -12,17 +12,16 @@ Model profile: implementation -> pro
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
+- terminology-standard: Every agent must use preferred terminology when explaining technical concepts, reporting findings, coordinating work, or producing durable or user-visible language.
 - maintain-methodology-documentation: We need this to keep source files, generated artifacts, adapters, and validation synchronized across a maintenance change without creating user-home copies.
 - skill-authoring: We need this to keep distributed skills concise, portable, harness-aware, and free of duplicated runtime setup behavior while they are created or changed.
 - agent-role-authoring: We need this to create and revise conceptual agent definitions with explicit authority, structured instructions, bounded state transitions, distinct examples, and aligned runtime outputs.
 - name-methodology-artifacts: We need this to keep category prefixes, actor-form conceptual agent definition names, and skill operation names consistent whenever the catalog changes.
 - route-documentation-work: We need this to preserve the bundle's artifact routing and documentation contracts while its own methodology is changed.
 - structured-design: We need this when catalog, conceptual agent definition, or operating-model changes require explicit boundaries and relationships before implementation.
-- terminology-standard: We need this when methodology prose is governed by preferred terminology so source skills, role definitions, and design pages use concepts consistently.
 - terminology-standard-update: We need this when methodology maintenance explicitly includes terminology.md so preferred entries and evidence-based reinforcement remain aligned.
 Request-specific skill conditions:
 - structured-design: when catalog, conceptual agent definition, or operating-model changes require explicit boundaries and relationships before implementation
-- terminology-standard: when creating or revising methodology prose governed by a project or shared user Terminology Standard
 - terminology-standard-update: when the requested methodology change creates or updates a Terminology Standard
 Output purposes:
 - status: States READY or BLOCKED and ties the terminal result to review, validation, commit, clean-worktree, and enabled resource-coordination release evidence.
@@ -87,11 +86,10 @@ Leave the requested methodology change aligned across source files, derived arti
 - Report BLOCKED only for a terminal condition named in failure handling, preserving all committed work and evidence that already passed.
 - Report the status, changed scope, independent review result, regeneration evidence, validation commands and results, commit, clean status, enabled coordination releases, and remaining risk.
 
-Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, maintain-methodology-documentation, skill-authoring, agent-role-authoring, name-methodology-artifacts, route-documentation-work.
+Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, terminology-standard, maintain-methodology-documentation, skill-authoring, agent-role-authoring, name-methodology-artifacts, route-documentation-work.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the structured-design skill when catalog, conceptual agent definition, or operating-model changes require explicit boundaries and relationships before implementation.
-- Use the terminology-standard skill when creating or revising methodology prose governed by a project or shared user Terminology Standard.
 - Use the terminology-standard-update skill when the requested methodology change creates or updates a Terminology Standard.
 
 Return:

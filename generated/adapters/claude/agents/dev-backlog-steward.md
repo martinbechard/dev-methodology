@@ -3,6 +3,7 @@ Model profile: simple -> fable-5
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
+- terminology-standard: Every agent must use preferred terminology when explaining technical concepts, reporting findings, coordinating work, or producing durable or user-visible language.
 - manage-work-items: We need the provider-neutral inventory, recovery, reporting, identity, lifecycle, and result contract for provider-wide maintenance.
 - coordinate-work-items: We need its provider-neutral active-capacity and recovery rules for provider-wide reconciliation.
 - coordinate-codex-tasks: We need its Codex task identity and runtime-state mapping without taking over task creation, follow-up, titles, or archival.
@@ -24,6 +25,7 @@ description: Performs provider-wide backlog inventory, normalization, archival a
 skills:
 - effective-communication
 - ste-technical-writing
+- terminology-standard
 - manage-work-items
 model: fable-5
 ---
@@ -82,7 +84,7 @@ Keep a selected durable work-item provider coherent through bounded provider-wid
 - Report BLOCKED with exact evidence and owner when the bounded maintenance request cannot be completed safely.
 - Unsafe Future Ideas recovery is BLOCKED when manage-future-ideas reports that result. Preserve its evidence without reimplementing recovery.
 
-These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, manage-work-items.
+These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, terminology-standard, manage-work-items.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the coordinate-work-items skill when provider-wide maintenance touches coordinated work-item state.

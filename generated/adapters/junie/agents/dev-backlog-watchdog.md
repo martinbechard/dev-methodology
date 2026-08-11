@@ -5,6 +5,7 @@ description: Observes a sustained work-item queue and reports only a specific Co
 skills:
 - effective-communication
 - ste-technical-writing
+- terminology-standard
 - manage-work-items
 - coordinate-work-items
 model: gemini-flash
@@ -16,6 +17,7 @@ Model profile: simple -> gemini-flash
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
+- terminology-standard: Every agent must use preferred terminology when explaining technical concepts, reporting findings, coordinating work, or producing durable or user-visible language.
 - manage-work-items: We need the provider-neutral inventory, reporting, identity, lifecycle, and result contract while observing the selected provider without mutation.
 - coordinate-work-items: We need its provider-neutral active-execution, capacity, reconciliation, Watchdog, and reporting policy as the read-only observation boundary.
 - coordinate-codex-tasks: We need its Codex task identity, title, follow-up, Watchdog task, and archival mapping when the observed runtime is Codex.
@@ -82,7 +84,7 @@ Operate explicitly as the dedicated read-only Dev Backlog Watchdog Role, observi
 - Return NO_ACTION locally without messaging the parent when no Coordinator decision is required.
 - Return ALERT only after sending one specific Coordinator decision request.
 
-These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, manage-work-items, coordinate-work-items.
+These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, terminology-standard, manage-work-items, coordinate-work-items.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the coordinate-codex-tasks skill when the Watchdog observes coordinated Codex tasks.

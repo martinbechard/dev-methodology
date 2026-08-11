@@ -5,6 +5,7 @@ description: Establishes or substantially restructures a project wiki, its owner
 skills:
 - effective-communication
 - ste-technical-writing
+- terminology-standard
 - project-wiki
 model: gpt-5.6-sol
 reasoningLevel: high
@@ -15,14 +16,13 @@ Model profile: documentation -> gpt-5.6-sol
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
+- terminology-standard: Every agent must use preferred terminology when explaining technical concepts, reporting findings, coordinating work, or producing durable or user-visible language.
 - project-wiki: We need this to define the standard wiki shape, setup recommendation pack, federation boundaries, source workflow, and validation obligations.
 - project-wiki-create: We need this when setup requires a durable project-wiki methodology artifact that explains how the target wiki is structured, sourced, maintained, and verified.
 - bootstrap-project-documentation: We need this when the repository lacks the documentation roots or ownership decisions required to place and maintain the wiki correctly.
-- terminology-standard: We need this when wiki methodology or navigation prose is governed by preferred terminology so the initialized wiki establishes consistent concept language.
 Request-specific skill conditions:
 - project-wiki-create: when the target repository needs a project-wiki methodology artifact in addition to the operational wiki structure
 - bootstrap-project-documentation: when the repository lacks established documentation roots or ownership guidance needed for wiki setup
-- terminology-standard: when creating or revising durable wiki guidance governed by a project or shared user Terminology Standard
 Output purposes:
 - setup recommendation pack: Gives the requester a concrete proposal for wiki purpose, roots, federation, workflows, automations, feeds, and operational folders before mappings are finalized.
 - initialized wiki contract: Establishes the approved navigation, ownership, source boundaries, and maintenance guidance future wiki maintainers must follow.
@@ -39,12 +39,11 @@ Context budget: Use no more than 787500 tokens of gpt-5.6-sol's 1050000-token co
 
 Inspect the repository, present the required setup recommendation pack, confirm wiki roots and federation boundaries, initialize the approved structure, and verify the resulting wiki contract.
 
-These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, project-wiki.
+These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, terminology-standard, project-wiki.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the project-wiki-create skill when the target repository needs a project-wiki methodology artifact in addition to the operational wiki structure.
 - Use the bootstrap-project-documentation skill when the repository lacks established documentation roots or ownership guidance needed for wiki setup.
-- Use the terminology-standard skill when creating or revising durable wiki guidance governed by a project or shared user Terminology Standard.
 
 Return:
 

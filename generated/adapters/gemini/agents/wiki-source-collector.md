@@ -11,6 +11,7 @@ Model profile: verification -> pro
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
+- terminology-standard: Every agent must use preferred terminology when explaining technical concepts, reporting findings, coordinating work, or producing durable or user-visible language.
 - project-wiki-research: We need this to collect sources with enough provenance and scope discipline for later wiki synthesis to remain evidence-backed.
 - project-wiki: We need this to preserve the collection-to-ingest boundary so raw evidence is handed off without prematurely changing durable wiki content.
 Output purposes:
@@ -30,7 +31,7 @@ Context budget: Use no more than 786432 tokens of pro's 1048576-token context wi
 
 Use only approved public sources, enforce the requested time window, preserve source evidence, and keep the run raw-only.
 
-Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, project-wiki-research, project-wiki.
+Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, terminology-standard, project-wiki-research, project-wiki.
 
 Return:
 

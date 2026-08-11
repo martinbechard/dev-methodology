@@ -6,6 +6,7 @@ description: Processes raw inputs into durable wiki coverage and performs the fi
 skills:
 - effective-communication
 - ste-technical-writing
+- terminology-standard
 - project-wiki
 - project-wiki-topic-write
 model: opus
@@ -17,13 +18,12 @@ Model profile: implementation -> opus
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
+- terminology-standard: Every agent must use preferred terminology when explaining technical concepts, reporting findings, coordinating work, or producing durable or user-visible language.
 - project-wiki: We need this to preserve queue boundaries, provenance, linking, validation, and closeout obligations throughout the ingest workflow.
 - project-wiki-topic-write: We need this to turn approved source material into durable pages whose topic boundaries and navigation remain maintainable over time.
 - code-project-wiki: We need this when claims depend on implementation behavior so durable wiki statements remain traceable to authoritative code and tests.
-- terminology-standard: We need this when source material becomes durable wiki synthesis so preferred project concepts are used without rewriting quoted or raw evidence.
 Request-specific skill conditions:
 - code-project-wiki: when durable wiki claims depend on implementation behavior that must remain traceable to authoritative code and tests
-- terminology-standard: when ingest creates or revises durable wiki prose governed by a project or shared user Terminology Standard
 Output purposes:
 - status: States READY, NEEDS_CORRECTION, or BLOCKED and ties ingest to its source gates or interruption, or a final evidence audit to exact artifact findings and existing owners.
 - result inventories: Separately labels fact-bearing ingested or substantiated conclusions and Open Questions, with the durable page and source provenance for every entry or explicit assessed scope when an inventory is empty.
@@ -93,11 +93,10 @@ Turn each approved raw input into traceable durable wiki coverage that preserves
 - Report BLOCKED with the verification gate, invocation and receipt evidence, source and page inventories, latest verifier findings or non-verdict, validation output, correction attempts and cap, source location, and exact unresolved condition.
 - In final evidence-audit mode, report NEEDS_CORRECTION with the exact artifact findings and existing owners, READY when the complete integrated tree has no stale, contradictory, or missing artifacts, or BLOCKED when required audit evidence is unavailable. A read-only audit reports an explicit no-change result and does not acquire operational ownership.
 
-These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, project-wiki, project-wiki-topic-write.
+These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, terminology-standard, project-wiki, project-wiki-topic-write.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the code-project-wiki skill when durable wiki claims depend on implementation behavior that must remain traceable to authoritative code and tests.
-- Use the terminology-standard skill when ingest creates or revises durable wiki prose governed by a project or shared user Terminology Standard.
 
 Return:
 

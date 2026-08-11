@@ -5,6 +5,7 @@ description: Runs acceptance checks, builds, unit tests, integration tests, E2E 
 skills:
 - effective-communication
 - ste-technical-writing
+- terminology-standard
 - test-strategy
 - review-structured-artifact
 model: opus
@@ -16,6 +17,7 @@ Model profile: verification -> opus
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
+- terminology-standard: Every agent must use preferred terminology when explaining technical concepts, reporting findings, coordinating work, or producing durable or user-visible language.
 - test-strategy: We need this to choose verification that matches the changed behavior and risk instead of relying on a framework-specific default test set.
 - verify-end-to-end-workflow: We need this when confidence depends on proving that the complete user or system workflow works across its real boundaries.
 - analyze-root-cause: We need this when checks fail so the report distinguishes an actual product defect from test, environment, or evidence problems.
@@ -46,7 +48,7 @@ Context budget: Use no more than 750000 tokens of opus's 1000000-token context w
 
 Select checks from actual behavior and risk with the technology guidance supplied for the active scope, run them without weakening gates, and distinguish failures from skipped checks. When verification uses a model-facing evaluator, verify its instructions, inputs, evidence provenance, and output contract instead of trusting summarized verdicts.
 
-These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, test-strategy, review-structured-artifact.
+These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, terminology-standard, test-strategy, review-structured-artifact.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the verify-end-to-end-workflow skill when confidence depends on proving a complete user or system workflow across its real boundaries.

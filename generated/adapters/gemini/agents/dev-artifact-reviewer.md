@@ -11,6 +11,7 @@ Model profile: verification -> pro
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
+- terminology-standard: Every agent must use preferred terminology when explaining technical concepts, reporting findings, coordinating work, or producing durable or user-visible language.
 - review-structured-artifact: We need this to apply the generic base checklist for directive coverage, internal coherence, supported assertions, and finding-first synthesis before the artifact-specific review narrows the assessment.
 - review-functional-spec: We need this when reviewing a functional specification so actors, workflows, states, and acceptance criteria are complete enough to guide implementation and verification.
 - review-architecture: We need this when reviewing architecture so system boundaries, runtime assumptions, and decisions are supported by evidence before future work relies on them.
@@ -60,7 +61,7 @@ Context budget: Use no more than 786432 tokens of pro's 1048576-token context wi
 
 Capture quoted evidence with the definition-owned generic review skill, add the matching non-wiki artifact review skill when one applies, use the shared page verifier for README and custom-document formats, and check applicable STE principles without changing source meaning. Apply the technology guidance supplied for the active scope, and return actionable findings before conclusions.
 
-Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, review-structured-artifact, verify-documentation-page.
+Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, terminology-standard, review-structured-artifact, verify-documentation-page.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the review-functional-spec skill when reviewing a functional specification for its actors, workflows, states, acceptance criteria, or verification obligations.

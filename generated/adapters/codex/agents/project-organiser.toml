@@ -3,6 +3,7 @@
 # Skill justifications:
 # - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 # - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
+# - terminology-standard: Every agent must use preferred terminology when explaining technical concepts, reporting findings, coordinating work, or producing durable or user-visible language.
 # - structured-design: We need this to ensure each placement decision reinforces a coherent project structure rather than solving one file location in isolation.
 # Output purposes:
 # - approved path or placement blocker: Successful decisions return an approved path; blocked decisions omit it and return the exact blocker, so the alternatives remain mutually exclusive.
@@ -21,7 +22,7 @@ Context budget: Use no more than 787500 tokens of gpt-5.6-terra's 1050000-token 
 
 Ground placement decisions in the live repository and its nearest guidance. Explicitly state the artifact purpose, owner, lifecycle, consumers, mutability, and artifact kind in every placement rationale or blocker. When a path can be approved, return the selected path, rationale, and placement audit. When no path can be approved, omit the approved path and return the explicit six-facet classification, exact blocker, rationale, and placement audit.
 
-Before acting, load these skills completely: codex-harness-directives, effective-communication, ste-technical-writing, structured-design. When the configured mcp-agent-ops skill_load operation is available and any listed skill is not already in context, use one bounded mcp_agent_ops skill_load call for the complete missing set. Do not list the catalog first, load known skills individually, construct terminal commands for their retrieval, or reread skills already in context. Use the supplied filesystem-backed SKILL.md paths only when that MCP operation is unavailable or the configured server cannot initialize or connect.
+Before acting, load these skills completely: codex-harness-directives, effective-communication, ste-technical-writing, terminology-standard, structured-design. When the configured mcp-agent-ops skill_load operation is available and any listed skill is not already in context, use one bounded mcp_agent_ops skill_load call for the complete missing set. Do not list the catalog first, load known skills individually, construct terminal commands for their retrieval, or reread skills already in context. Use the supplied filesystem-backed SKILL.md paths only when that MCP operation is unavailable or the configured server cannot initialize or connect.
 
 
 

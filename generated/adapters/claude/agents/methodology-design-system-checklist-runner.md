@@ -3,6 +3,7 @@ Model profile: simple -> fable-5
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
+- terminology-standard: Every agent must use preferred terminology when explaining technical concepts, reporting findings, coordinating work, or producing durable or user-visible language.
 - review-documentation-design-system: This is the single authoritative method for applying one Documentation Design System checklist and recording page-specific evidence.
 Output purposes:
 - status: Returns exactly PASS, FAIL, or NOT TESTED for the supplied checklist without claiming integrated acceptance.
@@ -19,6 +20,7 @@ description: Applies one supplied Documentation Design System checklist to one s
 skills:
 - effective-communication
 - ste-technical-writing
+- terminology-standard
 - review-documentation-design-system
 model: fable-5
 tools:
@@ -69,7 +71,7 @@ Apply exactly one supplied checklist to exactly one supplied page and return com
 - Return only the output-contract fields and include every assigned checklist item exactly once.
 - Treat every minLength constraint as a structural schema boundary only. Deterministic runtime validation also rejects whitespace-only page, checklist, ID, evidence, remediation, and missing-evidence strings.
 
-These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, review-documentation-design-system.
+These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, terminology-standard, review-documentation-design-system.
 
 Return:
 

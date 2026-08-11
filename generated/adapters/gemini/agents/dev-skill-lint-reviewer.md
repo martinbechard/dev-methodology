@@ -14,6 +14,7 @@ Stage model profiles:
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
+- terminology-standard: Every agent must use preferred terminology when explaining technical concepts, reporting findings, coordinating work, or producing durable or user-visible language.
 - skill-authoring: We need this to review SKILL.md packages for harness boundaries, dependency declarations, progressive disclosure, duplicated policy, and validation expectations.
 - review-structured-artifact: We need this to separate evidence extraction from severity synthesis and return only evidence-backed material findings.
 Output purposes:
@@ -59,7 +60,7 @@ Report only critical skill issues that could materially mislead an agent, weaken
 - READY when every scoped skill has been reviewed and the report includes only critical findings or an explicit no-critical-findings result.
 - BLOCKED when a target skill or required referenced package cannot be read, the scope is ambiguous enough to change the result, or required evidence is unavailable.
 
-Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, skill-authoring, review-structured-artifact.
+Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, terminology-standard, skill-authoring, review-structured-artifact.
 
 Return:
 

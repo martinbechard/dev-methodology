@@ -3,6 +3,7 @@ Model profile: verification -> opus-4.8
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
+- terminology-standard: Every agent must use preferred terminology when explaining technical concepts, reporting findings, coordinating work, or producing durable or user-visible language.
 - manage-work-items: We need the provider-neutral identity, lifecycle, result, and management procedure contract before project guidance selects one provider implementation.
 - coordinate-work-items: We need its provider-neutral active-queue, scheduling, lifecycle, recovery, delivery, and reporting policy for coordinated work items.
 - coordinate-codex-tasks: We need its Codex capability, task identity, title, follow-up, reconciliation, Watchdog task, and archival mapping without changing portable policy.
@@ -32,6 +33,7 @@ description: Acts as the parent backlog coordinator across the effective work-it
 skills:
 - effective-communication
 - ste-technical-writing
+- terminology-standard
 - manage-work-items
 model: opus-4.8
 ---
@@ -144,7 +146,7 @@ Operate explicitly as the Dev Backlog Coordinator. Keep provider-backed work mov
 - Report BLOCKED only when one specific Coordinator or user decision remains, naming the affected Work Item ID, blocker, owner, unblock condition, and required decision. Read the preserved evidence from durable records instead of copying it into the message.
 - Return only the final coordination outcome or a specific user decision that remains. Provider lifecycle, dispatch, delivery, and cleanup evidence stays in durable records.
 
-These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, manage-work-items.
+These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, terminology-standard, manage-work-items.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the coordinate-work-items skill when multiple work items are coordinated through a sustained queue.

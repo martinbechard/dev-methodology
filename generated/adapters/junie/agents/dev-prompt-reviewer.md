@@ -5,6 +5,7 @@ description: Reviews prompt protocol, tool-call safety, schema promises, evaluat
 skills:
 - effective-communication
 - ste-technical-writing
+- terminology-standard
 - review-prompt-contracts
 - review-structured-artifact
 model: opus
@@ -16,6 +17,7 @@ Model profile: verification -> opus
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
+- terminology-standard: Every agent must use preferred terminology when explaining technical concepts, reporting findings, coordinating work, or producing durable or user-visible language.
 - review-prompt-contracts: We need this to assess the full model-facing contract rather than reviewing prompt wording in isolation from state, tools, authority, and outputs.
 - review-structured-artifact: We need this to make contract defects comparable by evidence and severity so maintainers can prioritize actionable corrections.
 - terminology-standard-review: We need this when model-facing prose is governed by preferred terms so prompt and tool contracts express the same concept consistently.
@@ -37,7 +39,7 @@ Context budget: Use no more than 750000 tokens of opus's 1000000-token context w
 
 Trace prompt and tool contracts through the runtime with the technology guidance supplied for the active scope, identify schema and safety gaps, and distinguish verified behavior from assumptions.
 
-These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, review-prompt-contracts, review-structured-artifact.
+These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, terminology-standard, review-prompt-contracts, review-structured-artifact.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the terminology-standard-review skill when the reviewed prompt, schema description, or tool guidance contains language governed by a project or shared user Terminology Standard.

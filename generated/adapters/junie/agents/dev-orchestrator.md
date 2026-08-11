@@ -7,6 +7,7 @@ description: Coordinates multi-step development work across planning, architectu
 skills:
 - effective-communication
 - ste-technical-writing
+- terminology-standard
 - manage-work-items
 - deliver-work-item
 - structured-design
@@ -19,6 +20,7 @@ Model profile: verification -> opus
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
+- terminology-standard: Every agent must use preferred terminology when explaining technical concepts, reporting findings, coordinating work, or producing durable or user-visible language.
 - create-work-item: We need the provider-neutral identity, input, creation, and result contract when a confirmed issue is deliberately excluded from the current delivery.
 - manage-work-items: We need the provider-neutral identity, lifecycle, result, transition, completion-reconciliation, recovery, and reporting contract for direct lifecycle ownership.
 - coordinate-work-items: We need its provider-neutral acceptance, active-execution, delivery, Persistence closure, recovery, and reporting policy.
@@ -170,7 +172,7 @@ Coordinate scoped development work through independently owned implementation, f
 - Report the complex-plan decision as structured outcome evidence including the gate result and reasons, fixed task-owned paths when active, helper outcomes and before-and-after hashes, discovery additions, final synchronization against authoritative delivery evidence, and explicit retention result. When the gate is false, record the negative reason without creating paths.
 - Report the status, task breakdown, resolved definition-owned skillsets, assigned agents, enabled resource ownership, work-item delivery references, confirmed issue dispositions, Persistence lifecycle updates, commits, review results, verification results, integration evidence, and remaining questions.
 
-These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, manage-work-items, deliver-work-item, structured-design.
+These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, terminology-standard, manage-work-items, deliver-work-item, structured-design.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the create-work-item skill when an excluded confirmed issue requires a durable provider-owned work item.

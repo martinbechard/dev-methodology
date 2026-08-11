@@ -138,11 +138,6 @@ skills:
     justification: We need this when catalog, conceptual agent definition, or operating-model changes require explicit boundaries and relationships before implementation.
     condition: when catalog, conceptual agent definition, or operating-model changes require explicit boundaries
       and relationships before implementation
-- terminology-standard:
-    justification: We need this when methodology prose is governed by preferred terminology
-      so source skills, role definitions, and design pages use concepts consistently.
-    condition: when creating or revising methodology prose governed by a project or shared
-      user Terminology Standard.
 - terminology-standard-update:
     justification: We need this when methodology maintenance explicitly includes
       terminology.md so preferred entries and evidence-based reinforcement remain aligned.

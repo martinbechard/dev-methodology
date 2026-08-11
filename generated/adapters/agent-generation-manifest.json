@@ -28,11 +28,12 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "route-documentation-work",
             "careful-coding",
             "test-driven-development"
           ],
-          "sha256": "2ffbfbee6d2c14356bc99f1a4710c112e350aaffa4ab4db3c75b1c74a46343bf",
+          "sha256": "ebf6f70d8de4fab56002cda1ebf80ef177cbb84a74bddcbda91293ba29b77a52",
           "source": "agents/roles/dev-activities/dev-architect.role.yaml"
         },
         {
@@ -60,10 +61,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "review-structured-artifact",
             "verify-documentation-page"
           ],
-          "sha256": "23bfcabb7e18e77d10be0af7c52d40ef0b182635419f8a82ad921444bbaf0170",
+          "sha256": "316f16d11a4008ff465ac511ca157bb6f09f8ef992d826ce8376771a9cfa0420",
           "source": "agents/roles/dev-activities/dev-artifact-reviewer.role.yaml"
         },
         {
@@ -91,9 +93,10 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "manage-work-items"
           ],
-          "sha256": "f422ecd1882b95c0d23f92ffb370c74ceda2c890c2e87d195c41e820fa21997f",
+          "sha256": "563d08d0b3e3a51f55166466d8eb117d4da7b80eb9843334233dcda10f6fb1ea",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
@@ -121,9 +124,10 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "manage-work-items"
           ],
-          "sha256": "05f6900e828048deff7ca525ac74cc8849d4ebb9308936d0cb99d4d0a05f6317",
+          "sha256": "c39580480fa2cc6cec11a32a14ea254508be928b71eab954d697363460d1f03a",
           "source": "agents/roles/dev-activities/dev-backlog-steward.role.yaml"
         },
         {
@@ -151,10 +155,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "manage-work-items",
             "coordinate-work-items"
           ],
-          "sha256": "a1cf28ca073e1ff9afbcb6b42bff44d4a30195655eb4ef28e5a58162f415e31b",
+          "sha256": "990875eb64cd25f0eecd9f44fa49e30f1902ff21f36c2365bdaae6f064b3e624",
           "source": "agents/roles/dev-activities/dev-backlog-watchdog.role.yaml"
         },
         {
@@ -182,9 +187,10 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "verify-end-to-end-workflow"
           ],
-          "sha256": "899cc5ad310fb451c2e90a4ad251f1af34781f55554dda7a652ac20467595f3f",
+          "sha256": "64cbe6a7e7352a684b9dafd9fe52f38731ce664ad428011a2d6823a1a0683c79",
           "source": "agents/roles/dev-activities/dev-browser-operator.role.yaml"
         },
         {
@@ -249,12 +255,13 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "review-code-with-evidence",
             "review-structured-artifact",
             "careful-coding",
             "code-comments"
           ],
-          "sha256": "b50efb01595ec066f88358b1b41ce8981e3a1e473a6248bc131ad42738c031e8",
+          "sha256": "f9372772c3c25e82f11918c88e4fb87466a6690d07f744582fddab27180dc8d1",
           "source": "agents/roles/dev-activities/dev-code-reviewer.role.yaml"
         },
         {
@@ -282,12 +289,13 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "careful-coding",
             "code-comments",
             "code-discovery",
             "explain-code-fix"
           ],
-          "sha256": "e4f6c88342fbe84c9e5c46b041b21cd01d7e781c2ddd1cf4922c524e9795a917",
+          "sha256": "f25f5c051494bfd52b0db7c607ef5e18c8afa857c722e6e37922af63389c7e14",
           "source": "agents/roles/dev-activities/dev-coder.role.yaml"
         },
         {
@@ -315,10 +323,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "analyze-document-topics",
             "revise-document-topics"
           ],
-          "sha256": "3cfc5d5e50812a89a09cf7cccff263263cf4f030e10faa6572c4de82c0d5da37",
+          "sha256": "67e3722bef2dcb9c83a110fbb7a61ae5d0b04c8d261db0cd553371762e29f13e",
           "source": "agents/roles/dev-activities/dev-document-topic-editor.role.yaml"
         },
         {
@@ -346,9 +355,10 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "route-documentation-work"
           ],
-          "sha256": "10959d361e1986f106f2eb36ee9777430c57f179ed783b65bc87480532237d0b",
+          "sha256": "a76011af911e548729824046bf5ba5db9842156996ad5f8750582755124cb1e5",
           "source": "agents/roles/dev-activities/dev-documentation-writer.role.yaml"
         },
         {
@@ -376,11 +386,12 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "integrate-agent-work",
             "review-structured-artifact",
             "explain-code-fix"
           ],
-          "sha256": "16f5b485e5e4dc0fe621505a9889a5d3c6cc39c52c887fb32ef341f3dd3752d8",
+          "sha256": "c2f5398b568fbb5eaf289df96d037874c4b2795c38e30849683e3f15807422ff",
           "source": "agents/roles/dev-activities/dev-merge-coordinator.role.yaml"
         },
         {
@@ -408,11 +419,12 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "manage-work-items",
             "deliver-work-item",
             "structured-design"
           ],
-          "sha256": "49cac02078a7acde6d0f1d131c4ae484d0fedbbb0678204a7ee807e18744432c",
+          "sha256": "b93268ad794b508dc0800a5fd4d9230bd7726920d9e332241893afe9b0520bc5",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -440,10 +452,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "review-prompt-contracts",
             "review-structured-artifact"
           ],
-          "sha256": "063fac48dd63243fb41c802870a57e4dfa551e3fad3bc64ec167f6bf7c1880f0",
+          "sha256": "6e7fa4e105c58ff72cffe2eed3c1571bed97604c67da07bf87671c4ea20f921c",
           "source": "agents/roles/dev-activities/dev-prompt-reviewer.role.yaml"
         },
         {
@@ -471,12 +484,13 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "code-discovery",
             "test-strategy",
             "analyze-root-cause",
             "trace-code-execution"
           ],
-          "sha256": "8e18dc9aba4312c1c5717ef5488a2e9da87def5e71190859fc745352323670d7",
+          "sha256": "c6559009b67d7627cf75b3d5317a79a4d8b62f1276de844dfe672d8976d14a5d",
           "source": "agents/roles/dev-activities/dev-runtime-diagnostician.role.yaml"
         },
         {
@@ -504,10 +518,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "application-security",
             "review-structured-artifact"
           ],
-          "sha256": "53da08874248143555da52acf41eac4a72e791ffee2ba1b6855d6948cfc57b07",
+          "sha256": "e009de2c84a57142f917c057038fc78446e9c180b0787f07c79f74465d429893",
           "source": "agents/roles/dev-activities/dev-security-reviewer.role.yaml"
         },
         {
@@ -560,10 +575,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "skill-authoring",
             "review-structured-artifact"
           ],
-          "sha256": "e1b0c7bfc17bfa6d7b0df9d3e7cbadf43496e2c99152413c5e7bc3b128345dfd",
+          "sha256": "05809f5d7020658e556dbdd8e015e81731e330566cef169713e4421993d7910f",
           "source": "agents/roles/dev-activities/dev-skill-lint-reviewer.role.yaml"
         },
         {
@@ -591,11 +607,12 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "user-experience-review",
             "verify-end-to-end-workflow",
             "review-structured-artifact"
           ],
-          "sha256": "9cf5fe5c6abf7c17c8bcef0ca35ee5f8fd89c3749454f9ec28f6aa854c4cda7c",
+          "sha256": "608bacdd7a01bfb8091e0483702c8f49dc4e2f17aea5153f5aba8bbb5132f14d",
           "source": "agents/roles/dev-activities/dev-ux-specialist.role.yaml"
         },
         {
@@ -623,10 +640,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "test-strategy",
             "review-structured-artifact"
           ],
-          "sha256": "acee0cc0b1d282c44707d05066d15fea7f5c46e1edc7fb65bdfde01d0754c2c7",
+          "sha256": "ba7e96ad2a4a8e9208293b21e17eef623913d4b3e2b3413331cd6d64dfb42e58",
           "source": "agents/roles/dev-activities/dev-verifier.role.yaml"
         },
         {
@@ -679,6 +697,7 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "review-structured-artifact",
             "skill-authoring",
             "agent-role-authoring",
@@ -686,7 +705,7 @@
             "verify-documentation-page",
             "route-documentation-work"
           ],
-          "sha256": "27775648065be6e5b60e6278dd2d617e7daba8e77becf34bea85d4cbb213d4bd",
+          "sha256": "ce3d67bc0554abcb0ba979a2c555b587fef7a8fe96128949c01a481cccee714c",
           "source": "agents/roles/methodology-maintenance/methodology-artifact-reviewer.role.yaml"
         },
         {
@@ -714,9 +733,10 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "review-documentation-design-system"
           ],
-          "sha256": "bd0b2b75b6ce9bb0c57280f35db88dfddb22c2fc532ecc66c757839f504dda54",
+          "sha256": "d8aa763cd51ca6c96212440009f2f77d6e4de6ae0061d380894a5bfb7475e025",
           "source": "agents/roles/methodology-maintenance/methodology-design-system-checklist-runner.role.yaml"
         },
         {
@@ -743,9 +763,10 @@
           "output": "generated/adapters/claude/agents/methodology-design-system-review-coordinator.md",
           "referencedFixedSkills": [
             "effective-communication",
-            "ste-technical-writing"
+            "ste-technical-writing",
+            "terminology-standard"
           ],
-          "sha256": "5f3ae90a3c1efec787fdfbef026ed9a73458bb7e6a7da37e1a1db311af5eacf4",
+          "sha256": "3fa523d4350c8e3668774e686e1de830dde49924884a3b7ccb4ca53239793fb3",
           "source": "agents/roles/methodology-maintenance/methodology-design-system-review-coordinator.role.yaml"
         },
         {
@@ -773,13 +794,14 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "maintain-methodology-documentation",
             "skill-authoring",
             "agent-role-authoring",
             "name-methodology-artifacts",
             "route-documentation-work"
           ],
-          "sha256": "a016e9544a8b47f453c845a9a1244e02ca6591820724b9372b2641772e4c990b",
+          "sha256": "cf7e62b7af5157f387d7812c9a1bc3383c6d5533052c7ea233cc360a53fba632",
           "source": "agents/roles/methodology-maintenance/methodology-maintainer.role.yaml"
         },
         {
@@ -807,10 +829,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "bootstrap-project-documentation",
             "route-documentation-work"
           ],
-          "sha256": "14685d412b481c665b40ed319a0a75e0115746d70cc639a7978352eb631e0c35",
+          "sha256": "41cacda5a376fe00327afa09ec45874b3199458fda1fea8a691ac4337ee66f0f",
           "source": "agents/roles/project-setup/project-bootstrapper.role.yaml"
         },
         {
@@ -838,12 +861,13 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "detect-technology-skills",
             "create-project-configuration",
             "route-documentation-work",
             "verify-documentation-page"
           ],
-          "sha256": "1582d2786ee1709db541d2d3fe2f3845a1e2f5bce2b7d92611dcf6284cd1d0db",
+          "sha256": "028cf3f46fb763ead7e3f6c8449d470d9a6ce0ad4c866a920119d66b52cae07f",
           "source": "agents/roles/project-setup/project-configurator.role.yaml"
         },
         {
@@ -871,9 +895,10 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "structured-design"
           ],
-          "sha256": "f70f3a1066876c56acfb00fe2d3deab4507cbce97fbabc8da6ed5d56ab326c3f",
+          "sha256": "8c96801f14e4cfc9865908c5fa535ac854425596b2e618e544ac30f915d85af6",
           "source": "agents/roles/project-setup/project-organiser.role.yaml"
         },
         {
@@ -901,9 +926,10 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "project-wiki"
           ],
-          "sha256": "53636b3e2f2febf8349618d043c875d5749c3c4e8a5380e58237d1ea28c27e89",
+          "sha256": "ba92233f9bdbbc2069834c16c056ed3a415095a5e8492167f5d32c289e6bb227",
           "source": "agents/roles/wiki-activities/wiki-architect.role.yaml"
         },
         {
@@ -956,10 +982,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "project-wiki-review",
             "verify-documentation-page"
           ],
-          "sha256": "dbbdb1e9726229a90098437f8b0c897e8ddff1574a2207cd329266ff34c88087",
+          "sha256": "a56e0f9596c3306c9774be91d5ee3b0e03f70f1cea82a4cfbea7b0bdb751c25c",
           "source": "agents/roles/wiki-activities/wiki-artifact-reviewer.role.yaml"
         },
         {
@@ -987,10 +1014,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "project-wiki",
             "project-wiki-topic-write"
           ],
-          "sha256": "40e122d1f5f021b6d4e6f77dc7e9cedc5057e9739183091a97682a18e39b77f3",
+          "sha256": "e53fb7e485822f7063d17efd2af889133dc524c7192230656e522bf968c3fd4f",
           "source": "agents/roles/wiki-activities/wiki-ingester.role.yaml"
         },
         {
@@ -1018,9 +1046,10 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "project-wiki-query"
           ],
-          "sha256": "02bcf3ece42468fad2659ff0ab456436f971437df625f2a86d40f2e3b7d9a721",
+          "sha256": "4d6f03699056d1854476ca3daf7366f44e91f77de82ef2575d6ef41172e38a2e",
           "source": "agents/roles/wiki-activities/wiki-query-responder.role.yaml"
         },
         {
@@ -1048,10 +1077,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "project-wiki-query",
             "project-wiki-research"
           ],
-          "sha256": "30049e7798444473c4fdbf01b53914e40bf684df477b44ab2a8e1713c50a967b",
+          "sha256": "5a68fa1a9765833c7f23d701be206611db62fa6c0912d683b2e1a447d41f0976",
           "source": "agents/roles/wiki-activities/wiki-researcher.role.yaml"
         },
         {
@@ -1079,10 +1109,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "project-wiki-research",
             "project-wiki"
           ],
-          "sha256": "d7393105c93b9112198df127626f6e59c35c1fa01c65c77dcaf9e78d13a630e7",
+          "sha256": "0da78c093e24e0f92cd3964b5b5e52b22be8efe51c097d53bea42efe47818fbb",
           "source": "agents/roles/wiki-activities/wiki-source-collector.role.yaml"
         },
         {
@@ -1135,9 +1166,10 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "project-wiki-topic-verify"
           ],
-          "sha256": "2cc84d3d10cf3196571e865c65222ef9c9121f0cd625eb4a280edd3a4ea8c789",
+          "sha256": "b6d71915ae06a787aada8b57cec0f430309b5f0882ae885a42fc606028889eba",
           "source": "agents/roles/wiki-activities/wiki-topic-verifier.role.yaml"
         },
         {
@@ -1165,10 +1197,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "project-wiki",
             "project-wiki-topic-write"
           ],
-          "sha256": "0424cfcb0c183e9d4e4f9035c6374bdf464b2bee257dd90494f772815a6a064f",
+          "sha256": "7de0a9d8b432bcdceeb01521ce0f38110a38ced009696f77d069497c3ae5a4bb",
           "source": "agents/roles/wiki-activities/wiki-writer.role.yaml"
         }
       ],
@@ -1204,12 +1237,13 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "route-documentation-work",
             "careful-coding",
             "test-driven-development",
             "codex-harness-directives"
           ],
-          "sha256": "8fafe5856b32db887dc5ae398229fdda6ee835f549f9188a0e7cac777473db69",
+          "sha256": "35461851c04743860746caef3cf7c42bda6efbc7aae286152dfcacc2bbf70d04",
           "source": "agents/roles/dev-activities/dev-architect.role.yaml"
         },
         {
@@ -1237,11 +1271,12 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "review-structured-artifact",
             "verify-documentation-page",
             "codex-harness-directives"
           ],
-          "sha256": "30f8802e15fdd0945531b5441fe588a2334ed3d4c15b1fd1a25714c68c10dd72",
+          "sha256": "c4655001fd70614c56ac080b1e561f2e08a1c5af666d7bc6dd94ee0f0f60764a",
           "source": "agents/roles/dev-activities/dev-artifact-reviewer.role.yaml"
         },
         {
@@ -1269,10 +1304,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "manage-work-items",
             "codex-harness-directives"
           ],
-          "sha256": "edb2b291302a18f2e45d66eab580b1ac2a110995b788859a4ac02649c121f512",
+          "sha256": "b191ecd4c9cef17ef6b0ba49c6328c55ae8e25cd33de467d9cf03a3e48b03734",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
@@ -1300,10 +1336,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "manage-work-items",
             "codex-harness-directives"
           ],
-          "sha256": "7475a824d0ff1273eebd5f3bb16c6f8d2cc56cf3d14857efd9bf2fb1668a709f",
+          "sha256": "31685167cb9e1f51f4a4bd0de34b676179f4056680985d8b2dccf89b3c84d43b",
           "source": "agents/roles/dev-activities/dev-backlog-steward.role.yaml"
         },
         {
@@ -1331,10 +1368,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "manage-work-items",
             "coordinate-work-items"
           ],
-          "sha256": "66d56a1c31b1ff29b3ed2e14e981f4185bb988eaa9754a5c6d58d2980d1b31b3",
+          "sha256": "e18107d154eb01d52d92f4ac4903ec4e0e5924d433d627ebca8f455ab2b0087c",
           "source": "agents/roles/dev-activities/dev-backlog-watchdog.role.yaml"
         },
         {
@@ -1362,10 +1400,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "verify-end-to-end-workflow",
             "codex-harness-directives"
           ],
-          "sha256": "296f8ea2189827a7ffa4c75b35ad04a1d3b6150ee195b26ffa3c6cb1db8cddda",
+          "sha256": "0746c7e9a4921c25690c047e0ffdd1de865766739cbf0b0e05a0ac0207ded335",
           "source": "agents/roles/dev-activities/dev-browser-operator.role.yaml"
         },
         {
@@ -1430,13 +1469,14 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "review-code-with-evidence",
             "review-structured-artifact",
             "careful-coding",
             "code-comments",
             "codex-harness-directives"
           ],
-          "sha256": "88bf5c1b13ffbb821f7a51b8dceffedab7fd8ae93e2b489027a66450fbf2ed54",
+          "sha256": "78d0ab14c07967d4afa83dee9defd060b7fa0353a010665a26f6a6155c6c472d",
           "source": "agents/roles/dev-activities/dev-code-reviewer.role.yaml"
         },
         {
@@ -1464,13 +1504,14 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "careful-coding",
             "code-comments",
             "code-discovery",
             "explain-code-fix",
             "codex-harness-directives"
           ],
-          "sha256": "45cab0f2b83aed51ac3b0b2c600f953684397d1db1c2f49225b3405ae63f4a1b",
+          "sha256": "dc9d85e7d4a71755ac1ac6a4022c5473b54872b9375bac4c60989e6491b3268b",
           "source": "agents/roles/dev-activities/dev-coder.role.yaml"
         },
         {
@@ -1498,11 +1539,12 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "analyze-document-topics",
             "revise-document-topics",
             "codex-harness-directives"
           ],
-          "sha256": "6d0f3a1f758648eed0752e1835c77091d4585e29e6709850bfbb073e040c44a6",
+          "sha256": "32cc9ee0ca649163a2c6c784dc8fa9991893e46470c1a6f685bedd3233ec2943",
           "source": "agents/roles/dev-activities/dev-document-topic-editor.role.yaml"
         },
         {
@@ -1530,10 +1572,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "route-documentation-work",
             "codex-harness-directives"
           ],
-          "sha256": "96f85130a4543165f86f4c2706295cc78875545fdbfc99bccf6d8b50a30bfe6f",
+          "sha256": "9f0d644864264bfee2aa49ea2020631272516e5eb1b80127a3bcf9c81fb01881",
           "source": "agents/roles/dev-activities/dev-documentation-writer.role.yaml"
         },
         {
@@ -1561,12 +1604,13 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "integrate-agent-work",
             "review-structured-artifact",
             "explain-code-fix",
             "codex-harness-directives"
           ],
-          "sha256": "2083dd86ae4d394d92cd62097ab4d7f3ad9cdd2408b837a177d9c54efa5134cd",
+          "sha256": "7d50308cbfa412f6fe9e0e4ed6e0c43bcac6d3eb29e44b44e046b589e96cf8ae",
           "source": "agents/roles/dev-activities/dev-merge-coordinator.role.yaml"
         },
         {
@@ -1594,12 +1638,13 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "manage-work-items",
             "deliver-work-item",
             "structured-design",
             "codex-harness-directives"
           ],
-          "sha256": "c9f9e0c618e6fd8cafb1a4648b2b4da003a25114475d095d8a1e9d708d55a8b2",
+          "sha256": "13194117adf6c6c1a80919016d4c71794a0951de757db8499780b1160c2fd77d",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -1627,11 +1672,12 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "review-prompt-contracts",
             "review-structured-artifact",
             "codex-harness-directives"
           ],
-          "sha256": "d91f944e5cb67cbf98d3107fce4554a8abfc99c9aa0d69db52f50928a72ab6d9",
+          "sha256": "577635b21472d1cce55caaaab2916b2cd8a2c88a2f0083890183ea94b4ce3c0f",
           "source": "agents/roles/dev-activities/dev-prompt-reviewer.role.yaml"
         },
         {
@@ -1659,13 +1705,14 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "code-discovery",
             "test-strategy",
             "analyze-root-cause",
             "trace-code-execution",
             "codex-harness-directives"
           ],
-          "sha256": "2fbb15146c608785f96586742653365ef165dfeebfbd9de0fc40913b8662ae3e",
+          "sha256": "6543f5e229b3e3e9e6ba47bdb33c49f72d87fe1b98dab09e200fcf4760125452",
           "source": "agents/roles/dev-activities/dev-runtime-diagnostician.role.yaml"
         },
         {
@@ -1693,11 +1740,12 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "application-security",
             "review-structured-artifact",
             "codex-harness-directives"
           ],
-          "sha256": "feb90faf68ddfa6e47b3d82c188854f71d8e915b2c2adf7f772cc0f375231267",
+          "sha256": "91c99b1c52967d0c2512d3038f9ed1602139202a0d4fc2982530b5ad639cffc5",
           "source": "agents/roles/dev-activities/dev-security-reviewer.role.yaml"
         },
         {
@@ -1750,11 +1798,12 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "skill-authoring",
             "review-structured-artifact",
             "codex-harness-directives"
           ],
-          "sha256": "3b20af583a792b203baa523a91c390f7e82b9a4a222893da68e2fb4ad5203c11",
+          "sha256": "d8368d0615e392552962453960d0033bca94758ba507877266513678b01bcc9e",
           "source": "agents/roles/dev-activities/dev-skill-lint-reviewer.role.yaml"
         },
         {
@@ -1782,12 +1831,13 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "user-experience-review",
             "verify-end-to-end-workflow",
             "review-structured-artifact",
             "codex-harness-directives"
           ],
-          "sha256": "f30f1ff578ba526a84ce750d8da3e92be24c9199605d1ba6d4a50b1823e46e3a",
+          "sha256": "97c1b6d9f1dae9b04cad61c514430f74e77ed7d6bd54a6ccff94e757d47e1fdc",
           "source": "agents/roles/dev-activities/dev-ux-specialist.role.yaml"
         },
         {
@@ -1815,11 +1865,12 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "test-strategy",
             "review-structured-artifact",
             "codex-harness-directives"
           ],
-          "sha256": "4aa3dd16e3ca1b7a331f771461595650184b6a5ee0d66bdbb041a8bc553b8c10",
+          "sha256": "0a534f3449d4308187cd4846b57636df4b08c0deab0956c607049c4e6bc2856f",
           "source": "agents/roles/dev-activities/dev-verifier.role.yaml"
         },
         {
@@ -1872,6 +1923,7 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "review-structured-artifact",
             "skill-authoring",
             "agent-role-authoring",
@@ -1880,7 +1932,7 @@
             "route-documentation-work",
             "codex-harness-directives"
           ],
-          "sha256": "2c47b2b21bfe9869ac83919fa446f48b22764f4e71db1b64504061255e9c7c8d",
+          "sha256": "69f1a91f418f7b46ee5f8117abf938757a30244bc387e52a01838af03146695d",
           "source": "agents/roles/methodology-maintenance/methodology-artifact-reviewer.role.yaml"
         },
         {
@@ -1908,9 +1960,10 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "review-documentation-design-system"
           ],
-          "sha256": "f52d4414803bc5eb0e371eb383e569ae760e60e186a310a90809f9a4cb57c7ae",
+          "sha256": "1e937f03dd8e1826a836fe5e925e027d9acab24e2ac08a7fce7749ab910f8c77",
           "source": "agents/roles/methodology-maintenance/methodology-design-system-checklist-runner.role.yaml"
         },
         {
@@ -1937,9 +1990,10 @@
           "output": "generated/adapters/codex/agents/methodology-design-system-review-coordinator.toml",
           "referencedFixedSkills": [
             "effective-communication",
-            "ste-technical-writing"
+            "ste-technical-writing",
+            "terminology-standard"
           ],
-          "sha256": "4ab64cc888eebd0f90364ce12b2d61a5c2b2975ba5389a1a52254ae5ecd80e8c",
+          "sha256": "8d8d865ed8813833176b59051632fabcb00ddf38dbc9993e087fb8fb8fa2eca8",
           "source": "agents/roles/methodology-maintenance/methodology-design-system-review-coordinator.role.yaml"
         },
         {
@@ -1967,6 +2021,7 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "maintain-methodology-documentation",
             "skill-authoring",
             "agent-role-authoring",
@@ -1974,7 +2029,7 @@
             "route-documentation-work",
             "codex-harness-directives"
           ],
-          "sha256": "a5e7af217d4331b3d5536e71a721034a3d7fb1311c879832d488b1f49badc1d0",
+          "sha256": "572fa03dd0c54378c19f0cf4861508ec2fc328d2825f0f3f951a47fe8d3185e0",
           "source": "agents/roles/methodology-maintenance/methodology-maintainer.role.yaml"
         },
         {
@@ -2002,11 +2057,12 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "bootstrap-project-documentation",
             "route-documentation-work",
             "codex-harness-directives"
           ],
-          "sha256": "9aa1296742e07192d4a563e42e6eff5642d1bf2cbfe2694fc77c6cd987fa35b7",
+          "sha256": "7a72fd13df63121759f633047ebeca5b724726c5fcc5c464d3dbeedf88a8078e",
           "source": "agents/roles/project-setup/project-bootstrapper.role.yaml"
         },
         {
@@ -2034,13 +2090,14 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "detect-technology-skills",
             "create-project-configuration",
             "route-documentation-work",
             "verify-documentation-page",
             "codex-harness-directives"
           ],
-          "sha256": "e056ef5f647c394e79d3f6d1c227211f90bb1dbaae4b402e3b80028cb182f9c1",
+          "sha256": "070d731207444217db2ed904141d304ade25c46a1361d8ba7f763ccce18bb5f9",
           "source": "agents/roles/project-setup/project-configurator.role.yaml"
         },
         {
@@ -2068,10 +2125,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "structured-design",
             "codex-harness-directives"
           ],
-          "sha256": "e776aad82c8e92826eb04ac706b48502a8d9d909825304486a7dca43d5145a71",
+          "sha256": "7c4c7d2b67afadb76d197e14428ea25ecd0158a410f248b6fb58a66087cda8a3",
           "source": "agents/roles/project-setup/project-organiser.role.yaml"
         },
         {
@@ -2099,10 +2157,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "project-wiki",
             "codex-harness-directives"
           ],
-          "sha256": "da0f9c46549fc02b6d8d107e273439a416c18ccac52f203e1af09431307a308b",
+          "sha256": "89cdb99e2ced2516be8df1b6bc444f48dc35243a523697f4a389e786ef9dd7f1",
           "source": "agents/roles/wiki-activities/wiki-architect.role.yaml"
         },
         {
@@ -2155,11 +2214,12 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "project-wiki-review",
             "verify-documentation-page",
             "codex-harness-directives"
           ],
-          "sha256": "ea2067e221f479cd83498dd9a9208cb7d885505b9cedc4f7890a51f63f363769",
+          "sha256": "b729e92346c68292a714b24824fdb313a00d4108e146d852ec2a6c9ef2fd02ce",
           "source": "agents/roles/wiki-activities/wiki-artifact-reviewer.role.yaml"
         },
         {
@@ -2187,11 +2247,12 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "project-wiki",
             "project-wiki-topic-write",
             "codex-harness-directives"
           ],
-          "sha256": "6b6d69d920bb7731759bd13487e31fccf51e48ec36e45463795277fa624ac731",
+          "sha256": "0bbb11041a55686f5634e7c2b91263bb4290a09b02a276ad55fefb5cad00dc62",
           "source": "agents/roles/wiki-activities/wiki-ingester.role.yaml"
         },
         {
@@ -2219,9 +2280,10 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "project-wiki-query"
           ],
-          "sha256": "1e57b72cd03d080f06f669c51f5fb5c8872f459b8aa9942745a0f58219be0741",
+          "sha256": "0566ea058c09514de750243587f13adeef2ec6d7b739e0125e9c1000c7f9ec7b",
           "source": "agents/roles/wiki-activities/wiki-query-responder.role.yaml"
         },
         {
@@ -2249,11 +2311,12 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "project-wiki-query",
             "project-wiki-research",
             "codex-harness-directives"
           ],
-          "sha256": "04feb27211c1ae2cbc000032de7b4eee762175c777a4e91e437d9fe9f3cb9287",
+          "sha256": "7f1b52035cd01d684a0a926d41db4bf5fda9f03bc9e1d4b1e48e739e026ce1d9",
           "source": "agents/roles/wiki-activities/wiki-researcher.role.yaml"
         },
         {
@@ -2281,11 +2344,12 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "project-wiki-research",
             "project-wiki",
             "codex-harness-directives"
           ],
-          "sha256": "c16b584519475c8a0b0c3d3ad69ba649efdbefeecddcae7eb4e447ee3fdb91b6",
+          "sha256": "464506b694c614121ed7342827de1f0b7c2a7970be282d263bcb88a9060b4050",
           "source": "agents/roles/wiki-activities/wiki-source-collector.role.yaml"
         },
         {
@@ -2338,9 +2402,10 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "project-wiki-topic-verify"
           ],
-          "sha256": "79c373d604cfa999ea62f3e29ecfd79eecba1d9317e90515e1783320f7f82d47",
+          "sha256": "22cee2b26f9377afc2c7e3acbd410fd5b58ddf7a0c5642d47d66657587ead822",
           "source": "agents/roles/wiki-activities/wiki-topic-verifier.role.yaml"
         },
         {
@@ -2368,11 +2433,12 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "project-wiki",
             "project-wiki-topic-write",
             "codex-harness-directives"
           ],
-          "sha256": "aef9b95abc17becbaaf479df3f3da868a716a9683f877e367977775c28637900",
+          "sha256": "709e874cd7c83a075bf0c9b3ddb94981597021b320d17fa2d8bf68e70bab4c84",
           "source": "agents/roles/wiki-activities/wiki-writer.role.yaml"
         }
       ],
@@ -2415,11 +2481,12 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "route-documentation-work",
             "careful-coding",
             "test-driven-development"
           ],
-          "sha256": "aa3e16746fa52df1942c87fc870e862bb0322127f057e436782dd3666832cae6",
+          "sha256": "22a4fb8b806b14cc3edc8e7a099f15392a40b50399a85a955e5bb6d771343050",
           "source": "agents/roles/dev-activities/dev-architect.role.yaml"
         },
         {
@@ -2448,10 +2515,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "review-structured-artifact",
             "verify-documentation-page"
           ],
-          "sha256": "07484ae72db5051634a6efde5a661a1a8c51cefd2924689a017c6b8594ce0986",
+          "sha256": "89a2011a0f98629d8e4c4f44bc51261e62dd2938792474cc957938e58d00c1b2",
           "source": "agents/roles/dev-activities/dev-artifact-reviewer.role.yaml"
         },
         {
@@ -2480,9 +2548,10 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "manage-work-items"
           ],
-          "sha256": "e1a74f606bdd4e77693028b46d1da4d4e57b7e9b355471ccf32829ed06e61bc2",
+          "sha256": "cead584f7d3dd1404e7edfb5aef57ccaf29cce623dd90da9cf3be2fc74a5a81d",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
@@ -2511,9 +2580,10 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "manage-work-items"
           ],
-          "sha256": "8ae4f261a29d6d265f88479d5b7fa1cab9cecab2eb652092c2a16d746fbe3f9c",
+          "sha256": "441f906236b72ceba9a0e5f7756dacb105b0612dd917a337a38ae37fe3617955",
           "source": "agents/roles/dev-activities/dev-backlog-steward.role.yaml"
         },
         {
@@ -2542,10 +2612,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "manage-work-items",
             "coordinate-work-items"
           ],
-          "sha256": "50b9ba19efa40caa8eff596f4a20241edaeaaa58a94100dfd7c217088a60dd28",
+          "sha256": "6e954837cb7bcc0c36a8f1bb5388a75e438544d91f7aa045f507837a6474e520",
           "source": "agents/roles/dev-activities/dev-backlog-watchdog.role.yaml"
         },
         {
@@ -2574,9 +2645,10 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "verify-end-to-end-workflow"
           ],
-          "sha256": "f7d0c6a9d09817d84393ea2cdf230ae148ef320c7768d4c4f38b625ab0046574",
+          "sha256": "b89c7b083c48b0947f18165d4aed8cf26e15d9bc13944a0fc099930b9f9dba9d",
           "source": "agents/roles/dev-activities/dev-browser-operator.role.yaml"
         },
         {
@@ -2645,12 +2717,13 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "review-code-with-evidence",
             "review-structured-artifact",
             "careful-coding",
             "code-comments"
           ],
-          "sha256": "9bd5200d089e48cb94c478d2dca263f7c19b0abec0f5c8eef6df78515e1b0679",
+          "sha256": "c1c623e9729e9de71a7889744aede0a7daeed761cdb4a973c9ef9ab90c1ac449",
           "source": "agents/roles/dev-activities/dev-code-reviewer.role.yaml"
         },
         {
@@ -2679,12 +2752,13 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "careful-coding",
             "code-comments",
             "code-discovery",
             "explain-code-fix"
           ],
-          "sha256": "9753f1f5edff1aefb0e01f715f8fbb6ff736e5ca561e776df33be0783b1e0a0c",
+          "sha256": "944f3a6f5dee9cbe29879bf81a5412413b836e63317667772fb4c8516e3903f3",
           "source": "agents/roles/dev-activities/dev-coder.role.yaml"
         },
         {
@@ -2713,10 +2787,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "analyze-document-topics",
             "revise-document-topics"
           ],
-          "sha256": "c0000c19aa887da6ddc29aaca5e793a62a20ec30097666a7d2fbf8acb0ddf06d",
+          "sha256": "e22a7c198d20bccbe8ad89bff41428232d0f3d03db0dfad4039d800ee285cc67",
           "source": "agents/roles/dev-activities/dev-document-topic-editor.role.yaml"
         },
         {
@@ -2745,9 +2820,10 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "route-documentation-work"
           ],
-          "sha256": "da71ae7a012df52640aff84dde0837f50cb96c9f89e0677c85847b68855a900f",
+          "sha256": "d20d341596d363b1c8f1da056c9b95346fe7d2b9b1cbdf5aedde62b57da9b971",
           "source": "agents/roles/dev-activities/dev-documentation-writer.role.yaml"
         },
         {
@@ -2776,11 +2852,12 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "integrate-agent-work",
             "review-structured-artifact",
             "explain-code-fix"
           ],
-          "sha256": "fa32fe25dd8bd25afabe96b35bcf8331498d2c49a533440576ab5b9629dea350",
+          "sha256": "6c35db38410c140b8caeca7e91c81806329a480d65b9e35d097fa36a5eedba6d",
           "source": "agents/roles/dev-activities/dev-merge-coordinator.role.yaml"
         },
         {
@@ -2809,11 +2886,12 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "manage-work-items",
             "deliver-work-item",
             "structured-design"
           ],
-          "sha256": "839a6611c2ea2fad97fcba2099165d5e9b7ccd95275b7cafda3df548db0580d9",
+          "sha256": "999ee2e812ef8d5248dff5c710af931ec973f09c2555c5e6c4b29053cdb10233",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -2842,10 +2920,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "review-prompt-contracts",
             "review-structured-artifact"
           ],
-          "sha256": "f44bd30f8b6c0904fffa952a775444c244fb4a7778f7e64d22e9f7ad0d315e00",
+          "sha256": "4068e2cb0e05e23f13f848c2814a8d84b40e7dbce19a79a4c3a0177b9df41946",
           "source": "agents/roles/dev-activities/dev-prompt-reviewer.role.yaml"
         },
         {
@@ -2874,12 +2953,13 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "code-discovery",
             "test-strategy",
             "analyze-root-cause",
             "trace-code-execution"
           ],
-          "sha256": "e1c034a167dc7ba147069378a01638527d61b276b98275ce7e2600079614d782",
+          "sha256": "8b73e9e0097881fffe36b49d4862932f4e7b62593c3e9911a0109176f9bd2989",
           "source": "agents/roles/dev-activities/dev-runtime-diagnostician.role.yaml"
         },
         {
@@ -2908,10 +2988,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "application-security",
             "review-structured-artifact"
           ],
-          "sha256": "58840a3b5760a4ec9edfc7afd5d6f203e1935deb23bd18a1597827fe40b3f08b",
+          "sha256": "8083a5e96614d46b3ebb1f886b6f712bb7490e3eeefdfaafc1b930a0548456ac",
           "source": "agents/roles/dev-activities/dev-security-reviewer.role.yaml"
         },
         {
@@ -2967,10 +3048,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "skill-authoring",
             "review-structured-artifact"
           ],
-          "sha256": "62294c81967f6fe8afd54d3a6fd861a96fa1d1ddb5961d8fe6f04f00ba7f40a3",
+          "sha256": "b3b7911a76d536b5edf58c640dc8efc736499bc9b92c8e1741d79d70d906367f",
           "source": "agents/roles/dev-activities/dev-skill-lint-reviewer.role.yaml"
         },
         {
@@ -2999,11 +3081,12 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "user-experience-review",
             "verify-end-to-end-workflow",
             "review-structured-artifact"
           ],
-          "sha256": "5e2e4a77cf0d9fd0cbe653f80a99c259ee5dcb0c95d2a376dd6fd11d46d70385",
+          "sha256": "9340c1e2ac9063c7fb5b22c2dfe500c6be33d3af6833adbad0b8eb6ab80fc5de",
           "source": "agents/roles/dev-activities/dev-ux-specialist.role.yaml"
         },
         {
@@ -3032,10 +3115,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "test-strategy",
             "review-structured-artifact"
           ],
-          "sha256": "2669da2f0f9448b7b25fbbf153c23f513434716a0bceb5c3357720eef45f2246",
+          "sha256": "620358efa2f9c6b5717e5f5db0ff4246bd1bc5780a24a6041780d84b8db2c52a",
           "source": "agents/roles/dev-activities/dev-verifier.role.yaml"
         },
         {
@@ -3091,6 +3175,7 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "review-structured-artifact",
             "skill-authoring",
             "agent-role-authoring",
@@ -3098,7 +3183,7 @@
             "verify-documentation-page",
             "route-documentation-work"
           ],
-          "sha256": "1bed88fb5daea94582a98874e87b1c758bb48a333b10ae3a4db5b6af197c2516",
+          "sha256": "bc11db7788bf6f50a1db08532475e35c3ff76c4f22966aed1c7603d9486fe1ed",
           "source": "agents/roles/methodology-maintenance/methodology-artifact-reviewer.role.yaml"
         },
         {
@@ -3127,9 +3212,10 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "review-documentation-design-system"
           ],
-          "sha256": "365ff0c3f8d713e93cc1cd797bc1b8ef7305d4be62dd2a0199139ee9109f7fca",
+          "sha256": "e7f86be8362a382f6bf26d12cba2a98d8e4b495a82c38746d57531f96eea0150",
           "source": "agents/roles/methodology-maintenance/methodology-design-system-checklist-runner.role.yaml"
         },
         {
@@ -3157,9 +3243,10 @@
           "output": "generated/adapters/gemini/agents/methodology-design-system-review-coordinator.md",
           "referencedFixedSkills": [
             "effective-communication",
-            "ste-technical-writing"
+            "ste-technical-writing",
+            "terminology-standard"
           ],
-          "sha256": "e2953d534ee6dc17c598d2d75ff1fb0268893c98e9f52861c8c6d559708caee4",
+          "sha256": "0f138c7287be22fb483e93005afe3db3df92f346b1bd1706a811dd3e01985267",
           "source": "agents/roles/methodology-maintenance/methodology-design-system-review-coordinator.role.yaml"
         },
         {
@@ -3188,13 +3275,14 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "maintain-methodology-documentation",
             "skill-authoring",
             "agent-role-authoring",
             "name-methodology-artifacts",
             "route-documentation-work"
           ],
-          "sha256": "63ea6110a60eae6db2723606429054df846c0b7a4bb0a0854980ece42550ec7e",
+          "sha256": "af6c4dd204de5318536dd33a909ba111323f4015892105c802a49e7c89d9748e",
           "source": "agents/roles/methodology-maintenance/methodology-maintainer.role.yaml"
         },
         {
@@ -3223,10 +3311,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "bootstrap-project-documentation",
             "route-documentation-work"
           ],
-          "sha256": "38dab93e95bd0e08625750400a87152e2f02af2523cc39a7ca5a5b43c7fcd1bf",
+          "sha256": "6ac0687a0c0204528d754ebe6262dbf2385bc8f85985308f8d75a4f88d29e784",
           "source": "agents/roles/project-setup/project-bootstrapper.role.yaml"
         },
         {
@@ -3255,12 +3344,13 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "detect-technology-skills",
             "create-project-configuration",
             "route-documentation-work",
             "verify-documentation-page"
           ],
-          "sha256": "befeab19c4a5546738df9ceb61354cea7ca17f2db3935302292144f686e3312d",
+          "sha256": "bd7bf20e81bf0d69de2dbced521c37c379569f4308b1f331aad3915a9f12af98",
           "source": "agents/roles/project-setup/project-configurator.role.yaml"
         },
         {
@@ -3289,9 +3379,10 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "structured-design"
           ],
-          "sha256": "afe8c3c8606d626d4e4f1442b86b7b5496c12d388092540fe380830cfe8ca73c",
+          "sha256": "ac91ef231f0e74fc3c9619b9062fb68231f150153118a84ea241135b51881272",
           "source": "agents/roles/project-setup/project-organiser.role.yaml"
         },
         {
@@ -3320,9 +3411,10 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "project-wiki"
           ],
-          "sha256": "4a9ba28c4491878e28d53c0f16da8a5fa4631fcc7db3c73f05428f97034c5ea1",
+          "sha256": "63cc540cd7e763f430ae7deb43ef74703331677cc74ce9471b53a31dd92c8f2b",
           "source": "agents/roles/wiki-activities/wiki-architect.role.yaml"
         },
         {
@@ -3378,10 +3470,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "project-wiki-review",
             "verify-documentation-page"
           ],
-          "sha256": "0bb57191015f5eba44c42e71d5bcdd93532753bb7b7c533cf01132c517775d2a",
+          "sha256": "ae2e2be4246c6c5e8afc75c7de4693e618fc3ca1126c9330f55324cb28f36ed4",
           "source": "agents/roles/wiki-activities/wiki-artifact-reviewer.role.yaml"
         },
         {
@@ -3410,10 +3503,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "project-wiki",
             "project-wiki-topic-write"
           ],
-          "sha256": "1faa2a4042ceaaeac6b4e7326123379c60c64351ced85bf852956ca208dad32f",
+          "sha256": "213b7163867e08ab73ef7802a00b4770303fc515913babaf348844e8b083f30d",
           "source": "agents/roles/wiki-activities/wiki-ingester.role.yaml"
         },
         {
@@ -3442,9 +3536,10 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "project-wiki-query"
           ],
-          "sha256": "905ec0b88b9282f6b4b282bc3b061c18ed1f110e5052219b75628180def6f74f",
+          "sha256": "26b1060945ef45b4d5a44f1a2446e9979fa30f079bea30090f2e1fcb51a662b3",
           "source": "agents/roles/wiki-activities/wiki-query-responder.role.yaml"
         },
         {
@@ -3473,10 +3568,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "project-wiki-query",
             "project-wiki-research"
           ],
-          "sha256": "03cee63ef4956f2348b41a88d65b97a3bebc245e3d69da3bc54000cb68336a27",
+          "sha256": "f478a0577ff76ea12993a666fd6c30b22da5672ea76f469a0c6e67432aef5305",
           "source": "agents/roles/wiki-activities/wiki-researcher.role.yaml"
         },
         {
@@ -3505,10 +3601,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "project-wiki-research",
             "project-wiki"
           ],
-          "sha256": "443afb9bff02e538c0729fcfb7eacec1cfe15fa68c6aaf9ad20d6d96f74bf9f3",
+          "sha256": "c83a046b9c46aa1bb733e6a54998967ef0b55e84044aa59e10ceb3052af4ad42",
           "source": "agents/roles/wiki-activities/wiki-source-collector.role.yaml"
         },
         {
@@ -3564,9 +3661,10 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "project-wiki-topic-verify"
           ],
-          "sha256": "5286b0ac86ee339b34c8612cba88439390fb750daaaaa476c68d45fc6da5d77c",
+          "sha256": "17968bf02a3a8fcb17388ff1c9ab99f5cde188864ab9e26577b2ff1540a1cc25",
           "source": "agents/roles/wiki-activities/wiki-topic-verifier.role.yaml"
         },
         {
@@ -3595,10 +3693,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "project-wiki",
             "project-wiki-topic-write"
           ],
-          "sha256": "57bc4360970ca6b9aed1139f56ee3a7dc8bf39ed337c62c12da53507fe3f1724",
+          "sha256": "02667d9ce4f2e67d8919c57676dbad213f9575c91a9f86cd6cccee2399c599eb",
           "source": "agents/roles/wiki-activities/wiki-writer.role.yaml"
         }
       ],
@@ -3635,11 +3734,12 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "route-documentation-work",
             "careful-coding",
             "test-driven-development"
           ],
-          "sha256": "5f67bfc35f576271fd5b8ef48cf7ed5ab65e31b04d03dcd7f81e47d3a64a575f",
+          "sha256": "7178b8df226d99bbff0337c49a297226394bc7aa5081c7bbbb222e4be9d360c5",
           "source": "agents/roles/dev-activities/dev-architect.role.yaml"
         },
         {
@@ -3668,10 +3768,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "review-structured-artifact",
             "verify-documentation-page"
           ],
-          "sha256": "4f49efdf4bb9982b5b4612183b779eabbc1637134568e983bb2f4d762c46db3e",
+          "sha256": "3888a17745fc0b43a5d96ec8d4937f3146badf1399d3984effde06d12eba1aa0",
           "source": "agents/roles/dev-activities/dev-artifact-reviewer.role.yaml"
         },
         {
@@ -3700,9 +3801,10 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "manage-work-items"
           ],
-          "sha256": "d297f9ffdc22e549fb5c5a22945de1f52033c787d2a223b268b81f2b3d06b2e3",
+          "sha256": "949ca135e65bbc93cdd08d28d8bf40d307feb2f619da5e381d1e3d6061f32138",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
@@ -3731,9 +3833,10 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "manage-work-items"
           ],
-          "sha256": "1a154722d7b6da6770c81352c7fe5aac19ec92b45146ae243231c6cad1a5f9fd",
+          "sha256": "522220862adb2086d25bf2b6405325bb3803e8ebf2bb60902821c1a851690c37",
           "source": "agents/roles/dev-activities/dev-backlog-steward.role.yaml"
         },
         {
@@ -3762,10 +3865,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "manage-work-items",
             "coordinate-work-items"
           ],
-          "sha256": "4c2a70feeeff70a76eb6e9ecf4efc25a29766256448ce93d23817fa0e97f4fe3",
+          "sha256": "11f897e07fe6f9c72d691ef7dec5f042dfb3e011b608e876cf8fba5b91fa3556",
           "source": "agents/roles/dev-activities/dev-backlog-watchdog.role.yaml"
         },
         {
@@ -3794,9 +3898,10 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "verify-end-to-end-workflow"
           ],
-          "sha256": "aa0bc8d2bb215c8a5571aacd2922b1ed6941d30b43204631ca646b3b0b27f47d",
+          "sha256": "9fa35378d9b4d197cf3a897ca9d121ebbfe1a21fa21950e1afaa020098656c57",
           "source": "agents/roles/dev-activities/dev-browser-operator.role.yaml"
         },
         {
@@ -3865,12 +3970,13 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "review-code-with-evidence",
             "review-structured-artifact",
             "careful-coding",
             "code-comments"
           ],
-          "sha256": "0bd42f68883898c146ce78dadb1bb7dc86022ac14493b11cf388d9f435d5feed",
+          "sha256": "17e037d67f8ca8b22671f983fa68207a4b4c27e95e23117c7ed9dbba24da363c",
           "source": "agents/roles/dev-activities/dev-code-reviewer.role.yaml"
         },
         {
@@ -3899,12 +4005,13 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "careful-coding",
             "code-comments",
             "code-discovery",
             "explain-code-fix"
           ],
-          "sha256": "d236641c761e764e875c3e3f002d59617e7ee63d5ae7695c0ab6896695fa01cc",
+          "sha256": "f6715a8d3a51d9607bd47489479d3569542dcc479d08ca822094cd660b2583ae",
           "source": "agents/roles/dev-activities/dev-coder.role.yaml"
         },
         {
@@ -3933,10 +4040,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "analyze-document-topics",
             "revise-document-topics"
           ],
-          "sha256": "48c59e18d710856378662b584d868a7b12591c41cc845c497c8e060981ac0720",
+          "sha256": "d2f858f3bfe2cac0897c9521bf71856108626dd0409ee91ff0f0a873d630f773",
           "source": "agents/roles/dev-activities/dev-document-topic-editor.role.yaml"
         },
         {
@@ -3965,9 +4073,10 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "route-documentation-work"
           ],
-          "sha256": "becbef17e2d1be3edcc0846b2f40111d4200d4adcd30f97b9c598e808fecdf3f",
+          "sha256": "abdce5a78ae049127e445f7f8f0e40362d7d0f96ab80b228514e42e07b2ccb44",
           "source": "agents/roles/dev-activities/dev-documentation-writer.role.yaml"
         },
         {
@@ -3996,11 +4105,12 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "integrate-agent-work",
             "review-structured-artifact",
             "explain-code-fix"
           ],
-          "sha256": "473a059dd879c0a4c2ea2df6a4993ab33dc2779fe23e2598b61397c0f216146b",
+          "sha256": "2d73effc85d31785ff67bdda15df3c97f1dd4483fac4bff52756dfe0db2b9d95",
           "source": "agents/roles/dev-activities/dev-merge-coordinator.role.yaml"
         },
         {
@@ -4029,11 +4139,12 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "manage-work-items",
             "deliver-work-item",
             "structured-design"
           ],
-          "sha256": "5d3167b6b99bef9c0466d1f672284de0952d8aa698d86f0282ac276e78163a22",
+          "sha256": "0b692e9eb8e50c1d576aa94c0382c964533882286b5250cc414ae370722fcacc",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -4062,10 +4173,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "review-prompt-contracts",
             "review-structured-artifact"
           ],
-          "sha256": "142ee20ed7fad47fe5f816821df9142c3e1b540bc22c157a6f491a95e9126038",
+          "sha256": "5543b58c27ac3edb7b5ca1eb049e94a67665252478d70e4008823c4b83061e15",
           "source": "agents/roles/dev-activities/dev-prompt-reviewer.role.yaml"
         },
         {
@@ -4094,12 +4206,13 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "code-discovery",
             "test-strategy",
             "analyze-root-cause",
             "trace-code-execution"
           ],
-          "sha256": "2d2a47fa116e69dd71dbf6e563f7361000683f8eda281b61d01c3a62d5ac11af",
+          "sha256": "4157d0d7f905f33e9fae4611920100aa3feafdb22e1e238b3cc0f6ed8e861539",
           "source": "agents/roles/dev-activities/dev-runtime-diagnostician.role.yaml"
         },
         {
@@ -4128,10 +4241,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "application-security",
             "review-structured-artifact"
           ],
-          "sha256": "d387486441d2332c80ea54abfd7638b4dd871d749684f06abdbc256e27de1a39",
+          "sha256": "83c86402ea97c53c85389b169ab0978ebe55217e8c9536d53931afa0a761a746",
           "source": "agents/roles/dev-activities/dev-security-reviewer.role.yaml"
         },
         {
@@ -4187,10 +4301,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "skill-authoring",
             "review-structured-artifact"
           ],
-          "sha256": "b4de57390adf03f99c2b4165468e73c1dfd0e1ad2a753995ed9d7a3fae5a5b3e",
+          "sha256": "e4a0a58b82f00ced69943c375ae5a8e8376187fdc01516c02ee2e5b5447a2386",
           "source": "agents/roles/dev-activities/dev-skill-lint-reviewer.role.yaml"
         },
         {
@@ -4219,11 +4334,12 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "user-experience-review",
             "verify-end-to-end-workflow",
             "review-structured-artifact"
           ],
-          "sha256": "5a282ee8cecdd70144481edf89aa26c9085f28d7ad0fe3a92c3a2199f4300092",
+          "sha256": "00a5580c744d06a19156075f1cd2ddda90e0f65cf3fe57dbfc050f095df590f2",
           "source": "agents/roles/dev-activities/dev-ux-specialist.role.yaml"
         },
         {
@@ -4252,10 +4368,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "test-strategy",
             "review-structured-artifact"
           ],
-          "sha256": "e4a56e62f836a5f94e130a90eaa221f4299c093961ee87b4cc435ebfc01acd4e",
+          "sha256": "0c7aff9214e6ebd0fed0d852e6e9c77bbba9fe2e6d5aced4871d12d8d12222f5",
           "source": "agents/roles/dev-activities/dev-verifier.role.yaml"
         },
         {
@@ -4311,6 +4428,7 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "review-structured-artifact",
             "skill-authoring",
             "agent-role-authoring",
@@ -4318,7 +4436,7 @@
             "verify-documentation-page",
             "route-documentation-work"
           ],
-          "sha256": "5ace7f55a60cea9532ea034768b564e57d3445133202a33e032bbe8d07d908d2",
+          "sha256": "e54dbf42f3476fd742dbe7cb24cff56c664e208fe662e90fd7a3aaee15735a0f",
           "source": "agents/roles/methodology-maintenance/methodology-artifact-reviewer.role.yaml"
         },
         {
@@ -4347,9 +4465,10 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "review-documentation-design-system"
           ],
-          "sha256": "9b1b5ae3cc43c9863f0b8b279178492eae825852eeb0f1e2c05b2d4f3165b40f",
+          "sha256": "59abb80d2d79117495dab14551ed5d4a4f7f3f29ee5de08d64c7c9a3c384759e",
           "source": "agents/roles/methodology-maintenance/methodology-design-system-checklist-runner.role.yaml"
         },
         {
@@ -4377,9 +4496,10 @@
           "output": "generated/adapters/junie/agents/methodology-design-system-review-coordinator.md",
           "referencedFixedSkills": [
             "effective-communication",
-            "ste-technical-writing"
+            "ste-technical-writing",
+            "terminology-standard"
           ],
-          "sha256": "c35c9fc42df700072aa4202084c1858afbf15afc42c161d029b6cc78783191b1",
+          "sha256": "b218b8716ecd5c7a0a49e140fb75bc22a6170be3ff94e5c0431e00ab9759cdc5",
           "source": "agents/roles/methodology-maintenance/methodology-design-system-review-coordinator.role.yaml"
         },
         {
@@ -4408,13 +4528,14 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "maintain-methodology-documentation",
             "skill-authoring",
             "agent-role-authoring",
             "name-methodology-artifacts",
             "route-documentation-work"
           ],
-          "sha256": "ae4943eb2df946e6534c7def81a62b1bfe0f4f384b4bdd5762100a600b8b40ac",
+          "sha256": "6370314f94d8bff76c324418562382bf22f3cea5af10fb9d8cc10c0633497806",
           "source": "agents/roles/methodology-maintenance/methodology-maintainer.role.yaml"
         },
         {
@@ -4443,10 +4564,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "bootstrap-project-documentation",
             "route-documentation-work"
           ],
-          "sha256": "6a572a40453d952e351c8187da6e437701033482aca8e925e317c8447a9a2859",
+          "sha256": "5e08da9186aea2fcbed4bad45187cfbca6d35bda88e9b6adb3c00d60d7fc554b",
           "source": "agents/roles/project-setup/project-bootstrapper.role.yaml"
         },
         {
@@ -4475,12 +4597,13 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "detect-technology-skills",
             "create-project-configuration",
             "route-documentation-work",
             "verify-documentation-page"
           ],
-          "sha256": "9723a7c5fb81ba41a00c47eb4639dbfd8a5720861c93b9e4fbde126007e2a5f5",
+          "sha256": "69518d48ee4a12c8dde6ed3735cdd662858c57e6e78e2b3d4819b691d04775ce",
           "source": "agents/roles/project-setup/project-configurator.role.yaml"
         },
         {
@@ -4509,9 +4632,10 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "structured-design"
           ],
-          "sha256": "ed5c915fce7a6ac6688df4ce7d057095328c1665ce9bf86667d36380d2d7b2e3",
+          "sha256": "0c54874b461069095a6f4ccb2ad15e856fa3489c75ef7b7090c24bdd13468481",
           "source": "agents/roles/project-setup/project-organiser.role.yaml"
         },
         {
@@ -4540,9 +4664,10 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "project-wiki"
           ],
-          "sha256": "7a7f94f9255d7b3da67b138ef23bcef863e316387e131f466333f5c3c6c1b8ea",
+          "sha256": "bced7312aa94962e41d6a132e117826f3303acc1aa6cfa17de1eb57b6cb7c09e",
           "source": "agents/roles/wiki-activities/wiki-architect.role.yaml"
         },
         {
@@ -4598,10 +4723,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "project-wiki-review",
             "verify-documentation-page"
           ],
-          "sha256": "e05cbb022f8652de08d18d65ca45d2625a0659f7bb9d56550dd0b117d1fb2d61",
+          "sha256": "5cd7907f166261273b90564a9bf04e7e76019231da042edb4a3c2bd301581aa1",
           "source": "agents/roles/wiki-activities/wiki-artifact-reviewer.role.yaml"
         },
         {
@@ -4630,10 +4756,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "project-wiki",
             "project-wiki-topic-write"
           ],
-          "sha256": "b8c44a25f0b4a71cbf79ef0e299b987e109f6ddb8538fa5cdd357e3760e9e554",
+          "sha256": "d83977b63ff896f91505640b68126ef852d9d11832645ff82777aad93d5e1c61",
           "source": "agents/roles/wiki-activities/wiki-ingester.role.yaml"
         },
         {
@@ -4662,9 +4789,10 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "project-wiki-query"
           ],
-          "sha256": "f8792a6f515610fad4cb078ebdff305009d8760bdaa5f78b2962b6daae195150",
+          "sha256": "2ed6a23978f590f506bbdd21fb2d0269e70c3ef4e00f6a6ebf4fda5b2a6528bd",
           "source": "agents/roles/wiki-activities/wiki-query-responder.role.yaml"
         },
         {
@@ -4693,10 +4821,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "project-wiki-query",
             "project-wiki-research"
           ],
-          "sha256": "f4890ad969d8f6f1c569040d0ecb5a48b6d6b9dc851ee01d4c67ef6bd61d8aeb",
+          "sha256": "8e8b11e434f026081972e3309b855366a1532ccefbac5e2a82ff61f4fba6eae2",
           "source": "agents/roles/wiki-activities/wiki-researcher.role.yaml"
         },
         {
@@ -4725,10 +4854,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "project-wiki-research",
             "project-wiki"
           ],
-          "sha256": "64598bee5d0f28b155d7a49ccaf9986c41112d8b392dd12672b0043709ed55f9",
+          "sha256": "135b81db8a36254ed74f6c53df94c32a14eb7c8ddcb09696843d728020adf9bb",
           "source": "agents/roles/wiki-activities/wiki-source-collector.role.yaml"
         },
         {
@@ -4784,9 +4914,10 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "project-wiki-topic-verify"
           ],
-          "sha256": "8a36c19157f9d92dc8449428d002964dd08d8d0d22e58330a4a450d4582a7106",
+          "sha256": "8099c0f129baa26ed3abaa13edc2041d5934df4926f587b6acce3c0f363ca897",
           "source": "agents/roles/wiki-activities/wiki-topic-verifier.role.yaml"
         },
         {
@@ -4815,10 +4946,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "terminology-standard",
             "project-wiki",
             "project-wiki-topic-write"
           ],
-          "sha256": "f7583cc91011f2472d89bb41cc83d0385ba53e122ad0465798f4a50e4f2a2e44",
+          "sha256": "e4ad38ce8c30a02cd8e1e488a17c1fd637e72c855653ddc0b3a71503723e532b",
           "source": "agents/roles/wiki-activities/wiki-writer.role.yaml"
         }
       ],

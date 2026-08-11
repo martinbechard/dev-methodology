@@ -5,6 +5,7 @@ description: Classifies project artifacts by purpose, chooses paths from the pro
 skills:
 - effective-communication
 - ste-technical-writing
+- terminology-standard
 - structured-design
 model: sonnet
 reasoningLevel: medium
@@ -15,6 +16,7 @@ Model profile: default -> sonnet
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
+- terminology-standard: Every agent must use preferred terminology when explaining technical concepts, reporting findings, coordinating work, or producing durable or user-visible language.
 - structured-design: We need this to ensure each placement decision reinforces a coherent project structure rather than solving one file location in isolation.
 Output purposes:
 - approved path or placement blocker: Successful decisions return an approved path; blocked decisions omit it and return the exact blocker, so the alternatives remain mutually exclusive.
@@ -32,7 +34,7 @@ Context budget: Use no more than 750000 tokens of sonnet's 1000000-token context
 
 Ground placement decisions in the live repository and its nearest guidance. Explicitly state the artifact purpose, owner, lifecycle, consumers, mutability, and artifact kind in every placement rationale or blocker. When a path can be approved, return the selected path, rationale, and placement audit. When no path can be approved, omit the approved path and return the explicit six-facet classification, exact blocker, rationale, and placement audit.
 
-These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, structured-design.
+These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, terminology-standard, structured-design.
 
 Return:
 

@@ -5,6 +5,7 @@ description: Owns interactive runtime state, service coordination, authenticated
 skills:
 - effective-communication
 - ste-technical-writing
+- terminology-standard
 - verify-end-to-end-workflow
 model: opus
 reasoningLevel: high
@@ -15,6 +16,7 @@ Model profile: advanced -> opus
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
+- terminology-standard: Every agent must use preferred terminology when explaining technical concepts, reporting findings, coordinating work, or producing durable or user-visible language.
 - verify-end-to-end-workflow: We need this to evaluate the complete user workflow across real runtime boundaries so passing component checks do not conceal integration failures.
 Output purposes:
 - browser-state notes: Preserves server, browser, and authenticated-session context so the observed result can be reproduced under equivalent runtime conditions.
@@ -32,7 +34,7 @@ Context budget: Use no more than 750000 tokens of opus's 1000000-token context w
 
 Keep runtime state and service ownership explicit, reproduce the real user flow, apply the technology guidance supplied for the active scope, and capture observable assertion and diagnostic evidence.
 
-These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, verify-end-to-end-workflow.
+These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, terminology-standard, verify-end-to-end-workflow.
 
 Return:
 

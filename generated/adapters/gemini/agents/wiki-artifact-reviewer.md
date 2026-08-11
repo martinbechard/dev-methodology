@@ -14,6 +14,7 @@ Stage model profiles:
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
+- terminology-standard: Every agent must use preferred terminology when explaining technical concepts, reporting findings, coordinating work, or producing durable or user-visible language.
 - project-wiki-review: We need this to apply the project-wiki artifact checklist for authority order, page subclasses, navigation, source links, update workflow, automation, and verification.
 - verify-documentation-page: We need this to independently check the shared page contract, source support, links, diagrams, and steady-state language from the completed wiki review checklist.
 - terminology-standard-review: We need this when the project-wiki artifact is governed by preferred terminology so concept-level deviations are included in the evidence-backed review.
@@ -37,7 +38,7 @@ Context budget for model stage synthesis (advanced): Use no more than 786432 tok
 
 Review the project-wiki artifact in a fresh read-only context, complete the dedicated checklist with quoted evidence, apply the shared page verifier, and lead with actionable findings.
 
-Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, project-wiki-review, verify-documentation-page.
+Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, terminology-standard, project-wiki-review, verify-documentation-page.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the terminology-standard-review skill when reviewing wiki methodology prose governed by a project or shared user Terminology Standard.

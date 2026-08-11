@@ -14,7 +14,7 @@ The General Agent Skills design separates two loading mechanisms that reach ever
 
 ### Agent-Wide Applicability View
 
-The view contains five independent skills whose common property is Agent-wide applicability. The box itemizes that applicability set without treating it as a cohesive capability or implying that one skill depends on another.
+The view contains six independent skills whose common property is Agent-wide applicability. The box itemizes that applicability set without treating it as a cohesive capability or implying that one skill depends on another.
 
 ```mermaid
 classDiagram
@@ -25,6 +25,9 @@ classDiagram
             <<SKILL.md>>
         }
         class ste-technical-writing {
+            <<SKILL.md>>
+        }
+        class terminology-standard {
             <<SKILL.md>>
         }
         class structured-explanation {
@@ -59,12 +62,16 @@ classDiagram
     class ste-technical-writing {
         <<SKILL.md>>
     }
+    class terminology-standard {
+        <<SKILL.md>>
+    }
 
     RoleSchema o--> effective-communication
     RoleSchema o--> ste-technical-writing
+    RoleSchema o--> terminology-standard
 ```
 
-`effective-communication` governs the messages, decisions, evidence, blockers, outcomes, and handoffs produced by every Agent. `ste-technical-writing` supplies one semantic-preservation contract whenever an Agent writes, rewrites, or reviews technical-document prose. Its universal presence does not turn every Agent response into a technical document; the skill’s own boundary determines when its writing rules apply.
+`effective-communication` governs the messages, decisions, evidence, blockers, outcomes, and handoffs produced by every Agent. `ste-technical-writing` supplies one semantic-preservation contract whenever an Agent writes, rewrites, or reviews technical-document prose. `terminology-standard` applies preferred terms to every Agent's technical explanations, findings, coordination messages, and durable or user-visible language. Its universal presence does not turn every Agent response into a technical document; each skill's own boundary determines which rules apply.
 
 ### Project-Wide Conditional Skills
 
@@ -107,7 +114,7 @@ classDiagram
 
 ### How Agent-Group Designs Use This Design
 
-Agent-group designs focus on dependencies that distinguish their Agents and activities. They link to this design instead of repeating the five general skills in every overall or scenario diagram. A scenario may still show one of these skills when that general dependency is the subject of the scenario itself.
+Agent-group designs focus on dependencies that distinguish their Agents and activities. They link to this design instead of repeating the six general skills in every overall or scenario diagram. A scenario may still show one of these skills when that general dependency is the subject of the scenario itself.
 
 This omission is a diagramming simplification, not a loss of dependency information. Universal skills remain present through the role schema, and project-wide conditional skills remain available through the rendered project directives.
 

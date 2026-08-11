@@ -128,11 +128,6 @@ skills:
 - verify-documentation-page:
     justification: We need this when reverse-engineering integration creates or updates a README or custom non-wiki entry document that has no artifact-specific review contract.
     condition: when creating or updating a README or custom non-wiki entry document whose established format must be preserved.
-- terminology-standard:
-    justification: We need this when technical documentation is governed by project or
-      shared terminology so the same concept is expressed consistently across artifacts.
-    condition: when creating or revising durable technical prose and a project or shared
-      user Terminology Standard may apply.
 - terminology-standard-update:
     justification: We need this when the requested documentation outcome creates or
       changes terminology.md so preferred entries remain positive-first and scoped.

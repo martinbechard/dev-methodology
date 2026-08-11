@@ -45,6 +45,8 @@ fixedBehavior:
         justification: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
     - ste-technical-writing:
         justification: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
+    - terminology-standard:
+        justification: Every agent must use preferred terminology when explaining technical concepts, reporting findings, coordinating work, or producing durable or user-visible language.
 excludedProperties:
   - hooks
   - target

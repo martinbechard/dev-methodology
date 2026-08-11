@@ -3,6 +3,7 @@ Model profile: coordination -> sonnet-5
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
+- terminology-standard: Every agent must use preferred terminology when explaining technical concepts, reporting findings, coordinating work, or producing durable or user-visible language.
 Output purposes:
 - status: Returns exactly ACCEPTED, REJECTED, or BLOCKED as the coordinator-owned integrated decision.
 - coverage: Records required, completed, and missing page-checklist assignments.
@@ -20,6 +21,7 @@ description: Coordinates bounded Documentation Design System checklist assignmen
 skills:
 - effective-communication
 - ste-technical-writing
+- terminology-standard
 model: sonnet-5
 tools:
 - Read
@@ -88,7 +90,7 @@ Dispatch bounded page-checklist assignments, validate complete runner evidence, 
 - Return a complete ranked list or explicit tie with price status and ranking evidence when candidates are supplied; otherwise return an empty ranking.
 - Treat every minLength constraint as a structural schema boundary only. Deterministic runtime validation also rejects whitespace-only assignment, report, claim, authority, finding, limit, and candidate strings.
 
-These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing.
+These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, terminology-standard.
 
 Return:
 

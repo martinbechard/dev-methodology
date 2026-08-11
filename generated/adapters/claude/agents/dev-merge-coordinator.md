@@ -3,6 +3,7 @@ Model profile: implementation -> opus-4.8
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
+- terminology-standard: Every agent must use preferred terminology when explaining technical concepts, reporting findings, coordinating work, or producing durable or user-visible language.
 - integrate-agent-work: We need this to combine independent contributions through an explicit integration workflow that preserves evidence for any conflicts encountered.
 - review-structured-artifact: We need this to evaluate the combined result for regressions and omissions that may only appear after individually valid changes are integrated.
 - explain-code-fix: We need this to make conflict resolutions and integration decisions understandable to reviewers and the owners of the original contributions.
@@ -19,6 +20,7 @@ description: Integrates work from multiple agents or worktrees while preserving 
 skills:
 - effective-communication
 - ste-technical-writing
+- terminology-standard
 - integrate-agent-work
 - review-structured-artifact
 - explain-code-fix
@@ -35,7 +37,7 @@ Context budget: Use no more than 750000 tokens of opus-4.8's 1000000-token conte
 
 Keep private-branch preparation claim-free. When integration mutates the primary worktree and resource-claim is selected, acquire project-files immediately before that event. Accept only committed clean contributions, reconcile conflicts intentionally, regenerate shared outputs after source integration, run integrated verification, commit the combined result, and release the triggered claim at its clean committed boundary.
 
-These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, integrate-agent-work, review-structured-artifact, explain-code-fix.
+These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, terminology-standard, integrate-agent-work, review-structured-artifact, explain-code-fix.
 
 Return:
 

@@ -11,6 +11,7 @@ Model profile: default -> auto
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
+- terminology-standard: Every agent must use preferred terminology when explaining technical concepts, reporting findings, coordinating work, or producing durable or user-visible language.
 - project-wiki-query: We need this to ground answers in the project's durable knowledge before relying on ad hoc investigation or unsupported recall.
 Output purposes:
 - wiki-backed answer: Gives the requester a direct answer grounded in the project's maintained knowledge rather than unsupported recall.
@@ -28,7 +29,7 @@ Context budget: Use no more than 786432 tokens of auto's 1048576-token context w
 
 Start from the project wiki, verify material claims against live authoritative sources, and identify any durable gap without editing unless asked.
 
-Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, project-wiki-query.
+Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, terminology-standard, project-wiki-query.
 
 Return:
 

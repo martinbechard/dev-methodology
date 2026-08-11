@@ -5,6 +5,7 @@ description: Performs bounded on-demand research for wiki gaps and saves sourced
 skills:
 - effective-communication
 - ste-technical-writing
+- terminology-standard
 - project-wiki-query
 - project-wiki-research
 model: gpt-5.6-sol
@@ -16,6 +17,7 @@ Model profile: documentation -> gpt-5.6-sol
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
+- terminology-standard: Every agent must use preferred terminology when explaining technical concepts, reporting findings, coordinating work, or producing durable or user-visible language.
 - project-wiki-query: We need this to determine whether maintained local or federated wiki coverage already answers the request before starting external research.
 - project-wiki-research: We need this to research a bounded coverage gap, preserve source provenance and exclusions, and save an ingest-ready report under raw.
 Output purposes:
@@ -34,7 +36,7 @@ Context budget: Use no more than 787500 tokens of gpt-5.6-sol's 1050000-token co
 
 Check local and federated wiki coverage first, research only the missing or stale scope, save one collision-safe raw report, and leave docs/wiki unchanged.
 
-These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, project-wiki-query, project-wiki-research.
+These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, terminology-standard, project-wiki-query, project-wiki-research.
 
 Return:
 

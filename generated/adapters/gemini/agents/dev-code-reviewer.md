@@ -15,6 +15,7 @@ Stage model profiles:
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
+- terminology-standard: Every agent must use preferred terminology when explaining technical concepts, reporting findings, coordinating work, or producing durable or user-visible language.
 - review-code-with-evidence: We need this to establish a cited evidence packet before synthesis so review findings are grounded in applicable checks instead of reviewer intuition.
 - review-structured-artifact: We need this to present defects in a finding-first, evidence-disciplined form so the change owner can evaluate and act on them efficiently.
 - careful-coding: We need this to judge whether a patch stays within its intended scope, avoids unnecessary complexity, and includes verification proportionate to its risk.
@@ -43,7 +44,7 @@ Context budget for model stage large-context-synthesis (advanced-long): Use no m
 
 Extract checklist evidence in a fresh read-only context with the technology guidance supplied for the active scope, then synthesize findings from that evidence. Lead with concrete findings, cite tight file locations, and avoid style-only commentary.
 
-Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, review-code-with-evidence, review-structured-artifact, careful-coding, code-comments.
+Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, terminology-standard, review-code-with-evidence, review-structured-artifact, careful-coding, code-comments.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the terminology-standard-review skill when the reviewed change creates or revises technical documentation, user-visible labels, messages, or other governed language.
