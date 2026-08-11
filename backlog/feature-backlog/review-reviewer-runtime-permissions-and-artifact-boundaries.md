@@ -1,10 +1,10 @@
 # Review and Enforce Read-Only Reviewer Runtime Access
 
-Status: Ready
+Status: Starting
 
 Owner: Unowned
 
-Phase: Recovered for canonical resumption
+Phase: Canonical resumption requested
 
 Type: Feature
 
@@ -188,3 +188,29 @@ Superseded Decision: The Coordinator Runtime-Enforcement Decision above is retai
 Confirmed Blocker Resolution: The false runtime tool-scoping blocker is removed. Candidate 08554484859c0bdb66d83ef973266f6765e49e58 remains clean and focused on scripts/install-skills.py and scripts/test_install_skills.py. The concurrently Running baseline-remediation item owns no live path claim on either file, and its declared 49-identity scope does not include either file. Exact-path overlap is therefore not present for bounded candidate review and verification.
 
 Recovery Action: Blocked -> Ready with Owner: Unowned. Preserve canonical task 019ff2f9-085e-7202-8099-8f35425278a0, branch codex/reviewer-runtime-permissions-019ff2f9, clean isolated worktree, candidate 08554484859c0bdb66d83ef973266f6765e49e58, and all prior evidence. Resume only through a separate Ready -> Starting reservation followed by the same root Dev Orchestrator accepting Starting -> Running.
+
+## Canonical Resumption Handoff
+
+Starting Recorded At: 2026-08-11T23:14:35Z
+
+Coordinator: Codex task 019ff26f-25d0-7381-88f7-74d52717ff59
+
+Normalized Objective: Resume the preserved reference-root candidate under the clarified reviewer role-division policy; maintain zero reviewer mutation behavior and producer sandboxing; reconcile only exact current path overlap; then complete fresh independent review, focused verification, main-branch delivery, provider closure, and cleanup.
+
+Intended Root Role: Dev Orchestrator
+
+Launch Result: Requested for preserved canonical execution
+
+Canonical Execution: Codex task 019ff2f9-085e-7202-8099-8f35425278a0
+
+Preserved Candidate: 08554484859c0bdb66d83ef973266f6765e49e58
+
+Preserved Branch: codex/reviewer-runtime-permissions-019ff2f9
+
+Preserved Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/review-reviewer-runtime-permissions-work-019ff2f9
+
+Overlap Decision: The Running baseline-remediation item owns no live claim or declared historical repair on scripts/install-skills.py or scripts/test_install_skills.py. Bounded candidate review and verification may resume. Reconcile again before any later overlapping source, generated-output, or integration event.
+
+Last Contact At: 2026-08-11T23:14:35Z
+
+Next Reconciliation At: 2026-08-11T23:29:35Z
