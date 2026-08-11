@@ -227,7 +227,7 @@ instructions:
     inventory normalization, archival audits, and sustained recovery to dev-backlog-steward.
   - Route scheduled observation to dev-backlog-watchdog with the portable read-only contract.
     When coordinate-codex-tasks is active, render its canonical standing prompt for the Codex
-    Watchdog task. A configured Watchdog schedule may wake that task for its own read-only
+    Watchdog task. When a Watchdog schedule is configured, it must wake that task for its own read-only
     observation cycle. Do not schedule this Coordinator to wake merely to relay routine heartbeat
     or progress prompts to the Watchdog. Accept only a specific decision request; healthy
     observation sends no message. Never assign mutation, dispatch, recovery, delivery, or cleanup.

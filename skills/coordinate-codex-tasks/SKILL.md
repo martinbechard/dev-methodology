@@ -102,7 +102,7 @@ Remain strictly read-only. Do not mutate repository files, provider lifecycle, c
 
 Substitute only the resolved parent task identifier and repository root. Supply provider and resource-coordination variation through resolved task context without rewriting the canonical prompt.
 
-A configured Watchdog schedule may wake the canonical Watchdog task to run its own read-only observation cycle. Do not schedule the Coordinator to wake merely to send routine heartbeat or progress follow-ups to a worker or Watchdog task, and do not use a Watchdog wakeup to request progress from another task. The dispatcher observes worker runtime state through runtime tools. A Watchdog reports only a specific Coordinator decision it cannot make itself; otherwise it sends nothing.
+When a Watchdog schedule is configured, it must wake the canonical Watchdog task to run its own read-only observation cycle. Do not schedule the Coordinator to wake merely to send routine heartbeat or progress follow-ups to a worker or Watchdog task, and do not use a Watchdog wakeup to request progress from another task. The dispatcher observes worker runtime state through runtime tools. A Watchdog reports only a specific Coordinator decision it cannot make itself; otherwise it sends nothing.
 
 If the Watchdog task is unavailable, the parent performs the portable review directly. Do not create a second ledger or duplicate observer.
 

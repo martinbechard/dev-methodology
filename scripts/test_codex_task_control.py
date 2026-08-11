@@ -204,7 +204,7 @@ class CodexTaskControlPackageTests(unittest.TestCase):
         )
         self.assertNotIn("Canonical Heartbeat Prompt Template", self.codex)
         self.assertIn(
-            "A configured Watchdog schedule may wake the canonical Watchdog task",
+            "When a Watchdog schedule is configured, it must wake the canonical Watchdog task",
             self.codex,
         )
         self.assertIn(
