@@ -104,7 +104,7 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
         campaign = self.model["campaign"]
 
         self.assertEqual(145, summary["skillCount"])
-        self.assertEqual(142, summary["probeCount"])
+        self.assertEqual(143, summary["probeCount"])
         self.assertEqual(33, summary["roleCount"])
         self.assertEqual(33, summary["suiteCount"])
         self.assertEqual(124, summary["currentScenarioCount"])
@@ -412,10 +412,10 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
     def test_skill_entries_separate_probe_declarations_from_governed_outcomes(self) -> None:
         """Every skill must retain probe, indirect coverage, and outcome limitations separately."""
         self.assertEqual(145, len(self.model["skills"]))
-        self.assertEqual(3, sum(skill["probe"] is None for skill in self.model["skills"]))
-        self.assertEqual(142, self.model["summary"]["directProbeSkillCount"])
+        self.assertEqual(2, sum(skill["probe"] is None for skill in self.model["skills"]))
+        self.assertEqual(143, self.model["summary"]["directProbeSkillCount"])
         self.assertEqual(1, self.model["summary"]["indirectOnlySkillCount"])
-        self.assertEqual(2, self.model["summary"]["noRecordedEvidenceSkillCount"])
+        self.assertEqual(1, self.model["summary"]["noRecordedEvidenceSkillCount"])
         self.assertTrue(
             any(not skill["governedScenarioLinks"] for skill in self.model["skills"])
         )
@@ -434,7 +434,7 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
             self.page,
         )
         self.assertIn(
-            "2 skills have no recorded evaluation evidence.",
+            "1 skill has no recorded evaluation evidence.",
             self.page,
         )
         self.assertNotRegex(self.page, r"\b1 skills (?:have|are)\b")

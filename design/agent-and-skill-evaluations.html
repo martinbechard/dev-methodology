@@ -140,7 +140,7 @@ Task-ID-Evidence: historical-unknown
     <h3>Current catalog inventory</h3>
     <div class="grid" style="margin-top:1rem">
       <article class="metric"><strong>145</strong><span>Bundled skills</span></article>
-      <article class="metric"><strong>142</strong><span>Diagnostic probe records</span></article>
+      <article class="metric"><strong>143</strong><span>Diagnostic probe records</span></article>
       <article class="metric"><strong>33</strong><span>Conceptual agents</span></article>
       <article class="metric"><strong>33</strong><span>Current Test suites</span></article>
       <article class="metric"><strong>124</strong><span>Current Test suite scenarios</span></article>
@@ -152,7 +152,7 @@ Task-ID-Evidence: historical-unknown
       <article class="metric"><strong>5</strong><span>Workflow packs</span></article>
     </div>
     <div class="grid" style="margin-top:1rem">
-      <article class="method-card"><h3>Skill catalog states</h3><ul><li>0 skills have a direct governed Evaluation result.</li><li>142 skills have a direct diagnostic probe declaration but no direct Evaluation result.</li><li>2 skills have only indirect current Test suite coverage without a direct probe or Evaluation result.</li><li>1 skill has no recorded evaluation evidence.</li><li>59 skills are named by at least one scenario in the selected Campaign; 86 skills are not.</li></ul><p><strong>No skill-level Evaluation result:</strong> The selected Test report publishes no skill-level Evaluation results. Linked PASS results remain agent-scenario evidence.</p></article>
+      <article class="method-card"><h3>Skill catalog states</h3><ul><li>0 skills have a direct governed Evaluation result.</li><li>143 skills have a direct diagnostic probe declaration but no direct Evaluation result.</li><li>1 skill has only indirect current Test suite coverage without a direct probe or Evaluation result.</li><li>1 skill has no recorded evaluation evidence.</li><li>59 skills are named by at least one scenario in the selected Campaign; 86 skills are not.</li></ul><p><strong>No skill-level Evaluation result:</strong> The selected Test report publishes no skill-level Evaluation results. Linked PASS results remain agent-scenario evidence.</p></article>
     </div>
   </section>
 
@@ -167,7 +167,7 @@ Task-ID-Evidence: historical-unknown
       <div><dt>Evidence level</dt><dd>Governed agent-suite Campaign</dd></div>
       <div><dt>Source snapshot mode</dt><dd>Deterministic source snapshot</dd></div>
       <div><dt>Wall-clock build time</dt><dd>Not retained; deterministic output does not claim an unsupported generation timestamp</dd></div>
-      <div><dt>Current source digest</dt><dd><code>ded67b3918129a9b8ec5059cb5ee546245d39e5dbd1e9dc93476bc51bbb28af4</code>; regenerated and compared by the focused check</dd></div>
+      <div><dt>Current source digest</dt><dd><code>f92a55c127d7707beedacad7c2325b43ab71db0359df131ce5469cc1f6169f99</code>; regenerated and compared by the focused check</dd></div>
     </dl>
     <div style="margin-top:2rem"><h3>Evaluation results</h3></div>
     <div class="grid" style="margin-top:1rem">
@@ -4211,15 +4211,26 @@ Task-ID-Evidence: historical-unknown
     </article>
 
     <article class="evaluation-card skill-card" id="skill-manage-complex-development-plan"
-      data-kind="skill" data-status="indirect-only" data-search="manage-complex-development-plan maintain a task-owned json and html execution plan for complex development through deterministic mcp-agent-ops hierarchy commands. development-practice none linked agent-scenario evaluation result categories: pass, blocked">
+      data-kind="skill" data-status="direct-probe" data-search="manage-complex-development-plan create and update an implementation hierarchy through configured mcp plan operations, keeping its authoritative json and rendered html current. development-practice probe-manage-complex-development-plan linked agent-scenario evaluation result categories: pass, blocked">
       <div class="card-heading">
         <div><span class="card-kicker">Skill</span><h3>manage-complex-development-plan</h3></div>
-        <span class="status status--indirect-only">Indirect agent-scenario evidence only</span>
+        <span class="status status--direct-probe">Direct diagnostic probe declaration</span>
       </div>
-      <p>Maintain a task-owned JSON and HTML execution plan for complex development through deterministic mcp-agent-ops hierarchy commands.</p>
+      <p>Create and update an implementation hierarchy through configured MCP plan operations, keeping its authoritative JSON and rendered HTML current.</p>
       <p class="source-row"><a href="../skills/manage-complex-development-plan/SKILL.md">Skill source</a></p>
       <h4>Direct diagnostic probe declaration</h4>
-      <p><span class="status status--missing">No direct probe declaration</span></p><p>No diagnostic probe is declared for this skill.</p>
+
+        <dl class="compact-list">
+          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-manage-complex-development-plan</a></dd></div>
+          <div><dt>Coverage state</dt><dd>declared: catalog declaration, not a verified run</dd></div>
+          <div><dt>Kind</dt><dd>activation-and-behavior</dd></div>
+          <div><dt>Executable cases</dt><dd>None declared</dd></div>
+          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-coder-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-orchestrator-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-orchestrator-boundary</a></dd></div>
+          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">code-delivery</a></dd></div>
+          <div><dt>Deterministic checks</dt><dd>skill-read-trace, operation-coverage, tool-authority, no-forbidden-mutation, output-contract-presence</dd></div>
+          <div><dt>Model rubric</dt><dd>workflow-quality</dd></div>
+        </dl>
+
       <h4>Selected Campaign scenario links</h4>
       <ul class="link-list"><li><a href="../evals/agent-tests/dev-orchestrator/scenarios.yaml">dev-orchestrator / dependency-routing</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-orchestrator/scenarios.yaml">dev-orchestrator / bounded-correction</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li></ul>
       <dl class="compact-list">
