@@ -154,3 +154,23 @@ Blocking References: codex-reviewer-tool-scoping-unavailable; Codex task 019ff2f
 Recovery Note: Preserve branch codex/reviewer-runtime-permissions-019ff2f9 and its clean isolated worktree. Commit 08554484859c0bdb66d83ef973266f6765e49e58 is a focused, verified reference-root correction but has not completed independent review, integrated verification, or main delivery. The unrelated primary-checkout modification scripts/test_audit_worktree_completion_links.py remained untouched.
 
 Permitted Resumption Transition: Blocked to Ready only after the Coordinator records one of the two explicit runtime-enforcement dispositions and reconciles the overlap handoff.
+
+## Coordinator Runtime-Enforcement Decision
+
+Decision Recorded At: 2026-08-11T22:55:09Z
+
+Decision Owner: Dev Backlog Coordinator task 019ff26f-25d0-7381-88f7-74d52717ff59
+
+Decision: Preserve the hard reviewer mutation-capability non-exposure requirement. Instruction-level refusal plus a read-only filesystem sandbox is not sufficient because inherited provider, claim, Git integration, task-dispatch, and cross-task mutation tools remain callable by the reviewer runtime.
+
+Lifecycle Action: Retain Status: Blocked and Owner: Unowned. Do not resume candidate 08554484859c0bdb66d83ef973266f6765e49e58 or perform further shared mutation for this item.
+
+Rationale: The user-authorized policy requires reviewers to remain strictly read-only, and the acceptance criteria require reviewer runtimes to be unable to mutate provider lifecycle, claims, integration, delivery, branches, worktrees, or another task's state. Replacing capability non-exposure with instruction-only restraint would weaken the authorized requirement rather than verify it.
+
+Technical Dependency: Codex runtime support for enforceable per-agent tool scoping, or an equivalent runtime boundary that makes every prohibited state-changing operation unavailable to reviewer executions while preserving required read access.
+
+Dependency Owner: Codex runtime capability owner.
+
+Observable Unblock Trigger: A supported Codex release and exact-path reviewer pilot demonstrate required repository, project, and configured-reference reads while each prohibited mutation capability is absent or rejected by the runtime boundary.
+
+Preserved Evidence: Keep canonical task 019ff2f9-085e-7202-8099-8f35425278a0, branch codex/reviewer-runtime-permissions-019ff2f9, its clean isolated worktree, and candidate 08554484859c0bdb66d83ef973266f6765e49e58. The candidate remains unreviewed and undelivered. Its project-reference-root correction may be resumed only after this runtime dependency and the recorded overlap are reconciled.
