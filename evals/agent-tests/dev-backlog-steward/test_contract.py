@@ -1272,9 +1272,8 @@ class DevBacklogStewardContractTests(unittest.TestCase):
             "Snapshot exact idea bytes target bytes and target existence",
             "Restore exact pre-attempt state after target-write idea-write validation staging or commit failure",
             "Snapshot exact full Git index file bytes and existence before mutation",
-            "Acquire exact source and destination path claims together before mutation",
-            "Revalidate source destination HEAD index and unrelated state after claims",
-            "Return zero-mutation BLOCKED on claim conflict or post-claim drift",
+            "Revalidate source destination HEAD index and unrelated state immediately before mutation",
+            "Return zero-mutation BLOCKED on pre-mutation drift",
             "Set Promoted To to the destination Work Item ID",
             "Set destination Work Item ID to its filename stem",
             "Add reciprocal Source Evidence with the exact idea path",
@@ -1284,6 +1283,15 @@ class DevBacklogStewardContractTests(unittest.TestCase):
         ):
             with self.subTest(required_behavior=behavior):
                 self.assertIn(behavior, scenario["requiredBehaviors"])
+        common_behavior_text = "\n".join(scenario["requiredBehaviors"]).casefold()
+        for claim_only_fragment in (
+            "acquire exact source and destination path claims",
+            "claim conflict",
+            "after claims",
+            "post-claim drift",
+        ):
+            with self.subTest(claim_only_fragment=claim_only_fragment):
+                self.assertNotIn(claim_only_fragment, common_behavior_text)
         scenario_coordination = scenario["resourceCoordinationCases"]
         resource_claim = scenario_coordination["resource-claim"]
         none = scenario_coordination["none"]
@@ -1305,6 +1313,10 @@ class DevBacklogStewardContractTests(unittest.TestCase):
         )
         self.assertIn(
             "Stop with no retained new ownership on any path conflict",
+            resource_claim["claimLifecycle"],
+        )
+        self.assertIn(
+            "Revalidate transaction snapshots after claims",
             resource_claim["claimLifecycle"],
         )
         self.assertEqual([], none["targetSkills"])
