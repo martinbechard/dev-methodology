@@ -1,6 +1,6 @@
 # Create the Backlog Dispatcher Skill
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -93,3 +93,29 @@ Approved at creation. On 2026-08-11, in Codex task 019ff2c3-1710-7aa1-89c4-9d606
 
 - This Work Item creates the dispatcher skill; it does not transfer backlog authority from the Dev Backlog Coordinator to the caller.
 - The dispatcher is an execution bridge for runtime capabilities, not a replacement Coordinator, shadow scheduler, or second queue owner.
+
+## Starting Handoff Evidence
+
+Starting Recorded At: 2026-08-11T23:16:29Z
+
+Coordinator: Dev Backlog Coordinator delegated by canonical Codex caller task 019ff2c3-1710-7aa1-89c4-9d6066f51fe4
+
+Normalized Objective: Create and integrate the portable backlog-dispatcher skill with its exact approved dependent artifacts, prove the Coordinator-to-caller dispatch boundary through focused validation and live usage, preserve current queue and Watchdog authority, then complete independent review, main-branch delivery, provider closure, and cleanup. Defer a dedicated Evaluation suite until the current backlog finishes, as directed by the user.
+
+Intended Root Role: Dev Orchestrator operating in the canonical caller task
+
+Launch Result: Requested for existing canonical execution
+
+Canonical Execution: Codex task 019ff2c3-1710-7aa1-89c4-9d6066f51fe4
+
+Dispatch Baseline: ef01cc13f4b503de40f700033ca009b7e0a27962
+
+Capacity Evidence: Three actively eligible items occupy concurrent capacity before this reservation: two Running items and one Starting canonical resumption. This user-prioritized item is the fourth active item and remains below the evidence-based concurrent limit of five.
+
+Overlap Constraints: The active lifecycle-design item may own design/orchestrated-development-lifecycle.html. Defer changes or integration for that exact file until its owner releases or hands off the path. The baseline-remediation item has no live path claim but may later touch scripts/test_bundle_content.py; reconcile its accepted changed-path handoff before editing or integrating that file. The new skills/backlog-dispatcher subtree and skills/backlog-dispatcher/agents/openai.yaml are currently independent. Reconcile README.md, design/skills-modularization.html, design/generated/skill-definitions.js, and every other approved dependent artifact immediately before its edit or integration event.
+
+Reviewer And Producer Boundary: Reviewers remain zero-write role owners and must not mutate artifacts or lifecycle state. Artifact producers remain sandbox-constrained.
+
+Last Contact At: 2026-08-11T23:16:29Z
+
+Next Reconciliation At: 2026-08-11T23:31:29Z
