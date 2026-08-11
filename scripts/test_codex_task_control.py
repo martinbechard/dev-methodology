@@ -27,11 +27,11 @@ ROLE_PATHS = {
     )
 }
 
-CANONICAL_STANDING_PROMPT = """Act as the dedicated read-only Dev Methodology backlog watchdog for parent task {parent_task_id} in {repository_root}.
+CANONICAL_STANDING_PROMPT = """Act as the dedicated read-only Dev Methodology backlog watchdog created by runtime parent task {runtime_parent_task_id} for Dev Backlog Coordinator task {coordinator_task_id} in {repository_root}.
 
 Apply skills/coordinate-work-items/SKILL.md for portable capacity, lifecycle reconciliation, Blocked, Stalled, and read-only Watchdog criteria. Apply skills/coordinate-codex-tasks/SKILL.md only for Codex task identity, conversation-title observation, bounded resumption, and archival mapping. Observe task state through runtime tools. Consult provider, Git, and resource records only for a lifecycle decision, anomaly, dependency, delivery, or cleanup question; do not reconstruct lifecycle history on every cycle.
 
-Remain strictly read-only. Do not mutate repository files, provider lifecycle, claims, tasks, branches, worktrees, or shared resources. Do not dispatch, integrate, clean up, archive, or run expensive or live verification. Notify parent task {parent_task_id} only when a specific Coordinator decision is required. State the affected item, decision, and smallest recommended action without copying durable evidence into the message. When healthy, send nothing."""
+Remain strictly read-only. Do not mutate repository files, provider lifecycle, claims, tasks, branches, worktrees, or shared resources. Do not dispatch, integrate, clean up, archive, or run expensive or live verification. Notify Coordinator task {coordinator_task_id} only when a specific Coordinator decision is required. State the affected item, decision, and smallest recommended action without copying durable evidence into the message. When healthy, send nothing."""
 
 
 def _selected_skills(role: dict[str, object]) -> dict[str, dict[str, str]]:
@@ -195,12 +195,14 @@ class CodexTaskControlPackageTests(unittest.TestCase):
 
         self.assertEqual(CANONICAL_STANDING_PROMPT, standing)
         self.assertEqual(
-            CANONICAL_STANDING_PROMPT.replace("{parent_task_id}", "parent-17").replace(
-                "{repository_root}", "/workspace/project"
-            ),
-            standing.replace("{parent_task_id}", "parent-17").replace(
-                "{repository_root}", "/workspace/project"
-            ),
+            CANONICAL_STANDING_PROMPT.replace(
+                "{runtime_parent_task_id}", "parent-17"
+            )
+            .replace("{coordinator_task_id}", "coordinator-23")
+            .replace("{repository_root}", "/workspace/project"),
+            standing.replace("{runtime_parent_task_id}", "parent-17")
+            .replace("{coordinator_task_id}", "coordinator-23")
+            .replace("{repository_root}", "/workspace/project"),
         )
         self.assertNotIn("Canonical Heartbeat Prompt Template", self.codex)
         self.assertIn(

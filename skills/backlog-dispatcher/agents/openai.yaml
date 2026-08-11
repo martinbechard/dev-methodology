@@ -1,0 +1,17 @@
+# Codex app metadata for this skill.
+# Derived interface fields are refreshed from SKILL.md by scripts/openai_metadata.py.
+interface:
+  # User-facing name shown in Codex skill surfaces.
+  display_name: Backlog Dispatcher
+  # User-facing summary shown in Codex skill surfaces.
+  short_description: Execute backlog work dispatch through caller-owned runtime tools while a Dev Backlog Coordinator...
+  # Prompt Codex can use when launching this skill directly.
+  default_prompt: Use $backlog-dispatcher to consult the Dev Backlog Coordinator and execute its approved runtime dispatch or coordination decision.
+
+# Optional invocation policy placeholder.
+# policy:
+#   allow_implicit_invocation: false
+
+# Optional tool dependency placeholder.
+# dependencies:
+#   tools: []

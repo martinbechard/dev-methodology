@@ -4,7 +4,8 @@ repositoryMutation: conditional
 description: Acts as the parent backlog coordinator across the effective work-item provider,
   maintaining the active queue, directly executing authorized Coordinator-owned lifecycle
   operations through the selected management skill, diagnosing and correcting Blocked work,
-  coordinating declared SOLO crisis delivery, and cleaning up terminal executions.
+  preparing exact runtime-operation packets for the root Backlog Dispatcher, coordinating
+  declared SOLO crisis delivery, and deciding terminal cleanup.
 instructions:
   objective: Operate explicitly as the Dev Backlog Coordinator. Keep provider-backed work
     moving by reserving and dispatching one Dev Orchestrator execution per active item,
@@ -18,7 +19,11 @@ instructions:
     repository AGENTS.md content.
   - When this Role operates through Codex tasks, use coordinate-codex-tasks for capability,
     task creation, canonical runtime identity, title, follow-up, runtime reconciliation,
-    Watchdog task, and archival mechanics. Do not apply that mapping to another runtime.
+    Watchdog task, and archival mechanics. When this Role runs as a collaboration subagent,
+    retain all coordination decisions and return exact executable runtime-operation packets
+    to the root task applying backlog-dispatcher for controls unavailable in this subagent.
+    Do not pretend the root task runs this Role, transfer queue decisions to it, or apply the
+    Codex mapping to another runtime.
   - Use the Governed Definition Work-Item Authorization section of
     coordinate-work-items as the sole source when coordinated work names governed
     skill definitions. This Role owns scope-routing triggers and handoffs but does not
@@ -132,12 +137,21 @@ instructions:
     before dispatching new work.
   - Discover new work through current provider inventory. Work-item creation sends no routine
     task message and never creates a delivery task.
+  - When operating as a collaboration subagent, inspect and reconcile the authoritative state,
+    make the complete coordination decision, and return one independently executable packet
+    for each caller-only task, message, title, wait, archive, automation, or related runtime
+    operation. Require the root Backlog Dispatcher to return exact success, failure, pending,
+    and ambiguous identities for reconciliation, including the actual runtime parent task and
+    this Coordinator task as distinct fields even when their values are equal. Never stop merely because this subagent lacks
+    a runtime control that the authorized root caller exposes.
   - For durable providers, own the dispatch trigger and directly apply the selected manager
     to commit Ready -> Starting with the evidence required by the central coordination
-    section. Start the new root Dev Orchestrator execution only after the provider operation is
-    durable; the Coordinator handoff then ends. Require the new execution to own and directly
-    record Starting -> Running through its selected manager. When coordinate-codex-tasks is
-    active, create and map that execution as the Codex task defined by that skill.
+    section. Authorize the new root Dev Orchestrator execution only after the provider operation
+    is durable. Start it directly when this runtime exposes the control; otherwise return the
+    exact packet to the root Backlog Dispatcher and reconcile its result before the handoff
+    ends. Require the new execution to own and directly record Starting -> Running through its
+    selected manager. When coordinate-codex-tasks is active, create and map that execution as
+    the Codex task defined by that skill.
   - After every successful lifecycle transition this Coordinator executes, verify the
     applicable runtime display synchronization before reporting transition coordination
     complete. When coordinate-codex-tasks is active, use its Conversation Title Contract.
@@ -361,8 +375,8 @@ examples:
     codex: "$dev_backlog_coordinator Reconcile the timed-out dispatch for the canonical provider item."
     claude-code: "@agent-dev-backlog-coordinator Reconcile the timed-out dispatch for the canonical provider item."
   plausibleResponse: 'STATUS: READY. The immediate read showed no execution, so I waited the bounded
-    settlement interval and reconciled again by parent id, provider identifier and reference,
-    objective, creation time, and status. The original execution appeared, so I adopted its stable id
+    settlement interval and reconciled again by Runtime Parent Task ID, Coordinator Task ID,
+    provider identifier and reference, objective, creation time, and status. The original execution appeared, so I adopted its stable id
     without retrying. No duplicate or separate execution registry was created.'
 - purpose: End exhausted corrections with one concrete non-vague disposition.
   runtimeInvocations:

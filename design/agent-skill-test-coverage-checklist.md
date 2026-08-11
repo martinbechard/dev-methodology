@@ -20,10 +20,10 @@ This page is generated from the live conceptual agent and skill inventories, all
 
 ## Summary
 
-- [x] 33 conceptual agents and 145 bundled skills have structural coverage.
+- [x] 33 conceptual agents and 146 bundled skills have structural coverage.
 - [x] 32 agents are scenario-declared and 143 skills are probe-declared.
 - Agents missing scenario declarations: dev-skill-lint-reviewer.
-- Skills missing probe declarations: analyze-document-topics, revise-document-topics.
+- Skills missing probe declarations: analyze-document-topics, backlog-dispatcher, revise-document-topics.
 - [x] 75 agent scenarios and 5 workflow packs are declared.
 - 5 workflow packs have associated cases; 5 are partial and 0 have end-to-end fixture coverage.
 - 17 cases are fixture-backed and 17 fixtures are structurally executable before harness readiness is considered.
@@ -156,6 +156,7 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | analyze-root-cause | [x] | [x] probe-analyze-root-cause | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | application-security | [x] | [x] probe-application-security | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | ast-grep | [x] | [x] probe-ast-grep | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
+| backlog-dispatcher | [x] | [ ] none | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | missing | none | none | none | none |
 | careful-coding | [x] | [x] probe-careful-coding | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
 | code-comments | [x] | [x] probe-code-comments | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | code-discovery | [x] | [x] probe-code-discovery | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
@@ -337,7 +338,7 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 
 ## Repository Verification Layers
 
-- [ ] Every live skill has exactly one probe declaration. Missing declarations: analyze-document-topics, revise-document-topics.
+- [ ] Every live skill has exactly one probe declaration. Missing declarations: analyze-document-topics, backlog-dispatcher, revise-document-topics.
 - [ ] Every live conceptual agent has exactly one scenario declaration with at least one scenario. Missing declarations: dev-skill-lint-reviewer.
 - [x] Evaluation catalog references, fixture paths, Judge plans, harnesses, workflow links, and sandbox profiles are validated.
 - [x] Codex and Junie are the only supported evaluation harnesses.

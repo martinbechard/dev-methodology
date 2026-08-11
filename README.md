@@ -172,7 +172,7 @@ A Codex user-level installation uses the installed copy:
 python3 "${HOME}/.agents/skills/resource-claim-helper-command/scripts/claim.py" --help
 ```
 
-For coordinated multi-item work, Dev Backlog Coordinator owns queue decisions, directly applies the selected provider manager for Ready -> Starting reservations and Coordinator-owned dispositions, launches the root Dev Orchestrator execution, and finishes its handoff. When coordinate-codex-tasks is active, that execution maps to one root Codex task. The root Dev Orchestrator independently applies the selected provider manager for Starting -> Running acceptance and its later lifecycle operations. Dev Backlog Steward is optional and limited to provider-wide inventory, normalization, archival audit, and recovery. Dev Backlog Watchdog detects overly old Starting items and reports recovery evidence to the Coordinator. Each agent follows Resource Claim when its work reaches an event in the Claim Events table.
+For coordinated multi-item work, Dev Backlog Coordinator owns queue decisions, directly applies the selected provider manager for Ready -> Starting reservations and Coordinator-owned dispositions, and prepares the complete execution handoff. [Backlog Dispatcher](skills/backlog-dispatcher/SKILL.md) lets the calling task use its own runtime controls to create, resume, message, title, wait on, or archive the approved execution, then return the canonical runtime identity to the Coordinator for reconciliation. When coordinate-codex-tasks is active, that execution maps to one root Codex task. The root Dev Orchestrator independently applies the selected provider manager for Starting -> Running acceptance and its later lifecycle operations. Dev Backlog Steward is optional and limited to provider-wide inventory, normalization, archival audit, and recovery. Dev Backlog Watchdog detects overly old Starting items and reports recovery evidence to the Coordinator. Each agent follows Resource Claim when its work reaches an event in the Claim Events table.
 
 An explicit user-authorized work item that names exact skill definition paths supplies the required user direction for those named skills; only additional skill-definition paths require additional approval.
 
@@ -419,7 +419,7 @@ reporting. When the execution runtime is Codex, the complementary
 task creation, resumption, capability checks, identity, titles, follow-up, reconciliation,
 Watchdog operation, and archival. Neither peer owns the other's responsibility.
 It directly applies the effective Persistence-selected manager for its authorized lifecycle
-operations and sends each actively eligible work item to Dev Orchestrator with the effective Commit-selected skill. File, GitHub, and
+operations and prepares each actively eligible work item for Dev Orchestrator with the effective Commit-selected skill. When the Coordinator's delegated runtime does not expose canonical task controls, [Backlog Dispatcher](skills/backlog-dispatcher/SKILL.md) keeps queue decisions with the Coordinator while the calling task performs the approved runtime operation and returns the resulting task identity. Incoming Agent messages that require work selection, lifecycle, ownership, overlap, recovery, Watchdog, re-homing, or cleanup decisions go through the Coordinator before the dispatcher acts. File, GitHub, and
 GitLab retain native provider identities; placeholder providers, provider none, and UNSET
 preserve their defined zero-mutation or non-durable boundaries without fallback.
 
@@ -576,6 +576,7 @@ The development practice skills are:
 - resource-claim-helper-command
 - resource-claim-helper-mcp
 - integrate-agent-work
+- backlog-dispatcher
 - coordinate-work-items
 - coordinate-codex-tasks
 - resolve-backlog-blockage
