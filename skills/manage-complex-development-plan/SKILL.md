@@ -1,6 +1,6 @@
 ---
 name: manage-complex-development-plan
-description: Create and update an implementation hierarchy through configured MCP plan operations, keeping its authoritative JSON and rendered HTML current.
+description: Create and update an externalized implementation hierarchy, when explicitly required, through configured MCP plan operations.
 metadata:
   category: development-practice
 ---
@@ -24,7 +24,7 @@ Task-ID-Evidence: runtime-supplied
 
 # Manage Complex Development Plan
 
-Use this Skill when Dev Coder's assignment requires an implementation plan. Dev Coder owns the plan semantics and decomposition. The configured MCP operations own persistence and rendering. A user instruction to code without planning bypasses plan creation.
+Use this Skill only when Dev Coder's assignment explicitly requires an externalized hierarchy plan. Dev Coder always owns the plan semantics and decomposition. When the assignment records that no externalized plan is needed, Dev Coder still creates and returns a bounded implementation and TDD plan without MCP persistence. The configured MCP operations own persistence and rendering for an externalized plan. A user instruction to code without planning bypasses both plan forms.
 
 The returned JSON plan is authoritative, and its same-named HTML file is the synchronized rendering. The plan is an implementation aid, not a provider record, work-item queue, review verdict, verification result, Commit result, or source-control record.
 

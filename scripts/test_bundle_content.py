@@ -2793,6 +2793,22 @@ class BundleContentTests(unittest.TestCase):
             ["mcp-agent-ops"],
             [tool["value"] for tool in metadata["dependencies"]["tools"]],
         )
+        self.assertIn(
+            "externalized implementation hierarchy",
+            metadata["interface"]["short_description"],
+        )
+        self.assertIn(
+            "assignment explicitly requires an externalized hierarchy plan",
+            skill_text,
+        )
+        self.assertIn(
+            "without MCP persistence",
+            skill_text,
+        )
+        self.assertNotIn(
+            "Use this Skill when Dev Coder's assignment requires an implementation plan",
+            skill_text,
+        )
         for required_contract in (
             '"Development plan"',
             '"First item"',
@@ -2833,12 +2849,20 @@ class BundleContentTests(unittest.TestCase):
         }
         self.assertIn("manage-complex-development-plan", coder_skill_entries)
         self.assertIn(
-            "assignment requires an implementation plan",
+            "assignment explicitly requires an externalized hierarchy plan",
             coder_skill_entries["manage-complex-development-plan"]["condition"],
         )
         coder_text = json.dumps(coder_role, sort_keys=True)
         self.assertIn("create_hierarchy_plan", coder_text)
-        self.assertIn("same authoritative hierarchy plan", coder_text)
+        self.assertIn("without MCP persistence", coder_text)
+        self.assertIn(
+            "when explicitly required, the same authoritative hierarchy plan",
+            coder_text,
+        )
+        self.assertNotIn(
+            "When the assignment requires an implementation plan",
+            coder_text,
+        )
 
         role = load_yaml_object(
             ROLES_ROOT / "dev-activities" / "dev-orchestrator.role.yaml"
@@ -2986,10 +3010,18 @@ class BundleContentTests(unittest.TestCase):
             ):
                 adapter = GENERATED_ADAPTERS_ROOT / relative_path
                 with self.subTest(adapter=relative_path):
-                    self.assertIn(
-                        "manage-complex-development-plan",
-                        adapter.read_text(encoding="utf-8"),
-                    )
+                    adapter_text = adapter.read_text(encoding="utf-8")
+                    self.assertIn("manage-complex-development-plan", adapter_text)
+                    if role_name == "dev-coder":
+                        self.assertIn(
+                            "assignment explicitly requires an externalized hierarchy plan",
+                            adapter_text,
+                        )
+                        self.assertIn("without MCP persistence", adapter_text)
+                        self.assertNotIn(
+                            "assignment requires an implementation plan",
+                            adapter_text,
+                        )
 
         readme_text = README_PATH.read_text(encoding="utf-8")
         self.assertIn("direct configured MCP hierarchy operations", readme_text)
@@ -3003,6 +3035,14 @@ class BundleContentTests(unittest.TestCase):
         )
         self.assertEqual("activation-and-behavior", plan_probe["evaluationKind"])
         self.assertEqual("declared", plan_probe["coverageStatus"])
+        self.assertIn(
+            "explicitly requires an externalized hierarchy plan",
+            plan_probe["activationCondition"],
+        )
+        self.assertIn(
+            "ordinary bounded implementation and TDD plan remains required",
+            plan_probe["negativeCondition"],
+        )
         self.assertEqual(
             {"dev-coder-happy", "dev-orchestrator-happy", "dev-orchestrator-boundary"},
             set(plan_probe["scenarioAssociations"]),

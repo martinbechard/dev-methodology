@@ -1274,9 +1274,9 @@ probes:
     source: skills/manage-complex-development-plan/SKILL.md
     evaluationCategory: development-practice
     evaluationKind: activation-and-behavior
-    activationCondition: Dev Coder is assigned an implementation plan, or Dev Orchestrator's complexity gate requires an externalized plan.
-    negativeCondition: The user explicitly directs coding without planning, or the assignment does not require an implementation plan.
-    expectedBehavior: Confirm configured create_hierarchy_plan, plan-read, and update_hierarchy_plan capabilities; turn Dev Coder's accepted decomposition into the numbered hierarchy source; call create_hierarchy_plan directly; return the authoritative JSON path; read current state before each update; call update_hierarchy_plan with one targeted mutation; reread JSON and HTML to prove the intended change and unaffected items; share that same plan with Dev Orchestrator; and stop clearly without package import, installation, or a substitute when a capability is unavailable.
+    activationCondition: Dev Coder's assignment explicitly requires an externalized hierarchy plan after Dev Orchestrator's complexity gate passes.
+    negativeCondition: The user explicitly directs coding without planning, or the assignment records that no externalized hierarchy plan is needed; the ordinary bounded implementation and TDD plan remains required unless the user bypassed planning.
+    expectedBehavior: Only for an explicitly required externalized hierarchy plan, confirm configured create_hierarchy_plan, plan-read, and update_hierarchy_plan capabilities; turn Dev Coder's accepted decomposition into the numbered hierarchy source; call create_hierarchy_plan directly; return the authoritative JSON path; read current state before each update; call update_hierarchy_plan with one targeted mutation; reread JSON and HTML to prove the intended change and unaffected items; share that same plan with Dev Orchestrator; and stop clearly without package import, installation, or a substitute when a capability is unavailable.
     judgePlan: {deterministicChecks: [skill-read-trace, operation-coverage, tool-authority, no-forbidden-mutation, output-contract-presence], modelRubric: workflow-quality}
     scenarioAssociations: [dev-coder-happy, dev-orchestrator-happy, dev-orchestrator-boundary]
     workflowAssociations: [code-delivery]
