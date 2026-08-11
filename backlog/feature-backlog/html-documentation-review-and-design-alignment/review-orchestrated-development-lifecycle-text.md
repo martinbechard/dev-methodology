@@ -18,7 +18,14 @@ Series: backlog/feature-backlog/html-documentation-review-and-design-alignment/i
 
 Coordinator Priority: Next
 
-Reason: This is preserved finish-lane work. Its Dev Architect dependency is complete, the page correction is already accepted, and only the bounded test correction, final gates, delivery, and cleanup remain.
+Reasons:
+
+- The corrected page already has accepted documentation and methodology reviews, so completing it preserves substantial finished work instead of starting another item from scratch.
+- Its Dev Architect dependency is complete, removing the reason for the earlier pause.
+- Only a bounded ten-line test correction, focused checks, final review, verification, delivery, and cleanup remain.
+- Resumption can reconcile the page with the newly delivered Dev Architect and direct MCP planning workflow before the content becomes the design-alignment baseline.
+- Completion removes an old dirty worktree and closes its preserved execution state.
+- Completion unblocks align-orchestrated-development-lifecycle-with-documentation-design-system.
 
 ## Crisis Pause Evidence
 
