@@ -1,10 +1,10 @@
 # Review and Enforce Read-Only Reviewer Runtime Access
 
-Status: Running
+Status: Blocked
 
-Owner: Dev Orchestrator task 019ff2f9-085e-7202-8099-8f35425278a0
+Owner: Unowned
 
-Phase: Reviewer runtime boundary implementation
+Phase: Coordinator runtime-enforcement decision
 
 Type: Feature
 
@@ -136,3 +136,21 @@ Exact-Path Pilot Evidence: Both pilots read README.md and PROJECT.yaml successfu
 Accepted Candidate: Commit 08554484859c0bdb66d83ef973266f6765e49e58 corrects project reference-root precedence in scripts/install-skills.py with focused coverage in scripts/test_install_skills.py; 89 installer tests passed and the candidate worktree was clean.
 
 Overlap Coordination: Conceptual reviewer sources, generated adapters, scripts/build-skill-docs.py, scripts/test_role_mutation_policy.py, and scripts/test_codex_task_control.py remain deferred until Work Item remediate-inherited-supported-test-baseline-failures returns its exact accepted changed-path and commit handoff.
+
+## Blocked Evidence
+
+Blocked At: 2026-08-11T22:53:58Z
+
+Known Blocker: Codex 0.145 collaboration children inherit the parent tool inventory, and the supported per-agent TOML contract has no tool allowlist or denylist. A reviewer sandbox can reject filesystem writes, but it cannot make provider, claim, GitHub integration, task-dispatch, cross-task, or other state-changing tools unavailable.
+
+Blocker Owner: Dev Backlog Coordinator
+
+Unblock Condition: The Coordinator must choose either to preserve the hard capability-non-exposure requirement and defer this item until Codex supports per-agent tool scoping, or to authorize a revised acceptance boundary that permits inherited mutation tools when the reviewer has native read-only filesystem sandboxing and explicit instruction-level prohibitions.
+
+Requested Coordinator Action: Decide whether hard runtime capability non-exposure remains mandatory. If mandatory, retain Blocked and route the missing Codex runtime feature separately. If instruction-level refusal is accepted as the negative authority proof, authorize bounded resumption from candidate 08554484859c0bdb66d83ef973266f6765e49e58 after the declared overlap item returns its exact accepted handoff.
+
+Blocking References: codex-reviewer-tool-scoping-unavailable; Codex task 019ff2f9-085e-7202-8099-8f35425278a0; top-level pilot task 019ff300-d8be-7052-abeb-1a5c7d5148f5
+
+Recovery Note: Preserve branch codex/reviewer-runtime-permissions-019ff2f9 and its clean isolated worktree. Commit 08554484859c0bdb66d83ef973266f6765e49e58 is a focused, verified reference-root correction but has not completed independent review, integrated verification, or main delivery. The unrelated primary-checkout modification scripts/test_audit_worktree_completion_links.py remained untouched.
+
+Permitted Resumption Transition: Blocked to Ready only after the Coordinator records one of the two explicit runtime-enforcement dispositions and reconciles the overlap handoff.
