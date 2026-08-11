@@ -236,6 +236,8 @@ Cleanup is enabled by default and removes obsolete bundle-owned artifacts record
 
 A non-dry-run refresh stages complete destination trees and ownership manifests beside the live destinations before changing them. Skills and optional native agents commit as one in-process transaction. A handled staging or destination-swap failure restores every previously live destination when rollback succeeds. If rollback cannot fully restore the destinations, the installer retains the transaction backups and reports their locations for recovery. A successful commit removes the transaction backups.
 
+Use --skip-invalid when a partial publication is preferable to rejecting the complete bundle because one skill directory lacks a non-empty SKILL.md. The installer publishes every valid skill and Agent, reports each skipped directory, and preserves any previously installed bundle-owned copy of a skipped skill. Unsafe source entries, ownership conflicts for publishable artifacts, malformed manifests, and transaction failures remain fatal.
+
 The matching adapter skill source is merged only when that adapter is selected. The Codex command therefore installs the shared skills plus codex-harness-directives; Claude Code, Gemini CLI, and Junie CLI deployments do not receive that Codex-only skill. A caller that supplies a custom generic source may also supply an explicit adapter source with --adapter-skills-source.
 
 Deploy the Codex bundle globally:

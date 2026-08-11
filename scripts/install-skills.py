@@ -126,6 +126,7 @@ class _SkillInstallPlan(NamedTuple):
     source_skills: tuple[Path, ...]
     current_skill_names: set[str]
     previous_manifest: Optional[dict[str, object]]
+    skipped_invalid_skill_names: tuple[str, ...]
 
 
 class _AgentInstallPlan(NamedTuple):
@@ -254,6 +255,14 @@ def parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
         "--replace-customized",
         action="store_true",
         help="Replace customized owned artifacts only after discrepancy analysis and user approval.",
+    )
+    parser.add_argument(
+        "--skip-invalid",
+        action="store_true",
+        help=(
+            "Publish valid skills while reporting incomplete skill directories and "
+            "preserving their previously installed owned copies."
+        ),
     )
     parser.add_argument(
         "--dry-run",
@@ -1270,7 +1279,12 @@ def _is_ignored_source_entry(path: Path) -> bool:
     return is_disposable_source_entry(path)
 
 
-def iter_skill_directories(source: Path) -> list[Path]:
+def iter_skill_directories(
+    source: Path,
+    *,
+    skip_invalid: bool = False,
+    skipped_invalid_names: list[str] | None = None,
+) -> list[Path]:
     """Return complete maintained skills and reject unsafe or incomplete sources."""
 
     if not source.is_dir():
@@ -1314,14 +1328,19 @@ def iter_skill_directories(source: Path) -> list[Path]:
     incomplete_directories = [
         path.name for path in source_directories if not is_skill_directory(path)
     ]
-    if incomplete_directories:
+    if incomplete_directories and not skip_invalid:
         raise ValueError(
             "skill source contains incomplete skill directories: "
             + ", ".join(incomplete_directories)
         )
+    if skipped_invalid_names is not None:
+        skipped_invalid_names.extend(incomplete_directories)
+    complete_directories = [
+        path for path in source_directories if path.name not in incomplete_directories
+    ]
     if not source_directories:
         raise ValueError(f"skill source contains no skill directories: {source}")
-    return source_directories
+    return complete_directories
 
 
 def remove_existing_destination(path: Path) -> None:
@@ -1807,6 +1826,7 @@ def _prepare_skill_install(
     destination: Path,
     adapter: Adapter,
     replace_customized: bool,
+    skip_invalid: bool = False,
 ) -> _SkillInstallPlan:
     resolved_source = _resolve_source_root(source, "skill")
     skill_sources = [resolved_source]
@@ -1818,10 +1838,15 @@ def _prepare_skill_install(
             raise ValueError(
                 f"skill source and destination overlap: {skill_source} and {destination_root}"
             )
+    skipped_invalid_skill_names: list[str] = []
     source_skills = tuple(
         source_skill
         for skill_source in skill_sources
-        for source_skill in iter_skill_directories(skill_source)
+        for source_skill in iter_skill_directories(
+            skill_source,
+            skip_invalid=skip_invalid,
+            skipped_invalid_names=skipped_invalid_skill_names,
+        )
     )
     source_skill_names = [source_skill.name for source_skill in source_skills]
     duplicate_names = sorted(
@@ -1840,23 +1865,32 @@ def _prepare_skill_install(
         expected_artifact_type=MANIFEST_SKILL_ARTIFACT_TYPE,
     )
     if not replace_customized:
+        replaceable_owned_paths = {
+            name: path
+            for name, path in manifest_skill_paths(previous_manifest).items()
+            if name not in skipped_invalid_skill_names
+        }
         customized_skills = customized_owned_artifacts(
             destination,
             previous_manifest,
             MANIFEST_SKILL_ARTIFACT_TYPE,
-            manifest_skill_paths(previous_manifest),
+            replaceable_owned_paths,
         )
         if customized_skills:
             raise ValueError(
                 "customized owned skills require discrepancy analysis: "
                 + ", ".join(customized_skills)
             )
+    protected_skipped_names = set(skipped_invalid_skill_names) & manifest_skill_names(
+        previous_manifest
+    )
     return _SkillInstallPlan(
         resolved_source=resolved_source,
         source_roots=tuple(skill_sources),
         source_skills=source_skills,
-        current_skill_names=set(source_skill_names),
+        current_skill_names=set(source_skill_names) | protected_skipped_names,
         previous_manifest=previous_manifest,
+        skipped_invalid_skill_names=tuple(sorted(set(skipped_invalid_skill_names))),
     )
 
 
@@ -1889,7 +1923,10 @@ def install_skills(
     if not dry_run:
         destination.mkdir(parents=True, exist_ok=True)
 
-    results: list[str] = []
+    results: list[str] = [
+        f"error: skipped invalid skill directory {skill_name}: missing non-empty SKILL.md"
+        for skill_name in plan.skipped_invalid_skill_names
+    ]
     if cleanup:
         results.extend(
             prune_obsolete_owned_skills(
@@ -2483,6 +2520,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 destination,
                 adapter,
                 args.replace_customized,
+                args.skip_invalid,
             )
             if args.configure_mcp:
                 mcp_config_plan = _prepare_mcp_config(
@@ -2590,6 +2628,10 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(f"agents destination {agents_destination.expanduser()}")
     for result in results:
         print(result)
+    if not args.remove_owned and skill_plan.skipped_invalid_skill_names:
+        count = len(skill_plan.skipped_invalid_skill_names)
+        label = "directory" if count == 1 else "directories"
+        print(f"partial publication: skipped {count} invalid skill {label}")
 
     return SUCCESS_EXIT_CODE
 

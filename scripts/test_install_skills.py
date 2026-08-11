@@ -326,6 +326,59 @@ class InstallSkillsTests(unittest.TestCase):
             error_output.getvalue(),
         )
 
+    def test_skip_invalid_publishes_valid_skills_and_preserves_owned_copy(self) -> None:
+        """Publish valid skills while retaining an installed copy of an invalid source."""
+
+        installer = load_installer()
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            source = root / "source"
+            destination = root / "dest"
+            self.create_skill(source, "alpha")
+            incomplete_source = source / "intended-skill" / "scripts"
+            incomplete_source.mkdir(parents=True)
+            (incomplete_source / "helper.py").write_text("VALUE = 1\n", encoding="utf-8")
+            installed = self.create_skill(destination, "intended-skill")
+            self.create_manifest(destination, ["intended-skill"])
+            (installed / "SKILL.md").write_text(
+                "---\nname: intended-skill\ndescription: Locally retained.\n---\n",
+                encoding="utf-8",
+            )
+            installed_bytes = (installed / "SKILL.md").read_bytes()
+
+            output = io.StringIO()
+            with redirect_stdout(output):
+                exit_code = installer.main(
+                    [
+                        "--source",
+                        str(source),
+                        "--dest",
+                        str(destination),
+                        "--replace",
+                        "--skip-invalid",
+                    ]
+                )
+
+            self.assertEqual(installer.SUCCESS_EXIT_CODE, exit_code)
+            self.assertTrue((destination / "alpha/SKILL.md").is_file())
+            self.assertEqual(
+                installed_bytes,
+                (destination / "intended-skill/SKILL.md").read_bytes(),
+            )
+            self.assertEqual(
+                ["alpha", "intended-skill"],
+                self.read_manifest_skill_names(destination),
+            )
+            self.assertIn(
+                "error: skipped invalid skill directory intended-skill: missing non-empty SKILL.md",
+                output.getvalue(),
+            )
+            self.assertIn(
+                "partial publication: skipped 1 invalid skill directory",
+                output.getvalue(),
+            )
+
     def test_project_wiki_template_resolves_from_source_and_installed_catalogs(
         self,
     ) -> None:
