@@ -19,6 +19,7 @@ REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 SCRIPT_PATH = REPOSITORY_ROOT / "scripts" / "build-agent-skill-hierarchy.py"
 OUTPUT_PATH = REPOSITORY_ROOT / "design" / "agent-skill-hierarchy.svg"
 ROLE_MAP_PATH = REPOSITORY_ROOT / "design" / "agent-and-skill-definitions.html"
+SKILL_CATEGORIES_PATH = REPOSITORY_ROOT / "design" / "skill-categories.yaml"
 ROLES_ROOT = REPOSITORY_ROOT / "agents" / "roles"
 GENERATED_TECHNOLOGY_REGISTRY_PATH = (
     REPOSITORY_ROOT
@@ -245,8 +246,8 @@ class AgentSkillHierarchyTests(unittest.TestCase):
         self.assertEqual(1, backlog_group.count('data-role="dev-backlog-watchdog"'))
         self.assertNotIn('data-role="dev-orchestrator"', backlog_group)
 
-    def test_skill_groups_start_with_development_then_wiki(self) -> None:
-        """The skill reading order should mirror the first two agent categories."""
+    def test_skill_groups_follow_category_source_order(self) -> None:
+        """The skill reading order should follow the maintained category source."""
         group_nodes = self.root.findall(
             f".//{{{SVG_NAMESPACE}}}text[@class='group']"
         )
@@ -255,18 +256,16 @@ class AgentSkillHierarchyTests(unittest.TestCase):
             for node in group_nodes
             if int(node.attrib["x"]) == self.module.SKILL_X
         ]
-
-        self.assertEqual(
-            [
-                "Development Practice",
-                "Wiki And Knowledge",
-                "Documentation Methodology",
-                "Artifact Creation",
-                "Artifact Review",
-                "Design Patterns",
-            ],
-            skill_group_labels,
+        category_payload = yaml.safe_load(
+            SKILL_CATEGORIES_PATH.read_text(encoding="utf-8")
         )
+        expected_labels = [
+            category["id"].replace("-", " ").title()
+            for category in category_payload["categories"]
+            if category["id"] != self.module.STACK_AND_DOMAIN_CATEGORY
+        ]
+
+        self.assertEqual(expected_labels, skill_group_labels)
 
     def test_role_cards_follow_the_catalog_group_order(self) -> None:
         """The reader-facing conceptual agent definition cards follow catalog group order."""

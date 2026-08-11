@@ -130,7 +130,7 @@ Within the linked HTML design set, the documentation index assigns one owner to 
 
 Use maintain-methodology-documentation when changing skills, conceptual agent definitions, categories, adapters, or design pages. That skill owns source updates, regeneration, stale-output checks, validation, and diff review. Skill authoring and review share skill-authoring, while conceptual agent definition creation and review share agent-role-authoring so instruction structure, authority, state transitions, examples, agent dependencies, and outputs are defined once.
 
-Each skill frontmatter metadata block names its category id. The category file owns category order and display labels.
+Each skill frontmatter metadata block names its category id. The ordered design/skill-categories.yaml file owns the generated catalog display labels and the category order shared by the generated catalog and interactive hierarchy. The hierarchy omits Stack and domain skills because they are setup-time skills, but it preserves the relative order of displayed categories.
 
 The HTML design pages use the generated static data to open formatted skill definitions from skill badges. The Edit button uses an editor URL scheme when the page can infer the repository root from a local file URL or from a repoRoot query parameter.
 

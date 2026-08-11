@@ -22,9 +22,11 @@ ROLE_DATA_PATH = ROOT / "design" / "generated" / "role-definitions.js"
 HIERARCHY_PATH = ROOT / "design" / "agent-skill-hierarchy.svg"
 SVG_NAMESPACE = "http://www.w3.org/2000/svg"
 REQUIRED_DIRECTIVE = (
-    "design/agent-and-skill-definitions.html and its generated catalog and diagram "
-    "surfaces must follow this outline and sibling order. Any intentional structural "
-    "change must update the outline and its conformance tests in the same accepted change."
+    "design/agent-and-skill-definitions.html and its complete generated catalog must "
+    "follow this outline and sibling order. The interactive hierarchy must preserve the "
+    "relative skill-category order from design/skill-categories.yaml while omitting Stack "
+    "and domain skills, which are setup-time skills. Any intentional structural change "
+    "must update the outline and its conformance tests in the same accepted change."
 )
 
 
@@ -123,6 +125,22 @@ class AgentAndSkillDefinitionsOutlineTests(unittest.TestCase):
             for node in root.findall(f".//{{{SVG_NAMESPACE}}}text[@class='group']")
             if node.attrib.get("x") == "30"
         ]
+        self.assertEqual(expected_labels, hierarchy_labels)
+
+    def test_generated_skill_hierarchy_follows_outline_category_order(self) -> None:
+        """The generated hierarchy must preserve the outline's skill-category order."""
+        expected_labels = [
+            category["id"].replace("-", " ").title()
+            for category in self.skill_categories
+            if category["id"] != "stack-and-domain"
+        ]
+        root = element_tree.parse(HIERARCHY_PATH).getroot()
+        hierarchy_labels = [
+            node.text
+            for node in root.findall(f".//{{{SVG_NAMESPACE}}}text[@class='group']")
+            if node.attrib.get("x") == "760"
+        ]
+
         self.assertEqual(expected_labels, hierarchy_labels)
 
     def test_section_order_mutation_breaks_conformance(self) -> None:

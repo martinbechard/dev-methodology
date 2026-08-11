@@ -1,6 +1,6 @@
 # Conceptual Agent and Skill Definitions Outline
 
-design/agent-and-skill-definitions.html and its generated catalog and diagram surfaces must follow this outline and sibling order. Any intentional structural change must update the outline and its conformance tests in the same accepted change.
+design/agent-and-skill-definitions.html and its complete generated catalog must follow this outline and sibling order. The interactive hierarchy must preserve the relative skill-category order from design/skill-categories.yaml while omitting Stack and domain skills, which are setup-time skills. Any intentional structural change must update the outline and its conformance tests in the same accepted change.
 
 ```text
 Conceptual Agent and Skill Definitions

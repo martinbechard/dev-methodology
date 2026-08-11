@@ -20,10 +20,6 @@ CATEGORIES_PATH = ROOT / "design" / "skill-categories.yaml"
 ROLE_CATALOG_GROUPS_PATH = ROOT / "design" / "role-catalog-groups.yaml"
 OUTPUT_PATH = ROOT / "design" / "agent-skill-hierarchy.svg"
 STACK_AND_DOMAIN_CATEGORY = "stack-and-domain"
-HIERARCHY_SKILL_CATEGORY_PRIORITY = (
-    "development-practice",
-    "wiki-and-knowledge",
-)
 ROW_HEIGHT = 30
 TOP = 150
 ROLE_X = 30
@@ -222,21 +218,11 @@ def _visible_skill_categories(
             "Skills reference unknown categories: "
             + ", ".join(sorted(unknown_categories))
         )
-    available_category_ids = [
+    visible_category_ids = [
         category_id
         for category_id in category_order
         if category_id != STACK_AND_DOMAIN_CATEGORY
     ]
-    visible_category_ids = [
-        category_id
-        for category_id in HIERARCHY_SKILL_CATEGORY_PRIORITY
-        if category_id in available_category_ids
-    ]
-    visible_category_ids.extend(
-        category_id
-        for category_id in available_category_ids
-        if category_id not in visible_category_ids
-    )
     return [
         (category_id, sorted(skills_by_category[category_id]))
         for category_id in visible_category_ids
