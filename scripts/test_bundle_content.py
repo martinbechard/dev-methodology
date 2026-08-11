@@ -9204,43 +9204,54 @@ Visible after.
         instructions = role["instructions"]
 
         self.assertIsInstance(instructions, dict)
-        boundaries = " ".join(instructions["boundaries"])
-        self.assertIn("review candidate", boundaries)
-        self.assertIn("authorized checklist and findings artifacts", boundaries)
-        self.assertIn("existing checklist questions", boundaries)
+        self.assertEqual("conditional", role["repositoryMutation"])
+        for required_boundary in (
+            "Treat the review candidate as read-only. Do not modify candidate "
+            "sources, generated projections, tests, or documentation.",
+            "Read-only candidate ownership permits writing authorized checklist "
+            "and findings artifacts required by review-structured-artifact.",
+            "Use the existing checklist questions unchanged. Do not add, redesign, "
+            "expand, or rewrite them.",
+        ):
+            with self.subTest(required_boundary=required_boundary):
+                self.assertIn(required_boundary, instructions["boundaries"])
 
         workflow = instructions["workflow"]
-        save_index = next(
-            index
-            for index, step in enumerate(workflow)
-            if "complete and save the checklist" in step
+        save_step = (
+            "Use review-structured-artifact to complete and save the checklist "
+            "before writing findings."
         )
-        findings_index = next(
-            index
-            for index, step in enumerate(workflow)
-            if "Derive findings" in step
+        validate_step = (
+            "Validate the saved checklist for every applicable question, required "
+            "field, and source trace."
         )
-        verdict_index = next(
-            index
-            for index, step in enumerate(workflow)
-            if "Return the review result" in step
+        findings_step = (
+            "Derive findings only from failed or questionable saved checklist items, "
+            "ordered by practical impact."
         )
-        self.assertLess(save_index, findings_index)
+        verdict_step = (
+            "Return the review result with the verdict, saved checklist path, "
+            "findings, and residual risk."
+        )
+        save_index = workflow.index(save_step)
+        validate_index = workflow.index(validate_step)
+        findings_index = workflow.index(findings_step)
+        verdict_index = workflow.index(verdict_step)
+        self.assertLess(save_index, validate_index)
+        self.assertLess(validate_index, findings_index)
         self.assertLess(findings_index, verdict_index)
 
-        decisions = " ".join(instructions["decisions"])
-        for required_contract in (
-            "NEEDS_CORRECTION",
-            "existing checklist question",
-            "authority, evidence, correction, and impact",
-        ):
-            with self.subTest(required_contract=required_contract):
-                self.assertIn(required_contract, decisions)
+        self.assertIn(
+            "Each NEEDS_CORRECTION finding must identify its existing checklist "
+            "question and include authority, evidence, correction, and impact.",
+            instructions["decisions"],
+        )
 
-        completion = " ".join(instructions["completion"])
-        self.assertIn("missing or incomplete", completion)
-        self.assertIn("BLOCKED", completion)
-        self.assertIn("invalid", completion)
+        self.assertIn(
+            "Report BLOCKED when the saved checklist is missing or incomplete because "
+            "the review is invalid.",
+            instructions["completion"],
+        )
 
         output_names = [next(iter(entry)) for entry in role["outputContract"]]
         self.assertIn("saved completed review checklist", output_names)
