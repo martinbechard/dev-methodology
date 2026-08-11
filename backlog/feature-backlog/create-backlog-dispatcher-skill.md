@@ -39,7 +39,8 @@ On 2026-08-11, in Codex task 019ff2c3-1710-7aa1-89c4-9d6066f51fe4, the user requ
 - Define safe partial-dispatch behavior: preserve successful task identities, reconcile failed or pending task creation individually, and never duplicate a task merely because worktree setup or task discovery is delayed.
 - Preserve normal concurrent dispatch, provider and claim authority, reviewer zero-write authority, producer sandbox constraints, the single canonical read-only Watchdog, and the prohibition on shadow backlog or mode records.
 - Define an explicit blocked result when the caller lacks a required runtime capability after Coordinator reconciliation, naming the missing capability without moving additional Ready items into an unexecutable lifecycle state.
-- Integrate the new skill into the supported skill catalog, runtime metadata, relevant conceptual-agent skill routing only where separately authorized, documentation, generated projections, and focused regression coverage.
+- Integrate the new skill into the supported skill catalog, runtime metadata, relevant conceptual-agent skill routing only where separately authorized, documentation, generated projections, and focused skill validation.
+- Implement and live-test the skill now. Do not create a dedicated Evaluation suite for this item; the user defers that suite until the current backlog is complete. During this delivery, improve the canonical skill when subsequent coordination discussions expose a concrete, source-backed rule within the approved scope.
 
 ## Acceptance Criteria
 
@@ -49,8 +50,8 @@ On 2026-08-11, in Codex task 019ff2c3-1710-7aa1-89c4-9d6066f51fe4, the user requ
 - The Backlog Coordinator remains the authority for queue state, selection, capacity, dependencies, claims, finish lanes, lifecycle reconciliation, re-homing, and cleanup; the dispatcher does not create a second ledger or infer those decisions.
 - Partial task-creation outcomes are reconciled without duplicate tasks, duplicate provider reservations, lost task identities, or unbounded Starting records.
 - Existing Watchdog scheduling remains valid: its schedule wakes the canonical read-only Watchdog task, while no Coordinator wakeup is created merely to relay heartbeats.
-- Focused tests cover successful multi-item dispatch, unavailable Coordinator-side task tools with available caller-side tools, inbound coordination messages, partial task creation, delayed worktree setup, duplicate prevention, and missing caller capability.
-- Catalog, metadata, documentation, generated outputs, and focused tests are current and independently reviewed.
+- Focused skill and contract validation plus recorded live usage cover successful multi-item dispatch, unavailable Coordinator-side task tools with available caller-side tools, inbound coordination messages, partial task creation, delayed worktree setup, duplicate prevention, and missing caller capability.
+- Catalog, metadata, documentation, generated outputs, focused validation, and live-usage evidence are current and independently reviewed. A dedicated Evaluation suite is not required for this item and remains deferred until the current backlog is complete.
 
 ## Dependencies
 
@@ -59,7 +60,8 @@ None.
 ## Verification
 
 - Validate the new skill and its runtime metadata through the configured skill catalog tooling.
-- Run focused contract tests for Coordinator consultation, dispatch-packet completeness, caller-owned task creation, identity reconciliation, inbound coordination messages, partial failure, and duplicate prevention.
+- Run focused skill and contract validation for Coordinator consultation, dispatch-packet completeness, caller-owned task creation, identity reconciliation, inbound coordination messages, partial failure, and duplicate prevention.
+- Exercise the skill through current live backlog dispatch and coordination-message handling, retain the observed outcomes, and update the canonical skill when that usage exposes a concrete in-scope rule. Do not create or run a dedicated Evaluation suite for this item.
 - Regenerate and verify every supported projection affected by the skill catalog change.
 - Review the authority split against coordinate-work-items, coordinate-codex-tasks, the Dev Backlog Coordinator role, the Dev Backlog Watchdog role, and resource-claim guidance.
 - Perform a fresh prompt/skill review that confirms the dispatcher cannot silently assume Coordinator authority or bypass provider and claim evidence.
