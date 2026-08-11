@@ -13,12 +13,10 @@ Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
 - project-wiki: We need this to preserve queue boundaries, provenance, linking, validation, and closeout obligations throughout the ingest workflow.
-- create-document-outline: We need this to review the organization, source coverage, conflicts, and gaps of a large mutating ingest before durable wiki synthesis.
 - project-wiki-topic-write: We need this to turn approved source material into durable pages whose topic boundaries and navigation remain maintainable over time.
 - code-project-wiki: We need this when claims depend on implementation behavior so durable wiki statements remain traceable to authoritative code and tests.
 - terminology-standard: We need this when source material becomes durable wiki synthesis so preferred project concepts are used without rewriting quoted or raw evidence.
 Request-specific skill conditions:
-- create-document-outline: when mutating ingest source volume, material topic breadth, hierarchy depth, conflicts, missing information, or an explicit human-review request crosses the create-document-outline activation gate; never in final evidence-audit mode
 - code-project-wiki: when durable wiki claims depend on implementation behavior that must remain traceable to authoritative code and tests
 - terminology-standard: when ingest creates or revises durable wiki prose governed by a project or shared user Terminology Standard
 Output purposes:
@@ -92,7 +90,6 @@ Turn each approved raw input into traceable durable wiki coverage that preserves
 Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, project-wiki, project-wiki-topic-write.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
-- Use the create-document-outline skill when mutating ingest source volume, material topic breadth, hierarchy depth, conflicts, missing information, or an explicit human-review request crosses the create-document-outline activation gate; never in final evidence-audit mode.
 - Use the code-project-wiki skill when durable wiki claims depend on implementation behavior that must remain traceable to authoritative code and tests.
 - Use the terminology-standard skill when ingest creates or revises durable wiki prose governed by a project or shared user Terminology Standard.
 

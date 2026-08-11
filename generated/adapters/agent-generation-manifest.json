@@ -316,7 +316,7 @@
             "ste-technical-writing",
             "route-documentation-work"
           ],
-          "sha256": "5564c0ec8f528477b37f7f5eb98d7964f486cd9e76834a256319490820525356",
+          "sha256": "9fb0fa32d73e728113beff601ddc266c82f6a9281c4239c85deb039fe69c2b16",
           "source": "agents/roles/dev-activities/dev-documentation-writer.role.yaml"
         },
         {
@@ -747,7 +747,7 @@
             "name-methodology-artifacts",
             "route-documentation-work"
           ],
-          "sha256": "f1944715c369a8caf4b47f39f5a1647a6982ac3bcfe670c4d2388cd5ebf92b41",
+          "sha256": "45680edd6c8753f7812ee94018f3b7659eabdc0112dd0878fbb1a8709ef75223",
           "source": "agents/roles/methodology-maintenance/methodology-maintainer.role.yaml"
         },
         {
@@ -958,7 +958,7 @@
             "project-wiki",
             "project-wiki-topic-write"
           ],
-          "sha256": "0270603639fc934dacefc36dc9679d7a19738527d4d9a90b9d8d3c4ee5fb4161",
+          "sha256": "165b37e06146665c605d063a545579c86cff1f5095d55ee6164b3d5d5eb1fddc",
           "source": "agents/roles/wiki-activities/wiki-ingester.role.yaml"
         },
         {
@@ -1136,7 +1136,7 @@
             "project-wiki",
             "project-wiki-topic-write"
           ],
-          "sha256": "3428322e7304a63dea6d464a2b212b74c29ff07df839ae40278deef6aa4803fa",
+          "sha256": "c4ecb32a0e3ed87e15933692c70a37bd71160e653fbd4a5da11ff102368d2a18",
           "source": "agents/roles/wiki-activities/wiki-writer.role.yaml"
         }
       ],
@@ -1468,7 +1468,7 @@
             "route-documentation-work",
             "codex-harness-directives"
           ],
-          "sha256": "b978be570ded136ad9429b108efab91603083b288ccf0f4665ac54a81dcf686f",
+          "sha256": "d8ec155538cec8799a8df2b2e7d88ceb5e911767cc3787546b4bf12cb4960ff7",
           "source": "agents/roles/dev-activities/dev-documentation-writer.role.yaml"
         },
         {
@@ -1909,7 +1909,7 @@
             "route-documentation-work",
             "codex-harness-directives"
           ],
-          "sha256": "a56101db4e99934029826cf3015f9cdb0583cade53161711c0c29900adb29abf",
+          "sha256": "aef26b13ad0841da0a3ebca35d35534c0534bc185bc1c8f5c908cfb67acc7ea6",
           "source": "agents/roles/methodology-maintenance/methodology-maintainer.role.yaml"
         },
         {
@@ -2126,7 +2126,7 @@
             "project-wiki-topic-write",
             "codex-harness-directives"
           ],
-          "sha256": "f6b17e3e86a034bc2a9eb27ab3789648825690c372a3125ba39f1041b9467bb5",
+          "sha256": "3990d5fd475e52a8cb85658339390fe722dbaa5f0866f754fc58e83fe5806203",
           "source": "agents/roles/wiki-activities/wiki-ingester.role.yaml"
         },
         {
@@ -2307,7 +2307,7 @@
             "project-wiki-topic-write",
             "codex-harness-directives"
           ],
-          "sha256": "6305a1eb9cef563788b924173d6a7877b4ee07d140981d30e2b3f394cb85259b",
+          "sha256": "93f371bb7ff70ec7309287d3dd75745f2a6ce3c36b7a23f16f71dc923e25676d",
           "source": "agents/roles/wiki-activities/wiki-writer.role.yaml"
         }
       ],
@@ -2649,7 +2649,7 @@
             "ste-technical-writing",
             "route-documentation-work"
           ],
-          "sha256": "a0d362507000cae3555ba217fad15636dd2bab9daa4fb9622507f2dfca2051c3",
+          "sha256": "7af0a9ecb6015584e8caed9065b6c38b6005a2eed765d838d0966128da43a9e0",
           "source": "agents/roles/dev-activities/dev-documentation-writer.role.yaml"
         },
         {
@@ -3096,7 +3096,7 @@
             "name-methodology-artifacts",
             "route-documentation-work"
           ],
-          "sha256": "a6a885f9dc4c47aa2549bb29e93b9dced16d2fdd143d7ecdcb50ce393ea1be58",
+          "sha256": "67f2f72396a304f156720c6b0c0c287f7c3248ae2075ad792cccb4fa69003433",
           "source": "agents/roles/methodology-maintenance/methodology-maintainer.role.yaml"
         },
         {
@@ -3315,7 +3315,7 @@
             "project-wiki",
             "project-wiki-topic-write"
           ],
-          "sha256": "52b052b72615b53f584719b92a9e2097ed0c4a4c2cef762455261095183a4330",
+          "sha256": "535641f544ecee2e15cc3ebecc2d9a0b77317cff4a32497aab0b65f387e2e717",
           "source": "agents/roles/wiki-activities/wiki-ingester.role.yaml"
         },
         {
@@ -3500,7 +3500,7 @@
             "project-wiki",
             "project-wiki-topic-write"
           ],
-          "sha256": "bfc1e20a28d99142f97cba59f0fbdd0ba2282993b42c65968a2c55c4710df55d",
+          "sha256": "ac145737dbcf15174c5bc9a59e141c99b51a8559f2d313f666b156ef9d49bc0e",
           "source": "agents/roles/wiki-activities/wiki-writer.role.yaml"
         }
       ],
@@ -3836,7 +3836,7 @@
             "ste-technical-writing",
             "route-documentation-work"
           ],
-          "sha256": "4608d312828b056961bdad67dd23100e057192955a0994bd93648196dae55070",
+          "sha256": "5188f3bdef3c04f28f166e0c17895386226a0fcb59dd00f55604fb50eb8abf07",
           "source": "agents/roles/dev-activities/dev-documentation-writer.role.yaml"
         },
         {
@@ -4283,7 +4283,7 @@
             "name-methodology-artifacts",
             "route-documentation-work"
           ],
-          "sha256": "8fabc1cb99ab5571c1cad3b84b2536b73f59653ea0644e8d2d0a713fb52c2e87",
+          "sha256": "ae5c511c6e193bff8bc8b87e39882586cd5fcab309f657cd9274e789e45dd96b",
           "source": "agents/roles/methodology-maintenance/methodology-maintainer.role.yaml"
         },
         {
@@ -4502,7 +4502,7 @@
             "project-wiki",
             "project-wiki-topic-write"
           ],
-          "sha256": "bca16038feee60d4706e10723ef82195d852be6b0b0bb5743edc5a906500e7bf",
+          "sha256": "cf5f0992c42d00df797066f7bbb4f5bb6bc7a17be2838c33d10e6fbfa9c00626",
           "source": "agents/roles/wiki-activities/wiki-ingester.role.yaml"
         },
         {
@@ -4687,7 +4687,7 @@
             "project-wiki",
             "project-wiki-topic-write"
           ],
-          "sha256": "9a08bbaf0ef0e1e72adec38dc768df8db7ab6556a39adc12eb217ce31d3d6761",
+          "sha256": "92c7bcda87964271ef9f4228dabc60a3c8568667861af07b82c093829d755698",
           "source": "agents/roles/wiki-activities/wiki-writer.role.yaml"
         }
       ],

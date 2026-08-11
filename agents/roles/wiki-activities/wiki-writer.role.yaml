@@ -125,11 +125,6 @@ examples:
 skills:
 - project-wiki:
     justification: We need this to preserve the wiki authority order, page contract, topic granularity, navigation, linking, and closeout rules.
-- create-document-outline:
-    justification: We need this to make a large or complex source-backed wiki structure reviewable before durable topic writing begins.
-    condition: when authorized source volume, material topic breadth, hierarchy depth,
-      conflicts, missing information, or an explicit human-review request crosses the
-      create-document-outline activation gate.
 - project-wiki-topic-write:
     justification: We need this to create, rewrite, split, and repair durable topic pages while keeping hubs, leaves, indexes, and digests coherent.
 - code-project-wiki:

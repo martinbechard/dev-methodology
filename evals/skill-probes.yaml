@@ -401,20 +401,6 @@ probes:
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: typescript}
-  - id: probe-create-document-outline
-    skill: create-document-outline
-    source: skills/create-document-outline/SKILL.md
-    evaluationCategory: documentation-methodology
-    evaluationKind: artifact-contract
-    activationCondition: A large or complex document needs a visible source-traceable structure before full prose writing because the evidence volume, section hierarchy, conflicts, gaps, proposed organization, or user request meets the skill activation gate.
-    negativeCondition: A short single-source document, bounded edit, or small document with an obvious template-owned structure does not activate outline creation, and an outline does not replace final-document writing or review.
-    expectedBehavior: Inventory every authorized source without raw or sensitive payloads; separate source facts from proposed organization, conflicts, unknowns, and decisions; maintain one canonical JSON outline with source references and one synchronized self-contained HTML review projection; preserve unresolved questions through review; and pass the accepted outline plus the original source evidence to the selected writer for claim verification and final prose.
-    judgePlan: {deterministicChecks: [skill-read-trace, artifact-structure, source-link-resolution, no-sensitive-output, readiness-consistency], modelRubric: artifact-contract}
-    scenarioAssociations: [dev-documentation-writer-happy, methodology-maintainer-happy, wiki-ingester-happy, wiki-writer-happy]
-    workflowAssociations: [documentation-methodology, wiki-lifecycle]
-    executableCases: []
-    coverageStatus: declared
-    ablation: {omitTargetSkill: true, wrongSkillControl: typescript}
   - id: probe-create-work-item
     skill: create-work-item
     source: skills/create-work-item/SKILL.md

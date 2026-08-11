@@ -17,12 +17,10 @@ Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
 - project-wiki: We need this to preserve the wiki authority order, page contract, topic granularity, navigation, linking, and closeout rules.
-- create-document-outline: We need this to make a large or complex source-backed wiki structure reviewable before durable topic writing begins.
 - project-wiki-topic-write: We need this to create, rewrite, split, and repair durable topic pages while keeping hubs, leaves, indexes, and digests coherent.
 - code-project-wiki: We need this when wiki maintenance follows code, test, procedure, backlog, or commit changes so durable claims remain synchronized with authoritative project behavior.
 - terminology-standard: We need this when durable wiki synthesis is governed by preferred terminology so related pages use the same term for the same concept.
 Request-specific skill conditions:
-- create-document-outline: when authorized source volume, material topic breadth, hierarchy depth, conflicts, missing information, or an explicit human-review request crosses the create-document-outline activation gate
 - code-project-wiki: when wiki maintenance depends on code, tests, procedures, backlog state, or commit-range evidence
 - terminology-standard: when creating or revising durable wiki prose governed by a project or shared user Terminology Standard
 Output purposes:
@@ -82,7 +80,6 @@ Produce source-backed durable wiki changes that pass independent topic verificat
 These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, project-wiki, project-wiki-topic-write.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
-- Use the create-document-outline skill when authorized source volume, material topic breadth, hierarchy depth, conflicts, missing information, or an explicit human-review request crosses the create-document-outline activation gate.
 - Use the code-project-wiki skill when wiki maintenance depends on code, tests, procedures, backlog state, or commit-range evidence.
 - Use the terminology-standard skill when creating or revising durable wiki prose governed by a project or shared user Terminology Standard.
 

@@ -103,8 +103,8 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
         summary = self.model["summary"]
         campaign = self.model["campaign"]
 
-        self.assertEqual(146, summary["skillCount"])
-        self.assertEqual(143, summary["probeCount"])
+        self.assertEqual(145, summary["skillCount"])
+        self.assertEqual(142, summary["probeCount"])
         self.assertEqual(32, summary["roleCount"])
         self.assertEqual(32, summary["suiteCount"])
         self.assertEqual(120, summary["currentScenarioCount"])
@@ -411,9 +411,9 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
 
     def test_skill_entries_separate_probe_declarations_from_governed_outcomes(self) -> None:
         """Every skill must retain probe, indirect coverage, and outcome limitations separately."""
-        self.assertEqual(146, len(self.model["skills"]))
+        self.assertEqual(145, len(self.model["skills"]))
         self.assertEqual(3, sum(skill["probe"] is None for skill in self.model["skills"]))
-        self.assertEqual(143, self.model["summary"]["directProbeSkillCount"])
+        self.assertEqual(142, self.model["summary"]["directProbeSkillCount"])
         self.assertEqual(1, self.model["summary"]["indirectOnlySkillCount"])
         self.assertEqual(2, self.model["summary"]["noRecordedEvidenceSkillCount"])
         self.assertTrue(
@@ -603,7 +603,7 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
 
     def test_static_page_contains_every_entry_without_javascript(self) -> None:
         """Generated details must remain complete when the optional filter script is absent."""
-        self.assertEqual(146, self.page.count('class="evaluation-card skill-card"'))
+        self.assertEqual(145, self.page.count('class="evaluation-card skill-card"'))
         self.assertEqual(32, self.page.count('class="evaluation-card agent-card"'))
         for opening_tag in re.findall(r"<(?:article|section)\b[^>]*>", self.page):
             attributes_only = re.sub(r'=(?:"[^"]*"|\'[^\']*\')', '=""', opening_tag)

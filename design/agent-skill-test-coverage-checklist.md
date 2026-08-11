@@ -20,8 +20,8 @@ This page is generated from the live conceptual agent and skill inventories, all
 
 ## Summary
 
-- [x] 32 conceptual agents and 146 bundled skills have structural coverage.
-- [x] 31 agents are scenario-declared and 143 skills are probe-declared.
+- [x] 32 conceptual agents and 145 bundled skills have structural coverage.
+- [x] 31 agents are scenario-declared and 142 skills are probe-declared.
 - Agents missing scenario declarations: dev-skill-lint-reviewer.
 - Skills missing probe declarations: analyze-document-topics, manage-complex-development-plan, revise-document-topics.
 - [x] 72 agent scenarios and 5 workflow packs are declared.
@@ -33,7 +33,7 @@ This page is generated from the live conceptual agent and skill inventories, all
 - 33 skills have positive-case support, 0 have negative-activation cases, 0 have executable paired controls, and 0 satisfy the full probe contract.
 - 2 agents and 0 skills have executable full fixtures.
 - 0 agents and 0 skills have calibrated Model Judge status.
-- 31 agents and 119 skills have pending Model Judge status.
+- 31 agents and 118 skills have pending Model Judge status.
 - 0 agents and 24 skills use Deterministic Judges only and do not require Model Judge calibration.
 - 0 agents and 0 skills have classified executions.
 - 0 agents and 0 skills have Judge-passed evidence.
@@ -62,8 +62,8 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | dev-backlog-steward | simple | [x] | [x] dev-backlog-steward-boundary, dev-backlog-steward-happy, dev-backlog-steward-provider-boundary | [x] dev-backlog-steward-boundary, dev-backlog-steward-happy, dev-backlog-steward-provider-boundary | [x] backlog-lifecycle, file-work-item-no-mutation, file-work-item-template-contract, github-work-item-provider, provider-placeholder-matrix, work-item-management-provider-operations | [x] backlog-lifecycle, file-work-item-no-mutation, file-work-item-template-contract, github-work-item-provider, provider-placeholder-matrix, work-item-management-provider-operations | pending | none | none | none | none |
 | dev-backlog-watchdog | simple | [x] | [x] dev-backlog-watchdog-boundary, dev-backlog-watchdog-exit-condition, dev-backlog-watchdog-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
 | dev-browser-operator | advanced | [x] | [x] dev-browser-operator-boundary, dev-browser-operator-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
-| dev-code-reviewer | advanced | [x] | [x] dev-code-reviewer-boundary, dev-code-reviewer-happy | [x] dev-code-reviewer-happy | [ ] none | [ ] none | pending | none | none | none | none |
-| dev-coder | advanced | [x] | [x] dev-coder-boundary, dev-coder-happy | [x] dev-coder-happy | [ ] none | [ ] none | pending | none | none | none | none |
+| dev-code-reviewer | verification | [x] | [x] dev-code-reviewer-boundary, dev-code-reviewer-happy | [x] dev-code-reviewer-happy | [ ] none | [ ] none | pending | none | none | none | none |
+| dev-coder | implementation | [x] | [x] dev-coder-boundary, dev-coder-happy | [x] dev-coder-happy | [ ] none | [ ] none | pending | none | none | none | none |
 | dev-document-topic-editor | documentation | [x] | [x] dev-document-topic-editor-authorized-revision, dev-document-topic-editor-read-only | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
 | dev-documentation-writer | documentation | [x] | [x] dev-documentation-writer-boundary, dev-documentation-writer-happy, dev-documentation-writer-terminology-exclusion, dev-documentation-writer-terminology-rewrite | [x] dev-documentation-writer-happy, dev-documentation-writer-terminology-exclusion, dev-documentation-writer-terminology-rewrite | [ ] none | [ ] none | pending | none | none | none | none |
 | dev-merge-coordinator | advanced | [x] | [x] dev-merge-coordinator-boundary, dev-merge-coordinator-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
@@ -73,7 +73,7 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | dev-security-reviewer | advanced | [x] | [x] dev-security-reviewer-boundary, dev-security-reviewer-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
 | dev-skill-lint-reviewer | intermediate | [x] | [ ] none | [ ] none | [ ] none | [ ] none | missing | none | none | none | none |
 | dev-ux-specialist | default | [x] | [x] dev-ux-specialist-boundary, dev-ux-specialist-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
-| dev-verifier | advanced | [x] | [x] dev-verifier-boundary, dev-verifier-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
+| dev-verifier | verification | [x] | [x] dev-verifier-boundary, dev-verifier-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
 | methodology-artifact-reviewer | advanced | [x] | [x] methodology-artifact-reviewer-boundary, methodology-artifact-reviewer-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
 | methodology-design-system-checklist-runner | simple | [x] | [x] methodology-design-system-checklist-runner-boundary, methodology-design-system-checklist-runner-happy | [x] methodology-design-system-checklist-runner-happy | [ ] none | [ ] none | pending | none | none | none | none |
 | methodology-design-system-review-coordinator | coordination | [x] | [x] methodology-design-system-review-coordinator-boundary, methodology-design-system-review-coordinator-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
@@ -112,7 +112,6 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | agent-role-authoring | [x] | [x] probe-agent-role-authoring | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | analyze-document-topics | [x] | [ ] none | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | missing | none | none | none | none |
 | bootstrap-project-documentation | [x] | [x] probe-bootstrap-project-documentation | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
-| create-document-outline | [x] | [x] probe-create-document-outline | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | create-project-configuration | [x] | [x] probe-create-project-configuration | [x] project-configuration-routing | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | document-provenance | [x] | [x] probe-document-provenance | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | maintain-methodology-documentation | [x] | [x] probe-maintain-methodology-documentation | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |

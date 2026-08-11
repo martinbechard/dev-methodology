@@ -139,8 +139,8 @@ Task-ID-Evidence: historical-unknown
     <div class="section-heading"><h2 id="coverage-title">Coverage and case catalogs</h2><p>Current catalog inventory remains separate from the selected historical Campaign Evaluation results. Probe records retain executable-case, agent-scenario, and Workflow associations without turning declarations into verified runs.</p></div>
     <h3>Current catalog inventory</h3>
     <div class="grid" style="margin-top:1rem">
-      <article class="metric"><strong>146</strong><span>Bundled skills</span></article>
-      <article class="metric"><strong>143</strong><span>Diagnostic probe records</span></article>
+      <article class="metric"><strong>145</strong><span>Bundled skills</span></article>
+      <article class="metric"><strong>142</strong><span>Diagnostic probe records</span></article>
       <article class="metric"><strong>32</strong><span>Conceptual agents</span></article>
       <article class="metric"><strong>32</strong><span>Current Test suites</span></article>
       <article class="metric"><strong>120</strong><span>Current Test suite scenarios</span></article>
@@ -152,7 +152,7 @@ Task-ID-Evidence: historical-unknown
       <article class="metric"><strong>5</strong><span>Workflow packs</span></article>
     </div>
     <div class="grid" style="margin-top:1rem">
-      <article class="method-card"><h3>Skill catalog states</h3><ul><li>0 skills have a direct governed Evaluation result.</li><li>143 skills have a direct diagnostic probe declaration but no direct Evaluation result.</li><li>1 skill has only indirect current Test suite coverage without a direct probe or Evaluation result.</li><li>2 skills have no recorded evaluation evidence.</li><li>56 skills are named by at least one scenario in the selected Campaign; 90 skills are not.</li></ul><p><strong>No skill-level Evaluation result:</strong> The selected Test report publishes no skill-level Evaluation results. Linked PASS results remain agent-scenario evidence.</p></article>
+      <article class="method-card"><h3>Skill catalog states</h3><ul><li>0 skills have a direct governed Evaluation result.</li><li>142 skills have a direct diagnostic probe declaration but no direct Evaluation result.</li><li>1 skill has only indirect current Test suite coverage without a direct probe or Evaluation result.</li><li>2 skills have no recorded evaluation evidence.</li><li>56 skills are named by at least one scenario in the selected Campaign; 89 skills are not.</li></ul><p><strong>No skill-level Evaluation result:</strong> The selected Test report publishes no skill-level Evaluation results. Linked PASS results remain agent-scenario evidence.</p></article>
     </div>
   </section>
 
@@ -167,7 +167,7 @@ Task-ID-Evidence: historical-unknown
       <div><dt>Evidence level</dt><dd>Governed agent-suite Campaign</dd></div>
       <div><dt>Source snapshot mode</dt><dd>Deterministic source snapshot</dd></div>
       <div><dt>Wall-clock build time</dt><dd>Not retained; deterministic output does not claim an unsupported generation timestamp</dd></div>
-      <div><dt>Current source digest</dt><dd><code>5fb5cf263b9b74b00f5eba02286219e76cd2f7d6e083b7316a8e80d8025c16ea</code>; regenerated and compared by the focused check</dd></div>
+      <div><dt>Current source digest</dt><dd><code>0b7d7ef91714d8289f70f3767f6dee902ec10b5010f817cffd27301f5f4dcb49</code>; regenerated and compared by the focused check</dd></div>
     </dl>
     <div style="margin-top:2rem"><h3>Evaluation results</h3></div>
     <div class="grid" style="margin-top:1rem">
@@ -2320,7 +2320,7 @@ Task-ID-Evidence: historical-unknown
       <label class="field" for="skill-status">Coverage status<select id="skill-status" data-filter-status="skill"><option value="all">All statuses</option><option value="direct-governed">Direct governed skill result</option><option value="direct-probe">Direct diagnostic probe declaration</option><option value="indirect-only">Indirect agent-scenario evidence only</option><option value="none">No recorded evaluation evidence</option></select></label>
       <button type="button" data-filter-clear="skill">Clear skill filters</button>
     </div>
-    <p class="result-count" id="skill-result-count" aria-live="polite">Showing all 146 skills.</p>
+    <p class="result-count" id="skill-result-count" aria-live="polite">Showing all 145 skills.</p>
     <noscript><p class="scope-note">JavaScript is disabled. All skill entries remain visible; text and status filtering are optional enhancements.</p></noscript>
     <div class="catalog" id="skill-catalog">
     <article class="evaluation-card skill-card" id="skill-agent-harness"
@@ -2907,36 +2907,6 @@ Task-ID-Evidence: historical-unknown
       <ul class="link-list"><li><a href="../evals/agent-tests/dev-documentation-writer/scenarios.yaml">dev-documentation-writer / source-gaps</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li></ul>
       <dl class="compact-list">
         <div><dt>Linked Campaign Evaluation results</dt><dd>Linked agent-scenario Evaluation result categories: BLOCKED</dd></div>
-        <div><dt>Evidence level</dt><dd>Agent-scenario evidence only; no skill-level Evaluation result</dd></div>
-        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-scenario Evaluation result does not establish a skill-level Evaluation result. The selected Test report publishes no skill-level Evaluation result.</dd></div>
-      </dl>
-    </article>
-
-    <article class="evaluation-card skill-card" id="skill-create-document-outline"
-      data-kind="skill" data-status="direct-probe" data-search="create-document-outline create a source-traceable json document outline and synchronized review html before writing a large or complex document. documentation-methodology probe-create-document-outline no selected campaign evaluation result link">
-      <div class="card-heading">
-        <div><span class="card-kicker">Skill</span><h3>create-document-outline</h3></div>
-        <span class="status status--direct-probe">Direct diagnostic probe declaration</span>
-      </div>
-      <p>Create a source-traceable JSON document outline and synchronized review HTML before writing a large or complex document.</p>
-      <p class="source-row"><a href="../skills/create-document-outline/SKILL.md">Skill source</a></p>
-      <h4>Direct diagnostic probe declaration</h4>
-
-        <dl class="compact-list">
-          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-create-document-outline</a></dd></div>
-          <div><dt>Coverage state</dt><dd>declared: catalog declaration, not a verified run</dd></div>
-          <div><dt>Kind</dt><dd>artifact-contract</dd></div>
-          <div><dt>Executable cases</dt><dd>None declared</dd></div>
-          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-documentation-writer-happy</a>, <a href="../evals/agent-scenarios.yaml">methodology-maintainer-happy</a>, <a href="../evals/agent-scenarios.yaml">wiki-ingester-happy</a>, <a href="../evals/agent-scenarios.yaml">wiki-writer-happy</a></dd></div>
-          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">documentation-methodology</a>, <a href="../evals/workflow-packs.yaml">wiki-lifecycle</a></dd></div>
-          <div><dt>Deterministic checks</dt><dd>skill-read-trace, artifact-structure, source-link-resolution, no-sensitive-output, readiness-consistency</dd></div>
-          <div><dt>Model rubric</dt><dd>artifact-contract</dd></div>
-        </dl>
-
-      <h4>Selected Campaign scenario links</h4>
-      <p><span class="status status--missing">No selected Campaign scenario link</span></p><p>No scenario in the selected Campaign currently names this skill as a target skill.</p>
-      <dl class="compact-list">
-        <div><dt>Linked Campaign Evaluation results</dt><dd>No selected Campaign Evaluation result link</dd></div>
         <div><dt>Evidence level</dt><dd>Agent-scenario evidence only; no skill-level Evaluation result</dd></div>
         <div><dt>Limitation</dt><dd>A probe declaration or linked agent-scenario Evaluation result does not establish a skill-level Evaluation result. The selected Test report publishes no skill-level Evaluation result.</dd></div>
       </dl>
