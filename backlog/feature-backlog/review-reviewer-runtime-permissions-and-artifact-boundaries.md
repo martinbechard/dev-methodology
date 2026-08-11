@@ -4,7 +4,7 @@ Status: Running
 
 Owner: Dev Orchestrator task 019ff2f9-085e-7202-8099-8f35425278a0
 
-Phase: Runtime and configuration divergence diagnosis
+Phase: Reviewer runtime boundary implementation
 
 Type: Feature
 
@@ -120,3 +120,19 @@ Phase: Runtime and configuration divergence diagnosis
 Started At Evidence: The configured claim helper returned ISOLATED_CHECKOUT_ACQUIRED for claim review-reviewer-runtime-permissions-work-019ff2f9 at 2026-08-11T22:40:14.068602Z from dispatch commit f1490b80e856df9cc08d24027acd3252734aac18.
 
 Accepted Execution Evidence: This canonical root execution accepted the Starting handoff, acquired the exact opaque Work Item ID with activity work, created the isolated task worktree through the repository-relative configured helper, and began source-backed diagnosis. The handoff-provided hash f1490b80d6df33fe92f88905e8b92cacb596967d was not present; the observed current-main dispatch commit was f1490b80e856df9cc08d24027acd3252734aac18.
+
+## Runtime Divergence Evidence
+
+Phase Changed At: 2026-08-11T22:51:08Z
+
+Current Phase: Reviewer runtime boundary implementation
+
+Earliest Configuration Divergence: Project-scope deployment configured only shared user reference roots and omitted the selected project root, so both exact-path reviewer pilots could call reference_load but received reference_not_found for the repository-root terminology.md.
+
+Authority Divergence: The methodology-artifact-reviewer conceptual source declares repositoryMutation conditional, requires saved checklist and findings artifacts, and generates no Codex read-only sandbox. Both the collaboration-child and fresh top-level reviewer pilots exposed file, artifact, provider, claim, Git, integration, worktree, dispatch, and cross-task mutation operations.
+
+Exact-Path Pilot Evidence: Both pilots read README.md and PROJECT.yaml successfully and invoked the configured mcp-agent-ops reference_load operation. Neither pilot invoked a mutation or created an artifact.
+
+Accepted Candidate: Commit 08554484859c0bdb66d83ef973266f6765e49e58 corrects project reference-root precedence in scripts/install-skills.py with focused coverage in scripts/test_install_skills.py; 89 installer tests passed and the candidate worktree was clean.
+
+Overlap Coordination: Conceptual reviewer sources, generated adapters, scripts/build-skill-docs.py, scripts/test_role_mutation_policy.py, and scripts/test_codex_task_control.py remain deferred until Work Item remediate-inherited-supported-test-baseline-failures returns its exact accepted changed-path and commit handoff.
