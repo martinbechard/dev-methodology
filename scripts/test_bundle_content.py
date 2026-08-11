@@ -11576,7 +11576,7 @@ Visible after.
         roles = build_skill_docs.load_role_definitions(set(skill_payload["skills"]))
         role = next(role for role in roles if role.name == "dev-skill-lint-reviewer")
 
-        self.assertEqual("intermediate", role.model_profile)
+        self.assertEqual("verification", role.model_profile)
         self.assertEqual(
             {
                 "skill-authoring",
