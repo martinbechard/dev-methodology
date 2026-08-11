@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: User Action Required
+Status: Ready
 
 Type: Defect
 
@@ -106,7 +106,11 @@ The agreed three-strikes review rule requires user action after the third failed
 
 ## Resolution
 
-Pending.
+Resolved At: 2026-08-11T04:06:24Z
+
+Resolved In: Canonical task 019feea3-4792-7991-89c8-bcf35f814f25
+
+Decision: Decline the Windows-path correction as outside the original requirement. Accept the fresh focused verification of candidate 795b36167f5646c9e01d39b7cc47c9648da117f5 and resume delivery without treating Windows portability as a blocker.
 
 ## Preserved Recovery State
 
