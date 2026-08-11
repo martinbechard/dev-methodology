@@ -1,8 +1,8 @@
 # Enforce Methodology Review Checklist Completion
 
-Owner: Dev Orchestrator task 019feea3-4792-7991-89c8-bcf35f814f25
+Owner: Unowned
 
-Status: Running
+Status: User Action Required
 
 Type: Defect
 
@@ -87,3 +87,31 @@ Worktree: /Users/martinbechard/.codex/worktrees/f43a/dev-methodology
 Phase: implementation
 
 Accepted Execution Evidence: This canonical Root Dev Orchestrator accepted the Starting reservation and acquired the exact file-provider Work Item ID for outcome delivery.
+
+## User Action Required
+
+The initial review plus two correction retries are exhausted. The preserved candidate remains undelivered because its path validation accepts Windows-style parent escapes and drive-absolute paths for checklist artifacts.
+
+## Question for the User
+
+Do you authorize one additional bounded correction limited to rejecting Windows-style parent-escape and absolute checklist paths, adding focused negative tests, and then performing one final re-review and verification?
+
+Asked At: 2026-08-11T03:47:04Z
+
+Asked In: Parent coordination task 019fb057-1767-7ef2-b5fa-41f4417b20b3
+
+## Why User Input Is Required
+
+The agreed three-strikes review rule requires user action after the third failed review. Continuing would otherwise create an unauthorized fourth correction cycle.
+
+## Resolution
+
+Pending.
+
+## Preserved Recovery State
+
+Candidate: 795b3616
+
+Exact blocker: Q012-Q016:runner-safe-relative-file-accepts-windows-path-escape.
+
+Required correction: reject paths such as ..\\escape.md and C:/escape.md before resolving checklist or findings artifact locations.
