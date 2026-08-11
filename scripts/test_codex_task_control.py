@@ -190,7 +190,7 @@ class CodexTaskControlPackageTests(unittest.TestCase):
             with self.subTest(clause=clause):
                 self.assertIn(clause, self.normalized)
 
-    def test_watchdog_prompt_is_canonical_without_heartbeat_messages(self) -> None:
+    def test_watchdog_prompt_is_canonical_with_watchdog_owned_scheduling(self) -> None:
         standing = _prompt_template(self.codex, "Canonical Standing Prompt Template")
 
         self.assertEqual(CANONICAL_STANDING_PROMPT, standing)
@@ -203,7 +203,18 @@ class CodexTaskControlPackageTests(unittest.TestCase):
             ),
         )
         self.assertNotIn("Canonical Heartbeat Prompt Template", self.codex)
-        self.assertIn("Do not send scheduled heartbeat or progress follow-ups", self.codex)
+        self.assertIn(
+            "A configured Watchdog schedule may wake the canonical Watchdog task",
+            self.codex,
+        )
+        self.assertIn(
+            "Do not schedule the Coordinator to wake merely to send routine heartbeat or progress follow-ups",
+            self.codex,
+        )
+        self.assertIn(
+            "do not use a Watchdog wakeup to request progress from another task",
+            self.codex,
+        )
 
     def test_portable_skill_contains_no_codex_only_vocabulary(self) -> None:
         for phrase in (
