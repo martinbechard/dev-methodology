@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: Blocked
+Status: Ready
 
 Type: Feature
 
@@ -211,3 +211,21 @@ Recovery Note: Reuse the preserved candidate, code-review GOOD verdict, and 20 p
 Permitted Resumption Transition: Blocked -> Ready -> Starting -> Running for the same canonical task after the observable unblock condition is satisfied; direct Blocked -> Running is prohibited.
 
 Next Action After Resumption: Obtain the one fresh replacement terminology/documentation/methodology review first. Only a terminal acceptance verdict permits independent verification reconciliation, main-branch delivery, provider completion, dependent-item notification, claim cleanup, and worktree cleanup.
+
+## Blocked Recovery Receipt
+
+Recovered At: 2026-08-11T21:26:00Z
+
+Decision Authority: Dev Backlog Coordinator task 019ff2af-feee-7141-bf1f-51045c4e9993
+
+Confirmed Blocker: The prior configured-reference blocker was reproduced in collaboration-child reviewer paths but resolved through a fresh top-level zero-write reviewer created after MCP activation.
+
+Unblock Evidence: Fresh reviewer task 019ff29d-93e0-7c90-afcd-6055cf088760 loaded the configured project terminology snapshot through mcp-agent-ops reference_load and returned a terminal NEEDS CORRECTION verdict. The user confirmed the permanent reviewer policy: reviewers may read every required repository, project, and configured reference source but have zero write capability; producers remain sandbox-constrained.
+
+Preserved Candidate And Gates: Candidate 5c1fb555644e370c5e1d776224df2c9c32692eab remains clean in /Users/martinbechard/dev/dev-methodology/.worktrees/review-orchestrated-development-lifecycle-text-work-resume-019fe9f2. Preserve the existing code-review GOOD verdict and 20 passing focused checks while their exact bytes and assumptions remain valid.
+
+Bounded Corrections: Correct only the three fresh review findings in design/orchestrated-development-lifecycle.html and directly affected focused assertions: branch selected-Persistence lifecycle handoffs from provider-none task-local evidence; replace non-Evaluation uses of Campaign; replace native agents with generated Agent configurations. Related terminology drift outside this work item's authorized target remains residual risk or separate work.
+
+Remaining Risk: The source-level zero-write review did not run live browser or screen-reader interaction. The unchanged work-item-coordination baseline failures remain out of scope and do not replace candidate review or verification.
+
+Restart Decision: Restore Ready with Owner Unowned and preserve the same canonical task 019fe9f2-a42b-77f2-9c2a-96c29e5f4e38. Resume through a separate Ready -> Starting transaction, then require that task to record Starting -> Running before source mutation.
