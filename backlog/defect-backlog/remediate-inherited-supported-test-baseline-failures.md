@@ -121,7 +121,7 @@ Branch: codex/remediate-inherited-supported-test-baseline-failures
 
 Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/remediate-inherited-supported-test-baseline-failures
 
-Phase: Reviewing candidate 529112158f6b4454864d5d550db96547d5029371
+Phase: Waiting for methodology-review recovery decision
 
 Accepted Execution Evidence: The exact opaque Work Item ID was acquired with activity work. A clean, non-shallow full-history worktree was created from observed current main f1490b80e856df9cc08d24027acd3252734aac18 before implementation. The dispatch SHA f1490b80d6df33fe92f88905e8b92cacb596967d was not present in the repository; the full observed main identity is retained here without substituting the historical candidate.
 
@@ -157,4 +157,18 @@ Overlap Handoff: Reviewer-runtime task 019ff2f9-085e-7202-8099-8f35425278a0 rece
 
 Review Correction Reconciliation: Independent methodology evidence identified one stale role-mutation assertion, but verification proved that correcting it remediated one of the nine newly discovered identities that this item must keep separate. The original coder restored the established boundary. Final candidate 529112158f6b4454864d5d550db96547d5029371 has tree 0b8c8ec3264f587aff614a51734189fe2f61b455, byte-identical to source-approved candidate 84861e84eca27c2dd25ef9238401834fca5418b7. All nine separate current identities remain visible.
 
-Methodology Review Availability: The first methodology-artifact reviewer could not issue a valid verdict because its role requires writing a checklist artifact while this work item explicitly grants reviewers zero write authority. Its substantive stale-assertion finding was corrected. A fresh zero-write methodology-focused source reviewer is reviewing the replacement candidate under the user-authorized boundary.
+Methodology Review Availability: The first methodology-artifact reviewer could not issue a valid verdict because its role requires writing a checklist artifact while this work item explicitly grants reviewers zero write authority. Its substantive stale-assertion finding was classified as one of the nine separate current identities; the temporary correction was reverted. The permitted zero-write replacement failed its required skill load before review.
+
+## Review Recovery Decision
+
+Decision Requested At: 2026-08-11T23:47:31Z
+
+Decision Owner: Parent Dev Backlog Coordinator task 019ff26f-25d0-7381-88f7-74d52717ff59
+
+Current Candidate: 529112158f6b4454864d5d550db96547d5029371, clean and independently source-approved and verified
+
+Review Availability Evidence: The methodology-artifact reviewer could not issue a verdict without violating the explicit zero-write reviewer boundary because its contract mandates a written checklist artifact. The one permitted replacement connected to the configured skill loader but received skill_not_found for dev-methodology-repository-maintenance and stopped before review. This is review availability failure, not a source finding.
+
+Requested Coordinator Decision: Either accept the existing independent source review's explicit methodology-contract, generator-ownership, and comparator-strictness coverage as satisfying the methodology gate, or re-home one zero-write methodology review with a working required-skill load.
+
+Unattended Boundary: Do not begin main integration or provider completion until the Coordinator records one evidence-backed recovery disposition. Preserve the final candidate, source approval, verification, worktree, and released blocked work claim.
