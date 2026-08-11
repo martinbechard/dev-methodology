@@ -1,6 +1,6 @@
 # Review and Enforce Read-Only Reviewer Runtime Access
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -78,3 +78,21 @@ None.
 ## Notes
 
 This item does not authorize changes to the preserved lifecycle-text candidate or its provider state. Immediate recovery may use an already-authorized read-capable reviewer runtime, but any durable reviewer policy or configuration change belongs to this work item's later lifecycle.
+
+## Starting Handoff Evidence
+
+Starting Recorded At: 2026-08-11T22:32:17Z
+
+Coordinator: Codex task 019ff26f-25d0-7381-88f7-74d52717ff59
+
+Normalized Objective: Identify and correct the exact runtime configuration boundary that prevents read-only reviewer roles from accessing required repository and configured reference sources, while preserving zero reviewer write or lifecycle authority; then complete exact-path capability pilots, independent review, focused verification, main-branch delivery, provider closure, and cleanup.
+
+Intended Root Role: Dev Orchestrator
+
+Launch Result: Requested after this durable reservation
+
+Canonical Execution: None
+
+Last Contact At: 2026-08-11T22:32:17Z
+
+Next Reconciliation At: 2026-08-11T22:47:17Z
