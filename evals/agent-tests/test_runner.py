@@ -4184,6 +4184,90 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             self.assertEqual("invalid", result["receiptAudit"]["status"])
             self.assertTrue(result["receiptAudit"]["diagnostics"])
 
+    def test_methodology_review_accepts_canonical_checklist_and_authorized_outputs(self) -> None:
+        """A complete canonical checklist and the two declared review outputs can pass."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            checkpoint_root = root / "checkpoints"
+            fixture_root = root / "fixtures"
+            checkpoint_root.mkdir()
+            fixture_root.mkdir()
+            run, checkpoint, baselines = self._write_methodology_review_checkpoint(
+                checkpoint_root,
+                fixture_root,
+                "valid",
+            )
+            checkpoint_path = (
+                checkpoint_root
+                / "methodology-artifact-reviewer"
+                / "accepted-aligned-change.json"
+            )
+            checkpoint_path.write_text(
+                json.dumps(checkpoint, indent=2, sort_keys=True) + "\n",
+                encoding="utf-8",
+            )
+
+            report = runner._load_checkpoint_report(
+                checkpoint_root,
+                (run,),
+                "codex-methodology-review-test",
+                require_runtime_judge_provenance=False,
+                fixture_root=fixture_root,
+                workspace_inventory_baselines=baselines,
+            )
+
+        assert report is not None
+        result = report["runs"][0]["scenarioResults"][0]
+        self.assertEqual("PASS", result["status"])
+        self.assertEqual("verified", result["receiptAudit"]["status"])
+
+    def test_methodology_review_rejects_invalid_checklist_or_candidate_change(self) -> None:
+        """Exact records and the authorized-output boundary are deterministic gates."""
+        cases = (
+            "missing",
+            "incomplete",
+            "reordered",
+            "rewritten",
+            "duplicated",
+            "unauthorized-candidate-change",
+        )
+        for case in cases:
+            with self.subTest(case=case), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                checkpoint_root = root / "checkpoints"
+                fixture_root = root / "fixtures"
+                checkpoint_root.mkdir()
+                fixture_root.mkdir()
+                run, checkpoint, baselines = self._write_methodology_review_checkpoint(
+                    checkpoint_root,
+                    fixture_root,
+                    case,
+                )
+                checkpoint_path = (
+                    checkpoint_root
+                    / "methodology-artifact-reviewer"
+                    / "accepted-aligned-change.json"
+                )
+                checkpoint_path.write_text(
+                    json.dumps(checkpoint, indent=2, sort_keys=True) + "\n",
+                    encoding="utf-8",
+                )
+
+                report = runner._load_checkpoint_report(
+                    checkpoint_root,
+                    (run,),
+                    "codex-methodology-review-test",
+                    require_runtime_judge_provenance=False,
+                    fixture_root=fixture_root,
+                    workspace_inventory_baselines=baselines,
+                )
+
+            assert report is not None
+            result = report["runs"][0]["scenarioResults"][0]
+            self.assertEqual("BLOCKED", result["status"])
+            self.assertEqual("invalid", result["receiptAudit"]["status"])
+            self.assertTrue(result["receiptAudit"]["diagnostics"])
+
     def test_required_workspace_inventory_rejects_prose_and_unrestored_mutation(self) -> None:
         """Read-only mutation receipts bind complete inventory evidence and a restored baseline."""
         suite = self._suite("one")
@@ -5185,6 +5269,149 @@ class AgentSuiteRunnerTests(unittest.TestCase):
         }
         checkpoint.write_text(json.dumps(document, indent=2, sort_keys=True) + "\n", encoding="utf-8")
         return document
+
+    @classmethod
+    def _write_methodology_review_checkpoint(
+        cls,
+        checkpoint_root: Path,
+        fixture_root: Path,
+        case: str,
+    ) -> tuple[object, dict[str, object], dict[tuple[str, str], dict[str, object]]]:
+        """Create retained methodology-review evidence for one validation case."""
+        suite = runner._load_catalog(
+            include_ids={"methodology-artifact-reviewer"}
+        )["methodology-artifact-reviewer"]
+        run = runner._RunSpec(
+            suite=suite,
+            scenario_ids=("accepted-aligned-change",),
+        )
+        checkpoint = cls._write_receipt_checkpoint(
+            checkpoint_root,
+            run,
+            "codex-methodology-review-test",
+        )
+        baselines = runner._stage_workspace_inventory_fixtures(
+            (run,), fixture_root, checkpoint_root
+        )
+        scenario = next(
+            value
+            for value in suite.scenarios
+            if value["id"] == "accepted-aligned-change"
+        )
+        review_evidence = scenario["reviewEvidence"]
+        completed_contract = review_evidence["completedChecklist"]
+        findings_contract = review_evidence["findings"]
+        protected = (
+            fixture_root
+            / "methodology-artifact-reviewer"
+            / "accepted-aligned-change"
+        )
+        completed_path = protected / completed_contract["workspacePath"]
+        findings_path = protected / findings_contract["workspacePath"]
+        completed_path.parent.mkdir(parents=True, exist_ok=True)
+        findings_path.parent.mkdir(parents=True, exist_ok=True)
+
+        checklist_contract = runner._load_review_checklist_contract()
+        repository = _RUNNER_PATH.parents[2]
+        canonical_path = repository / review_evidence["canonicalChecklist"]
+        canonical = checklist_contract.load_canonical_checklist(canonical_path)
+        questions = list(canonical.questions)
+        if case == "incomplete":
+            questions.pop()
+        elif case == "reordered":
+            questions[0], questions[1] = questions[1], questions[0]
+        elif case == "rewritten":
+            questions[0] = f"{questions[0]} rewritten"
+        completed_text = cls._completed_checklist(canonical.fields, tuple(questions))
+        if case == "duplicated":
+            completed_text = completed_text.replace("## Q002", "## Q001", 1)
+        completed_path.write_text(completed_text, encoding="utf-8")
+        findings_path.write_text("# Findings\n\nNo required correction.\n", encoding="utf-8")
+        if case == "unauthorized-candidate-change":
+            (protected / "accepted" / "skill.yaml").write_text(
+                "name: unauthorized-candidate-change\n",
+                encoding="utf-8",
+            )
+
+        scenario_artifacts = (
+            checkpoint_root
+            / "methodology-artifact-reviewer"
+            / "accepted-aligned-change"
+            / "artifacts"
+        )
+        retained_completed = scenario_artifacts / completed_contract["retainedArtifact"]
+        retained_findings = scenario_artifacts / findings_contract["retainedArtifact"]
+        shutil.copyfile(completed_path, retained_completed)
+        shutil.copyfile(findings_path, retained_findings)
+        completed_digest = runner._sha256(retained_completed)
+        reported_completed = (
+            ".agent-suite-fixtures/methodology-artifact-reviewer/"
+            f"accepted-aligned-change/{completed_contract['workspacePath']}"
+        )
+        checklist_result = {
+            "valid": True,
+            "checklists": [
+                {
+                    "canonical": review_evidence["canonicalChecklist"],
+                    "canonical_sha256": runner._sha256(canonical_path),
+                    "completed": reported_completed,
+                    "completed_sha256": completed_digest,
+                    "expected_count": len(canonical.questions),
+                    "completed_count": len(canonical.questions),
+                    "valid": True,
+                    "errors": [],
+                }
+            ],
+        }
+        cls._replace_deterministic_artifact(
+            checkpoint_root,
+            checkpoint,
+            "checklist-completeness",
+            checklist_result,
+        )
+
+        baseline_path = (
+            scenario_artifacts / "workspace-baseline.json"
+        )
+        mutation_evidence = runner.workspace_inventory_support._mutation_evidence(
+            protected,
+            baseline_path,
+            True,
+            runner._sha256(baseline_path),
+        )
+        cls._replace_deterministic_artifact(
+            checkpoint_root,
+            checkpoint,
+            "no-forbidden-mutation",
+            mutation_evidence,
+        )
+        if case == "missing":
+            retained_completed.unlink()
+        return run, checkpoint, baselines
+
+    @staticmethod
+    def _completed_checklist(
+        fields: tuple[str, ...], questions: tuple[str, ...]
+    ) -> str:
+        """Render complete records without changing canonical field names or questions."""
+        values = {
+            "Status": "pass",
+            "Evidence type": "assessment",
+            "Evidence source": "synthetic methodology fixture",
+            "Evidence": "The retained fixture aligns with its accepted contract.",
+            "Assessment": "The evidence satisfies this question.",
+            "Correction": "not applicable",
+            "Authority": "the frozen methodology review contract",
+            "Impact": "none",
+        }
+        records: list[str] = []
+        for index, question in enumerate(questions, start=1):
+            rows = [f"## Q{index:03d}", ""]
+            for field in fields:
+                value = question if field == "Question" else values[field]
+                rows.append(f"- {field}: {value}")
+            records.append("\n".join(rows))
+        return "\n\n".join(records) + "\n"
 
     @staticmethod
     def _workspace_mutation_evidence(*, final_matches: bool) -> dict[str, object]:

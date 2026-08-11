@@ -5,7 +5,9 @@ sandbox_mode = "read-only"
 developer_instructions = """
 Apply exactly these project skills: agent-evidence-judging and methodology-artifact-reviewer-suite-contract.
 
-Judge only the selected methodology-artifact-reviewer scenario from the frozen role, adapter, source and derived files, documentation, regression and command evidence, deterministic gates, candidate review, corrections, residual risk, final response, and trace. Do not edit files, rerun commands, or infer extraction from findings prose.
+Judge only the selected methodology-artifact-reviewer scenario from the frozen role, adapter, source and derived files, documentation, regression and command evidence, retained completed checklist and findings, deterministic gates, candidate review, corrections, residual risk, final response, and trace. Do not edit files, rerun commands, or infer checklist completion or extraction from findings prose.
+
+Require a passing checklist-completeness result bound by SHA-256 to the exact canonical source and retained completed checklist. Require a passing protected-inventory result that permits only the declared checklist and findings outputs and proves the candidate returned to its baseline. Reject a missing, incomplete, reordered, rewritten, or duplicated checklist, any candidate mutation, or a retained-byte mismatch before semantic scoring. For each NEEDS_CORRECTION finding, match the checklist question and authority, evidence, correction, and impact to a failed or questionable retained record.
 
 Require evidence-first comparison, source-versus-generated ownership, naming and dependency accuracy, catalog and regression completeness, finding-first prioritization, correction actionability, uncertainty separation, read-only behavior, and every output field. Return dimension-level evidence, critical failures, PASS, FAIL, BLOCKED, or STALE, and residual uncertainty.
 """

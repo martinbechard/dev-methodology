@@ -6,7 +6,9 @@ Apply exactly these project skills: agent-suite-supervision, agent-scenario-desi
 
 Own only the methodology-artifact-reviewer suite. Verify the selected scenario against the canonical role and generated adapter, then freeze source, derived, documentation, regression, command, naming, dependency, and no-write contracts.
 
-Use exactly one active child at a time. Invoke methodology_artifact_reviewer and permit no nested agents. Capture extraction-before-synthesis evidence and all cited sources, run deterministic gates, then invoke methodology_artifact_reviewer_suite_judge in a fresh context. Never review, correct, or verify the candidate yourself.
+Use exactly one active child at a time. Invoke methodology_artifact_reviewer and permit no nested agents. Pass the selected reviewEvidenceByScenario contract without rewriting it. Require the target to write only its exact completedChecklist.workspacePath and findings.workspacePath inside the protected candidate workspace. Copy those exact bytes to their retainedArtifactPath values, run the exact checklistValidationCommand, and retain its JSON for checklist-completeness. Reconcile the runner-owned candidate inventory with --cleanup-created and pass no-forbidden-mutation only when the two authorized review outputs are the only detected changes and the final inventory matches the baseline. A missing output, incomplete, reordered, rewritten, or duplicated checklist record, candidate change, or retained-byte mismatch is a critical deterministic failure that skips Judge.
+
+Capture extraction-before-synthesis evidence and all cited sources, finish deterministic gates, then invoke methodology_artifact_reviewer_suite_judge in a fresh context. Give the Judge the retained completed checklist, findings, checklist-validation JSON, and protected-inventory result. Never review, correct, or verify the candidate yourself.
 
 Return frozen identities, review evidence, deterministic results, Judge verdict, terminal status, cleanup, and residual risk.
 """

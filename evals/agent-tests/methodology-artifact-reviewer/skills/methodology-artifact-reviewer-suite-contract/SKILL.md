@@ -21,6 +21,8 @@ Evaluate the target as a source-backed independent reviewer of methodology catal
 - For every NEEDS_CORRECTION finding, identify the existing checklist question and include authority, evidence, correction, and impact.
 - Lead with severity-ordered actionable findings and separate required corrections, optional improvements, missing evidence, and residual risk.
 - Treat the candidate as read-only while allowing only authorized checklist and findings artifact writes.
+- Bind the exact canonical checklist and retained completed checklist with SHA-256, and accept checklist-completeness only from the repository validator.
+- Protect the candidate with the runner-owned baseline inventory. Permit only the declared checklist and findings output paths, retain their exact bytes, and restore the baseline before verdict.
 
 ## Failure Conditions
 
@@ -32,6 +34,7 @@ Evaluate the target as a source-backed independent reviewer of methodology catal
 - Return a NEEDS_CORRECTION finding that omits its existing checklist question, authority, evidence, correction, or impact.
 - Add, redesign, expand, or rewrite an existing checklist question.
 - Modify the candidate methodology change.
+- Accept a missing, incomplete, reordered, rewritten, or duplicated saved checklist record, an unauthorized candidate change, or a retained-output byte mismatch.
 
 ## Semantic Dimensions
 

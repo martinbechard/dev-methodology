@@ -9289,9 +9289,26 @@ Visible after.
                     "read-only-boundary",
                     scenario["deterministicChecks"],
                 )
-                self.assertNotIn(
+                self.assertIn(
                     "no-forbidden-mutation",
                     scenario["deterministicChecks"],
+                )
+                self.assertIs(True, scenario["requiresWorkspaceInventory"])
+                review_evidence = scenario["reviewEvidence"]
+                self.assertEqual(
+                    "skills/review-structured-artifact/references/"
+                    "review-checklist-structured.md",
+                    review_evidence["canonicalChecklist"],
+                )
+                self.assertEqual(
+                    {
+                        "completed-review-checklist.md",
+                        "review-findings.md",
+                    },
+                    {
+                        review_evidence["completedChecklist"]["retainedArtifact"],
+                        review_evidence["findings"]["retainedArtifact"],
+                    },
                 )
                 self.assertIn(
                     "Complete and save the existing structured-review checklist "

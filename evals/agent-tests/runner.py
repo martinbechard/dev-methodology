@@ -67,6 +67,7 @@ _WORKSPACE_MUTATION_SCHEMA = "dev-methodology-workspace-mutation-evidence"
 _JUDGE_OUTPUT_SCHEMA = "dev-methodology-agent-suite-judge-output"
 _SHA256_PATTERN = re.compile(r"^[0-9a-f]{64}$")
 _IMMEDIATE_NOOP_CLOSE_SECONDS = 10.0
+_REVIEW_CHECKLIST_CONTRACT_MODULE: Any | None = None
 _PLAYWRIGHT_INTERACTION_CONTRACT = {
     "root": "one JSON object containing exactly an actions array",
     "locators": (
@@ -216,6 +217,25 @@ def _load_yaml(path: Path) -> dict[str, Any]:
     if not isinstance(loaded, dict):
         raise ValueError(f"Expected a YAML mapping in {path}")
     return loaded
+
+
+def _load_review_checklist_contract() -> Any:
+    """Load the repository's existing canonical-checklist validator once."""
+    global _REVIEW_CHECKLIST_CONTRACT_MODULE
+    if _REVIEW_CHECKLIST_CONTRACT_MODULE is not None:
+        return _REVIEW_CHECKLIST_CONTRACT_MODULE
+    module_path = _SUITE_ROOT / "dev-artifact-reviewer" / "checklist_contract.py"
+    specification = importlib.util.spec_from_file_location(
+        "agent_suite_review_checklist_contract",
+        module_path,
+    )
+    if specification is None or specification.loader is None:
+        raise RuntimeError(f"Cannot load review checklist contract: {module_path}")
+    module = importlib.util.module_from_spec(specification)
+    sys.modules[specification.name] = module
+    specification.loader.exec_module(module)
+    _REVIEW_CHECKLIST_CONTRACT_MODULE = module
+    return module
 
 
 def _dotted_value(document: dict[str, Any], dotted_path: str) -> Any:
@@ -510,6 +530,85 @@ def _contained_suite_file(suite_root: Path, suite_path: Path, file_name: str) ->
     return canonical
 
 
+def _safe_relative_file(value: object, field: str) -> str:
+    """Return one normalized relative file path without traversal components."""
+    if not isinstance(value, str) or not value:
+        raise ValueError(f"{field} must be a non-empty relative file path")
+    relative = PurePosixPath(value)
+    if (
+        relative.is_absolute()
+        or relative.as_posix() != value
+        or any(part in {"", ".", ".."} for part in relative.parts)
+        or relative.name in {"", ".", ".."}
+    ):
+        raise ValueError(f"{field} is not a safe relative file path: {value!r}")
+    return relative.as_posix()
+
+
+def _scenario_review_evidence(
+    suite: _Suite,
+    scenario: Mapping[str, Any],
+) -> dict[str, Any] | None:
+    """Validate and normalize an optional saved-review evidence contract."""
+    raw = scenario.get("reviewEvidence")
+    if raw is None:
+        return None
+    scenario_id = str(scenario.get("id", ""))
+    field = f"{suite.suite_id}:{scenario_id} reviewEvidence"
+    if not isinstance(raw, Mapping) or set(raw) != {
+        "canonicalChecklist",
+        "completedChecklist",
+        "findings",
+    }:
+        raise ValueError(f"{field} must declare canonicalChecklist, completedChecklist, and findings")
+    canonical = _safe_relative_file(
+        raw.get("canonicalChecklist"),
+        f"{field}.canonicalChecklist",
+    )
+    canonical_path = _REPOSITORY_ROOT / canonical
+    try:
+        _load_review_checklist_contract().load_canonical_checklist(canonical_path)
+    except (OSError, UnicodeError, ValueError) as error:
+        raise ValueError(f"{field}.canonicalChecklist is invalid: {error}") from error
+
+    normalized: dict[str, Any] = {"canonicalChecklist": canonical}
+    for output_name in ("completedChecklist", "findings"):
+        output = raw.get(output_name)
+        output_field = f"{field}.{output_name}"
+        if not isinstance(output, Mapping) or set(output) != {
+            "workspacePath",
+            "retainedArtifact",
+        }:
+            raise ValueError(
+                f"{output_field} must declare workspacePath and retainedArtifact"
+            )
+        workspace_path = _safe_relative_file(
+            output.get("workspacePath"),
+            f"{output_field}.workspacePath",
+        )
+        retained_artifact = _safe_relative_file(
+            output.get("retainedArtifact"),
+            f"{output_field}.retainedArtifact",
+        )
+        if len(PurePosixPath(retained_artifact).parts) != 1:
+            raise ValueError(f"{output_field}.retainedArtifact must be a direct artifact filename")
+        normalized[output_name] = {
+            "workspacePath": workspace_path,
+            "retainedArtifact": retained_artifact,
+        }
+    workspace_paths = {
+        normalized[output_name]["workspacePath"]
+        for output_name in ("completedChecklist", "findings")
+    }
+    retained_artifacts = {
+        normalized[output_name]["retainedArtifact"]
+        for output_name in ("completedChecklist", "findings")
+    }
+    if len(workspace_paths) != 2 or len(retained_artifacts) != 2:
+        raise ValueError(f"{field} output paths must be distinct")
+    return normalized
+
+
 def _load_catalog(
     suite_root: Path = _SUITE_ROOT,
     include_ids: set[str] | None = None,
@@ -618,6 +717,22 @@ def _validate_suite(suite: _Suite, require_executable: bool = True) -> None:
             raise ValueError(
                 f"{suite.suite_id}:{scenario_id} no-detected-mutation enforcement requires workspace inventory"
             )
+        review_evidence = _scenario_review_evidence(suite, scenario)
+        if review_evidence is not None:
+            deterministic_checks = scenario.get("deterministicChecks", [])
+            for required_check in ("checklist-completeness", "no-forbidden-mutation"):
+                if required_check not in deterministic_checks:
+                    raise ValueError(
+                        f"{suite.suite_id}:{scenario_id} reviewEvidence requires {required_check}"
+                    )
+            if not requires_inventory:
+                raise ValueError(
+                    f"{suite.suite_id}:{scenario_id} reviewEvidence requires workspace inventory"
+                )
+            if requires_no_detected_mutation:
+                raise ValueError(
+                    f"{suite.suite_id}:{scenario_id} authorized review outputs conflict with strict no-detected-mutation enforcement"
+                )
         scenario_dependencies = scenario.get("allowedAgentDependencies")
         if scenario_dependencies is not None:
             if not isinstance(scenario_dependencies, list) or not all(
@@ -1407,6 +1522,15 @@ def _stage_workspace_inventory_fixtures(
                 check=True,
                 capture_output=True,
             )
+            review_evidence = _scenario_review_evidence(run.suite, scenario)
+            if review_evidence is not None:
+                for output_name in ("completedChecklist", "findings"):
+                    output_path = destination / review_evidence[output_name]["workspacePath"]
+                    if output_path.exists() or output_path.is_symlink():
+                        raise RuntimeError(
+                            f"Authorized review output already exists in the frozen fixture: "
+                            f"{run.suite.suite_id}:{scenario_id}:{output_path.relative_to(destination)}"
+                        )
             baseline = workspace_inventory_support._inventory(destination)
             baseline_path = (
                 checkpoint_root
@@ -2254,6 +2378,63 @@ def _coordinator_prompt(
                     if str(scenario["id"]) in set(run.scenario_ids)
                     and scenario.get("requiresWorkspaceInventory") is True
                 },
+                "reviewEvidenceByScenario": {
+                    str(scenario["id"]): {
+                        "canonicalChecklist": review_evidence["canonicalChecklist"],
+                        "completedChecklist": {
+                            "workspacePath": str(
+                                fixture_root
+                                / run.suite.suite_id
+                                / str(scenario["id"])
+                                / review_evidence["completedChecklist"]["workspacePath"]
+                            ),
+                            "retainedArtifactPath": str(
+                                checkpoint_root
+                                / run.suite.suite_id
+                                / str(scenario["id"])
+                                / "artifacts"
+                                / review_evidence["completedChecklist"]["retainedArtifact"]
+                            ),
+                        },
+                        "findings": {
+                            "workspacePath": str(
+                                fixture_root
+                                / run.suite.suite_id
+                                / str(scenario["id"])
+                                / review_evidence["findings"]["workspacePath"]
+                            ),
+                            "retainedArtifactPath": str(
+                                checkpoint_root
+                                / run.suite.suite_id
+                                / str(scenario["id"])
+                                / "artifacts"
+                                / review_evidence["findings"]["retainedArtifact"]
+                            ),
+                        },
+                        "authorizedWorkspaceOutputPaths": [
+                            review_evidence[output_name]["workspacePath"]
+                            for output_name in ("completedChecklist", "findings")
+                        ],
+                        "checklistValidationCommand": shlex.join(
+                            (
+                                "python3",
+                                "evals/agent-tests/dev-artifact-reviewer/checklist_contract.py",
+                                "--pair",
+                                review_evidence["canonicalChecklist"],
+                                str(
+                                    fixture_root
+                                    / run.suite.suite_id
+                                    / str(scenario["id"])
+                                    / review_evidence["completedChecklist"]["workspacePath"]
+                                ),
+                            )
+                        ),
+                    }
+                    for scenario in run.suite.scenarios
+                    if str(scenario["id"]) in set(run.scenario_ids)
+                    and (review_evidence := _scenario_review_evidence(run.suite, scenario))
+                    is not None
+                },
                 "agentDependencies": list(_agent_dependencies(run)),
                 "fixtureContracts": [
                     str(scenario["fixtureContract"])
@@ -2323,6 +2504,13 @@ def _coordinator_prompt(
         "script or tool and must not report claim evidence on any receipt, including an extra lane. Pre-existing "
         "repository claim files do not count as scenario activity. A scenario whose value is resource-claim must retain its "
         "configured acquisition and normal-release evidence. The "
+        "reviewEvidenceByScenario assignment, when present, is the exact saved-review contract. The target may create only "
+        "the two authorizedWorkspaceOutputPaths inside the protected scenario workspace. The supervisor must copy those "
+        "exact bytes to completedChecklist.retainedArtifactPath and findings.retainedArtifactPath before cleanup, execute "
+        "the exact checklistValidationCommand, and retain its JSON as checklist-completeness evidence. Reconcile the "
+        "runner-owned workspace baseline with --cleanup-created after retaining both outputs. A passed no-forbidden-mutation "
+        "receipt may contain those two detected creations only; any candidate modification, deletion, Git metadata change, "
+        "different creation, missing retained output, or retained-byte mismatch is a critical failure. "
         "repository is relative to the active scenario's scenarioRoots[scenario] directory, every sessionIds and "
         "eventIds value is a "
         "non-empty string array, "
@@ -2716,6 +2904,165 @@ def _validate_workspace_mutation_evidence(
         diagnostics.append(f"{field} is not a complete workspace mutation inventory")
 
 
+def _review_completed_workspace_path(
+    suite_id: str,
+    scenario_id: str,
+    review_evidence: Mapping[str, Any],
+) -> str:
+    """Return the completed-checklist path as reported from the disposable repository."""
+    return PurePosixPath(
+        ".agent-suite-fixtures",
+        suite_id,
+        scenario_id,
+        str(review_evidence["completedChecklist"]["workspacePath"]),
+    ).as_posix()
+
+
+def _validate_review_checklist_evidence(
+    checkpoint_root: Path,
+    evidence_path: Path,
+    artifact_parent: PurePosixPath,
+    run: _RunSpec,
+    scenario_id: str,
+    review_evidence: Mapping[str, Any],
+    receipt_verdict: object,
+    field: str,
+    diagnostics: list[str],
+) -> None:
+    """Recompute saved-checklist validity from the retained canonical and completed bytes."""
+    document = _json_mapping(evidence_path, field, diagnostics)
+    if document is None:
+        return
+    checklists = document.get("checklists")
+    if (
+        set(document) != {"valid", "checklists"}
+        or type(document.get("valid")) is not bool
+        or not isinstance(checklists, list)
+        or len(checklists) != 1
+        or not isinstance(checklists[0], Mapping)
+    ):
+        diagnostics.append(f"{field} is not one canonical completed-checklist result")
+        return
+    result = checklists[0]
+    completed_digest = result.get("completed_sha256")
+    if not isinstance(completed_digest, str) or _SHA256_PATTERN.fullmatch(completed_digest) is None:
+        diagnostics.append(f"{field} completed checklist digest is invalid")
+        return
+    retained_name = str(review_evidence["completedChecklist"]["retainedArtifact"])
+    retained_relative = artifact_parent / retained_name
+    retained_completed = _retained_artifact(
+        checkpoint_root,
+        {"path": retained_relative.as_posix(), "sha256": completed_digest},
+        artifact_parent,
+        f"{field}.completedChecklist",
+        diagnostics,
+    )
+    if retained_completed is None:
+        return
+    canonical_relative = str(review_evidence["canonicalChecklist"])
+    canonical_path = _REPOSITORY_ROOT / canonical_relative
+    completed_relative = _review_completed_workspace_path(
+        run.suite.suite_id,
+        scenario_id,
+        review_evidence,
+    )
+    try:
+        with tempfile.TemporaryDirectory(prefix="agent-review-checklist-") as temporary:
+            synthetic_root = Path(temporary)
+            synthetic_canonical = synthetic_root / canonical_relative
+            synthetic_completed = synthetic_root / completed_relative
+            synthetic_canonical.parent.mkdir(parents=True)
+            synthetic_completed.parent.mkdir(parents=True)
+            shutil.copyfile(canonical_path, synthetic_canonical)
+            shutil.copyfile(retained_completed, synthetic_completed)
+            recomputed = _load_review_checklist_contract().validate_completed_checklist(
+                synthetic_canonical,
+                synthetic_completed,
+                repository_root=synthetic_root,
+            )
+    except (OSError, RuntimeError, UnicodeError, ValueError) as error:
+        diagnostics.append(f"{field} checklist validation failed: {error}")
+        return
+    expected_result = json.loads(json.dumps(dataclasses.asdict(recomputed)))
+    expected_document = {
+        "valid": recomputed.valid,
+        "checklists": [expected_result],
+    }
+    if dict(document) != expected_document:
+        diagnostics.append(f"{field} does not match the retained canonical and completed checklist bytes")
+    expected_verdict = "passed" if recomputed.valid else "failed"
+    if receipt_verdict != expected_verdict:
+        diagnostics.append(
+            f"{field} receipt verdict {receipt_verdict!r} disagrees with recomputed checklist validity"
+        )
+
+
+def _validate_review_workspace_outputs(
+    checkpoint_root: Path,
+    evidence: Mapping[str, Any],
+    artifact_parent: PurePosixPath,
+    review_evidence: Mapping[str, Any],
+    receipt_verdict: object,
+    field: str,
+    diagnostics: list[str],
+) -> None:
+    """Permit only the two retained review outputs and reject every candidate mutation."""
+    detected = evidence.get("detected")
+    expected_outputs = {
+        str(review_evidence[output_name]["workspacePath"]): str(
+            review_evidence[output_name]["retainedArtifact"]
+        )
+        for output_name in ("completedChecklist", "findings")
+    }
+    created_files: dict[str, Mapping[str, Any]] = {}
+    if isinstance(detected, Mapping) and isinstance(detected.get("created"), list):
+        for entry in detected["created"]:
+            if isinstance(entry, Mapping) and isinstance(entry.get("path"), str):
+                created_files[str(entry["path"])] = entry
+    boundary_valid = (
+        isinstance(detected, Mapping)
+        and set(detected) == {"created", "modified", "deleted", "gitMetadata"}
+        and set(created_files) == set(expected_outputs)
+        and len(created_files) == len(detected.get("created", []))
+        and all(
+            entry.get("kind") == "file"
+            and isinstance(entry.get("sha256"), str)
+            and _SHA256_PATTERN.fullmatch(str(entry.get("sha256"))) is not None
+            for entry in created_files.values()
+        )
+        and not detected.get("modified")
+        and not detected.get("deleted")
+        and not detected.get("gitMetadata")
+        and evidence.get("finalMatchesBaseline") is True
+    )
+    if not boundary_valid:
+        diagnostics.append(
+            f"{field} must create exactly the authorized checklist and findings outputs without changing the candidate"
+        )
+    for workspace_path, retained_name in expected_outputs.items():
+        entry = created_files.get(workspace_path)
+        if entry is None or not isinstance(entry.get("sha256"), str):
+            continue
+        diagnostic_count = len(diagnostics)
+        _retained_artifact(
+            checkpoint_root,
+            {
+                "path": (artifact_parent / retained_name).as_posix(),
+                "sha256": str(entry["sha256"]),
+            },
+            artifact_parent,
+            f"{field}.{workspace_path}",
+            diagnostics,
+        )
+        if len(diagnostics) != diagnostic_count:
+            boundary_valid = False
+    expected_verdict = "passed" if boundary_valid else "failed"
+    if receipt_verdict != expected_verdict:
+        diagnostics.append(
+            f"{field} receipt verdict {receipt_verdict!r} disagrees with the authorized review-output boundary"
+        )
+
+
 def _validate_evidence_receipts(
     checkpoint_root: Path,
     references: object,
@@ -2738,6 +3085,7 @@ def _validate_evidence_receipts(
     )
     raw_check_ids = scenario.get("deterministicChecks", [])
     expected_check_ids = [str(value) for value in raw_check_ids] if isinstance(raw_check_ids, list) else []
+    review_evidence = _scenario_review_evidence(run.suite, scenario)
     if not expected_check_ids or len(expected_check_ids) != len(set(expected_check_ids)):
         diagnostics.append("selected scenario deterministicChecks must identify unique checks")
     catalog = _deterministic_check_catalog()
@@ -2808,6 +3156,18 @@ def _validate_evidence_receipts(
                 diagnostics.append(f"{field} deterministic criticality mismatch: {check_id}")
             if receipt.get("verdict") not in {"passed", "failed"}:
                 diagnostics.append(f"{field} deterministic verdict is invalid: {check_id}")
+            if check_id == "checklist-completeness" and review_evidence is not None:
+                _validate_review_checklist_evidence(
+                    checkpoint_root,
+                    evidence_path,
+                    artifact_parent,
+                    run,
+                    scenario_id,
+                    review_evidence,
+                    receipt.get("verdict"),
+                    f"{field}.evidence",
+                    diagnostics,
+                )
             if check_id == "no-forbidden-mutation" and scenario.get("requiresWorkspaceInventory") is True:
                 inventory = _json_mapping(evidence_path, f"{field}.evidence", diagnostics)
                 if inventory is not None:
@@ -2835,6 +3195,16 @@ def _validate_evidence_receipts(
                         expected_inventory_root,
                         expected_baseline,
                     )
+                    if review_evidence is not None:
+                        _validate_review_workspace_outputs(
+                            checkpoint_root,
+                            inventory,
+                            artifact_parent,
+                            review_evidence,
+                            receipt.get("verdict"),
+                            f"{field}.evidence",
+                            diagnostics,
+                        )
                     if expected_inventory_root is not None:
                         actual_final = workspace_inventory_support._inventory(expected_inventory_root)
                         if inventory.get("final") != actual_final:
