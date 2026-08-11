@@ -163,14 +163,22 @@ Condition Type: root-execution
 
 Owner: Dev Orchestrator
 
-Evidence: Dev Coder returned clean candidate f7d880b5 with the approved 22-path source and generated-artifact manifest and focused checks passing.
+Evidence: Fresh independent review confirmed one correction: the new probe requires its generated evaluation projection and directly affected focused expectations to be refreshed.
 
-Observed At: 2026-08-11T15:00:05Z
+Observed At: 2026-08-11T15:13:10Z
 
 Started At: 2026-08-11T14:34:23Z
 
-Deadline or Expires At: 2026-08-11T15:15:00Z
+Deadline or Expires At: 2026-08-11T15:28:00Z
 
-Next Action: Dispatch fresh independent source review of exact candidate f7d880b5.
+Next Action: Return the accepted review finding to the original Dev Coder for one bounded correction and replacement candidate.
 
-Next Reconciliation At: 2026-08-11T15:13:00Z
+Next Reconciliation At: 2026-08-11T15:26:00Z
+
+## Review Correction Evidence
+
+Confirmed Issue: The new manage-complex-development-plan probe leaves design/agent-and-skill-evaluations.html and its focused source-current expectations stale.
+
+Disposition: Correct in the current delivery through the original Dev Coder, followed by fresh independent re-review and reverification.
+
+Coordinator Scope Resolution: scripts/test_agent_skill_evaluation_docs.py is a non-governed directly affected focused contract test already authorized by this work item's focused-test requirement. Change exactly that path for the 143-probe and two-missing-probe expectations. Do not widen any other scope.
