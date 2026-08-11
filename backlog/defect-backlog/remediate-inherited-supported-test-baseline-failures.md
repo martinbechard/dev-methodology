@@ -121,7 +121,7 @@ Branch: codex/remediate-inherited-supported-test-baseline-failures
 
 Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/remediate-inherited-supported-test-baseline-failures
 
-Phase: Reviewing candidate 84861e84eca27c2dd25ef9238401834fca5418b7
+Phase: Reviewing candidate 6a50eaf70b84a1e403c7b92e858b8df1b3215c1d
 
 Accepted Execution Evidence: The exact opaque Work Item ID was acquired with activity work. A clean, non-shallow full-history worktree was created from observed current main f1490b80e856df9cc08d24027acd3252734aac18 before implementation. The dispatch SHA f1490b80d6df33fe92f88905e8b92cacb596967d was not present in the repository; the full observed main identity is retained here without substituting the historical candidate.
 
@@ -141,7 +141,7 @@ Implementation Boundary: Correct only the 49 remaining historical identities and
 
 ## Candidate Evidence
 
-Accepted Candidate Commit: 84861e84eca27c2dd25ef9238401834fca5418b7
+Accepted Candidate Commit: 6a50eaf70b84a1e403c7b92e858b8df1b3215c1d
 
 Candidate Recorded At: 2026-08-11T23:26:59Z
 
@@ -153,4 +153,8 @@ Focused Verification: Resource claim 141 of 141 passed; Project Bootstrapper 24 
 
 Known External Gate Failures: The complete supported entry point still stops on the two unclassified audit-worktree paths. The direct supported loop still encounters the stale Playwright exclusion identities. These are preserved as separate current-main defects and were not changed by the candidate.
 
-Overlap Handoff: Reviewer-runtime task 019ff2f9-085e-7202-8099-8f35425278a0 received commit 84861e84eca27c2dd25ef9238401834fca5418b7 and the exact scripts/test_role_mutation_policy.py content boundary before beginning overlapping mutation.
+Overlap Handoff: Reviewer-runtime task 019ff2f9-085e-7202-8099-8f35425278a0 received replacement commit 6a50eaf70b84a1e403c7b92e858b8df1b3215c1d and the exact scripts/test_role_mutation_policy.py content boundary before beginning overlapping mutation.
+
+Review Correction: The initial source candidate 84861e84eca27c2dd25ef9238401834fca5418b7 was superseded after independent methodology evidence found one stale role-mutation assertion. The original coder corrected only that assertion to the authoritative wording "With resource coordination none, registry evidence is absent." The replacement candidate passed all 18 role-mutation tests, its comparator child reported zero failures, and git diff --check passed.
+
+Methodology Review Availability: The first methodology-artifact reviewer could not issue a valid verdict because its role requires writing a checklist artifact while this work item explicitly grants reviewers zero write authority. Its substantive stale-assertion finding was corrected. A fresh zero-write methodology-focused source reviewer is reviewing the replacement candidate under the user-authorized boundary.
