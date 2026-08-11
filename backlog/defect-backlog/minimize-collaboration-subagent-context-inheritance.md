@@ -104,7 +104,7 @@ Complex Development Plan: Not required; this is one routine contribution lane fo
 
 ### Governed Canonical Sources
 
-- skills/codex-harness-directives/SKILL.md
+- adapters/codex/skills/codex-harness-directives/SKILL.md
 - skills/coordinate-codex-tasks/SKILL.md
 - agents/roles/dev-activities/dev-backlog-coordinator.role.yaml
 - agents/roles/dev-activities/dev-orchestrator.role.yaml
