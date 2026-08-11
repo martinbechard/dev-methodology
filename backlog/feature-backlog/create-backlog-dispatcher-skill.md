@@ -77,6 +77,8 @@ None.
 ### Governed Canonical Sources
 
 - skills/backlog-dispatcher/SKILL.md
+- skills/coordinate-codex-tasks/SKILL.md
+- agents/roles/dev-activities/dev-backlog-coordinator.role.yaml
 
 ### Allowed Dependent Artifacts
 
@@ -85,11 +87,28 @@ None.
 - design/skills-modularization.html
 - design/orchestrated-development-lifecycle.html
 - design/generated/skill-definitions.js
+- design/generated/role-definitions.js
+- design/agent-skill-test-coverage-checklist.md
+- generated/adapters/agent-generation-manifest.json
+- generated/adapters/claude/agents/dev-backlog-coordinator.md
+- generated/adapters/codex/agents/dev-backlog-coordinator.toml
+- generated/adapters/gemini/agents/dev-backlog-coordinator.md
+- generated/adapters/junie/agents/dev-backlog-coordinator.md
+- scripts/test_agent_identity_generation.py
 - scripts/test_bundle_content.py
+- scripts/test_codex_task_control.py
+- scripts/test_role_mutation_policy.py
+- scripts/test_work_item_coordination.py
 
 ### Approval Resolution
 
-Approved at creation. On 2026-08-11, in Codex task 019ff2c3-1710-7aa1-89c4-9d6066f51fe4, the user explicitly requested creation of the named backlog-dispatcher-skill Work Item. This approval covers only skills/backlog-dispatcher/SKILL.md as the governed skill-definition source and the exact dependent artifacts listed above. Any additional governed skill or agent-definition source requires separate explicit approval.
+Approved at creation and explicitly expanded on 2026-08-11 in canonical Codex task 019ff2c3-1710-7aa1-89c4-9d6066f51fe4. The expanded approval covers exactly the three governed canonical sources and the mechanically required dependent artifacts listed above. It does not authorize another skill definition, Agent definition, Evaluation suite, or unrelated generated or documentation artifact.
+
+Exact user architecture clarification and approval:
+
+> The Coordinator runs as a subagent and some Codex functionality is unavailable there. Therefore the Coordinator must tell the root task agent exactly what to do; the root has the tools and performs operations such as starting user-visible tasks. Previously the Coordinator was run as a root task that was merely aware of the Coordinator role but did not actually run it; that pattern is replaced. Treat this as explicit approval to expand create-backlog-dispatcher-skill to modify exactly skills/coordinate-codex-tasks/SKILL.md and agents/roles/dev-activities/dev-backlog-coordinator.role.yaml plus mechanically required generated adapters, documentation, focused expectations, and the generated structural checklist.
+
+Architecture Decision: The Dev Backlog Coordinator runs as the decision-authority subagent. It reconciles authoritative state, records Coordinator-owned lifecycle transitions, and tells the root Backlog Dispatcher exactly which caller-only runtime operations to perform. The root Backlog Dispatcher is the execution authority for caller-only Codex tools, including starting user-visible tasks, and returns exact outcomes for Coordinator reconciliation. The former pattern in which a root task was merely aware of the Coordinator Role without running a Coordinator subagent is replaced.
 
 ## Notes
 
