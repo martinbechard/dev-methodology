@@ -1,6 +1,6 @@
 # Remediate Inherited Supported-Test Baseline Failures
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -102,3 +102,25 @@ Canonical Execution: None
 Last Contact At: 2026-08-11T22:32:45Z
 
 Next Reconciliation At: 2026-08-11T22:47:45Z
+
+## Running Execution Evidence
+
+Accepted At: 2026-08-11T22:39:07Z
+
+Owner: Root Dev Orchestrator
+
+Codex Task ID: 019ff2f9-0863-7133-aac0-ff141cf16a92
+
+Conversation ID: 019ff2f9-0863-7133-aac0-ff141cf16a92
+
+Root Role: Dev Orchestrator
+
+Parent Task ID: 019ff26f-25d0-7381-88f7-74d52717ff59
+
+Branch: codex/remediate-inherited-supported-test-baseline-failures
+
+Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/remediate-inherited-supported-test-baseline-failures
+
+Phase: Reproducing the authorized baseline
+
+Accepted Execution Evidence: The exact opaque Work Item ID was acquired with activity work. A clean, non-shallow full-history worktree was created from observed current main f1490b80e856df9cc08d24027acd3252734aac18 before implementation. The dispatch SHA f1490b80d6df33fe92f88905e8b92cacb596967d was not present in the repository; the full observed main identity is retained here without substituting the historical candidate.
