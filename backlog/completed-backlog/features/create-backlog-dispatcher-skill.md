@@ -1,6 +1,6 @@
 # Create the Backlog Dispatcher Skill
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
@@ -162,3 +162,21 @@ Accepted Baseline: ed203bdf56cf16ade738b1e4a6d54f6a471b3bdc
 Phase: Implementing
 
 Execution Evidence: The canonical caller accepted the Coordinator reservation, acquired work-item ownership, created the isolated full-history worktree, and began the user-prioritized skill implementation. Focused validation and live dispatch usage replace a dedicated Evaluation suite until the current backlog is complete.
+
+## Completion Evidence
+
+Completed At: 2026-08-11T23:49:00Z
+
+Accepted Candidate: 4b420325
+
+Main Integration: 710d9ed5
+
+Review: Fresh zero-write Dev Skill Lint Reviewer verdict GOOD after correction of task-control ownership and runtime-parent identity findings.
+
+Verification: Independent Dev Verifier verdict PASS. Both skills and YAML sources validated; OpenAI metadata, generated adapters, generated documentation data, and structural checklist were current; all 16 focused Codex task-control tests passed; five affected bundle checks passed; provenance validated against the runtime envelope; and git diff checks passed. The full bundle suite retained one unrelated pre-existing terminology role-routing failure.
+
+Live Usage: The root caller used the Coordinator subagent to reserve work, execute five caller-owned task creations, route an incoming coordination decision, correct a false reviewer-security interpretation, resume the canonical worker, reconcile this Work Item's scope, and return runtime outcomes. These operations directly exercised the initial dispatcher contract without creating a dedicated Evaluation suite.
+
+Delivered Outcome: The Dev Backlog Coordinator now runs as the decision-making subagent. The root Backlog Dispatcher performs caller-only Codex runtime operations from exact Coordinator packets and returns distinct Runtime Parent Task ID and Coordinator Task ID evidence for reconciliation. Reviewer zero-write remains a role-division boundary. The canonical Watchdog remains read-only and its configured schedule wakes it directly.
+
+Claims: Work, integration, update, and exact provider-path claims were reconciled and released at their operation boundaries.
