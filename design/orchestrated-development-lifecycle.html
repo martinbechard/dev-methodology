@@ -20,7 +20,9 @@ Task-ID-Evidence: historical-unknown
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="design-system-version" content="0.1.1">
   <title>Orchestrated Development Lifecycle</title>
+  <link rel="stylesheet" href="documentation-design-system/assets/design-system.css">
   <style>
     :root {
       --ink: #14213d;
@@ -491,7 +493,7 @@ Task-ID-Evidence: historical-unknown
     .decision-band div { padding: 1.2rem; background: var(--panel); }
     .decision-band div + div { border-left: 1px solid var(--line); }
     .decision-band strong { display: block; margin-bottom: 0.35rem; color: var(--ink); }
-    .evidence-table { width: 100%; border-collapse: collapse; background: var(--panel); box-shadow: var(--shadow); }
+    .evidence-table { width: 100%; min-width: 52rem; border-collapse: collapse; background: var(--panel); box-shadow: var(--shadow); }
     .evidence-table caption { padding: 0 0 0.75rem; color: var(--ink); font-family: var(--display); font-size: 1.15rem; font-weight: 850; text-align: left; }
     .evidence-table th, .evidence-table td { padding: 1rem; border: 1px solid var(--line); vertical-align: top; text-align: left; }
     .evidence-table th { background: var(--ink); color: white; font-family: var(--utility); font-size: 0.75rem; letter-spacing: 0.05em; text-transform: uppercase; }
@@ -535,8 +537,6 @@ Task-ID-Evidence: historical-unknown
       .decision-band { grid-template-columns: repeat(2, 1fr); }
       .decision-band div:nth-child(3) { border-left: 0; border-top: 1px solid var(--line); }
       .decision-band div:nth-child(4) { border-top: 1px solid var(--line); }
-      .evidence-table { table-layout: fixed; }
-      .evidence-table th, .evidence-table td { overflow-wrap: anywhere; }
     }
 
     @media (max-width: 560px) {
@@ -601,14 +601,27 @@ Task-ID-Evidence: historical-unknown
     }
   </style>
 </head>
-<body>
+<body id="top">
+<a class="skip-link" href="#main-content">Skip to main content</a>
 <header class="site-header">
   <a class="site-brand" href="../index.html">
     <img class="site-logo" src="../logo.png" alt="DevConsult Canada logo">
     <span>AI-Assisted Coding Toolkit Index</span>
   </a>
 </header>
-<main>
+<nav class="suite-nav" aria-label="Documentation pages">
+  <a href="agent-and-skill-definitions.html">Agent And Skill Definitions</a>
+  <a href="agent-and-skill-evaluations.html">Agent And Skill Evaluations</a>
+  <a href="agent-owned-evaluation-suites.html">Agent-Owned Evaluation Suites</a>
+  <a href="agentic-configuration.html">Agentic Configuration</a>
+  <a href="skills-modularization.html">Skills Modularization</a>
+  <a href="generic-agent-definitions-source.html">Generic Agent Definitions Source</a>
+  <a href="agent-skill-specialization-examples.html">Agent And Skill Specialization Examples</a>
+  <a href="orchestrated-development-lifecycle.html" aria-current="page">Orchestrated Development Lifecycle</a>
+  <a href="documentation-templates.html">Documentation Templates</a>
+  <a href="wiki-skills-and-project-context.html">Wiki Skills And Project Context</a>
+</nav>
+<main id="main-content">
   <nav class="document-nav" aria-label="Documentation navigation">
     <div class="document-sequence">
       <a href="agent-skill-specialization-examples.html" rel="prev"><span aria-hidden="true">&larr;</span> Previous: Examples</a>
@@ -616,11 +629,11 @@ Task-ID-Evidence: historical-unknown
     </div>
   </nav>
 
-  <section class="hero">
+  <section class="hero" aria-labelledby="page-title">
     <div class="hero-copy">
       <div>
         <span class="eyebrow">A practical operating model for many agents and one codebase</span>
-        <h1>Orchestrated Development Lifecycle</h1>
+        <h1 id="page-title">Orchestrated Development Lifecycle</h1>
       </div>
       <p>Work moves through one selected-Persistence queue when a provider is selected, or through task-local result evidence when provider none applies. Each item uses one bounded delivery lane and short coordination gates only when agents must touch the same shared object.</p>
       <p>Methodology installation first chooses and records core-skill delivery while producing and installing matching generated Agent configurations. Later project setup reuses that evidence, creates PROJECT.yaml and only the selected empty wiki or specification roots, and does not run reverse engineering. Explicit later documentation and development workflows consume the accepted configuration and routed skill references.</p>
@@ -644,6 +657,7 @@ Task-ID-Evidence: historical-unknown
   </figure>
 
   <nav class="chapter-nav" aria-label="Lifecycle chapters">
+    <a href="#top">Top</a>
     <a href="#backlog">Backlog</a>
     <a href="#file-provider">Files</a>
     <a href="#agents">Agents</a>
@@ -944,7 +958,7 @@ Task-ID-Evidence: historical-unknown
       <span class="chapter-number">Chapter 10</span>
       <div><h2 id="evidence-title">Delivery Evidence</h2><p>Different records answer different questions. None can substitute for another.</p></div>
     </div>
-    <table class="evidence-table" aria-labelledby="evidence-table-caption">
+    <div class="table-wrap"><table class="evidence-table" aria-labelledby="evidence-table-caption">
       <caption id="evidence-table-caption">Evidence Boundaries</caption>
       <thead><tr><th scope="col">Evidence source</th><th scope="col">What it proves</th><th scope="col">What it does not prove</th></tr></thead>
       <tbody>
@@ -954,7 +968,7 @@ Task-ID-Evidence: historical-unknown
         <tr><td><strong>Review and verification outputs</strong></td><td>The exact candidate assessed, findings or acceptance, checks run, retained evidence, and residual risk.</td><td>Shared mutation authority or backlog completion.</td></tr>
         <tr><td><strong>Coordination registry when enabled</strong></td><td>When resource-claim is selected, the coordination registry records temporary shared-mutation protection, conflict, heartbeat, release, and recovery state. With resource coordination none, registry evidence is absent.</td><td>Accepted content, successful integration, or completed work.</td></tr>
       </tbody>
-    </table>
+    </table></div>
     <aside class="not-a-record"><strong>Execution Evidence Boundary:</strong> Agent messages, titles, and live runtime state help people observe execution. Durable facts still belong in the selected-Persistence Work item, Git, review outputs, and the coordination registry when enabled. With provider none, task-local result evidence replaces the provider record; with resource coordination none, registry evidence is absent.</aside>
   </section>
 
@@ -986,7 +1000,7 @@ Task-ID-Evidence: historical-unknown
     <p class="source-note">See <a href="documentation-templates.html">Documentation Templates</a>, <a href="wiki-skills-and-project-context.html">Wiki Skills And Project Context</a>, and the generated <a href="agent-and-skill-definitions.html">Agent And Skill Catalog</a> for the detailed authoring and review contracts.</p>
   </section>
 </main>
-<footer class="site-footer"><p>Copyright (c) 2026 Martin.Bechard@DevConsult.ca - <a href="../LICENSE">MIT License</a></p></footer>
+<footer class="site-footer"><p>Copyright (c) 2026 Martin.Bechard@DevConsult.ca - <a href="../LICENSE">MIT License</a></p><p><span class="ds-version">Design system v0.1.1</span></p></footer>
 <script src="documentation-settings.js"></script>
 </body>
 </html>

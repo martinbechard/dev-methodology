@@ -8,7 +8,9 @@ Tests: scripts/test_documentation_design_system.py
 
 from __future__ import annotations
 
+from html import unescape
 from html.parser import HTMLParser
+import hashlib
 from pathlib import Path
 import re
 import unittest
@@ -18,7 +20,7 @@ from urllib.parse import urlsplit
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 DESIGN_ROOT = REPOSITORY_ROOT / "design" / "documentation-design-system"
 SKILL_ROOT = REPOSITORY_ROOT / "skills" / "review-documentation-design-system"
-VERSION = "0.1.0"
+VERSION = "0.1.1"
 PAGE_NAMES = (
     "index.html",
     "foundations.html",
@@ -45,6 +47,24 @@ CHECKLIST_NAMES = (
     "review-checklist-documentation-design-system-variations.md",
 )
 CHECKLIST_ID_PATTERN = re.compile(r"DDS-[A-Z]+-[0-9]{3}")
+LIFECYCLE_NAVIGATION = (
+    ("Agent And Skill Definitions", "agent-and-skill-definitions.html"),
+    ("Agent And Skill Evaluations", "agent-and-skill-evaluations.html"),
+    ("Agent-Owned Evaluation Suites", "agent-owned-evaluation-suites.html"),
+    ("Agentic Configuration", "agentic-configuration.html"),
+    ("Skills Modularization", "skills-modularization.html"),
+    ("Generic Agent Definitions Source", "generic-agent-definitions-source.html"),
+    (
+        "Agent And Skill Specialization Examples",
+        "agent-skill-specialization-examples.html",
+    ),
+    ("Orchestrated Development Lifecycle", "orchestrated-development-lifecycle.html"),
+    ("Documentation Templates", "documentation-templates.html"),
+    ("Wiki Skills And Project Context", "wiki-skills-and-project-context.html"),
+)
+LIFECYCLE_BASELINE_SEMANTIC_SHA256 = (
+    "a9efc9eb4714eef850e72be5d997b6eeb934b9a8d6d5a2ffe05a3292a6d0b546"
+)
 
 
 class _PageParser(HTMLParser):
@@ -113,6 +133,41 @@ def _parse_page(path: Path) -> tuple[str, _PageParser]:
     return text, parser
 
 
+def _lifecycle_semantic_text(source: str) -> str:
+    """Return accepted lifecycle prose after removing enumerated shell additions."""
+
+    without_additions = re.sub(
+        r'<a class="skip-link".*?</a>',
+        "",
+        source,
+        flags=re.DOTALL,
+    )
+    without_additions = re.sub(
+        r'<nav class="suite-nav".*?</nav>',
+        "",
+        without_additions,
+        flags=re.DOTALL,
+    )
+    without_additions = re.sub(
+        r'<a href="#top">Top</a>',
+        "",
+        without_additions,
+    )
+    without_additions = re.sub(
+        r'<span class="ds-version">Design system v[^<]+</span>\s*[·-]?\s*',
+        "",
+        without_additions,
+    )
+    visible_markup = re.sub(
+        r"<(?:style|script)\b.*?</(?:style|script)>",
+        "",
+        without_additions,
+        flags=re.DOTALL,
+    )
+    visible_text = re.sub(r"<[^>]+>", " ", visible_markup)
+    return " ".join(unescape(visible_text).split())
+
+
 class DocumentationDesignSystemTests(unittest.TestCase):
     """Protect the approved static pages, checklist catalog, and interaction contracts."""
 
@@ -171,6 +226,100 @@ class DocumentationDesignSystemTests(unittest.TestCase):
         self.assertIn("caller-owned pre-dispatch BLOCKED condition", skill_text)
         self.assertIn("NOT TESTED only after", skill_text)
         self.assertNotIn("and the one page-type checklist", skill_text)
+
+    def test_shared_checklist_requires_target_navigation_inventory(self) -> None:
+        """Shared review must validate the reviewed suite's real navigation contract."""
+
+        skill_text = (SKILL_ROOT / "SKILL.md").read_text(encoding="utf-8")
+        checklist_text = (
+            SKILL_ROOT
+            / "references"
+            / "review-checklist-documentation-design-system-shared.md"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn("Documentation Design System v0.1.1", skill_text)
+        self.assertIn("expected suite-navigation inventory", skill_text)
+        self.assertIn("visible label and href in exact order", skill_text)
+        self.assertIn("current-page href", skill_text)
+        self.assertIn("caller-supplied expected navigation inventory", checklist_text)
+        self.assertIn("visible labels, href values, order", checklist_text)
+        self.assertNotIn("the same ten destinations", checklist_text)
+
+    def test_page_shell_labels_navigation_specimens_as_illustrative(self) -> None:
+        """Navigation specimens must not masquerade as a target suite inventory."""
+
+        page_text = (DESIGN_ROOT / "page-shell.html").read_text(encoding="utf-8")
+        checklist_text = (
+            SKILL_ROOT
+            / "references"
+            / "review-checklist-documentation-design-system-page-shell.md"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn("Illustrative navigation specimen", page_text)
+        self.assertIn("labels and destinations are examples", page_text)
+        self.assertIn("target suite's authoritative navigation inventory", page_text)
+        self.assertIn("illustrative labels and destinations", checklist_text)
+        self.assertIn("target suite's authoritative navigation inventory", checklist_text)
+
+    def test_lifecycle_uses_versioned_shell_and_real_navigation(self) -> None:
+        """The lifecycle page must use its real suite inventory and shared shell."""
+
+        lifecycle_path = (
+            REPOSITORY_ROOT / "design" / "orchestrated-development-lifecycle.html"
+        )
+        lifecycle_text, lifecycle_parser = _parse_page(lifecycle_path)
+        suite_nav = lifecycle_text.split(
+            '<nav class="suite-nav" aria-label="Documentation pages">',
+            1,
+        )[1].split("</nav>", 1)[0]
+        navigation_links = re.findall(
+            r'<a href="([^"]+)"(?: aria-current="page")?>([^<]+)</a>',
+            suite_nav,
+        )
+
+        self.assertEqual([VERSION], lifecycle_parser.version_meta)
+        self.assertEqual(
+            ["documentation-design-system/assets/design-system.css"],
+            lifecycle_parser.stylesheets,
+        )
+        self.assertIn('<body id="top">', lifecycle_text)
+        self.assertIn(
+            '<a class="skip-link" href="#main-content">Skip to main content</a>',
+            lifecycle_text,
+        )
+        self.assertIn('<main id="main-content">', lifecycle_text)
+        self.assertEqual(
+            [(href, label) for label, href in LIFECYCLE_NAVIGATION],
+            navigation_links,
+        )
+        for _, href in LIFECYCLE_NAVIGATION:
+            with self.subTest(navigation_target=href):
+                self.assertTrue((lifecycle_path.parent / href).is_file())
+        self.assertEqual(1, suite_nav.count('aria-current="page"'))
+        self.assertIn(
+            '<a href="orchestrated-development-lifecycle.html" aria-current="page">'
+            "Orchestrated Development Lifecycle</a>",
+            suite_nav,
+        )
+        self.assertIn(
+            '<section class="hero" aria-labelledby="page-title">', lifecycle_text
+        )
+        self.assertIn(
+            '<h1 id="page-title">Orchestrated Development Lifecycle</h1>',
+            lifecycle_text,
+        )
+        self.assertIn(
+            '<nav class="chapter-nav" aria-label="Lifecycle chapters">\n    <a href="#top">Top</a>',
+            lifecycle_text,
+        )
+        self.assertIn('<div class="table-wrap"><table class="evidence-table"', lifecycle_text)
+        self.assertIn(f'<span class="ds-version">Design system v{VERSION}</span>', lifecycle_text)
+        self.assertEqual(
+            LIFECYCLE_BASELINE_SEMANTIC_SHA256,
+            hashlib.sha256(
+                _lifecycle_semantic_text(lifecycle_text).encode("utf-8")
+            ).hexdigest(),
+        )
 
     def test_forms_expose_result_count_and_complete_dialog_keyboard_contract(self) -> None:
         """Form demonstrations must expose results and a real modal focus loop."""

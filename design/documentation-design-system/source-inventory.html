@@ -17,7 +17,7 @@ Reasoning-Effort-Evidence: runtime-supplied
 Task-ID-Evidence: runtime-supplied
 -->
 <html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="design-system-version" content="0.1.0"><title>Source Inventory · Documentation Design System</title><link rel="stylesheet" href="assets/design-system.css"></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="design-system-version" content="0.1.1"><title>Source Inventory · Documentation Design System</title><link rel="stylesheet" href="assets/design-system.css"></head>
 <body id="top">
   <a class="skip-link" href="#main-content">Skip to main content</a><header class="ds-header"><a class="site-brand" href="index.html"><img class="site-logo" src="assets/dev-methodology-logo.png" alt="DevConsult Canada logo"><span>Documentation Design System</span></a></header>
   <nav class="suite-nav" aria-label="Design system pages"><a href="index.html">Index</a><a href="foundations.html">Foundations</a><a href="page-shell.html">Page shell</a><a href="content.html">Content</a><a href="data-display.html">Data display</a><a href="forms-and-actions.html">Forms</a><a href="diagrams.html">Diagrams</a><a href="accessibility.html">Accessibility</a><a href="variations.html">Variations</a><a href="source-inventory.html" aria-current="page">Inventory</a></nav>
@@ -62,5 +62,5 @@ Task-ID-Evidence: runtime-supplied
     </section>
 
     <section class="section" id="method" aria-labelledby="method-title"><div class="section-heading"><h2 id="method-title">Audit Method</h2><p>The audit used the tracked-file inventory at the declared immutable commit, then separated design-relevant sources from format-only fixtures before inspecting semantics, classes, embedded styles, assets, and scripts.</p></div><ol><li>List every tracked <code>*.html</code> file at the declared commit.</li><li>Compare the tracked list with the live checkout.</li><li>Classify primary documentation, the styled report example, interaction fixtures, and excluded format-only fixtures.</li><li>Extract tag counts, class use, headings, shared assets, tokens, selectors, and interactive elements from the 16 included sources.</li><li>Inspect unique structures and accessibility semantics in each included file.</li><li>Record common elements and inconsistent variants with source paths, advantages, disadvantages, and standardization status.</li></ol><div class="callout"><p>The audit reads only the declared HTML source boundary. It does not modify, stage, or overwrite audited pages or excluded fixtures.</p></div></section>
-  </main><footer class="ds-footer"><p><span class="ds-version">Design system v0.1.0</span> · Source inventory · 16 design-relevant sources reviewed from 17 tracked HTML files.</p></footer>
+  </main><footer class="ds-footer"><p><span class="ds-version">Design system v0.1.1</span> · Source inventory · 16 design-relevant sources reviewed from 17 tracked HTML files.</p></footer>
 </body></html>

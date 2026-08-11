@@ -1,6 +1,6 @@
 ---
 name: review-documentation-design-system
-description: Review a documentation HTML page against the adopted Documentation Design System v0.1.0 contracts and return evidence-backed pass or fail results. Use for design-system conformance reviews of an index, foundation, shell, content, data-display, form, diagram, accessibility, variation-audit, or source-inventory page.
+description: Review a documentation HTML page against the adopted Documentation Design System v0.1.1 contracts and return evidence-backed pass or fail results. Use for design-system conformance reviews of an index, foundation, shell, content, data-display, form, diagram, accessibility, variation-audit, or source-inventory page.
 metadata:
   category: documentation-methodology
 ---
@@ -32,9 +32,12 @@ Review one rendered HTML page and its source. Do not treat the audit examples in
 - The HTML file or rendered URL under review.
 - Exactly one supplied checklist from this skill's references.
 - The design-system version it claims.
+- For the Shared checklist, the expected suite-navigation inventory as each visible label and href in exact order, plus the current-page href.
 - Browser access when behavior or responsive rendering is in scope.
 
 The caller must supply one nonblank page identity, one nonblank checklist identity, and the exact unique expected-ID inventory. A missing, ambiguous, malformed, or whitespace-only identity is a caller-owned pre-dispatch BLOCKED condition; do not invoke the checklist runner or choose an identity silently.
+
+For a Shared-checklist invocation, the caller must also supply the target page's expected suite-navigation inventory. Each visible label and href must be nonblank, each href must be unique, and the current-page href must identify exactly one inventory entry. A missing, malformed, or ambiguous navigation inventory is a caller-owned pre-dispatch BLOCKED condition. Do not substitute labels or destinations from a design-system specimen.
 
 Use NOT TESTED only after the exact page, checklist, and expected-ID inventory exists and required source, rendered, responsive, keyboard, or other review evidence cannot be obtained. Name that missing evidence; do not infer conformance.
 

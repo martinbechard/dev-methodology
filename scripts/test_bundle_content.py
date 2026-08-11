@@ -11566,7 +11566,7 @@ Visible after.
         self.assertIn("@media (prefers-color-scheme: dark)", lifecycle_text)
         self.assertIn("overflow-x: auto", lifecycle_text)
         self.assertIn(
-            '<footer class="site-footer"><p>Copyright (c) 2026 Martin.Bechard@DevConsult.ca - <a href="../LICENSE">MIT License</a></p></footer>',
+            '<footer class="site-footer"><p>Copyright (c) 2026 Martin.Bechard@DevConsult.ca - <a href="../LICENSE">MIT License</a></p><p><span class="ds-version">Design system v0.1.1</span></p></footer>',
             lifecycle_text,
         )
 
