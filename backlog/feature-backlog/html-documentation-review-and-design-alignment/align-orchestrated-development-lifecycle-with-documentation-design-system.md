@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -73,4 +73,22 @@ Target page: design/orchestrated-development-lifecycle.html
 
 - This item must not start before its page-specific text review is Completed.
 - Creation of this work item does not dispatch it while backlog crisis recovery remains active.
+
+## Starting Handoff Evidence
+
+Starting Recorded At: 2026-08-11T22:31:21Z
+
+Coordinator: Codex task 019ff26f-25d0-7381-88f7-74d52717ff59
+
+Normalized Objective: Align design/orchestrated-development-lifecycle.html with the Documentation Design System while preserving the accepted content baseline at main integration 81c430e04d3f628ceae9a7a521d43f6ea9e2371d, then complete independent design-system review, focused browser verification, main-branch delivery, provider closure, and cleanup.
+
+Intended Root Role: Dev Orchestrator
+
+Launch Result: Requested after this durable reservation
+
+Canonical Execution: None
+
+Last Contact At: 2026-08-11T22:31:21Z
+
+Next Reconciliation At: 2026-08-11T22:46:21Z
 - Dependency reconciliation recorded Ready at 2026-08-11T22:10:25Z. This notification does not dispatch or perform the design-system migration.
