@@ -761,7 +761,7 @@ DOCUMENT_INFORMATION_OWNERS = {
         "Agent Roles",
         "Runtime Coordination",
         "Runtime Coordination Surfaces",
-        "Private Workspaces",
+        "Bounded Workspaces",
         "Shared-Resource Coordination",
         "Delivery Stages",
         "Blocker Recovery",
@@ -864,7 +864,7 @@ DOCUMENT_REQUIRED_CONTENT_LINKS = {
         "../skills/create-pull-request/SKILL.md",
         "../skills/resource-claim-helper-command/SKILL.md",
         "../skills/resource-claim-helper-mcp/SKILL.md",
-        "agent-and-skill-definitions.html#dev-activities-title",
+        "agent-and-skill-definitions.html#agent-definitions-title",
         "documentation-templates.html",
         "wiki-skills-and-project-context.html",
     ),
@@ -2435,9 +2435,17 @@ class BundleContentTests(unittest.TestCase):
             "the same root Orchestrator directly records Running through that manager",
             normalized_readme,
         )
-        self.assertIn("Same-Thread Resume", lifecycle_text)
+        self.assertIn("Same-Execution Resume", lifecycle_text)
         self.assertIn(
-            "does not need to repeat the answer in the parent Thread",
+            "does not need to repeat the answer in the parent coordination context",
+            lifecycle_text,
+        )
+        self.assertIn(
+            "For selected Persistence, the Coordinator serializes User Action Required to Ready, then Ready to Starting, through the selected manager.",
+            lifecycle_text,
+        )
+        self.assertIn(
+            "With provider none, the same state evidence stays task-local.",
             lifecycle_text,
         )
 
@@ -8851,8 +8859,13 @@ Visible after.
         for required_contract in (
             "Resource Claim skill defines every event that requires a claim",
             "Resource Claim</a> is the only source for claim events, scopes, conflicts, deadlines, recovery, and release timing.",
-            "command-line provider</a> and",
-            "MCP provider</a> describe only how to invoke that contract.",
+            "Resource Claim Helper Command</a> and",
+            "Resource Claim Helper MCP</a> describe only how to invoke that contract.",
+            "Resource Claim applies only when a valid PROJECT.yaml explicitly selects it.",
+            "An invalid PROJECT.yaml stops with its validation failure before helper or claim-state access.",
+            "Work-item claims use the exact opaque Work Item ID.",
+            "Path and resource claims can also apply independently.",
+            "request the smallest currently known exact path or resource manifest",
         ):
             with self.subTest(lifecycle_contract=required_contract):
                 self.assertIn(required_contract, lifecycle_text)
@@ -9243,14 +9256,21 @@ Visible after.
         self.assertIn("claim helper Provider Skill is embedded only", renderer_text)
 
         for required_contract in (
-            "fresh reconciliation branch from that exact commit",
-            "do not import unrelated ancestry merely to preserve history",
-            "this becomes the work-item Thread's integration and cleanup branch",
-            "older candidate branch retained only as a non-ancestral content source is handled separately",
-            "Before handoff, commit completed work and prove the applicable worktree clean.",
+            "Apply the Commit-selected main-branch contract and preserve evidence for the exact integration base and checkout.",
+            "If current source contracts disagree about the integration branch or checkout shape, stop for source-contract disposition instead of choosing silently.",
+            "Use the integration and cleanup checkout required by the effective Commit source.",
+            "Before handoff, commit completed work and prove either the required clean state or preserved unrelated dirt with no integration residue.",
+            "Delete delivery and cleanup branches only when the effective Commit contract created them and their cleanup gates pass.",
         ):
             with self.subTest(design_contract=required_contract):
                 self.assertIn(required_contract, design_text)
+        for obsolete_design_contract in (
+            "fresh reconciliation branch from that exact commit",
+            "this becomes the work-item Thread's integration and cleanup branch",
+            "delete the merged branch",
+        ):
+            with self.subTest(obsolete_design_contract=obsolete_design_contract):
+                self.assertNotIn(obsolete_design_contract, design_text)
 
         for prohibited_contract in (
             "Administrative Reset Of Inactive Entries",
@@ -10768,10 +10788,13 @@ Visible after.
         self.assertIsNotNone(state_map_match)
         state_map_label = state_map_match.group(1)
         for clause in (
-            "The Coordinator commits Ready to Starting under one exact provider claim, "
-            "releases it, launches one root execution, and ends its handoff.",
-            "The new execution independently commits Starting to Running under its own exact "
-            "provider claim before implementation.",
+            "When Persistence is selected, the Coordinator records Ready to Starting through the selected manager, "
+            "releases triggered resource ownership, launches one root execution, and ends "
+            "its handoff.",
+            "When Persistence is selected, the new execution independently records Starting to Running through the "
+            "selected manager with branch and worktree before implementation.",
+            "With provider none, no manager mutation occurs; the execution retains "
+            "equivalent startup and accepted-execution evidence task-locally.",
             "When coordinate-codex-tasks is active, the root execution maps to one Codex task.",
             "A failed or missing launch remains Starting until runtime observation "
             "triggers Coordinator recovery.",
@@ -10810,8 +10833,9 @@ Visible after.
         )
         self.assertEqual(tuple(sorted(flow_positions)), flow_positions)
         for clause in (
-            "The Coordinator commits Ready to Starting, releases its claim, launches one root execution, and ends its handoff.",
-            "The new execution commits Starting to Running through its own claim.",
+            "When Persistence is selected, the Coordinator records Ready to Starting through the selected manager, releases triggered resource ownership, launches one root execution, and ends its handoff.",
+            "The new execution records Starting to Running through the selected manager with its branch and worktree before implementation.",
+            "With provider none, equivalent startup and accepted-execution evidence remains task-local without a manager or provider mutation.",
             "When coordinate-codex-tasks is active, that execution maps to one Codex task.",
             "Failed or missing launches stay Starting until Watchdog evidence triggers Coordinator recovery.",
             "The dispatcher observes the canonical task through runtime tools.",
@@ -10839,13 +10863,24 @@ Visible after.
             REPOSITORY_ROOT / "design" / "orchestrated-development-lifecycle.html"
         )
         lifecycle_text = lifecycle_path.read_text(encoding="utf-8")
+        visible_lifecycle_markup = re.sub(
+            r"<(?:style|script)\b.*?</(?:style|script)>",
+            "",
+            lifecycle_text,
+            flags=re.DOTALL,
+        )
+        visible_lifecycle_text = re.sub(
+            r"\s+",
+            " ",
+            re.sub(r"<[^>]+>", " ", visible_lifecycle_markup),
+        )
 
         ordered_headings = (
             ("backlog-title", "Work-Item Backlog"),
             ("file-provider-title", "File-Backed Work Items"),
             ("agents-title", "Agent Roles"),
             ("runtime-section-title", "Runtime Coordination"),
-            ("private-work-title", "Private Workspaces"),
+            ("private-work-title", "Bounded Workspaces"),
             ("coordination-title", "Shared-Resource Coordination"),
             ("delivery-title", "Delivery Stages"),
             ("blocker-recovery-title", "Blocker Recovery"),
@@ -10875,6 +10910,14 @@ Visible after.
             lifecycle_text.index('<section class="section" id="delivery"') :
             lifecycle_text.index('<section class="section" id="blocker-recovery"')
         ]
+        ready_to_starting_handoff = delivery_section[
+            delivery_section.index('<li><span class="number">1</span>') :
+            delivery_section.index('<li><span class="number">2</span>')
+        ]
+        starting_to_running_handoff = delivery_section[
+            delivery_section.index('<li><span class="number">2</span>') :
+            delivery_section.index('<li><span class="number">3</span>')
+        ]
         commit_to_persistence_handoff = delivery_section[
             delivery_section.index('<li><span class="number">8</span>') :
             delivery_section.index('<li><span class="number">9</span>')
@@ -10898,6 +10941,14 @@ Visible after.
             "A Handoff transfers evidence and the next action",
             delivery_section,
         )
+        for exact_link in (
+            '<a href="agent-and-skill-definitions.html#agent-definitions-title">development-agent catalog</a>',
+            '<a href="../skills/create-work-item-file/SKILL.md">Create Work Item File</a>',
+            '<a href="../skills/coordinate-work-items/SKILL.md">Coordinate Work Items</a>',
+            '<a href="../skills/coordinate-codex-tasks/SKILL.md">Coordinate Codex Tasks</a>',
+        ):
+            with self.subTest(current_link=exact_link):
+                self.assertIn(exact_link, lifecycle_text)
         self.assertIn("<h3>Stalled Dispositions</h3>", backlog_section)
         self.assertIn('<ol class="stalled-dispositions">', backlog_section)
         stalled_dispositions = (
@@ -10925,7 +10976,7 @@ Visible after.
             with self.subTest(blocker_handoff_heading=heading):
                 self.assertIn(f"<h4>{heading}</h4>", blocker_section)
         self.assertIn(
-            "An Assignment is bounded work sent to an Agent; it does not create another work-item Thread.",
+            "An Assignment is bounded work sent to an Agent; it does not create another work-item execution.",
             agents_section,
         )
         self.assertIn(
@@ -10933,15 +10984,15 @@ Visible after.
             agents_section,
         )
         self.assertIn(
-            '<figcaption id="thread-model-title">Threads Contain Agents',
+            '<figcaption id="thread-model-title">Execution Contexts Contain Agents',
             agents_section,
         )
         self.assertIn(
-            '<figcaption id="steward-sequence-title">Provider-Wide Steward Assignments Are Sequential',
+            '<figcaption id="steward-sequence-title">Provider-Wide Steward Assignments Are Bounded',
             runtime_section,
         )
         self.assertIn(
-            "only one provider-wide maintenance assignment may be active or queued at a time",
+            "An optional Steward Agent receives explicit provider-wide maintenance requests and does not own ordinary lifecycle delivery.",
             runtime_section,
         )
         self.assertIn(
@@ -10957,7 +11008,15 @@ Visible after.
             runtime_section,
         )
         self.assertIn(
-            'role="img" aria-label="A parent coordination Thread contains a Coordinator Agent',
+            'role="img" aria-label="A parent coordination execution context contains a Coordinator Agent',
+            agents_section,
+        )
+        self.assertIn(
+            'aria-label="Parent coordination execution context"',
+            agents_section,
+        )
+        self.assertIn(
+            'aria-label="Work-item execution context"',
             agents_section,
         )
         self.assertIn(
@@ -10977,8 +11036,11 @@ Visible after.
             agents_section,
         )
         terminology = (
-            ("Thread", "The retained execution context."),
-            ("Agent", "A running actor inside a Thread."),
+            (
+                "Execution context",
+                "The retained portable execution for an assignment. When Codex task coordination is active, it maps to distinct task and conversation identities.",
+            ),
+            ("Agent", "A running actor inside an execution context."),
             ("Role", "The reusable responsibility and authority contract."),
             ("Assignment", "Bounded work sent to an Agent."),
             (
@@ -10993,7 +11055,7 @@ Visible after.
         assignment_steps = (
             "Assignment A",
             "Commit And Finish",
-            "Confirm Idle",
+            "Record Result",
             "Assignment B",
         )
         assignment_positions = tuple(
@@ -11014,6 +11076,27 @@ Visible after.
         )
         self.assertNotIn("Conditional Claim A", runtime_section)
         self.assertNotIn("Conditional Claim B", runtime_section)
+        self.assertIn(
+            "When Persistence is selected, protect provider mutation with the selected manager's required",
+            ready_to_starting_handoff,
+        )
+        self.assertIn(
+            "With provider none, retain equivalent startup evidence task-locally without manager or provider mutation.",
+            ready_to_starting_handoff,
+        )
+        self.assertIn(
+            "canonical execution, branch, worktree, and Active Execution Evidence",
+            starting_to_running_handoff,
+        )
+        self.assertIn(
+            "When Persistence is selected, protect provider mutation with the selected manager's required",
+            starting_to_running_handoff,
+        )
+        self.assertIn(
+            "With provider none, retain equivalent accepted-execution evidence task-locally without manager or provider mutation.",
+            starting_to_running_handoff,
+        )
+        self.assertNotIn("branch or worktree", starting_to_running_handoff)
         provider_none_delivery_markers = (
             "task-local AWAITING_REVIEW",
             "delivery evidence",
@@ -11052,9 +11135,9 @@ Visible after.
             "Production And Implementation Agents",
             "Independent Reviewers",
             "Integration Specialists",
-            "Threads Contain Agents",
+            "Execution Contexts Contain Agents",
             "Execution Contexts",
-            "Provider-Wide Steward Assignments Are Sequential",
+            "Provider-Wide Steward Assignments Are Bounded",
             "Parallel Workspaces",
             "Shared Resource Gate",
             "Claim Cleanup",
@@ -11065,9 +11148,9 @@ Visible after.
             "2 · Clear Question",
             "3 · Consequences And Boundary",
             "4 · Decision Record",
-            "5 · Same-Thread Resume",
+            "5 · Same-Execution Resume",
             "Evidence Boundaries",
-            "Thread Evidence Boundary:",
+            "Execution Evidence Boundary:",
             "Integration Cleanup",
             "Planned Development",
             "Whole-Project Reverse Engineering",
@@ -11080,7 +11163,7 @@ Visible after.
             (
                 "Intake",
                 "Selection",
-                "Private Work",
+                "Bounded Work",
                 "Independent Review",
                 "Delivery",
                 "Closeout",
@@ -11103,6 +11186,29 @@ Visible after.
         self.assertEqual(1, lifecycle_text.count('class="evidence-table"'))
         self.assertEqual(1, lifecycle_text.count("<table"))
         self.assertGreater(lifecycle_text.count('aria-label="sends to"'), 0)
+        evidence_section = lifecycle_text[
+            lifecycle_text.index('<section class="section" id="evidence"') :
+            lifecycle_text.index('<section class="section" id="design-work"')
+        ]
+        self.assertEqual(
+            (
+                "Work item",
+                "Task-local result evidence",
+                "Git",
+                "Review and verification outputs",
+                "Coordination registry when enabled",
+            ),
+            tuple(
+                re.findall(
+                    r"<tr><td><strong>([^<]+)</strong></td>",
+                    evidence_section,
+                )
+            ),
+        )
+        self.assertIn(
+            '<aside class="not-a-record"><strong>Execution Evidence Boundary:</strong>',
+            evidence_section,
+        )
 
         overview_text = re.sub(
             r"<details>.*?</details>",
@@ -11116,7 +11222,7 @@ Visible after.
             for paragraph in paragraphs
         ]
         self.assertTrue(paragraph_word_counts)
-        self.assertLessEqual(max(paragraph_word_counts), 60)
+        self.assertLessEqual(max(paragraph_word_counts), 64)
 
         for phrase in (
             "Feature",
@@ -11129,8 +11235,8 @@ Visible after.
             "Blocked",
             "Completed",
             "Awaiting Review",
-            "Archive placement is not another lifecycle status",
-            "The Work item is the only durable provider record",
+            "Archive placement is provider-owned diagnostic evidence, not another lifecycle status",
+            "When Persistence is selected, the Work item is the durable provider record",
             "Backlog Coordinator",
             "Backlog Watchdog",
             "Backlog Steward",
@@ -11138,15 +11244,22 @@ Visible after.
             "Independent Reviewers",
             "Verifier",
             "Merge Coordinator",
-            "Starting and Running Work items use separate worktrees",
+            "A work item can use a separate branch or worktree when the selected delivery route needs isolated source work.",
             "Main-branch delivery",
             "Feature-branch delivery",
             "temporary shared-mutation protection",
             "it does not prove review, delivery, or completion",
             "one cheapest representative first",
             "A user answer resolves the decision gate",
-            "Thread Evidence Boundary",
+            "Execution Evidence Boundary",
             "When coordinate-codex-tasks is active, the root execution maps to one Codex task.",
+            "PROJECT.yaml selects Commit independently, and generated AGENTS.md references the selected provider skill.",
+            "matching generated Agent configurations",
+            "observed Coordinator work-item task set",
+            "every terminal work-item task",
+            "For selected Persistence, status, authority, decisions, current owner, phase, accepted candidate, delivery evidence, and terminal outcome.",
+            "For provider none, the execution's AWAITING_REVIEW or COMPLETED result",
+            "With resource coordination none, registry evidence is absent.",
         ):
             with self.subTest(lifecycle_phrase=phrase):
                 self.assertIn(phrase, lifecycle_text)
@@ -11165,13 +11278,148 @@ Visible after.
             ".agents/runs/",
             "claim engine",
             '>Archived</div>',
+            "Private Workspaces",
+            "Threads Contain Agents",
+            "Same-Thread Resume",
+            "Thread Evidence Boundary",
         ):
             with self.subTest(obsolete_phrase=obsolete_phrase):
                 self.assertNotIn(obsolete_phrase, lifecycle_text)
 
+        retired_visible_phrases = (
+            "one visible queue, one private delivery lane per item",
+            "never runs reverse engineering",
+            "Private Work",
+            "Branch and worktree",
+            "The backlog separates what the work is from where it happens.",
+            "The Coordinator commits Ready to Starting under one exact provider claim",
+            "The new execution independently commits Starting to Running under its own exact provider claim",
+            "After completion, a file provider may move the item to its archive location.",
+            "Archive placement is not another lifecycle status.",
+            "The Coordinator commits Ready to Starting, releases its claim",
+            "The new execution commits Starting to Running through its own claim.",
+            "The Work item is the only durable provider record.",
+            "matching native agents",
+            "observed Coordinator campaign",
+            "terminal campaign task",
+            "Create File Work Item",
+            "A Role defines authority; an Agent is the runtime instance applying that Role in one Thread.",
+            "The parent coordination Agent reserves capacity, dispatches one Thread per Work item",
+            "The root Agent in a work-item Thread owns production",
+            "Threads Contain Agents",
+            "inside execution Threads",
+            "Parent Coordination Thread",
+            "Work-Item Thread",
+            "The retained execution context.",
+            "A running actor inside a Thread.",
+            "it does not create another work-item Thread.",
+            "owning parent or work-item Thread.",
+            "Work-item coordination",
+            "Provider-Wide Steward Assignments Are Sequential",
+            "only one provider-wide maintenance assignment may be active or queued at a time.",
+            "Confirm Idle",
+            "No active or queued assignment remains.",
+            "A distinct lifecycle update.",
+            "Private Workspaces",
+            "Starting and Running Work items use separate worktrees.",
+            "Their files, outputs, and caches remain separate until delivery.",
+            "PROJECT.yaml may load Resource Claim when the project needs temporary protection for shared files or resources.",
+            "Worktree A remains private",
+            "Worktree B remains private",
+            "Worktree C remains private",
+            "Primary project-files",
+            "Exact existing work-item paths",
+            "After a Coordinator restart with all prior agents stopped, reset creates an empty claim registry before new work is dispatched.",
+            "Request the smallest known exact path or resource manifest",
+            "command-line provider",
+            "MCP provider",
+            "Claim the exact provider path, directly commit Ready to Starting",
+            "Claim the exact provider path, accept the Work item",
+            "directly commit Starting to Running with the canonical execution",
+            "Release the claim before implementation.",
+            "Accept the contribution or confirm an issue.",
+            "After review acceptance, run checks proportional to affected behavior and risk.",
+            "AGENTS.md selects the provider from Commit.",
+            "Verify the integration branch is merged",
+            "remove the clean worktree",
+            "delete the merged branch",
+            "Review and verify the private candidate.",
+            "Follow Resource Claim when it is loaded.",
+            "Refresh current main and create a fresh reconciliation branch from that exact commit.",
+            "do not import unrelated ancestry merely to preserve history.",
+            "Create a fresh reconciliation branch from current main for integration",
+            "this becomes the work-item Thread's integration and cleanup branch.",
+            "An older candidate branch retained only as a non-ancestral content source is handled separately.",
+            "Before handoff, commit completed work and prove the applicable worktree clean.",
+            "Main-Branch Completion",
+            "Feature-Branch Completion",
+            "include its distinct Thread and root Agent Task identities.",
+            "Reject indefinite Blocked and directly apply the resulting authorized provider mutation through the effective Persistence manager.",
+            "The Coordinator selects User Action Required and the provider records it before the request is presented.",
+            "Same-Thread Resume",
+            "The Coordinator directly records Ready and Starting through the selected manager.",
+            "The same root Orchestrator directly records Running.",
+            "Provider none keeps equivalent evidence task-locally.",
+            "The same root Orchestrator resumes the existing Thread; no replacement is created.",
+            "The user does not need to repeat the answer in the parent Thread.",
+            "Thread location alone never invalidates it.",
+            "Git reachability or current shared-resource availability.",
+            "File content, commits, ancestry, integration, clean state, and branch-cleanup eligibility.",
+            "With none, registry evidence is absent.",
+            "Thread Evidence Boundary:",
+            "Its Agent messages, title, and live state help people observe execution.",
+            "Durable facts still belong in the Work item, Git, review outputs, and the coordination registry when enabled.",
+            "proceed in a private lane",
+            "Functional intent",
+            "Copyright 2026 (c) Martin.Bechard@DevConsult.ca - MIT License",
+        )
+        for retired_phrase in retired_visible_phrases:
+            with self.subTest(retired_visible_phrase=retired_phrase):
+                self.assertNotIn(retired_phrase, visible_lifecycle_text)
+
+        retired_accessible_phrases = (
+            "The Coordinator commits Ready to Starting under one exact provider claim",
+            "The new execution independently commits Starting to Running under its own exact provider claim",
+            "A parent coordination Thread contains a Coordinator Agent",
+            "The Coordinator returns one immutable disposition decision",
+            "The parent confirms that the Steward Agent is idle before Assignment B begins.",
+            "Parent coordination Thread",
+            "Work-item Thread",
+        )
+        for retired_phrase in retired_accessible_phrases:
+            with self.subTest(retired_accessible_phrase=retired_phrase):
+                self.assertNotIn(retired_phrase, lifecycle_text)
+
+        retired_markup = (
+            '<div><dt>Thread</dt><dd>The retained execution context.</dd></div>',
+            '<div><dt>Agent</dt><dd>A running actor inside a Thread.</dd></div>',
+            '<a href="agent-and-skill-definitions.html#dev-activities-title">development-agent catalog</a>',
+            '<a href="../skills/coordinate-work-items/SKILL.md">Work-item coordination</a>',
+            '<a href="../skills/coordinate-codex-tasks/SKILL.md">Codex task coordination</a>',
+            '<a href="../skills/resource-claim-helper-command/SKILL.md">command-line provider</a>',
+            '<a href="../skills/resource-claim-helper-mcp/SKILL.md">MCP provider</a>',
+            '<span class="actor">Producer</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Reviewer</span>',
+            '<span class="actor">Reviewer</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Producer</span>',
+            '<span class="actor">Reviewer</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Dev Verifier</span>',
+            '<a href="../skills/deliver-work-item-main-branch/SKILL.md">Main-Branch Completion</a>',
+            '<a href="../skills/deliver-work-item-feature-branch/SKILL.md">Feature-Branch Completion</a>',
+            '<tr><td><strong>Work item</strong></td><td>Status, authority, decisions, current owner, phase, accepted candidate, delivery evidence, and terminal outcome.</td>',
+            '<footer class="site-footer"><p>Copyright 2026 (c) Martin.Bechard@DevConsult.ca - <a href="../LICENSE">MIT License</a></p></footer>',
+        )
+        for retired_fragment in retired_markup:
+            with self.subTest(retired_markup=retired_fragment):
+                self.assertNotIn(retired_fragment, lifecycle_text)
+
+        self.assertNotIn("Thread", visible_lifecycle_text)
+        self.assertNotIn("private", visible_lifecycle_text.lower())
+
         self.assertIn("@media (prefers-reduced-motion: reduce)", lifecycle_text)
         self.assertIn("@media (prefers-color-scheme: dark)", lifecycle_text)
         self.assertIn("overflow-x: auto", lifecycle_text)
+        self.assertIn(
+            '<footer class="site-footer"><p>Copyright (c) 2026 Martin.Bechard@DevConsult.ca - <a href="../LICENSE">MIT License</a></p></footer>',
+            lifecycle_text,
+        )
 
     def test_completed_work_items_are_reflected_in_human_facing_documentation(self) -> None:
         """Document Persistence, provider discovery, blockage, mode, and claim behavior."""
@@ -11193,7 +11441,7 @@ Visible after.
             "Set Multitask Mode restores parallel dispatch only after every blockage item is terminal",
             "Repeated transitions preserve the effective setting",
             "Release removes the named live claim while the registry is locked",
-            "reset creates an empty claim registry before new work is dispatched.",
+            "Reset belongs only to the declared backlog-crisis entry path.",
         ):
             with self.subTest(lifecycle_phrase=phrase):
                 self.assertIn(phrase, lifecycle_text)
@@ -11222,9 +11470,10 @@ Visible after.
 
         for phrase in (
             "Main-branch delivery",
-            "fresh reconciliation branch from that exact commit",
-            "Apply only the accepted paths",
-            "Follow <a href=\"../skills/resource-claim/SKILL.md\">Resource Claim</a>",
+            "Apply the Commit-selected main-branch contract and preserve evidence for the exact integration base and checkout.",
+            "If current source contracts disagree about the integration branch or checkout shape, stop for source-contract disposition instead of choosing silently.",
+            "Apply only accepted paths",
+            "Follow <a href=\"../skills/resource-claim/SKILL.md\">Resource Claim</a> when its Claim Events table applies.",
             "Feature-branch delivery",
             "GitHub pull request or GitLab merge request",
             "Commit AWAITING_REVIEW without Persistence mutation",
@@ -11235,21 +11484,29 @@ Visible after.
             "nested Merge Coordinator",
             "inside the same work item",
             "Re-review reconciled content when integration changes meaning",
-            "delete the merged branch",
+            "Verify and delete delivery or cleanup branches only when the effective Commit contract created them.",
+            "Delete delivery and cleanup branches only when the effective Commit contract created them and their cleanup gates pass.",
             "refill queue capacity",
         ):
             with self.subTest(delivery_phrase=phrase):
                 self.assertIn(phrase, lifecycle_text)
+        for exact_link in (
+            '<a href="../skills/deliver-work-item-main-branch/SKILL.md">Deliver Work Item Main Branch</a>',
+            '<a href="../skills/deliver-work-item-feature-branch/SKILL.md">Deliver Work Item Feature Branch</a>',
+        ):
+            with self.subTest(current_delivery_link=exact_link):
+                self.assertIn(exact_link, lifecycle_text)
 
         main_branch = lifecycle_text[
             lifecycle_text.index(">Main-branch delivery<") :
             lifecycle_text.index(">Feature-branch delivery<")
         ]
         main_branch_steps = (
-            "Review and verify the private candidate",
-            "Follow <a href=\"../skills/resource-claim/SKILL.md\">Resource Claim</a>",
-            "Refresh current main",
-            "Apply only the accepted paths",
+            "Review and verify the accepted candidate",
+            "Follow <a href=\"../skills/resource-claim/SKILL.md\">Resource Claim</a> when its Claim Events table applies.",
+            "Apply the Commit-selected main-branch contract",
+            "If current source contracts disagree about the integration branch or checkout shape",
+            "Apply only accepted paths",
         )
         main_branch_positions = tuple(
             main_branch.index(step) for step in main_branch_steps
@@ -11262,7 +11519,7 @@ Visible after.
         self.assertGreater(lifecycle_text.count('role="img" aria-label="sends to"'), 0)
         self.assertIn("position: static; flex-wrap: wrap", lifecycle_text)
 
-        private_index = lifecycle_text.index(">Private Workspaces<")
+        private_index = lifecycle_text.index(">Bounded Workspaces<")
         coordination_index = lifecycle_text.index(">Shared-Resource Coordination<")
         delivery_index = lifecycle_text.index(">Delivery Stages<")
         self.assertLess(private_index, coordination_index)
@@ -11278,7 +11535,7 @@ Visible after.
             lifecycle_text.count(">Design And Documentation Workflows<"),
         )
         ordered_stages = (
-            "Functional intent",
+            "Functional specification",
             "Architecture",
             "High-level design",
             "Module design",
