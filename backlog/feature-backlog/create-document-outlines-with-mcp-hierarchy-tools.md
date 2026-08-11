@@ -1,8 +1,6 @@
 # Create Document Outline Skill with MCP Hierarchy Tools
 
-Status: Blocked
-
-Owner: Unowned
+Status: Ready
 
 Type: Feature
 
@@ -54,11 +52,9 @@ The user requested a new Skill that converts selected source material into an HT
 
 - remove-superseded-document-outline-skill-implementation
 
-Blocker owner: Work Item remove-superseded-document-outline-skill-implementation.
+Dependency Resolution: Satisfied by completed Work Item remove-superseded-document-outline-skill-implementation. Main delivery commit 955cc4b68e3eb7ef570f5f16213c2591e5f7a9ab removed the rejected Skill package, helper, routing, probe, tests, and generated projections.
 
-Blocked to Ready condition: remove-superseded-document-outline-skill-implementation is Completed with the rejected Skill package, helper, routing, probe, tests, and generated projections removed from main.
-
-Requested Coordinator action: complete the removal item, confirm the obsolete implementation is absent, then transition this Work Item from Blocked to Ready before dispatch.
+Next Action: Reserve a new implementation task that starts from the current repository state and follows this Work Item without reusing the rejected implementation.
 
 ## Verification
 
