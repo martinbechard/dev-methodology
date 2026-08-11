@@ -968,11 +968,11 @@ class RepositoryCoverageCliTests(unittest.TestCase):
             ROOT / "design" / "agent-skill-test-coverage-checklist.md"
         ).read_text(encoding="utf-8")
         self.assertIn(
-            "30 conceptual agents and 131 bundled skills have structural coverage",
+            "33 conceptual agents and 145 bundled skills have structural coverage",
             checklist,
         )
         self.assertIn(
-            "29 agents are scenario-declared and 129 skills are probe-declared",
+            "32 agents are scenario-declared and 143 skills are probe-declared",
             checklist,
         )
         self.assertIn(

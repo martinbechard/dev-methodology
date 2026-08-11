@@ -71,19 +71,19 @@ _PRODUCERS = {
 }
 _TARGET_DIGESTS = {
     "skills/set-solo-mode/SKILL.md": (
-        "c167eb32a7e58a220430bb9bbb4ec1b07dfd69f022440213dff2835785ff1311"
+        "57d1301e1d7f9a3feb0b842601438908464bff96e55d9f30d7bacf3d386a4cce"
     ),
     "skills/set-multitask-mode/SKILL.md": (
-        "8792181e5eb0644f06e3e867c2862bb8aaeb3a2833dac28938d2d94935657d19"
+        "58db246cf60121136d7d363de6ea7b38d87c4c8f5c1093b945f69f1b4aec477b"
     ),
     "skills/resource-claim/SKILL.md": (
-        "bb8a4f5d6074128e20c595cc197a8a45b9a352e78de82df214901d484df91c49"
+        "aee32e758a5c6110134be95bb26432faf319662527f7bd9d7c8dbefcdb54fb00"
     ),
     "agents/roles/project-setup/project-bootstrapper.role.yaml": (
-        "f21f88f59e26237c206b3d730d2b7ce9897098686ea9fc6133715954b49b00f5"
+        "167db9c594c8a1656df6112a3070f677a3a434ac691cb6ff0107d80385817ca0"
     ),
     "agents/roles/wiki-activities/wiki-ingester.role.yaml": (
-        "c704b0df2c9b08fdb38cc99dbdc970d41ad6265ecabc507b809b9a21617a96ba"
+        "304995274047372efbabeb19a244290b9509628f863607aa4b06a7bcbeda7d34"
     ),
 }
 

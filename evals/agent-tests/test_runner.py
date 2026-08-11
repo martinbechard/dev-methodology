@@ -402,15 +402,19 @@ class AgentSuiteRunnerTests(unittest.TestCase):
         """A candidate repository cannot retain a claim outside the workspace registry."""
         with tempfile.TemporaryDirectory() as directory:
             workspace = Path(directory)
-            registry = (
+            candidate = (
                 workspace
                 / ".agent-suite-fixtures"
                 / "dev-coder"
                 / "candidate"
+            )
+            candidate.mkdir(parents=True)
+            subprocess.run(["git", "init", "--quiet"], cwd=candidate, check=True)
+            registry = (
+                candidate
                 / ".git"
                 / "agent-claims.json"
             )
-            registry.parent.mkdir(parents=True)
             registry.write_text(
                 json.dumps({"claims": [{"claim_id": "retained"}]}) + "\n",
                 encoding="utf-8",

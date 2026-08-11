@@ -325,7 +325,6 @@ class ProjectConfiguratorFixtureTests(unittest.TestCase):
 
         self.assertEqual(
             {
-                "resource-claim",
                 "detect-technology-skills",
                 "create-project-configuration",
                 "route-documentation-work",
@@ -334,7 +333,7 @@ class ProjectConfiguratorFixtureTests(unittest.TestCase):
             fixed_skills,
         )
         self.assertEqual(
-            {"organise-project-files", "bootstrap-project-documentation"},
+            {"bootstrap-project-documentation"},
             set(conditional_skills),
         )
         self.assertTrue(all(condition.strip() for condition in conditional_skills.values()))
@@ -363,7 +362,7 @@ class ProjectConfiguratorFixtureTests(unittest.TestCase):
         self.assertIn("contains only @AGENTS.md", judge)
         self.assertIn("trailing content", judge)
         self.assertIn("The file must end after that line", task)
-        self.assertIn("including their canonical conditions", task)
+        self.assertIn("including its canonical condition", task)
         self.assertIn("canonical-role-skill-ownership", supervisor)
         self.assertIn("functional-claude-bridges", supervisor)
 

@@ -3690,6 +3690,7 @@ def _report(args: argparse.Namespace) -> int:
             )
     report = {
         "schema_version": REPORT_SCHEMA_VERSION,
+        "outcome": "REPORT",
         "window": {"since": args.since, "start": _format_timestamp(start), "end": _format_timestamp(end)},
         "event_count": len(filtered),
         "metrics": _aggregate(filtered, end, live_claims),

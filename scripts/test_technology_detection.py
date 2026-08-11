@@ -2870,7 +2870,10 @@ class TechnologyDetectionTests(unittest.TestCase):
             "Default persistence none: no durable persistence skill; durable create and manage operations are invalid.",
             none_rendered,
         )
-        self.assertIn("asks for the Persistence decision before a persistence operation", unset_rendered)
+        self.assertIn(
+            "when durable work-item management is first requested, ask whether to select the available file provider",
+            unset_rendered,
+        )
         self.assertIn("asks for the Commit decision before implementation or publication", unset_rendered)
         self.assertIn("does not infer either value from repository or hosting evidence", unset_rendered)
         self.assertIn("create-work-item-azure-devops", placeholder_rendered)
@@ -3232,14 +3235,18 @@ class TechnologyDetectionTests(unittest.TestCase):
 
     def test_render_docstring_distinguishes_optional_authority_from_required_workflow(self) -> None:
         renderer = load_renderer_module()
+        render_docstring = " ".join((renderer.render.__doc__ or "").split())
 
-        self.assertIn("Optional definition authority", renderer.render.__doc__)
-        self.assertIn("workflow_selection and resource_coordination are required", renderer.render.__doc__)
+        self.assertIn(
+            "Optional shared_agent_skills, document_provenance, and project_skill_extensions",
+            render_docstring,
+        )
+        self.assertIn("workflow_selection and resource_coordination are required", render_docstring)
         self.assertIn(
             "agent_claim_transport is required only when resource_coordination selects resource-claim",
-            renderer.render.__doc__,
+            render_docstring,
         )
-        self.assertNotIn("Optional authority and workflow", renderer.render.__doc__)
+        self.assertNotIn("Optional definition authority", render_docstring)
 
     def test_agents_section_reports_deterministic_legacy_selector_migrations(self) -> None:
         renderer = load_renderer_module()

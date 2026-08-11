@@ -2,7 +2,7 @@
   "provenance": {
     "mode": "deterministic-offline-contract-replay",
     "generatedAdapter": "generated/adapters/codex/agents/wiki-ingester.toml",
-    "generatedAdapterSha256": "f2eaee91e9851beb804f4324ef1055b2e6626ac726d8d9c8aca63efd53f86478",
+    "generatedAdapterSha256": "0bbb11041a55686f5634e7c2b91263bb4290a09b02a276ad55fefb5cad00dc62",
     "liveExecution": false,
     "basis": "Expected gate receipts, source state, and BLOCKED evidence derived from the generated adapter contract; this fixture does not claim a fresh external verifier execution."
   },

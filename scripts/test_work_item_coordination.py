@@ -163,8 +163,8 @@ class WorkItemCoordinationPackageTests(unittest.TestCase):
             "never performs scheduling or recovery",
             "outside the provider queue and active capacity",
             "must not change repository files, provider records, lifecycle state, claims",
-            "Notify the coordinator only when action is required",
-            "one concise no-action cycle result",
+            "Notify the Coordinator only when a specific decision is required",
+            "When no decision is required, send nothing",
         ):
             with self.subTest(clause=clause):
                 self.assertIn(clause, watchdog)

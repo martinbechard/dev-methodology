@@ -123,7 +123,7 @@ class ChecklistContractTests(unittest.TestCase):
 
         contracts = tuple(contract.load_canonical_checklist(path) for path in sources)
 
-        self.assertEqual((36, 25), tuple(len(value.questions) for value in contracts))
+        self.assertEqual((36, 43), tuple(len(value.questions) for value in contracts))
         for value in contracts:
             self.assertEqual(len(value.questions), len(set(value.questions)))
             self.assertRegex(value.sha256, r"^[0-9a-f]{64}$")

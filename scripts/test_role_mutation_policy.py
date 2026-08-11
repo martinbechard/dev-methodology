@@ -174,10 +174,17 @@ class RoleMutationPolicyTests(unittest.TestCase):
             feature_branch,
         )
         for skill_text in (feature_branch, main_branch, work_merge):
-            self.assertIn("Claim Events table in resource-claim", skill_text)
-            self.assertNotIn("Event Contract", skill_text)
-            self.assertNotIn("claim-free", skill_text)
-            self.assertNotIn("needs no claim", skill_text)
+            normalized = " ".join(skill_text.split())
+            self.assertIn(
+                "Apply the loaded resource-coordination procedure when its event contract requires protection",
+                normalized,
+            )
+            self.assertIn(
+                "When applicable project instructions select none and load no resource-coordination procedure",
+                normalized,
+            )
+            self.assertIn("perform no claim procedure", normalized)
+            self.assertIn("do not discover, acquire, heartbeat, or release claims", normalized)
 
     def test_execute_workitem_package_is_retired_without_weakening_delivery_contracts(self) -> None:
         """Keep the retired bridge absent while maintained Commit skills own clean delivery."""
@@ -185,9 +192,18 @@ class RoleMutationPolicyTests(unittest.TestCase):
         self.assertFalse(EXECUTE_WORKITEM_PACKAGE.exists())
         feature_branch = FEATURE_BRANCH_SKILL.read_text(encoding="utf-8")
         main_branch = MAIN_BRANCH_SKILL.read_text(encoding="utf-8")
-        self.assertIn("Claim Events table in resource-claim", feature_branch)
-        self.assertIn("Claim Events table in resource-claim", main_branch)
         for text in (feature_branch, main_branch):
+            normalized = " ".join(text.split())
+            self.assertIn(
+                "Apply the loaded resource-coordination procedure when its event contract requires protection",
+                normalized,
+            )
+            self.assertIn(
+                "When applicable project instructions select none and load no resource-coordination procedure",
+                normalized,
+            )
+            self.assertIn("perform no claim procedure", normalized)
+            self.assertIn("do not discover, acquire, heartbeat, or release claims", normalized)
             self.assertIn("clean", text.lower())
             self.assertIn("commit", text.lower())
 

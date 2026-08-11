@@ -3,7 +3,7 @@
   "sourcePath": "src/inventory.py",
   "testPath": "tests/test_inventory.py",
   "acceptedTestCommand": "python3 -m unittest discover -s tests",
-  "canonicalTemplateSha256": "9269a18ddda9d0193134b22e9d929dd299b5d1dc7e345fa64983ff517b4573d4",
+  "canonicalTemplateSha256": "f0e99da9d7d8812a1a5c49877addbfc99b1ddf485da1710313080120b0d69c00",
   "expectedTestCount": 1,
   "sourceOnlyBranchTerms": [
     "blank-value ValueError branch",

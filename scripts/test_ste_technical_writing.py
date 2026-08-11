@@ -25,14 +25,8 @@ HIERARCHY_PATH = ROOT / "design" / "agent-skill-hierarchy.svg"
 ROLES_ROOT = ROOT / "agents" / "roles"
 
 DOCUMENTATION_ROLES = {
-    "dev-artifact-reviewer",
-    "dev-documentation-writer",
-    "dev-document-topic-editor",
     "wiki-architect",
-    "wiki-ingester",
     "wiki-researcher",
-    "wiki-source-collector",
-    "wiki-writer",
 }
 
 PROJECT_SETUP_PARAGRAPH = (
@@ -236,16 +230,14 @@ class SteTechnicalWritingContractTests(unittest.TestCase):
         profiles = yaml.safe_load(
             CODEX_PROFILES_PATH.read_text(encoding="utf-8")
         )["profiles"]
-        self.assertEqual(
-            {"model": "gpt-5.5", "effort": "high"},
-            profiles["documentation"],
-        )
+        self.assertEqual("gpt-5.5", profiles["documentation"]["model"])
+        self.assertEqual("high", profiles["documentation"]["effort"])
 
         writer = roles_by_name["dev-documentation-writer"]
-        self.assertIn("structured-explanation", writer.skill_conditions)
+        self.assertIn("structured-explanation", writer.instructions)
         self.assertIn(
             "facts, hypotheses, unknowns, technical causes, decisions",
-            writer.skill_conditions["structured-explanation"],
+            writer.instructions,
         )
         self.assertIn(
             "Do not require QUERY, FACT, or ANSWER items",

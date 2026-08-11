@@ -376,10 +376,8 @@ _INTENTIONAL_UNITTEST_SKIP_REASONS = {
     ),
 }
 
-# The original candidate inherited twelve unrelated failing test entry points. Expanding mixed
-# suites exposed additional failures in a full-history clone of current main. Current main fixed
-# test_bundle_content.py; retaining it here makes that improvement observable without shrinking the
-# accepted sixteen-path baseline. Every remaining failure identity is compared exactly.
+# Keep the complete accepted owner inventory after the inherited baseline is repaired. Any
+# newly observed failure in one of these paths remains an unclassified regression.
 def _failure_ids(raw: str) -> tuple[str, ...]:
     """Parse a duplicate-free baseline identity list."""
     values = tuple(line.strip() for line in raw.splitlines() if line.strip())
@@ -389,671 +387,26 @@ def _failure_ids(raw: str) -> tuple[str, ...]:
 
 
 _OS_INDEPENDENT_FAILURE_BASELINE = {
-    "evals/agent-tests/dev-artifact-reviewer/test_checklist_contract.py": _BaselineFailure(
-        "Dev Artifact Reviewer",
-        _failure_ids(
-            """
-failure:test_checklist_contract.ChecklistContractTests.test_current_canonical_sources_have_stable_unique_question_sequences
-"""
-        ),
-    ),
-    "evals/agent-tests/dev-documentation-writer/test_fixtures.py": _BaselineFailure(
-        "Dev Documentation Writer",
-        _failure_ids(
-            """
-failure:test_fixtures.DocumentationWriterFixtureTests.test_final_validator_accepts_canonical_bold_readiness_markers
-failure:test_fixtures.DocumentationWriterFixtureTests.test_final_validator_accepts_complete_source_faithful_artifact
-failure:test_fixtures.DocumentationWriterFixtureTests.test_final_validator_accepts_explanatory_node_prose
-failure:test_fixtures.DocumentationWriterFixtureTests.test_final_validator_accepts_local_reference_style_destinations
-failure:test_fixtures.DocumentationWriterFixtureTests.test_final_validator_accepts_local_shortcut_reference_destinations
-failure:test_fixtures.DocumentationWriterFixtureTests.test_final_validator_accepts_nonanaphoric_that_coverage_claim
-failure:test_fixtures.DocumentationWriterFixtureTests.test_final_validator_excludes_html_comments_from_visible_evidence
-failure:test_fixtures.DocumentationWriterFixtureTests.test_final_validator_ignores_unrelated_external_reference_destination
-failure:test_fixtures.DocumentationWriterFixtureTests.test_final_validator_treats_html_comment_markers_in_fences_as_literal
-failure:test_fixtures.DocumentationWriterFixtureTests.test_final_validator_treats_html_comments_in_nested_fences_as_literal
-failure:test_fixtures.DocumentationWriterFixtureTests.test_final_validator_treats_nested_blockquotes_as_visible_prose
-"""
-        ),
-    ),
-    "evals/agent-tests/dev-orchestrator/test_fixtures.py": _BaselineFailure(
-        "Dev Orchestrator",
-        _failure_ids(
-            """
-error:test_fixtures.DependencyRoutingFixtureTests.test_committed_fixture_contract_is_complete
-error:test_fixtures.DependencyRoutingFixtureTests.test_coordinator_prompt_exposes_none_coordination_boundary
-error:test_fixtures.DependencyRoutingFixtureTests.test_delivery_result_controls_provider_closeout
-error:test_fixtures.DependencyRoutingFixtureTests.test_dirty_receipt_repository_matrix_is_rejected (drift='tracked')
-error:test_fixtures.DependencyRoutingFixtureTests.test_dirty_receipt_repository_matrix_is_rejected (drift='untracked')
-error:test_fixtures.DependencyRoutingFixtureTests.test_every_handoff_field_has_an_exact_omission_diagnostic
-error:test_fixtures.DependencyRoutingFixtureTests.test_every_handoff_lane_has_an_exact_omission_diagnostic
-error:test_fixtures.DependencyRoutingFixtureTests.test_evidence_audit_preserves_missing_and_duplicate_lane_errors (case='duplicate')
-error:test_fixtures.DependencyRoutingFixtureTests.test_evidence_audit_preserves_missing_and_duplicate_lane_errors (case='missing')
-error:test_fixtures.DependencyRoutingFixtureTests.test_evidence_audit_rejects_extra_lane_with_or_without_claims (claim_release=False)
-error:test_fixtures.DependencyRoutingFixtureTests.test_evidence_audit_rejects_extra_lane_with_or_without_claims (claim_release=True)
-error:test_fixtures.DependencyRoutingFixtureTests.test_evidence_audit_rejects_receipt_for_empty_lane_set (claim_release=False)
-error:test_fixtures.DependencyRoutingFixtureTests.test_evidence_audit_rejects_receipt_for_empty_lane_set (claim_release=True)
-error:test_fixtures.DependencyRoutingFixtureTests.test_fabricated_receipt_evidence_matrix_is_rejected
-error:test_fixtures.DependencyRoutingFixtureTests.test_hyphenated_producer_alias_does_not_match_registered_invocation
-error:test_fixtures.DependencyRoutingFixtureTests.test_none_coordination_evidence_needs_no_claim_journal
-error:test_fixtures.DependencyRoutingFixtureTests.test_none_coordination_ignores_pre_existing_claim_files
-error:test_fixtures.DependencyRoutingFixtureTests.test_none_coordination_is_not_a_required_target_skill
-error:test_fixtures.DependencyRoutingFixtureTests.test_none_coordination_rejects_claim_invocation (session_id='coder')
-error:test_fixtures.DependencyRoutingFixtureTests.test_none_coordination_rejects_claim_invocation (session_id='target')
-error:test_fixtures.DependencyRoutingFixtureTests.test_none_coordination_report_omits_claim_release_evidence
-error:test_fixtures.DependencyRoutingFixtureTests.test_producer_session_evidence_matrix_is_rejected
-error:test_fixtures.DependencyRoutingFixtureTests.test_receipt_session_superset_rejects_duplicates_replacements_and_foreign_roles (name='duplicate-review')
-error:test_fixtures.DependencyRoutingFixtureTests.test_receipt_session_superset_rejects_duplicates_replacements_and_foreign_roles (name='duplicate-verification')
-error:test_fixtures.DependencyRoutingFixtureTests.test_receipt_session_superset_rejects_duplicates_replacements_and_foreign_roles (name='foreign-review')
-error:test_fixtures.DependencyRoutingFixtureTests.test_receipt_session_superset_rejects_duplicates_replacements_and_foreign_roles (name='foreign-verification')
-error:test_fixtures.DependencyRoutingFixtureTests.test_receipt_session_superset_rejects_duplicates_replacements_and_foreign_roles (name='replacement-review')
-error:test_fixtures.DependencyRoutingFixtureTests.test_receipt_session_superset_rejects_duplicates_replacements_and_foreign_roles (name='replacement-verification')
-error:test_fixtures.DependencyRoutingFixtureTests.test_receipts_may_retain_additional_same_role_review_and_verification_sessions
-error:test_fixtures.DependencyRoutingFixtureTests.test_report_rejects_extra_lane_with_or_without_claims (claim_release=False)
-error:test_fixtures.DependencyRoutingFixtureTests.test_report_rejects_extra_lane_with_or_without_claims (claim_release=True)
-error:test_fixtures.DependencyRoutingFixtureTests.test_report_rejects_receipt_for_empty_lane_set (claim_release=False)
-error:test_fixtures.DependencyRoutingFixtureTests.test_report_rejects_receipt_for_empty_lane_set (claim_release=True)
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_accepts_exact_legacy_markers
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_allows_released_named_resource_event
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_executes_and_audits_complete_lifecycle
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_reads_legacy_state_as_fallback
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_contradictory_dual_state
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='acquire-after-mutation')
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='acquire-after-release')
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='active-registry')
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='duplicate-claim-id-across-repositories')
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='duplicate-release-event-ids')
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='early-integration-claim')
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='isolated-integration-acquire')
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='malformed-journal-json')
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='missing-acquire')
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='multiple-release-event-ids')
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='resource-file-domain')
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='second-repository-surplus-claim')
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='surplus-bound-successful-release')
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='surplus-private-file-claim')
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='unexpected-integration-resource')
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='unrecognized-named-resource')
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='unreleased-named-resource')
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='unsupported-schema')
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='wrong-integration-scope')
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_mixed_registry_and_event_layouts
-error:test_fixtures.DependencyRoutingFixtureTests.test_scalar_receipt_evidence_matrix_is_rejected
-error:test_fixtures.DependencyRoutingFixtureTests.test_skill_under_test_finding_uses_separate_protected_and_provider_boundaries
-"""
-        ),
-    ),
-    "evals/agent-tests/project-configurator/test_fixtures.py": _BaselineFailure(
-        "Project Configurator",
-        _failure_ids(
-            """
-failure:test_fixtures.ProjectConfiguratorFixtureTests.test_routing_contracts_name_exact_role_ownership_and_bridge_bytes
-            """
-        ),
-    ),
-    "evals/agent-tests/project-bootstrapper/test_scripted_orchestration.py": _BaselineFailure(
-        "Project Bootstrapper",
-        _failure_ids(
-            """
-failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_both_configuration_outputs_receive_independent_reviews
-failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_correction_retries_the_owner_and_stops_at_two
-failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_default_trace_is_repeatable_and_complete
-failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_integration_review_and_verification_corrections_are_bounded
-failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_missing_configuration_uses_primary_claim_free_handoff_then_resumes
-failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_resumed_execution_obeys_canonical_solo_and_legacy_selectors
-failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_reverse_engineering_audit_blocks_without_coverage_manifest_evidence
-failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_reverse_engineering_audit_blocks_without_required_ledger
-failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_reverse_engineering_audit_detects_swapped_manifest_mappings
-failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_reverse_engineering_audit_owner_corrections_are_bounded
-failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_reverse_engineering_audit_parses_the_exact_owner_field
-failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_reverse_engineering_audit_rejects_baseline_classification_mismatch
-failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_reverse_engineering_audit_rejects_incomplete_path_classifications
-failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_reverse_engineering_audit_requires_hashed_baseline_for_every_source
-failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_reverse_engineering_audit_routes_corrections_and_reaches_steady_state
-failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_reverse_engineering_audit_routes_missing_auditable_artifacts (artifact='docs/module-catalog.md')
-failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_reverse_engineering_audit_routes_missing_auditable_artifacts (artifact='docs/wiki/topic-index.md')
-failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_terminal_dependency_outcomes_are_reproducible (outcome='FAIL')
-failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_terminal_dependency_outcomes_are_reproducible (outcome='BLOCKED')
-failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_terminal_dependency_outcomes_are_reproducible
-failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_verification_correction_is_reviewed_and_reaudited_before_retry
-failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_verification_correction_uses_persistent_owner_for_audit_created_document
-error:test_scripted_orchestration.ScriptedBootstrapperTests.test_configuration_dependency_invokes_each_public_setup_procedure
-error:test_scripted_orchestration.ScriptedBootstrapperTests.test_isolated_snapshot_contains_only_declared_inputs
-"""
-        ),
-    ),
-    "evals/agent-tests/wiki-ingester/test_contract.py": _BaselineFailure(
-        "Wiki Ingester",
-        _failure_ids(
-            """
-failure:test_contract.WikiIngesterTargetBoundaryTests.test_retained_evaluator_artifacts_replay_offline
-"""
-        ),
-    ),
-    "evals/agent-tests/test_runner.py": _BaselineFailure(
-        "agent-suite runner",
-        _failure_ids(
-            """
-failure:test_runner.AgentSuiteRunnerTests.test_cleanup_audit_rejects_active_claim_in_nested_fixture_repository
-"""
-        ),
-    ),
+    "evals/agent-tests/dev-artifact-reviewer/test_checklist_contract.py": _BaselineFailure("Dev Artifact Reviewer", (), "resolved on current main"),
+    "evals/agent-tests/dev-documentation-writer/test_fixtures.py": _BaselineFailure("Dev Documentation Writer", (), "resolved on current main"),
+    "evals/agent-tests/dev-orchestrator/test_fixtures.py": _BaselineFailure("Dev Orchestrator", (), "resolved on current main"),
+    "evals/agent-tests/project-configurator/test_fixtures.py": _BaselineFailure("Project Configurator", (), "resolved on current main"),
+    "evals/agent-tests/project-bootstrapper/test_scripted_orchestration.py": _BaselineFailure("Project Bootstrapper", (), "resolved on current main"),
+    "evals/agent-tests/wiki-ingester/test_contract.py": _BaselineFailure("Wiki Ingester", (), "resolved on current main"),
+    "evals/agent-tests/test_runner.py": _BaselineFailure("agent-suite runner", (), "resolved on current main"),
     "scripts/test_bundle_content.py": _BaselineFailure("bundle contract", (), "resolved on current main"),
-    "scripts/test_codex_task_control.py": _BaselineFailure(
-        "Codex task control",
-        _failure_ids(
-            """
-failure:test_codex_task_control.CodexTaskControlPackageTests.test_archival_waits_for_portable_terminal_closeout (clause='Archive a terminal Codex task only after coordinate-work-items confirms')
-failure:test_codex_task_control.CodexTaskControlPackageTests.test_archival_waits_for_portable_terminal_closeout (clause='cleanup eligibility')
-failure:test_codex_task_control.CodexTaskControlPackageTests.test_archival_waits_for_portable_terminal_closeout (clause='no unresolved notification remains')
-failure:test_codex_task_control.CodexTaskControlPackageTests.test_portable_skill_contains_no_codex_only_vocabulary (phrase='task archival')
-failure:test_codex_task_control.CodexTaskControlPackageTests.test_watchdog_prompt_templates_are_canonical_and_render_byte_identically
-failure:test_codex_task_control.CodexTaskControlRoleRoutingTests.test_non_codex_generated_agents_do_not_name_portable_policy_as_codex (runtime='claude', role='dev-backlog-watchdog')
-failure:test_codex_task_control.CodexTaskControlRoleRoutingTests.test_non_codex_generated_agents_do_not_name_portable_policy_as_codex (runtime='gemini', role='dev-backlog-watchdog')
-failure:test_codex_task_control.CodexTaskControlRoleRoutingTests.test_non_codex_generated_agents_do_not_name_portable_policy_as_codex (runtime='junie', role='dev-backlog-watchdog')
-"""
-        ),
-    ),
-    "scripts/test_eval_coverage_catalog.py": _BaselineFailure(
-        "evaluation coverage catalog",
-        _failure_ids(
-            """
-failure:test_eval_coverage_catalog.RepositoryCoverageCliTests.test_cli_reproduces_structural_and_declared_totals
-"""
-        ),
-    ),
-    "scripts/test_agent_skill_evaluation_docs.py": _BaselineFailure(
-        "agent-skill evaluation documentation",
-        _failure_ids(
-            """
-failure:test_agent_skill_evaluation_docs.AgentSkillEvaluationDocumentationTests.test_backlog_steward_rows_publish_neutral_resource_coordination_variants
-failure:test_agent_skill_evaluation_docs.AgentSkillEvaluationDocumentationTests.test_generator_check_reports_current_output
-"""
-        ),
-    ),
-    "scripts/test_resource_claim.py": _BaselineFailure(
-        "resource claim",
-        _failure_ids(
-            """
-error:test_resource_claim.ResourceClaimTests.test_report_groups_versioned_work_item_segments_and_diagnostics
-"""
-        ),
-    ),
-    "scripts/test_role_mutation_policy.py": _BaselineFailure(
-        "role mutation policy",
-        _failure_ids(
-            """
-failure:test_role_mutation_policy.RoleMutationPolicyTests.test_execute_workitem_package_is_retired_without_weakening_delivery_contracts
-failure:test_role_mutation_policy.RoleMutationPolicyTests.test_workflow_skills_delegate_claim_rules_to_resource_claim
-"""
-        ),
-    ),
-    "scripts/test_ste_technical_writing.py": _BaselineFailure(
-        "STE technical writing",
-        _failure_ids(
-            """
-failure:test_ste_technical_writing.SteTechnicalWritingContractTests.test_documentation_roles_and_codex_profile_use_gpt_55_high
-"""
-        ),
-    ),
-    "scripts/test_technology_detection.py": _BaselineFailure(
-        "technology detection",
-        _failure_ids(
-            """
-failure:test_technology_detection.TechnologyDetectionTests.test_agents_section_preserves_none_unset_and_unsupported_boundaries
-failure:test_technology_detection.TechnologyDetectionTests.test_render_docstring_distinguishes_optional_authority_from_required_workflow
-"""
-        ),
-    ),
-    "scripts/test_work_item_coordination.py": _BaselineFailure(
-        "work-item coordination",
-        _failure_ids(
-            """
-failure:test_work_item_coordination.WorkItemCoordinationPackageTests.test_watchdog_policy_is_read_only_and_provider_neutral (clause='Notify the coordinator only when action is required')
-failure:test_work_item_coordination.WorkItemCoordinationPackageTests.test_watchdog_policy_is_read_only_and_provider_neutral (clause='one concise no-action cycle result')
-"""
-        ),
-    ),
+    "scripts/test_codex_task_control.py": _BaselineFailure("Codex task control", (), "resolved on current main"),
+    "scripts/test_eval_coverage_catalog.py": _BaselineFailure("evaluation coverage catalog", (), "resolved on current main"),
+    "scripts/test_agent_skill_evaluation_docs.py": _BaselineFailure("agent-skill evaluation documentation", (), "resolved on current main"),
+    "scripts/test_resource_claim.py": _BaselineFailure("resource claim", (), "resolved on current main"),
+    "scripts/test_role_mutation_policy.py": _BaselineFailure("role mutation policy", (), "resolved on current main"),
+    "scripts/test_ste_technical_writing.py": _BaselineFailure("STE technical writing", (), "resolved on current main"),
+    "scripts/test_technology_detection.py": _BaselineFailure("technology detection", (), "resolved on current main"),
+    "scripts/test_work_item_coordination.py": _BaselineFailure("work-item coordination", (), "resolved on current main"),
 }
 
-# Captured from the exact current-main failures. Each identity is bound to one normalized
-# terminal cause so a same-ID exception or assertion change cannot be absorbed.
-_OS_INDEPENDENT_FAILURE_CAUSES = {
-    'evals/agent-tests/dev-artifact-reviewer/test_checklist_contract.py': (
-        (
-            _failure_ids(
-                """
-failure:test_checklist_contract.ChecklistContractTests.test_current_canonical_sources_have_stable_unique_question_sequences
-"""
-            ),
-            'AssertionError',
-            'Tuples differ: (36, 25) != (36, 43)',
-        ),
-    ),
-    'evals/agent-tests/dev-documentation-writer/test_fixtures.py': (
-        (
-            _failure_ids(
-                """
-failure:test_fixtures.DocumentationWriterFixtureTests.test_final_validator_accepts_canonical_bold_readiness_markers
-failure:test_fixtures.DocumentationWriterFixtureTests.test_final_validator_accepts_complete_source_faithful_artifact
-failure:test_fixtures.DocumentationWriterFixtureTests.test_final_validator_accepts_explanatory_node_prose
-failure:test_fixtures.DocumentationWriterFixtureTests.test_final_validator_accepts_local_reference_style_destinations
-failure:test_fixtures.DocumentationWriterFixtureTests.test_final_validator_accepts_local_shortcut_reference_destinations
-failure:test_fixtures.DocumentationWriterFixtureTests.test_final_validator_accepts_nonanaphoric_that_coverage_claim
-failure:test_fixtures.DocumentationWriterFixtureTests.test_final_validator_treats_html_comment_markers_in_fences_as_literal
-failure:test_fixtures.DocumentationWriterFixtureTests.test_final_validator_treats_html_comments_in_nested_fences_as_literal
-failure:test_fixtures.DocumentationWriterFixtureTests.test_final_validator_treats_nested_blockquotes_as_visible_prose
-"""
-            ),
-            'AssertionError',
-            '0 != 3 : {"artifactPathValid": true, "artifactPresent": true, "commandClaims": ["python3 -m unittest discover -s tests"], "commandStructureValid": true, "evidenceReferencesValid": true, "externalReferences": [], "headingsMatch": true, "markdownStructureValid": true, "readinessValid": true, "referencedPaths": ["../src/inventory.py", "../tests/test_inventory.py"], "sourcePresent": true, "templateAuthorityValid": false, "testClaimsValid": true, "testCommandValid": true, "testOutput": "./n----------... [sha256:a41145f999a9e42cab6df6dbf3163d5ed8c25a948564a95009b9058adef863cb]',
-        ),
-        (
-            _failure_ids(
-                """
-failure:test_fixtures.DocumentationWriterFixtureTests.test_final_validator_excludes_html_comments_from_visible_evidence
-"""
-            ),
-            'AssertionError',
-            '0 != 3',
-        ),
-        (
-            _failure_ids(
-                """
-failure:test_fixtures.DocumentationWriterFixtureTests.test_final_validator_ignores_unrelated_external_reference_destination
-"""
-            ),
-            'AssertionError',
-            '0 != 3 : {"artifactPathValid": true, "artifactPresent": true, "commandClaims": ["python3 -m unittest discover -s tests"], "commandStructureValid": true, "evidenceReferencesValid": true, "externalReferences": ["https://example.invalid/reference"], "headingsMatch": true, "markdownStructureValid": true, "readinessValid": true, "referencedPaths": ["../src/inventory.py", "../tests/test_inventory.py"], "sourcePresent": true, "templateAuthorityValid": false, "testClaimsValid": true, "testCommandValid":... [sha256:abc5e9ffe918bbafc6f89a2e34c5209fd254f6bc1ece9c38d1198fc3b19b75d3]',
-        ),
-    ),
-    'evals/agent-tests/dev-orchestrator/test_fixtures.py': (
-        (
-            _failure_ids(
-                """
-error:test_fixtures.DependencyRoutingFixtureTests.test_committed_fixture_contract_is_complete
-error:test_fixtures.DependencyRoutingFixtureTests.test_coordinator_prompt_exposes_none_coordination_boundary
-error:test_fixtures.DependencyRoutingFixtureTests.test_delivery_result_controls_provider_closeout
-error:test_fixtures.DependencyRoutingFixtureTests.test_dirty_receipt_repository_matrix_is_rejected (drift='tracked')
-error:test_fixtures.DependencyRoutingFixtureTests.test_dirty_receipt_repository_matrix_is_rejected (drift='untracked')
-error:test_fixtures.DependencyRoutingFixtureTests.test_every_handoff_field_has_an_exact_omission_diagnostic
-error:test_fixtures.DependencyRoutingFixtureTests.test_every_handoff_lane_has_an_exact_omission_diagnostic
-error:test_fixtures.DependencyRoutingFixtureTests.test_evidence_audit_preserves_missing_and_duplicate_lane_errors (case='duplicate')
-error:test_fixtures.DependencyRoutingFixtureTests.test_evidence_audit_preserves_missing_and_duplicate_lane_errors (case='missing')
-error:test_fixtures.DependencyRoutingFixtureTests.test_evidence_audit_rejects_extra_lane_with_or_without_claims (claim_release=False)
-error:test_fixtures.DependencyRoutingFixtureTests.test_evidence_audit_rejects_extra_lane_with_or_without_claims (claim_release=True)
-error:test_fixtures.DependencyRoutingFixtureTests.test_evidence_audit_rejects_receipt_for_empty_lane_set (claim_release=False)
-error:test_fixtures.DependencyRoutingFixtureTests.test_evidence_audit_rejects_receipt_for_empty_lane_set (claim_release=True)
-error:test_fixtures.DependencyRoutingFixtureTests.test_fabricated_receipt_evidence_matrix_is_rejected
-error:test_fixtures.DependencyRoutingFixtureTests.test_hyphenated_producer_alias_does_not_match_registered_invocation
-error:test_fixtures.DependencyRoutingFixtureTests.test_none_coordination_evidence_needs_no_claim_journal
-error:test_fixtures.DependencyRoutingFixtureTests.test_none_coordination_ignores_pre_existing_claim_files
-error:test_fixtures.DependencyRoutingFixtureTests.test_none_coordination_is_not_a_required_target_skill
-error:test_fixtures.DependencyRoutingFixtureTests.test_none_coordination_rejects_claim_invocation (session_id='coder')
-error:test_fixtures.DependencyRoutingFixtureTests.test_none_coordination_rejects_claim_invocation (session_id='target')
-error:test_fixtures.DependencyRoutingFixtureTests.test_none_coordination_report_omits_claim_release_evidence
-error:test_fixtures.DependencyRoutingFixtureTests.test_producer_session_evidence_matrix_is_rejected
-error:test_fixtures.DependencyRoutingFixtureTests.test_receipt_session_superset_rejects_duplicates_replacements_and_foreign_roles (name='duplicate-review')
-error:test_fixtures.DependencyRoutingFixtureTests.test_receipt_session_superset_rejects_duplicates_replacements_and_foreign_roles (name='duplicate-verification')
-error:test_fixtures.DependencyRoutingFixtureTests.test_receipt_session_superset_rejects_duplicates_replacements_and_foreign_roles (name='foreign-review')
-error:test_fixtures.DependencyRoutingFixtureTests.test_receipt_session_superset_rejects_duplicates_replacements_and_foreign_roles (name='foreign-verification')
-error:test_fixtures.DependencyRoutingFixtureTests.test_receipt_session_superset_rejects_duplicates_replacements_and_foreign_roles (name='replacement-review')
-error:test_fixtures.DependencyRoutingFixtureTests.test_receipt_session_superset_rejects_duplicates_replacements_and_foreign_roles (name='replacement-verification')
-error:test_fixtures.DependencyRoutingFixtureTests.test_receipts_may_retain_additional_same_role_review_and_verification_sessions
-error:test_fixtures.DependencyRoutingFixtureTests.test_report_rejects_extra_lane_with_or_without_claims (claim_release=False)
-error:test_fixtures.DependencyRoutingFixtureTests.test_report_rejects_extra_lane_with_or_without_claims (claim_release=True)
-error:test_fixtures.DependencyRoutingFixtureTests.test_report_rejects_receipt_for_empty_lane_set (claim_release=False)
-error:test_fixtures.DependencyRoutingFixtureTests.test_report_rejects_receipt_for_empty_lane_set (claim_release=True)
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_accepts_exact_legacy_markers
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_allows_released_named_resource_event
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_executes_and_audits_complete_lifecycle
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_reads_legacy_state_as_fallback
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_contradictory_dual_state
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='acquire-after-mutation')
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='acquire-after-release')
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='active-registry')
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='duplicate-claim-id-across-repositories')
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='duplicate-release-event-ids')
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='early-integration-claim')
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='isolated-integration-acquire')
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='malformed-journal-json')
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='missing-acquire')
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='multiple-release-event-ids')
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='resource-file-domain')
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='second-repository-surplus-claim')
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='surplus-bound-successful-release')
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='surplus-private-file-claim')
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='unexpected-integration-resource')
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='unrecognized-named-resource')
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='unreleased-named-resource')
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='unsupported-schema')
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_lifecycle_breaks (case='wrong-integration-scope')
-error:test_fixtures.DependencyRoutingFixtureTests.test_resource_claim_companion_rejects_mixed_registry_and_event_layouts
-error:test_fixtures.DependencyRoutingFixtureTests.test_scalar_receipt_evidence_matrix_is_rejected
-error:test_fixtures.DependencyRoutingFixtureTests.test_skill_under_test_finding_uses_separate_protected_and_provider_boundaries
-"""
-            ),
-            'ValueError',
-            'dev-orchestrator native agent does not include required skill structured-explanation',
-        ),
-    ),
-    'evals/agent-tests/project-bootstrapper/test_scripted_orchestration.py': (
-        (
-            _failure_ids(
-                """
-error:test_scripted_orchestration.ScriptedBootstrapperTests.test_configuration_dependency_invokes_each_public_setup_procedure
-"""
-            ),
-            'KeyError',
-            "'configurationExecution'",
-        ),
-        (
-            _failure_ids(
-                """
-error:test_scripted_orchestration.ScriptedBootstrapperTests.test_isolated_snapshot_contains_only_declared_inputs
-"""
-            ),
-            'KeyError',
-            "'copiedInputs'",
-        ),
-        (
-            _failure_ids(
-                """
-failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_both_configuration_outputs_receive_independent_reviews
-"""
-            ),
-            'AssertionError',
-            'False is not true',
-        ),
-        (
-            _failure_ids(
-                """
-failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_correction_retries_the_owner_and_stops_at_two
-"""
-            ),
-            'AssertionError',
-            "Lists differ: [('dev-documentation-writer', 'contribute'[218 chars]SS')] != []",
-        ),
-        (
-            _failure_ids(
-                """
-failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_default_trace_is_repeatable_and_complete
-failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_integration_review_and_verification_corrections_are_bounded
-failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_missing_configuration_uses_primary_claim_free_handoff_then_resumes
-failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_resumed_execution_obeys_canonical_solo_and_legacy_selectors
-failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_reverse_engineering_audit_detects_swapped_manifest_mappings
-failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_reverse_engineering_audit_owner_corrections_are_bounded
-failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_reverse_engineering_audit_parses_the_exact_owner_field
-failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_reverse_engineering_audit_routes_corrections_and_reaches_steady_state
-failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_reverse_engineering_audit_routes_missing_auditable_artifacts (artifact='docs/module-catalog.md')
-failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_reverse_engineering_audit_routes_missing_auditable_artifacts (artifact='docs/wiki/topic-index.md')
-failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_verification_correction_is_reviewed_and_reaudited_before_retry
-failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_verification_correction_uses_persistent_owner_for_audit_created_document
-"""
-            ),
-            'AssertionError',
-            "'PASS' != 'INFRASTRUCTURE_FAILED'",
-        ),
-        (
-            _failure_ids(
-                """
-failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_reverse_engineering_audit_blocks_without_coverage_manifest_evidence
-failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_reverse_engineering_audit_blocks_without_required_ledger
-failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_reverse_engineering_audit_rejects_baseline_classification_mismatch
-failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_reverse_engineering_audit_rejects_incomplete_path_classifications
-failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_reverse_engineering_audit_requires_hashed_baseline_for_every_source
-failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_terminal_dependency_outcomes_are_reproducible (outcome='BLOCKED')
-"""
-            ),
-            'AssertionError',
-            "'BLOCKED' != 'INFRASTRUCTURE_FAILED'",
-        ),
-        (
-            _failure_ids(
-                """
-failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_terminal_dependency_outcomes_are_reproducible
-"""
-            ),
-            'AssertionError',
-            "'malformed handoff' not found in 'Bootstrapper target contract drifted: skills/resource-claim/SKILL.md'",
-        ),
-        (
-            _failure_ids(
-                """
-failure:test_scripted_orchestration.ScriptedBootstrapperTests.test_terminal_dependency_outcomes_are_reproducible (outcome='FAIL')
-"""
-            ),
-            'AssertionError',
-            "'FAIL' != 'INFRASTRUCTURE_FAILED'",
-        ),
-    ),
-    'evals/agent-tests/project-configurator/test_fixtures.py': (
-        (
-            _failure_ids(
-                """
-failure:test_fixtures.ProjectConfiguratorFixtureTests.test_routing_contracts_name_exact_role_ownership_and_bridge_bytes
-"""
-            ),
-            'AssertionError',
-            'Items in the first set but not the second:',
-        ),
-    ),
-    'evals/agent-tests/test_runner.py': (
-        (
-            _failure_ids(
-                """
-failure:test_runner.AgentSuiteRunnerTests.test_cleanup_audit_rejects_active_claim_in_nested_fixture_repository
-"""
-            ),
-            'AssertionError',
-            '"Fixture repository retains active claims" does not match "Receipt repository is not a Git worktree: <temp>/.agent-suite-fixtures/dev-coder/candidate"',
-        ),
-    ),
-    'evals/agent-tests/wiki-ingester/test_contract.py': (
-        (
-            _failure_ids(
-                """
-failure:test_contract.WikiIngesterTargetBoundaryTests.test_retained_evaluator_artifacts_replay_offline
-"""
-            ),
-            'AssertionError',
-            "'f2eaee91e9851beb804f4324ef1055b2e6626ac726d8d9c8aca63efd53f86478' != '3990d5fd475e52a8cb85658339390fe722dbaa5f0866f754fc58e83fe5806203'",
-        ),
-    ),
-    'scripts/test_agent_skill_evaluation_docs.py': (
-        (
-            _failure_ids(
-                """
-failure:test_agent_skill_evaluation_docs.AgentSkillEvaluationDocumentationTests.test_backlog_steward_rows_publish_neutral_resource_coordination_variants
-"""
-            ),
-            'AssertionError',
-            'Items in the second set but not the first:',
-        ),
-        (
-            _failure_ids(
-                """
-failure:test_agent_skill_evaluation_docs.AgentSkillEvaluationDocumentationTests.test_generator_check_reports_current_output
-"""
-            ),
-            'AssertionError',
-            '0 != 1 : Evaluation documentation is stale: run build-agent-skill-evaluation-docs.py',
-        ),
-    ),
-    'scripts/test_codex_task_control.py': (
-        (
-            _failure_ids(
-                """
-failure:test_codex_task_control.CodexTaskControlPackageTests.test_archival_waits_for_portable_terminal_closeout (clause='Archive a terminal Codex task only after coordinate-work-items confirms')
-"""
-            ),
-            'AssertionError',
-            '\'Archive a terminal Codex task only after coordinate-work-items confirms\' not found in "--- name: coordinate-codex-tasks description: Map portable work-item coordination to Codex task creation, resumption, identity, titles, follow-up, reconciliation, watchdog operation, and archival. Use only when coordinated work runs through Codex tasks. metadata: category: development-practice --- # Coordinate Codex Tasks Codex task control maps one portable work-item execution to one canonical Codex task and... [sha256:c811adc9468fba2d71d06fc90bc42d882fcd575dc00a043b9f68ceeda191bfbd]',
-        ),
-        (
-            _failure_ids(
-                """
-failure:test_codex_task_control.CodexTaskControlPackageTests.test_archival_waits_for_portable_terminal_closeout (clause='cleanup eligibility')
-"""
-            ),
-            'AssertionError',
-            '\'cleanup eligibility\' not found in "--- name: coordinate-codex-tasks description: Map portable work-item coordination to Codex task creation, resumption, identity, titles, follow-up, reconciliation, watchdog operation, and archival. Use only when coordinated work runs through Codex tasks. metadata: category: development-practice --- # Coordinate Codex Tasks Codex task control maps one portable work-item execution to one canonical Codex task and its retained user-visible context. Apply coordinate... [sha256:f006f1cd45ecf91308a680deece3a9ed93bbb75231cb71358e68af262079bf54]',
-        ),
-        (
-            _failure_ids(
-                """
-failure:test_codex_task_control.CodexTaskControlPackageTests.test_archival_waits_for_portable_terminal_closeout (clause='no unresolved notification remains')
-"""
-            ),
-            'AssertionError',
-            '\'no unresolved notification remains\' not found in "--- name: coordinate-codex-tasks description: Map portable work-item coordination to Codex task creation, resumption, identity, titles, follow-up, reconciliation, watchdog operation, and archival. Use only when coordinated work runs through Codex tasks. metadata: category: development-practice --- # Coordinate Codex Tasks Codex task control maps one portable work-item execution to one canonical Codex task and its retained user-visible context. A... [sha256:24f2c3650c347b3d92736b9e5c4c56b9e711fc09abd25887e4d5fcbcd388c30b]',
-        ),
-        (
-            _failure_ids(
-                """
-failure:test_codex_task_control.CodexTaskControlPackageTests.test_portable_skill_contains_no_codex_only_vocabulary (phrase='task archival')
-"""
-            ),
-            'AssertionError',
-            '\'task archival\' unexpectedly found in "---/nname: coordinate-work-items/ndescription: coordinate multiple provider-selected work items through one parent backlog coordinator and one root dev orchestrator execution per starting or running item. use when a sustained queue needs provider-neutral scheduling, reviewed delivery, lifecycle closure, and recovery./nmetadata:/n category: development-practice/n---/n/n# coordinate work items/n/nwork-item coordination connects a durable provider queue to bou... [sha256:a0bb1a9780fa2e8432cc95c2681da6d8aa9fc3ac690934dbc5f5e3788770d306]',
-        ),
-        (
-            _failure_ids(
-                """
-failure:test_codex_task_control.CodexTaskControlPackageTests.test_watchdog_prompt_templates_are_canonical_and_render_byte_identically
-"""
-            ),
-            'AssertionError',
-            "'Act [806 chars]out, terminal cleanup anomalies, and unsafe, s[458 chars]ere.' != 'Act [806 chars]out, every terminal Codex task in this Coordin[690 chars]ere.'",
-        ),
-        (
-            _failure_ids(
-                """
-failure:test_codex_task_control.CodexTaskControlRoleRoutingTests.test_non_codex_generated_agents_do_not_name_portable_policy_as_codex (runtime='claude', role='dev-backlog-watchdog')
-"""
-            ),
-            'AssertionError',
-            "Regex didn't match: 'when .*Codex|when coordinate-codex-tasks is active|for other runtimes' not found in '7. For each terminal Codex task, observe whether every status-applicable terminal gate passes. For Completed, require merged delivery before default archival. For Failed and Abandoned, require valid terminal evidence without inferring merged delivery. Treat archival as required by default. Accept an archival pause only from explicit current user direction for exact named task archival with r... [sha256:f46fc71fc2e84f8220c2d96a139b2dc327363366061f5e0c0b992354ccb30ed9]",
-        ),
-        (
-            _failure_ids(
-                """
-failure:test_codex_task_control.CodexTaskControlRoleRoutingTests.test_non_codex_generated_agents_do_not_name_portable_policy_as_codex (runtime='gemini', role='dev-backlog-watchdog')
-"""
-            ),
-            'AssertionError',
-            "Regex didn't match: 'when .*Codex|when coordinate-codex-tasks is active|for other runtimes' not found in '7. For each terminal Codex task, observe whether every status-applicable terminal gate passes. For Completed, require merged delivery before default archival. For Failed and Abandoned, require valid terminal evidence without inferring merged delivery. Treat archival as required by default. Accept an archival pause only from explicit current user direction for exact named task archival with r... [sha256:36da48e12dbf2349d6aa3a1fc3dac62a4f74075feba5e1a434dc77e563a97660]",
-        ),
-        (
-            _failure_ids(
-                """
-failure:test_codex_task_control.CodexTaskControlRoleRoutingTests.test_non_codex_generated_agents_do_not_name_portable_policy_as_codex (runtime='junie', role='dev-backlog-watchdog')
-"""
-            ),
-            'AssertionError',
-            "Regex didn't match: 'when .*Codex|when coordinate-codex-tasks is active|for other runtimes' not found in '7. For each terminal Codex task, observe whether every status-applicable terminal gate passes. For Completed, require merged delivery before default archival. For Failed and Abandoned, require valid terminal evidence without inferring merged delivery. Treat archival as required by default. Accept an archival pause only from explicit current user direction for exact named task archival with r... [sha256:d09c5235029c1e2852431427eaf7ec6ac14249ddce95049c5d2604db4150d1fc]",
-        ),
-    ),
-    'scripts/test_eval_coverage_catalog.py': (
-        (
-            _failure_ids(
-                """
-failure:test_eval_coverage_catalog.RepositoryCoverageCliTests.test_cli_reproduces_structural_and_declared_totals
-"""
-            ),
-            'AssertionError',
-            "'30 conceptual agents and 131 bundled skills have structural coverage' not found in '# Agent, Skill, Technology, And Test Coverage Checklist/n/nThis page is generated from the live conceptual agent and skill inventories, all six evaluation catalogs, executable fixture checks, sandbox declarations, Judge calibration records, and classified evidence receipts. Regenerate it with scripts/build-support-checklist.py./n/n## Status Meaning/n/n- Structural means the current agent or skill source exists a... [sha256:f2d466cded460a524a383c935c8c154e32fddce42ab438fad09fac83209dba01]",
-        ),
-    ),
-    'scripts/test_resource_claim.py': (
-        (
-            _failure_ids(
-                """
-error:test_resource_claim.ResourceClaimTests.test_report_groups_versioned_work_item_segments_and_diagnostics
-"""
-            ),
-            'KeyError',
-            "'outcome'",
-        ),
-    ),
-    'scripts/test_role_mutation_policy.py': (
-        (
-            _failure_ids(
-                """
-failure:test_role_mutation_policy.RoleMutationPolicyTests.test_execute_workitem_package_is_retired_without_weakening_delivery_contracts
-failure:test_role_mutation_policy.RoleMutationPolicyTests.test_workflow_skills_delegate_claim_rules_to_resource_claim
-"""
-            ),
-            'AssertionError',
-            "'Claim Events table in resource-claim' not found in '---/nname: deliver-work-item-feature-branch/ndescription: Complete a normalized work item through one reviewable feature branch, provider-accurate pull-request or merge-request publication, accepted corrections, required checks, observed merge, and final provider lifecycle evidence. Use when the selected completion process is feature-branch or a request explicitly requires reviewed branch delivery through merge./nmetadata:/n category: developm... [sha256:47c025b4416c042752c67704954e9f375f53b7e33669d715c835517b53923da1]",
-        ),
-    ),
-    'scripts/test_ste_technical_writing.py': (
-        (
-            _failure_ids(
-                """
-failure:test_ste_technical_writing.SteTechnicalWritingContractTests.test_documentation_roles_and_codex_profile_use_gpt_55_high
-"""
-            ),
-            'AssertionError',
-            "{'mod[27 chars]high'} != {'mod[27 chars]high', 'contextCapacityTokens': 1050000, 'cont[199 chars]nts'}",
-        ),
-    ),
-    'scripts/test_technology_detection.py': (
-        (
-            _failure_ids(
-                """
-failure:test_technology_detection.TechnologyDetectionTests.test_agents_section_preserves_none_unset_and_unsupported_boundaries
-"""
-            ),
-            'AssertionError',
-            "'asks for the Persistence decision before a persistence operation' not found in '## Resource Coordination Skill Reference/n/nProject Configurator selected resource-coordination skill resource-claim. Apply that bundled skill by reference before taking ownership of repository paths or exclusive runtime and integration resources./n/nThe selected skill owns its coordination procedure and evidence. Work-item providers own durable assignment and lifecycle records; they do not own operational resources... [sha256:97ad355d6eee93eb850df3210fe2789508cebfb9c064c3a547f1c56e4245eae6]",
-        ),
-        (
-            _failure_ids(
-                """
-failure:test_technology_detection.TechnologyDetectionTests.test_render_docstring_distinguishes_optional_authority_from_required_workflow
-"""
-            ),
-            'AssertionError',
-            "'Optional definition authority' not found in 'Render configured root AGENTS.md project and skill sections./n/n value is the mapping loaded from PROJECT.yaml. workflow_selection and/n resource_coordination are required./n agent_claim_transport is required only when resource_coordination selects resource-claim/n and must be absent when resource_coordination selects none./n Technology guidance is always produced from the configured loadouts. Optional/n shared_agent_skills, document_provenance, and ... [sha256:1a79876e2d3e4ac7f2b1f6a44094d8df51789a7920a05f1e7aec0670dd6beae8]",
-        ),
-    ),
-    'scripts/test_work_item_coordination.py': (
-        (
-            _failure_ids(
-                """
-failure:test_work_item_coordination.WorkItemCoordinationPackageTests.test_watchdog_policy_is_read_only_and_provider_neutral (clause='Notify the coordinator only when action is required')
-"""
-            ),
-            'AssertionError',
-            '\'Notify the coordinator only when action is required\' not found in "When the user requests background supervision for a sustained queue, the parent may assign one dedicated watchdog execution under the Dev Backlog Watchdog Role. The watchdog never performs scheduling or recovery. It observes and reports. It remains outside the provider queue and active capacity and is not a durable record or substitute Coordinator. The Watchdog reads provider inventory, Git state, runtime evidence, and applicabl... [sha256:120b5924b620cc78e90aab2d3effea8632dfe8a6be1eb4c95b76b709e863c251]',
-        ),
-        (
-            _failure_ids(
-                """
-failure:test_work_item_coordination.WorkItemCoordinationPackageTests.test_watchdog_policy_is_read_only_and_provider_neutral (clause='one concise no-action cycle result')
-"""
-            ),
-            'AssertionError',
-            '\'one concise no-action cycle result\' not found in "When the user requests background supervision for a sustained queue, the parent may assign one dedicated watchdog execution under the Dev Backlog Watchdog Role. The watchdog never performs scheduling or recovery. It observes and reports. It remains outside the provider queue and active capacity and is not a durable record or substitute Coordinator. The Watchdog reads provider inventory, Git state, runtime evidence, and applicable resource coordi... [sha256:284069d61936aef12418c04675a48a88335469a4324ba707dc4d4213885789e0]',
-        ),
-    ),
-}
-
-_ROOT_ALIAS_DIAGNOSTIC_HASH_REFRESH = {
-    "failure:test_codex_task_control.CodexTaskControlRoleRoutingTests.test_non_codex_generated_agents_do_not_name_portable_policy_as_codex (runtime='claude', role='dev-backlog-watchdog')": (
-        "03db336336755dfc0bb92a9926f48bd0fd04e3fa3affa45c26c0529ff2f99e7a",
-        "f46fc71fc2e84f8220c2d96a139b2dc327363366061f5e0c0b992354ccb30ed9",
-    ),
-    "failure:test_codex_task_control.CodexTaskControlRoleRoutingTests.test_non_codex_generated_agents_do_not_name_portable_policy_as_codex (runtime='gemini', role='dev-backlog-watchdog')": (
-        "aa1b585d3ab023cb102c3a01a5dd39c9bd5efa3a2ae42089db543c42327620ef",
-        "36da48e12dbf2349d6aa3a1fc3dac62a4f74075feba5e1a434dc77e563a97660",
-    ),
-    "failure:test_codex_task_control.CodexTaskControlRoleRoutingTests.test_non_codex_generated_agents_do_not_name_portable_policy_as_codex (runtime='junie', role='dev-backlog-watchdog')": (
-        "a548965fb7b6c2d7ee4523620bc042fe895afeb223f59bb020eacad2f7a286ce",
-        "d09c5235029c1e2852431427eaf7ec6ac14249ddce95049c5d2604db4150d1fc",
-    ),
-}
+# No repaired historical identity or diagnostic remains authorized.
+_OS_INDEPENDENT_FAILURE_CAUSES = {}
 
 
 def _encode_failure_diagnostic(
@@ -1632,33 +985,17 @@ class WindowsPortabilityContractTests(unittest.TestCase):
     def test_os_independent_failure_baseline_retains_all_sixteen_owners(self) -> None:
         self.assertEqual(16, len(_OS_INDEPENDENT_FAILURE_BASELINE))
         self.assertEqual(
-            118,
+            0,
             sum(
                 len(baseline.failure_ids)
                 for baseline in _OS_INDEPENDENT_FAILURE_BASELINE.values()
             ),
         )
-        self.assertEqual(
-            "resolved on current main",
-            _OS_INDEPENDENT_FAILURE_BASELINE["scripts/test_bundle_content.py"].status,
-        )
-        self.assertEqual(
-            (
-                "failure:test_agent_skill_evaluation_docs."
-                "AgentSkillEvaluationDocumentationTests."
-                "test_backlog_steward_rows_publish_neutral_resource_coordination_variants",
-                "failure:test_agent_skill_evaluation_docs."
-                "AgentSkillEvaluationDocumentationTests."
-                "test_generator_check_reports_current_output",
-            ),
-            _OS_INDEPENDENT_FAILURE_BASELINE[
-                "scripts/test_agent_skill_evaluation_docs.py"
-            ].failure_ids,
-        )
         for relative_path, expected in _OS_INDEPENDENT_FAILURE_BASELINE.items():
             self.assertTrue(relative_path.endswith(".py"))
             self.assertTrue(expected.owner)
-            self.assertTrue(expected.failure_ids or expected.status == "resolved on current main")
+            self.assertEqual((), expected.failure_ids)
+            self.assertEqual("resolved on current main", expected.status)
             self.assertEqual(
                 set(expected.failure_ids),
                 set(_OS_INDEPENDENT_FAILURE_DIAGNOSTICS.get(relative_path, {})),
@@ -1702,25 +1039,6 @@ class WindowsPortabilityContractTests(unittest.TestCase):
                 "AssertionError: mismatch at /mounted-volume/project-resolved/generated/agent.md",
             )
         self.assertEqual(lexical, resolved)
-
-    def test_root_alias_refresh_changes_only_three_recorded_diagnostic_hashes(self) -> None:
-        expected_identities = {
-            "failure:test_codex_task_control.CodexTaskControlRoleRoutingTests.test_non_codex_generated_agents_do_not_name_portable_policy_as_codex (runtime='claude', role='dev-backlog-watchdog')",
-            "failure:test_codex_task_control.CodexTaskControlRoleRoutingTests.test_non_codex_generated_agents_do_not_name_portable_policy_as_codex (runtime='gemini', role='dev-backlog-watchdog')",
-            "failure:test_codex_task_control.CodexTaskControlRoleRoutingTests.test_non_codex_generated_agents_do_not_name_portable_policy_as_codex (runtime='junie', role='dev-backlog-watchdog')",
-        }
-        self.assertEqual(expected_identities, set(_ROOT_ALIAS_DIAGNOSTIC_HASH_REFRESH))
-        diagnostics = _OS_INDEPENDENT_FAILURE_DIAGNOSTICS[
-            "scripts/test_codex_task_control.py"
-        ]
-        for identity, (previous_hash, normalized_hash) in (
-            _ROOT_ALIAS_DIAGNOSTIC_HASH_REFRESH.items()
-        ):
-            with self.subTest(identity=identity):
-                diagnostic = json.loads(diagnostics[identity])["diagnostic"]
-                self.assertNotEqual(previous_hash, normalized_hash)
-                self.assertNotIn(previous_hash, diagnostic)
-                self.assertIn(normalized_hash, diagnostic)
 
     def test_failure_baseline_rejects_same_identity_cause_drift(self) -> None:
         identity = "failure:module.Case.test_contract"
@@ -1797,24 +1115,16 @@ class WindowsPortabilityContractTests(unittest.TestCase):
         }
         self.assertTrue(expected <= set(_INTENTIONAL_UNITTEST_SKIP_REASONS))
 
-    def test_failure_baseline_rejects_new_identity_inside_inherited_red_file(self) -> None:
-        observed = {
-            path: {
-                identity: _OS_INDEPENDENT_FAILURE_DIAGNOSTICS[path][identity]
-                for identity in baseline.failure_ids
-            }
-            for path, baseline in _OS_INDEPENDENT_FAILURE_BASELINE.items()
-            if baseline.failure_ids
-        }
+    def test_failure_baseline_rejects_new_identity_inside_resolved_owner(self) -> None:
+        observed: dict[str, dict[str, str]] = {}
         resolved = _compare_supported_test_failures(observed)
         self.assertEqual(
-            {"scripts/test_bundle_content.py": ()},
+            {path: () for path in _OS_INDEPENDENT_FAILURE_BASELINE},
             resolved,
         )
         drifted = dict(observed)
         inherited_path = "scripts/test_technology_detection.py"
         drifted[inherited_path] = {
-            **drifted[inherited_path],
             "failure:new_windows_regression": "unrecognized diagnostic",
         }
         with self.assertRaisesRegex(RuntimeError, "new_windows_regression"):
@@ -2213,7 +1523,7 @@ def _compare_supported_test_failures(
 
 
 def _run_supported_tests() -> dict[str, object]:
-    """Run supported cases and accept only the exact inherited failure identities."""
+    """Run supported cases and reject every newly observed failure identity."""
     environment = os.environ.copy()
     environment["PYTHONDONTWRITEBYTECODE"] = "1"
     inherited_python_path = environment.get("PYTHONPATH", "")
