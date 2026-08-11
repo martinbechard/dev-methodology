@@ -1,6 +1,6 @@
 # Create Direct MCP Development Planning Skill
 
-Status: Running
+Status: Ready
 
 Type: Feature
 
@@ -10,11 +10,11 @@ Work Item ID: create-direct-mcp-development-planning-skill
 
 Completion: main-branch
 
-Owner: Dev Orchestrator
+Owner: Unowned
 
 Canonical Conversation: Not exposed by runtime
 
-Canonical Task: /root/direct_mcp_planning_orchestrator
+Canonical Task: Prior execution /root/direct_mcp_planning_orchestrator
 
 Parent Task: /root
 
@@ -157,7 +157,7 @@ Last Contact At: 2026-08-11T14:32:00Z
 
 Next Reconciliation At: 2026-08-11T14:47:00Z
 
-## Active Execution Evidence
+## Prior Execution Evidence
 
 Condition Type: root-execution
 
@@ -182,3 +182,5 @@ Confirmed Issue: The new manage-complex-development-plan probe leaves design/age
 Disposition: Correct in the current delivery through the original Dev Coder, followed by fresh independent re-review and reverification.
 
 Coordinator Scope Resolution: scripts/test_agent_skill_evaluation_docs.py is a non-governed directly affected focused contract test already authorized by this work item's focused-test requirement. Change exactly that path for the 143-probe and two-missing-probe expectations. Do not widen any other scope.
+
+Recovery Resolution: The updated methodology skills and Agent definitions were installed at user scope, and the user restarted Codex on 2026-08-11. Ordinary redispatch is safe. A new execution must review the preserved changes, obtain a bounded Dev Coder implementation and TDD plan, and require Dev Architect acceptance before further source mutation.
