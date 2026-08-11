@@ -153,18 +153,18 @@ Next Reconciliation At: 2026-08-11T14:47:00Z
 
 ## Active Execution Evidence
 
-Condition Type: root-execution
+Condition Type: delegated-work
 
-Owner: Dev Orchestrator
+Owner: Dev Coder task /root/direct_mcp_planning_orchestrator/direct_mcp_planning_coder
 
-Evidence: Canonical Codex task /root/direct_mcp_planning_orchestrator remains active. Main commit 670c273c removes the retired checker prerequisite and restores exact-manifest authorization for the bounded Dev Coder lane.
+Evidence: Runtime reconciliation at 2026-08-11T14:54:33Z reports the original Dev Coder task running on the bounded source assignment after exact-manifest authorization resumed.
 
-Observed At: 2026-08-11T14:44:01Z
+Observed At: 2026-08-11T14:54:33Z
 
 Started At: 2026-08-11T14:34:23Z
 
-Deadline or Expires At: 2026-08-11T14:59:00Z
+Deadline or Expires At: 2026-08-11T15:09:00Z
 
-Next Action: Resume the original Dev Coder on current main and obtain one clean verified candidate commit.
+Next Action: Dev Coder completes focused checks and returns one clean candidate commit to this Dev Orchestrator.
 
-Next Reconciliation At: 2026-08-11T14:56:00Z
+Next Reconciliation At: 2026-08-11T15:07:00Z
