@@ -1,6 +1,6 @@
 # Create Direct MCP Development Planning Skill
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -120,3 +120,19 @@ Approved at creation. On 2026-08-10, the user explicitly requested the planning 
 
 - The plan is an implementation aid, not a duplicate work-item queue or lifecycle record.
 - The Skill should remain concise. It should describe how the Agent uses the configured MCP operations, not reproduce the MCP server implementation.
+
+## Starting Handoff Evidence
+
+Starting Recorded At: 2026-08-11T14:32:00Z
+
+Coordinator: Codex task 019fb057-1767-7ef2-b5fa-41f4417b20b3
+
+Normalized Objective: Replace the helper-driven planning workflow with the concise direct MCP hierarchy-plan Skill, preserve the approved routing, and verify creation and targeted updates through the configured tools.
+
+Launch Result: Requested
+
+Canonical Execution: Pending
+
+Last Contact At: 2026-08-11T14:32:00Z
+
+Next Reconciliation At: 2026-08-11T14:47:00Z
