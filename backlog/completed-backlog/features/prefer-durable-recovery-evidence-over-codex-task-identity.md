@@ -1,6 +1,6 @@
 # Prefer Durable Recovery Evidence Over Codex Task Identity
 
-Status: Running
+Status: Completed
 
 Owner: Root Dev Orchestrator task 019ff81d-50ec-7d21-9206-e2a9a7ae4c4d
 
@@ -117,3 +117,25 @@ Worktree: /Users/martinbechard/dev/dev-methodology
 Phase: planning and baseline reconciliation
 
 Accepted Execution Evidence: This canonical Root Dev Orchestrator accepted the Starting reservation, resolved reservation commit `29b169be8f9ecf44fb955d4e4b4d5fa74169f4e9`, preserved accepted Watchdog baseline `c73bd4eb9452ef4df99d1b92442cdbfc2f39f6fb`, and acquired exact Work Item ID claim `prefer-durable-recovery-019ff81d-work` with activity `work` before this transition.
+
+## Completion Evidence
+
+Completed At: 2026-08-12T23:10:00Z
+
+Completion Selector: main-branch
+
+Accepted Source Commit: `66a2a5663a527b7772801038fb556ff6d9552cda`
+
+Integration Commit And Observed Main Tip: `66a2a5663a527b7772801038fb556ff6d9552cda` on `main`; the accepted direct commit is the observed main tip and is reachable from `main`.
+
+Independent Skill Review: GOOD after one bounded correction required the old execution and every duplicate to remain stopped or permanently barred, with post-acceptance mutation reserved to the accepted successor.
+
+Independent Verification: PASS. Nineteen Codex task-control tests and three focused bundle tests passed; both skill packages passed configured MCP validation with no findings; exact four-path scope and `git diff --check` passed; the worktree was clean at the accepted commit.
+
+Generated Freshness: `python3 scripts/build-skill-docs.py --check` reported only `design/generated/skill-definitions.js` stale. That deferred projection remains unmodified for `document-external-terminal-cleanup`.
+
+Delivery Disposition: READY. No merge replay was required because the reviewed and verified direct candidate was already the configured `main` tip. Remote publication was not required by the selected local main-branch completion contract.
+
+Preservation Acknowledgement: The integrated Watchdog source baseline remains preserved; no documentation, conceptual role, adapter, generated projection, or detached `/Users/martinbechard/.codex/worktrees/69b1/dev-methodology` state was changed.
+
+Terminal Archive Path: `backlog/completed-backlog/features/prefer-durable-recovery-evidence-over-codex-task-identity.md`
