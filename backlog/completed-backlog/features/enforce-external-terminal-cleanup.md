@@ -1,6 +1,6 @@
 # Enforce External Terminal Cleanup
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
@@ -115,3 +115,19 @@ Approved at creation. On 2026-08-12, the user explicitly ordered immediate conci
 ## Notes
 
 This item changes the executable coordination contract only. The separate documentation and role-projection item owns broader explanatory alignment.
+
+## Completion Evidence
+
+- Completed At: 2026-08-12T21:19:21Z.
+- Accepted Candidate: `720030e8f4350b30ea5aa9e75829d8a8954ed96f` on `codex/enforce-external-terminal-cleanup`.
+- Independent Review: Fresh Dev Code Reviewer accepted the exact four-file candidate with no findings.
+- Candidate Verification: Python compile, the focused external-cleanup contract test, 30 directly affected task-control and main-branch tests, OpenAI metadata validation, and Git diff checks passed.
+- Integration Commit: `d2c248aeba9e8dcd6372d19e8986ef836f1d7249` on configured `main`.
+- Integration Mapping: Each of the four accepted candidate blobs is byte-identical at the integration commit; the candidate was replayed onto current main without importing cumulative source-branch ancestry.
+- Main Observation: Primary main is clean at `d2c248aeba9e8dcd6372d19e8986ef836f1d7249`, and the integration commit is reachable from `main`.
+- Primary Skill Validation: Configured MCP `skill_validate` returned `{"ok":true,"findings":[]}` for the exact integrated primary-root bytes of the private Backlog Dispatcher, Codex task coordination, and main-branch delivery skills.
+- Post-Integration Verification: Fresh Dev Verifier passed Python compile, the focused external-cleanup test, 30 directly affected contract tests, OpenAI metadata, exact scope, byte equivalence, main reachability, clean-state, and Git diff checks.
+- Generated Freshness Residual: `scripts/build-skill-docs.py --check` truthfully reports only `design/generated/skill-definitions.js`; no other generated projection or adapter differs. Work Item `document-external-terminal-cleanup`, updated at `f0b8ca96db4b8aa2d56fd7c7f864ea475fb05b8c`, owns that exact residual.
+- Claim Reconciliation: Outcome-work claim `enforce-external-terminal-cleanup-work-resume-019ff7b7` released with `handoff`; exact source-path claim `enforce-external-terminal-cleanup-paths-resume-019ff7b7` released. The terminal provider transaction owns only this active path and its completed destination until its commit and release finish.
+- Commit Disposition: READY for requested lifecycle COMPLETED.
+- Cleanup Eligibility: The canonical task, current worktree, and checked-out branch are retained. Dev Backlog Coordinator must verify terminal provider and delivery evidence, released claims, worktree cleanliness, and branch-to-delivery equivalence before authorizing exact external cleanup. Root Backlog Dispatcher removes the authorized worktree, safely deletes the authorized branch, archives the task last, returns every outcome, and only then may the Coordinator reconcile capacity.
