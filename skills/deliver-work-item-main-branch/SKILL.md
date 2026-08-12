@@ -138,6 +138,8 @@ When a provider is selected, prepare one terminal update containing:
 
 Return the prepared terminal handoff to the caller after integration is complete. The owning orchestrator decides whether and when to dispatch the selected provider manager. This skill neither performs that dispatch nor waits for its result. The provider-backed item remains nonterminal until the separate Persistence update succeeds. Do not report a provider-backed item as completed before that succeeds.
 
+After the applicable Persistence reconciliation, the owning Dev Orchestrator returns the complete terminal evidence and cleanup eligibility to the Dev Backlog Coordinator. Cleanup eligibility includes applicable released-claim evidence, worktree cleanliness, and branch-to-delivery equivalence. The Dev Orchestrator must not archive its active Codex task, remove its current worktree, or delete its checked-out branch. Terminal cleanup remains external to the active work-item execution.
+
 ## Result
 
 Return READY only when the complete main-branch delivery proof exists. Include coordination

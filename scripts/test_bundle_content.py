@@ -4328,6 +4328,63 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn("Historical mapping:", migration)
                 self.assertNotIn("until their separately governed callers move", migration)
 
+    def test_external_terminal_cleanup_is_external_and_archive_last(self) -> None:
+        """Terminal cleanup stays external to the active work-item execution."""
+
+        dispatcher_text = (
+            REPOSITORY_ROOT
+            / ".agents"
+            / "skills"
+            / "backlog-dispatcher"
+            / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        codex_text = (
+            SKILLS_ROOT / "coordinate-codex-tasks" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        delivery_text = (
+            SKILLS_ROOT / "deliver-work-item-main-branch" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        normalized_dispatcher = " ".join(dispatcher_text.split())
+        normalized_codex = " ".join(codex_text.split())
+        normalized_delivery = " ".join(delivery_text.split())
+
+        for phrase in (
+            "returns the complete terminal evidence and cleanup eligibility",
+            "must not archive its active Codex task",
+            "remove its current worktree",
+            "delete its checked-out branch",
+        ):
+            with self.subTest(delivery_contract=phrase):
+                self.assertIn(phrase, normalized_delivery)
+
+        for phrase in (
+            "must not execute terminal cleanup directly",
+            "Only the authorized root Backlog Dispatcher executes terminal cleanup",
+            "even when the Coordinator runtime exposes the required task controls",
+            "terminal provider and delivery evidence",
+            "released claims",
+            "worktree cleanliness",
+            "branch-to-delivery equivalence",
+        ):
+            with self.subTest(coordination_contract=phrase):
+                self.assertIn(phrase, normalized_codex)
+        self.assertNotIn(
+            "The Coordinator archives directly only when its runtime exposes the control",
+            normalized_codex,
+        )
+
+        ordered_cleanup = (
+            "remove the authorized worktree",
+            "safely delete the authorized branch",
+            "archive the authorized task",
+            "return every cleanup outcome",
+            "The Coordinator reconciles capacity only after those outcomes return",
+        )
+        positions = [
+            normalized_dispatcher.index(phrase) for phrase in ordered_cleanup
+        ]
+        self.assertEqual(sorted(positions), positions)
+
     def test_main_branch_completion_requires_integrated_main_evidence(self) -> None:
         skill_name = "deliver-work-item-main-branch"
         skill_path = SKILLS_ROOT / skill_name / "SKILL.md"

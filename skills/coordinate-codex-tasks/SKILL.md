@@ -15,7 +15,7 @@ Run the Dev Backlog Coordinator as the coordination Agent. When it runs as a col
 
 The root calling task uses its project-private runtime dispatcher. The Coordinator returns an exact executable packet; the authorized root runtime dispatcher performs only the approved task creation, resumption, message, title, wait, archive, automation, or related caller-only operation and returns the exact result to the Coordinator. The authorized root runtime dispatcher does not adopt the Coordinator Role, independently select work, mutate Coordinator-owned lifecycle, or create a second coordination record.
 
-When the Coordinator runtime itself exposes the required task control, it may execute its own approved operation directly and reconcile the result through the same contract. Runtime placement changes the operation executor, not coordination authority.
+When the Coordinator runtime itself exposes the required task control, it may execute its own approved operation directly unless the operation is terminal cleanup. The Coordinator must not execute terminal cleanup directly. Runtime placement changes the executor for ordinary operations, not coordination authority or the external terminal-cleanup boundary.
 
 ## Codex Capability Check
 
@@ -122,7 +122,9 @@ Task archival is mandatory by default after the applicable ordinary terminal gat
 
 An archival pause is valid only when explicit current user direction names the exact Codex task, limits its scope to Codex task archival, records the exact direction and scope as evidence, and has a recorded acknowledgement. Do not infer, inherit, carry forward, or persist a campaign-wide pause from earlier conversation. A valid pause suppresses archival only for its named tasks. It never suppresses provider closeout, claim reconciliation, worktree cleanup, delivery-branch cleanup, source-branch cleanup, notification, or another terminal reconciliation action.
 
-Before archival, the Coordinator verifies the terminal conversation title and preserves the canonical task identity with the terminal handoff. If no valid current named-task pause exists, it authorizes archival after every ordinary gate passes. The Coordinator archives directly only when its runtime exposes the control; otherwise the authorized root runtime dispatcher executes the exact archival instruction and returns the outcome. If archival fails or no authorized runtime supports it, record the limitation and do not report archival success. An idle, stopped, titled, or archived Codex task proves none of those facts.
+The Dev Orchestrator returns the complete terminal evidence and cleanup eligibility. It must not archive its active Codex task, remove its current worktree, or delete its checked-out branch.
+
+Before cleanup authorization, the Dev Backlog Coordinator verifies the terminal conversation title, canonical task identity, terminal provider and delivery evidence, released claims, worktree cleanliness, branch-to-delivery equivalence, and preservation acknowledgement. If no valid current named-task pause exists, it authorizes archival after every ordinary gate passes. Only the authorized root Backlog Dispatcher executes terminal cleanup, even when the Coordinator runtime exposes the required task controls. It executes the exact authorized worktree, branch, and task operations, archives the task last, and returns every outcome to the Coordinator. The Coordinator reconciles capacity only after those outcomes return. If archival fails or no authorized runtime supports it, record the limitation and do not report archival success. An idle, stopped, titled, or archived Codex task proves none of those facts.
 
 Task archival is a runtime cleanup mapping. It does not close a provider record, prove Commit delivery, release a claim, delete a worktree, or delete a branch.
 

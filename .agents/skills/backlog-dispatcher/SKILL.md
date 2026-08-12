@@ -103,6 +103,19 @@ Pass the message as evidence and ask the Coordinator to verify it against author
 
 Ordinary final results may be forwarded to the Coordinator without a second decision request. Routine progress, heartbeat, title-only, and repeated evidence messages remain prohibited.
 
+## Terminal Cleanup
+
+Terminal cleanup begins only after the Dev Orchestrator returns terminal evidence and cleanup eligibility and the Dev Backlog Coordinator authorizes exact targets. The cleanup packet names the authorized task, worktree, and branch. The root Backlog Dispatcher executes only that packet.
+
+For each authorized operation, the root Backlog Dispatcher must:
+
+1. remove the authorized worktree;
+2. safely delete the authorized branch after worktree removal;
+3. archive the authorized task after every other authorized cleanup operation;
+4. return every cleanup outcome, including failed, pending, or ambiguous outcomes.
+
+The Coordinator reconciles capacity only after those outcomes return. The dispatcher does not infer cleanup eligibility, substitute another target, or reconcile capacity itself.
+
 ## Partial And Ambiguous Runtime Outcomes
 
 Treat a timeout, disconnect, delayed worktree setup, pending client identifier, or incomplete task-creation response as an ambiguous runtime mutation.
