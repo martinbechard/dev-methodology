@@ -1,6 +1,6 @@
 # Generate The Inspect AI Evaluation Catalog
 
-Status: Holding
+Status: Ready
 
 Type: Feature
 
@@ -48,7 +48,7 @@ The user authorized the phased Inspect-first adoption series on 2026-08-12. This
 
 integrate-inspect-ai-reporting-evidence. Unblock when the stabilized execution, routing, governed-result, and evidence schemas are accepted.
 
-Queued Dependency Evidence: This is a normal predecessor wait, not a current impediment. Resume to Ready after the predecessor completes; propagate Blocked only if that predecessor becomes truly Blocked.
+Derived Queue Evidence: Stored lifecycle remains Ready. Series order derives effective Holding behind a healthy predecessor or effective Blocked behind the first genuinely Blocked predecessor; do not rewrite this record for either derived state.
 
 ## Verification
 

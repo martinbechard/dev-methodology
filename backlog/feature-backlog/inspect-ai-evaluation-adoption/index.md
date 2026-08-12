@@ -28,7 +28,7 @@ On 2026-08-12 in Codex task 019ff660-663f-7271-a4da-c30e6c054cf7, the user selec
 
 Planning estimates use generated output tokens, including reasoning, at an assumed 50 tokens per second. One agent-hour therefore equals 180,000 generated tokens. Estimates report non-model runtime separately and distinguish total agent-hours from critical-path elapsed time.
 
-## Recommended Order
+## Required Order
 
 1. [Map Evaluation Contracts To Inspect AI](map-evaluation-contracts-to-inspect-ai.md)
 2. [Prove Read-Only Inspect AI Execution](prove-read-only-inspect-ai-execution.md)
@@ -38,6 +38,8 @@ Planning estimates use generated output tokens, including reasoning, at an assum
 6. [Integrate Inspect AI Reporting And Evidence](integrate-inspect-ai-reporting-evidence.md)
 7. [Generate The Inspect AI Evaluation Catalog](generate-inspect-ai-evaluation-catalog.md)
 8. [Migrate Evaluation Suites To Inspect AI](migrate-evaluation-suites-to-inspect-ai.md)
+
+This order defines dependency scheduling for the series. A healthy nonterminal predecessor makes later children effectively Holding without rewriting their stored lifecycle. A genuinely impeded child alone stores Blocked; later children derive effective Blocked from that first stored blocker. Completed children may move to their canonical archive while retaining their ordered identity here.
 
 ## Program Stop Conditions
 
