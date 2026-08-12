@@ -149,3 +149,13 @@ None.
 - Review Disposition: GOOD; no prior finding survives.
 - Conversation Title: `Publishing — Correct Resource Claims and Private Dispatcher`.
 - Resource Coordination: claim-free under the active crisis; publication and installation must not invoke any claim operation.
+
+## Windows Publication Correction
+
+- Phase: publication correction — Windows fresh barrier contract.
+- Trigger: exact-head CI run `31598572186` rejected a fresh directory barrier because one compatibility assertion selected barrier form only from `os.name`.
+- Authoritative Fresh Contract: every platform installs a directory barrier at `.codex/agent-claim/agent-claims.json` containing the exact `state.json` registry-marker payload; the legacy event path is an exact regular-file barrier.
+- Authoritative Legacy Contract: migration of an existing empty legacy registry retains a same-inode regular-file tombstone on Windows; POSIX may replace it with the directory barrier.
+- Candidate Under Correction: mcp-agent-ops `ca69c6fe901c4d24da546bbad846699791a5f2fe`; this commit must not receive tag `v0.12.0`.
+- Conversation Title: `Correcting — Windows Resource Claim Barrier`.
+- Resource Coordination: claim-free under the active crisis; no claim operation is authorized during correction.
