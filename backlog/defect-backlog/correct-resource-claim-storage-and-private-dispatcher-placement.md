@@ -1,10 +1,10 @@
 # Correct Resource-Claim Storage And Private Dispatcher Placement
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
-Owner: Unowned
+Owner: Dev Orchestrator
 
 Provider: file
 
@@ -98,3 +98,18 @@ None.
 - Creation authority is the user's explicit repair and publication request. Unique atomic file-provider creation is claim-free, and crisis recovery prohibits operational claim use.
 - Historical completed Work items remain historical evidence and are not reopened or rewritten to represent this repair.
 - The canonical execution must use the dirty primary checkout to adopt the preserved candidate. It must not manufacture a clean replacement that strands or erases those bytes.
+
+## Current Starting Reservation
+
+- Parent Coordination Task: Backlog Dispatcher `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Reservation: one crisis-authorized Ready -> Starting reservation for the only separate canonical repair execution.
+- Normalized Objective: correct resource-claim storage and private Backlog Dispatcher placement, reconcile the preserved candidate, deliver both repositories, publish only portable artifacts, and stop for a fresh Codex restart before post-restart verification.
+- Intended Root Role: Dev Orchestrator.
+- Provider Identity: file; Work Item ID `correct-resource-claim-storage-and-private-dispatcher-placement`; Provider Reference `backlog/defect-backlog/correct-resource-claim-storage-and-private-dispatcher-placement.md`.
+- Persistence And Completion: file provider; main-branch completion.
+- Baseline Before Reservation: `050b92036496557016c64d25bbd494980c21a25f` on primary `main`.
+- Checkout: primary `/Users/martinbechard/dev/dev-methodology`, required to adopt the preserved dirty candidate; external boundary `/Users/martinbechard/dev/mcp-agent-ops`.
+- Reserved At: 2026-08-12T11:32:02Z.
+- Canonical Runtime Identity: caller-owned creation is pending; the Backlog Dispatcher must record the returned Codex Task ID and distinct Conversation ID before treating launch as reconciled. Titles are display evidence only.
+- Resource Coordination: no claim. Crisis epoch `claim-coordination-repair-2026-08-12T11:30:13Z` prohibits all claim operations after the one reset.
+- Next Lifecycle Owner: the newly created root Dev Orchestrator must use this same provider item and directly record Starting -> Running before artifact mutation. No second execution or concurrent dispatch is authorized.
