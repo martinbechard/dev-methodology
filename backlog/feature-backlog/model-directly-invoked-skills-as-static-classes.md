@@ -21,14 +21,22 @@ Extend the object-oriented Agent and Skill model with Static Classes for skills 
 - Dispatch Reservation: `reserve-starting-model-static-classes-019ff2c3`.
 - Normalized Objective: Define Static Classes for directly invoked skills, document the private Backlog Dispatcher to Dev Backlog Coordinator example and root-owned Codex task-launch boundary, and verify OpenAI-attributed statements against official sources.
 - Intended Root Role: Dev Orchestrator.
-- Launch Result: Not attempted. The caller-owned root Backlog Dispatcher must create the canonical Codex task only after this durable reservation.
-- Canonical Execution: None pending caller-owned task creation.
-- Canonical Codex Task ID: None pending caller-owned task creation.
-- Canonical Conversation ID: None pending caller-owned task creation.
+- Launch Result: Started. Caller creation succeeded after pending worktree resolution without retry.
+- Runtime Parent Task ID: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Dev Backlog Coordinator Task Identity: `/root/backlog_coordinator`.
+- Canonical Execution: Codex task `019ff737-8b68-7010-8342-ca3cc356053e` on host `local`.
+- Canonical Codex Task ID: `019ff737-8b68-7010-8342-ca3cc356053e`.
+- Canonical Conversation ID: `019ff737-8b68-7010-8342-ca3cc356053e`; this runtime exposes one combined identity.
+- Pending Client Identity: `client-new-thread:6cc87bc3-e1d1-4ec4-9692-dd2944a21d6c`, resolved uniquely to the canonical task above.
+- Runtime Worktree: `/Users/martinbechard/.codex/worktrees/d7b9/dev-methodology`.
+- Runtime Creation Time: 2026-08-12T18:24:04Z (`1786559044`).
+- Runtime State: Active. This proves a successful launch only and does not prove Running acceptance.
+- Conversation Title: `Starting — Model Directly Invoked Skills As Static Classes`, explicitly synchronized and confirmed.
 - Baseline Commit: `aac210514eadad32ce0678fbf0860c4724ebee4b`.
 - Provider Claim: `reserve-starting-model-static-classes-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `52ce6fa6-f1b6-4308-a1e0-138a1faa3757`.
-- Last Contact: 2026-08-12T18:22:03Z, durable reservation prepared before runtime launch.
-- Next Reconciliation: Immediately after the caller returns the runtime task-creation result; if no result arrives, inspect at or after 2026-08-12T18:27:03Z without creating a replacement automatically.
+- Identity Reconciliation Claim: `reconcile-starting-model-static-classes-019ff737`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `40e7bfec-088d-420d-81c1-e02893507156`.
+- Last Contact: 2026-08-12T18:24:04Z, caller returned the successful canonical task identity and active runtime state.
+- Next Reconciliation: Accept the canonical task's distinct Starting -> Running provider transition or reconcile a concrete failed, stopped, missing, or blocked handoff. Do not create a replacement automatically.
 - Next Lifecycle Owner: The new root Dev Orchestrator must claim this exact Work Item ID with activity `update` and record the distinct Starting -> Running acceptance before implementation or documentation mutation.
 
 ## Scheduling Evidence
