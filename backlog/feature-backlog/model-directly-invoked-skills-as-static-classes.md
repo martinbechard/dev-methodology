@@ -1,6 +1,6 @@
 # Model Directly Invoked Skills As Static Classes
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -47,6 +47,24 @@ Extend the object-oriented Agent and Skill model with Static Classes for skills 
 - Capacity Result: one of one pass-local launch slots reserved; this item now consumes the slot as Starting.
 - Dependencies: None.
 - Overlap Result: no canonical execution, provider duplicate, active claim, active work-item path owner, or finish-lane delivery overlaps this item. Documentation paths remain unclaimed until the root Dev Orchestrator accepts Running and acquires its outcome-work claim.
+
+## Running Acceptance Evidence
+
+- Running Recorded At: 2026-08-12T18:26:22Z.
+- Owner: Root Dev Orchestrator.
+- Canonical Codex Task ID: `019ff737-8b68-7010-8342-ca3cc356053e`.
+- Canonical Conversation ID: `019ff737-8b68-7010-8342-ca3cc356053e`; the current Codex runtime exposes one combined identity through the task surface, so the distinct provider fields retain the same runtime-supplied value.
+- Runtime Parent Task ID: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Dev Backlog Coordinator Task Identity: `/root/backlog_coordinator`.
+- Root Role: Dev Orchestrator.
+- Branch: `codex/model-direct-skills-static-classes`.
+- Worktree: `/Users/martinbechard/.codex/worktrees/d7b9/dev-methodology`.
+- Phase: Documentation design and source reconciliation.
+- Accepted Baseline: `84e8ceec51974eb9302890b11eb6d1c3921351f3`, verified as the private worktree HEAD before work began.
+- Accepted Execution Evidence: the canonical root task is active in the reserved private worktree, accepted the exact Work Item ID, created its dedicated branch at the accepted baseline, and acquired the distinct activity `update` work-item claim plus the exact provider-path claim before this transition.
+- Provider Update Claim: `running-model-static-classes-019ff737`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `db9f27fc-9e90-4eee-b556-4842264f9c14`.
+- Provider Path Claim: `running-provider-path-model-static-019ff737`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `6033c8fd-247b-4c9b-8e86-16d9f09cfa80`.
+- Next Action: commit this distinct Starting -> Running provider mutation, release both update claims with disposition `handoff` where required, then acquire activity `work` and the exact documentation path ownership before source mutation.
 
 ## Context
 
