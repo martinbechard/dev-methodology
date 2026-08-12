@@ -94,11 +94,13 @@ Approved at creation by the user's explicit 2026-08-12 instruction to incorporat
 - Accepted At: 2026-08-12T23:28:20Z.
 - Canonical Execution: `/root/enforce_reference_plus_delta`.
 - Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Authorizing Coordinator: `/root/backlog_coordinator`.
 - Root Owner: Dev Orchestrator.
 - Branch: `main`.
 - Worktree: `/Users/martinbechard/dev/dev-methodology`.
 - Accepted Baseline: `868dbe34a947efa88cb0ad11c7fd07ac8432f0a6`.
 - Accepted Execution: The sole authorized crisis execution accepted the complete provider record and dispatch-time delta on host `local`.
+- Runtime Display Handoff: `NOT_APPLICABLE`; this collaboration runtime exposes no separate Codex Task ID, Conversation ID, host, or title-control surface.
 - Phase: Implementation planning.
 - Claim State: Suspended; no claim operation is permitted or performed.
 
