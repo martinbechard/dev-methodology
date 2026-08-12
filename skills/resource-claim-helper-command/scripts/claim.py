@@ -685,8 +685,6 @@ def _resolve_registry_path_once(
     claim_id: str | None,
 ) -> Path | None:
     registry_path = _registry_path(repository)
-    legacy_registry = _legacy_registry_path(repository)
-    legacy_events = _legacy_events_path(repository)
     marker = _state_marker(repository)
 
     if marker and marker["migration_status"] == "complete":
@@ -696,27 +694,12 @@ def _resolve_registry_path_once(
                 "The completed claim-state marker has no canonical registry.",
                 registry=str(registry_path),
             )
-        if marker["origin"] == "fresh":
-            if os.path.lexists(legacy_registry) or os.path.lexists(legacy_events):
-                raise _ClaimStateError(
-                    "contradictory_dual_state",
-                    "Fresh canonical claim state conflicts with state later created at a legacy path.",
-                    canonical_registry=str(registry_path),
-                    legacy_registry=str(legacy_registry),
-                    legacy_events=str(legacy_events),
-                )
-        elif not (
-            _legacy_registry_is_marker(legacy_registry)
-            and _legacy_events_is_marker(legacy_events)
-        ):
-            raise _ClaimStateError(
-                "contradictory_dual_state",
-                "Migrated claim state is missing an exact incompatible legacy-path marker.",
-                canonical_registry=str(registry_path),
-                legacy_registry=str(legacy_registry),
-                legacy_events=str(legacy_events),
-            )
+        legacy_registry = registry_path.parent / ".completed-legacy-registry-boundary"
+        legacy_events = registry_path.parent / ".completed-legacy-events-boundary"
         return registry_path
+
+    legacy_registry = _legacy_registry_path(repository)
+    legacy_events = _legacy_events_path(repository)
 
     if marker and marker["migration_status"] == "in_progress":
         if WINDOWS_LEGACY_REGISTRY_TOMBSTONE:
@@ -863,17 +846,10 @@ def _read_only_registry_once(
 ) -> tuple[Path, dict[str, Any]] | None:
     """Read claim state under its existing lock without creating or migrating storage."""
     registry_path = _registry_path(repository)
-    legacy_registry = _legacy_registry_path(repository)
-    legacy_events = _legacy_events_path(repository)
+    legacy_registry = registry_path.parent / ".completed-legacy-registry-boundary"
+    legacy_events = registry_path.parent / ".completed-legacy-events-boundary"
     marker = _state_marker(repository)
 
-    if marker and marker["migration_status"] == "in_progress":
-        raise _ClaimStateError(
-            "migration_interrupted",
-            "Claim-state migration is incomplete; retry with the next mutating operation.",
-            canonical_registry=str(registry_path),
-            legacy_registry=str(legacy_registry),
-        )
     if marker and marker["migration_status"] == "complete":
         if not registry_path.exists():
             raise _ClaimStateError(
@@ -881,27 +857,17 @@ def _read_only_registry_once(
                 "The completed claim-state marker has no canonical registry.",
                 registry=str(registry_path),
             )
-        if marker["origin"] == "fresh":
-            if os.path.lexists(legacy_registry) or os.path.lexists(legacy_events):
-                raise _ClaimStateError(
-                    "contradictory_dual_state",
-                    "Fresh canonical claim state conflicts with state later created at a legacy path.",
-                    canonical_registry=str(registry_path),
-                    legacy_registry=str(legacy_registry),
-                    legacy_events=str(legacy_events),
-                )
-        elif not (
-            _legacy_registry_is_marker(legacy_registry)
-            and _legacy_events_is_marker(legacy_events)
-        ):
+    else:
+        legacy_registry = _legacy_registry_path(repository)
+        legacy_events = _legacy_events_path(repository)
+        if marker and marker["migration_status"] == "in_progress":
             raise _ClaimStateError(
-                "contradictory_dual_state",
-                "Migrated claim state is missing an exact incompatible legacy-path marker.",
+                "migration_interrupted",
+                "Claim-state migration is incomplete; retry with the next mutating operation.",
                 canonical_registry=str(registry_path),
                 legacy_registry=str(legacy_registry),
-                legacy_events=str(legacy_events),
             )
-    elif registry_path.exists() and (
+    if not (marker and marker["migration_status"] == "complete") and registry_path.exists() and (
         os.path.lexists(legacy_registry) or os.path.lexists(legacy_events)
     ):
         raise _ClaimStateError(
