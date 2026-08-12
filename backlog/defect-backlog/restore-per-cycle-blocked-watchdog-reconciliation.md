@@ -1,6 +1,6 @@
 # Restore Per-Cycle Blocked Watchdog Reconciliation
 
-Status: Ready
+Status: Blocked
 
 Type: Defect
 
@@ -111,3 +111,17 @@ Approved at creation and expanded by later answer. On 2026-08-12, after the exac
 - This item is a regression correction to the completed predecessor, not a second feature for the same outcome.
 - The intended test additions are three focused behavioral cases, not a broad evaluation-suite expansion.
 - Coordinator recovery policy remains owned by skills/coordinate-work-items/SKILL.md; this defect does not move provider mutation or dispatcher authority into the Watchdog.
+
+## Delivered Work Lifecycle Reconciliation
+
+- Reconciled At: 2026-08-12.
+- Preserved Main Commit: `ba00c950364740f51a250ef53eb7ba4049369aed` contains the complete 16-path user-authorized source, role, generated-adapter, projection, and focused-regression change set.
+- Preserved Reported Gates: The originating execution reports fresh independent acceptance and verification. Preserve those results for adoption; do not redispatch or reimplement the requested behavior.
+- Lifecycle Anomaly: The provider remained Ready while the work was implemented, reviewed, verified, and committed directly to main. It contains no durable Starting or Running acceptance, canonical root Dev Orchestrator identity, selected Commit READY result, or terminal provider transaction.
+- Current Disposition: Ready -> Blocked; Owner Unowned. Direct Ready -> Completed is prohibited because Git delivery and Watchdog assertions do not substitute for the missing lifecycle and Commit gates.
+- Confirmed Blocker: Finish-lane adoption must reconcile the already-delivered main commit through one authorized root Dev Orchestrator execution without changing its accepted content or redispatching implementation.
+- Blocker Owner: Dev Backlog Coordinator.
+- Unblock Condition: After `align-orchestrated-development-lifecycle-with-documentation-design-system` finishes its active terminal provider transaction and cleanup, reserve exactly one lifecycle-adoption execution. That execution must record Starting -> Running, verify `ba00c950` and reported gates against current main, obtain any missing fresh terminal gate, apply `deliver-work-item-main-branch` to READY without replaying content, then close and archive this provider item.
+- Overlap Constraint: `skills/coordinate-codex-tasks/SKILL.md` is also required by Ready item `prefer-durable-recovery-evidence-over-codex-task-identity`. Do not dispatch that item until this adoption closes or explicitly releases the delivered path ownership.
+- Preservation Boundary: Do not revert, amend, cherry-pick, regenerate, or rewrite `ba00c950` merely to repair lifecycle order. Preserve unrelated lifecycle-alignment provider changes and every unrelated worktree or branch.
+- Transition Claim: `block-watchdog-delivery-lifecycle-adoption-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `e9f44706-81ba-4a2d-9aa7-fcd58ef8d328`.
