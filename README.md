@@ -142,7 +142,7 @@ python3 scripts/build-skill-docs.py --check
 
 ## Resource Claims And Worktrees
 
-PROJECT.yaml selects resource-claim or none. When resource-claim is selected, Project Configurator records resource deadlines and configures one claim helper provider. The field agent_claim_transport keeps its historical name but selects that provider. This repository uses the command-line provider because the current MCP provider omits claim deadline extension and registry reset operations.
+PROJECT.yaml selects resource-claim or none. When resource-claim is selected, Project Configurator records resource deadlines and configures one claim helper provider. The field agent_claim_transport keeps its historical name but selects that provider. This repository selects the verified mcp-agent-ops 0.12.0 provider with all nine schema-version-2 operations.
 
 [Resource Claim](skills/resource-claim/SKILL.md) is the only source for events that require claims, the scope for each event, conflict handling, deadline policy, and release timing. [Resource Claim Helper](skills/resource-claim-helper/SKILL.md) defines the common operations, inputs, structured outcomes, and uncertain-outcome reconciliation. The command-line and MCP Provider Skills realize that interface without redefining policy.
 
@@ -158,7 +158,7 @@ Project setup keeps the canonical checkout root out of repository status with th
 
 After a private contribution is preserved on its branch or integrated into its target, the orchestration owner removes the clean worktree and prunes stale Git worktree metadata.
 
-Every worktree uses the claim registry and claim history resolved from the primary worktree under .agent-ops/resource-claim. The directory name, agent-claims.json registry, agent-claim-events history, and agent_claim_transport project field retain their historical names as explicit compatibility identifiers; the public Resource Claim rename does not migrate or discard persisted claim state. Agent transcripts are not claim history.
+Every worktree uses the claim registry and claim history resolved from the primary worktree under .agent-ops/resource-claim. The agent-claims.json registry, agent-claim-events history, and agent_claim_transport project field retain their historical names as explicit compatibility identifiers; migration preserves persisted audit state. Agent transcripts are not claim history.
 
 The command helper is implemented by skills/resource-claim-helper-command/scripts/claim.py:
 
