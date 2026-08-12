@@ -242,3 +242,15 @@ None.
 - Schema-Only Verification: the fresh process advertised all nine claim tools: status, acquire, extend, extend-deadline, heartbeat, release, reset, maintain-journal, and report. None was invoked.
 - Remaining Runtime Boundary: the MCP process attached to the current Codex session retains its pre-correction startup environment; a Codex restart is required before in-session catalog confirmation and any later Coordinator-authorized crisis-exit sequence.
 - Claim Evidence: none; no claim operation occurred.
+
+## Restarted In-Session Catalog Evidence
+
+- User Confirmation: the user explicitly confirmed the second Codex restart; this is accepted as the fresh-runtime boundary.
+- Attached Runtime: non-claim mcp-agent-ops catalog tools are reachable and no longer return `Configured skill catalog is invalid.`
+- `skill_refresh`: succeeded with catalog revision `a80c7336676563fefd73612bfe45f857d60968beff9e109ba45481fed33fd198`.
+- `skill_list`: succeeded with 150 skills and the same revision.
+- `skill_load`: succeeded for `backlog-dispatcher`, `resource-claim`, `resource-claim-helper`, `resource-claim-helper-mcp`, and `coordinate-codex-tasks`; no errors and the same revision.
+- Attached Digests: backlog-dispatcher `75ac03f54ce8c89d436159182fc89a8a5863715045a276287c4deffb79086919`; resource-claim `f16aca5f649de818c51073779df1d64d3215e8a5fc9cfee69318e4631cb9cbdc`; resource-claim-helper `d8431e082964173a1087916b8b5e6cbaf1071b714f3122b387fa1a4d9dd7428b`; resource-claim-helper-mcp `dc0803a1e2adc075ee1d08f5ab2c5a3ad724fd7d567bbabd978bbd94fb56c8a0`; coordinate-codex-tasks `e1cdab99cf994ef91b326c126babab3dc455e7683217cb19ee97bce38c64dbaf`.
+- Schema Inspection: the attached runtime exposes exactly nine claim tools: `claim_status`, `claim_acquire`, `claim_extend`, `claim_extend_deadline`, `claim_heartbeat`, `claim_release`, `claim_reset`, `claim_maintain_journal`, and `claim_report`.
+- Claim Evidence: none. No claim tool was invoked during fresh-runtime verification.
+- Coordinator Handoff: non-claim catalog diagnosis and verification are complete; crisis exit, any disposable claim lifecycle, MULTITASK restoration, lifecycle completion, and cleanup remain Coordinator-owned next-phase decisions.
