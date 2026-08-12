@@ -1,0 +1,72 @@
+# Reconcile Project Organiser Filename-Selection Regression Gaps
+
+Status: Ready
+
+Type: Defect
+
+Provider: file
+
+Work Item ID: reconcile-project-organiser-filename-selection-regression-gaps
+
+Completion: main-branch
+
+## Summary
+
+Reassess four abandoned Project Organiser filename-selection regression branches against current main and retain only assertion and omission-boundary coverage that is still missing.
+
+## Context
+
+Current main contains the completed Project Organiser filename-selection correction and a substantially rewritten bundle-content test surface. Four later worktrees attempted to harden required and forbidden selection markers, structured omissions, sentinels, punctuation boundaries, container boundaries, and complete-field handling. Their patches conflict with current scripts/test_bundle_content.py and must not be replayed directly.
+
+The preserved source branches are temporary evidence only:
+
+- codex/align-project-organiser-filename-selection-oracle-correction at 41343b0327705504b1f9d50600b031dc5a8dbbed
+- codex/align-project-organiser-filename-selection-oracle-review-correction-1 at 517679cec2b1fd0288b0dea803ada3838ef83844
+- codex/align-project-organiser-filename-selection-oracle-omission-correction-2 at 6e7eb7460a7e133b6a7d7ce37a262a41eefce019
+- codex/align-project-organiser-filename-selection-complete-field-correction-3 at 971bad6bc8a5ffe4b1aeafc49d49c88e48dc8da3
+
+After this work item is committed and verified as self-contained, those branches and worktrees can be deleted. Git history and this record retain the investigation identity without presenting the old branches as active delivery candidates.
+
+## Source Evidence
+
+On 2026-08-12, the user approved combining the related Project Organiser correction branches into one replacement work item and directed that source branches be discarded after the work-item record is verified.
+
+The worktree mergeability review in .codex/reports/worktree-related-main-merge-review.md found high overlap risk and recommended deriving any residual gaps from current main rather than merging the branches.
+
+## Requirements
+
+- Compare the four recorded branch commits with the current Project Organiser filename-selection assertions in scripts/test_bundle_content.py.
+- Classify each branch case as already covered, obsolete because the contract changed, or a reproducible current-main gap.
+- Preserve the current Project Organiser response-only behavior and filename/path-selection contract.
+- Add only current, demonstrably missing regression cases.
+- Use Judge only when referring to an Evaluation evaluator; use assertion, expected result, matcher, or test condition for deterministic test behavior.
+- Do not restore stale skill names, generated-bundle expectations, or pre-rewrite test structure.
+
+## Acceptance Criteria
+
+- Every distinct behavior represented by the four branch commits has a recorded current-main disposition.
+- Confirmed gaps have focused regression coverage in the current bundle-content structure.
+- Already-covered and obsolete cases do not produce duplicate assertions.
+- Current Project Organiser filename and path selection behavior remains consistent with its maintained contract.
+- The implementation does not use Judge as a generic synonym for deterministic test assertions.
+
+## Dependencies
+
+None.
+
+## Verification
+
+- Inspect the four recorded commits and current scripts/test_bundle_content.py.
+- Run the focused Project Organiser bundle-content tests affected by any accepted cases.
+- Run current bundle-content validation for the modified assertion surface.
+- Run git diff --check.
+- Obtain independent review of the residual-gap classifications and terminology boundary.
+
+## Open Questions
+
+None.
+
+## Notes
+
+- This item concerns deterministic regression assertions. The separate replace-evaluation-oracle-terminology-with-judge item governs terminology for Evaluation evaluators and must not be broadened into a generic test-vocabulary rewrite.
+- The four legacy branches are evidence inputs, not accepted implementation candidates.
