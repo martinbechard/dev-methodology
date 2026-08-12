@@ -1114,17 +1114,45 @@ class ResourceClaimTests(unittest.TestCase):
         self.assertTrue(self.legacy_registry_path().is_file())
         self.assertTrue(legacy_hot.is_dir())
 
-    def test_fresh_state_rejects_legacy_state_created_after_rollout(self) -> None:
-        """A completed fresh boundary still detects an older helper's later split registry."""
-        first = self.claim("reset")
-        self.assertEqual(0, first.returncode, first.stderr)
-        self.legacy_registry_path().write_text('{"claims":[]}\n', encoding="utf-8")
+    def test_fresh_state_installs_legacy_boundary_before_completion(self) -> None:
+        """A completed fresh boundary prevents an older helper from creating split state."""
+        module = self.load_claim_module("fresh_legacy_boundary")
+        legacy_events = self.legacy_registry_path().parent / "agent-claim-events"
+        original_write_state_marker = module._write_state_marker
+
+        def require_boundaries_before_completion(
+            repository: Path,
+            status: str,
+            origin: str,
+        ) -> None:
+            if status == "complete" and origin == "fresh":
+                self.assertTrue(module._legacy_registry_is_marker(self.legacy_registry_path()))
+                self.assertTrue(module._legacy_events_is_marker(legacy_events))
+            original_write_state_marker(repository, status, origin)
+
+        with mock.patch.object(
+            module,
+            "_write_state_marker",
+            require_boundaries_before_completion,
+        ):
+            exit_code, result = self.claim_in_process(module, "reset")
+
+        self.assertEqual(0, exit_code)
+        self.assertEqual("RESET", result["outcome"])
+        self.assertTrue(self.legacy_registry_path().is_dir())
+        self.assertTrue(legacy_events.is_file())
+        marker = json.loads((self.state_root() / "state.json").read_text(encoding="utf-8"))
+        self.assertEqual("complete", marker["migration_status"])
+        self.assertEqual("fresh", marker["origin"])
+        with self.assertRaises(IsADirectoryError):
+            self.legacy_registry_path().write_text('{"claims":[]}\n', encoding="utf-8")
+        with self.assertRaises(FileExistsError):
+            legacy_events.mkdir()
 
         completed = self.claim("status")
 
-        self.assertEqual(3, completed.returncode)
-        self.assertEqual("CLAIM_STATE_MIGRATION_BLOCKED", self.output(completed)["outcome"])
-        self.assertEqual("contradictory_dual_state", self.output(completed)["reason"])
+        self.assertEqual(0, completed.returncode)
+        self.assertEqual("STATUS", self.output(completed)["outcome"])
 
     def test_migrated_state_requires_exact_legacy_marker_types(self) -> None:
         """A completed legacy boundary never trusts missing or replaced rollout markers."""
