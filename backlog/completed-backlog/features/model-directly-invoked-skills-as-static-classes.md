@@ -1,6 +1,6 @@
 # Model Directly Invoked Skills As Static Classes
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
@@ -65,6 +65,28 @@ Extend the object-oriented Agent and Skill model with Static Classes for skills 
 - Provider Update Claim: `running-model-static-classes-019ff737`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `db9f27fc-9e90-4eee-b556-4842264f9c14`.
 - Provider Path Claim: `running-provider-path-model-static-019ff737`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `6033c8fd-247b-4c9b-8e86-16d9f09cfa80`.
 - Next Action: commit this distinct Starting -> Running provider mutation, release both update claims with disposition `handoff` where required, then acquire activity `work` and the exact documentation path ownership before source mutation.
+
+## Completion Evidence
+
+- Completed At: 2026-08-12T19:00:10Z.
+- Outcome: Defined directly invoked Skills as Static Classes, documented Backlog Dispatcher as the project-private worked example that invokes Dev Backlog Coordinator, and aligned the canonical dispatch process with the conditional Coordinator-direct versus caller-owned runtime-operation boundary.
+- Accepted Baseline: `84e8ceec51974eb9302890b11eb6d1c3921351f3`.
+- Candidate Branch: `codex/model-direct-skills-static-classes`.
+- Candidate Commits: `9767a68bb9f2aa510e29f88768b9a8a05813e994`, `aa811d3ff1c8aa80d12982c44c685b9e1c12b903`, and `61df16407378540800045f16479691338a34cd78`.
+- Main Integration Commits: `c2925941`, `9dd60b79`, and `653f20f9`.
+- Main Observation: `653f20f963e26d69c448c4b8db6abc1df3f3f4d8` is the verified current-main documentation result before this provider completion transaction.
+- Changed Maintained Documents: `design/object-oriented-agent-and-skill-model.md` and `design/agents/work-item-dispatching-and-delivery.md`; no generated projection is owned by either document.
+- Independent Reviews: initial topic review found four corrections; an independent methodology/source review found one stale claim-helper selection; all findings were corrected. Final fresh source review accepted candidate `61df16407378540800045f16479691338a34cd78` with no material findings.
+- Independent Verification: accepted candidate `61df16407378540800045f16479691338a34cd78`; exact two-file scope, historical provenance, links and anchors, navigation, citations, Mermaid notation and fences, source ownership, provider-family tests, focused resource-coordination tests, and Git whitespace checks passed.
+- Primary-Root Verification: configured `verify_markdown_links` checked both changed documents after integration and returned `ok: true` with zero findings. `python3 -m unittest scripts.test_provider_family_naming scripts.test_project_document_provenance` ran 11 tests successfully. Python 3.11 focused bundle-content selectors for claim-rule ownership and Codex collaboration references both passed. `git diff --check 61736b2a..653f20f9` passed.
+- Source Truthfulness: official OpenAI documentation supports reusable Skill packages, explicit or implicit Skill invocation, distinct outcome chats, and saved-chat resumption. The stronger caller-owned root task-control boundary remains labeled observed current Codex runtime and harness behavior plus a project coordination constraint, not an OpenAI general guarantee.
+- Residual Environment Notes: the isolated-worktree MCP link check was structurally unavailable, so it was rerun successfully after integration at the configured primary root. Mermaid CLI and markdownlint were unavailable; independent structural checks and focused regression tests found no candidate defect. One broad unchanged resource-claim-helper fixture test has an unrelated untracked-directory failure; focused candidate-relevant tests passed.
+- Integration Claim: `integrate-model-static-classes-019ff737`; acquired event `1a15ce89-f738-463d-b8eb-2019172fd85e`; released event `8d4f96af-97cd-4e54-b020-83409c661e02`.
+- Outcome-Work Claim: `work-model-static-classes-019ff737`; released with disposition `handoff` in event `d23aef45-3802-4fb0-bf91-fb80a7b7f955` before the terminal provider update.
+- Completion Update Claim: `complete-model-static-classes-019ff737`; acquired event `decb4f9b-9f65-4ffb-bdf9-bb95b147e410`.
+- Completion Path Claim: `complete-provider-paths-model-static-019ff737`; acquired event `080a3290-0f6c-413f-a14e-df01c7846f38`.
+- Canonical Codex Task ID: `019ff737-8b68-7010-8342-ca3cc356053e`.
+- Canonical Conversation ID: `019ff737-8b68-7010-8342-ca3cc356053e`; the runtime exposes one combined identity while the provider preserves distinct fields.
 
 ## Context
 
