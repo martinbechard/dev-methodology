@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -182,3 +182,21 @@ Remaining Risk: The candidate has not passed the required terminal verifier gate
 - Transition: Blocked -> Ready with Owner Unowned. Preserve branch, checkout, candidate, canonical task, and every prior accepted gate.
 - Next Action: After Ready title synchronization, the Dev Backlog Coordinator records Ready -> Starting for preserved canonical task `019ff2f9-0863-7133-aac0-fef97ad6d74d`.
 - Transition Claim: `align-lifecycle-blocked-ready-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `871f4f4c-6c69-4e44-aacd-46662e99d786`.
+
+## Resumption Starting Handoff
+
+- Starting Recorded At: 2026-08-12T21:35:12Z.
+- Coordinator: Backlog Dispatcher task `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`, acting through Dev Backlog Coordinator `/root/backlog_coordinator`.
+- Transition: Ready -> Starting after confirmed title synchronization to `Ready — Orchestrated Lifecycle Design Alignment`.
+- Dispatch Reservation: `align-lifecycle-ready-starting-019ff2c3`.
+- Normalized Objective: Resume the accepted `ce7002bf` candidate in the same canonical Dev Orchestrator task, record Starting -> Running, integrate the verified design-system alignment, complete provider delivery, and retain terminal resources for externally authorized cleanup.
+- Preserved Canonical Codex Task ID: `019ff2f9-0863-7133-aac0-fef97ad6d74d`.
+- Preserved Canonical Conversation ID: `019ff2f9-0863-7133-aac0-fef97ad6d74d`.
+- Branch: `codex/align-orchestrated-development-lifecycle-design-system-019ff2f9`.
+- Worktree: `/Users/martinbechard/dev/dev-methodology/.worktrees/align-orchestrated-lifecycle-work-019ff2f9`.
+- Preserved Candidate: `ce7002bf2794c62cdbd7ebf58ff217aeb5e55935`.
+- Accepted Baseline For Resumption: `e9177d261da6a873b98b3702ba87e37d98b24846` on primary main after Blocked -> Ready.
+- Launch Result: Requested as same-task resumption; no replacement task is authorized.
+- Capacity Result: one finish-lane slot reserved; this Starting item consumes active capacity.
+- Next Lifecycle Owner: The preserved root Dev Orchestrator must claim this exact Work Item ID with activity `update` and record Starting -> Running before integration or further mutation.
+- Starting Claim: `align-lifecycle-ready-starting-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `4b59c64a-26bb-4c38-9841-3f2240a12e86`.
