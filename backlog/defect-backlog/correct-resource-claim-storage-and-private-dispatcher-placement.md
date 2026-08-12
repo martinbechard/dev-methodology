@@ -1,6 +1,6 @@
 # Correct Resource-Claim Storage And Private Dispatcher Placement
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -205,3 +205,14 @@ None.
 - Recovery Owner: the same canonical Dev Orchestrator task `019ff5c1-05a2-7551-bcf2-812f61776a7e`.
 - Exact Recovery: diagnose and correct the configured catalog or installed artifact that makes the fresh mcp-agent-ops 0.12.0 process reject the catalog; preserve the published release, installed runtime, private Dispatcher, and unrelated repository state.
 - Exit Boundary: crisis exit remains prohibited until fresh-runtime `skill_refresh`, `skill_list`, and `skill_load` succeed for the private Dispatcher and required portable claim skills. Claim tools remain prohibited until the Coordinator accepts that evidence and orders crisis exit.
+
+## Post-Restart Starting Reservation
+
+- Reserved At: 2026-08-12T15:47:38Z.
+- Parent Coordination Task: Backlog Dispatcher `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Canonical Codex Task And Conversation: `019ff5c1-05a2-7551-bcf2-812f61776a7e`; resume only this execution.
+- Objective: correct the fresh-runtime invalid skill catalog and complete bounded non-claim catalog verification before crisis-exit reconciliation.
+- Baseline: primary `main` after restart-resolution commit `73ffa99ac2d9d9fdb812d7b9dfede3772a39e05c`.
+- Resource Coordination: no claim. The active crisis prohibits every claim operation.
+- Required Title: `Starting — Repair Fresh Codex Skill Catalog`.
+- Next Lifecycle Owner: the same root Dev Orchestrator records Starting -> Running claim-free before any corrective mutation.
