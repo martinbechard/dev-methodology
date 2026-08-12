@@ -12,7 +12,7 @@ Completion: main-branch
 
 ## Summary
 
-Restore the Dev Backlog Watchdog contract so every scheduled cycle inventories and reconciles every current Blocked work item while notifying the Coordinator only when current evidence requires a decision.
+Restore the Dev Backlog Watchdog contract so every scheduled cycle inventories and reconciles every current Blocked work item, verifies that every observed canonical task title accurately reflects authoritative lifecycle and current Running phase, and notifies the Coordinator only when current evidence requires a decision.
 
 ## Context
 
@@ -26,6 +26,8 @@ The correction must remain read-only at runtime and avoid duplicating Blocked po
 
 On 2026-08-12, after observing a Blocked item whose verifier-placement problem and missing preserved branch were not surfaced automatically, the user asked how the Watchdog procedure could resolve such blockages automatically. The user then asked for the proposed changes to be organized by skill file, challenged the proposal for DRY, YAGNI, and skill-writing quality, and directed: “ok create the item.”
 
+Later on 2026-08-12, after observing simultaneous Waiting for Help, Verifying, Completed, and Done labels that contradicted provider or runtime state, the user explicitly directed: “Fix these damn titles, and ensure they stay clean in the future accurately showing their state. Make sure that's in the watchdog skill in the future” and “make sure you record this in your skill.” This authorizes the exact title-reconciliation additions below.
+
 Repository evidence on 2026-08-12 shows that the completed predecessor already promised per-cycle Blocked reconciliation, while current skills/coordinate-work-items/SKILL.md and agents/roles/dev-activities/dev-backlog-watchdog.role.yaml retain an event-only reconciliation clause that conflicts with that promise.
 
 ## Requirements
@@ -34,6 +36,9 @@ Repository evidence on 2026-08-12 shows that the completed predecessor already p
 - Require every scheduled Watchdog cycle to obtain the current Blocked inventory and reconcile each item sufficiently to classify it as active recovery, a genuine unchanged user or external wait, or unattended agent-actionable recovery.
 - Alert the Coordinator when current evidence shows agent-owned recovery without an active owner, an invalid or missing next-action owner or trigger, a satisfied dependency or unblock condition, exhausted correction attempts without a current disposition, or preservation evidence contradicted by Git or runtime state.
 - Suppress repeat alerts only while acknowledged recovery is actively owned or an unchanged concrete user or external trigger remains unsatisfied.
+- Require every scheduled Watchdog cycle to compare each observed canonical runtime task title with the exact title derived from authoritative provider lifecycle and current material Running phase.
+- Alert the Coordinator when a canonical task title is stale, noncanonical, or contradicts lifecycle or phase. Do not infer lifecycle from the title and do not let title drift change capacity, ownership, or delivery evidence.
+- Enforce the existing title vocabulary: Completed maps to Done —, Blocked maps to Blocked —, and Waiting for Help — is valid only for a Running task currently awaiting technical help. A bounded noncanonical verifier task that finishes must not remain visibly titled Verifying.
 - Keep agents/roles/dev-activities/dev-backlog-watchdog.role.yaml and the canonical Watchdog runtime prompt in skills/coordinate-codex-tasks/SKILL.md as thin mappings to the owning policy. Remove or replace conflicting event-only wording instead of restating the full classification rules.
 - Preserve the Watchdog's read-only authority boundary. It reports the Work Item ID and smallest Coordinator action; it does not mutate lifecycle, claims, tasks, branches, worktrees, provider records, or shared resources.
 - Add focused regression coverage for unattended agent-owned recovery, acknowledged active recovery, and provider preservation evidence that contradicts Git or runtime state.
@@ -47,6 +52,9 @@ Repository evidence on 2026-08-12 shows that the completed predecessor already p
 - A cycle with acknowledged, actively owned recovery retains reconciliation evidence without emitting a duplicate alert.
 - A cycle where the provider says a candidate branch or worktree is preserved but Git or runtime proves it absent emits one alert naming the Work Item ID and the smallest reconciliation action.
 - A cycle with an unchanged concrete user or external dependency remains quiet after retaining its current reconciliation result.
+- A Blocked item titled Waiting for Help emits one title-reconciliation alert without changing provider lifecycle.
+- A Completed item titled Completed instead of Done emits one title-reconciliation alert even when the task is idle, terminal, or archived.
+- A finished bounded verifier task is no longer presented as actively Verifying.
 - The portable policy has one normative classification rule; role and runtime prompt mappings reference it without duplicating its decision table.
 - Existing healthy-cycle, singular-alert, no-forbidden-mutation, and complete Blocked-inventory behavior remains intact.
 - Generated Dev Backlog Watchdog adapters are fresh and derived from the conceptual role source.
@@ -90,10 +98,13 @@ None.
 - generated/adapters/claude/agents/dev-backlog-watchdog.md
 - generated/adapters/gemini/agents/dev-backlog-watchdog.md
 - generated/adapters/junie/agents/dev-backlog-watchdog.md
+- design/generated/skill-definitions.js
+- design/generated/role-definitions.js
+- generated/adapters/agent-generation-manifest.json
 
 ### Approval Resolution
 
-Approved at creation. On 2026-08-12, after the exact source and test responsibilities were organized and narrowed for DRY, YAGNI, and skill-writing quality, the user directed: “ok create the item.” Approval is limited to the exact governed canonical sources and allowed dependent artifacts listed above. Any additional governed definition requires separate reconciliation and scope-specific approval.
+Approved at creation and expanded by later answer. On 2026-08-12, after the exact source and test responsibilities were organized and narrowed for DRY, YAGNI, and skill-writing quality, the user directed: “ok create the item.” Later that day, the user explicitly required accurate future title enforcement in the Watchdog skill. Approval is limited to the exact governed canonical sources and allowed dependent artifacts listed above. Any additional governed definition requires separate reconciliation and scope-specific approval.
 
 ## Notes
 
