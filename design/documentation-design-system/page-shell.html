@@ -17,7 +17,7 @@ Reasoning-Effort-Evidence: runtime-supplied
 Task-ID-Evidence: runtime-supplied
 -->
 <html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="design-system-version" content="0.1.1"><title>Page Shell · Documentation Design System</title><link rel="stylesheet" href="assets/design-system.css"></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="design-system-version" content="1.0.0"><title>Page Shell · Documentation Design System</title><link rel="stylesheet" href="assets/design-system.css"></head>
 <body id="top">
   <a class="skip-link" href="#main-content">Skip to main content</a>
   <header class="ds-header"><a class="site-brand" href="index.html"><img class="site-logo" src="assets/dev-methodology-logo.png" alt="DevConsult Canada logo"><span>Documentation Design System</span></a></header>
@@ -117,24 +117,24 @@ Task-ID-Evidence: runtime-supplied
     </section>
 
     <section class="section" id="footer" aria-labelledby="footer-title"><div class="section-heading"><h2 id="footer-title">Footer</h2><p>The footer closes the page with the design-system version followed by page-specific provenance, scope, copyright, or license information.</p></div>
-      <div class="example-frame"><p style="padding-top:1rem;border-top:1px solid var(--ds-line)"><span class="ds-version">Design system v0.1.1</span> · Copyright 2026 (c) Martin.Bechard@DevConsult.ca · MIT License</p></div>
+      <div class="example-frame"><p style="padding-top:1rem;border-top:1px solid var(--ds-line)"><span class="ds-version">Design system v1.0.0</span> · Copyright 2026 (c) Martin.Bechard@DevConsult.ca · MIT License</p></div>
     </section>
 
-    <section class="section" id="versioning" aria-labelledby="versioning-title"><div class="section-heading"><h2 id="versioning-title">Versioning And Compatibility</h2><p>The design system uses Semantic Versioning. The current version is <strong>0.1.1</strong>, which identifies a usable draft whose contracts may still change before 1.0.0.</p></div>
+    <section class="section" id="versioning" aria-labelledby="versioning-title"><div class="section-heading"><h2 id="versioning-title">Versioning And Compatibility</h2><p>The design system uses Semantic Versioning. The current version is <strong>1.0.0</strong>, the first stable contract release.</p></div>
       <div class="pattern-decision"><span class="pattern-decision__status">Required</span><div><strong>Every design-system page and every conforming document must identify the exact design-system version it follows.</strong><p>Use the visible footer label for readers and the metadata value for tools. Both values must match the canonical <code>VERSION</code> file.</p></div></div>
       <ul class="source-list">
         <li><strong>Major:</strong> increment for an incompatible change to adopted markup, tokens, behavior, accessibility requirements, or documented usage contracts.</li>
         <li><strong>Minor:</strong> increment for a backward-compatible component, pattern, token, or capability.</li>
         <li><strong>Patch:</strong> increment for backward-compatible corrections and clarifications that do not change a contract.</li>
       </ul>
-      <pre><code>&lt;meta name="design-system-version" content="0.1.1"&gt;
+      <pre><code>&lt;meta name="design-system-version" content="1.0.0"&gt;
 
 &lt;footer class="ds-footer"&gt;
-  &lt;p&gt;&lt;span class="ds-version"&gt;Design system v0.1.1&lt;/span&gt; · ...&lt;/p&gt;
+  &lt;p&gt;&lt;span class="ds-version"&gt;Design system v1.0.0&lt;/span&gt; · ...&lt;/p&gt;
 &lt;/footer&gt;</code></pre>
       <p class="source-path">Compatibility requirement: record an exact version, not “latest” or a range. Review the document before changing its declared version. The audited source commit identifies evidence provenance and is not a substitute for the design-system version.</p>
     </section>
   </main>
-  <footer class="ds-footer"><p><span class="ds-version">Design system v0.1.1</span> · Page shell concern · Use the default hero for most pages and the two-column hero only when the secondary card adds page-wide context.</p></footer>
+  <footer class="ds-footer"><p><span class="ds-version">Design system v1.0.0</span> · Page shell concern · Use the default hero for most pages and the two-column hero only when the secondary card adds page-wide context.</p></footer>
 </body>
 </html>

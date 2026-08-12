@@ -1601,6 +1601,8 @@ class BundleContentTests(unittest.TestCase):
         self,
         html: str,
         expected_sequence_links: list[tuple[str, str]],
+        *,
+        expects_top_link: bool = False,
     ) -> None:
         parser = DocumentationNavigationParser()
         parser.feed(html)
@@ -1632,9 +1634,20 @@ class BundleContentTests(unittest.TestCase):
         usable_major_section_targets = [
             target for target in parser.major_section_targets if target is not None
         ]
+        top_targets = [
+            target for target in parser.section_navigation_targets if target == "top"
+        ]
+        major_navigation_targets = [
+            target for target in parser.section_navigation_targets if target != "top"
+        ]
+        self.assertEqual(
+            int(expects_top_link),
+            len(top_targets),
+            "The required Top link must be validated separately from major sections",
+        )
         self.assertEqual(
             usable_major_section_targets,
-            parser.section_navigation_targets,
+            major_navigation_targets,
         )
         self.assertEqual(
             len(parser.section_navigation_targets),
@@ -1676,6 +1689,10 @@ class BundleContentTests(unittest.TestCase):
                 self._assert_documentation_navigation(
                     (REPOSITORY_ROOT / relative_path).read_text(encoding="utf-8"),
                     expected_sequence_links,
+                    expects_top_link=(
+                        Path(relative_path).name
+                        == "orchestrated-development-lifecycle.html"
+                    ),
                 )
 
     def test_documentation_navigation_rejects_invalid_ids_and_sequence_links(
@@ -11566,7 +11583,7 @@ Visible after.
         self.assertIn("@media (prefers-color-scheme: dark)", lifecycle_text)
         self.assertIn("overflow-x: auto", lifecycle_text)
         self.assertIn(
-            '<footer class="site-footer"><p>Copyright (c) 2026 Martin.Bechard@DevConsult.ca - <a href="../LICENSE">MIT License</a></p><p><span class="ds-version">Design system v0.1.1</span></p></footer>',
+            '<footer class="site-footer"><p>Copyright (c) 2026 Martin.Bechard@DevConsult.ca - <a href="../LICENSE">MIT License</a></p><p><span class="ds-version">Design system v1.0.0</span></p></footer>',
             lifecycle_text,
         )
 

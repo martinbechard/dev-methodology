@@ -20,7 +20,7 @@ from urllib.parse import urlsplit
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 DESIGN_ROOT = REPOSITORY_ROOT / "design" / "documentation-design-system"
 SKILL_ROOT = REPOSITORY_ROOT / "skills" / "review-documentation-design-system"
-VERSION = "0.1.1"
+VERSION = "1.0.0"
 PAGE_NAMES = (
     "index.html",
     "foundations.html",
@@ -237,13 +237,37 @@ class DocumentationDesignSystemTests(unittest.TestCase):
             / "review-checklist-documentation-design-system-shared.md"
         ).read_text(encoding="utf-8")
 
-        self.assertIn("Documentation Design System v0.1.1", skill_text)
+        self.assertIn("Documentation Design System v1.0.0", skill_text)
         self.assertIn("expected suite-navigation inventory", skill_text)
         self.assertIn("visible label and href in exact order", skill_text)
         self.assertIn("current-page href", skill_text)
         self.assertIn("caller-supplied expected navigation inventory", checklist_text)
         self.assertIn("visible labels, href values, order", checklist_text)
         self.assertNotIn("the same ten destinations", checklist_text)
+
+    def test_page_type_checklists_require_complete_contract_adoption(self) -> None:
+        """Consuming pages must not receive partial page-type checklist reviews."""
+
+        skill_text = (SKILL_ROOT / "SKILL.md").read_text(encoding="utf-8")
+
+        self.assertIn(
+            "Page-type checklists review the corresponding Documentation Design System "
+            "contract and specimen pages by default.",
+            skill_text,
+        )
+        self.assertIn(
+            "only when that page intentionally adopts the complete page-type contract "
+            "and every checklist criterion applies",
+            skill_text,
+        )
+        self.assertIn(
+            "Never assign or evaluate only part of a page-type checklist.", skill_text
+        )
+        self.assertIn(
+            "complete Shared checklist plus independent artifact review and "
+            "browser-based user-experience verification",
+            skill_text,
+        )
 
     def test_page_shell_labels_navigation_specimens_as_illustrative(self) -> None:
         """Navigation specimens must not masquerade as a target suite inventory."""
@@ -260,6 +284,14 @@ class DocumentationDesignSystemTests(unittest.TestCase):
         self.assertIn("target suite's authoritative navigation inventory", page_text)
         self.assertIn("illustrative labels and destinations", checklist_text)
         self.assertIn("target suite's authoritative navigation inventory", checklist_text)
+
+    def test_version_one_declares_a_stable_contract(self) -> None:
+        """The versioning guidance must describe the 1.0.0 compatibility boundary."""
+
+        page_text = (DESIGN_ROOT / "page-shell.html").read_text(encoding="utf-8")
+
+        self.assertIn("first stable contract release", page_text)
+        self.assertNotIn("before 1.0.0", page_text)
 
     def test_lifecycle_uses_versioned_shell_and_real_navigation(self) -> None:
         """The lifecycle page must use its real suite inventory and shared shell."""

@@ -1,6 +1,6 @@
 ---
 name: review-documentation-design-system
-description: Review a documentation HTML page against the adopted Documentation Design System v0.1.1 contracts and return evidence-backed pass or fail results. Use for design-system conformance reviews of an index, foundation, shell, content, data-display, form, diagram, accessibility, variation-audit, or source-inventory page.
+description: Review a documentation HTML page against the adopted Documentation Design System v1.0.0 contracts and return evidence-backed pass or fail results. Use for design-system conformance reviews of an index, foundation, shell, content, data-display, form, diagram, accessibility, variation-audit, or source-inventory page.
 metadata:
   category: documentation-methodology
 ---
@@ -51,6 +51,12 @@ Use NOT TESTED only after the exact page, checklist, and expected-ID inventory e
 6. Return NOT TESTED when any assigned item lacks evidence, including when another item fails. Otherwise return FAIL when any item fails, and PASS only when every assigned item passes.
 
 For a standalone full-page review, the caller schedules separate invocations for the Shared checklist and the applicable page-type checklist. Each invocation remains one page and one checklist.
+
+## Page-Type Checklist Applicability
+
+Page-type checklists review the corresponding Documentation Design System contract and specimen pages by default. Apply a page-type checklist to another page only when that page intentionally adopts the complete page-type contract and every checklist criterion applies.
+
+Never assign or evaluate only part of a page-type checklist. A consuming documentation page normally receives the complete Shared checklist plus independent artifact review and browser-based user-experience verification.
 
 ## Page Checklists
 
