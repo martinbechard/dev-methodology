@@ -1,18 +1,33 @@
 # Require Durable Defect Logging And Direct-Main Work-Item Creation
 
-Status: Completed
+Status: Ready
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/completed-backlog/features/require-durable-defect-logging-and-direct-main-creation.md
+Work Item ID: require-durable-defect-logging-and-direct-main-creation
+
+Provider Reference: backlog/feature-backlog/require-durable-defect-logging-and-direct-main-creation.md
 
 Completion: direct-main
 
 Owner: Unowned
 
 Claim: None
+
+## Reopened Cleanup Review
+
+- Reopened At: 2026-08-12.
+- Reopen Authority: The user directed that this archived item return to the incomplete backlog after cleanup review.
+- Reason: Its clean preserved worktree is also linked to discarded cleanup items, while this work item's remaining branch evidence has not been dispositioned safely.
+- Preserved Branch: codex/durable-defect-creation-coder-019f96cf.
+- Preserved Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/durable-defect-creation-coder-019f96cf.
+- Preserved Historical Branch HEAD: 32212af7d6751e3dd89d43485e2a355c1b3e3288.
+- Preserved Commits: 4f47fea91dc6f49b4f36d5c1360bf414fce2d852 and 957c93370c476bb3296151f979b5f1407362e7be.
+- Cleanup Context: Worktrees linked to preserve-terminal-closure verification and linked-checkout topology corrections were explicitly discarded. This branch also contains recovery evidence for this still-wanted work item and therefore remains preserved.
+- Supersession Boundary: Do not integrate the previously superseded four-path claim-free candidate identified later in this record.
+- Next Action: Reconcile the preserved branch with current main, isolate any still-required durable-defect policy work from superseded content, and obtain fresh review and verification before integration or renewed completion.
 
 ## Launch Reservation
 
