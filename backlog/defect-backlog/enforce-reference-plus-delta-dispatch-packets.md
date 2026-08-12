@@ -111,4 +111,12 @@ Approved at creation by the user's explicit 2026-08-12 instruction to incorporat
 
 - The completed `prefer-durable-recovery-evidence-over-codex-task-identity` task remains terminal and must not be resumed or reopened.
 - Do not combine this immediate private-skill correction with `document-external-terminal-cleanup`.
+
+## Cross-Project Relay Incident
+
+- Incident: During crisis preservation, the root Dispatcher sent a stop-and-preserve packet to parent task `019ff5f0-6b8c-7f92-9f32-14caeeefb442` in `/Users/martinbechard/dev/agent-runner` because its dev-methodology-mutating subordinate was not directly addressable. This crossed the coordination-project boundary and was unauthorized.
+- Correct Boundary: Never use a cross-project parent as a relay for coordination, stop, resume, cleanup, or lifecycle control merely because its subordinate owns a current-repository claim. When the exact owner is not directly addressable within the current coordination context, preserve bytes and evidence, perform no cross-project runtime mutation, and return stranded or unaddressable ownership for explicit Coordinator recovery.
+- Post-Reset Anomaly: Watchdog evidence reports that project-files claim `revise-traceability-templates` was reacquired at `2026-08-12T23:34:29Z` after the epoch's single reset. Its owner is not a current dev-methodology task, while the preserved traceability and template bytes remain dirty.
+- Disposition: Treat this as stranded post-reset ownership. Do not contact the agent-runner parent or subordinate; do not invoke claim status, release, reset, report, maintenance, or reconstruction; do not modify the preserved bytes. Claim suspension and the prohibition on a second reset remain in force.
+- Active-Task Boundary: The current crisis execution may change only the dispatcher source and directly focused tests authorized above. It must incorporate the no-cross-project-relay rule, preserve all stranded paths, and return one blocker if its exact authorized paths cannot be isolated from them.
 - The user added the cross-project runtime-safety requirement during Running execution on 2026-08-12 after a live crisis exposed stranded ownership through an unaddressable subagent.
