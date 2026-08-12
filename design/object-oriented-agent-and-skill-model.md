@@ -1,3 +1,21 @@
+<!--
+Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+Artifact-ID: 7f80902a-46b6-4c1d-b9b2-fc67c3f04b62
+Created-UTC: 2026-07-29T19:33:19Z
+Creating-Agent: historical-unknown
+Runtime: historical-unknown
+Dispatched-Model: historical-unknown
+Reasoning-Effort: historical-unknown
+Task-ID: historical-unknown
+Artifact-ID-Evidence: migration-assigned
+Created-UTC-Evidence: git-derived
+Creating-Agent-Evidence: historical-unknown
+Runtime-Evidence: historical-unknown
+Dispatched-Model-Evidence: historical-unknown
+Reasoning-Effort-Evidence: historical-unknown
+Task-ID-Evidence: historical-unknown
+-->
+
 # Object-Oriented Analysis Of Agents And Skills
 
 ## Scope
@@ -9,6 +27,7 @@ It covers:
 - Agent dependencies and procedure expectations;
 - unconditional, conditional, procedure-mapped, and request-triggered skill use cases;
 - Agent Skills;
+- Static Classes used for direct Skill invocation outside Agent definitions;
 - Injected Skills;
 - Agent Groups used to organize related Agent definitions;
 - Skill Groups and their expanded and collapsed diagram forms;
@@ -410,7 +429,80 @@ classDiagram
 
 The simplified view still means that Work Item Manager consumes manage-work-items. Each Provider Skill shown realizes that interface. Project-specific directives select one provider as shown in the detailed diagram; the simplified view omits that routing relationship and does not imply that all providers are loaded together.
 
-### 2.8 Skill Loaded by a User Request
+### 2.8 Static Class Invoked Outside An Agent Definition
+
+A Static Class is a directly invoked Skill whose public operation can run without making the Skill an Agent dependency or creating an Agent instance for the Skill itself. The term describes an invocation and authority relationship in this analysis. It does not assert that the runtime implements a programming-language static class.
+
+A Static Class remains a Skill package. Its SKILL.md can contain instructions, resources, and optional scripts. [OpenAI Build Skills](https://learn.chatgpt.com/docs/build-skills) describes Skills as reusable workflow packages and supports explicit and implicit invocation. Those product capabilities support direct Skill invocation, but the Static Class category and its authority rules are methodology conventions defined here.
+
+- **RULE: RULE-75** A Static Class exposes a caller-invoked Skill operation
+  - **SYNOPSIS:** A caller invokes the exact Skill package without first entering an Agent definition that declares the Skill as a dependency.
+  - **EXAMPLE:** An authorized root Codex task invokes the project-private Backlog Dispatcher Skill to start a coordinated backlog dispatch.
+
+- **RULE: RULE-76** Static Class notation marks the operation as static
+  - **SYNOPSIS:** Use the Static Class stereotype for the Skill node and append the Mermaid static classifier marker to each directly invoked function member. An open diamond from the caller shows exact-name knowledge.
+  - **EXAMPLE:** Backlog Dispatcher displays dispatchBacklogWork() with a trailing dollar-sign marker, and Root Codex Task points to the Skill with an open-diamond arrow.
+
+- **RULE: RULE-77** Direct invocation does not transfer caller or Agent authority
+  - **SYNOPSIS:** The Static Class coordinates its declared procedure while each participant retains the authority assigned by its own contract.
+  - **EXAMPLE:** Backlog Dispatcher invokes Dev Backlog Coordinator for queue and lifecycle decisions. The root caller performs task controls, but it does not become the Coordinator.
+
+```mermaid
+classDiagram
+    direction LR
+
+    class RootCodexTask {
+        <<Runtime caller>>
+        +caller-owned-task-controls
+    }
+
+    class BacklogDispatcher["backlog-dispatcher"] {
+        <<Static Class>>
+        +dispatchBacklogWork()$
+    }
+
+    class DevBacklogCoordinator {
+        <<Agent Role>>
+        +decideCoordination()
+        +prepareRuntimeOperationPacket()
+    }
+
+    RootCodexTask o--> BacklogDispatcher
+    BacklogDispatcher --> DevBacklogCoordinator
+```
+
+The Static Class stereotype identifies a SKILL.md package, so the node does not add a second SKILL.md stereotype. The dollar-sign marker is Mermaid notation for a static member. It does not appear in the actual procedure name.
+
+Static Class is separate from these relationships and classifications:
+
+| Related concept | Distinction from Static Class |
+| --- | --- |
+| Agent Skill | An Agent definition names an Agent Skill as a fixed or conditional dependency. A caller invokes a Static Class outside that dependency list. |
+| Request-triggered skill selection | A request or description match selects a Skill for one request. Static Class describes how the selected Skill is invoked and where authority remains; it does not define the selection trigger. |
+| AGENTS.md provider selection | Project guidance selects one implementation for a shared procedure. A Static Class is one exact directly invoked Skill and does not become a provider factory merely because AGENTS.md makes it available. |
+| Interface Skill | An Interface Skill publishes a contract shared by consumers and providers. A Static Class can expose one direct operation without defining a provider family. |
+| Provider Skill | A Provider Skill realizes an Interface Skill and extends its exact identity with a provider suffix. Direct invocation alone creates no realization relationship. |
+| Skill Group | A Skill Group organizes a cohesive set. Static Class describes one Skill's invocation form, not group membership or containment. |
+
+#### Worked Example: Backlog Dispatcher
+
+The repository-private [Backlog Dispatcher](../.agents/skills/backlog-dispatcher/SKILL.md) is a Static Class. The authorized root caller invokes its dispatch procedure when coordinated backlog work needs caller-owned runtime task controls.
+
+Backlog Dispatcher invokes an Agent under the Dev Backlog Coordinator Role. The Coordinator owns provider inventory, lifecycle, capacity, dependency, ownership, recovery, and dispatch-packet decisions. Backlog Dispatcher executes only the exact caller-owned runtime operation that the Coordinator authorizes and returns the exact outcome for reconciliation. Task creation does not prove Running lifecycle state.
+
+Backlog Dispatcher is a Skill rather than an Agent because it has no independent queue authority, durable execution identity, or autonomous decision scope. It is a reusable caller workflow that connects one decision-owning Agent to runtime controls available at the caller boundary. The current Codex desktop runtime and harness expose root task creation at that caller boundary in this project. This placement is observed runtime behavior and a project coordination constraint, not a general OpenAI guarantee.
+
+The Skill remains under .agents/skills because its procedure is specific to this repository's coordination environment. Portable coordination contracts remain under skills. A repository-private Static Class must not be published as a portable Skill unless its repository-specific assumptions and caller controls are removed or replaced with a portable contract.
+
+- **RULE: RULE-78** A directly invoked dispatcher remains a Skill when it owns procedure but not Role authority
+  - **SYNOPSIS:** Use a Static Class when a reusable caller workflow performs bounded operations but sends authoritative decisions to an Agent Role.
+  - **EXAMPLE:** Backlog Dispatcher performs approved task creation or resumption, while Dev Backlog Coordinator selects the work item and prepares the exact packet.
+
+- **RULE: RULE-79** Static Class publication follows its scope
+  - **SYNOPSIS:** Keep a repository-specific Static Class private when its operation depends on local runtime controls, project authority, or repository-only procedures.
+  - **EXAMPLE:** Backlog Dispatcher stays in .agents/skills, while coordinate-work-items and coordinate-codex-tasks remain portable Skills in skills.
+
+### 2.9 Skill Loaded by a User Request
 
 A request can select an available skill without a declared reference from an Agent definition or AGENTS.md.
 
@@ -893,13 +985,13 @@ A good model makes skill dependencies, dispatch, and organization understandable
   - **SYNOPSIS:** A reader can follow the request from the user, through manageWorkItem() and its transition reference, through AGENTS.md injection, to the selected SKILL.md procedure.
   - **EXAMPLE:** Move work item 42 to Running invokes manageWorkItem(), which refers to transition-work-item(); AGENTS.md selects manage-work-items-gitlab, whose Transition Work Item section performs the GitLab procedure.
 
-- **RULE: RULE-26** Declared relationships and request-triggered selection have valid uses
-  - **SYNOPSIS:** The model distinguishes exact Agent dependencies, Skill Group sets, expanded and collapsed Skill Group diagrams, AGENTS.md substitution, direct skill-to-skill coupling, and request-scoped selection.
-  - **EXAMPLE:** Dev Coder names careful-coding, the Work Item Skill Group contains three non-overlapping members while Work Item Coordinator loads two of them, Resource Coordination contains resource-claim, Project-specific directives select a Provider Skill for manage-work-items, deliver-work-item-feature-branch names create-pull-request, and a structural-search request selects ast-grep only for that request.
+- **RULE: RULE-26** Declared relationships, direct invocation, and request-triggered selection have valid uses
+  - **SYNOPSIS:** The model distinguishes exact Agent dependencies, Static Class invocation, Skill Group sets, AGENTS.md substitution, direct skill-to-skill coupling, and request-scoped selection.
+  - **EXAMPLE:** Dev Coder names careful-coding, a root Codex task invokes Backlog Dispatcher as a Static Class, Resource Coordination contains resource-claim, Project-specific directives select a Provider Skill for manage-work-items, and a structural-search request selects ast-grep only for that request.
 
-- **RULE: RULE-51** The four skill-loading use cases remain distinct from factory composition
-  - **SYNOPSIS:** The method separates unconditional exact-name loading, conditional exact-name loading, procedure mapping through AGENTS.md, request-triggered selection, and the factory pattern that combines an Agent-facing Interface Skill with an AGENTS.md-selected Provider Skill.
-  - **EXAMPLE:** Section 2 gives every loading use case its own subsection, omits a persistent class relationship for request-triggered ast-grep selection, and presents provider selection as a separate composition.
+- **RULE: RULE-51** Skill-loading and invocation use cases remain distinct from factory composition
+  - **SYNOPSIS:** The method separates unconditional exact-name loading, conditional exact-name loading, procedure mapping, Static Class invocation, request-triggered selection, and provider-factory composition.
+  - **EXAMPLE:** Section 2 gives each use case its own subsection, shows Backlog Dispatcher as a directly invoked Static Class, omits a persistent class relationship for request-triggered ast-grep selection, and presents provider selection separately.
 
 - **RULE: RULE-27** Every assertion includes an example
   - **SYNOPSIS:** Each GOAL, RULE, PROCESS, and other structured assertion is followed by an EXAMPLE.
@@ -953,6 +1045,7 @@ The glossary defines the relationship and diagram terms used by the analysis aft
 | AGENTS.md DII | The indirect binding relationship represented by an AGENTS.md node with a routing annotation. The node maps a procedure to the concrete skill selected by name through AGENTS.md. | Project-specific directives route transition-work-item to manage-work-items-gitlab. |
 | SKILL.md | A complete skill definition loaded as one context unit and containing data members, function members, or both. | manage-work-items-gitlab contains provider data and work-item procedures in this analysis example. |
 | Agent Skill | A SKILL.md referenced by exact name in an Agent definition for every execution or under a routing condition. | Dev Coder names careful-coding unconditionally and test-driven-development conditionally. |
+| Static Class | A directly invoked SKILL.md whose public operation runs outside an Agent dependency list. The category preserves the caller's runtime authority and any invoked Agent Role's decision authority. | A root Codex task invokes Backlog Dispatcher, which asks Dev Backlog Coordinator for the authoritative dispatch decision. |
 | Injectable Skill | A SKILL.md written with a shared procedure name and invocation meaning so AGENTS.md can select it without changing its invoker. | manage-work-items-file and manage-work-items-gitlab can both supply transition-work-item(). |
 | Injected Skill | The Injectable Skill selected through AGENTS.md for one procedure in an effective project configuration. | manage-work-items-gitlab is the Injected Skill when Project-specific directives route transition-work-item to it. |
 | Skills injection | The AGENTS.md selection that links an interface procedure to one concrete SKILL.md. | When transition-work-item() is needed, Project-specific directives select manage-work-items-gitlab. |
@@ -996,5 +1089,11 @@ The analysis is grounded in the user-directed conventions and repository sources
 - [Generated Codex Dev Coder](../generated/adapters/codex/agents/dev-coder.toml)
 - [Generated Claude Code Dev Coder](../generated/adapters/claude/agents/dev-coder.md)
 - [Generic Agent Definitions Source](generic-agent-definitions-source.html)
+- [Work Item Dispatching And Delivery](agents/work-item-dispatching-and-delivery.md)
+- [Backlog Dispatcher](../.agents/skills/backlog-dispatcher/SKILL.md)
+- [Dev Backlog Coordinator](../agents/roles/dev-activities/dev-backlog-coordinator.role.yaml)
+- [Coordinate Codex Tasks](../skills/coordinate-codex-tasks/SKILL.md)
+- [OpenAI Build Skills](https://learn.chatgpt.com/docs/build-skills)
+- [OpenAI Projects And Chats](https://learn.chatgpt.com/docs/projects)
 - [Mermaid Class Diagram Relationships](https://mermaid.js.org/syntax/classDiagram.html)
 - [Mermaid Sequence Diagram Messages](https://mermaid.js.org/syntax/sequenceDiagram)
