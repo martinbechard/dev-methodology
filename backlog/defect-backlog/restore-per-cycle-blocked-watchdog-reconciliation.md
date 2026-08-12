@@ -1,6 +1,6 @@
 # Restore Per-Cycle Blocked Watchdog Reconciliation
 
-Status: Blocked
+Status: Ready
 
 Type: Defect
 
@@ -125,3 +125,11 @@ Approved at creation and expanded by later answer. On 2026-08-12, after the exac
 - Overlap Constraint: `skills/coordinate-codex-tasks/SKILL.md` is also required by Ready item `prefer-durable-recovery-evidence-over-codex-task-identity`. Do not dispatch that item until this adoption closes or explicitly releases the delivered path ownership.
 - Preservation Boundary: Do not revert, amend, cherry-pick, regenerate, or rewrite `ba00c950` merely to repair lifecycle order. Preserve unrelated lifecycle-alignment provider changes and every unrelated worktree or branch.
 - Transition Claim: `block-watchdog-delivery-lifecycle-adoption-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `e9f44706-81ba-4a2d-9aa7-fcd58ef8d328`.
+
+## Blocked Recovery
+
+- Reconciled At: 2026-08-12T22:09:48Z.
+- Recovery Decision: The lifecycle-alignment finish lane completed its provider transaction, worktree and branch cleanup, and successor-task archival. The recorded unblock condition is satisfied.
+- Ready Scope: Reserve exactly one root Dev Orchestrator execution to adopt the already-delivered `ba00c950364740f51a250ef53eb7ba4049369aed` result. Do not replay implementation or change its accepted content.
+- Required Outcome: Record Starting -> Running, verify the preserved commit and reported gates against current main, obtain any missing fresh terminal gate, apply `deliver-work-item-main-branch` to a truthful READY result without replaying content, and close and archive this provider item.
+- Recovery Claim: `ready-watchdog-delivery-lifecycle-adoption-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `2c413e21-38f7-4a8e-9bf3-c1c06dd60ff7`.
