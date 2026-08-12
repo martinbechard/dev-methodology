@@ -1,6 +1,6 @@
 # Enforce Reference-Plus-Delta Dispatch Packets
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -135,3 +135,12 @@ Approved at creation by the user's explicit 2026-08-12 instruction to incorporat
 - Recovery Evidence: The user explicitly permitted dev-methodology to continue its own work. The primary checkout is now clean, and `scripts/test_bundle_content.py` has no retained dirty ownership bytes; the exact focused method can be changed without overwriting preserved work.
 - Claim Boundary: No claim release is inferred and no claim operation was invoked. Crisis claim suspension remains active.
 - Recovery Decision: Resume the preserved collaboration execution through Ready -> Starting; no replacement execution is permitted.
+
+## Recovery Starting Handoff
+
+- Reserved At: 2026-08-12.
+- Preserved Canonical Execution: `/root/enforce_reference_plus_delta`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Resume Delta: The exact focused `scripts/test_bundle_content.py` method is no longer overlapped by dirty ownership and may be reconciled with the dispatcher contract. Claims remain suspended.
+- Next Action: The preserved Dev Orchestrator records Starting -> Running before mutation and resumes the existing candidate plan.
