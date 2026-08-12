@@ -149,3 +149,12 @@ Remaining Risk: The candidate has not passed the required terminal verifier gate
 - Next Action Owner: Dev Backlog Coordinator, after the immediate active slot is released.
 - Next Action: Recreate a safe isolated checkout for the restored branch, re-home exactly one final verifier whose effective catalog loads `dev-methodology-repository-maintenance`, and retain Blocked unless that verifier returns PASS.
 - Resumption Boundary: After PASS, preserve the same canonical task and record Blocked -> Ready -> Starting. The same task must then record Starting -> Running before integration.
+
+## Recovery Priority
+
+- Priority Decision: This is the next finish-lane recovery after `enforce-external-terminal-cleanup` releases its active slot and completes external cleanup reconciliation.
+- Current Disposition: Remains Blocked and consumes no active capacity. Do not interrupt or overlap the current Running item.
+- Classification: Ordinary agent-owned verifier-routing blockage. No User Action Required transition is justified unless bounded recovery isolates one concrete user-owned decision.
+- Recovery Sequence: Use the restored `ce7002bf` branch; create a safe isolated checkout; run exactly one final verifier with confirmed private `dev-methodology-repository-maintenance` access; preserve Blocked on any non-PASS result.
+- PASS Sequence: Preserve canonical task `019ff2f9-0863-7133-aac0-fef97ad6d74d`; record Blocked -> Ready -> Starting; require that same task to record Starting -> Running; then resume integration, provider closure, and externally authorized cleanup.
+- Priority Claim: `queue-align-lifecycle-recovery-next-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `c8e6351c-8a9c-478b-b112-08350bfdbc6b`.
