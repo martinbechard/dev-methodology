@@ -1,10 +1,12 @@
 # Restore Per-Cycle Blocked Watchdog Reconciliation
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
 Provider: file
+
+Owner: Dev Orchestrator `019ff807-e1d5-7e83-9c40-7481d83b9995`
 
 Work Item ID: restore-per-cycle-blocked-watchdog-reconciliation
 
@@ -152,3 +154,16 @@ Approved at creation and expanded by later answer. On 2026-08-12, after the exac
 - Next Reconciliation: The canonical root execution must record Starting -> Running before any adoption mutation.
 - Create Reconciliation Claim: `reconcile-watchdog-adoption-create-019ff807`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `62521149-4d71-49f2-a049-081ac8ddffd5`.
 - Transition Claim: `start-watchdog-delivery-lifecycle-adoption-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `24ae02ec-a4c5-4a81-93e0-2f8e6225e45a`.
+
+## Running Execution Evidence
+
+- Running Accepted At: 2026-08-12T22:12:56Z.
+- Canonical Codex Task: `019ff807-e1d5-7e83-9c40-7481d83b9995`.
+- Canonical Conversation: `019ff807-e1d5-7e83-9c40-7481d83b9995`.
+- Root Owner: Dev Orchestrator `019ff807-e1d5-7e83-9c40-7481d83b9995`.
+- Parent Runtime Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Authorizing Coordinator: `/root/backlog_coordinator`.
+- Phase: Lifecycle adoption.
+- Branch And Worktree: primary `main` at `/Users/martinbechard/dev/dev-methodology`; accepted execution baseline `8e74404185df8d9bf6c456823d60054727fcfc02`.
+- Accepted Execution: This canonical root execution acquired exact Work Item ID `restore-per-cycle-blocked-watchdog-reconciliation` with activity `work`, outcome `SHARED_CHECKOUT_ACQUIRED`, event `90d878af-4f90-4a31-8a0f-c94c2f45f75a`; it accepts the finish-lane adoption of preserved main commit `ba00c950364740f51a250ef53eb7ba4049369aed` without replaying, amending, reverting, regenerating, or changing the accepted 16-path content.
+- Transition Claim: `watchdog-running-transition-019ff807`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `5da7f074-5bb3-4dd3-ba48-7b1a060aef36`.
