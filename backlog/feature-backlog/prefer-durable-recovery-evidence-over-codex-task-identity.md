@@ -1,6 +1,8 @@
 # Prefer Durable Recovery Evidence Over Codex Task Identity
 
-Status: Starting
+Status: Running
+
+Owner: Root Dev Orchestrator task 019ff81d-50ec-7d21-9206-e2a9a7ae4c4d
 
 Type: Feature
 
@@ -97,3 +99,21 @@ The separate Watchdog-contract work completed and archived at main commit `c73bd
 - Next Reconciliation: The canonical root execution must record Starting -> Running before mutation.
 - Create Reconciliation Claim: `reconcile-durable-recovery-create-019ff81d`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `72778701-ad16-4894-b213-f158cf23073a`.
 - Transition Claim: `start-durable-recovery-guidance-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `10a37cf9-4263-4d6c-9f64-64ab2c120dfe`.
+
+## Running Evidence
+
+Started At: 2026-08-12T22:36:10Z
+
+Canonical Conversation: 019ff81d-50ec-7d21-9206-e2a9a7ae4c4d
+
+Root Agent Task: 019ff81d-50ec-7d21-9206-e2a9a7ae4c4d
+
+Parent Coordination: 019ff2c3-1710-7aa1-89c4-9d6066f51fe4
+
+Branch: main
+
+Worktree: /Users/martinbechard/dev/dev-methodology
+
+Phase: planning and baseline reconciliation
+
+Accepted Execution Evidence: This canonical Root Dev Orchestrator accepted the Starting reservation, resolved reservation commit `29b169be8f9ecf44fb955d4e4b4d5fa74169f4e9`, preserved accepted Watchdog baseline `c73bd4eb9452ef4df99d1b92442cdbfc2f39f6fb`, and acquired exact Work Item ID claim `prefer-durable-recovery-019ff81d-work` with activity `work` before this transition.
