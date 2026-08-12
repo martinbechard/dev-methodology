@@ -1,6 +1,6 @@
 # Remediate Inherited Supported-Test Baseline Failures
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
@@ -121,7 +121,7 @@ Branch: codex/remediate-inherited-supported-test-baseline-failures
 
 Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/remediate-inherited-supported-test-baseline-failures
 
-Phase: Integrating accepted candidate into current main
+Phase: Completed on main
 
 Accepted Execution Evidence: The exact opaque Work Item ID was acquired with activity work. A clean, non-shallow full-history worktree was created from observed current main f1490b80e856df9cc08d24027acd3252734aac18 before implementation. The dispatch SHA f1490b80d6df33fe92f88905e8b92cacb596967d was not present in the repository; the full observed main identity is retained here without substituting the historical candidate.
 
@@ -176,3 +176,21 @@ Unattended Boundary: Do not begin main integration or provider completion until 
 Resolution: On 2026-08-12 in the canonical Codex task, the user confirmed that work may continue after clarification that no code approval, scope expansion, reduced verification, or risk acceptance was requested. The selected recovery is to run another strictly read-only methodology review in a compatible task or runtime that can load the required skills. Main integration remains prohibited until that review accepts the candidate.
 
 Methodology Review Result: APPROVED on 2026-08-12 by a fresh strictly read-only reviewer against candidate 529112158f6b4454864d5d550db96547d5029371. The review accepted Project Configurator ownership semantics, selected and none resource-coordination contracts, JSON REPORT behavior, generator ownership and provenance, strict zero-identity comparator behavior, unchanged discovery and normalization, and preservation of all separate current defects. The candidate worktree remained clean.
+
+## Completion Evidence
+
+Completed At: 2026-08-12T00:13:30Z
+
+Delivered Main Commit: 2a2f24ce32404fc0c89c6ae86b71bba449916fd6
+
+Source Candidate Mapping: Candidate 529112158f6b4454864d5d550db96547d5029371 was applied to current main as integration commit 86cf8825b76cf9c8a730764e330c26ae5377e158. Current-main generator inputs required one generator-owned refresh in 2a2f24ce32404fc0c89c6ae86b71bba449916fd6.
+
+Independent Review: Fresh source and methodology review approved the repaired contracts. The final integration-only generated refresh also received fresh methodology approval.
+
+Independent Verification: All 118 authorized historical identities are absent; all 16 zero-identity owner rows remain; comparator strictness checks passed 3 of 3; focused JSON and text report contracts passed 2 of 2; evaluation-documentation and skill-documentation freshness checks passed; Git diff checks passed; and the clean integration worktree matched the delivered main commit.
+
+Preserved Separate Defects: Nine separately classified current identities remain visible. The supported entry point still reports the separately owned audit-path inventory defect, and independent runner evidence still reports stale Playwright exclusions. This work item did not add exclusions, expected-failure markers, signature allowlists, normalization changes, or platform bypasses.
+
+Primary Worktree Preservation: The unrelated modification to scripts/test_audit_worktree_completion_links.py remained byte-for-byte and diff-for-diff unchanged across delivery. Its file SHA-256 remained 320e038708924aa76df21cf8055319a4756294b48462a32c3c53ce4e2f5bab7f and its binary-diff SHA-256 remained a5c02982c25be424220b44df4d9052250f22fc7c9049bd86e4eb7daa590ef66f.
+
+Claim Disposition: The work claim was released with handoff after main delivery. The main-integration claim was released after the accepted commit became the main tip and preservation evidence was rechecked.
