@@ -27,6 +27,7 @@ On 2026-08-12, the user separately requested one Ready file-provider backlog ite
 - Update `design/agents/work-item-dispatching-and-delivery.md` and `design/orchestrated-development-lifecycle.html` with the terminal evidence, Coordinator authorization, root Dispatcher cleanup, archive-last, returned-outcome, and capacity-reconciliation sequence.
 - Update the Dev Orchestrator and Dev Backlog Coordinator conceptual role sources to preserve the same ownership boundary.
 - Regenerate every supported adapter mechanically from the changed canonical role sources.
+- Regenerate `design/generated/skill-definitions.js` after the immediate skill-source item lands, and verify it contains the delivered external-cleanup contract.
 - Add or update only the focused tests and generated projections proven necessary by source ownership.
 - Reconcile current skill text before writing so documentation and roles describe the delivered executable contract rather than a predicted version.
 - Preserve the distinction between terminal delivery eligibility and completed external cleanup.
@@ -74,6 +75,7 @@ None.
 - generated/adapters/junie/agents/dev-backlog-coordinator.md
 - design/agents/work-item-dispatching-and-delivery.md
 - design/orchestrated-development-lifecycle.html
+- design/generated/skill-definitions.js
 - Mechanically required focused test files and generator-owned projections proven by repository discovery.
 
 ### Approval Resolution
@@ -83,3 +85,5 @@ Approved at creation. On 2026-08-12, the user explicitly requested later updates
 ## Notes
 
 This Ready item is a distinct later delivery. Coordinate its exact design and role paths against the immediate skill item at mutation and integration boundaries; do not merge the two canonical executions.
+
+The immediate source-only item intentionally leaves `design/generated/skill-definitions.js` stale because the user separated generated documentation updates into this later item. Treat the exact `build-skill-docs.py --check` delta caused only by those three delivered skill sources as accepted input to this item, not as evidence that the immediate item may mutate the projection.
