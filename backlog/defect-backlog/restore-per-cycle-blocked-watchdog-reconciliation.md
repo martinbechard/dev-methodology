@@ -1,6 +1,6 @@
 # Restore Per-Cycle Blocked Watchdog Reconciliation
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -133,3 +133,17 @@ Approved at creation and expanded by later answer. On 2026-08-12, after the exac
 - Ready Scope: Reserve exactly one root Dev Orchestrator execution to adopt the already-delivered `ba00c950364740f51a250ef53eb7ba4049369aed` result. Do not replay implementation or change its accepted content.
 - Required Outcome: Record Starting -> Running, verify the preserved commit and reported gates against current main, obtain any missing fresh terminal gate, apply `deliver-work-item-main-branch` to a truthful READY result without replaying content, and close and archive this provider item.
 - Recovery Claim: `ready-watchdog-delivery-lifecycle-adoption-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `2c413e21-38f7-4a8e-9bf3-c1c06dd60ff7`.
+
+## Starting Handoff Evidence
+
+- Reserved At: 2026-08-12T22:10:15Z.
+- Parent Runtime Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Normalized Objective: Adopt the already-delivered Watchdog reconciliation result at `ba00c950364740f51a250ef53eb7ba4049369aed` through the missing lifecycle, independent terminal-gate, selected Commit, provider-closeout, and external-cleanup sequence without replaying or changing accepted implementation content.
+- Intended Root Role: Dev Orchestrator.
+- Baseline: `f3b6eff5e97b3120b693adaf095448fd4ca48392` on primary `main`.
+- Dispatch Reservation: Exactly one new canonical root execution; runtime identity pending caller-owned creation. No prior canonical execution exists for this adoption boundary.
+- Launch State: Authorized and pending root Backlog Dispatcher creation result; successful creation does not imply Running.
+- Last Contact: 2026-08-12T22:10:15Z.
+- Next Reconciliation: Reconcile the exact create result immediately; the new root execution must record Starting -> Running before any adoption mutation.
+- Transition Claim: `start-watchdog-delivery-lifecycle-adoption-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `24ae02ec-a4c5-4a81-93e0-2f8e6225e45a`.
