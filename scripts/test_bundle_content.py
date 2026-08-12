@@ -5774,6 +5774,68 @@ class BundleContentTests(unittest.TestCase):
                     r"without using one satisfied section trigger to waive another shared trigger",
                 )
 
+        for phrase in (
+            "Architecture and high-level design are different artifact types",
+            "Never give an architecture artifact an HLD path",
+            "architecture constrains child high-level designs",
+            "docs/architecture/architecture-design.yaml",
+        ):
+            self.assertIn(phrase, development_text)
+
+        for phrase in (
+            "Pre-Write Placement Gate",
+            "classified as architecture",
+            "outside every HLD category",
+            "child-HLD location and naming convention",
+            "Stop when architecture and HLD would receive the same",
+        ):
+            self.assertIn(phrase, architecture_create)
+
+        for phrase in (
+            "classifies the target path, filename pattern, identifier, and prefix as architecture",
+            "child HLDs reference this architecture as their parent",
+            "does not depend on a child HLD for normative authority",
+            "detailed operation contracts, leaf-module assignments, and implementation sequencing",
+        ):
+            self.assertIn(phrase, architecture_review)
+
+        for phrase in (
+            "repository taxonomy classify the target path",
+            "child HLDs reference this architecture as their parent",
+            "fixed structured workflow artifact share one directory",
+        ):
+            self.assertIn(phrase, checklists["architecture"])
+
+        architecture_template = templates["architecture-template.md"]
+        for phrase in (
+            "Architecture Identity And Child Designs",
+            "canonical repository-relative architecture path",
+            "child-HLD location and HLD naming convention",
+            "no circular authority references",
+        ):
+            self.assertIn(phrase, architecture_template)
+
+        bootstrap_text = skill_text("bootstrap-project-documentation")
+        configuration_text = skill_text("create-project-configuration")
+        for text in (bootstrap_text, configuration_text):
+            self.assertIn("docs/project-taxonomy.md", text)
+            for phrase in (
+                "docs/architecture/ARC-NNN-slug.md",
+                "docs/design/high-level/HLD-NNN-slug.md",
+                "docs/design/components/CD-NNN-slug.md",
+                "architecture-design.yaml",
+            ):
+                self.assertIn(phrase, text)
+
+        project_template = templates["project-template.yaml"]
+        for phrase in (
+            "ARC-NNN-slug.md",
+            "HLD-NNN-slug.md",
+            "CD-NNN-slug.md",
+            "Fixed structured architecture workflow output",
+        ):
+            self.assertIn(phrase, project_template)
+
         functional_surfaces = {
             "create": (functional_create, "Mermaid workflow diagram whenever"),
             "review": (functional_review, "Mermaid diagram whenever"),

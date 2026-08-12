@@ -13,11 +13,16 @@ For planned development, review architecture as solution design. Accept undefine
 
 Review whether the architecture prevents chaos in high-level designs by giving them one coherent frame for runtime units, subsystem vocabulary, stack, repository roots, documentation homes, ownership, layers, dependency direction, data authority, integrations, trust boundaries, configuration, lifecycle, and implementation sequence. Avoidable open questions, conflicting frames, incomplete paths, and placeholder locations are findings.
 
+Review artifact identity before content depth. Confirm the repository taxonomy classifies the target path, filename pattern, identifier, and prefix as architecture; confirm it is not mislabeled or placed as an HLD. Verify that child HLDs reference this architecture as their parent and that the architecture does not depend on a child HLD for normative authority. Evidence may flow bottom up during reverse engineering, but accepted authority remains architecture to HLD to component or module design without circular references.
+
+Treat detailed operation contracts, leaf-module assignments, and implementation sequencing as HLD or component-design responsibilities when they do not establish a project-wide rule. Their presence is a finding when it makes the architecture depend on child-detail ownership or obscures the system-wide authority boundary. A fixed structured workflow artifact such as docs/architecture/architecture-design.yaml is not the durable Markdown architecture merely because it shares the directory.
+
 Require an appropriate Mermaid diagram whenever a section describes two or more ordered actions or phases, or any handoff, data movement, lifecycle transition, branch, retry, recovery path, startup or shutdown dependency, or dependent implementation phase. Require a structural diagram when a section defines a non-tabular topology: one system-context, scope, ownership, layer, component, dependency, principle, risk, or verification node connects to two or more others; a dependency or ownership path spans three or more nodes; a cycle exists; containment spans two or more levels; or an edge crosses a system, trust, or runtime boundary. Prose, numbered lists, and tables may support a diagram but must not carry the complete qualifying relationship alone. Treat architecture-template section-specific triggers as additive minimums under the shared route-documentation-work rule; satisfying one section-specific trigger does not waive another shared trigger.
 
 ## Required Inputs
 
 - The architecture artifact under review.
+- The repository placement taxonomy that classifies its path, identifier, and prefix.
 - The architecture template from route-documentation-work assets when available.
 - Related source roots, tests, configuration, runtime metadata, procedures, high-level designs, module designs, and wiki pages.
 
@@ -38,7 +43,7 @@ Use exactly one allowed status and never qualify a status with wording such as p
 
 ## Workflow
 
-1. Read the artifact and identify the system boundary, runtime assumptions, system-frame ledger, repository roots, layers, components, ownership, dependencies, data authority, integrations, trust boundaries, configuration, lifecycle, implementation sequence, qualifying structural and ordered relationships and their diagrams, justified propositions, residual open questions, cross-cutting claims, documentation acceptance, implementation readiness, and verification claims.
+1. Read the repository taxonomy and artifact, then identify its architecture path and identifier classification, child-HLD convention and references, authority direction, system boundary, runtime assumptions, system-frame ledger, repository roots, layers, components, ownership, dependencies, data authority, integrations, trust boundaries, configuration, lifecycle, implementation sequence, qualifying structural and ordered relationships and their diagrams, justified propositions, residual open questions, cross-cutting claims, documentation acceptance, implementation readiness, and verification claims.
 2. Read references/review-checklist-architecture.md.
 3. Complete every applicable checklist question with the Completed Checklist Evidence fields.
 4. Save the completed review checklist next to the artifact using this form: artifact-name.review-checklist-architecture.md.

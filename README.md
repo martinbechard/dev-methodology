@@ -718,9 +718,9 @@ python3 scripts/render-agents-technology-skills.py --project PROJECT.yaml --inli
 ## Neutral Target Project Layout
 
 - [documentation-root]/functional
-- [documentation-root]/architecture
-- [documentation-root]/high-level
-- [documentation-root]/modules
+- docs/architecture/ARC-NNN-slug.md
+- docs/design/high-level/HLD-NNN-slug.md
+- docs/design/components/CD-NNN-slug.md
 - [documentation-root]/module-coverage.md
 - PROJECT.yaml
 - [technology-subfolder]/AGENTS.md when a subfolder needs distinct operational guidance
@@ -728,7 +728,7 @@ python3 scripts/render-agents-technology-skills.py --project PROJECT.yaml --inli
 - raw/wiki-fragments
 - raw/processed
 
-The placeholder [documentation-root] means the documentation root chosen by the target project. Projects may choose different folders when they already have established documentation locations, but each project should keep a clear home for each documentation type.
+The placeholder [documentation-root] means the documentation root chosen by the target project. The architecture, HLD, and component paths are the defaults when no stronger convention exists. Projects may choose different folders when their taxonomy keeps those artifact identities and prefixes distinct. Durable Markdown architecture is system authority; a fixed structured workflow artifact such as docs/architecture/architecture-design.yaml has a separate owner and lifecycle even when it shares the directory. Authority flows from architecture to HLD to component design without circular references.
 
 The project wiki should live at docs/wiki. It is a synthesized navigation and understanding layer, not the highest source of truth. Code and tests remain authoritative for actual behavior. Functional and technical documents can live under docs/wiki as wiki page subclasses or remain in their project documentation folders with wiki pages linking to them.
 

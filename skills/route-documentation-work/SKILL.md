@@ -90,6 +90,19 @@ Pages that use the shared page contract start with these sections:
 
 Functional specifications, architecture documents, high-level designs, and module designs are page subclasses. They keep the shared sections first, then append the specialized sections from their matching template.
 
+## Design Artifact Identity And Authority
+
+Architecture and high-level design are different artifact types. Never give an architecture artifact an HLD path, prefix, identifier, or authority role merely because the repository taxonomy has no architecture category. Resolve placement through organise-project-files before writing. When the project taxonomy has no architecture category, Project Organiser extends the taxonomy with a distinct architecture category before the artifact is created; the author does not fall back to the HLD category.
+
+Keep durable design authority directional: architecture constrains child high-level designs, and each high-level design constrains its child component or module designs. Child artifacts reference their parent. An architecture must not depend on a child HLD for its own normative authority, and parent and child artifacts must not form circular authority references. Existing-implementation reverse engineering may gather evidence bottom up, but that evidence-gathering order does not invert the accepted artifact authority direction.
+
+Distinguish two architecture concepts that may share one directory:
+
+- Durable Markdown system authority uses the project taxonomy's architecture category and naming convention, such as docs/architecture/ARC-NNN-slug.md.
+- Generated or phase-specific structured architecture output uses the fixed YAML filename and lifecycle declared by its owning workflow, such as docs/architecture/architecture-design.yaml.
+
+Do not treat a fixed structured workflow output as the canonical Markdown architecture artifact or derive its identifier, owner, review route, or lifecycle from the durable architecture category.
+
 ## Document Type Selection
 
 Use the smallest document type that fully explains the work:
@@ -144,7 +157,7 @@ When a target project needs a local editable document, copy only the matching te
 
 1. Inspect the target repository before writing documentation. Identify source roots, test roots, existing docs, wiki root, procedures, backlog files, build commands, and current worktree status.
 2. Choose the document type from the source evidence and the user's requested outcome.
-3. Choose the document structure from the user request, existing file, runtime schema, selected template, or docs/wiki contract before writing.
+3. Choose the document structure from the user request, existing file, runtime schema, selected template, or docs/wiki contract before writing. For architecture, HLD, and component or module design, resolve the exact taxonomy category, path, identifier prefix, and parent-child authority direction before copying a template. Stop when two levels would receive the same identity or authority role.
 4. Load the matching artifact creation skill from the route table when creating or substantially rewriting a methodology artifact.
 5. Copy the matching template asset only when a new or refreshed document is needed.
 6. Replace every TODO instruction with project-specific content backed by source links.

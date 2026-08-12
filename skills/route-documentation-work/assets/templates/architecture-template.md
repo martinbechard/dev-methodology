@@ -84,6 +84,18 @@ TODO: Record what future maintainers should recheck when source roots, technolog
 
 TODO: Include the last meaningful source review when known.
 
+## Architecture Identity And Child Designs
+
+> This section prevents architecture from inheriting an HLD identity and makes the design authority chain explicit before detailed content is interpreted.
+
+TODO: State the canonical repository-relative architecture path, ARC identifier, and architecture filename convention.
+
+TODO: State the child-HLD location and HLD naming convention.
+
+TODO: State that authority flows from this architecture to its child HLDs and from each HLD to its child component or module designs, with each child referencing its parent and no circular authority references.
+
+TODO: Identify any fixed structured architecture workflow artifact that shares the directory and distinguish its owner and lifecycle from this durable Markdown architecture, or say Not applicable.
+
 ## Scope
 
 > This section prevents responsibilities from being duplicated, omitted, or silently assigned to the wrong design artifact. Architects, implementers, and reviewers use it when selecting documentation ownership, planning changes, and reviewing boundaries to determine what this architecture governs, what it excludes, and where excluded concerns belong.

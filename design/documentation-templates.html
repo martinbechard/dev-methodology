@@ -461,9 +461,11 @@ Task-ID-Evidence: historical-unknown
 
         <article class="card design">
           <h3>Architecture</h3>
-          <p>Defines project-wide boundaries, system context, technology stack, file ownership, dependency layers, major components, cross-cutting concerns, invariants, risks, and verification.</p>
+          <p>Defines project-wide boundaries, system context, technology stack, file ownership, dependency layers, major components, cross-cutting concerns, invariants, risks, and verification. Its taxonomy identity remains distinct from HLD, and its authority flows to child HLDs and component designs without circular references.</p>
           <ul>
             <li>Scope: a system or cross-cutting architectural concern</li>
+            <li>Default identity: docs/architecture/ARC-NNN-slug.md</li>
+            <li>Structured workflow outputs such as architecture-design.yaml retain separate ownership and lifecycle</li>
             <li>Creator: create-architecture</li>
             <li>Reviewer: review-architecture</li>
           </ul>
@@ -551,7 +553,7 @@ Task-ID-Evidence: historical-unknown
             <tr>
               <td>What system-wide structure, boundaries, stack, and dependency rules govern implementation?</td>
               <td>Architecture</td>
-              <td>Constrains high-level designs while leaving individual subsystem detail to them.</td>
+              <td>Constrains child high-level designs while leaving detailed operation contracts, leaf assignments, and implementation sequencing to them; its taxonomy identity and authority remain distinct.</td>
             </tr>
             <tr>
               <td>How do several components collaborate to deliver a subsystem or feature family?</td>

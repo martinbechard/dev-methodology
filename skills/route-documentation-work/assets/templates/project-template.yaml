@@ -113,8 +113,17 @@ project_taxonomy:
         - "TODO: Framework, language, database, or tool."
       notes: "TODO: Explain the routing significance of this tier."
   documentation_surfaces:
-    - path: "TODO: Documentation surface path."
-      purpose: "TODO: Explain what agents maintain there."
+    # When specifications or both is selected, keep architecture -> HLD -> component
+    # design as the non-circular authority direction and require each child to name
+    # its parent. Preserve different project paths only when these identities remain distinct.
+    - path: "TODO: Durable Markdown architecture category; default to docs/architecture when no stronger convention exists."
+      purpose: "TODO: Record the ARC-NNN-slug.md pattern and its system-authority ownership."
+    - path: "TODO: Durable Markdown HLD category; default to docs/design/high-level when no stronger convention exists."
+      purpose: "TODO: Record the HLD-NNN-slug.md pattern and its child-of-architecture ownership."
+    - path: "TODO: Durable Markdown component-design category; default to docs/design/components when no stronger convention exists."
+      purpose: "TODO: Record the CD-NNN-slug.md pattern and its child-of-HLD ownership."
+    - path: "TODO: Fixed structured architecture workflow output such as docs/architecture/architecture-design.yaml, or Not applicable."
+      purpose: "TODO: Name the generating workflow, fixed filename, owner, and lifecycle separately from durable Markdown architecture."
 
 root_agents_reference:
   file: AGENTS.md
