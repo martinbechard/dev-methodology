@@ -1,6 +1,6 @@
 # Enforce External Terminal Cleanup
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -13,6 +13,30 @@ Completion: main-branch
 ## Summary
 
 Concisely enforce one external terminal-cleanup boundary across the private Backlog Dispatcher, Codex task coordination, and main-branch delivery skills.
+
+## Starting Handoff Evidence
+
+- Starting Recorded At: 2026-08-12T20:42:44Z.
+- Coordinator: Backlog Dispatcher Codex task `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`, acting through canonical Dev Backlog Coordinator subagent `/root/backlog_coordinator`.
+- Dispatch Reservation: `reserve-starting-external-terminal-cleanup-019ff2c3`.
+- Normalized Objective: Concisely enforce external terminal cleanup across exactly the three user-approved skill sources, with Orchestrator evidence handoff, Coordinator verification and authorization, root Dispatcher cleanup and archive-last execution, returned outcomes, and post-cleanup capacity reconciliation.
+- Intended Root Role: Dev Orchestrator.
+- Launch Result: Not attempted pending caller-owned task creation.
+- Canonical Execution: None pending caller-owned task creation.
+- Baseline Commit: `d1d0af1cce496141a86d8a9aebaf24fb46d910cf`.
+- Provider Claim: `reserve-starting-external-terminal-cleanup-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `6ee68833-d8f4-41a4-8351-f2d74c5759af`.
+- Last Contact: 2026-08-12T20:42:44Z.
+- Next Reconciliation: Immediately after the caller returns the exact runtime creation result; do not retry an ambiguous result.
+- Next Lifecycle Owner: The new root Dev Orchestrator must record the distinct Starting -> Running acceptance before source mutation.
+
+## Scheduling Evidence
+
+- Mode: MULTITASK enabled.
+- Active Eligibility Before Reservation: zero Starting and zero Running items.
+- Effective Scheduling Limit: one launch in this pass because the user directed this correction immediately and the separate Ready documentation/role item consumes related review, generation, and integration capacity.
+- Capacity Result: the one pass-local slot is reserved by this Starting item.
+- Dependencies: None.
+- Overlap Result: no active canonical execution, claim, candidate, worktree, or finish-lane item overlaps the three exact skill sources. `document-external-terminal-cleanup` remains Ready and must not mutate or integrate overlapping contract projections while this item is active.
 
 ## Context
 
