@@ -1,6 +1,6 @@
 # Correct Resource-Claim Storage And Private Dispatcher Placement
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -116,3 +116,15 @@ None.
 - Conversation Title: `Starting — Correct Resource Claims and Private Dispatcher`; synchronized with the durable Starting lifecycle at launch. The title remains display evidence only.
 - Resource Coordination: no claim. Crisis epoch `claim-coordination-repair-2026-08-12T11:30:13Z` prohibits all claim operations after the one reset.
 - Next Lifecycle Owner: the newly created root Dev Orchestrator must use this same provider item and directly record Starting -> Running before artifact mutation. No second execution or concurrent dispatch is authorized.
+
+## Running Acceptance Evidence
+
+- Accepted At: 2026-08-12T11:35:54Z.
+- Canonical Codex Task ID: `019ff5c1-05a2-7551-bcf2-812f61776a7e`.
+- Canonical Conversation ID: `019ff5c1-05a2-7551-bcf2-812f61776a7e`.
+- Root Agent Task: `/root`.
+- Owner: Dev Orchestrator.
+- Phase: governing-contract and preserved-candidate reconciliation before implementation.
+- Checkout: primary `/Users/martinbechard/dev/dev-methodology`; external delivery boundary `/Users/martinbechard/dev/mcp-agent-ops`.
+- Resource Coordination: claim-free under crisis epoch `claim-coordination-repair-2026-08-12T11:30:13Z`; no claim operation occurred during acceptance.
+- Conversation Title: `Implementing — Correct Resource Claims and Private Dispatcher`.
