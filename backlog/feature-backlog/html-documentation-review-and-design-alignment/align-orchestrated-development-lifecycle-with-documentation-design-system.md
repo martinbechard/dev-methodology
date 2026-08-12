@@ -237,7 +237,7 @@ Remaining Risk: The candidate has not passed the required terminal verifier gate
 - Dispatch Reservation: `align-lifecycle-successor-starting-019ff2c3`.
 - Normalized Objective: Adopt the preserved verified candidate in exactly one fresh successor Dev Orchestrator execution, accept Starting -> Running, integrate onto current main, complete provider delivery, and retain resources for external cleanup.
 - Superseded Historical Task And Conversation: `019ff2f9-0863-7133-aac0-fef97ad6d74d`; no restoration or further outcome work is authorized.
-- Successor Canonical Execution: None pending caller-owned creation. The first unique successful result becomes canonical; ambiguity must be reconciled without retry.
+- Successor Canonical Execution: Codex task and conversation `019ff7ef-3b93-7522-9ed1-9f829aabdbf7` on host `local`; the runtime exposes one combined identity.
 - Preserved Branch: `codex/align-orchestrated-development-lifecycle-design-system-019ff2f9`.
 - Preserved Worktree: `/Users/martinbechard/dev/dev-methodology/.worktrees/align-orchestrated-lifecycle-work-019ff2f9`.
 - Preserved Candidate: `ce7002bf2794c62cdbd7ebf58ff217aeb5e55935`.
@@ -246,3 +246,6 @@ Remaining Risk: The candidate has not passed the required terminal verifier gate
 - Capacity Result: one finish-lane successor slot reserved; this Starting item consumes active capacity.
 - Next Lifecycle Owner: The unique successor root Dev Orchestrator claims this exact Work Item ID with activity `update`, records Starting -> Running with the old-to-new identity handoff, and releases the claim before integration.
 - Starting Claim: `align-lifecycle-successor-starting-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `517ae9c5-19ab-4386-a200-b22f84265972`.
+- Creation Result: Immediate unique success with no client ID. Runtime cwd, title, status, and creation time remain pending observation because the task has not yet appeared on read/list surfaces. Do not retry.
+- Identity Handoff: `019ff2f9-0863-7133-aac0-fef97ad6d74d` is superseded historical evidence; `019ff7ef-3b93-7522-9ed1-9f829aabdbf7` is the only authorized successor and current canonical execution.
+- Reconciliation Claim: `align-lifecycle-reconcile-successor-019ff7ef`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `8eb4edd2-657c-4ebd-8d26-c115b3f4cd5f`.
