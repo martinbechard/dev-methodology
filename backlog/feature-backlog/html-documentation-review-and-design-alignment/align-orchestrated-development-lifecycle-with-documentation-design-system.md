@@ -1,8 +1,8 @@
 # Align Orchestrated Development Lifecycle with the Documentation Design System
 
-Owner: Dev Orchestrator
+Owner: Unowned
 
-Status: Running
+Status: Blocked
 
 Type: Feature
 
@@ -114,3 +114,25 @@ Phase: Documentation design-system discovery and implementation planning
 Accepted Execution Evidence: The canonical root Dev Orchestrator accepted the Starting handoff, acquired the exact opaque Work Item ID, and adopted an isolated worktree at observed current main f1490b80e856df9cc08d24027acd3252734aac18. The dispatch-supplied object f1490b80d6df33fe92f88905e8b92cacb596967d is absent from the repository; the observed main commit has subject Reserve wiki context text review. The accepted semantic baseline remains main integration 81c430e04d3f628ceae9a7a521d43f6ea9e2371d.
 
 Complex Development Plan Decision: Pending bounded discovery. The expected delivery is one documentation contribution lane with ordinary independent design-system review, browser verification, and main-branch integration; no external plan is created unless discovery meets the configured complexity gate.
+
+## Blocked Recovery Evidence
+
+Blocked Recorded At: 2026-08-12T02:18:00Z
+
+Canonical Conversation: 019ff2f9-0863-7133-aac0-fef97ad6d74d
+
+Codex Task ID: 019ff2f9-0863-7133-aac0-fef97ad6d74d
+
+Preserved Candidate Commit: ce7002bf
+
+Confirmed Blocker: Both permitted final-verifier instances stopped before candidate inspection because their configured runtime catalogs could not load the required dev-methodology-repository-maintenance skill. This is verifier availability failure, not a candidate finding.
+
+Preserved Gate Evidence: Fresh source, artifact, prompt-contract, Shared Documentation Design System, browser accessibility, and browser correction reviews accepted the preserved candidate. Final verification and main integration have not been accepted.
+
+Blocker Owner: Dev Backlog Coordinator.
+
+Coordinator Next Action: Re-home final verification to an authorized runtime whose effective catalog exposes dev-methodology-repository-maintenance, or obtain a catalog repair and then resume the same canonical task. Do not create a replacement work-item task.
+
+Unblock Condition: One authorized final verifier with a confirmed working dev-methodology-repository-maintenance skill load inspects preserved candidate ce7002bf and returns a terminal passing verdict, after which the same canonical task resumes through Blocked -> Ready -> Starting -> Running before integration.
+
+Remaining Risk: The candidate has not passed the required terminal verifier gate. Do not integrate, complete the provider record, clean up the branch or worktree, or discard candidate evidence while Blocked.
