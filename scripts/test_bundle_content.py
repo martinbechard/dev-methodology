@@ -4358,6 +4358,68 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn("Historical mapping:", migration)
                 self.assertNotIn("until their separately governed callers move", migration)
 
+    def test_codex_successor_recovery_contract_matches_private_dispatcher(self) -> None:
+        """Keep successor recovery narrow and equivalent across its two owners."""
+
+        codex_text = (
+            SKILLS_ROOT / "coordinate-codex-tasks" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        dispatcher_text = (
+            REPOSITORY_ROOT
+            / ".agents"
+            / "skills"
+            / "backlog-dispatcher"
+            / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        normalized_sources = {
+            "coordinate-codex-tasks": " ".join(codex_text.split()).lower(),
+            "backlog-dispatcher": " ".join(dispatcher_text.split()).lower(),
+        }
+
+        shared_contract = (
+            "observed failure of an ordinary required capability during the active workload",
+            "exhausted bounded identity-preserving recovery through the same canonical task",
+            "capability-pilot mismatch",
+            "not successor evidence",
+            "idle, slow, quiet",
+            "accepted commit",
+            "branch and worktree",
+            "applicable claims",
+            "completed reviews",
+            "verifier evidence",
+            "delivery state",
+            "authoritative recovery evidence",
+            "durable old-to-new identity handoff",
+            "reconcile active and archived runtime tasks",
+            "do not issue another create operation",
+            "starting -> running",
+            "before any repository or shared-work mutation",
+            "old execution and every duplicate must be stopped or permanently barred",
+            "only the accepted successor may mutate repository or shared work",
+            "truthful non-active provider disposition",
+        )
+        for source_name, source_text in normalized_sources.items():
+            for clause in shared_contract:
+                with self.subTest(source=source_name, clause=clause):
+                    self.assertIn(clause, source_text)
+
+        self.assertIn(
+            "exactly one successor root execution",
+            normalized_sources["coordinate-codex-tasks"],
+        )
+        self.assertIn(
+            "exact one-successor authorization",
+            normalized_sources["backlog-dispatcher"],
+        )
+        self.assertIn(
+            "must not authorize another successor",
+            normalized_sources["coordinate-codex-tasks"],
+        )
+        self.assertIn(
+            "never create or request another successor",
+            normalized_sources["backlog-dispatcher"],
+        )
+
     def test_external_terminal_cleanup_is_external_and_archive_last(self) -> None:
         """Terminal cleanup stays external to the active work-item execution."""
 

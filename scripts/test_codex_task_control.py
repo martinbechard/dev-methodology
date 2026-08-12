@@ -16,6 +16,9 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 RETIRED_SKILL_NAME = "coordinate-" + "codex-work-items"
 CODEX_SKILL_PATH = ROOT / "skills" / "coordinate-codex-tasks" / "SKILL.md"
+DISPATCHER_SKILL_PATH = (
+    ROOT / ".agents" / "skills" / "backlog-dispatcher" / "SKILL.md"
+)
 PORTABLE_SKILL_PATH = ROOT / "skills" / "coordinate-work-items" / "SKILL.md"
 ROLE_PATHS = {
     name: ROOT / "agents" / "roles" / "dev-activities" / f"{name}.role.yaml"
@@ -29,7 +32,7 @@ ROLE_PATHS = {
 
 CANONICAL_STANDING_PROMPT = """Act as the dedicated read-only Dev Methodology backlog watchdog created by runtime parent task {runtime_parent_task_id} for Dev Backlog Coordinator task {coordinator_task_id} in {repository_root}.
 
-Apply skills/coordinate-work-items/SKILL.md for portable capacity, lifecycle reconciliation, Blocked, Stalled, and read-only Watchdog criteria. Apply skills/coordinate-codex-tasks/SKILL.md only for Codex task identity, conversation-title observation, bounded resumption, and archival mapping. Observe task state through runtime tools. Consult provider, Git, and resource records only for a lifecycle decision, anomaly, dependency, delivery, or cleanup question; do not reconstruct lifecycle history on every cycle.
+Apply skills/coordinate-work-items/SKILL.md for portable capacity, lifecycle reconciliation, Blocked, Stalled, and read-only Watchdog criteria. Apply skills/coordinate-codex-tasks/SKILL.md only for Codex task identity, conversation-title observation, bounded resumption, and archival mapping. Observe task state through runtime tools. On every cycle, obtain the current Blocked inventory, compare every observed canonical Codex task title with the exact title derived from current provider lifecycle and material Running phase, and compare each observed bounded verifier title with its current runtime outcome. Consult provider, Git, and resource records only for those reconciliations or another lifecycle decision, anomaly, dependency, delivery, or cleanup question; do not reconstruct lifecycle history on every cycle.
 
 Remain strictly read-only. Do not mutate repository files, provider lifecycle, claims, tasks, branches, worktrees, or shared resources. Do not dispatch, integrate, clean up, archive, or run expensive or live verification. Notify Coordinator task {coordinator_task_id} only when a specific Coordinator decision is required. State the affected item, decision, and smallest recommended action without copying durable evidence into the message. When healthy, send nothing."""
 
@@ -62,8 +65,10 @@ class CodexTaskControlPackageTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.codex = CODEX_SKILL_PATH.read_text(encoding="utf-8")
+        cls.dispatcher = DISPATCHER_SKILL_PATH.read_text(encoding="utf-8")
         cls.portable = PORTABLE_SKILL_PATH.read_text(encoding="utf-8")
         cls.normalized = " ".join(cls.codex.split())
+        cls.normalized_dispatcher = " ".join(cls.dispatcher.split())
 
     def test_codex_skill_owns_only_runtime_mapping_sections(self) -> None:
         for heading in (
@@ -72,6 +77,7 @@ class CodexTaskControlPackageTests(unittest.TestCase):
             "Canonical Codex Task Identity",
             "Conversation Title Contract",
             "Codex Runtime Reconciliation",
+            "Bounded Successor Recovery",
             "Task Follow-Up",
             "Watchdog Task Mapping",
             "Task Archival",
@@ -178,6 +184,67 @@ class CodexTaskControlPackageTests(unittest.TestCase):
         ):
             with self.subTest(clause=clause):
                 self.assertIn(clause.lower(), normalized_lower)
+
+    def test_successor_requires_failed_capability_and_exhausted_same_task_recovery(
+        self,
+    ) -> None:
+        for clause in (
+            "observed failure of an ordinary required capability during the active workload",
+            "exhausted bounded identity-preserving recovery through the same canonical task",
+            "A capability-pilot mismatch follows the pilot correction path and is not successor evidence",
+            "Idle, slow, quiet, or awaiting an ordinary bounded operation",
+        ):
+            with self.subTest(clause=clause):
+                self.assertIn(clause, self.normalized)
+
+    def test_successor_preserves_durable_authority_and_runs_once(self) -> None:
+        for clause in (
+            "provider record and complete Work Item content",
+            "accepted commit",
+            "branch and worktree",
+            "applicable claims",
+            "completed reviews",
+            "verifier evidence",
+            "delivery state",
+            "authoritative recovery evidence",
+            "exactly one successor root execution",
+            "durable old-to-new identity handoff",
+            "must not authorize another successor",
+        ):
+            with self.subTest(clause=clause):
+                self.assertIn(clause, self.normalized)
+
+    def test_successor_reconciles_creation_and_accepts_running_before_work(self) -> None:
+        for text in (self.normalized, self.normalized_dispatcher):
+            with self.subTest(source="codex" if text == self.normalized else "dispatcher"):
+                for clause in (
+                    "reconcile active and archived runtime tasks",
+                    "do not issue another create operation",
+                    "Starting -> Running",
+                    "before any repository or shared-work mutation",
+                    "old execution and every duplicate must be stopped or permanently barred",
+                    "only the accepted successor may mutate repository or shared work",
+                    "truthful non-active provider disposition",
+                ):
+                    with self.subTest(clause=clause):
+                        self.assertIn(clause.lower(), text.lower())
+
+        self.assertIn(
+            "The required Starting -> Running provider update remains the successor's lifecycle acceptance",
+            self.normalized,
+        )
+        self.assertIn(
+            "sole lifecycle mutation permitted before Running becomes durable",
+            self.normalized,
+        )
+        self.assertIn(
+            "execute only the Coordinator's exact one-successor authorization",
+            self.normalized_dispatcher,
+        )
+        self.assertIn(
+            "prevent concurrent mutation by the old execution, a duplicate, or the successor",
+            self.normalized_dispatcher.lower(),
+        )
 
     def test_archival_waits_for_portable_terminal_closeout(self) -> None:
         for clause in (

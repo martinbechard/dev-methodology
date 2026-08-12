@@ -129,6 +129,18 @@ Treat a timeout, disconnect, delayed worktree setup, pending client identifier, 
 
 Successful creation is not Running evidence. The root execution accepts Running through the provider workflow before repository mutation.
 
+## Bounded Successor Execution
+
+For an unusable canonical task, execute only the Coordinator's exact one-successor authorization. Require the packet to show the observed failure of an ordinary required capability during the active workload and exhausted bounded identity-preserving recovery through the same canonical task. A capability-pilot mismatch is not successor evidence and remains on the pilot correction path. Idle, slow, quiet, or an ordinary bounded wait never permits this operation.
+
+Require the packet to identify the authoritative provider and complete Work Item content, accepted commit, branch and worktree, applicable claims, completed reviews, verifier evidence, and delivery state. These durable records are authoritative recovery evidence for runtime execution. Preserve the old task identity and return the successor or pending identity so the Coordinator can record the durable old-to-new identity handoff. Do not infer either identity from a title, prompt, branch, worktree, or provider path.
+
+Before successor creation, reconcile any prior ambiguous runtime outcome. After an error, timeout, disconnect, or incomplete creation response, reconcile active and archived runtime tasks using the packet evidence. Adopt the one matching successor or stop every duplicate as the Coordinator directs. Do not issue another create operation.
+
+Prevent concurrent mutation by the old execution, a duplicate, or the successor. Successful creation is not Running. The successor records Starting -> Running through the provider before any repository or shared-work mutation. This required provider update is the sole lifecycle mutation permitted before Running becomes durable. Before the successor accepts Running, the old execution and every duplicate must be stopped or permanently barred from repository and shared-work mutation. After Running acceptance, only the accepted successor may mutate repository or shared work.
+
+If the sole successor cannot accept Running or later fails, return that outcome for the Coordinator's truthful non-active provider disposition. Never create or request another successor.
+
 ## Capability Boundary
 
 Before reservation, tell the Coordinator which required runtime operations the caller can perform. If the Coordinator's delegated runtime lacks task controls but the caller has them, continue through the caller-owned dispatch workflow.

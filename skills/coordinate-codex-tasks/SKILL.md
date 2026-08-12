@@ -92,6 +92,25 @@ If exactly one match exists, the Coordinator must adopt it as the canonical task
 
 Map Codex task states into portable evidence without inventing lifecycle. A running Codex process can support active-root-execution evidence. A running child can support delegated-work evidence. An idle, completed, failed, interrupted, or missing task requires portable reconciliation and cannot choose a provider transition by itself.
 
+## Bounded Successor Recovery
+
+Preserve the same canonical task by default. The Dev Backlog Coordinator may consider a successor only after both of these conditions are true:
+
+- Runtime evidence shows the observed failure of an ordinary required capability during the active workload.
+- The Coordinator has exhausted bounded identity-preserving recovery through the same canonical task and recorded its failed outcome.
+
+A capability-pilot mismatch follows the pilot correction path and is not successor evidence. Idle, slow, quiet, or awaiting an ordinary bounded operation is not capability-failure evidence and never permits a successor.
+
+Before authorization, reconcile the provider record and complete Work Item content, accepted commit, branch and worktree, applicable claims, completed reviews, verifier evidence, and delivery state. These durable records are authoritative recovery evidence. The old Codex task identity is replaceable runtime metadata only after the complete threshold is met. Do not infer a successor identity from a title, prompt, branch, worktree, or provider path.
+
+The Coordinator may authorize exactly one successor root execution for the Work Item. The portable lifecycle owner records the required Starting handoff before dispatch. Record a durable old-to-new identity handoff with the old task identity, the returned successor identity or pending client identity, and the consumed one-successor authorization.
+
+Treat an error, timeout, disconnect, or incomplete response from successor creation as ambiguous. Reconcile active and archived runtime tasks using the dispatch evidence before any other runtime operation. Adopt the one matching successor or stop every duplicate before work continues. In all cases, do not issue another create operation.
+
+The successor independently records Starting -> Running with its new identity before any repository or shared-work mutation. The required Starting -> Running provider update remains the successor's lifecycle acceptance and is the sole lifecycle mutation permitted before Running becomes durable; task creation is not acceptance. Before the successor accepts Running, the old execution and every duplicate must be stopped or permanently barred from repository and shared-work mutation. After Running acceptance, only the accepted successor may mutate repository or shared work.
+
+If the sole successor cannot accept Running or later fails, the Coordinator records a truthful non-active provider disposition. It must not authorize another successor.
+
 ## Task Follow-Up
 
 When the canonical task is idle but remains the selected resumable execution, the Coordinator may authorize the runtime executor to send one follow-up only to resume an authorized bounded next action or deliver a Coordinator decision. The Coordinator sends it directly only when its runtime exposes follow-up control; otherwise the authorized root runtime dispatcher sends the exact authorized message and returns the outcome. Never use follow-up for routine status, heartbeat, lifecycle history, capacity evidence, provider mutation, or proof of progress.
