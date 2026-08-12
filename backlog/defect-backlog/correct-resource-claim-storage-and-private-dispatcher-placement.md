@@ -128,3 +128,14 @@ None.
 - Checkout: primary `/Users/martinbechard/dev/dev-methodology`; external delivery boundary `/Users/martinbechard/dev/mcp-agent-ops`.
 - Resource Coordination: claim-free under crisis epoch `claim-coordination-repair-2026-08-12T11:30:13Z`; no claim operation occurred during acceptance.
 - Conversation Title: `Implementing — Correct Resource Claims and Private Dispatcher`.
+
+## Storage Boundary Correction
+
+- Corrected At: 2026-08-12T11:49:00Z.
+- Decision Owner: Dev Backlog Coordinator for crisis epoch `claim-coordination-repair-2026-08-12T11:30:13Z`.
+- Canonical Root: `<primary-worktree>/.agent-ops/resource-claim/`, resolved identically from primary and linked worktrees.
+- Ignore Rule: exact anchored `/.agent-ops/resource-claim/`, added when resource-claim is selected.
+- Rejected Roots: `<git-common-dir>/agent-claim/` because Git-metadata access recreates the permission defect; `<primary-worktree>/.codex/agent-claim/` because the user superseded the harness-owned location; `.worktrees` because it owns linked checkouts and cleanup.
+- Migration: move the empty live registry and preserved audit journal from `.codex/agent-claim` atomically and fail closed; never dual-write or mutate contradictory or live legacy state.
+- Verification Addition: exercise every helper operation with `.git` and `.codex` denied while the primary-worktree operational root remains writable.
+- Phase: resumed implementation under this corrected boundary, claim-free throughout the active crisis.
