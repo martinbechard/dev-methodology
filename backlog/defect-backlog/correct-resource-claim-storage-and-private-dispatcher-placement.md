@@ -224,3 +224,21 @@ None.
 - Phase: diagnosing and correcting the fresh Codex skill catalog.
 - Conversation Title: `Diagnosing — Fresh Codex Skill Catalog`.
 - Resource Coordination: claim-free under the active crisis; no claim tool is authorized.
+
+## Fresh Catalog Root Cause And Correction
+
+- Exact Cause: `/Users/martinbechard/.agents/skills/project-organiser-init` is an unowned preserved symlink to `/Users/martinbechard/dev/agent-assets/skills/project-organiser-init`. The installed MCP configuration authorized only `/Users/martinbechard/.agents/skills`, so catalog construction rejected the resolved `SKILL.md` as outside every configured root.
+- Diagnostic Evidence: direct `SkillCatalog.from_roots` raised `SKILL.md resolves outside configured skill roots: /Users/martinbechard/.agents/skills/project-organiser-init/SKILL.md`; adding the exact symlink target as a root produced a valid 150-skill catalog.
+- Ownership Reconciliation: the user skill manifest owns 146 portable skills and does not own `project-organiser-init` or `backlog-dispatcher`; the agent manifest owns 33 generated agents. The symlink and every other unowned artifact were preserved.
+- Corrected Artifact: `/Users/martinbechard/.codex/config.toml` only.
+- Corrected Skill Roots: `/Users/martinbechard/.agents/skills:/Users/martinbechard/dev/agent-assets/skills/project-organiser-init`.
+- Active Executable: `/Users/martinbechard/.local/share/uv/tools/mcp-agent-ops/bin/mcp-agent-ops` version `0.12.0`, runtime digest `11529a24781de540bac489710ba39272dfc4d45a7a9ceda2ee0062b691eac2bc`.
+- Workspace Boundary: `/Users/martinbechard/dev/dev-methodology`.
+- Installer Evidence: the accepted MCP candidate was consumed; `/Users/martinbechard/.codex/config.toml.bak` remains. No reinstall or unowned-content deletion occurred.
+- Private Dispatcher: remains exclusively at `.agents/skills/backlog-dispatcher`; absent from global installed skills and both ownership manifests.
+- Fresh-Process Verification: a separately started installed `0.12.0` stdio server completed `skill_refresh`, `skill_list`, and `skill_load` for `backlog-dispatcher`, `resource-claim`, `resource-claim-helper`, `resource-claim-helper-mcp`, and `coordinate-codex-tasks`.
+- Fresh Catalog Revision: `a80c7336676563fefd73612bfe45f857d60968beff9e109ba45481fed33fd198`; catalog count 150.
+- Verified Digests: backlog-dispatcher `75ac03f54ce8c89d436159182fc89a8a5863715045a276287c4deffb79086919`; resource-claim `f16aca5f649de818c51073779df1d64d3215e8a5fc9cfee69318e4631cb9cbdc`; resource-claim-helper `d8431e082964173a1087916b8b5e6cbaf1071b714f3122b387fa1a4d9dd7428b`; resource-claim-helper-mcp `dc0803a1e2adc075ee1d08f5ab2c5a3ad724fd7d567bbabd978bbd94fb56c8a0`; coordinate-codex-tasks `e1cdab99cf994ef91b326c126babab3dc455e7683217cb19ee97bce38c64dbaf`.
+- Schema-Only Verification: the fresh process advertised all nine claim tools: status, acquire, extend, extend-deadline, heartbeat, release, reset, maintain-journal, and report. None was invoked.
+- Remaining Runtime Boundary: the MCP process attached to the current Codex session retains its pre-correction startup environment; a Codex restart is required before in-session catalog confirmation and any later Coordinator-authorized crisis-exit sequence.
+- Claim Evidence: none; no claim operation occurred.
