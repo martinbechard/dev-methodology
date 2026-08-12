@@ -1,6 +1,6 @@
 # Model Directly Invoked Skills As Static Classes
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -13,6 +13,32 @@ Completion: main-branch
 ## Summary
 
 Extend the object-oriented Agent and Skill model with Static Classes for skills that callers invoke directly outside Agent definitions. Use the private Backlog Dispatcher skill and its invocation of the Dev Backlog Coordinator as the primary example, and align the dispatch-process documentation with the current Codex root-task launch constraint.
+
+## Starting Handoff Evidence
+
+- Starting Recorded At: 2026-08-12T18:22:03Z.
+- Coordinator: Backlog Dispatcher Codex task `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`, acting through canonical Dev Backlog Coordinator subagent `/root/backlog_coordinator`.
+- Dispatch Reservation: `reserve-starting-model-static-classes-019ff2c3`.
+- Normalized Objective: Define Static Classes for directly invoked skills, document the private Backlog Dispatcher to Dev Backlog Coordinator example and root-owned Codex task-launch boundary, and verify OpenAI-attributed statements against official sources.
+- Intended Root Role: Dev Orchestrator.
+- Launch Result: Not attempted. The caller-owned root Backlog Dispatcher must create the canonical Codex task only after this durable reservation.
+- Canonical Execution: None pending caller-owned task creation.
+- Canonical Codex Task ID: None pending caller-owned task creation.
+- Canonical Conversation ID: None pending caller-owned task creation.
+- Baseline Commit: `aac210514eadad32ce0678fbf0860c4724ebee4b`.
+- Provider Claim: `reserve-starting-model-static-classes-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `52ce6fa6-f1b6-4308-a1e0-138a1faa3757`.
+- Last Contact: 2026-08-12T18:22:03Z, durable reservation prepared before runtime launch.
+- Next Reconciliation: Immediately after the caller returns the runtime task-creation result; if no result arrives, inspect at or after 2026-08-12T18:27:03Z without creating a replacement automatically.
+- Next Lifecycle Owner: The new root Dev Orchestrator must claim this exact Work Item ID with activity `update` and record the distinct Starting -> Running acceptance before implementation or documentation mutation.
+
+## Scheduling Evidence
+
+- Mode: MULTITASK enabled and verified after crisis exit.
+- Active Eligibility Before Reservation: zero Starting and zero Running items.
+- Effective Scheduling Limit: one new launch in this scheduling pass. The selected item is independent of active delivery because no active delivery or finish-lane candidate exists.
+- Capacity Result: one of one pass-local launch slots reserved; this item now consumes the slot as Starting.
+- Dependencies: None.
+- Overlap Result: no canonical execution, provider duplicate, active claim, active work-item path owner, or finish-lane delivery overlaps this item. Documentation paths remain unclaimed until the root Dev Orchestrator accepts Running and acquires its outcome-work claim.
 
 ## Context
 
