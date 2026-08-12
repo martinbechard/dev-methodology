@@ -131,3 +131,14 @@ This item changes the executable coordination contract only. The separate docume
 - Claim Reconciliation: Outcome-work claim `enforce-external-terminal-cleanup-work-resume-019ff7b7` released with `handoff`; exact source-path claim `enforce-external-terminal-cleanup-paths-resume-019ff7b7` released. The terminal provider transaction owns only this active path and its completed destination until its commit and release finish.
 - Commit Disposition: READY for requested lifecycle COMPLETED.
 - Cleanup Eligibility: The canonical task, current worktree, and checked-out branch are retained. Dev Backlog Coordinator must verify terminal provider and delivery evidence, released claims, worktree cleanliness, and branch-to-delivery equivalence before authorizing exact external cleanup. Root Backlog Dispatcher removes the authorized worktree, safely deletes the authorized branch, archives the task last, returns every outcome, and only then may the Coordinator reconcile capacity.
+
+## External Cleanup Reconciliation
+
+- Reconciled At: 2026-08-12.
+- Precheck: PASS. Claims were empty; primary main was clean at terminal commit `6a533dcb0dcce75c32d49b9b76328558283eb1dc`; the exact retained worktree was clean on the expected branch and candidate; `git cherry` proved patch equivalence.
+- Worktree Removal: PASS. Non-forced removal of `/Users/martinbechard/.codex/worktrees/568d/dev-methodology` succeeded; the directory and worktree registration are absent.
+- Branch Cleanup: PASS. `codex/enforce-external-terminal-cleanup` was rechecked at `720030e8f4350b30ea5aa9e75829d8a8954ed96f`, remained patch-equivalent, and was deleted. Worktree metadata pruning passed.
+- Preservation: Primary main remains clean at the terminal commit. Unrelated worktrees and branches were unchanged.
+- Runtime Limitation: After worktree removal, canonical task and conversation `019ff7b7-a43a-7d22-8b6b-047cd44341b4` became unavailable through direct read and both active and pinned list surfaces. No title or archive mutation was attempted, and neither result is claimed successful.
+- Capacity Result: repository cleanup is complete and this item releases its active slot. The unaddressable runtime display limitation is durable evidence and does not block the next finish-lane recovery.
+- Coordination Claim: `record-enforce-external-cleanup-result-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `b1e4bb87-ef3b-431c-804d-ade5f2aa1a50`.
