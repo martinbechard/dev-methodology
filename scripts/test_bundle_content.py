@@ -385,8 +385,8 @@ README_REQUIRED_PHRASES = (
     "Unowned skills and agents are never removed.",
     "For a user-scope Codex deployment, the MCP skill root is the resolved absolute path to ~/.agents/skills.",
     "--dest ~/.codex/skills",
-    "This repository uses the command-line provider because the current MCP provider omits claim deadline extension and registry reset operations.",
-    "Published release 0.4.0 does not support the required claim results",
+    "This repository selects the verified mcp-agent-ops 0.12.0 provider with all nine schema-version-2 operations.",
+    "The verified mcp-agent-ops 0.12.0 provider exposes all nine schema-version-2 claim operations",
     "fifteen exact MCP operations",
     "one call-bearing MCP process stream",
     "An outcome-less completed call is not semantic evidence.",
@@ -8994,7 +8994,8 @@ Visible after.
         self.assertIn("same script", command_text)
         self.assertIn("same server", mcp_text)
         self.assertIn("## Current Availability", mcp_text)
-        self.assertIn("Do not configure the current mcp-agent-ops provider", mcp_text)
+        self.assertIn("claim_extend_deadline", mcp_text)
+        self.assertIn("claim_reset", mcp_text)
 
         expected_probe_terms = {
             "resource-claim": (
