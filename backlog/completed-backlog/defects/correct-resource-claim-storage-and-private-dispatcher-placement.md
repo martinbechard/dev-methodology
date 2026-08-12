@@ -1,6 +1,6 @@
 # Correct Resource-Claim Storage And Private Dispatcher Placement
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
@@ -254,3 +254,17 @@ None.
 - Schema Inspection: the attached runtime exposes exactly nine claim tools: `claim_status`, `claim_acquire`, `claim_extend`, `claim_extend_deadline`, `claim_heartbeat`, `claim_release`, `claim_reset`, `claim_maintain_journal`, and `claim_report`.
 - Claim Evidence: none. No claim tool was invoked during fresh-runtime verification.
 - Coordinator Handoff: non-claim catalog diagnosis and verification are complete; crisis exit, any disposable claim lifecycle, MULTITASK restoration, lifecycle completion, and cleanup remain Coordinator-owned next-phase decisions.
+
+## Terminal Delivery Evidence
+
+- Completed At: 2026-08-12.
+- Delivered Main Tip Before Terminal Transaction: `84bbbe3e664f59b3a87006bb4679bfc541dc3017` on primary `main`.
+- Selected Commit Gate: `deliver-work-item-main-branch` READY; the accepted implementation, publication, installation, restart, and fresh-runtime verification commits are integrated in current main history, and the provider transaction is the only terminal mutation.
+- File Provider Gate: `manage-work-items-file` accepted Running -> Completed and archived this record to `backlog/completed-backlog/defects/correct-resource-claim-storage-and-private-dispatcher-placement.md`.
+- External Release: immutable tag `v0.12.0` resolves to `c22fc9362cb46c44948d25da7771c72dfecbb28b`; release URL `https://github.com/martinbechard/mcp-agent-ops/releases/tag/v0.12.0`.
+- Installed Runtime: mcp-agent-ops `0.12.0`, runtime digest `11529a24781de540bac489710ba39272dfc4d45a7a9ceda2ee0062b691eac2bc`.
+- Fresh Catalog: revision `a80c7336676563fefd73612bfe45f857d60968beff9e109ba45481fed33fd198`, 150 skills, expected five skill digests, and exact nine-tool schema inspection retained above.
+- Claim Ordering: no claim tool was invoked during the post-restart catalog repair or verification. The disposable live claim smoke test is intentionally deferred until ordinary resource coordination resumes after crisis exit; this ordering correction is not missing implementation evidence.
+- Preserved State: unrelated mcp-agent-ops working-tree changes remain untouched; no unrelated repository state, worktree, branch, or installed artifact was cleaned.
+- Conversation Title: `Completed — Correct Resource Claims and Private Dispatcher`.
+- Cleanup Eligibility: provider archival is complete; operational cleanup, crisis exit, MULTITASK restoration, and Codex task archival remain ineligible until the Backlog Coordinator explicitly orders them.
