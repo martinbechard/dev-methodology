@@ -121,7 +121,7 @@ Branch: codex/remediate-inherited-supported-test-baseline-failures
 
 Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/remediate-inherited-supported-test-baseline-failures
 
-Phase: Running another independent methodology review
+Phase: Integrating accepted candidate into current main
 
 Accepted Execution Evidence: The exact opaque Work Item ID was acquired with activity work. A clean, non-shallow full-history worktree was created from observed current main f1490b80e856df9cc08d24027acd3252734aac18 before implementation. The dispatch SHA f1490b80d6df33fe92f88905e8b92cacb596967d was not present in the repository; the full observed main identity is retained here without substituting the historical candidate.
 
@@ -174,3 +174,5 @@ Requested Coordinator Decision: Either accept the existing independent source re
 Unattended Boundary: Do not begin main integration or provider completion until the Coordinator records one evidence-backed recovery disposition. Preserve the final candidate, source approval, verification, worktree, and released blocked work claim.
 
 Resolution: On 2026-08-12 in the canonical Codex task, the user confirmed that work may continue after clarification that no code approval, scope expansion, reduced verification, or risk acceptance was requested. The selected recovery is to run another strictly read-only methodology review in a compatible task or runtime that can load the required skills. Main integration remains prohibited until that review accepts the candidate.
+
+Methodology Review Result: APPROVED on 2026-08-12 by a fresh strictly read-only reviewer against candidate 529112158f6b4454864d5d550db96547d5029371. The review accepted Project Configurator ownership semantics, selected and none resource-coordination contracts, JSON REPORT behavior, generator ownership and provenance, strict zero-identity comparator behavior, unchanged discovery and normalization, and preservation of all separate current defects. The candidate worktree remained clean.
