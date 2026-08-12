@@ -1,6 +1,6 @@
 # Prove Read-Only Inspect AI Execution
 
-Status: Blocked
+Status: Holding
 
 Type: Feature
 
@@ -48,6 +48,8 @@ The user authorized the phased Inspect-first adoption series on 2026-08-12. This
 ## Dependencies
 
 map-evaluation-contracts-to-inspect-ai. Unblock when its accepted mapping explicitly authorizes the Phase 2 execution design.
+
+Queued Dependency Evidence: The predecessor is healthy and Ready. This item is queued, not Blocked; resume to Ready after the predecessor completes unless it develops a real impediment.
 
 ## Verification
 

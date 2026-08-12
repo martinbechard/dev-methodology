@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: Blocked
+Status: Ready
 
 Type: Feature
 
@@ -58,6 +58,8 @@ Target page: design/wiki-skills-and-project-context.html
 Blocker owner: Work Item review-wiki-skills-and-project-context-text.
 
 Blocked to Ready condition: review-wiki-skills-and-project-context-text is Completed with corrected content, fresh independent acceptance, and an immutable content baseline for design/wiki-skills-and-project-context.html.
+
+Dependency Reconciliation: Satisfied by completed Work Item `review-wiki-skills-and-project-context-text`; its archived provider record and accepted immutable content baseline remain authoritative. No current impediment remains.
 
 ## Verification
 

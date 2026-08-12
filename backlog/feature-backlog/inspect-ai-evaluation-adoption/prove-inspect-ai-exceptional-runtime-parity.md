@@ -1,6 +1,6 @@
 # Prove Inspect AI Exceptional Runtime Parity
 
-Status: Blocked
+Status: Holding
 
 Type: Feature
 
@@ -44,6 +44,8 @@ The user authorized the phased Inspect-first adoption series on 2026-08-12. This
 ## Dependencies
 
 prove-inspect-ai-mutation-lifecycle-parity. Unblock after ordinary mutation and lifecycle boundaries are accepted.
+
+Queued Dependency Evidence: This is a normal predecessor wait, not a current impediment. Resume to Ready after the predecessor completes; propagate Blocked only if that predecessor becomes truly Blocked.
 
 ## Verification
 

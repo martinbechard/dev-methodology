@@ -1,6 +1,6 @@
 # Prove Inspect AI Multi-Agent Identity
 
-Status: Blocked
+Status: Holding
 
 Type: Feature
 
@@ -46,6 +46,8 @@ The user authorized the phased Inspect-first adoption series on 2026-08-12. This
 ## Dependencies
 
 prove-read-only-inspect-ai-execution. Unblock after the read-only spike is accepted and its exact-agent invocation boundary is stable.
+
+Queued Dependency Evidence: This is a normal predecessor wait, not a current impediment. Resume to Ready after the predecessor completes; propagate Blocked only if that predecessor becomes truly Blocked.
 
 ## Verification
 

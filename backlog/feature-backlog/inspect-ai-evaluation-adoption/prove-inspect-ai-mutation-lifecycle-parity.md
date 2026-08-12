@@ -1,6 +1,6 @@
 # Prove Inspect AI Mutation And Lifecycle Parity
 
-Status: Blocked
+Status: Holding
 
 Type: Feature
 
@@ -44,6 +44,8 @@ The user authorized the phased Inspect-first adoption series on 2026-08-12. This
 ## Dependencies
 
 prove-inspect-ai-multi-agent-identity. Unblock when the accepted topology decision defines how target and Judge evidence enter the verifier.
+
+Queued Dependency Evidence: This is a normal predecessor wait, not a current impediment. Resume to Ready after the predecessor completes; propagate Blocked only if that predecessor becomes truly Blocked.
 
 ## Verification
 

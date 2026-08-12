@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: Blocked
+Status: Ready
 
 Type: Feature
 
@@ -58,6 +58,8 @@ Target page: design/skills-modularization.html
 Blocker owner: Work Item review-skills-modularization-text.
 
 Blocked to Ready condition: review-skills-modularization-text is Completed with corrected content, fresh independent acceptance, and an immutable content baseline for design/skills-modularization.html.
+
+Dependency Reconciliation: Satisfied by completed Work Item `review-skills-modularization-text`; its archived provider record and accepted immutable content baseline remain authoritative. No current impediment remains.
 
 ## Verification
 
