@@ -1,6 +1,6 @@
 # Correct Resource-Claim Storage And Private Dispatcher Placement
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -216,3 +216,11 @@ None.
 - Resource Coordination: no claim. The active crisis prohibits every claim operation.
 - Required Title: `Starting — Repair Fresh Codex Skill Catalog`.
 - Next Lifecycle Owner: the same root Dev Orchestrator records Starting -> Running claim-free before any corrective mutation.
+
+## Fresh Catalog Running Evidence
+
+- Accepted At: 2026-08-12.
+- Lifecycle: Starting -> Running in the same canonical Dev Orchestrator execution before configuration mutation.
+- Phase: diagnosing and correcting the fresh Codex skill catalog.
+- Conversation Title: `Diagnosing — Fresh Codex Skill Catalog`.
+- Resource Coordination: claim-free under the active crisis; no claim tool is authorized.
