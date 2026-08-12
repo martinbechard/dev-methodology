@@ -140,6 +140,5 @@ class WorktreeCompletionLinkAuditTests(unittest.TestCase):
         self.assertIn("codex/no-link", rendered)
         self.assertIn("no archived work-item match", rendered)
 
-
 if __name__ == "__main__":
     unittest.main()

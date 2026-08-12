@@ -2,7 +2,7 @@
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Generated with AI assistance.
 # Summary: Correlates linked Git worktrees with terminal archived work-item evidence by using ripgrep.
-# Tests: scripts/test_audit_worktree_completion_links.py
+# Tests: .archive/2026-08-12-worktree-cleanup/scripts/test_audit_worktree_completion_links.py
 
 """Report likely links between registered worktrees and archived work items."""
 
