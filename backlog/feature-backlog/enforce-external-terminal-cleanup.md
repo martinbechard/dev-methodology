@@ -1,6 +1,6 @@
 # Enforce External Terminal Cleanup
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -21,13 +21,29 @@ Concisely enforce one external terminal-cleanup boundary across the private Back
 - Dispatch Reservation: `reserve-starting-external-terminal-cleanup-019ff2c3`.
 - Normalized Objective: Concisely enforce external terminal cleanup across exactly the three user-approved skill sources, with Orchestrator evidence handoff, Coordinator verification and authorization, root Dispatcher cleanup and archive-last execution, returned outcomes, and post-cleanup capacity reconciliation.
 - Intended Root Role: Dev Orchestrator.
-- Launch Result: Not attempted pending caller-owned task creation.
-- Canonical Execution: None pending caller-owned task creation.
+- Launch Result: Started.
+- Canonical Execution: Codex Task `019ff7b7-a43a-7d22-8b6b-047cd44341b4`; retained Conversation `019ff7b7-a43a-7d22-8b6b-047cd44341b4` on the runtime's combined task surface.
 - Baseline Commit: `d1d0af1cce496141a86d8a9aebaf24fb46d910cf`.
 - Provider Claim: `reserve-starting-external-terminal-cleanup-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `6ee68833-d8f4-41a4-8351-f2d74c5759af`.
 - Last Contact: 2026-08-12T20:42:44Z.
 - Next Reconciliation: Immediately after the caller returns the exact runtime creation result; do not retry an ambiguous result.
 - Next Lifecycle Owner: The new root Dev Orchestrator must record the distinct Starting -> Running acceptance before source mutation.
+
+## Running Acceptance Evidence
+
+- Accepted At: 2026-08-12T20:46:02Z.
+- Owner: Dev Orchestrator.
+- Codex Task ID: `019ff7b7-a43a-7d22-8b6b-047cd44341b4`.
+- Conversation ID: `019ff7b7-a43a-7d22-8b6b-047cd44341b4`.
+- Runtime Parent Task ID: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Task ID: `/root/backlog_coordinator` under runtime parent `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Branch: `codex/enforce-external-terminal-cleanup`.
+- Worktree: `/Users/martinbechard/.codex/worktrees/568d/dev-methodology`.
+- Current Phase: Planning and bounded producer assignment.
+- Accepted Baseline: `d1d0af1cce496141a86d8a9aebaf24fb46d910cf`.
+- Provider Reservation Commit: `ec8d921de898eed00da93439834de2159158e19e`.
+- Accepted Execution Evidence: The canonical root execution is active, its private worktree is clean, and exact Work Item activity `update` claim `enforce-external-terminal-cleanup-update-019ff7b7` returned `SHARED_CHECKOUT_ACQUIRED` with event `8da28bd3-439a-47e2-b332-951ca2196707` before this transition.
+- Next Action: Commit this provider transition, release update ownership with handoff, then acquire outcome-work and exact approved-path ownership before producer mutation.
 
 ## Scheduling Evidence
 
