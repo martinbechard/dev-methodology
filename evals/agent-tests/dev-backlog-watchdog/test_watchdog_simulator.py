@@ -517,6 +517,219 @@ class WatchdogSimulatorTests(unittest.TestCase):
                 self.assertEqual("ALERT", result.status)
                 self.assertIn(expected, result.alert.reason if result.alert else "")
 
+    def test_blocked_title_drift_alerts_without_changing_lifecycle(self) -> None:
+        """Waiting for Help cannot describe an authoritatively Blocked item."""
+
+        item = WorkItem(
+            provider_identity="provider:blocked-title-drift",
+            status="Blocked",
+            preventing_cause="final verification runtime is unavailable",
+            blocker_owner="dev-backlog-coordinator",
+            unblock_condition="verification is re-homed to a capable runtime",
+            next_action_owner="dev-backlog-coordinator",
+            git_state="candidate commit remains reachable",
+            short_title="Lifecycle Alignment",
+            conversation_title="Waiting for Help — Lifecycle Alignment",
+            current_disposition=DispositionReceipt(
+                outcome="CONTINUING_BLOCKED",
+                state="APPLIED",
+                owner="dev-backlog-coordinator",
+                evidence="verification runtime remains unavailable",
+                observable_trigger="capable verifier runtime is available",
+                unresolved_findings=("final verification",),
+            ),
+        )
+        before = deepcopy(item)
+
+        result = WatchdogCycle().evaluate((item,))
+
+        self.assertEqual("ALERT", result.status)
+        self.assertEqual(before, item)
+        self.assertEqual(
+            ("reconcile canonical conversation title",),
+            result.blocked_reconciliations[0].actionable_reasons,
+        )
+        self.assertIn(
+            "conversation_title=Waiting for Help — Lifecycle Alignment",
+            result.alert.evidence if result.alert else "",
+        )
+        self.assertFalse(result.mutated)
+
+    def test_unowned_agent_recovery_alerts_without_external_change(self) -> None:
+        """Agent-owned recovery cannot wait silently for an external event."""
+
+        item = WorkItem(
+            provider_identity="provider:unowned-recovery",
+            status="Blocked",
+            preventing_cause="final verifier lacks the required project skill",
+            blocker_owner="dev-backlog-coordinator",
+            unblock_condition="re-home verification to a capable runtime",
+            next_action_owner="dev-backlog-coordinator",
+            git_state="candidate commit remains reachable",
+            agent_actionable_recovery="dispatch one capable read-only verifier",
+            current_disposition=DispositionReceipt(
+                outcome="CONTINUING_BLOCKED",
+                state="APPLIED",
+                owner="dev-backlog-coordinator",
+                evidence="candidate is preserved",
+                observable_trigger="capable verifier is dispatched",
+                unresolved_findings=("final verification",),
+            ),
+        )
+
+        result = WatchdogCycle().evaluate((item,))
+
+        self.assertEqual("ALERT", result.status)
+        self.assertIn(
+            "agent-actionable recovery is available",
+            result.blocked_reconciliations[0].actionable_reasons,
+        )
+
+    def test_acknowledged_active_recovery_stays_quiet(self) -> None:
+        """Current acknowledged ownership suppresses duplicate recovery alerts."""
+
+        item = WorkItem(
+            provider_identity="provider:active-recovery",
+            status="Blocked",
+            preventing_cause="final verifier lacks the required project skill",
+            blocker_owner="dev-backlog-coordinator",
+            unblock_condition="re-home verification to a capable runtime",
+            next_action_owner="dev-backlog-coordinator",
+            git_state="candidate commit remains reachable",
+            agent_actionable_recovery="dispatch one capable read-only verifier",
+            active_recovery_owner="dev-backlog-coordinator",
+            recovery_acknowledged=True,
+            current_disposition=DispositionReceipt(
+                outcome="CONTINUING_BLOCKED",
+                state="APPLIED",
+                owner="dev-backlog-coordinator",
+                evidence="re-homed verifier is active",
+                observable_trigger="verifier returns a terminal verdict",
+                unresolved_findings=("final verification",),
+            ),
+        )
+
+        result = WatchdogCycle().evaluate((item,))
+
+        self.assertEqual("NO_ACTION", result.status)
+        self.assertFalse(result.blocked_reconciliations[0].actionable_reasons)
+
+    def test_stale_recovery_acknowledgement_does_not_suppress_alert(self) -> None:
+        """Acknowledgment is insufficient after the recovery execution stops."""
+
+        item = WorkItem(
+            provider_identity="provider:stopped-recovery",
+            status="Blocked",
+            preventing_cause="final verifier lacks the required project skill",
+            blocker_owner="dev-backlog-coordinator",
+            unblock_condition="re-home verification to a capable runtime",
+            next_action_owner="dev-backlog-coordinator",
+            git_state="candidate commit remains reachable",
+            task_state="stopped",
+            agent_actionable_recovery="dispatch one capable read-only verifier",
+            active_recovery_owner="dev-backlog-coordinator",
+            recovery_acknowledged=True,
+            current_disposition=DispositionReceipt(
+                outcome="CONTINUING_BLOCKED",
+                state="APPLIED",
+                owner="dev-backlog-coordinator",
+                evidence="the prior verifier stopped",
+                observable_trigger="a capable verifier is active",
+                unresolved_findings=("final verification",),
+            ),
+        )
+
+        result = WatchdogCycle().evaluate((item,))
+
+        self.assertEqual("ALERT", result.status)
+        self.assertIn(
+            "agent-actionable recovery is available",
+            result.blocked_reconciliations[0].actionable_reasons,
+        )
+
+    def test_preservation_contradiction_alerts(self) -> None:
+        """Provider preservation claims must agree with current Git and runtime state."""
+
+        item = WorkItem(
+            provider_identity="provider:preservation-contradiction",
+            status="Blocked",
+            preventing_cause="delivery is paused",
+            blocker_owner="dev-backlog-coordinator",
+            unblock_condition="candidate preservation is reconciled",
+            next_action_owner="dev-backlog-coordinator",
+            git_state="candidate commit exists but recorded branch and worktree are absent",
+            preservation_evidence_issue="provider says branch and worktree are preserved",
+            current_disposition=DispositionReceipt(
+                outcome="CONTINUING_BLOCKED",
+                state="APPLIED",
+                owner="dev-backlog-coordinator",
+                evidence="candidate commit is preserved",
+                observable_trigger="branch pointer is restored or provider evidence corrected",
+                unresolved_findings=("candidate preservation",),
+            ),
+        )
+
+        result = WatchdogCycle().evaluate((item,))
+
+        self.assertEqual("ALERT", result.status)
+        self.assertIn(
+            "preservation evidence contradicts Git or runtime state",
+            result.blocked_reconciliations[0].actionable_reasons,
+        )
+
+    def test_completed_title_drift_requires_done_label(self) -> None:
+        """Completed provider state uses Done, never Completed, as its display label."""
+
+        item = WorkItem(
+            provider_identity="provider:completed-title-drift",
+            status="Completed",
+            root_task="task-completed-title-drift",
+            short_title="Resource Claim Repair",
+            conversation_title="Completed — Resource Claim Repair",
+            provider_terminal_evidence=True,
+            code_merged=True,
+            claim_applicability="not-applicable",
+            worktree_disposition="absent",
+            delivery_branch_disposition="merged",
+            cleanup_branch_disposition="absent",
+            source_branch_disposition="absent",
+            codex_archived=True,
+        )
+
+        result = WatchdogCycle().evaluate((item,))
+
+        self.assertEqual("ALERT", result.status)
+        self.assertEqual(
+            ("reconcile canonical conversation title",),
+            result.terminal_reconciliations[0].actionable_reasons,
+        )
+        self.assertIn(
+            "expected_conversation_title=Done — Resource Claim Repair",
+            result.alert.evidence if result.alert else "",
+        )
+
+    def test_finished_bounded_verifier_does_not_remain_verifying(self) -> None:
+        """A completed bounded verifier uses Done even before canonical closeout."""
+
+        item = WorkItem(
+            provider_identity="provider:finished-bounded-verifier",
+            status="Running",
+            phase="Verifying",
+            short_title="Verify Lifecycle Alignment",
+            runtime_task_kind="bounded-verifier",
+            task_state="completed",
+            conversation_title="Verifying — Verify Lifecycle Alignment",
+        )
+
+        result = WatchdogCycle().evaluate((item,))
+
+        self.assertEqual("ALERT", result.status)
+        self.assertIn(
+            "expected_conversation_title=Done — Verify Lifecycle Alignment",
+            result.alert.evidence if result.alert else "",
+        )
+        self.assertFalse(result.mutated)
+
     def test_aggregate_alert_keeps_all_unknown_causes_blank(self) -> None:
         """Several unknown-cause observations must not fabricate cause content."""
 

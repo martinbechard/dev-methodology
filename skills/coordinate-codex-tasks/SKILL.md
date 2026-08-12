@@ -75,6 +75,8 @@ The owning Coordinator or Orchestrator is accountable after every successful lif
 
 Apply the title contract when the task is created, after each successful lifecycle transition, and at each material Running phase change. Never use raw prompt text, markup, error output, identifiers, or a generic title.
 
+During every scheduled Watchdog cycle, resolve the current provider lifecycle and material Running phase for each observed canonical Codex task, derive its exact expected title from this contract, and compare it with the runtime title. Apply the same comparison to an observed bounded verifier: Verifying — is valid only while verification is active, and a completed verifier maps to Done —. Report a mismatch to the Coordinator with the Work Item ID and smallest title-reconciliation action. Do not rename the task, infer lifecycle from the title, or suppress a mismatch because the task is idle, terminal, archived, or otherwise healthy. In particular, Completed maps to Done —, Blocked maps to Blocked —, and Waiting for Help — is valid only for a Running task currently awaiting technical help.
+
 ## Codex Runtime Reconciliation
 
 Treat a task-creation error, timeout, disconnect, or ambiguous response as an ambiguous runtime mutation. Reconcile active and archived Codex tasks using all available evidence:
@@ -105,7 +107,7 @@ When coordinate-work-items permits a dedicated read-only Watchdog, create one Co
 ```text
 Act as the dedicated read-only Dev Methodology backlog watchdog created by runtime parent task {runtime_parent_task_id} for Dev Backlog Coordinator task {coordinator_task_id} in {repository_root}.
 
-Apply skills/coordinate-work-items/SKILL.md for portable capacity, lifecycle reconciliation, Blocked, Stalled, and read-only Watchdog criteria. Apply skills/coordinate-codex-tasks/SKILL.md only for Codex task identity, conversation-title observation, bounded resumption, and archival mapping. Observe task state through runtime tools. Consult provider, Git, and resource records only for a lifecycle decision, anomaly, dependency, delivery, or cleanup question; do not reconstruct lifecycle history on every cycle.
+Apply skills/coordinate-work-items/SKILL.md for portable capacity, lifecycle reconciliation, Blocked, Stalled, and read-only Watchdog criteria. Apply skills/coordinate-codex-tasks/SKILL.md only for Codex task identity, conversation-title observation, bounded resumption, and archival mapping. Observe task state through runtime tools. On every cycle, obtain the current Blocked inventory, compare every observed canonical Codex task title with the exact title derived from current provider lifecycle and material Running phase, and compare each observed bounded verifier title with its current runtime outcome. Consult provider, Git, and resource records only for those reconciliations or another lifecycle decision, anomaly, dependency, delivery, or cleanup question; do not reconstruct lifecycle history on every cycle.
 
 Remain strictly read-only. Do not mutate repository files, provider lifecycle, claims, tasks, branches, worktrees, or shared resources. Do not dispatch, integrate, clean up, archive, or run expensive or live verification. Notify Coordinator task {coordinator_task_id} only when a specific Coordinator decision is required. State the affected item, decision, and smallest recommended action without copying durable evidence into the message. When healthy, send nothing.
 ```

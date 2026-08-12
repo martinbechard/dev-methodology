@@ -97,6 +97,70 @@ cases:
     expectedActionableReasons:
       - correction attempts exhausted without current disposition
     expectedAlertProviders: [provider:exhausted-without-disposition]
+  canonical-title-drift:
+    items:
+      - provider_identity: provider:blocked-title-drift
+        status: Blocked
+        preventing_cause: final verifier runtime is unavailable
+        blocker_owner: dev-backlog-coordinator
+        unblock_condition: verification is re-homed
+        next_action_owner: dev-backlog-coordinator
+        git_state: candidate commit remains reachable
+        short_title: Lifecycle Alignment
+        conversation_title: Waiting for Help — Lifecycle Alignment
+      - provider_identity: provider:completed-title-drift
+        status: Completed
+        root_task: task-completed-title-drift
+        short_title: Resource Claim Repair
+        conversation_title: Completed — Resource Claim Repair
+        provider_terminal_evidence: true
+        code_merged: true
+        claim_applicability: not-applicable
+        worktree_disposition: absent
+        delivery_branch_disposition: merged
+        cleanup_branch_disposition: absent
+        source_branch_disposition: absent
+        codex_archived: true
+    expectedReason: reconcile canonical conversation title
+  finished-bounded-verifier-title-drift:
+    items:
+      - provider_identity: provider:finished-bounded-verifier
+        status: Running
+        phase: Verifying
+        short_title: Verify Lifecycle Alignment
+        runtime_task_kind: bounded-verifier
+        task_state: completed
+        conversation_title: Verifying — Verify Lifecycle Alignment
+    expectedReason: canonical conversation title contradicts current lifecycle or phase
+  blocked-recovery-classification:
+    items:
+      - provider_identity: provider:unowned-agent-recovery
+        status: Blocked
+        preventing_cause: verifier runtime lacks the project skill
+        blocker_owner: dev-backlog-coordinator
+        unblock_condition: verification is re-homed
+        next_action_owner: dev-backlog-coordinator
+        git_state: candidate commit remains reachable
+        agent_actionable_recovery: dispatch one capable verifier
+      - provider_identity: provider:acknowledged-active-recovery
+        status: Blocked
+        preventing_cause: verifier runtime lacks the project skill
+        blocker_owner: dev-backlog-coordinator
+        unblock_condition: verification is re-homed
+        next_action_owner: dev-backlog-coordinator
+        git_state: candidate commit remains reachable
+        agent_actionable_recovery: dispatch one capable verifier
+        active_recovery_owner: dev-backlog-coordinator
+        recovery_acknowledged: true
+      - provider_identity: provider:preservation-contradiction
+        status: Blocked
+        preventing_cause: delivery is paused
+        blocker_owner: dev-backlog-coordinator
+        unblock_condition: candidate preservation is reconciled
+        next_action_owner: dev-backlog-coordinator
+        git_state: candidate commit exists but recorded branch and worktree are absent
+        preservation_evidence_issue: provider says branch and worktree are preserved
+    expectedAlertProviders: [provider:unowned-agent-recovery, provider:preservation-contradiction]
   terminal-archive-pause-cleanup:
     item:
       provider_identity: provider:paused-cleanup

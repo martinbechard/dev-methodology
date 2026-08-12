@@ -62,16 +62,15 @@ instructions:
     stalls, satisfied Stalled or Blocked exit conditions, stranded accepted work, provider
     closeout waits, terminal cleanup anomalies, waits at or beyond thirty minutes, and unsafe,
     stale, or broad shared ownership.
-  - Reconcile a Blocked item only when current observation shows a changed unblock condition
-    or missing disposition. Alert for satisfied dependency or
-    unblock evidence, agent-actionable recovery, exhausted correction attempts without a
-    current disposition, stale or contradictory lifecycle evidence, or an incorrect
-    next-action owner. Treat a missing, vague, malformed, expired, consumed, or
-    lifecycle-inconsistent disposition receipt as actionable.
+  - Obtain the current Blocked inventory on every cycle and apply the complete per-cycle
+    classification and alert policy from coordinate-work-items. Do not duplicate that
+    policy here or carry a prior classification forward without current evidence.
   - For a failed, stopped, or missing canonical execution, report the portable reconciliation
     trigger without choosing or mutating its lifecycle result.
-  - When coordinate-codex-tasks is active, report conversation-title drift against its
-    Conversation Title Contract while stating that title drift does not determine lifecycle
+  - When coordinate-codex-tasks is active, compare every observed canonical conversation title
+    with the exact title derived from current lifecycle and material Running phase, and compare
+    each observed bounded verifier title with its current runtime outcome. Report drift against
+    its Conversation Title Contract while stating that title drift does not determine lifecycle
     or active capacity.
   - When coordinate-codex-tasks is active, for each terminal Codex task, observe whether every
     status-applicable terminal gate passes. For Completed, require merged delivery before

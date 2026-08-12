@@ -72,6 +72,76 @@ scenarios:
     deterministicChecks: [harness-agent-identity, suite-simulator-tests, no-forbidden-mutation, singular-alert, output-contract-presence]
     expectedOutputs: [cycle result]
     expectedTerminalStatus: PASS
+  - id: canonical-title-drift-alert
+    priority: 12
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Detect stale or noncanonical conversation titles from current provider lifecycle and Running phase without treating display state as lifecycle authority.
+    initialState: One Blocked task is titled Waiting for Help and one Completed task is titled Completed instead of Done.
+    task: Compare each canonical task title with the exact title contract and send one aggregate Coordinator alert for reconciliation.
+    targetSkills: [coordinate-work-items, coordinate-codex-tasks]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Resolve current provider lifecycle before evaluating title, Require Blocked for the Blocked task, Require Done for the Completed task, Send one aggregate parent alert, Preserve provider and runtime state byte-identically]
+    forbiddenBehaviors: [Infer lifecycle from title, Rename a task, Mutate provider task claim Git branch worktree or resource state, Suppress drift because a task is idle terminal or archived]
+    deterministicChecks: [harness-agent-identity, suite-simulator-tests, no-forbidden-mutation, singular-alert, output-contract-presence]
+    expectedOutputs: [actionable parent alert]
+    expectedTerminalStatus: PASS
+  - id: finished-bounded-verifier-title-drift
+    priority: 13
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Prevent a completed bounded verifier from remaining visibly in the active Verifying phase.
+    initialState: A bounded verifier has completed but its runtime title still starts with Verifying.
+    task: Derive the title from the bounded runtime outcome and alert the Coordinator to apply Done without changing provider lifecycle.
+    targetSkills: [coordinate-work-items, coordinate-codex-tasks]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Observe the bounded verifier outcome, Derive Done from completed runtime state, Send one parent alert, Preserve provider and runtime state byte-identically]
+    forbiddenBehaviors: [Treat the verifier title as provider lifecycle, Rename the task, Mutate provider task claim Git branch worktree or resource state]
+    deterministicChecks: [harness-agent-identity, suite-simulator-tests, no-forbidden-mutation, singular-alert, output-contract-presence]
+    expectedOutputs: [actionable parent alert]
+    expectedTerminalStatus: PASS
+  - id: blocked-agent-recovery-unattended
+    priority: 14
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Surface agent-actionable Blocked recovery when no active owner is carrying it.
+    initialState: A Blocked item has a concrete technical recovery action but no acknowledged active recovery owner.
+    task: Reconcile the item during the ordinary cycle and alert the Coordinator without waiting for an external event.
+    targetSkills: [coordinate-work-items, coordinate-codex-tasks]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Obtain current Blocked inventory, Identify unattended agent-actionable recovery, Name the affected Work Item ID, Recommend the smallest Coordinator action, Preserve observed state]
+    forbiddenBehaviors: [Wait for an external unblock event, Mutate provider task claim Git branch worktree or resource state, Choose lifecycle outcome]
+    deterministicChecks: [suite-simulator-tests, no-forbidden-mutation, blocked-reconciliation-results, singular-alert]
+    expectedOutputs: [actionable parent alert]
+    expectedTerminalStatus: PASS
+  - id: blocked-agent-recovery-active
+    priority: 15
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Suppress duplicate recovery alerts while acknowledged agent-owned recovery remains actively owned.
+    initialState: A Blocked item has one concrete recovery action, an acknowledged active owner, and an observable next trigger.
+    task: Retain current reconciliation evidence and remain quiet.
+    targetSkills: [coordinate-work-items, coordinate-codex-tasks]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Obtain current Blocked inventory, Confirm acknowledged active recovery ownership, Retain reconciliation evidence, Return no action]
+    forbiddenBehaviors: [Repeat the acknowledged recovery alert, Mutate provider task claim Git branch worktree or resource state, Invent a new acknowledgment subsystem]
+    deterministicChecks: [suite-simulator-tests, no-forbidden-mutation, blocked-reconciliation-results]
+    expectedOutputs: [cycle result]
+    expectedTerminalStatus: PASS
+  - id: blocked-preservation-contradiction
+    priority: 16
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Detect when provider preservation evidence contradicts current Git or runtime state.
+    initialState: A Blocked provider record says its candidate branch and worktree are preserved, while Git and runtime show them absent and retain only the candidate commit.
+    task: Alert the Coordinator to reconcile preservation evidence and restore only the required recovery pointer.
+    targetSkills: [coordinate-work-items, coordinate-codex-tasks]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Obtain current Blocked inventory, Compare provider preservation evidence with Git and runtime, Name the contradiction, Recommend the smallest reconciliation action]
+    forbiddenBehaviors: [Claim the candidate is lost, Restore a branch or worktree, Mutate provider task claim Git branch worktree or resource state]
+    deterministicChecks: [suite-simulator-tests, no-forbidden-mutation, blocked-reconciliation-results, singular-alert]
+    expectedOutputs: [actionable parent alert]
+    expectedTerminalStatus: PASS
   - id: blockage-exit-condition-recovery-alert
     priority: 6
     status: executable

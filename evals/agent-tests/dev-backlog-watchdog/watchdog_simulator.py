@@ -22,6 +22,27 @@ BLOCKAGE_EXCLUDED_STATUSES = {
     *TERMINAL_STATUSES,
 }
 _TASK_ANOMALY_STATES = {"failed", "stopped", "missing"}
+_ACTIVE_TASK_STATES = {"active", "running"}
+_RUNNING_TITLE_PHASES = {
+    "Implementing",
+    "Reviewing",
+    "Verifying",
+    "Integrating",
+    "Waiting for Claim",
+    "Waiting for Help",
+}
+_LIFECYCLE_TITLE_LABELS = {
+    "Ready": "Ready",
+    "Starting": "Starting",
+    "User Action Required": "Waiting for User",
+    "Stalled": "Stalled",
+    "Blocked": "Blocked",
+    "Holding": "Holding",
+    "Awaiting Review": "Awaiting Review",
+    "Completed": "Done",
+    "Failed": "Failed",
+    "Abandoned": "Abandoned",
+}
 _SAFE_TERMINAL_WORKTREE_DISPOSITIONS = {"absent", "removed"}
 _SAFE_DELIVERY_BRANCH_DISPOSITIONS = {"absent", "merged", "removed"}
 _SAFE_CLEANUP_BRANCH_DISPOSITIONS = {"absent", "removed"}
@@ -74,6 +95,9 @@ class WorkItem:
     phase: str = ""
     canonical_thread: str = ""
     root_task: str = ""
+    short_title: str = ""
+    runtime_task_kind: str = "canonical"
+    conversation_title: str = ""
     last_productive_evidence: str = ""
     phase_estimate: str = ""
     hard_stop: str = ""
@@ -94,6 +118,9 @@ class WorkItem:
     live_claims: tuple[str, ...] = ()
     dependency_or_unblock_satisfied: bool = False
     agent_actionable_recovery: str = ""
+    active_recovery_owner: str = ""
+    recovery_acknowledged: bool = False
+    preservation_evidence_issue: str = ""
     correction_attempts_exhausted: bool = False
     correction_attempt_history: tuple[str, ...] = ()
     current_disposition: DispositionReceipt | None = None
@@ -135,6 +162,8 @@ class BlockedReconciliation:
     candidate_evidence: tuple[str, ...]
     review_verification_evidence: tuple[str, ...]
     canonical_task_state: str
+    conversation_title: str
+    expected_conversation_title: str
     git_state: str
     live_claims: tuple[str, ...]
     correction_attempt_history: tuple[str, ...]
@@ -154,6 +183,8 @@ class TerminalReconciliation:
     provider_identity: str
     task_id: str
     lifecycle_status: str
+    conversation_title: str
+    expected_conversation_title: str
     provider_terminal_evidence: bool
     code_merged: bool
     claim_applicability: str
@@ -396,6 +427,27 @@ class WatchdogCycle:
                         preventing_cause=item.preventing_cause,
                     )
                 )
+            if (
+                item.status not in TERMINAL_STATUSES
+                and item.status != "Blocked"
+                and self._conversation_title_issue(item)
+            ):
+                observations.append(
+                    WatchdogAlert(
+                        provider_identity=item.provider_identity,
+                        evidence=(
+                            f"conversation_title={item.conversation_title}; "
+                            "expected_conversation_title="
+                            f"{self._expected_conversation_title(item)}"
+                        ),
+                        reason="canonical conversation title contradicts current lifecycle or phase",
+                        recommended_action=(
+                            "Coordinator reconciles the canonical conversation title "
+                            "without changing provider lifecycle"
+                        ),
+                        preventing_cause=item.preventing_cause,
+                    )
+                )
         if not observations:
             return CycleResult(
                 "NO_ACTION",
@@ -424,6 +476,8 @@ class WatchdogCycle:
             reasons.append("identify canonical Codex task")
         if not item.provider_terminal_evidence:
             reasons.append("confirm provider terminal evidence")
+        if WatchdogCycle._conversation_title_issue(item):
+            reasons.append("reconcile canonical conversation title")
         if item.status == "Completed" and not item.code_merged:
             reasons.append("confirm merged delivery")
         if (
@@ -489,6 +543,10 @@ class WatchdogCycle:
             provider_identity=item.provider_identity,
             task_id=item.root_task,
             lifecycle_status=item.status,
+            conversation_title=item.conversation_title,
+            expected_conversation_title=(
+                WatchdogCycle._expected_conversation_title(item)
+            ),
             provider_terminal_evidence=item.provider_terminal_evidence,
             code_merged=item.code_merged,
             claim_applicability=item.claim_applicability,
@@ -542,6 +600,9 @@ class WatchdogCycle:
                 f"task={reconciliation.task_id or 'missing'}",
                 f"provider={reconciliation.provider_identity}",
                 f"lifecycle_status={reconciliation.lifecycle_status}",
+                f"conversation_title={reconciliation.conversation_title or 'missing'}",
+                "expected_conversation_title="
+                f"{reconciliation.expected_conversation_title or 'missing'}",
                 "provider_terminal_evidence="
                 f"{str(reconciliation.provider_terminal_evidence).lower()}",
                 f"code_merged={str(reconciliation.code_merged).lower()}",
@@ -584,8 +645,18 @@ class WatchdogCycle:
         reasons: list[str] = []
         if item.blocker_exit_satisfied or item.dependency_or_unblock_satisfied:
             reasons.append("dependency or unblock evidence is satisfied")
-        if item.agent_actionable_recovery.strip():
+        if WatchdogCycle._conversation_title_issue(item):
+            reasons.append("reconcile canonical conversation title")
+        recovery_is_actively_owned = bool(
+            item.agent_actionable_recovery.strip()
+            and item.active_recovery_owner.strip()
+            and item.recovery_acknowledged
+            and item.task_state in _ACTIVE_TASK_STATES
+        )
+        if item.agent_actionable_recovery.strip() and not recovery_is_actively_owned:
             reasons.append("agent-actionable recovery is available")
+        if item.preservation_evidence_issue.strip():
+            reasons.append("preservation evidence contradicts Git or runtime state")
         disposition_issue = WatchdogCycle._disposition_issue(item)
         if disposition_issue:
             reasons.append(disposition_issue)
@@ -621,12 +692,40 @@ class WatchdogCycle:
                 item.review_verification_evidence
             ),
             canonical_task_state=item.task_state,
+            conversation_title=item.conversation_title,
+            expected_conversation_title=(
+                WatchdogCycle._expected_conversation_title(item)
+            ),
             git_state=item.git_state,
             live_claims=tuple(item.live_claims),
             correction_attempt_history=tuple(item.correction_attempt_history),
             current_disposition=item.current_disposition,
             actionable_reasons=tuple(reasons),
         )
+
+    @staticmethod
+    def _conversation_title_issue(item: WorkItem) -> bool:
+        """Return title drift against the expectation derived from current state."""
+
+        expected = WatchdogCycle._expected_conversation_title(item)
+        return bool(expected and item.conversation_title != expected)
+
+    @staticmethod
+    def _expected_conversation_title(item: WorkItem) -> str:
+        """Derive display state from provider lifecycle or bounded task outcome."""
+
+        if not item.short_title.strip():
+            return ""
+        if (
+            item.runtime_task_kind == "bounded-verifier"
+            and item.task_state == "completed"
+        ):
+            return f"Done — {item.short_title}"
+        if item.status == "Running":
+            label = item.phase if item.phase in _RUNNING_TITLE_PHASES else ""
+        else:
+            label = _LIFECYCLE_TITLE_LABELS.get(item.status, "")
+        return f"{label} — {item.short_title}" if label else ""
 
     @staticmethod
     def _disposition_issue(item: WorkItem) -> str:
@@ -668,6 +767,9 @@ class WatchdogCycle:
                 "review_verification_evidence="
                 f"{reconciliation.review_verification_evidence or ('none',)}",
                 f"canonical_task_state={reconciliation.canonical_task_state}",
+                f"conversation_title={reconciliation.conversation_title or 'missing'}",
+                "expected_conversation_title="
+                f"{reconciliation.expected_conversation_title or 'missing'}",
                 f"git_state={reconciliation.git_state or 'missing'}",
                 f"live_claims={reconciliation.live_claims or ('none',)}",
                 "correction_attempt_history="

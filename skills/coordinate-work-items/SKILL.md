@@ -286,6 +286,12 @@ The Watchdog observes runtime state first. It reads provider, Git, and applicabl
 - terminal provider evidence, live and released claims, worktree disposition, delivery and cleanup branch disposition, source-branch disposition, unresolved notifications, and runtime archival state
 - stale, unsafe, or unnecessarily broad claims when resource-claim is loaded
 
+Every cycle obtains the current Blocked inventory. Reconcile each Blocked item far enough to classify it as acknowledged active recovery, an unchanged concrete user or external wait, or unattended agent-actionable recovery. Runtime-first observation limits unnecessary durable reads; it does not permit skipping the Blocked inventory or carrying a prior classification forward without current provider and runtime evidence.
+
+Alert when current evidence shows agent-owned recovery without an active owner, a missing or invalid next-action owner or observable trigger, a satisfied dependency or unblock condition, exhausted corrections without a current disposition, or preservation evidence contradicted by Git or runtime state. Suppress a repeat alert only while acknowledged recovery remains actively owned or the same concrete user or external trigger remains unsatisfied.
+
+When a runtime mapping defines task titles, compare every observed canonical task title with the current provider lifecycle and material Running phase, and compare each observed bounded verifier title with its current runtime outcome. Title drift requires a Coordinator decision even though it never changes lifecycle authority, active capacity, or delivery evidence.
+
 Reconcile a terminal task only when runtime observation indicates incomplete cleanup or another specific decision. Consult its durable provider, Git, claim, and archival records as needed; do not construct a repeated cycle history.
 
 A source branch may remain deliberately preserved only when current evidence proves that it is non-ancestral or non-equivalent. Retain that evidence-backed disposition without another alert after the Coordinator acknowledges the same evidence and required action. Alert again when the evidence or required action changes. A preserved source branch never suppresses an independently authorized alert to remove its clean terminal worktree.

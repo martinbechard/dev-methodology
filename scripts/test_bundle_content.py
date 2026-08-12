@@ -2202,6 +2202,8 @@ class BundleContentTests(unittest.TestCase):
         for clause in (
             "Reconcile a terminal task only when runtime observation indicates incomplete cleanup or another specific decision.",
             "A preserved source branch never suppresses an independently authorized alert to remove its clean terminal worktree.",
+            "Every cycle obtains the current Blocked inventory.",
+            "Title drift requires a Coordinator decision even though it never changes lifecycle authority, active capacity, or delivery evidence.",
             "When no decision is required, send nothing.",
         ):
             with self.subTest(portable_clause=clause):
@@ -2211,12 +2213,23 @@ class BundleContentTests(unittest.TestCase):
             "Failed and Abandoned require valid terminal evidence and do not require or imply merged delivery.",
             "Do not infer, inherit, carry forward, or persist a campaign-wide pause from earlier conversation.",
             "A valid pause suppresses archival only for its named tasks.",
+            "Completed maps to Done —, Blocked maps to Blocked —, and Waiting for Help — is valid only for a Running task currently awaiting technical help.",
         ):
             with self.subTest(codex_clause=clause):
                 self.assertIn(clause, codex_text)
         self.assertNotIn("Respect any user pause on archival.", codex_text)
         self.assertIn("Send exactly one aggregate parent alert", watchdog_text)
         self.assertIn("Never infer or inherit a campaign-wide pause", watchdog_text)
+        for scenario_id in (
+            "canonical-title-drift-alert",
+            "finished-bounded-verifier-title-drift",
+            "blocked-agent-recovery-unattended",
+            "blocked-agent-recovery-active",
+            "blocked-preservation-contradiction",
+        ):
+            with self.subTest(watchdog_scenario=scenario_id):
+                self.assertIn(scenario_id, scenario_ids)
+        self.assertNotIn("Reconcile a Blocked item only when", watchdog_text)
         self.assertIn(
             "Completed requires merged delivery before default archival.",
             SKILL_DEFINITIONS_PATH.read_text(encoding="utf-8"),
