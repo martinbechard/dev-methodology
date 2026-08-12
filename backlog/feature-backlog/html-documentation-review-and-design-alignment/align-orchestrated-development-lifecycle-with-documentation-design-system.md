@@ -158,3 +158,15 @@ Remaining Risk: The candidate has not passed the required terminal verifier gate
 - Recovery Sequence: Use the restored `ce7002bf` branch; create a safe isolated checkout; run exactly one final verifier with confirmed private `dev-methodology-repository-maintenance` access; preserve Blocked on any non-PASS result.
 - PASS Sequence: Preserve canonical task `019ff2f9-0863-7133-aac0-fef97ad6d74d`; record Blocked -> Ready -> Starting; require that same task to record Starting -> Running; then resume integration, provider closure, and externally authorized cleanup.
 - Priority Claim: `queue-align-lifecycle-recovery-next-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `c8e6351c-8a9c-478b-b112-08350bfdbc6b`.
+
+## Final Verifier Re-Homing
+
+- Recovery Started At: 2026-08-12.
+- Capacity Evidence: `enforce-external-terminal-cleanup` completed repository cleanup and released its active slot. Its runtime title/archive persistence is unconfirmable but consumes no capacity.
+- Safe Checkout: `/Users/martinbechard/dev/dev-methodology/.worktrees/align-orchestrated-lifecycle-work-019ff2f9` is restored, clean, and checks out `codex/align-orchestrated-development-lifecycle-design-system-019ff2f9` at exact candidate `ce7002bf2794c62cdbd7ebf58ff217aeb5e55935`.
+- Checkout Claim: `restore-align-lifecycle-verifier-checkout-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; acquired event `d5e8332d-75c6-49dc-9b35-ca608318dd45`; released event `4ae4d721-b116-4b9a-b8a7-3ab52cd2d680`.
+- Provider State: Remains Blocked during independent verification. The verifier is read-only and does not consume active work-item capacity.
+- Authorized Verification: Create exactly one fresh final Dev Verifier execution with confirmed access to private `dev-methodology-repository-maintenance`. It must inspect this exact checkout and candidate, run the recorded final verification scope, and return PASS or one concrete failing finding.
+- PASS Next Action: The Coordinator records Blocked -> Ready -> Starting for preserved canonical task `019ff2f9-0863-7133-aac0-fef97ad6d74d`; that same task then records Starting -> Running before integration.
+- Non-PASS Next Action: Preserve Blocked, branch, checkout, candidate, and all prior accepted gates; reconcile the exact verifier result without launching another verifier automatically.
+- Provider Update Claim: `record-align-verifier-checkout-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `5e5de2e2-212c-4cc8-834e-5b07abd05058`.
