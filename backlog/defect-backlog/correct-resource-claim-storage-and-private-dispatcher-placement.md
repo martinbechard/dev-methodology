@@ -1,6 +1,6 @@
 # Correct Resource-Claim Storage And Private Dispatcher Placement
 
-Status: Running
+Status: User Action Required
 
 Type: Defect
 
@@ -169,3 +169,29 @@ None.
 - CI URL: `https://github.com/martinbechard/mcp-agent-ops/actions/runs/31599149795`.
 - Phase: publishing accepted cross-repository candidates with corrected external tip `c22fc93`.
 - Conversation Title: `Publishing — Correct Resource Claims and Private Dispatcher`.
+
+## Publication And Pre-Restart Evidence
+
+- Published mcp-agent-ops Commit: `c22fc9362cb46c44948d25da7771c72dfecbb28b`.
+- Main CI: successful exact-head run `https://github.com/martinbechard/mcp-agent-ops/actions/runs/31599149795`, including Python 3.11, 3.12, 3.13, and Windows.
+- Release: `https://github.com/martinbechard/mcp-agent-ops/releases/tag/v0.12.0`.
+- Release Workflow: `https://github.com/martinbechard/mcp-agent-ops/actions/runs/31599288583`; successful verification, Windows, build, and publish jobs.
+- Release Assets: `mcp_agent_ops-0.12.0-py3-none-any.whl`, `runtime-requirements.txt`, and `SHA256SUMS`.
+- Wheel SHA-256: `7542132b3f4063e025302d525c4428d7d2c90377eab5682a2366750ee46e7f00`; downloaded assets passed `SHA256SUMS` verification.
+- Installed Runtime: mcp-agent-ops `0.12.0`; runtime digest `11529a24781de540bac489710ba39272dfc4d45a7a9ceda2ee0062b691eac2bc`.
+- Portable Publication: dev-methodology `main` published through `fb6d5e4b21a5f6c8c97479a59a64860bb49214fc`; accepted source candidate `4ea18ea743bb86f548e1eb849485db2dffc9ce13` remains its implementation ancestor.
+- Installation: Codex user-scope portable skills and generated agents installed with replacement; MCP candidate inspected and activated through the installer's interactive acceptance path; prior config saved at `/Users/martinbechard/.codex/config.toml.bak`.
+- Installed Byte Evidence: `resource-claim`, `resource-claim-helper`, `resource-claim-helper-mcp`, `coordinate-codex-tasks`, `dev-backlog-coordinator`, and `dev-orchestrator` match their published source bytes.
+- Installed Manifests: 146 portable skills and 33 generated agents; neither manifest contains `backlog-dispatcher`.
+- Private Dispatcher: absent from installed user skills and distributable `skills/`; retained only at `.agents/skills/backlog-dispatcher` and discovered from the project overlay.
+- Non-Claim MCP Catalog: `skill_refresh`, `skill_list`, and `skill_load` succeeded at revision `2ce5a06a1a9d1eba511d8beaa4b1b3e5a50249ae73b4b1de631408deb91d6cd8` for the private dispatcher and portable claim skills.
+- Catalog Digests: backlog-dispatcher `75ac03f54ce8c89d436159182fc89a8a5863715045a276287c4deffb79086919`; resource-claim `f16aca5f649de818c51073779df1d64d3215e8a5fc9cfee69318e4631cb9cbdc`; resource-claim-helper `d8431e082964173a1087916b8b5e6cbaf1071b714f3122b387fa1a4d9dd7428b`; resource-claim-helper-mcp `dc0803a1e2adc075ee1d08f5ab2c5a3ad724fd7d567bbabd978bbd94fb56c8a0`; coordinate-codex-tasks `e1cdab99cf994ef91b326c126babab3dc455e7683217cb19ee97bce38c64dbaf`.
+- Claim Suspension: no claim operation occurred during correction, release, installation, or pre-restart verification.
+
+## User Action Required
+
+- Transitioned At: 2026-08-12.
+- Exact User Action: Restart Codex now so it starts mcp-agent-ops 0.12.0 and reloads the corrected project/private catalog, then reply in this same conversation that the restart is complete.
+- Conversation Title: `User Action Required — Restart Codex for Corrected Resource Claims`.
+- Resume Boundary: after user confirmation, this same canonical execution performs bounded post-restart MCP startup, private-dispatcher discovery, and disposable corrected-storage acquire/release verification before crisis-exit reconciliation.
+- Prohibited Before Confirmation: claim operations, post-restart verification, crisis exit, MULTITASK restoration, completion, and cleanup.
