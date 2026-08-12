@@ -1,6 +1,6 @@
 # Correct Resource-Claim Storage And Private Dispatcher Placement
 
-Status: User Action Required
+Status: Ready
 
 Type: Defect
 
@@ -8,7 +8,7 @@ Owner: Dev Orchestrator
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/correct-resource-claim-storage-and-private-dispatcher-placement.md
+Provider Reference: backlog/defect-backlog/correct-resource-claim-storage-and-private-dispatcher-placement.md
 
 Work Item ID: correct-resource-claim-storage-and-private-dispatcher-placement
 
@@ -195,3 +195,13 @@ None.
 - Conversation Title: `User Action Required — Restart Codex for Corrected Resource Claims`.
 - Resume Boundary: after user confirmation, this same canonical execution performs bounded post-restart MCP startup, private-dispatcher discovery, and disposable corrected-storage acquire/release verification before crisis-exit reconciliation.
 - Prohibited Before Confirmation: claim operations, post-restart verification, crisis exit, MULTITASK restoration, completion, and cleanup.
+
+## Restart Resolution And Fresh-Runtime Blocker
+
+- User Answer: the user returned after restarting Codex on 2026-08-12; the required user action is satisfied.
+- Transition: User Action Required -> Ready at 2026-08-12T15:47:38Z in the same canonical execution.
+- Fresh Runtime: mcp-agent-ops tools are reachable, but both `skill_load` and `skill_refresh` return `Configured skill catalog is invalid.`
+- Claim Evidence: none. No claim operation was invoked after restart, and crisis claim suspension remains active.
+- Recovery Owner: the same canonical Dev Orchestrator task `019ff5c1-05a2-7551-bcf2-812f61776a7e`.
+- Exact Recovery: diagnose and correct the configured catalog or installed artifact that makes the fresh mcp-agent-ops 0.12.0 process reject the catalog; preserve the published release, installed runtime, private Dispatcher, and unrelated repository state.
+- Exit Boundary: crisis exit remains prohibited until fresh-runtime `skill_refresh`, `skill_list`, and `skill_load` succeed for the private Dispatcher and required portable claim skills. Claim tools remain prohibited until the Coordinator accepts that evidence and orders crisis exit.
