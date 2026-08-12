@@ -1,14 +1,27 @@
 # Establish The STE Technical Documentation Standard
 
-Status: Completed
+Status: Ready
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/completed-backlog/features/establish-ste-technical-documentation-standard.md
+Work Item ID: establish-ste-technical-documentation-standard
 
-Owner: Dev Orchestrator 019fa9be-0083-7542-973f-af103c0c45a5
+Provider Reference: backlog/feature-backlog/establish-ste-technical-documentation-standard.md
+
+Owner: Unowned
+
+## Reopened Cleanup Review
+
+- Reopened At: 2026-08-12.
+- Reopen Authority: The user directed that this archived item return to the incomplete backlog after cleanup review.
+- Reason: The clean worktree and branch remain as unintegrated recovery evidence, and the prior Completed disposition is not sufficient for cleanup.
+- Preserved Branch: codex/establish-ste-technical-documentation-standard.
+- Preserved Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/establish-ste-technical-documentation-standard.
+- Preserved Candidate: a4165c21f464e0cf74d72c6f81b7a64d49c90f62.
+- Cleanup Context: The linked semantic-preservation defect was explicitly discarded during cleanup. This item must now reconcile the surviving candidate with the user's clarification that STE is useful for all communication because it improves clarity.
+- Next Action: Review the preserved candidate against current main and the clarified STE scope, identify which content remains wanted, and obtain fresh review and verification before any integration or renewed completion.
 
 ## Current Starting Reservation
 
