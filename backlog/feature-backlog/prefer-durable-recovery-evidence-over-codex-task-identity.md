@@ -1,6 +1,6 @@
 # Prefer Durable Recovery Evidence Over Codex Task Identity
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -77,4 +77,18 @@ Approved at creation. On 2026-08-12, the user explicitly required the durable-st
 
 ## Notes
 
-`skills/coordinate-codex-tasks/SKILL.md` currently has uncommitted ownership under separate Watchdog-contract work. This item remains Ready and must reconcile that candidate before mutation; do not overwrite, revert, duplicate, or strand the concurrent changes.
+The separate Watchdog-contract work completed and archived at main commit `c73bd4eb9452ef4df99d1b92442cdbfc2f39f6fb`, and its canonical runtime execution was archived. Reconcile the current integrated skill text as the implementation baseline; do not replay or revert that delivered work.
+
+## Starting Handoff Evidence
+
+- Reserved At: 2026-08-12T22:21:18Z.
+- Parent Runtime Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Normalized Objective: Concisely update the private Backlog Dispatcher and portable Codex task-coordination skill so one demonstrably unusable task may be superseded through complete durable recovery evidence and duplicate prevention, while preserving the prohibition on replacing idle, slow, or quiet tasks.
+- Intended Root Role: Dev Orchestrator.
+- Baseline: `c73bd4eb9452ef4df99d1b92442cdbfc2f39f6fb` on primary `main`.
+- Dispatch Reservation: Exactly one new canonical root execution; runtime identity pending caller-owned creation.
+- Launch State: Authorized and pending root Backlog Dispatcher creation result; successful creation does not imply Running.
+- Last Contact: 2026-08-12T22:21:18Z.
+- Next Reconciliation: Reconcile the exact create result immediately; the root execution must record Starting -> Running before mutation.
+- Transition Claim: `start-durable-recovery-guidance-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `10a37cf9-4263-4d6c-9f64-64ab2c120dfe`.
