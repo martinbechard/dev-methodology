@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: Starting
+Status: Blocked
 
 Type: Feature
 
@@ -200,3 +200,18 @@ Remaining Risk: The candidate has not passed the required terminal verifier gate
 - Capacity Result: one finish-lane slot reserved; this Starting item consumes active capacity.
 - Next Lifecycle Owner: The preserved root Dev Orchestrator must claim this exact Work Item ID with activity `update` and record Starting -> Running before integration or further mutation.
 - Starting Claim: `align-lifecycle-ready-starting-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `4b59c64a-26bb-4c38-9841-3f2240a12e86`.
+
+## Canonical Runtime Re-Home Blocker
+
+- Blocked Recorded At: 2026-08-12.
+- Failed Acceptance: Preserved canonical task `019ff2f9-0863-7133-aac0-fef97ad6d74d` resumed but its effective runtime exposes no configured MCP claim tools. It made no claim, provider, Git, or integration mutation.
+- Identity Rule: Caller-owned claim or provider acceptance would transfer Dev Orchestrator authority and is prohibited. `create_thread` and `fork_thread` produce new identities and are not authorized replacements.
+- Re-Home Attempt: The only identity-preserving control, `handoff_thread`, returned `The source thread workspace is not a git repository.` It returned no operation ID and performed no runtime move.
+- Available Runtime Boundary: Host `local` is the only host. Task controls include create, fork, handoff, send, read, wait, title, archive, pin, navigate, and open; none can restore the same task's runtime capability profile after handoff failure.
+- Confirmed Blocker: The Codex runtime cannot associate the preserved canonical task with a Git workspace and current configured MCP surface while retaining both canonical task and conversation identity.
+- Blocker Owner: Codex task runtime capability owner; Dev Backlog Coordinator retains lifecycle and recovery responsibility.
+- Unblock Condition: An identity-preserving runtime operation must successfully restore task and conversation `019ff2f9-0863-7133-aac0-fef97ad6d74d` to the preserved Git checkout with current configured MCP tools. A same-task pilot must then load `dev-methodology-repository-maintenance` and return schema-v2 `claim_status` before another Ready -> Starting reservation.
+- Current Disposition: Starting -> Blocked; Owner Unowned. This item consumes no active capacity. Do not proxy claims, create a replacement, discard the candidate, or integrate outside the canonical execution.
+- Preserved Evidence: Candidate `ce7002bf2794c62cdbd7ebf58ff217aeb5e55935`, restored branch and clean worktree, final verifier PASS, prior accepted reviews, and all provider history remain intact.
+- Subordinate Verifier Cleanup Limitation: Verifier task `019ff7dd-98a1-7b21-a1b1-3682a8b77c39` became unavailable through direct read and active/pinned lists before title or archive mutation. Its PASS is durable; no cleanup success is claimed and no other task was targeted.
+- Transition Claim: `block-align-runtime-rehome-unavailable-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `a43f5fff-eb65-431c-84da-ff1a577b4a0c`.
