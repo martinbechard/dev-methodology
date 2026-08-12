@@ -28,11 +28,14 @@ resource_coordination:
     resource_overrides: {}
 
 agent_claim_transport:
-  selected: command
+  selected: mcp
   availability: AVAILABLE
   verification:
-    - "skills/resource-claim-helper-command/SKILL.md defines direct command invocation, structured result handling, and same-helper ambiguous-dispatch reconciliation."
-    - "skills/resource-claim-helper-command/scripts/claim.py is the bundle-owned command implementation distributed with the selected provider."
+    - "The live mcp-agent-ops callable catalog exposes claim_status, claim_acquire, claim_extend, claim_extend_deadline, claim_heartbeat, claim_release, claim_reset, claim_maintain_journal, and claim_report."
+    - "The callable schemas expose every Resource Claim Helper input, including resource timing, deadline-extension evidence, release disposition, journal retention, and report window fields."
+    - "claim_status for the configured project root returned schema_version 2 and structured STATUS result evidence from the selected mcp-agent-ops provider."
+    - "The selected mcp-agent-ops provider declares structured exit_code and result envelopes for every claim operation; mutating-operation uncertainty reconciles through its claim_status tool."
+    - "mcp-agent-ops 0.12.0 keeps the claim registry and event journal disk-authoritative under the primary-worktree .agent-ops/resource-claim operational root, resolves that same root from linked worktrees, and migrates empty rejected .codex state with audit retention."
 
 authoritative_sources:
   readme_files:
@@ -301,6 +304,10 @@ document_provenance:
 
 project_skill_extensions:
   - skill: dev-methodology-repository-maintenance
+    registration: registered
+    availability: AVAILABLE
+    catalog: "codex-project:.agents/skills"
+  - skill: backlog-dispatcher
     registration: registered
     availability: AVAILABLE
     catalog: "codex-project:.agents/skills"

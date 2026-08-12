@@ -13,7 +13,7 @@ Codex task control maps one portable work-item execution to one canonical Codex 
 
 Run the Dev Backlog Coordinator as the coordination Agent. When it runs as a collaboration subagent, it retains authoritative provider, lifecycle, capacity, dependency, claim, finish-lane, recovery, re-homing, dispatch-packet, and reconciliation decisions even when Codex withholds user-visible task controls from that subagent.
 
-The root calling task applies backlog-dispatcher as the runtime execution adapter. The Coordinator returns an exact executable packet; the root dispatcher performs only the approved task creation, resumption, message, title, wait, archive, automation, or related caller-only operation and returns the exact result to the Coordinator. The root dispatcher does not adopt the Coordinator Role, independently select work, mutate Coordinator-owned lifecycle, or create a second coordination record.
+The root calling task uses its project-private runtime dispatcher. The Coordinator returns an exact executable packet; the authorized root runtime dispatcher performs only the approved task creation, resumption, message, title, wait, archive, automation, or related caller-only operation and returns the exact result to the Coordinator. The authorized root runtime dispatcher does not adopt the Coordinator Role, independently select work, mutate Coordinator-owned lifecycle, or create a second coordination record.
 
 When the Coordinator runtime itself exposes the required task control, it may execute its own approved operation directly and reconcile the result through the same contract. Runtime placement changes the operation executor, not coordination authority.
 
@@ -29,7 +29,7 @@ If an ordinary required operation fails because the Agent lacks a capability, th
 
 ## Codex Task Creation And Resumption
 
-The Dev Backlog Coordinator may authorize at most one root Dev Orchestrator task after coordinate-work-items records the Starting reservation and permits runtime dispatch. It supplies the complete task title, prompt, provider reservation, baseline, isolation, claim, authority, verification, reporting, and cleanup packet. The authorized runtime executor may create at most one root Dev Orchestrator task for that packet. The Coordinator executes creation directly only when its runtime exposes the required control; otherwise the root Backlog Dispatcher executes that exact packet. Return the task or pending client identity and retained user-visible context to the Coordinator as runtime evidence; neither result changes provider lifecycle.
+The Dev Backlog Coordinator may authorize at most one root Dev Orchestrator task after coordinate-work-items records the Starting reservation and permits runtime dispatch. It supplies the complete task title, prompt, provider reservation, baseline, isolation, claim, authority, verification, reporting, and cleanup packet. The authorized runtime executor may create at most one root Dev Orchestrator task for that packet. The Coordinator executes creation directly only when its runtime exposes the required control; otherwise the authorized root runtime dispatcher executes that exact packet. Return the task or pending client identity and retained user-visible context to the Coordinator as runtime evidence; neither result changes provider lifecycle.
 
 Collaboration subagent launches follow the Codex Harness Collaboration Subagent Launch Contract. A separate user-visible Codex work-item task is not a collaboration subagent launch. Create it only through explicit provider and canonical-task handoffs. Give it a self-contained dispatch prompt and no implicit parent-conversation inheritance.
 
@@ -47,7 +47,7 @@ Record these fields when the runtime supplies them:
 Codex Task ID: [opaque task identifier]
 Conversation ID: [opaque retained-context identifier]
 Root Role: Dev Orchestrator
-Runtime Parent Task ID: [opaque root dispatcher or direct creator task identifier]
+Runtime Parent Task ID: [opaque authorized root runtime dispatcher or direct creator task identifier]
 Coordinator Task ID: [opaque Dev Backlog Coordinator task or subagent identifier]
 ```
 
@@ -71,7 +71,7 @@ Use this lifecycle and phase mapping:
 - Failed: Failed — short work-item title.
 - Abandoned: Abandoned — short work-item title.
 
-The owning Coordinator or Orchestrator is accountable after every successful lifecycle transition. When its runtime exposes rename authority, it renames the canonical conversation directly. Otherwise it supplies the exact title operation to the root Backlog Dispatcher and reconciles the returned outcome. When neither authorized path exposes rename authority, leave the title unsynchronized and retain that limitation in the durable record; do not send a title-only task message. A failed title update does not roll back a durable lifecycle transition.
+The owning Coordinator or Orchestrator is accountable after every successful lifecycle transition. When its runtime exposes rename authority, it renames the canonical conversation directly. Otherwise it supplies the exact title operation to the authorized root runtime dispatcher and reconciles the returned outcome. When neither authorized path exposes rename authority, leave the title unsynchronized and retain that limitation in the durable record; do not send a title-only task message. A failed title update does not roll back a durable lifecycle transition.
 
 Apply the title contract when the task is created, after each successful lifecycle transition, and at each material Running phase change. Never use raw prompt text, markup, error output, identifiers, or a generic title.
 
@@ -92,7 +92,7 @@ Map Codex task states into portable evidence without inventing lifecycle. A runn
 
 ## Task Follow-Up
 
-When the canonical task is idle but remains the selected resumable execution, the Coordinator may authorize the runtime executor to send one follow-up only to resume an authorized bounded next action or deliver a Coordinator decision. The Coordinator sends it directly only when its runtime exposes follow-up control; otherwise the root Backlog Dispatcher sends the exact authorized message and returns the outcome. Never use follow-up for routine status, heartbeat, lifecycle history, capacity evidence, provider mutation, or proof of progress.
+When the canonical task is idle but remains the selected resumable execution, the Coordinator may authorize the runtime executor to send one follow-up only to resume an authorized bounded next action or deliver a Coordinator decision. The Coordinator sends it directly only when its runtime exposes follow-up control; otherwise the authorized root runtime dispatcher sends the exact authorized message and returns the outcome. Never use follow-up for routine status, heartbeat, lifecycle history, capacity evidence, provider mutation, or proof of progress.
 
 Do not create a replacement task merely because the task is idle, slow, or has not produced a recent message. After a follow-up, preserve the original task identity and reconcile the returned runtime state. If the task cannot resume, report that evidence to the portable lifecycle owner before any replacement decision.
 
@@ -114,7 +114,7 @@ Substitute only the resolved runtime parent task identifier, Coordinator task id
 
 When a Watchdog schedule is configured, it must wake the canonical Watchdog task to run its own read-only observation cycle. Do not schedule the Coordinator to wake merely to send routine heartbeat or progress follow-ups to a worker or Watchdog task, and do not use a Watchdog wakeup to request progress from another task. The dispatcher observes worker runtime state through runtime tools. A Watchdog reports only a specific Coordinator decision it cannot make itself; otherwise it sends nothing.
 
-If the Watchdog task is unavailable, the Dev Backlog Coordinator performs the portable review directly. Do not make the root Backlog Dispatcher choose the review outcome and do not create a second ledger or duplicate observer.
+If the Watchdog task is unavailable, the Dev Backlog Coordinator performs the portable review directly. Do not make the authorized root runtime dispatcher choose the review outcome and do not create a second ledger or duplicate observer.
 
 ## Task Archival
 
@@ -122,7 +122,7 @@ Task archival is mandatory by default after the applicable ordinary terminal gat
 
 An archival pause is valid only when explicit current user direction names the exact Codex task, limits its scope to Codex task archival, records the exact direction and scope as evidence, and has a recorded acknowledgement. Do not infer, inherit, carry forward, or persist a campaign-wide pause from earlier conversation. A valid pause suppresses archival only for its named tasks. It never suppresses provider closeout, claim reconciliation, worktree cleanup, delivery-branch cleanup, source-branch cleanup, notification, or another terminal reconciliation action.
 
-Before archival, the Coordinator verifies the terminal conversation title and preserves the canonical task identity with the terminal handoff. If no valid current named-task pause exists, it authorizes archival after every ordinary gate passes. The Coordinator archives directly only when its runtime exposes the control; otherwise the root Backlog Dispatcher executes the exact archival instruction and returns the outcome. If archival fails or no authorized runtime supports it, record the limitation and do not report archival success. An idle, stopped, titled, or archived Codex task proves none of those facts.
+Before archival, the Coordinator verifies the terminal conversation title and preserves the canonical task identity with the terminal handoff. If no valid current named-task pause exists, it authorizes archival after every ordinary gate passes. The Coordinator archives directly only when its runtime exposes the control; otherwise the authorized root runtime dispatcher executes the exact archival instruction and returns the outcome. If archival fails or no authorized runtime supports it, record the limitation and do not report archival success. An idle, stopped, titled, or archived Codex task proves none of those facts.
 
 Task archival is a runtime cleanup mapping. It does not close a provider record, prove Commit delivery, release a claim, delete a worktree, or delete a branch.
 

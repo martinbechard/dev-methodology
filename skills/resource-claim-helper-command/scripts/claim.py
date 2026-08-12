@@ -37,8 +37,9 @@ WORKTREE_ROOT_DIRECTORY = ".worktrees"
 WORKTREE_IGNORE_PATTERN = "/.worktrees/"
 # These persisted names are stable compatibility identifiers from the former public skill name.
 # Resource Claim reuses them so a package rename never rewrites or discards shared live state.
-CLAIM_STATE_DIRECTORY = ".codex/agent-claim"
-CLAIM_STATE_IGNORE_PATTERN = "/.codex/agent-claim/"
+CLAIM_STATE_DIRECTORY = ".agent-ops/resource-claim"
+CLAIM_STATE_IGNORE_PATTERN = "/.agent-ops/resource-claim/"
+REJECTED_CLAIM_STATE_DIRECTORY = ".codex/agent-claim"
 ISOLATED_SPARSE_CHECKOUT_PATTERNS = ("/*", "!/backlog/")
 REGISTRY_FILE_NAME = "agent-claims.json"
 EVENT_DIRECTORY_NAME = "agent-claim-events"
@@ -241,7 +242,11 @@ def _registry_path(repository: Path) -> Path:
 
 
 def _legacy_registry_path(repository: Path) -> Path:
-    return _git_common_directory(repository) / REGISTRY_FILE_NAME
+    return (_primary_worktree(repository) / REJECTED_CLAIM_STATE_DIRECTORY / REGISTRY_FILE_NAME).resolve()
+
+
+def _legacy_events_path(repository: Path) -> Path:
+    return (_primary_worktree(repository) / REJECTED_CLAIM_STATE_DIRECTORY / EVENT_DIRECTORY_NAME).resolve()
 
 
 def _state_marker_path(repository: Path) -> Path:
@@ -557,7 +562,7 @@ def _windows_in_progress_live_legacy_registry(
 def _move_legacy_events(repository: Path) -> None:
     state_root = _state_root(repository)
     events_path = state_root / EVENT_DIRECTORY_NAME
-    legacy_events = _git_common_directory(repository) / EVENT_DIRECTORY_NAME
+    legacy_events = _legacy_events_path(repository)
 
     if _legacy_events_is_marker(legacy_events):
         events_path.mkdir(parents=True, exist_ok=True)
@@ -629,9 +634,8 @@ def _finish_legacy_migration(
     locked_legacy_file: TextIO | None = None,
 ) -> None:
     registry_path = _state_root(repository) / REGISTRY_FILE_NAME
-    legacy_root = _git_common_directory(repository)
-    legacy_registry = legacy_root / REGISTRY_FILE_NAME
-    legacy_events = legacy_root / EVENT_DIRECTORY_NAME
+    legacy_registry = _legacy_registry_path(repository)
+    legacy_events = _legacy_events_path(repository)
 
     if _registry_payload_from_file(canonical_registry_file, registry_path)["claims"]:
         raise _ClaimStateError(
@@ -682,7 +686,7 @@ def _resolve_registry_path_once(
 ) -> Path | None:
     registry_path = _registry_path(repository)
     legacy_registry = _legacy_registry_path(repository)
-    legacy_events = _git_common_directory(repository) / EVENT_DIRECTORY_NAME
+    legacy_events = _legacy_events_path(repository)
     marker = _state_marker(repository)
 
     if marker and marker["migration_status"] == "complete":
@@ -860,7 +864,7 @@ def _read_only_registry_once(
     """Read claim state under its existing lock without creating or migrating storage."""
     registry_path = _registry_path(repository)
     legacy_registry = _legacy_registry_path(repository)
-    legacy_events = _git_common_directory(repository) / EVENT_DIRECTORY_NAME
+    legacy_events = _legacy_events_path(repository)
     marker = _state_marker(repository)
 
     if marker and marker["migration_status"] == "in_progress":
@@ -3658,7 +3662,7 @@ def _report(args: argparse.Namespace) -> int:
     end = _now()
     start = end - delta
     registry_path, data = _read_only_registry(repository)
-    legacy_events = _git_common_directory(repository) / EVENT_DIRECTORY_NAME
+    legacy_events = _legacy_events_path(repository)
     state_marker = _state_marker(repository)
     event_state_root = (
         _git_common_directory(repository)

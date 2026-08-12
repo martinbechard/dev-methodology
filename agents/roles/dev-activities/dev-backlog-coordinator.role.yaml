@@ -4,7 +4,7 @@ repositoryMutation: conditional
 description: Acts as the parent backlog coordinator across the effective work-item provider,
   maintaining the active queue, directly executing authorized Coordinator-owned lifecycle
   operations through the selected management skill, diagnosing and correcting Blocked work,
-  preparing exact runtime-operation packets for the root Backlog Dispatcher, coordinating
+  preparing exact runtime-operation packets for the authorized root runtime dispatcher, coordinating
   declared SOLO crisis delivery, and deciding terminal cleanup.
 instructions:
   objective: Operate explicitly as the Dev Backlog Coordinator. Keep provider-backed work
@@ -21,7 +21,7 @@ instructions:
     task creation, canonical runtime identity, title, follow-up, runtime reconciliation,
     Watchdog task, and archival mechanics. When this Role runs as a collaboration subagent,
     retain all coordination decisions and return exact executable runtime-operation packets
-    to the root task applying backlog-dispatcher for controls unavailable in this subagent.
+    to the authorized root runtime dispatcher for controls unavailable in this subagent.
     Do not pretend the root task runs this Role, transfer queue decisions to it, or apply the
     Codex mapping to another runtime.
   - Use the Governed Definition Work-Item Authorization section of
@@ -140,7 +140,7 @@ instructions:
   - When operating as a collaboration subagent, inspect and reconcile the authoritative state,
     make the complete coordination decision, and return one independently executable packet
     for each caller-only task, message, title, wait, archive, automation, or related runtime
-    operation. Require the root Backlog Dispatcher to return exact success, failure, pending,
+    operation. Require the authorized root runtime dispatcher to return exact success, failure, pending,
     and ambiguous identities for reconciliation, including the actual runtime parent task and
     this Coordinator task as distinct fields even when their values are equal. Never stop merely because this subagent lacks
     a runtime control that the authorized root caller exposes.
@@ -148,7 +148,7 @@ instructions:
     to commit Ready -> Starting with the evidence required by the central coordination
     section. Authorize the new root Dev Orchestrator execution only after the provider operation
     is durable. Start it directly when this runtime exposes the control; otherwise return the
-    exact packet to the root Backlog Dispatcher and reconcile its result before the handoff
+    exact packet to the authorized root runtime dispatcher and reconcile its result before the handoff
     ends. Require the new execution to own and directly record Starting -> Running through its
     selected manager. When coordinate-codex-tasks is active, create and map that execution as
     the Codex task defined by that skill.

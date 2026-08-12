@@ -6277,7 +6277,7 @@ class BundleContentTests(unittest.TestCase):
             skill_text,
         )
         self.assertIn("resource-claim", skill_text)
-        self.assertIn("exact anchored /.worktrees/ entry", skill_text)
+        self.assertIn("exact anchored `/.worktrees/` and `/.agent-ops/resource-claim/` entries", skill_text)
         self.assertIn("Do not store a machine-specific absolute worktree path", skill_text)
         self.assertIn(
             "When resource_coordination selects resource-claim, the .worktrees directory is ignored operational state immediately beneath the primary worktree",
@@ -9516,12 +9516,26 @@ Visible after.
         )
         self.assertIn("mcp-agent-ops", claim_mcp_text)
         self.assertIn(
-            "Do not configure the current mcp-agent-ops provider as the claim helper.",
+            "The current mcp-agent-ops provider exposes the complete Resource Claim Helper tool surface:",
             claim_mcp_text,
         )
-        for missing_tool in ("claim_extend_deadline", "claim_reset"):
-            with self.subTest(missing_tool=missing_tool):
-                self.assertIn(f"`{missing_tool}`", claim_mcp_text)
+        for claim_tool in (
+            "claim_status",
+            "claim_acquire",
+            "claim_extend",
+            "claim_extend_deadline",
+            "claim_heartbeat",
+            "claim_release",
+            "claim_reset",
+            "claim_maintain_journal",
+            "claim_report",
+        ):
+            with self.subTest(claim_tool=claim_tool):
+                self.assertIn(f"`{claim_tool}`", claim_mcp_text)
+        self.assertIn(
+            "Availability in one live runtime does not prove availability in another runtime or configuration.",
+            claim_mcp_text,
+        )
 
         shared_claim_text = (SKILLS_ROOT / "resource-claim" / "SKILL.md").read_text(
             encoding="utf-8"

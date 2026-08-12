@@ -158,7 +158,7 @@ Project setup keeps the canonical checkout root out of repository status with th
 
 After a private contribution is preserved on its branch or integrated into its target, the orchestration owner removes the clean worktree and prunes stale Git worktree metadata.
 
-Every worktree uses the claim registry and claim history resolved from the primary worktree under .codex/agent-claim. The directory name, agent-claims.json registry, agent-claim-events history, and agent_claim_transport project field retain their historical names as explicit compatibility identifiers; the public Resource Claim rename does not migrate or discard persisted claim state. Agent transcripts are not claim history.
+Every worktree uses the claim registry and claim history resolved from the primary worktree under .agent-ops/resource-claim. The directory name, agent-claims.json registry, agent-claim-events history, and agent_claim_transport project field retain their historical names as explicit compatibility identifiers; the public Resource Claim rename does not migrate or discard persisted claim state. Agent transcripts are not claim history.
 
 The command helper is implemented by skills/resource-claim-helper-command/scripts/claim.py:
 
@@ -172,7 +172,7 @@ A Codex user-level installation uses the installed copy:
 python3 "${HOME}/.agents/skills/resource-claim-helper-command/scripts/claim.py" --help
 ```
 
-For coordinated multi-item work, Dev Backlog Coordinator owns queue decisions, directly applies the selected provider manager for Ready -> Starting reservations and Coordinator-owned dispositions, and prepares the complete execution handoff. [Backlog Dispatcher](skills/backlog-dispatcher/SKILL.md) lets the calling task use its own runtime controls to create, resume, message, title, wait on, or archive the approved execution, then return the canonical runtime identity to the Coordinator for reconciliation. When coordinate-codex-tasks is active, that execution maps to one root Codex task. The root Dev Orchestrator independently applies the selected provider manager for Starting -> Running acceptance and its later lifecycle operations. Dev Backlog Steward is optional and limited to provider-wide inventory, normalization, archival audit, and recovery. Dev Backlog Watchdog detects overly old Starting items and reports recovery evidence to the Coordinator. Each agent follows Resource Claim when its work reaches an event in the Claim Events table.
+For coordinated multi-item work, Dev Backlog Coordinator owns queue decisions, directly applies the selected provider manager for Ready -> Starting reservations and Coordinator-owned dispositions, and prepares the complete execution handoff. project-private Backlog Dispatcher lets the calling task use its own runtime controls to create, resume, message, title, wait on, or archive the approved execution, then return the canonical runtime identity to the Coordinator for reconciliation. When coordinate-codex-tasks is active, that execution maps to one root Codex task. The root Dev Orchestrator independently applies the selected provider manager for Starting -> Running acceptance and its later lifecycle operations. Dev Backlog Steward is optional and limited to provider-wide inventory, normalization, archival audit, and recovery. Dev Backlog Watchdog detects overly old Starting items and reports recovery evidence to the Coordinator. Each agent follows Resource Claim when its work reaches an event in the Claim Events table.
 
 An explicit user-authorized work item that names exact skill definition paths supplies the required user direction for those named skills; only additional skill-definition paths require additional approval.
 
@@ -303,9 +303,9 @@ python3 scripts/install-skills.py \
 
 ### Preferred MCP Operations Layer
 
-Codex and Junie can use mcp-agent-ops for aggregated project and shared user reference reads, skill catalog reads, technology detection, skill validation, YAML verification, and Markdown link checks. Project Configurator may select it as the claim helper only after verifying every operation and result field required by [Resource Claim Helper MCP](skills/resource-claim-helper-mcp/SKILL.md) and [Resource Claim Helper](skills/resource-claim-helper/SKILL.md). The current provider omits `claim_extend_deadline` and `claim_reset`, so this repository uses the command-line claim helper.
+Codex and Junie can use mcp-agent-ops for aggregated project and shared user reference reads, skill catalog reads, technology detection, skill validation, YAML verification, and Markdown link checks. Project Configurator may select it as the claim helper only after verifying every operation and result field required by [Resource Claim Helper MCP](skills/resource-claim-helper-mcp/SKILL.md) and [Resource Claim Helper](skills/resource-claim-helper/SKILL.md). The verified mcp-agent-ops 0.12.0 provider exposes all nine schema-version-2 claim operations, so this repository selects the MCP claim helper.
 
-Install and verify mcp-agent-ops before selecting it as the claim helper. Published release 0.4.0 does not support the required claim results and must not be selected for claims. Follow the companion project's [verified release installation procedure](https://github.com/martinbechard/mcp-agent-ops#install-the-latest-release), including checksum and installed-file verification. The bundle installer configures an existing server; it does not install the executable.
+Install and verify mcp-agent-ops before selecting it as the claim helper. Install mcp-agent-ops 0.12.0 or newer for the corrected operational storage and complete claim-helper contract. Follow the companion project's [verified release installation procedure](https://github.com/martinbechard/mcp-agent-ops#install-the-latest-release), including checksum and installed-file verification. The bundle installer configures an existing server; it does not install the executable.
 
 The installer configures Codex at user or trusted-project scope in config.toml. Custom subagents inherit parent MCP configuration when they omit an agent-specific server table, so the generated conceptual agents do not duplicate this connection definition. The following block is the manual equivalent when installer-managed configuration is disabled.
 
@@ -419,7 +419,7 @@ reporting. When the execution runtime is Codex, the complementary
 task creation, resumption, capability checks, identity, titles, follow-up, reconciliation,
 Watchdog operation, and archival. Neither peer owns the other's responsibility.
 It directly applies the effective Persistence-selected manager for its authorized lifecycle
-operations and prepares each actively eligible work item for Dev Orchestrator with the effective Commit-selected skill. When the Coordinator's delegated runtime does not expose canonical task controls, [Backlog Dispatcher](skills/backlog-dispatcher/SKILL.md) keeps queue decisions with the Coordinator while the calling task performs the approved runtime operation and returns the resulting task identity. Incoming Agent messages that require work selection, lifecycle, ownership, overlap, recovery, Watchdog, re-homing, or cleanup decisions go through the Coordinator before the dispatcher acts. File, GitHub, and
+operations and prepares each actively eligible work item for Dev Orchestrator with the effective Commit-selected skill. When the Coordinator's delegated runtime does not expose canonical task controls, project-private Backlog Dispatcher keeps queue decisions with the Coordinator while the calling task performs the approved runtime operation and returns the resulting task identity. Incoming Agent messages that require work selection, lifecycle, ownership, overlap, recovery, Watchdog, re-homing, or cleanup decisions go through the Coordinator before the dispatcher acts. File, GitHub, and
 GitLab retain native provider identities; placeholder providers, provider none, and UNSET
 preserve their defined zero-mutation or non-durable boundaries without fallback.
 
@@ -576,7 +576,6 @@ The development practice skills are:
 - resource-claim-helper-command
 - resource-claim-helper-mcp
 - integrate-agent-work
-- backlog-dispatcher
 - coordinate-work-items
 - coordinate-codex-tasks
 - resolve-backlog-blockage

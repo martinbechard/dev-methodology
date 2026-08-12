@@ -13,9 +13,19 @@ This skill owns MCP tool mapping, protocol-specific result envelopes, connection
 
 ## Current Availability
 
-Do not configure the current mcp-agent-ops provider as the claim helper. Its exposed tool surface omits `claim_extend_deadline` and `claim_reset`, so it cannot realize the complete interface even though it exposes journal maintenance and contention reporting.
+The current mcp-agent-ops provider exposes the complete Resource Claim Helper tool surface:
 
-No MCP implementation of the complete Resource Claim Helper interface is currently available. The tool mappings below define the required provider contract for future verification. They do not prove that the current provider implements it.
+- `claim_status`
+- `claim_acquire`
+- `claim_extend`
+- `claim_extend_deadline`
+- `claim_heartbeat`
+- `claim_release`
+- `claim_reset`
+- `claim_maintain_journal`
+- `claim_report`
+
+Project Configurator may select this provider only after it verifies the tool schemas, schema-version-2 results, and startup availability in the target runtime. Availability in one live runtime does not prove availability in another runtime or configuration.
 
 ## Helper Setup
 

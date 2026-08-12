@@ -739,7 +739,7 @@ def _claim_round_trip() -> None:
         repository = Path(directory) / "repository with spaces"
         repository.mkdir()
         (repository / ".gitignore").write_text(
-            "/.worktrees/\n/.codex/agent-claim/\n", encoding="utf-8"
+            "/.worktrees/\n/.agent-ops/resource-claim/\n", encoding="utf-8"
         )
         (repository / "README.md").write_text("lock smoke\n", encoding="utf-8")
         for command in (

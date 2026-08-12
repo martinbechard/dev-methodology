@@ -55,7 +55,7 @@ class ResourceClaimTests(unittest.TestCase):
         (self.repository / "docs").mkdir()
         (self.repository / "backlog" / "feature-backlog").mkdir(parents=True)
         (self.repository / ".gitignore").write_text(
-            "/.worktrees/\n/.codex/agent-claim/\n",
+            "/.worktrees/\n/.agent-ops/resource-claim/\n",
             encoding="utf-8",
         )
         (self.repository / "README.md").write_text("baseline\n", encoding="utf-8")
@@ -281,7 +281,7 @@ class ResourceClaimTests(unittest.TestCase):
 
     def registry_path(self) -> Path:
         """Return the repository-global live registry path."""
-        return self.repository / ".codex" / "agent-claim" / "agent-claims.json"
+        return self.repository / ".agent-ops" / "resource-claim" / "agent-claims.json"
 
     def write_registry_fixture(self, payload: dict[str, object]) -> None:
         """Write canonical versioned claim state for a stored-schema compatibility case."""
@@ -306,12 +306,14 @@ class ResourceClaimTests(unittest.TestCase):
         )
 
     def legacy_registry_path(self) -> Path:
-        """Return the pre-migration registry path in Git metadata."""
-        return self.common_directory() / "agent-claims.json"
+        """Return the rejected pre-migration registry path."""
+        path = self.repository / ".codex" / "agent-claim" / "agent-claims.json"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        return path
 
     def state_root(self) -> Path:
         """Return the canonical operational claim-state root."""
-        return self.repository / ".codex" / "agent-claim"
+        return self.repository / ".agent-ops" / "resource-claim"
 
     def rewrite_claim_paths_as_legacy(
         self,
@@ -431,7 +433,7 @@ class ResourceClaimTests(unittest.TestCase):
         rejected = self.claim(
             *self.acquire_arguments("operational"),
             "--file",
-            ".codex/agent-claim/agent-claims.json",
+            ".agent-ops/resource-claim/agent-claims.json",
         )
 
         self.assertEqual(0, created.returncode, created.stderr)
@@ -440,7 +442,7 @@ class ResourceClaimTests(unittest.TestCase):
             [claim["claim_id"] for claim in json.loads(self.registry_path().read_text(encoding="utf-8"))["claims"]],
         )
         self.assertFalse(self.legacy_registry_path().exists())
-        self.assertFalse((self.common_directory() / "agent-claim-events").exists())
+        self.assertFalse((self.legacy_registry_path().parent / "agent-claim-events").exists())
         self.assertEqual(1, rejected.returncode)
         self.assertEqual("INVALID_SCOPE", self.output(rejected)["outcome"])
         self.assertEqual(
@@ -452,7 +454,7 @@ class ResourceClaimTests(unittest.TestCase):
         """An empty legacy registry migrates history and blocks old helper path types."""
         legacy_registry = self.legacy_registry_path()
         legacy_registry.write_text('{"claims":[]}\n', encoding="utf-8")
-        legacy_hot = self.common_directory() / "agent-claim-events" / "hot"
+        legacy_hot = self.legacy_registry_path().parent / "agent-claim-events" / "hot"
         legacy_hot.mkdir(parents=True)
         legacy_event = self.synthetic_event(
             "legacy-event",
@@ -472,7 +474,7 @@ class ResourceClaimTests(unittest.TestCase):
         self.assertEqual(str(self.registry_path().resolve()), self.output(status)["registry"])
         self.assertTrue(legacy_registry.is_dir())
         self.assertTrue((legacy_registry / "state.json").is_file())
-        legacy_events = self.common_directory() / "agent-claim-events"
+        legacy_events = self.legacy_registry_path().parent / "agent-claim-events"
         self.assertTrue(legacy_events.is_file())
         self.assertEqual(
             legacy_event,
@@ -529,7 +531,7 @@ class ResourceClaimTests(unittest.TestCase):
         """Windows retires empty legacy state in place before event migration."""
         module = self.load_claim_module("windows_tombstone")
         legacy_registry = self.legacy_registry_path()
-        legacy_events = self.common_directory() / "agent-claim-events"
+        legacy_events = self.legacy_registry_path().parent / "agent-claim-events"
         legacy_registry.write_text('{"claims":[]}\n', encoding="utf-8")
         (legacy_events / "hot").mkdir(parents=True)
         original_inode = legacy_registry.stat().st_ino
@@ -614,7 +616,7 @@ class ResourceClaimTests(unittest.TestCase):
         """An interruption after tombstoning resumes without changing the retired inode."""
         module = self.load_claim_module("windows_tombstone_recovery")
         legacy_registry = self.legacy_registry_path()
-        legacy_events = self.common_directory() / "agent-claim-events"
+        legacy_events = self.legacy_registry_path().parent / "agent-claim-events"
         legacy_registry.write_text('{"claims":[]}\n', encoding="utf-8")
         (legacy_events / "hot").mkdir(parents=True)
         original_inode = legacy_registry.stat().st_ino
@@ -786,7 +788,7 @@ class ResourceClaimTests(unittest.TestCase):
         self.legacy_registry_path().write_bytes(
             module._legacy_marker_payload("registry")
         )
-        (self.common_directory() / "agent-claim-events").write_bytes(
+        (self.legacy_registry_path().parent / "agent-claim-events").write_bytes(
             module._legacy_marker_payload("events")
         )
 
@@ -1085,7 +1087,7 @@ class ResourceClaimTests(unittest.TestCase):
     def test_report_reads_legacy_history_before_first_mutation(self) -> None:
         """Read-only reporting preserves visible history until an empty legacy state migrates."""
         self.legacy_registry_path().write_text('{"claims":[]}\n', encoding="utf-8")
-        legacy_hot = self.common_directory() / "agent-claim-events" / "hot"
+        legacy_hot = self.legacy_registry_path().parent / "agent-claim-events" / "hot"
         legacy_hot.mkdir(parents=True)
         event = self.synthetic_event(
             "legacy-visible",
@@ -1140,7 +1142,7 @@ class ResourceClaimTests(unittest.TestCase):
     def test_interrupted_empty_legacy_migration_recovers_deterministically(self) -> None:
         """A migration stopped after moving history resumes from its versioned marker."""
         self.legacy_registry_path().write_text('{"claims":[]}\n', encoding="utf-8")
-        legacy_hot = self.common_directory() / "agent-claim-events" / "hot"
+        legacy_hot = self.legacy_registry_path().parent / "agent-claim-events" / "hot"
         legacy_hot.mkdir(parents=True)
         (legacy_hot / "2026-08-05.jsonl").write_text("", encoding="utf-8")
 
@@ -1154,7 +1156,7 @@ class ResourceClaimTests(unittest.TestCase):
         self.assertEqual("migration_interrupted", self.output(interrupted)["reason"])
         self.assertEqual(0, recovered.returncode, recovered.stderr)
         self.assertTrue(self.legacy_registry_path().is_dir())
-        self.assertTrue((self.common_directory() / "agent-claim-events").is_file())
+        self.assertTrue((self.legacy_registry_path().parent / "agent-claim-events").is_file())
         marker = json.loads((self.state_root() / "state.json").read_text(encoding="utf-8"))
         self.assertEqual("complete", marker["migration_status"])
 
@@ -2485,7 +2487,7 @@ class ResourceClaimTests(unittest.TestCase):
         self.assertEqual(1, completed.returncode)
         result = self.output(completed)
         self.assertEqual("WORKTREE_ROOT_NOT_IGNORED", result["outcome"])
-        self.assertEqual("/.worktrees/", result["required_ignore_pattern"])
+        self.assertEqual("/.agent-ops/resource-claim/", result["required_ignore_pattern"])
         self.assertFalse((self.repository / ".worktrees").exists())
 
     def test_claim_id_cannot_create_a_recursive_worktree_path(self) -> None:

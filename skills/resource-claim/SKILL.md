@@ -77,7 +77,7 @@ Acquire a claim only for an event in this table. Acquire it immediately before s
 
 In each example, &lt;project-root&gt; represents the primary worktree's absolute project-root path.
 
-Store shared claim state under &lt;project-root&gt;/.codex/agent-claim. The directory name, registry name agent-claims.json, and history name agent-claim-events are stable compatibility identifiers retained from the former public skill name. Renaming the Resource Claim skill never renames, resets, replaces, or discards those persisted records.
+Store shared claim state under &lt;project-root&gt;/.agent-ops/resource-claim. The registry name agent-claims.json and history name agent-claim-events remain compatibility identifiers. The helper migrates only an empty rejected .codex/agent-claim registry while preserving its audit history; live or contradictory legacy state stops without mutation.
 
 Resolve this directory from the primary worktree so every linked worktree uses the same registry and history.
 
@@ -85,9 +85,9 @@ Apply the exclusive OS lock directly to agent-claims.json. Read and update the r
 
 Store claim history in an agent-claim-events directory beside the registry. For example:
 
-- &lt;project-root&gt;/.codex/agent-claim/agent-claim-events/hot/2026-07-26.jsonl stores events from July 26 UTC.
-- &lt;project-root&gt;/.codex/agent-claim/agent-claim-events/archive/2026/07/2026-07-24.jsonl.gz stores compressed events from July 24 UTC.
-- &lt;project-root&gt;/.codex/agent-claim/agent-claim-events/journal/2026/07/2026-07-24.json stores a summary for July 24 UTC.
+- &lt;project-root&gt;/.agent-ops/resource-claim/agent-claim-events/hot/2026-07-26.jsonl stores events from July 26 UTC.
+- &lt;project-root&gt;/.agent-ops/resource-claim/agent-claim-events/archive/2026/07/2026-07-24.jsonl.gz stores compressed events from July 24 UTC.
+- &lt;project-root&gt;/.agent-ops/resource-claim/agent-claim-events/journal/2026/07/2026-07-24.json stores a summary for July 24 UTC.
 
 Store claim identifiers, scopes, outcomes, conflicts, and related commit identifiers in claim history.
 

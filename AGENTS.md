@@ -18,168 +18,168 @@ Exact resource-id overrides:
 
 ## Resource Claim Helper
 
-Project Configurator selected and verified the command claim helper. Apply resource-claim for policy and use the inlined resource-claim-helper-command Provider Skill to realize resource-claim-helper.
+Project Configurator selected and verified the mcp claim helper. Apply resource-claim for policy and use the inlined resource-claim-helper-mcp Provider Skill to realize resource-claim-helper.
 
 Use only this configured claim helper. If it cannot start, ask Project Configurator to configure a working helper.
 
------ BEGIN INLINED CLAIM HELPER SKILL: resource-claim-helper-command -----
-# Resource Claim Helper Command
+----- BEGIN INLINED CLAIM HELPER SKILL: resource-claim-helper-mcp -----
+# Resource Claim Helper MCP
 
-This Provider Skill realizes Resource Claim Helper through one local command-line program. Apply resource-claim for policy and resource-claim-helper for the common operation, input, result, and uncertain-outcome contract.
+This Provider Skill realizes Resource Claim Helper through MCP tool calls. Apply resource-claim for policy and resource-claim-helper for the common operation, input, result, and uncertain-outcome contract.
 
-This skill owns command discovery, argument mapping, process results, and command-specific reconciliation. It does not define claim policy or the shared helper contract.
+This skill owns MCP tool mapping, protocol-specific result envelopes, connection recovery, and the provider availability boundary. It does not define claim policy or the shared helper contract.
+
+## Current Availability
+
+The current mcp-agent-ops provider exposes the complete Resource Claim Helper tool surface:
+
+- `claim_status`
+- `claim_acquire`
+- `claim_extend`
+- `claim_extend_deadline`
+- `claim_heartbeat`
+- `claim_release`
+- `claim_reset`
+- `claim_maintain_journal`
+- `claim_report`
+
+Project Configurator may select this provider only after it verifies the tool schemas, schema-version-2 results, and startup availability in the target runtime. Availability in one live runtime does not prove availability in another runtime or configuration.
 
 ## Helper Setup
 
-Find the configured script before the first claim operation. Use that script for every claim operation in the task.
+Project Configurator must verify every operation, input, result field, and availability requirement before selecting an MCP server. After selection, use only that server for claim operations.
 
-Use the script path in project guidance when it is present. Otherwise, use scripts/claim.py beside this SKILL.md.
+If a required tool is missing or the server cannot start, ask Project Configurator to configure a working claim helper.
 
-In the dev-methodology source checkout:
+## MCP Results
 
-```bash
-CLAIM_SCRIPT=skills/resource-claim-helper-command/scripts/claim.py
-```
+Each completed tool call returns exit_code and result. Read result.outcome before deciding what to do. A nonzero exit_code can still contain a valid claim outcome.
 
-In a Codex user-level installation:
-
-```bash
-CLAIM_SCRIPT="${HOME}/.agents/skills/resource-claim-helper-command/scripts/claim.py"
-```
-
-If the script or Python cannot start, ask Project Configurator to configure a working claim helper.
-
-## Command Invocation
-
-Invoke the script with Python, an absolute project root, and one operation:
-
-```bash
-python3 "$CLAIM_SCRIPT" --repo /absolute/path/to/project OPERATION [ARGUMENTS]
-```
-
-Supported operations are status, acquire, extend, extend-deadline, heartbeat, release, reset, maintain-journal, and report.
-
-Except for a successful `report --format text`, each completed command writes one JSON document to standard output. Read `outcome` from that document. Several results share a process exit code, so do not decide from the exit code alone.
-
-`report --format text` is an explicit human-readable exception. It writes prose without `schema_version` or `outcome` and is not valid for automated result handling or provider-parity verification. Omit `--format` or use `--format json` when the structured Resource Claim Helper contract is required.
+Pass the absolute project root in repository for every tool call.
 
 ## Read Claim Status
 
-Map Read Claim Status to status:
+Map Read Claim Status to claim_status:
 
-```bash
-python3 "$CLAIM_SCRIPT" --repo . status
+```json
+{"repository": "/workspace/project"}
 ```
 
 ## Acquire Claim
 
-Map the common acquire inputs to long options. Use one scope shape selected through resource-claim.
+Map Acquire Claim to claim_acquire with repository, claim_id, agent, task, root_task_id, and one common scope shape.
 
 Work-item acquisition:
 
-```bash
-python3 "$CLAIM_SCRIPT" --repo . acquire \
-  --claim-id work-item-123-work \
-  --agent implementation-agent \
-  --task work-item-123 \
-  --root-task-id work-item-123 \
-  --work-item-id provider-opaque-id-123 \
-  --activity work
+```json
+{
+  "repository": "/workspace/project",
+  "claim_id": "work-item-123-work",
+  "agent": "implementation-agent",
+  "task": "work-item-123",
+  "root_task_id": "work-item-123",
+  "work_item_id": "provider-opaque-id-123",
+  "activity": "work"
+}
 ```
 
 Project-files acquisition:
 
-```bash
-python3 "$CLAIM_SCRIPT" --repo . acquire \
-  --claim-id task-123 \
-  --agent implementation-agent \
-  --task task-123 \
-  --root-task-id task-123 \
-  --project-files \
-  --scope-reason "project implementation"
+```json
+{
+  "repository": "/workspace/project",
+  "claim_id": "task-123",
+  "agent": "implementation-agent",
+  "task": "task-123",
+  "root_task_id": "task-123",
+  "project_files": true,
+  "scope_reason": "project implementation"
+}
 ```
 
-A file scope uses one `--file` option for each file and a tree scope uses one `--tree` option for each tree. Broad path domains use `--project-files`, `--backlog`, or `--all-files` plus `--scope-reason`. A resource scope uses `--resource` plus `--resource-class`, `--resource-id`, `--expected-duration-seconds`, and `--requested-hard-stop-duration-seconds`. Map `parent_claim_id` to `--parent-claim-id`. Isolated-checkout creation maps `branch`, `base`, and `worktree_path` to `--branch`, `--base`, and `--worktree-path`.
+A file scope uses `files` and a tree scope uses `trees`. Broad path domains use `project_files`, `backlog`, or `all_files` plus `scope_reason`. A resource scope uses one `resources` value plus `resource_class`, `resource_id`, `expected_duration_seconds`, and `requested_hard_stop_duration_seconds`. Preserve `parent_claim_id`. Isolated-checkout creation uses `branch`, `base`, and `worktree_path`.
 
 ## Extend Claim
 
-Map Extend Claim to extend with `--claim-id` and only the net-new path-domain or resource scope. Use the same path-domain and resource options as Acquire Claim, excluding work-item and isolated-checkout inputs.
+Map Extend Claim to claim_extend with `repository`, `claim_id`, and only the net-new path-domain or resource scope. Use the same path-domain and resource fields as Acquire Claim, excluding work-item and isolated-checkout inputs.
 
-```bash
-python3 "$CLAIM_SCRIPT" --repo . extend \
-  --claim-id task-123 \
-  --resource port:3000 \
-  --resource-class database-port \
-  --resource-id port:3000 \
-  --expected-duration-seconds 600 \
-  --requested-hard-stop-duration-seconds 1200
+```json
+{
+  "repository": "/workspace/project",
+  "claim_id": "task-123",
+  "resources": ["port:3000"],
+  "resource_class": "database-port",
+  "resource_id": "port:3000",
+  "expected_duration_seconds": 600,
+  "requested_hard_stop_duration_seconds": 1200
+}
 ```
 
 ## Extend Claim Deadline
 
-Map Extend Claim Deadline to extend-deadline:
+Map Extend Claim Deadline to claim_extend_deadline:
 
-```bash
-python3 "$CLAIM_SCRIPT" --repo . extend-deadline \
-  --claim-id browser-check-123 \
-  --requested-hard-stop-duration-seconds 2400 \
-  --extension-evidence "one final accessibility case remains"
+```json
+{
+  "repository": "/workspace/project",
+  "claim_id": "browser-check-123",
+  "requested_hard_stop_duration_seconds": 2400,
+  "extension_evidence": "one final accessibility case remains"
+}
 ```
 
 ## Heartbeat Claim
 
-Map Heartbeat Claim to heartbeat:
+Map Heartbeat Claim to claim_heartbeat:
 
-```bash
-python3 "$CLAIM_SCRIPT" --repo . heartbeat --claim-id task-123
+```json
+{"repository": "/workspace/project", "claim_id": "task-123"}
 ```
 
 ## Release Claim
 
-Map Release Claim to release. Supply disposition and blocker-reference only when the common interface and resource-claim require them.
+Map Release Claim to claim_release. Supply disposition and blocker_reference only when the common interface and resource-claim require them.
 
-```bash
-python3 "$CLAIM_SCRIPT" --repo . release \
-  --claim-id work-item-123-work \
-  --disposition handoff
-```
+A successful release returns canonical outcome `RELEASED`.
 
-Non-work-item release keeps the disposition-free form:
-
-```bash
-python3 "$CLAIM_SCRIPT" --repo . release --claim-id task-123
+```json
+{
+  "repository": "/workspace/project",
+  "claim_id": "work-item-123-work",
+  "disposition": "handoff"
+}
 ```
 
 ## Reset Claim Registry
 
-Map Reset Claim Registry to reset:
+Map Reset Claim Registry to claim_reset:
 
-```bash
-python3 "$CLAIM_SCRIPT" --repo . reset
+```json
+{"repository": "/workspace/project"}
 ```
 
 ## Maintain Claim Journal
 
-Map Maintain Claim Journal to maintain-journal. hot-days is optional.
+Map Maintain Claim Journal to claim_maintain_journal. hot_days defaults to 2.
 
-```bash
-python3 "$CLAIM_SCRIPT" --repo . maintain-journal --hot-days 2
+```json
+{"repository": "/workspace/project", "hot_days": 2}
 ```
 
 ## Report Claim Contention
 
-Map Report Claim Contention to report. `since` and `format` are optional command arguments. JSON mode returns canonical outcome `REPORT` with `window`, `event_count`, `metrics`, `work_items`, and `coverage_gaps`.
+Map Report Claim Contention to claim_report. `since` defaults to `2d`. A successful call returns canonical outcome `REPORT` with `window`, `event_count`, `metrics`, `work_items`, and `coverage_gaps`.
 
-```bash
-python3 "$CLAIM_SCRIPT" --repo . report --since 2d --format json
+```json
+{"repository": "/workspace/project", "since": "2d"}
 ```
 
-## Reconcile an Uncertain Command
+## Reconcile an Uncertain Tool Call
 
-If the process stops after it sends a mutating command, the outcome is uncertain. Do not repeat the command. Run Read Claim Status through this same script and reconcile the reported claim state.
+If the MCP connection fails after sending a mutating tool call, the outcome is uncertain. Do not repeat the call. Reconnect to the same server, call claim_status for the same repository, and reconcile the reported claim state.
 
-If the script cannot return status, ask Project Configurator for help. Do not use another helper to guess what happened.
------ END INLINED CLAIM HELPER SKILL: resource-claim-helper-command -----
+If the server cannot return status, ask Project Configurator for help. Do not use another helper to guess what happened.
+----- END INLINED CLAIM HELPER SKILL: resource-claim-helper-mcp -----
 
 ## Work-Item Workflow Skill References
 
@@ -293,3 +293,4 @@ For an unsupported maintained-document format, use a project-authorized sidecar 
 These references apply through the root AGENTS.md only. Load each selected skill completely in the declared order when starting project work. Skill definitions remain in their bundled or registered catalogs and are not copied here.
 
 - dev-methodology-repository-maintenance
+- backlog-dispatcher

@@ -45,7 +45,7 @@ LIVE_MCP_CLAIM_TOOLS = frozenset({
     "claim_maintain_journal",
     "claim_report",
 })
-REQUIRED_FUTURE_MCP_CLAIM_TOOLS = LIVE_MCP_CLAIM_TOOLS | {
+REQUIRED_MCP_CLAIM_TOOLS = LIVE_MCP_CLAIM_TOOLS | {
     "claim_extend_deadline",
     "claim_reset",
 }
@@ -197,7 +197,7 @@ class _SimulatedMcpHelper:
         self,
         *,
         available: bool = True,
-        tools: frozenset[str] = REQUIRED_FUTURE_MCP_CLAIM_TOOLS,
+        tools: frozenset[str] = REQUIRED_MCP_CLAIM_TOOLS,
         result_schema_version: int = 2,
         acquire_result: dict[str, object] | None = None,
         ambiguous_acquire: bool = False,
@@ -224,7 +224,7 @@ class _SimulatedMcpHelper:
 
         if not self.available:
             raise RuntimeError("CLAIM_HELPER_UNAVAILABLE")
-        if self.tools != REQUIRED_FUTURE_MCP_CLAIM_TOOLS:
+        if self.tools != REQUIRED_MCP_CLAIM_TOOLS:
             raise RuntimeError("CLAIM_HELPER_INCOMPLETE")
         if self.result_schema_version != 2:
             raise RuntimeError("CLAIM_HELPER_SCHEMA_UNSUPPORTED")
@@ -653,7 +653,7 @@ class ResourceClaimHelperTests(unittest.TestCase):
             self.assertEqual("RESET", reset["outcome"])
             self.assertEqual([], status["claims"])
             journals = list(
-                (repository / ".codex" / "agent-claim" / "agent-claim-events").rglob("*.jsonl")
+                (repository / ".agent-ops" / "resource-claim" / "agent-claim-events").rglob("*.jsonl")
             )
             history = "".join(path.read_text(encoding="utf-8") for path in journals)
             self.assertIn('"action":"acquire"', history)
@@ -996,7 +996,7 @@ class ResourceClaimHelperTests(unittest.TestCase):
                 encoding="utf-8",
             )
             (repository / ".gitignore").write_text(
-                "/.worktrees/\n/.codex/agent-claim/\n",
+                "/.worktrees/\n/.agent-ops/resource-claim/\n",
                 encoding="utf-8",
             )
             (repository / "README.md").write_text("baseline\n", encoding="utf-8")
@@ -1092,8 +1092,8 @@ class ResourceClaimHelperTests(unittest.TestCase):
             event_path = next(
                 (
                     repository
-                    / ".codex"
-                    / "agent-claim"
+                    / ".agent-ops"
+                    / "resource-claim"
                     / "agent-claim-events"
                     / "hot"
                 ).glob("*.jsonl")
@@ -1406,9 +1406,17 @@ class ResourceClaimHelperTests(unittest.TestCase):
         self.assertIn("claim_reset", mcp)
         for mcp_field in ("trees", "backlog", "all_files", "branch"):
             self.assertIn(f"`{mcp_field}`", mcp)
+        current_availability = _markdown_section(mcp, "Current Availability")
         self.assertIn(
-            "No MCP implementation of the complete Resource Claim Helper interface is currently available.",
-            _markdown_section(mcp, "Current Availability"),
+            "The current mcp-agent-ops provider exposes the complete Resource Claim Helper tool surface:",
+            current_availability,
+        )
+        for tool in REQUIRED_MCP_CLAIM_TOOLS:
+            with self.subTest(tool=tool):
+                self.assertIn(f"`{tool}`", current_availability)
+        self.assertIn(
+            "Availability in one live runtime does not prove availability in another runtime or configuration.",
+            current_availability,
         )
 
     def test_command_work_item_contract_fixtures_match_actual_helper_results(self) -> None:
@@ -1452,7 +1460,7 @@ class ResourceClaimHelperTests(unittest.TestCase):
                 capture_output=True,
             )
             registry_path = (
-                repository / ".codex" / "agent-claim" / "agent-claims.json"
+                repository / ".agent-ops" / "resource-claim" / "agent-claims.json"
             )
 
             def run_claim(*arguments: str) -> tuple[int, dict[str, object]]:
@@ -1661,7 +1669,7 @@ class ResourceClaimHelperTests(unittest.TestCase):
         """Reject an incomplete tool surface or legacy result schema during setup."""
 
         incomplete = _SimulatedMcpHelper(
-            tools=REQUIRED_FUTURE_MCP_CLAIM_TOOLS - {"claim_release"},
+            tools=REQUIRED_MCP_CLAIM_TOOLS - {"claim_release"},
         )
         legacy = _SimulatedMcpHelper(result_schema_version=1)
         with self.assertRaisesRegex(RuntimeError, "CLAIM_HELPER_INCOMPLETE"):
@@ -1730,20 +1738,20 @@ class ResourceClaimHelperTests(unittest.TestCase):
         self.assertEqual("0.5.1", contract["minimumVersion"])
         enabled_tools = set(contract["enabledTools"])
         self.assertTrue(
-            REQUIRED_FUTURE_MCP_CLAIM_TOOLS
+            REQUIRED_MCP_CLAIM_TOOLS
             <= eval_validation._MCP_AGENT_OPS_TOOL_NAMES
         )
         self.assertTrue(
-            REQUIRED_FUTURE_MCP_CLAIM_TOOLS
+            REQUIRED_MCP_CLAIM_TOOLS
             <= eval_validation._MCP_AGENT_OPS_CLAIM_TOOL_NAMES
         )
         self.assertTrue(LIVE_MCP_CLAIM_TOOLS <= enabled_tools)
         self.assertNotIn("claim_extend_deadline", enabled_tools)
         self.assertNotIn("claim_reset", enabled_tools)
-        self.assertFalse(REQUIRED_FUTURE_MCP_CLAIM_TOOLS <= enabled_tools)
+        self.assertFalse(REQUIRED_MCP_CLAIM_TOOLS <= enabled_tools)
         self.assertEqual(
             {"claim_extend_deadline", "claim_reset"},
-            REQUIRED_FUTURE_MCP_CLAIM_TOOLS - enabled_tools,
+            REQUIRED_MCP_CLAIM_TOOLS - enabled_tools,
         )
         self.assertEqual("UNRESOLVED_EXTERNAL_PROVIDER", MCP_DEADLINE_PARITY)
         self.assertEqual(
