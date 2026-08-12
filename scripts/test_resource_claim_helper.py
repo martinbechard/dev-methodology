@@ -774,6 +774,8 @@ class ResourceClaimHelperTests(unittest.TestCase):
         missing.pop("resource_coordination")
         unsupported = project_with_helper("mcp")
         unsupported["resource_coordination"] = {"selected": "claims-broker"}
+        retired = project_with_helper("mcp")
+        retired["resource_coordination"] = {"selected": "agent-claim"}
 
         with self.assertRaisesRegex(
             ValueError,
@@ -785,6 +787,11 @@ class ResourceClaimHelperTests(unittest.TestCase):
             "resource_coordination.selected must be none or resource-claim",
         ):
             renderer.render(unsupported)
+        with self.assertRaisesRegex(
+            ValueError,
+            "resource_coordination.selected must be none or resource-claim",
+        ):
+            renderer.render(retired)
 
     def test_none_renders_no_coordination_or_claim_helper_guidance(self) -> None:
         """Omit implementation, procedure, invocation interface, and evidence when coordination is disabled."""
