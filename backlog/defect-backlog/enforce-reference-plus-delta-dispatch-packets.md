@@ -26,12 +26,15 @@ On 2026-08-12, the user required this correction before any further recovery dis
 - Prohibit repeating provider requirements, scope, acceptance criteria, or verification expectations.
 - Prohibit restating lifecycle, claim, review, verification, delivery, cleanup, or recovery procedures owned by selected skills.
 - Require launch as one Dev Orchestrator subagent, not a generic task or a prompt that reconstructs root awareness.
+- Never send a coordination, stop, resume, cleanup, or lifecycle-control message to a task outside the current project or working-directory coordination context merely because one of its subagents owns a claim or modified files in the current repository.
+- Do not use a cross-project parent task as a relay when the exact owning subagent is not directly addressable. Treat the ownership as unaddressable or stranded, preserve bytes and evidence, perform no cross-project runtime mutation, and return the limitation to the Dev Backlog Coordinator for an explicitly authorized recovery decision.
 - Add only focused tests that directly enforce this packet boundary.
 
 ## Acceptance Criteria
 
 - Focused tests accept a minimal provider-reference-plus-delta packet.
 - Focused tests reject copied work-item content, copied selected-skill procedures, generic-task launch wording, and stable facts omitted from the provider record.
+- Focused tests reject cross-project task control and cross-project parent relay when the exact owning subagent is not directly addressable, while requiring preserved bytes and a Coordinator recovery handoff.
 - Fresh independent skill review and verification accept the concise source and tests.
 
 ## Dependencies
@@ -108,3 +111,4 @@ Approved at creation by the user's explicit 2026-08-12 instruction to incorporat
 
 - The completed `prefer-durable-recovery-evidence-over-codex-task-identity` task remains terminal and must not be resumed or reopened.
 - Do not combine this immediate private-skill correction with `document-external-terminal-cleanup`.
+- The user added the cross-project runtime-safety requirement during Running execution on 2026-08-12 after a live crisis exposed stranded ownership through an unaddressable subagent.
