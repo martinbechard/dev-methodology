@@ -1,6 +1,6 @@
 # Enforce Reference-Plus-Delta Dispatch Packets
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -88,6 +88,19 @@ Approved at creation by the user's explicit 2026-08-12 instruction to incorporat
 - Launch State: Authorized under serialized crisis recovery; successful creation does not imply Running.
 - Claim State: Suspended for the crisis epoch; this execution performs no claim operation.
 - Next Reconciliation: Reconcile the exact create result immediately; the root execution records Starting -> Running before mutation.
+
+## Running Acceptance Evidence
+
+- Accepted At: 2026-08-12T23:28:20Z.
+- Canonical Execution: `/root/enforce_reference_plus_delta`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Root Owner: Dev Orchestrator.
+- Branch: `main`.
+- Worktree: `/Users/martinbechard/dev/dev-methodology`.
+- Accepted Baseline: `868dbe34a947efa88cb0ad11c7fd07ac8432f0a6`.
+- Accepted Execution: The sole authorized crisis execution accepted the complete provider record and dispatch-time delta on host `local`.
+- Phase: Implementation planning.
+- Claim State: Suspended; no claim operation is permitted or performed.
 
 ## Notes
 
