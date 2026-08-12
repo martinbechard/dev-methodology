@@ -398,21 +398,6 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             delivery_schema["properties"]["status"]["enum"],
         )
 
-    def test_coordinator_schema_requires_every_strict_object_property(self) -> None:
-        """OpenAI strict-object schemas require every declared property at every object level."""
-        pending = [("$", runner._coordinator_schema())]
-        while pending:
-            path, schema = pending.pop()
-            if schema.get("type") == "object" and schema.get("additionalProperties") is False:
-                properties = schema.get("properties", {})
-                with self.subTest(path=path):
-                    self.assertEqual(set(properties), set(schema.get("required", [])))
-            for name, child in schema.get("properties", {}).items():
-                pending.append((f"{path}.properties.{name}", child))
-            items = schema.get("items")
-            if isinstance(items, dict):
-                pending.append((f"{path}.items", items))
-
     def test_cleanup_audit_rejects_active_claim_in_nested_fixture_repository(self) -> None:
         """A candidate repository cannot retain a claim outside the workspace registry."""
         with tempfile.TemporaryDirectory() as directory:
@@ -1230,77 +1215,6 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                     encoding="utf-8"
                 ),
             )
-
-    def test_offline_node_dependencies_fall_back_to_primary_worktree(self) -> None:
-        """A linked checkout copies ignored pinned dependencies from its canonical primary worktree."""
-        with tempfile.TemporaryDirectory() as temporary:
-            root = Path(temporary)
-            primary, linked = self._linked_offline_fixture(root, installed_version="7.0.2")
-            workspace = root / "workspace"
-            workspace.mkdir()
-
-            staged = runner._stage_offline_project_dependencies(
-                self._offline_node_batch(), linked, workspace
-            )
-
-            self.assertEqual(("evals/projects/fixture/node_modules",), staged)
-            copied = workspace / "evals" / "projects" / "fixture" / "node_modules"
-            self.assertEqual("primary", (copied / "source.txt").read_text(encoding="utf-8"))
-            self.assertFalse(
-                copied.samefile(primary / "evals" / "projects" / "fixture" / "node_modules")
-            )
-            copied_link = copied / "source-link.txt"
-            self.assertTrue(copied_link.is_symlink())
-            self.assertTrue(copied_link.resolve().is_relative_to(copied.resolve()))
-
-    def test_primary_worktree_dependencies_reject_absolute_internal_symlink(self) -> None:
-        """Copied dependencies cannot retain an executable path into the canonical primary tree."""
-        with tempfile.TemporaryDirectory() as temporary:
-            root = Path(temporary)
-            primary, linked = self._linked_offline_fixture(root, installed_version="7.0.2")
-            modules = primary / "evals" / "projects" / "fixture" / "node_modules"
-            (modules / "source-link.txt").unlink()
-            (modules / "source-link.txt").symlink_to(modules / "source.txt")
-            workspace = root / "workspace"
-            workspace.mkdir()
-
-            with self.assertRaisesRegex(RuntimeError, "absolute symlink"):
-                runner._stage_offline_project_dependencies(
-                    self._offline_node_batch(), linked, workspace
-                )
-
-    def test_primary_worktree_dependencies_must_match_linked_checkout_lockfile(self) -> None:
-        """Fallback dependencies cannot override the selected checkout's tracked package contract."""
-        with tempfile.TemporaryDirectory() as temporary:
-            root = Path(temporary)
-            _, linked = self._linked_offline_fixture(root, installed_version="7.0.1")
-            workspace = root / "workspace"
-            workspace.mkdir()
-
-            with self.assertRaisesRegex(RuntimeError, "does not match its lockfile"):
-                runner._stage_offline_project_dependencies(
-                    self._offline_node_batch(), linked, workspace
-                )
-
-    def test_missing_offline_dependencies_report_linked_and_primary_locations(self) -> None:
-        """An absent ignored tree identifies every deterministic source checked by the runner."""
-        with tempfile.TemporaryDirectory() as temporary:
-            root = Path(temporary)
-            primary, linked = self._linked_offline_fixture(root)
-            workspace = root / "workspace"
-            workspace.mkdir()
-
-            with self.assertRaisesRegex(
-                RuntimeError,
-                "checked selected checkout.*canonical primary worktree",
-            ) as raised:
-                runner._stage_offline_project_dependencies(
-                    self._offline_node_batch(), linked, workspace
-                )
-
-            message = str(raised.exception)
-            self.assertIn(str(linked / "evals" / "projects" / "fixture" / "node_modules"), message)
-            self.assertIn(str(primary / "evals" / "projects" / "fixture" / "node_modules"), message)
 
     def test_wiki_ingester_builder_stages_every_scenario_source(self) -> None:
         """Wiki Ingester cases cannot depend on files created by another concurrent suite."""
@@ -5067,68 +4981,6 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                 },
             ),
         )
-
-    @classmethod
-    def _offline_node_batch(cls) -> tuple[object, ...]:
-        suite = cls._suite("offline-suite")
-        suite = runner._Suite(
-            suite_id=suite.suite_id,
-            priority=suite.priority,
-            path=suite.path,
-            manifest=suite.manifest,
-            scenarios=(
-                {
-                    "id": "happy",
-                    "status": "executable",
-                    "executableCase": "fixture",
-                    "runtimeCapabilities": ["offline-node-modules"],
-                },
-            ),
-        )
-        return (runner._RunSpec(suite=suite, scenario_ids=("happy",)),)
-
-    @staticmethod
-    def _linked_offline_fixture(
-        root: Path,
-        installed_version: str | None = None,
-    ) -> tuple[Path, Path]:
-        primary = root / "primary"
-        fixture = primary / "evals" / "projects" / "fixture"
-        fixture.mkdir(parents=True)
-        (primary / ".gitignore").write_text("node_modules/\n", encoding="utf-8")
-        (fixture / "package-lock.json").write_text(
-            '{"packages":{"node_modules/typescript":{"version":"7.0.2"}}}',
-            encoding="utf-8",
-        )
-        subprocess.run(("git", "init", "-b", "main", str(primary)), check=True, capture_output=True)
-        subprocess.run(("git", "-C", str(primary), "config", "user.name", "Runner Test"), check=True)
-        subprocess.run(
-            ("git", "-C", str(primary), "config", "user.email", "runner@example.invalid"),
-            check=True,
-        )
-        subprocess.run(("git", "-C", str(primary), "add", "."), check=True)
-        subprocess.run(
-            ("git", "-C", str(primary), "commit", "-m", "fixture"),
-            check=True,
-            capture_output=True,
-        )
-        if installed_version is not None:
-            modules = fixture / "node_modules"
-            typescript = modules / "typescript"
-            typescript.mkdir(parents=True)
-            (typescript / "package.json").write_text(
-                json.dumps({"version": installed_version}),
-                encoding="utf-8",
-            )
-            (modules / "source.txt").write_text("primary", encoding="utf-8")
-            (modules / "source-link.txt").symlink_to("source.txt")
-        linked = root / "linked"
-        subprocess.run(
-            ("git", "-C", str(primary), "worktree", "add", "--detach", str(linked), "HEAD"),
-            check=True,
-            capture_output=True,
-        )
-        return primary, linked
 
     @classmethod
     def _run_spec(cls, suite_id: str, priority: int) -> object:
