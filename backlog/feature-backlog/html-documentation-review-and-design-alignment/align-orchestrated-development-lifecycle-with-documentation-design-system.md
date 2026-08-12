@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -227,3 +227,22 @@ Remaining Risk: The candidate has not passed the required terminal verifier gate
 - Lifecycle: Blocked -> Ready; Owner Unowned. The runtime blocker is resolved by the authorized one-time identity migration route, not by claiming the old task recovered.
 - Next Action: Synchronize the superseded task to the Ready title, record Ready -> Starting with a one-successor reservation, create the successor in the preserved checkout with current configured MCP tools, reconcile its unique identity, then retire the superseded task without discarding its evidence.
 - Transition Claim: `align-lifecycle-authorize-canonical-migration-ready-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `9b443558-46c6-4b39-af57-8607975db0bb`.
+
+## Successor Starting Handoff
+
+- Starting Recorded At: 2026-08-12T21:43:22Z.
+- User Clarification: The obsolete Codex task identity does not need restoration when provider, branch, worktree, candidate, and verification evidence durably preserve the work. Same-task identity is no longer an unblock condition for this recovery.
+- Coordinator: Backlog Dispatcher task `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`, acting through Dev Backlog Coordinator `/root/backlog_coordinator`.
+- Transition: Ready -> Starting after the superseded task title was synchronized to `Ready — Orchestrated Lifecycle Design Alignment`.
+- Dispatch Reservation: `align-lifecycle-successor-starting-019ff2c3`.
+- Normalized Objective: Adopt the preserved verified candidate in exactly one fresh successor Dev Orchestrator execution, accept Starting -> Running, integrate onto current main, complete provider delivery, and retain resources for external cleanup.
+- Superseded Historical Task And Conversation: `019ff2f9-0863-7133-aac0-fef97ad6d74d`; no restoration or further outcome work is authorized.
+- Successor Canonical Execution: None pending caller-owned creation. The first unique successful result becomes canonical; ambiguity must be reconciled without retry.
+- Preserved Branch: `codex/align-orchestrated-development-lifecycle-design-system-019ff2f9`.
+- Preserved Worktree: `/Users/martinbechard/dev/dev-methodology/.worktrees/align-orchestrated-lifecycle-work-019ff2f9`.
+- Preserved Candidate: `ce7002bf2794c62cdbd7ebf58ff217aeb5e55935`.
+- Accepted Primary Baseline: `34a9e693a05261217f09c609b2191cf0868a4f0c`.
+- Preserved Gates: Final verifier PASS and all prior accepted review and verification evidence.
+- Capacity Result: one finish-lane successor slot reserved; this Starting item consumes active capacity.
+- Next Lifecycle Owner: The unique successor root Dev Orchestrator claims this exact Work Item ID with activity `update`, records Starting -> Running with the old-to-new identity handoff, and releases the claim before integration.
+- Starting Claim: `align-lifecycle-successor-starting-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `517ae9c5-19ab-4386-a200-b22f84265972`.
