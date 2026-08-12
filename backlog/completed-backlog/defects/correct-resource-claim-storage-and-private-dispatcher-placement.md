@@ -278,3 +278,15 @@ None.
 - Coordinator Decision: crisis recovery is complete. The caller must apply `set-multitask-mode` and verify `ENABLED` or `ALREADY_MULTITASK` before ordinary resource-claim policy resumes.
 - Claim Ordering: claim suspension remains active through the mode transition. Do not reconstruct crisis-era claims. The first ordinary claim operation is the separately authorized disposable acquire/release smoke test after verified MULTITASK.
 - Cleanup Ordering: terminal runtime archival and operational cleanup remain deferred until mode restoration and the smoke-test result are reconciled.
+
+## Runtime Cleanup Reconciliation
+
+- Reconciled At: 2026-08-12.
+- Exit Evidence: crisis exit, MULTITASK restoration, and the disposable corrected-registry acquire/release smoke test all passed before this cleanup attempt.
+- Canonical Codex Task And Conversation: `019ff5c1-05a2-7551-bcf2-812f61776a7e`.
+- Runtime Result: the exact identity is absent from both non-pinned and pinned task-list surfaces, and direct task reading returns no identity, title, or status.
+- Mutation Result: no title or archive operation was attempted because the runtime could not address the exact canonical task safely. No other task was targeted.
+- Persistence Limitation: the task may already be archived or unloaded beyond the available list surface, but the runtime cannot confirm archival or terminal-title persistence. Do not report either operation as successful.
+- Repository Cleanup: no task-specific worktree exists. No branch is provider-designated for cleanup, so no branch was deleted.
+- Capacity Result: this terminal item consumes no active capacity and has no remaining safe cleanup action. The limitation is durable evidence, not a blocker for unrelated active work.
+- Coordination Claim: `record-repair-task-archival-limitation-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `26081890-7644-450c-88c2-5c8ec70c9821`.
