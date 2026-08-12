@@ -136,3 +136,16 @@ Coordinator Next Action: Re-home final verification to an authorized runtime who
 Unblock Condition: One authorized final verifier with a confirmed working dev-methodology-repository-maintenance skill load inspects preserved candidate ce7002bf and returns a terminal passing verdict, after which the same canonical task resumes through Blocked -> Ready -> Starting -> Running before integration.
 
 Remaining Risk: The candidate has not passed the required terminal verifier gate. Do not integrate, complete the provider record, clean up the branch or worktree, or discard candidate evidence while Blocked.
+
+## Candidate Preservation Reconciliation
+
+- Reconciled At: 2026-08-12T20:49:50Z.
+- Provider Disposition: Remains Blocked. The immediate `enforce-external-terminal-cleanup` Running item retains the current pass-local delivery slot.
+- Candidate Verification: `ce7002bf2794c62cdbd7ebf58ff217aeb5e55935` is a readable commit and is not ancestral to main.
+- Restored Branch: `codex/align-orchestrated-development-lifecycle-design-system-019ff2f9` now points exactly to the preserved candidate.
+- Worktree State: The recorded worktree remains absent. No replacement worktree was created during this preservation-only repair.
+- Canonical Execution: Preserve Codex task and conversation `019ff2f9-0863-7133-aac0-fef97ad6d74d`; do not create a replacement.
+- Preservation Claim: `preserve-align-lifecycle-candidate-ce7002bf-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `9387211d-9822-4a75-b4f7-fe77d40baf24`.
+- Next Action Owner: Dev Backlog Coordinator, after the immediate active slot is released.
+- Next Action: Recreate a safe isolated checkout for the restored branch, re-home exactly one final verifier whose effective catalog loads `dev-methodology-repository-maintenance`, and retain Blocked unless that verifier returns PASS.
+- Resumption Boundary: After PASS, preserve the same canonical task and record Blocked -> Ready -> Starting. The same task must then record Starting -> Running before integration.
