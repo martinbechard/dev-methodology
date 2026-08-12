@@ -139,3 +139,13 @@ None.
 - Migration: move the empty live registry and preserved audit journal from `.codex/agent-claim` atomically and fail closed; never dual-write or mutate contradictory or live legacy state.
 - Verification Addition: exercise every helper operation with `.git` and `.codex` denied while the primary-worktree operational root remains writable.
 - Phase: resumed implementation under this corrected boundary, claim-free throughout the active crisis.
+
+## Publication Phase Evidence
+
+- Entered At: 2026-08-12.
+- Phase: publishing accepted cross-repository candidates `4ea18ea7` and `ca69c6fe`.
+- Accepted dev-methodology Candidate: `4ea18ea743bb86f548e1eb849485db2dffc9ce13`.
+- Accepted mcp-agent-ops Candidate: `ca69c6fe901c4d24da546bbad846699791a5f2fe`.
+- Review Disposition: GOOD; no prior finding survives.
+- Conversation Title: `Publishing — Correct Resource Claims and Private Dispatcher`.
+- Resource Coordination: claim-free under the active crisis; publication and installation must not invoke any claim operation.
