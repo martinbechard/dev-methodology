@@ -268,3 +268,13 @@ None.
 - Preserved State: unrelated mcp-agent-ops working-tree changes remain untouched; no unrelated repository state, worktree, branch, or installed artifact was cleaned.
 - Conversation Title: `Completed — Correct Resource Claims and Private Dispatcher`.
 - Cleanup Eligibility: provider archival is complete; operational cleanup, crisis exit, MULTITASK restoration, and Codex task archival remain ineligible until the Backlog Coordinator explicitly orders them.
+
+## Crisis Recovery Closeout
+
+- Crisis Epoch: `claim-coordination-repair-2026-08-12T11:30:13Z`.
+- Terminal Provider Commit: `06cea98e60ad87b39f6324fdf6bf379ef9b98fc0`; `origin/main` matched the terminal main commit.
+- Watchdog: existing canonical read-only task `019fd2f5-77fb-7b01-8e97-de319bdcb0e7` returned `BLOCKAGE ENDED` after confirming every exit condition from `resolve-backlog-blockage`.
+- Exit Conditions: the sole crisis item is Completed; no crisis item is Blocked or being changed; every crisis change is committed; required regression, review, publication, installation, restart, and fresh-runtime evidence has a concrete passing disposition.
+- Coordinator Decision: crisis recovery is complete. The caller must apply `set-multitask-mode` and verify `ENABLED` or `ALREADY_MULTITASK` before ordinary resource-claim policy resumes.
+- Claim Ordering: claim suspension remains active through the mode transition. Do not reconstruct crisis-era claims. The first ordinary claim operation is the separately authorized disposable acquire/release smoke test after verified MULTITASK.
+- Cleanup Ordering: terminal runtime archival and operational cleanup remain deferred until mode restoration and the smoke-test result are reconciled.
