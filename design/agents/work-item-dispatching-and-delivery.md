@@ -32,74 +32,11 @@ The applied-model conventions are defined in [Object-Oriented Skill Group Models
 
 ## Design
 
-The design starts with the Task Management Agent hierarchy and then shows the relationships between whole Agent Groups and the independent Skill Groups they use. Two expanded diagrams identify the exact Agents and skills inside those Agent Group views. Four scenario diagrams then explain provider routing and other relationships that need more detail.
+The design starts with the Task Management Agent hierarchy and then shows the relationships between whole Agent Groups and the independent Skill Groups they use. A detailed dispatch sequence follows that high-level model. Two expanded diagrams then identify the exact Agents and skills inside those Agent Group views. Four scenario diagrams explain provider routing and other relationships that need more detail.
 
 A solid dependency is fixed by the referencing definition. A dotted dependency applies only under the condition written on the arrow. Project-selected skill loading originates at AGENTS.md. Agent- or skill-owned loading originates at the Agent or skill that makes that decision. Realization arrows show that a provider implements an interface; they do not load a file.
 
 When several provider skills expose the same public procedures, the scenario uses an exact Interface Skill when one exists. The interface gives consumers one shared contract, while AGENTS.md selects the provider skill for the project.
-
-### Canonical Caller-Owned Dispatch Process
-
-The canonical dispatch process starts when an authorized root caller invokes the project-private [Backlog Dispatcher](../../.agents/skills/backlog-dispatcher/SKILL.md). The dispatcher invokes an Agent under the Dev Backlog Coordinator Role and supplies the requested outcome plus known runtime capabilities. The Coordinator retains every queue, provider, lifecycle, capacity, dependency, claim, recovery, and canonical-execution decision.
-
-In the observed current Codex desktop runtime and harness, the root caller owns creation, resumption, messaging, titling, waiting, and archival controls for user-visible Codex tasks. A delegated Coordinator may lack those controls. This caller-owned boundary is a project coordination constraint. It is not a general OpenAI guarantee and does not make the root caller the Coordinator.
-
-```mermaid
-sequenceDiagram
-    actor Caller as Authorized root Codex task
-    participant Dispatcher as Backlog Dispatcher Static Class
-    participant Coordinator as Dev Backlog Coordinator Agent
-    participant Provider as Effective Persistence manager
-    participant Runtime as Codex task runtime
-    participant WorkItemTask as Root Dev Orchestrator task
-
-    Caller->>Dispatcher: Invoke coordinated dispatch
-    Dispatcher->>Coordinator: Send requested outcome and caller capabilities
-    alt Persistence provider selected
-        Coordinator->>Provider: Inventory and reconcile authoritative state
-        Provider-->>Coordinator: Return provider and lifecycle evidence
-        Coordinator->>Provider: Record Ready to Starting when dispatch is safe
-        Provider-->>Coordinator: Return durable reservation evidence
-    else Provider none
-        Coordinator->>Coordinator: Retain task-local startup evidence
-    end
-    Coordinator-->>Dispatcher: Return exact runtime-operation packet
-    Dispatcher->>Runtime: Create or resume the authorized canonical task
-    Runtime-->>Dispatcher: Return exact success, failure, pending, or ambiguous identity
-    Dispatcher->>Coordinator: Return the unchanged runtime outcome
-    alt Persistence provider selected
-        Coordinator->>Provider: Reconcile outcome without inferring Running
-    else Provider none
-        Coordinator->>Coordinator: Reconcile task-local runtime evidence
-    end
-    Coordinator-->>Dispatcher: Return forwarding or recovery decision
-    Dispatcher->>WorkItemTask: Forward only the authorized bounded instruction
-```
-
-The Coordinator can execute its own approved runtime operation when its runtime exposes the required control. That placement changes only the operation executor. It does not change coordination authority or create a second queue record.
-
-[OpenAI Build Skills](https://learn.chatgpt.com/docs/build-skills) describes Skills as reusable packages of instructions, resources, and optional scripts. A Skill can be invoked explicitly or selected implicitly from its description. [OpenAI Projects And Chats](https://learn.chatgpt.com/docs/projects) recommends a separate chat for each distinct outcome and documents saved-chat resumption. These product capabilities support the package and retained-context parts of this process. They do not establish the project's caller-owned root task-creation boundary.
-
-#### Dispatch Authority Boundaries
-
-| Participant | Owned responsibility | Excluded responsibility |
-| --- | --- | --- |
-| Authorized root caller | Invoke Backlog Dispatcher and execute exact caller-owned runtime operations. | Select work, choose lifecycle, create shadow coordination state, or adopt the Coordinator Role. |
-| Backlog Dispatcher Static Class | Invoke or resume the Coordinator, execute its exact runtime packet, preserve ambiguous outcomes, and return exact runtime evidence. | Make provider, queue, capacity, ownership, recovery, or canonical-task decisions. |
-| Dev Backlog Coordinator Agent | Reconcile authoritative evidence, reserve safe work, select the canonical execution, and prepare complete packets. | Perform ordinary work-item production, review, verification, integration, or delivery. |
-| Root Dev Orchestrator task | Accept Starting to Running and deliver one authorized work item through production, review, verification, Commit, and Persistence closeout. | Manage the provider-wide queue or create another canonical execution for the same item. |
-
-#### Runtime And Lifecycle Evidence
-
-Task creation is runtime evidence only. It does not prove that a work item reached Running. The new root execution accepts Starting to Running through the effective Persistence manager when a provider is selected. Provider none retains equivalent task-local evidence without creating a provider record.
-
-A failed, pending, disconnected, or ambiguous creation response is not retried. Backlog Dispatcher preserves every returned identity. The Coordinator reconciles active and archived tasks through the canonical identity contract before it authorizes another operation.
-
-One work item retains one canonical task and conversation through correction, review, verification, delivery, and resumable pauses. Separate chats keep distinct outcomes focused. Saved-chat resumption supports continued work in the retained context without treating a new chat as a lifecycle transition.
-
-#### Publication Boundary
-
-Backlog Dispatcher remains under .agents/skills because its procedure depends on this repository's coordination policy and caller runtime controls. The portable contracts coordinate-work-items and coordinate-codex-tasks remain under skills. Do not publish the private dispatcher as a portable Skill while those repository-specific assumptions remain.
 
 ### Agent Hierarchy
 
@@ -199,6 +136,72 @@ classDiagram
     WorkItemDispatching --> ResourceCoordination
     MainBranchDelivery ..> FeatureBranchAndWorktrees : when implementation uses a separate branch or worktree
 ```
+
+### Canonical Runtime Dispatch Process
+
+The canonical dispatch process starts when an authorized root caller invokes the project-private [Backlog Dispatcher](../../.agents/skills/backlog-dispatcher/SKILL.md). The dispatcher invokes an Agent under the Dev Backlog Coordinator Role and supplies the requested outcome plus known runtime capabilities. The Coordinator retains every queue, provider, lifecycle, capacity, dependency, claim, recovery, and canonical-execution decision.
+
+In the observed current Codex desktop runtime and harness, the root caller owns creation, resumption, messaging, titling, waiting, and archival controls for user-visible Codex tasks. A delegated Coordinator may lack those controls. This caller-owned boundary is a project coordination constraint. It is not a general OpenAI guarantee and does not make the root caller the Coordinator.
+
+```mermaid
+sequenceDiagram
+    actor Caller as Authorized root Codex task
+    participant Dispatcher as Backlog Dispatcher Static Class
+    participant Coordinator as Dev Backlog Coordinator Agent
+    participant Provider as Effective Persistence manager
+    participant Runtime as Codex task runtime
+
+    Caller->>Dispatcher: Invoke coordinated dispatch
+    Dispatcher->>Coordinator: Send requested outcome and caller capabilities
+    alt Persistence provider selected
+        Coordinator->>Provider: Inventory and reconcile authoritative state
+        Provider-->>Coordinator: Return provider and lifecycle evidence
+        Coordinator->>Provider: Record Ready to Starting when dispatch is safe
+        Provider-->>Coordinator: Return durable reservation evidence
+    else Provider none
+        Coordinator->>Coordinator: Retain task-local startup evidence
+    end
+    alt Coordinator runtime exposes task control
+        Coordinator->>Runtime: Create or resume the authorized canonical task
+        Runtime-->>Coordinator: Return exact runtime identity and outcome
+    else Caller-owned runtime execution required
+        Coordinator-->>Dispatcher: Return exact runtime-operation packet
+        Dispatcher->>Runtime: Create or resume the authorized canonical task
+        Runtime-->>Dispatcher: Return exact runtime identity and outcome
+        Dispatcher->>Coordinator: Return the unchanged runtime outcome
+    end
+    alt Persistence provider selected
+        Coordinator->>Provider: Reconcile outcome without inferring Running
+    else Provider none
+        Coordinator->>Coordinator: Reconcile task-local runtime evidence
+    end
+    Coordinator-->>Dispatcher: Return reconciled dispatch or recovery result
+```
+
+The Coordinator executes an approved runtime operation when its runtime exposes the required control. Otherwise, it returns an exact packet to Backlog Dispatcher for caller-owned execution. Runtime placement changes only the operation executor. It does not change coordination authority or create a second queue record.
+
+[OpenAI Build Skills](https://learn.chatgpt.com/docs/build-skills) describes Skills as reusable packages of instructions, resources, and optional scripts. A Skill can be invoked explicitly or selected implicitly from its description. [OpenAI Projects And Chats](https://learn.chatgpt.com/docs/projects) recommends a separate chat for each distinct outcome and documents saved-chat resumption. These product capabilities support the package and retained-context parts of this process. They do not establish the project's caller-owned root task-creation boundary.
+
+#### Dispatch Authority Boundaries
+
+| Participant | Owned responsibility | Excluded responsibility |
+| --- | --- | --- |
+| Authorized root caller | Invoke Backlog Dispatcher and execute an exact runtime packet when the Coordinator returns one. | Select work, choose lifecycle, create shadow coordination state, or adopt the Coordinator Role. |
+| Backlog Dispatcher Static Class | Invoke or resume the Coordinator, execute its exact runtime packet when required, preserve ambiguous outcomes, and return exact runtime evidence. | Make provider, queue, capacity, ownership, recovery, or canonical-task decisions. |
+| Dev Backlog Coordinator Agent | Reconcile authoritative evidence, reserve safe work, select the canonical execution, and prepare complete packets. Execute approved runtime operations directly when its runtime exposes the controls. | Perform ordinary work-item production, review, verification, integration, or delivery. |
+| Root Dev Orchestrator task | Accept Starting to Running and deliver one authorized work item through production, review, verification, Commit, and Persistence closeout. | Manage the provider-wide queue or create another canonical execution for the same item. |
+
+#### Runtime And Lifecycle Evidence
+
+Task creation is runtime evidence only. It does not prove that a work item reached Running. The new root execution accepts Starting to Running through the effective Persistence manager when a provider is selected. Provider none retains equivalent task-local evidence without creating a provider record.
+
+A failed, pending, disconnected, or ambiguous creation response is not retried. The operation executor preserves every returned identity. The Coordinator reconciles active and archived tasks through the canonical identity contract before it authorizes another operation.
+
+One work item retains one canonical task and conversation through correction, review, verification, delivery, and resumable pauses. Separate chats keep distinct outcomes focused. Saved-chat resumption supports continued work in the retained context without treating a new chat as a lifecycle transition.
+
+#### Publication Boundary
+
+Backlog Dispatcher remains under .agents/skills because its procedure depends on this repository's coordination policy and caller runtime controls. The portable contracts coordinate-work-items and coordinate-codex-tasks remain under skills. Do not publish the private dispatcher as a portable Skill while those repository-specific assumptions remain.
 
 ### Backlog Management Agents And Skills
 
@@ -787,14 +790,20 @@ The Core and Optional inventory uses the complete role-specific skill lists in t
 - [Explain Code Fix](../../skills/explain-code-fix/SKILL.md)
 - [Coordinate Work Items](../../skills/coordinate-work-items/SKILL.md)
 - [Coordinate Codex Tasks](../../skills/coordinate-codex-tasks/SKILL.md)
-- [Backlog Dispatcher](../../.agents/skills/backlog-dispatcher/SKILL.md)
-- [Object-Oriented Analysis Of Agents And Skills](../object-oriented-agent-and-skill-model.md#28-static-class-invoked-outside-an-agent-definition)
-- [OpenAI Build Skills](https://learn.chatgpt.com/docs/build-skills)
-- [OpenAI Projects And Chats](https://learn.chatgpt.com/docs/projects)
 - [Resolve Backlog Blockage](../../skills/resolve-backlog-blockage/SKILL.md)
 - [Set Solo Mode](../../skills/set-solo-mode/SKILL.md)
 - [Set Multitask Mode](../../skills/set-multitask-mode/SKILL.md)
 - [Integrate Agent Work](../../skills/integrate-agent-work/SKILL.md)
+
+### Direct Invocation And Runtime Authority
+
+The Static Class, runtime-executor, and product-capability claims use these sources. They do not extend the role-declared Core and Optional Agent Skill inventory above.
+
+- [Backlog Dispatcher](../../.agents/skills/backlog-dispatcher/SKILL.md)
+- [Object-Oriented Analysis Of Agents And Skills](../object-oriented-agent-and-skill-model.md#28-static-class-invoked-outside-an-agent-definition)
+- [Orchestrated Development Lifecycle](../orchestrated-development-lifecycle.html)
+- [OpenAI Build Skills](https://learn.chatgpt.com/docs/build-skills)
+- [OpenAI Projects And Chats](https://learn.chatgpt.com/docs/projects)
 
 ### Project Routing And Provider Implementations
 

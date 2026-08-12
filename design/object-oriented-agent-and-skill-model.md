@@ -987,7 +987,7 @@ A good model makes skill dependencies, dispatch, and organization understandable
 
 - **RULE: RULE-26** Declared relationships, direct invocation, and request-triggered selection have valid uses
   - **SYNOPSIS:** The model distinguishes exact Agent dependencies, Static Class invocation, Skill Group sets, AGENTS.md substitution, direct skill-to-skill coupling, and request-scoped selection.
-  - **EXAMPLE:** Dev Coder names careful-coding, a root Codex task invokes Backlog Dispatcher as a Static Class, Resource Coordination contains resource-claim, Project-specific directives select a Provider Skill for manage-work-items, and a structural-search request selects ast-grep only for that request.
+  - **EXAMPLE:** Dev Coder names careful-coding, a root Codex task invokes Backlog Dispatcher as a Static Class, Resource Coordination contains resource-claim, Project-specific directives select a Provider Skill for manage-work-items, deliver-work-item-feature-branch names create-pull-request, and a structural-search request selects ast-grep only for that request.
 
 - **RULE: RULE-51** Skill-loading and invocation use cases remain distinct from factory composition
   - **SYNOPSIS:** The method separates unconditional exact-name loading, conditional exact-name loading, procedure mapping, Static Class invocation, request-triggered selection, and provider-factory composition.
