@@ -8,7 +8,7 @@ Owner: Dev Orchestrator
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/correct-resource-claim-storage-and-private-dispatcher-placement.md
+Provider Reference: backlog/user-action-required/correct-resource-claim-storage-and-private-dispatcher-placement.md
 
 Work Item ID: correct-resource-claim-storage-and-private-dispatcher-placement
 
