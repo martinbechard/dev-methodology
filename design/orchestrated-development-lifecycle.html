@@ -68,7 +68,7 @@ Task-ID-Evidence: historical-unknown
     }
 
     a { color: var(--teal-deep); }
-    a:focus-visible, summary:focus-visible, .process-diagram-scroll:focus-visible {
+    a:focus-visible, summary:focus-visible, .process-diagram-scroll:focus-visible, .table-wrap:focus-visible {
       outline: 3px solid var(--amber);
       outline-offset: 3px;
     }
@@ -958,7 +958,7 @@ Task-ID-Evidence: historical-unknown
       <span class="chapter-number">Chapter 10</span>
       <div><h2 id="evidence-title">Delivery Evidence</h2><p>Different records answer different questions. None can substitute for another.</p></div>
     </div>
-    <div class="table-wrap"><table class="evidence-table" aria-labelledby="evidence-table-caption">
+    <div class="table-wrap" tabindex="0" role="region" aria-labelledby="evidence-table-caption"><table class="evidence-table" aria-labelledby="evidence-table-caption">
       <caption id="evidence-table-caption">Evidence Boundaries</caption>
       <thead><tr><th scope="col">Evidence source</th><th scope="col">What it proves</th><th scope="col">What it does not prove</th></tr></thead>
       <tbody>

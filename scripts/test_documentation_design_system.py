@@ -344,7 +344,15 @@ class DocumentationDesignSystemTests(unittest.TestCase):
             '<nav class="chapter-nav" aria-label="Lifecycle chapters">\n    <a href="#top">Top</a>',
             lifecycle_text,
         )
-        self.assertIn('<div class="table-wrap"><table class="evidence-table"', lifecycle_text)
+        self.assertIn(
+            '<div class="table-wrap" tabindex="0" role="region" '
+            'aria-labelledby="evidence-table-caption"><table class="evidence-table"',
+            lifecycle_text,
+        )
+        self.assertIn(
+            ".table-wrap:focus-visible {\n      outline: 3px solid var(--amber);",
+            lifecycle_text,
+        )
         self.assertIn(f'<span class="ds-version">Design system v{VERSION}</span>', lifecycle_text)
         self.assertEqual(
             LIFECYCLE_BASELINE_SEMANTIC_SHA256,
