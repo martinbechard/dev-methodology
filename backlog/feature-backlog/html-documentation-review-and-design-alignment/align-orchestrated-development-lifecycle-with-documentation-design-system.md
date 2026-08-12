@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: Blocked
+Status: Ready
 
 Type: Feature
 
@@ -215,3 +215,15 @@ Remaining Risk: The candidate has not passed the required terminal verifier gate
 - Preserved Evidence: Candidate `ce7002bf2794c62cdbd7ebf58ff217aeb5e55935`, restored branch and clean worktree, final verifier PASS, prior accepted reviews, and all provider history remain intact.
 - Subordinate Verifier Cleanup Limitation: Verifier task `019ff7dd-98a1-7b21-a1b1-3682a8b77c39` became unavailable through direct read and active/pinned lists before title or archive mutation. Its PASS is durable; no cleanup success is claimed and no other task was targeted.
 - Transition Claim: `block-align-runtime-rehome-unavailable-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `a43f5fff-eb65-431c-84da-ff1a577b4a0c`.
+
+## Controlled Canonical Identity Migration
+
+- Authorized At: 2026-08-12.
+- Authority: The user explicitly rejected indefinite Blocked retention and directed forward progress through a controlled canonical identity migration when evidence supports it.
+- Recovery Finding: The original canonical task is not idle or merely slow. It cannot access its Git workspace or mandatory MCP claim surface, and the only identity-preserving `handoff_thread` operation failed before mutation. This satisfies the failed-canonical-execution recovery boundary.
+- Superseded Task And Conversation: `019ff2f9-0863-7133-aac0-fef97ad6d74d`. Retain this identity as historical execution evidence; it must perform no further work-item mutation.
+- Successor Limit: Exactly one new root Dev Orchestrator execution may be created after a distinct Ready -> Starting reservation. It becomes canonical only after the caller returns a unique successful identity and the provider records the old-to-new handoff. Do not fork, retry ambiguity, or create another successor.
+- Preserved Delivery State: Reuse exact candidate `ce7002bf2794c62cdbd7ebf58ff217aeb5e55935`, restored branch and clean worktree, subordinate final-verifier PASS, prior independent reviews, and every accepted gate. The successor performs no implementation retry and creates no replacement candidate unless current integration produces a concrete finding.
+- Lifecycle: Blocked -> Ready; Owner Unowned. The runtime blocker is resolved by the authorized one-time identity migration route, not by claiming the old task recovered.
+- Next Action: Synchronize the superseded task to the Ready title, record Ready -> Starting with a one-successor reservation, create the successor in the preserved checkout with current configured MCP tools, reconcile its unique identity, then retire the superseded task without discarding its evidence.
+- Transition Claim: `align-lifecycle-authorize-canonical-migration-ready-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `9b443558-46c6-4b39-af57-8607975db0bb`.
