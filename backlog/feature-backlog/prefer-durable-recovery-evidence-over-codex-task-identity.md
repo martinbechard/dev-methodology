@@ -87,8 +87,13 @@ The separate Watchdog-contract work completed and archived at main commit `c73bd
 - Normalized Objective: Concisely update the private Backlog Dispatcher and portable Codex task-coordination skill so one demonstrably unusable task may be superseded through complete durable recovery evidence and duplicate prevention, while preserving the prohibition on replacing idle, slow, or quiet tasks.
 - Intended Root Role: Dev Orchestrator.
 - Baseline: `c73bd4eb9452ef4df99d1b92442cdbfc2f39f6fb` on primary `main`.
-- Dispatch Reservation: Exactly one new canonical root execution; runtime identity pending caller-owned creation.
-- Launch State: Authorized and pending root Backlog Dispatcher creation result; successful creation does not imply Running.
-- Last Contact: 2026-08-12T22:21:18Z.
-- Next Reconciliation: Reconcile the exact create result immediately; the root execution must record Starting -> Running before mutation.
+- Dispatch Reservation: Exactly one canonical root execution was created and reconciled without retry.
+- Canonical Codex Task: `019ff81d-50ec-7d21-9206-e2a9a7ae4c4d`.
+- Canonical Conversation: `019ff81d-50ec-7d21-9206-e2a9a7ae4c4d`.
+- Runtime Host And Checkout: host `local`; cwd `/Users/martinbechard/dev/dev-methodology`.
+- Launch Evidence: Canonical creation at Unix time `1786574098`; runtime status `active`; no client-thread identity and no retry. Creation does not imply Running.
+- Conversation Title: Requested `Starting — Prefer Durable Recovery Evidence Over Codex Task Identity`; the read UI displays a normalized truncated rendering.
+- Last Contact: 2026-08-12T22:34:58Z.
+- Next Reconciliation: The canonical root execution must record Starting -> Running before mutation.
+- Create Reconciliation Claim: `reconcile-durable-recovery-create-019ff81d`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `72778701-ad16-4894-b213-f158cf23073a`.
 - Transition Claim: `start-durable-recovery-guidance-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `10a37cf9-4263-4d6c-9f64-64ab2c120dfe`.
