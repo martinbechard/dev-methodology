@@ -159,3 +159,13 @@ None.
 - Candidate Under Correction: mcp-agent-ops `ca69c6fe901c4d24da546bbad846699791a5f2fe`; this commit must not receive tag `v0.12.0`.
 - Conversation Title: `Correcting — Windows Resource Claim Barrier`.
 - Resource Coordination: claim-free under the active crisis; no claim operation is authorized during correction.
+
+## Corrected Publication Candidate
+
+- Accepted mcp-agent-ops Candidate: `c22fc9362cb46c44948d25da7771c72dfecbb28b`.
+- Correction Review: GOOD; no findings.
+- Local Gate: 168 passed, 1 configured-source skip; Ruff, mypy, compilation, and diff checks passed; worktree clean.
+- Exact-Head CI: successful run `31599149795`, including Python 3.11, 3.12, 3.13, and native Windows verification.
+- CI URL: `https://github.com/martinbechard/mcp-agent-ops/actions/runs/31599149795`.
+- Phase: publishing accepted cross-repository candidates with corrected external tip `c22fc93`.
+- Conversation Title: `Publishing — Correct Resource Claims and Private Dispatcher`.
