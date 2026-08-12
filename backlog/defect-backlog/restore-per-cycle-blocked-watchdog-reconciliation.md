@@ -142,8 +142,13 @@ Approved at creation and expanded by later answer. On 2026-08-12, after the exac
 - Normalized Objective: Adopt the already-delivered Watchdog reconciliation result at `ba00c950364740f51a250ef53eb7ba4049369aed` through the missing lifecycle, independent terminal-gate, selected Commit, provider-closeout, and external-cleanup sequence without replaying or changing accepted implementation content.
 - Intended Root Role: Dev Orchestrator.
 - Baseline: `f3b6eff5e97b3120b693adaf095448fd4ca48392` on primary `main`.
-- Dispatch Reservation: Exactly one new canonical root execution; runtime identity pending caller-owned creation. No prior canonical execution exists for this adoption boundary.
-- Launch State: Authorized and pending root Backlog Dispatcher creation result; successful creation does not imply Running.
-- Last Contact: 2026-08-12T22:10:15Z.
-- Next Reconciliation: Reconcile the exact create result immediately; the new root execution must record Starting -> Running before any adoption mutation.
+- Dispatch Reservation: Exactly one canonical root execution was created without retry. No prior canonical execution exists for this adoption boundary.
+- Canonical Codex Task: `019ff807-e1d5-7e83-9c40-7481d83b9995`.
+- Canonical Conversation: `019ff807-e1d5-7e83-9c40-7481d83b9995`.
+- Runtime Host And Checkout: host `local`; cwd `/Users/martinbechard/dev/dev-methodology`.
+- Launch Evidence: Immediate canonical creation at Unix time `1786572694`; runtime status `active/inProgress`; no client-thread identity and no retry. Creation does not imply Running.
+- Conversation Title: Requested `Starting — Restore Per-Cycle Blocked Watchdog Reconciliation`; the read surface displays a normalized truncated rendering while retaining the full delegated prompt.
+- Last Contact: 2026-08-12T22:11:34Z.
+- Next Reconciliation: The canonical root execution must record Starting -> Running before any adoption mutation.
+- Create Reconciliation Claim: `reconcile-watchdog-adoption-create-019ff807`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `62521149-4d71-49f2-a049-081ac8ddffd5`.
 - Transition Claim: `start-watchdog-delivery-lifecycle-adoption-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `24ae02ec-a4c5-4a81-93e0-2f8e6225e45a`.
