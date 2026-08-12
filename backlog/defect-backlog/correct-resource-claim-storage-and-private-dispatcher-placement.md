@@ -110,6 +110,9 @@ None.
 - Baseline Before Reservation: `050b92036496557016c64d25bbd494980c21a25f` on primary `main`.
 - Checkout: primary `/Users/martinbechard/dev/dev-methodology`, required to adopt the preserved dirty candidate; external boundary `/Users/martinbechard/dev/mcp-agent-ops`.
 - Reserved At: 2026-08-12T11:32:02Z.
-- Canonical Runtime Identity: caller-owned creation is pending; the Backlog Dispatcher must record the returned Codex Task ID and distinct Conversation ID before treating launch as reconciled. Titles are display evidence only.
+- Canonical Codex Task ID: `019ff5c1-05a2-7551-bcf2-812f61776a7e`; host `local`.
+- Canonical Conversation ID: `019ff5c1-05a2-7551-bcf2-812f61776a7e`; this runtime returned one combined task/thread identity.
+- Runtime Creation Evidence: caller-owned launch succeeded directly in the saved dev-methodology primary checkout at 2026-08-12T11:35:16Z; no duplicate execution and no claim call occurred.
+- Conversation Title: `Starting — Correct Resource Claims and Private Dispatcher`; synchronized with the durable Starting lifecycle at launch. The title remains display evidence only.
 - Resource Coordination: no claim. Crisis epoch `claim-coordination-repair-2026-08-12T11:30:13Z` prohibits all claim operations after the one reset.
 - Next Lifecycle Owner: the newly created root Dev Orchestrator must use this same provider item and directly record Starting -> Running before artifact mutation. No second execution or concurrent dispatch is authorized.
