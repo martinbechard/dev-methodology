@@ -85,6 +85,90 @@ REMOVED_DEVELOPMENT_REFERENCES = (
 )
 
 
+def validate_expected_parallelism(
+    declared_paths: set[str], expected_parallelism: object
+) -> None:
+    """Validate simultaneous concurrency groups and optional complete schedule evidence."""
+    required_fields = {
+        "low",
+        "high",
+        "concurrency_groups",
+        "modeled_generation_intervals",
+    }
+    if not isinstance(expected_parallelism, dict) or set(expected_parallelism) != required_fields:
+        raise ValueError(
+            "expected_parallelism must contain exactly low, high, concurrency_groups, "
+            "and modeled_generation_intervals"
+        )
+    concurrency_low = expected_parallelism["low"]
+    concurrency_high = expected_parallelism["high"]
+    if (
+        isinstance(concurrency_low, bool)
+        or isinstance(concurrency_high, bool)
+        or not isinstance(concurrency_low, int)
+        or not isinstance(concurrency_high, int)
+    ):
+        raise ValueError("expected_parallelism bounds must be integers")
+    if concurrency_low <= 0 or concurrency_high <= 0:
+        raise ValueError("expected_parallelism bounds must be positive")
+    if concurrency_low > concurrency_high:
+        raise ValueError("expected_parallelism low cannot exceed high")
+
+    concurrency_groups = expected_parallelism["concurrency_groups"]
+    if not isinstance(concurrency_groups, list):
+        raise ValueError("expected_parallelism concurrency_groups must be a list")
+
+    def validate_path_group(group: object, label: str, minimum_size: int) -> frozenset[str]:
+        if not isinstance(group, list) or not all(
+            isinstance(path_name, str) for path_name in group
+        ):
+            raise ValueError(f"{label} must be a path list")
+        if len(group) < minimum_size:
+            raise ValueError(f"{label} must contain at least {minimum_size} paths")
+        if len(group) != len(set(group)):
+            raise ValueError(f"{label} paths must be unique")
+        if set(group) - declared_paths:
+            raise ValueError(f"{label} names an undeclared path")
+        return frozenset(group)
+
+    normalized_groups = [
+        validate_path_group(group, "concurrency group", 2)
+        for group in concurrency_groups
+    ]
+    if len(normalized_groups) != len(set(normalized_groups)):
+        raise ValueError("expected_parallelism concurrency groups must be unique")
+    derived_high = max((len(group) for group in normalized_groups), default=1)
+    if concurrency_high != derived_high:
+        raise ValueError(
+            "expected_parallelism high must equal the largest simultaneous group size"
+        )
+
+    schedule = expected_parallelism["modeled_generation_intervals"]
+    if schedule is None:
+        if concurrency_low != 1:
+            raise ValueError(
+                "expected_parallelism low requires complete modeled generation intervals"
+            )
+        return
+    if not isinstance(schedule, list) or not schedule:
+        raise ValueError("modeled_generation_intervals must be null or a nonempty list")
+    normalized_intervals = [
+        validate_path_group(interval, "modeled generation interval", 1)
+        for interval in schedule
+    ]
+    if set().union(*normalized_intervals) != declared_paths:
+        raise ValueError("modeled generation intervals must cover every declared path")
+    scheduled_groups = {interval for interval in normalized_intervals if len(interval) > 1}
+    if scheduled_groups != set(normalized_groups):
+        raise ValueError(
+            "concurrency_groups must exactly match simultaneous modeled generation intervals"
+        )
+    if concurrency_low != min(len(interval) for interval in normalized_intervals):
+        raise ValueError(
+            "expected_parallelism low must equal the schedule's minimum active agent count"
+        )
+
+
 def validate_estimate_output_shape(shape: object) -> dict[str, dict[str, tuple[float, float]]]:
     """Validate and independently calculate one estimate-agent-work output example."""
     if not isinstance(shape, dict) or not isinstance(shape.get("estimate"), dict):
@@ -257,40 +341,7 @@ def validate_estimate_output_shape(shape: object) -> dict[str, dict[str, tuple[f
     if range_pair(estimate.get("total_agent_hours"), "total agent hours") != total_generated:
         raise ValueError("total agent hours does not preserve all generated effort")
 
-    expected_parallelism = estimate.get("expected_parallelism")
-    if not isinstance(expected_parallelism, dict) or set(expected_parallelism) != {
-        "low",
-        "high",
-        "overlap",
-    }:
-        raise ValueError("expected_parallelism must contain exactly low, high, and overlap")
-    concurrency_low = expected_parallelism["low"]
-    concurrency_high = expected_parallelism["high"]
-    if (
-        isinstance(concurrency_low, bool)
-        or isinstance(concurrency_high, bool)
-        or not isinstance(concurrency_low, int)
-        or not isinstance(concurrency_high, int)
-    ):
-        raise ValueError("expected_parallelism bounds must be integers")
-    if concurrency_low <= 0 or concurrency_high <= 0:
-        raise ValueError("expected_parallelism bounds must be positive")
-    if concurrency_low > concurrency_high:
-        raise ValueError("expected_parallelism low cannot exceed high")
-    overlap_paths = expected_parallelism["overlap"]
-    if not isinstance(overlap_paths, list) or not all(
-        isinstance(path_name, str) for path_name in overlap_paths
-    ):
-        raise ValueError("expected_parallelism overlap must be a path list")
-    if len(overlap_paths) != len(set(overlap_paths)):
-        raise ValueError("expected_parallelism overlap paths must be unique")
-    unknown_paths = set(overlap_paths) - set(paths)
-    if unknown_paths:
-        raise ValueError("expected_parallelism overlap names an undeclared path")
-    if set(overlap_paths) != set(paths):
-        raise ValueError("expected_parallelism omits a concurrently evaluated path")
-    if concurrency_high != len(overlap_paths):
-        raise ValueError("expected_parallelism high must equal the overlapping path count")
+    validate_expected_parallelism(set(paths), estimate.get("expected_parallelism"))
     return calculated
 NEW_WORKFLOW_SKILLS = (
     "bootstrap-project-documentation",
@@ -3572,7 +3623,12 @@ class BundleContentTests(unittest.TestCase):
         parsed_shape = yaml.safe_load(reusable_shape["yaml"])
         calculated_paths = validate_estimate_output_shape(parsed_shape)
         self.assertEqual(
-            {"low": 1, "high": 2, "overlap": ["path-a", "path-b"]},
+            {
+                "low": 1,
+                "high": 2,
+                "concurrency_groups": [["path-a", "path-b"]],
+                "modeled_generation_intervals": None,
+            },
             parsed_shape["estimate"]["expected_parallelism"],
         )
         self.assertEqual(
@@ -3609,54 +3665,214 @@ class BundleContentTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "off_critical_path runtime"):
             validate_estimate_output_shape(malformed_disposition)
 
+        valid_parallelism_cases = (
+            (
+                "one serial path",
+                {"path-a"},
+                {
+                    "low": 1,
+                    "high": 1,
+                    "concurrency_groups": [],
+                    "modeled_generation_intervals": None,
+                },
+            ),
+            (
+                "multiple serial paths",
+                {"path-a", "path-b", "path-c"},
+                {
+                    "low": 1,
+                    "high": 1,
+                    "concurrency_groups": [],
+                    "modeled_generation_intervals": None,
+                },
+            ),
+            (
+                "partial overlap",
+                {"path-a", "path-b", "path-c"},
+                {
+                    "low": 1,
+                    "high": 2,
+                    "concurrency_groups": [["path-a", "path-b"]],
+                    "modeled_generation_intervals": None,
+                },
+            ),
+            (
+                "staged disjoint groups",
+                {"path-a", "path-b", "path-c", "path-d"},
+                {
+                    "low": 1,
+                    "high": 2,
+                    "concurrency_groups": [
+                        ["path-a", "path-b"],
+                        ["path-c", "path-d"],
+                    ],
+                    "modeled_generation_intervals": None,
+                },
+            ),
+            (
+                "evidence proves higher minimum",
+                {"path-a", "path-b"},
+                {
+                    "low": 2,
+                    "high": 2,
+                    "concurrency_groups": [["path-a", "path-b"]],
+                    "modeled_generation_intervals": [["path-a", "path-b"]],
+                },
+            ),
+        )
+        for case_name, declared_paths, parallelism in valid_parallelism_cases:
+            with self.subTest(valid_parallelism=case_name):
+                validate_expected_parallelism(declared_paths, parallelism)
+
         malformed_parallelism_cases = (
             (
                 "zero",
-                {"low": 0, "high": 2, "overlap": ["path-a", "path-b"]},
+                {"path-a", "path-b"},
+                {
+                    "low": 0,
+                    "high": 2,
+                    "concurrency_groups": [["path-a", "path-b"]],
+                    "modeled_generation_intervals": None,
+                },
                 "positive",
             ),
             (
                 "negative",
-                {"low": -1, "high": 2, "overlap": ["path-a", "path-b"]},
+                {"path-a", "path-b"},
+                {
+                    "low": -1,
+                    "high": 2,
+                    "concurrency_groups": [["path-a", "path-b"]],
+                    "modeled_generation_intervals": None,
+                },
                 "positive",
             ),
             (
                 "nonnumeric",
-                {"low": "one", "high": 2, "overlap": ["path-a", "path-b"]},
+                {"path-a", "path-b"},
+                {
+                    "low": "one",
+                    "high": 2,
+                    "concurrency_groups": [["path-a", "path-b"]],
+                    "modeled_generation_intervals": None,
+                },
                 "integers",
             ),
             (
                 "reversed",
-                {"low": 2, "high": 1, "overlap": ["path-a", "path-b"]},
+                {"path-a", "path-b"},
+                {
+                    "low": 2,
+                    "high": 1,
+                    "concurrency_groups": [],
+                    "modeled_generation_intervals": None,
+                },
                 "cannot exceed",
             ),
             (
-                "duplicate",
-                {"low": 1, "high": 2, "overlap": ["path-a", "path-a"]},
-                "unique",
+                "duplicate path within group",
+                {"path-a", "path-b"},
+                {
+                    "low": 1,
+                    "high": 2,
+                    "concurrency_groups": [["path-a", "path-a"]],
+                    "modeled_generation_intervals": None,
+                },
+                "paths must be unique",
+            ),
+            (
+                "duplicate group",
+                {"path-a", "path-b"},
+                {
+                    "low": 1,
+                    "high": 2,
+                    "concurrency_groups": [
+                        ["path-a", "path-b"],
+                        ["path-b", "path-a"],
+                    ],
+                    "modeled_generation_intervals": None,
+                },
+                "groups must be unique",
             ),
             (
                 "unknown",
-                {"low": 1, "high": 2, "overlap": ["path-a", "path-c"]},
+                {"path-a", "path-b"},
+                {
+                    "low": 1,
+                    "high": 2,
+                    "concurrency_groups": [["path-a", "path-c"]],
+                    "modeled_generation_intervals": None,
+                },
                 "undeclared",
             ),
             (
-                "missing",
-                {"low": 1, "high": 1, "overlap": ["path-a"]},
-                "omits",
+                "singleton group",
+                {"path-a", "path-b"},
+                {
+                    "low": 1,
+                    "high": 1,
+                    "concurrency_groups": [["path-a"]],
+                    "modeled_generation_intervals": None,
+                },
+                "at least 2 paths",
             ),
             (
-                "inconsistent",
-                {"low": 1, "high": 3, "overlap": ["path-a", "path-b"]},
-                "path count",
+                "empty group",
+                {"path-a", "path-b"},
+                {
+                    "low": 1,
+                    "high": 1,
+                    "concurrency_groups": [[]],
+                    "modeled_generation_intervals": None,
+                },
+                "at least 2 paths",
+            ),
+            (
+                "missing scheduled concurrent path",
+                {"path-a", "path-b", "path-c"},
+                {
+                    "low": 1,
+                    "high": 2,
+                    "concurrency_groups": [["path-a", "path-b"]],
+                    "modeled_generation_intervals": [
+                        ["path-a", "path-b", "path-c"],
+                        ["path-c"],
+                    ],
+                },
+                "exactly match",
+            ),
+            (
+                "high inconsistent with largest group",
+                {"path-a", "path-b"},
+                {
+                    "low": 1,
+                    "high": 3,
+                    "concurrency_groups": [["path-a", "path-b"]],
+                    "modeled_generation_intervals": None,
+                },
+                "largest simultaneous group size",
+            ),
+            (
+                "higher low without schedule evidence",
+                {"path-a", "path-b"},
+                {
+                    "low": 2,
+                    "high": 2,
+                    "concurrency_groups": [["path-a", "path-b"]],
+                    "modeled_generation_intervals": None,
+                },
+                "requires complete modeled generation intervals",
             ),
         )
-        for case_name, malformed_parallelism, message in malformed_parallelism_cases:
+        for (
+            case_name,
+            declared_paths,
+            malformed_parallelism,
+            message,
+        ) in malformed_parallelism_cases:
             with self.subTest(malformed_parallelism=case_name):
-                malformed_shape = json.loads(json.dumps(parsed_shape))
-                malformed_shape["estimate"]["expected_parallelism"] = malformed_parallelism
                 with self.assertRaisesRegex(ValueError, message):
-                    validate_estimate_output_shape(malformed_shape)
+                    validate_expected_parallelism(declared_paths, malformed_parallelism)
 
         dev_coder = load_yaml_object(
             ROLES_ROOT / "dev-activities" / "dev-coder.role.yaml"

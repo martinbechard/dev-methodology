@@ -122,13 +122,22 @@ and path runtime. They can be different. When reporting `critical_path_agent_hou
 selected path and include only its generated effort. Never select a generation-only path and
 then add runtime from another path.
 
-Report `expected_parallelism.low` as the minimum expected concurrently active agent count while
-delivery work remains, and `expected_parallelism.high` as the maximum. The `overlap` list contains
-the unique dependency-path IDs scheduled to overlap; every ID must name a declared path. When
-wall-clock duration takes the maximum rather than the sum of concurrent paths, list every such
-path and set `high` to their count. `low` can be 1 when only one path remains active during part of
-delivery. Parallelism does not reduce total agent-hours. It can reduce wall-clock time only when
-the dependency graph permits overlap.
+Report `expected_parallelism.low` as the minimum positive number of implementation agents active
+during modeled generation work. Do not count unattended zero-agent runtime waits. Require `low: 1`
+unless `modeled_generation_intervals` supplies the complete generation schedule and proves a
+higher minimum across every interval.
+
+Report `expected_parallelism.high` as the maximum simultaneous implementation-agent count. Each
+entry in `concurrency_groups` names at least two unique declared dependency-path IDs that execute
+concurrently during one schedule interval. Groups can occur at different times, can be disjoint,
+and do not form one flattened union. Omit serial paths from groups; use an empty group list for
+fully serial delivery. Derive `high` from the largest group, or use 1 when there are no groups.
+Singleton or empty entries are invalid. When supplied, `modeled_generation_intervals` lists every
+generation interval and all active path IDs, including singleton serial intervals; its multi-path
+sets must exactly match `concurrency_groups`.
+
+Parallelism does not reduce total agent-hours. It can reduce wall-clock time only when the
+dependency graph permits overlap.
 
 ## State Uncertainty And Confidence
 
@@ -243,7 +252,12 @@ estimate:
   generated_effort_critical_path: {path: path-a, agent_hours: {low: 1.0, high: 2.0}}
   delivery_critical_path: {path: path-a, combined_hours: {low: 1.25, high: 2.5}}
   critical_path_agent_hours: {path: path-a, low: 1.0, high: 2.0}
-  expected_parallelism: {low: 1, high: 2, overlap: [path-a, path-b]}
+  expected_parallelism:
+    low: 1
+    high: 2
+    concurrency_groups:
+      - [path-a, path-b]
+    modeled_generation_intervals: null
   wall_clock_duration_hours: {low: 1.25, high: 2.5}
   uncertainty:
     assumptions: []
