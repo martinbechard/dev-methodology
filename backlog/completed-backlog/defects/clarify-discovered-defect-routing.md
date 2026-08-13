@@ -1,6 +1,6 @@
 # Clarify Discovered Defect Routing
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
@@ -148,3 +148,22 @@ Do not modify either governed skill definition or its focused contract tests unt
 - Accepted Execution: The assigned nested Dev Orchestrator accepted exclusive execution ownership for this Work Item before source mutation.
 - Transition Claim: `run-clarify-discovered-defect-routing-019ff9da`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `69d58dba-3fd2-4f68-a188-a191207901af`.
 - Next Action: Produce and review a bounded implementation and TDD plan before changing the approved governed sources.
+
+## Completion Evidence
+
+- Completed At: 2026-08-13T07:08:48Z.
+- Completion: main-branch READY with requested lifecycle `Completed`.
+- Accepted Source Commit: `30e0b0f391bb36fc990c90ea8c96299aa3773afb`.
+- Integration Commit: `30e0b0f391bb36fc990c90ea8c96299aa3773afb`.
+- Main Observation: Local `main` and `HEAD` both resolve to the integration commit, and the candidate is an ancestor of `main`.
+- Changed Paths: `skills/create-work-item-file/SKILL.md`, `skills/manage-work-items-file/SKILL.md`, `scripts/test_bundle_content.py`, and `design/generated/skill-definitions.js`.
+- Source Review: Fresh Dev Code Reviewer PASS with no confirmed issue.
+- Prompt-Contract Review: Fresh Dev Prompt Reviewer PASS with no confirmed issue.
+- Methodology Review: Optional formal checklist verdict omitted because the reviewer zero-write rule prevented its required saved checklist; substantive fresh review found no material methodology issue.
+- Verification: Fresh Dev Verifier PASS for the focused routing test, both MCP skill validations, generated skill-definition freshness, `build-skill-docs.py --check`, exact-scope inspection, `git diff --check`, main reachability, and clean worktree state.
+- Proportional Omission: Broad `scripts` test discovery was excluded by the accepted Tier 2-4 verification policy.
+- Remote Publication: Not required or performed.
+- Preserved Candidate: `03a94762451efe4322fe781f77191b769bf6c7b1` remains unchanged and reachable from `main`.
+- Integration Claim: `deliver-clarify-discovered-defect-routing-019ff9da`; acquired event `ee45ecfe-5c96-4538-b6c4-c478556976a2`; released event `90d78144-6666-44c1-969a-ff878a2760c3`.
+- Terminal Backlog Claim: `complete-clarify-discovered-defect-routing-019ff9da`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `d1d1dd77-eded-466e-a00b-3146c8f6325d`.
+- Completed Archive: `backlog/completed-backlog/defects/clarify-discovered-defect-routing.md`.
