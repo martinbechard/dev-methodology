@@ -1,6 +1,6 @@
 # Distinguish Blocked From Queued Dependency Waits
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -133,3 +133,15 @@ Approved at creation by the user's explicit 2026-08-12 lifecycle-policy clarific
 - Resume Delta: Retry the required hierarchy-plan creation once with the optional `output_folder` omitted; use the configured provider default and verify the returned JSON and HTML artifacts.
 - Transition Claim: `restart-folder-dependency-plan-default-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `e7f5f499-01ad-4c33-aed5-6468d32079de`.
 - Acceptance Boundary: The same Dev Orchestrator records Starting -> Running before the retry or source mutation.
+
+## Same-Execution Running Acceptance
+
+- Accepted At: 2026-08-13T00:50:34Z.
+- Owner: Dev Orchestrator `/root/distinguish_blocked_waits`.
+- Canonical Conversation: Runtime parent Task `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Root Agent Task: `/root/distinguish_blocked_waits`.
+- Branch: `main`.
+- Worktree: `/Users/martinbechard/dev/dev-methodology`.
+- Phase: hierarchy-plan recovery and technical review.
+- Accepted Execution Evidence: The same canonical execution resolved recovery commits `4fec0d60b90d400bfe086ba3577ab2cbcbb64d50`, `b5ffef747e1d62d67b555f89aeab343e279517e2`, and `951aa60b4b7aa837526f70fffeca94a32f58b9f0`, then acquired Work Item update claim `distinguish-blocked-waits-resume-running` with outcome `SHARED_CHECKOUT_ACQUIRED` and event `ab287ef3-5102-4b02-a2eb-30c8baf982b9`.
+- Next Action: The existing Dev Coder retries `create_hierarchy_plan` exactly once with `output_folder` omitted and verifies only the provider-returned JSON and sibling HTML.
