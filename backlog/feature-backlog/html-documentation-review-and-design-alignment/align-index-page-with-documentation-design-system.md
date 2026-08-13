@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -79,3 +79,18 @@ Dependency Resolution: Satisfied by accepted candidate 6874526448340418cd5b074a2
 
 - This item must not start before its page-specific text review is Completed.
 - Creation of this work item does not dispatch it while backlog crisis recovery remains active.
+
+## Starting Handoff Evidence
+
+- Reserved At: 2026-08-13T13:34:28Z.
+- Transition: `Ready -> Starting`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Baseline: `3c54b256a62622781662622db4e1d8a017bc4d0c` on primary `main`.
+- Capacity: Fills the fifth active slot after `estimate-agent-work` entered User Action Required and terminal cleanup completed for `keep-user-decisions-in-visible-worker-tasks`.
+- Dependency: The page-specific text-review predecessor is durably Completed and its accepted baseline remains recorded above.
+- Series Scheduling: The series explicitly permits pages to proceed independently. This is the first listed remaining page-alignment item.
+- Overlap: Scope is the accepted `index.html` design alignment and its directly required page-specific verification. Active provider-terminology work does not name `index.html`; do not absorb README, shared methodology terminology, evaluation-runner, or unrelated generated-output changes. Claim exact paths before mutation and return any newly discovered overlap.
+- Dispatch Architecture: Create one visible Codex task whose initial prompt launches one Dev Orchestrator subagent and states the visible root title-and-messaging responsibility.
+- Transition Claims: Work Item `start-align-index-design-system-work-item`; event `6fe37a78-c4f9-4833-9b4d-90f389ff33b3`. Provider `start-align-index-design-system-provider`; event `359b50cc-b290-4043-be04-d360634bca42`.
+- Runtime Identity: Pending caller-owned visible task creation. Creation does not imply Running.
