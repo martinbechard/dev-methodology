@@ -127,3 +127,18 @@ Approved by the user's 2026-08-13 instruction to log the defect and update all l
 - Do not rename the upstream branch as a shortcut.
 - Do not infer provider authority solely from `origin/HEAD`, tracking configuration, or the currently checked-out branch.
 - Do not broaden this item into delivery-branch naming or ordinary main-branch completion semantics outside file-provider transactions.
+
+## Running Acceptance And Scope Decision
+
+- Accepted At: 2026-08-13T22:49:00Z.
+- Transition: `Starting -> Running` at provider commit `5ac6cb92`.
+- Canonical Task and Conversation: `019ffd4d-f252-7e42-a6bc-f13d0c80c30e` on host `local`.
+- Root Owner: The task's sole nested Dev Orchestrator.
+- Crisis Execution: Exactly one serial work-item execution; no claim operation.
+- Decision: Select boundary A. A prose-only contract cannot satisfy the user-authorized requirement to distinguish verified configured `main` or `master` from wrong, unset, linked, detached, or Git-inferred branch state.
+- Required Configuration Boundary: Add and validate one explicit canonical-primary-branch configuration value through the existing project configuration source, template, renderer, and directly dependent consumers. Reuse existing configuration infrastructure; do not introduce a second configuration file or infer the value from Git.
+- Approved Additional Governed Source: `skills/create-project-configuration/SKILL.md`, only for defining, validating, rendering, and preserving the canonical-primary-branch value required by this defect.
+- Approved Additional Dependent Artifacts: `skills/route-documentation-work/assets/templates/project-template.yaml`, directly affected configuration fixtures and focused tests, and mechanically generated projections required by the four approved skill sources.
+- Exclusions: Project Bootstrapper and Project Configurator role definitions, delivery skills, runtime adapters unrelated to the approved skill projections, `py-json-render`, and branch rename or remote-default mutation remain excluded unless a concrete implementation finding proves one is unavoidable and returns to the Coordinator before mutation.
+- Plan Gate: Correct the existing plan to this boundary and obtain fresh technical acceptance before source mutation. Do not substitute static prose assertions for executable main/master/wrong/unset/worktree behavior.
+- Required Runtime Title: `Implementing — Support Configured Primary Branches In File Provider Transactions`.
