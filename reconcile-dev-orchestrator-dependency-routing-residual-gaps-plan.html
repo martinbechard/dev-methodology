@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="en" data-theme="default">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reconcile Dev Orchestrator Dependency-Routing Residual Gaps</title>
+  <style>
+/*
+ * Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+ * AI attribution: Generated with AI assistance.
+ * Summary: Defines the shared responsive layout and interaction styles for hierarchical HTML documents.
+ * Design: docs/design/high-level/architecture.md
+ * Test plan: docs/reference/test-plan.md
+ */
+
+* {
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+body {
+  margin: 0;
+  color: var(--text);
+  background: var(--background);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  line-height: 1.5;
+}
+
+button {
+  color: inherit;
+  font: inherit;
+}
+
+.hierarchy-document {
+  width: min(1100px, calc(100% - 2rem));
+  margin: 2rem auto;
+  padding: clamp(1rem, 3vw, 2rem);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.document-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border);
+}
+
+h1 {
+  margin: 0;
+  color: var(--heading);
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  letter-spacing: -0.025em;
+}
+
+.tree-controls {
+  display: grid;
+  justify-items: end;
+  gap: 0.55rem;
+}
+
+.tree-control-row,
+.tree-actions,
+.tree-levels {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.tree-control-row {
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.tree-actions,
+.tree-levels {
+  gap: 0.3rem;
+}
+
+.tree-actions button,
+.tree-levels button {
+  padding: 0.45rem 0.75rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  background: var(--control);
+  cursor: pointer;
+}
+
+.tree-actions button {
+  display: inline-grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  padding: 0;
+}
+
+.tree-action-icon {
+  width: 1rem;
+  height: 1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+[data-action="copy"].is-success {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+[data-action="copy"].is-error {
+  color: var(--number);
+  border-color: var(--number);
+}
+
+.tree-actions button:hover,
+.tree-actions button:focus-visible,
+.tree-levels button:hover,
+.tree-levels button:focus-visible {
+  border-color: var(--accent);
+  outline: none;
+}
+
+.tree-level-label {
+  margin-right: 0.15rem;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 650;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.tree-levels button {
+  min-width: 2rem;
+  height: 2rem;
+  padding: 0.25rem 0.45rem;
+  font-size: 0.82rem;
+}
+
+.tree-levels button[aria-pressed="true"] {
+  color: var(--surface);
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
+.hierarchy-tree,
+.tree-children {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hierarchy-tree {
+  padding-top: 1rem;
+}
+
+.tree-children {
+  margin-left: 0.7rem;
+  padding-left: 1.25rem;
+  border-left: 1px solid var(--branch);
+}
+
+.tree-node {
+  position: relative;
+}
+
+.node-line {
+  min-height: 2.15rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0;
+}
+
+.tree-toggle {
+  display: inline-flex;
+  max-width: 100%;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.2rem 0.35rem;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+}
+
+.tree-toggle:hover,
+.tree-toggle:focus-visible {
+  background: var(--hover);
+  outline: 2px solid transparent;
+}
+
+.tree-chevron {
+  width: 0.55rem;
+  height: 0.55rem;
+  flex: 0 0 auto;
+  border-right: 2px solid var(--accent);
+  border-bottom: 2px solid var(--accent);
+  transform: rotate(45deg) translateY(-2px);
+  transition: transform 120ms ease;
+}
+
+.tree-toggle[aria-expanded="false"] .tree-chevron {
+  transform: rotate(-45deg);
+}
+
+.tree-checkbox {
+  display: inline-grid;
+  place-items: center;
+  width: 1.05rem;
+  height: 1.05rem;
+  flex: 0 0 auto;
+  margin: 0 0.1rem 0 0.2rem;
+  color: var(--surface);
+  border: 1.5px solid var(--muted);
+  border-radius: 3px;
+  background: var(--surface);
+  pointer-events: none;
+}
+
+.tree-checkbox.is-checked {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
+.tree-checkbox.is-checked::after {
+  content: "✓";
+  font-size: 0.78rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.tree-number {
+  flex: 0 0 auto;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+  font-weight: 750;
+}
+
+.tree-key {
+  color: var(--key);
+  font-weight: 650;
+  overflow-wrap: anywhere;
+}
+
+.tree-line-content {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.tree-separator {
+  color: var(--muted);
+}
+
+.tree-value {
+  min-width: 0;
+  padding: 0.1rem 0.35rem;
+  border-radius: 5px;
+  overflow-wrap: anywhere;
+}
+
+.copy-status {
+  min-height: 1.2em;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.type-string {
+  color: var(--string);
+}
+
+.type-number {
+  color: var(--number);
+}
+
+.type-boolean {
+  color: var(--boolean);
+  font-weight: 650;
+}
+
+.type-null {
+  color: var(--muted);
+  font-style: italic;
+}
+
+@media (max-width: 640px) {
+  .hierarchy-document {
+    width: 100%;
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+  }
+
+  .document-header {
+    flex-direction: column;
+  }
+
+  .tree-controls {
+    justify-items: start;
+  }
+
+  .tree-children {
+    margin-left: 0.25rem;
+    padding-left: 0.8rem;
+  }
+}
+
+/*
+ * Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+ * AI attribution: Generated with AI assistance.
+ * Summary: Provides a neutral light theme for general hierarchical documents.
+ * Design: docs/design/high-level/architecture.md
+ * Test plan: docs/reference/test-plan.md
+ */
+
+:root {
+  color-scheme: light;
+  --background: #f4f6f8;
+  --surface: #ffffff;
+  --control: #f8fafc;
+  --hover: #eef6ff;
+  --text: #26313d;
+  --heading: #111827;
+  --muted: #64748b;
+  --key: #1e3a5f;
+  --string: #276749;
+  --number: #9c4221;
+  --boolean: #6b46c1;
+  --accent: #2563eb;
+  --branch: #cbd5e1;
+  --border: #dbe2ea;
+  --border-strong: #c5cfdb;
+  --shadow: 0 18px 48px rgb(15 23 42 / 8%);
+}
+
+  </style>
+</head>
+<body>
+  <main class="hierarchy-document">
+    <header class="document-header">
+      <div>
+        <h1>Reconcile Dev Orchestrator Dependency-Routing Residual Gaps</h1>
+      </div>
+      <div class="tree-controls">
+        <div class="tree-control-row">
+          <div class="tree-levels" aria-label="Expand tree to level">
+            <span class="tree-level-label">Levels</span>
+            <button type="button" data-level="1" aria-pressed="false" aria-label="Expand through level 1">1</button>
+            <button type="button" data-level="2" aria-pressed="false" aria-label="Expand through level 2">2</button>
+            <button type="button" data-level="3" aria-pressed="false" aria-label="Expand through level 3">3</button>
+            <button type="button" data-level="all" aria-pressed="true" aria-label="Expand all levels">All</button>
+          </div>
+          <div class="tree-actions" aria-label="Tree controls">
+            <button type="button" data-action="copy" aria-label="Copy content" title="Copy content"><svg class="tree-action-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button>
+            <button type="button" data-action="expand" aria-label="Expand all" title="Expand all"><svg class="tree-action-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg></button>
+            <button type="button" data-action="collapse" aria-label="Collapse all" title="Collapse all"><svg class="tree-action-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h14"></path></svg></button>
+          </div>
+        </div>
+        <span class="copy-status" role="status" aria-live="polite" data-copy-status></span>
+      </div>
+    </header>
+    <ul class="hierarchy-tree" role="tree" data-hierarchy-root><li class="tree-node tree-branch" role="treeitem"><div class="node-line"><button type="button" class="tree-toggle" data-depth="0" aria-expanded="true" aria-controls="hierarchy-node-1"><span class="tree-chevron" aria-hidden="true"></span><span class="tree-line-content"><span class="tree-key">Reconcile Dev Orchestrator dependency-routing residual gaps</span></span></button></div><ul class="tree-children" id="hierarchy-node-1" role="group"><li class="tree-node tree-branch" role="treeitem"><div class="node-line"><span class="tree-checkbox is-checked" role="img" aria-label="1 complete"></span><button type="button" class="tree-toggle" data-depth="1" aria-expanded="true" aria-controls="hierarchy-node-2"><span class="tree-chevron" aria-hidden="true"></span><span class="tree-line-content"><span class="tree-number">1</span> <span class="tree-key">Authority and premise audit</span></span></button></div><ul class="tree-children" id="hierarchy-node-2" role="group"><li class="tree-node tree-leaf" role="treeitem"><div class="node-line"><span class="tree-checkbox is-checked" role="img" aria-label="1.1 complete"></span><span class="tree-line-content"><span class="tree-number">1.1</span> <span class="tree-value type-string">Use provider record reconcile-dev-orchestrator-dependency-routing-residual-gaps as the exact behavioral boundary</span></span></div></li><li class="tree-node tree-leaf" role="treeitem"><div class="node-line"><span class="tree-checkbox is-checked" role="img" aria-label="1.2 complete"></span><span class="tree-line-content"><span class="tree-number">1.2</span> <span class="tree-value type-string">Audit current main at d954b9d1988516599d8639c3336bca2c414e2db5 without modifying unrelated dirty work</span></span></div></li><li class="tree-node tree-leaf" role="treeitem"><div class="node-line"><span class="tree-checkbox is-checked" role="img" aria-label="1.3 complete"></span><span class="tree-line-content"><span class="tree-number">1.3</span> <span class="tree-value type-string">Use commits 7535a9b9, 78a0ce5a, 118939e5, 0be9b5ea, and 6c598418 as historical evidence only</span></span></div></li></ul></li><li class="tree-node tree-branch" role="treeitem"><div class="node-line"><span class="tree-checkbox is-checked" role="img" aria-label="2 complete"></span><button type="button" class="tree-toggle" data-depth="1" aria-expanded="true" aria-controls="hierarchy-node-3"><span class="tree-chevron" aria-hidden="true"></span><span class="tree-line-content"><span class="tree-number">2</span> <span class="tree-key">Current-main residual dispositions</span></span></button></div><ul class="tree-children" id="hierarchy-node-3" role="group"><li class="tree-node tree-leaf" role="treeitem"><div class="node-line"><span class="tree-checkbox is-checked" role="img" aria-label="2.1 complete"></span><span class="tree-line-content"><span class="tree-number">2.1</span> <span class="tree-value type-string">Linked-worktree and symlink release-journal containment is a confirmed defect: resolved journal paths are bounded to the fixture instead of the selected claim-state root, so cross-state redirection within the fixture is accepted</span></span></div></li><li class="tree-node tree-leaf" role="treeitem"><div class="node-line"><span class="tree-checkbox is-checked" role="img" aria-label="2.2 complete"></span><span class="tree-line-content"><span class="tree-number">2.2</span> <span class="tree-value type-string">Malformed or incomplete handoff receipts are already correct: non-array, non-object, invalid lane, duplicate lane, absent required lane, and malformed field cases reject explicitly while live-batch fallback retains bounded diagnostics</span></span></div></li><li class="tree-node tree-leaf" role="treeitem"><div class="node-line"><span class="tree-checkbox is-checked" role="img" aria-label="2.3 complete"></span><span class="tree-line-content"><span class="tree-number">2.3</span> <span class="tree-value type-string">Exact required producer identity is already correct: receipt invocation, exact retained producer session IDs, acquisition agent, and release agent must match the literal lane producer identity</span></span></div></li></ul></li><li class="tree-node tree-branch" role="treeitem"><div class="node-line"><span class="tree-checkbox is-checked" role="img" aria-label="3 complete"></span><button type="button" class="tree-toggle" data-depth="1" aria-expanded="true" aria-controls="hierarchy-node-4"><span class="tree-chevron" aria-hidden="true"></span><span class="tree-line-content"><span class="tree-number">3</span> <span class="tree-key">Smallest complete implementation decision</span></span></button></div><ul class="tree-children" id="hierarchy-node-4" role="group"><li class="tree-node tree-leaf" role="treeitem"><div class="node-line"><span class="tree-checkbox is-checked" role="img" aria-label="3.1 complete"></span><span class="tree-line-content"><span class="tree-number">3.1</span> <span class="tree-value type-string">Implement the architect-confirmed containment defect with one focused regression and the minimum correction; retain no-source-change dispositions for malformed receipts and exact producer identity</span></span></div></li><li class="tree-node tree-leaf" role="treeitem"><div class="node-line"><span class="tree-checkbox is-checked" role="img" aria-label="3.2 complete"></span><span class="tree-line-content"><span class="tree-number">3.2</span> <span class="tree-value type-string">Do not replay the legacy branch or restore its superseded fixture structure</span></span></div></li><li class="tree-node tree-leaf" role="treeitem"><div class="node-line"><span class="tree-checkbox is-checked" role="img" aria-label="3.3 complete"></span><span class="tree-line-content"><span class="tree-number">3.3</span> <span class="tree-value type-string">Reserve future source ownership, only after explicit authorization and a disproved classification, to evals/agent-tests/runner.py, evals/agent-tests/test_runner.py, and evals/agent-tests/dev-orchestrator/test_fixtures.py</span></span></div></li></ul></li><li class="tree-node tree-branch" role="treeitem"><div class="node-line"><span class="tree-checkbox is-checked" role="img" aria-label="4 complete"></span><button type="button" class="tree-toggle" data-depth="1" aria-expanded="true" aria-controls="hierarchy-node-5"><span class="tree-chevron" aria-hidden="true"></span><span class="tree-line-content"><span class="tree-number">4</span> <span class="tree-key">Conditional TDD correction boundary</span></span></button></div><ul class="tree-children" id="hierarchy-node-5" role="group"><li class="tree-node tree-leaf" role="treeitem"><div class="node-line"><span class="tree-checkbox is-checked" role="img" aria-label="4.1 complete"></span><span class="tree-line-content"><span class="tree-number">4.1</span> <span class="tree-value type-string">If review identifies a concrete in-scope counterexample, add one focused failing regression test in the existing unittest files and confirm the expected RED reason</span></span></div></li><li class="tree-node tree-leaf" role="treeitem"><div class="node-line"><span class="tree-checkbox is-checked" role="img" aria-label="4.2 complete"></span><span class="tree-line-content"><span class="tree-number">4.2</span> <span class="tree-value type-string">Make the minimum runner.py correction for only that confirmed counterexample and confirm GREEN</span></span></div></li><li class="tree-node tree-leaf" role="treeitem"><div class="node-line"><span class="tree-checkbox is-checked" role="img" aria-label="4.3 complete"></span><span class="tree-line-content"><span class="tree-number">4.3</span> <span class="tree-value type-string">Use existing unittest and temporary-directory fixtures; do not add custom infrastructure, change receipt schema beyond the three residuals, or alter fixture topology</span></span></div></li><li class="tree-node tree-leaf" role="treeitem"><div class="node-line"><span class="tree-checkbox is-checked" role="img" aria-label="4.4 complete"></span><span class="tree-line-content"><span class="tree-number">4.4</span> <span class="tree-value type-string">Update this same authoritative hierarchy plan before coding if discovery changes the accepted decomposition</span></span></div></li></ul></li><li class="tree-node tree-branch" role="treeitem"><div class="node-line"><span class="tree-checkbox" role="img" aria-label="5 incomplete"></span><button type="button" class="tree-toggle" data-depth="1" aria-expanded="true" aria-controls="hierarchy-node-6"><span class="tree-chevron" aria-hidden="true"></span><span class="tree-line-content"><span class="tree-number">5</span> <span class="tree-key">Verification and handoff</span></span></button></div><ul class="tree-children" id="hierarchy-node-6" role="group"><li class="tree-node tree-leaf" role="treeitem"><div class="node-line"><span class="tree-checkbox" role="img" aria-label="5.1 incomplete"></span><span class="tree-line-content"><span class="tree-number">5.1</span> <span class="tree-value type-string">Run the three focused AgentSuiteRunnerTests for linked-worktree containment, symlink journal containment, and malformed checkpoint diagnostic retention with CPython 3.11 or newer</span></span></div></li><li class="tree-node tree-leaf" role="treeitem"><div class="node-line"><span class="tree-checkbox" role="img" aria-label="5.2 incomplete"></span><span class="tree-line-content"><span class="tree-number">5.2</span> <span class="tree-value type-string">Run the four focused DependencyRoutingFixtureTests for required fields, required lanes, producer session evidence, and alias rejection with PYTHONPATH bound to evals/agent-tests</span></span></div></li><li class="tree-node tree-leaf" role="treeitem"><div class="node-line"><span class="tree-checkbox" role="img" aria-label="5.3 incomplete"></span><span class="tree-line-content"><span class="tree-number">5.3</span> <span class="tree-value type-string">If source changes are authorized, run both complete focused test files, python compilation for changed Python, and git diff --check without weakening gates</span></span></div></li><li class="tree-node tree-leaf" role="treeitem"><div class="node-line"><span class="tree-checkbox" role="img" aria-label="5.4 incomplete"></span><span class="tree-line-content"><span class="tree-number">5.4</span> <span class="tree-value type-string">Recheck current main and candidate paths for concurrent drift, preserve unrelated changes, and return exact evidence to Dev Orchestrator for independent review</span></span></div></li></ul></li></ul></li></ul>
+  </main>
+  <script>
+(() => {
+  const root = document.querySelector("[data-hierarchy-root]");
+  if (!root) return;
+  const levelControls = document.querySelectorAll("[data-level]");
+  const copyControl = document.querySelector('[data-action="copy"]');
+  const copyStatus = document.querySelector("[data-copy-status]");
+  let copyResetTimer;
+
+  const setExpanded = (button, expanded) => {
+    button.setAttribute("aria-expanded", String(expanded));
+    const children = document.getElementById(button.getAttribute("aria-controls"));
+    if (children) children.hidden = !expanded;
+  };
+
+  const setVisibleLevel = (level) => {
+    const visibleLevel = level === "all" ? Number.POSITIVE_INFINITY : Number(level);
+    root.querySelectorAll(".tree-toggle").forEach((button) => {
+      const depth = Number(button.getAttribute("data-depth"));
+      setExpanded(button, depth < visibleLevel);
+    });
+    levelControls.forEach((control) => {
+      control.setAttribute("aria-pressed", String(control.getAttribute("data-level") === level));
+    });
+  };
+
+  root.addEventListener("click", (event) => {
+    if (!(event.target instanceof Element)) return;
+    const button = event.target.closest(".tree-toggle");
+    if (!button || !root.contains(button)) return;
+    setExpanded(button, button.getAttribute("aria-expanded") !== "true");
+    levelControls.forEach((control) => control.setAttribute("aria-pressed", "false"));
+  });
+
+  document.querySelectorAll('[data-action="expand"], [data-action="collapse"]').forEach((control) => {
+    control.addEventListener("click", () => {
+      const level = control.getAttribute("data-action") === "expand" ? "all" : "1";
+      setVisibleLevel(level);
+    });
+  });
+
+  levelControls.forEach((control) => {
+    control.addEventListener("click", () => {
+      setVisibleLevel(control.getAttribute("data-level"));
+    });
+  });
+
+  const payloadText = () => {
+    const lines = [];
+    const appendList = (list, depth) => {
+      Array.from(list.children).forEach((node) => {
+        if (!(node instanceof Element) || !node.classList.contains("tree-node")) return;
+        const line = node.querySelector(":scope > .node-line .tree-line-content");
+        if (line) {
+          const marker = node.querySelector(":scope > .node-line > .tree-checkbox");
+          const completion = marker
+            ? marker.classList.contains("is-checked") ? "[x] " : "[ ] "
+            : "";
+          const text = line.textContent.replace(/\s+/g, " ").trim();
+          lines.push(`${"  ".repeat(depth)}${completion}${text}`);
+        }
+        const children = node.querySelector(":scope > .tree-children");
+        if (children) appendList(children, depth + 1);
+      });
+    };
+    appendList(root, 0);
+    return lines.join("\n");
+  };
+
+  const fallbackCopy = (payload) => {
+    const activeElement = document.activeElement;
+    const field = document.createElement("textarea");
+    field.value = payload;
+    field.setAttribute("readonly", "");
+    field.style.position = "fixed";
+    field.style.opacity = "0";
+    document.body.appendChild(field);
+    field.select();
+    const copied = document.execCommand("copy");
+    field.remove();
+    if (activeElement instanceof HTMLElement) activeElement.focus();
+    return copied;
+  };
+
+  const writePayload = async (payload) => {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      try {
+        await navigator.clipboard.writeText(payload);
+        return true;
+      } catch {
+        return fallbackCopy(payload);
+      }
+    }
+    return fallbackCopy(payload);
+  };
+
+  if (copyControl) {
+    copyControl.addEventListener("click", async () => {
+      const copied = await writePayload(payloadText());
+      const copyLabel = copied ? "Copied" : "Copy failed";
+      copyControl.setAttribute("aria-label", copyLabel);
+      copyControl.setAttribute("title", copyLabel);
+      copyControl.classList.toggle("is-success", copied);
+      copyControl.classList.toggle("is-error", !copied);
+      if (copyStatus) {
+        copyStatus.textContent = copied
+          ? "Hierarchy content copied."
+          : "Could not copy the hierarchy content. Select and copy it manually.";
+      }
+      window.clearTimeout(copyResetTimer);
+      copyResetTimer = window.setTimeout(() => {
+        copyControl.setAttribute("aria-label", "Copy content");
+        copyControl.setAttribute("title", "Copy content");
+        copyControl.classList.remove("is-success", "is-error");
+        if (copyStatus) copyStatus.textContent = "";
+      }, 2000);
+    });
+  }
+})();
+  </script>
+</body>
+</html>

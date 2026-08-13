@@ -1,0 +1,126 @@
+{
+  "schema": "mcp-agent-ops-hierarchy-plan",
+  "version": 1,
+  "title": "Reconcile Dev Orchestrator Dependency-Routing Residual Gaps",
+  "theme": "default",
+  "themesFolder": null,
+  "htmlFilename": "reconcile-dev-orchestrator-dependency-routing-residual-gaps-plan.html",
+  "rootLabel": "Reconcile Dev Orchestrator dependency-routing residual gaps",
+  "items": [
+    {
+      "text": "Authority and premise audit",
+      "complete": true,
+      "children": [
+        {
+          "text": "Use provider record reconcile-dev-orchestrator-dependency-routing-residual-gaps as the exact behavioral boundary",
+          "complete": true,
+          "children": []
+        },
+        {
+          "text": "Audit current main at d954b9d1988516599d8639c3336bca2c414e2db5 without modifying unrelated dirty work",
+          "complete": true,
+          "children": []
+        },
+        {
+          "text": "Use commits 7535a9b9, 78a0ce5a, 118939e5, 0be9b5ea, and 6c598418 as historical evidence only",
+          "complete": true,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "Current-main residual dispositions",
+      "complete": true,
+      "children": [
+        {
+          "text": "Linked-worktree and symlink release-journal containment is a confirmed defect: resolved journal paths are bounded to the fixture instead of the selected claim-state root, so cross-state redirection within the fixture is accepted",
+          "complete": true,
+          "children": []
+        },
+        {
+          "text": "Malformed or incomplete handoff receipts are already correct: non-array, non-object, invalid lane, duplicate lane, absent required lane, and malformed field cases reject explicitly while live-batch fallback retains bounded diagnostics",
+          "complete": true,
+          "children": []
+        },
+        {
+          "text": "Exact required producer identity is already correct: receipt invocation, exact retained producer session IDs, acquisition agent, and release agent must match the literal lane producer identity",
+          "complete": true,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "Smallest complete implementation decision",
+      "complete": true,
+      "children": [
+        {
+          "text": "Implement the architect-confirmed containment defect with one focused regression and the minimum correction; retain no-source-change dispositions for malformed receipts and exact producer identity",
+          "complete": true,
+          "children": []
+        },
+        {
+          "text": "Do not replay the legacy branch or restore its superseded fixture structure",
+          "complete": true,
+          "children": []
+        },
+        {
+          "text": "Reserve future source ownership, only after explicit authorization and a disproved classification, to evals/agent-tests/runner.py, evals/agent-tests/test_runner.py, and evals/agent-tests/dev-orchestrator/test_fixtures.py",
+          "complete": true,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "Conditional TDD correction boundary",
+      "complete": true,
+      "children": [
+        {
+          "text": "If review identifies a concrete in-scope counterexample, add one focused failing regression test in the existing unittest files and confirm the expected RED reason",
+          "complete": true,
+          "children": []
+        },
+        {
+          "text": "Make the minimum runner.py correction for only that confirmed counterexample and confirm GREEN",
+          "complete": true,
+          "children": []
+        },
+        {
+          "text": "Use existing unittest and temporary-directory fixtures; do not add custom infrastructure, change receipt schema beyond the three residuals, or alter fixture topology",
+          "complete": true,
+          "children": []
+        },
+        {
+          "text": "Update this same authoritative hierarchy plan before coding if discovery changes the accepted decomposition",
+          "complete": true,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "Verification and handoff",
+      "complete": false,
+      "children": [
+        {
+          "text": "Run the three focused AgentSuiteRunnerTests for linked-worktree containment, symlink journal containment, and malformed checkpoint diagnostic retention with CPython 3.11 or newer",
+          "complete": false,
+          "children": []
+        },
+        {
+          "text": "Run the four focused DependencyRoutingFixtureTests for required fields, required lanes, producer session evidence, and alias rejection with PYTHONPATH bound to evals/agent-tests",
+          "complete": false,
+          "children": []
+        },
+        {
+          "text": "If source changes are authorized, run both complete focused test files, python compilation for changed Python, and git diff --check without weakening gates",
+          "complete": false,
+          "children": []
+        },
+        {
+          "text": "Recheck current main and candidate paths for concurrent drift, preserve unrelated changes, and return exact evidence to Dev Orchestrator for independent review",
+          "complete": false,
+          "children": []
+        }
+      ]
+    }
+  ]
+}
