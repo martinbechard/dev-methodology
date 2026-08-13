@@ -1,6 +1,6 @@
 # Distinguish Blocked From Queued Dependency Waits
 
-Status: Running
+Status: Blocked
 
 Type: Defect
 
@@ -107,3 +107,13 @@ Approved at creation by the user's explicit 2026-08-12 lifecycle-policy clarific
 - Phase: implementation planning and technical review.
 - Accepted Execution Evidence: The authorized canonical collaboration execution resolved reservation commit `cba1acefc37402689033229787323ecccced6809` and acquired Work Item update claim `distinguish-blocked-waits-running-update` with outcome `SHARED_CHECKOUT_ACQUIRED` and event `f82bbefd-dc96-4d5c-af8d-58eca1ce1601`.
 - Next Action: Dev Coder creates the bounded implementation and TDD plan and the required authoritative hierarchy plan before source mutation.
+
+## Plan Workspace Blocker
+
+- Recorded At: 2026-08-13T00:49:12Z.
+- Exact Blocker: The first `create_hierarchy_plan` call supplied `/Users/martinbechard/.codex/visualizations/2026/08/11/019ff2c3-1710-7aa1-89c4-9d6066f51fe4`, which the configured provider rejected as outside its workspace roots. No plan or source mutation occurred.
+- Blocker Owner: Dev Backlog Coordinator.
+- Recovery Finding: `manage-complex-development-plan` makes `output_folder` optional and requires the provider default when a custom folder is inappropriate. Provider reconfiguration is unnecessary.
+- Unblock Condition: Retry the same create operation once with `output_folder` omitted, then use and verify the provider-returned JSON path and sibling HTML.
+- Preserved Execution: `/root/distinguish_blocked_waits`; safe to resume without replacement.
+- Transition Claim: `block-folder-dependency-plan-path-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `6a55d2e4-257d-4493-b454-ce9086f7910f`.
