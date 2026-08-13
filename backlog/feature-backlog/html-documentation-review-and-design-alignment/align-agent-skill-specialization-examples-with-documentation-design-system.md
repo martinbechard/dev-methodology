@@ -1,8 +1,8 @@
 # Align Agent and Skill Specialization Examples with the Documentation Design System
 
-Owner: Dev Orchestrator `/root/align_skill_examples`
+Owner: Unowned
 
-Status: Running
+Status: Blocked
 
 Type: Feature
 
@@ -197,6 +197,24 @@ Option A is accepted. It authorizes only useful known page-specific provenance, 
 - Transition Claim: `reserve-resumed-specialization-019ff2c3`; event `b5446199-9756-4fc2-8022-d1636bce0c38`.
 - Required Runtime Title: `Starting — Align Agent And Skill Specialization Examples With Documentation Design System`.
 - Next Action: The same Dev Orchestrator records `Starting -> Running`, reacquires its Work Item and exact implementation/browser claims, and continues only the approved Option A correction and fresh reviews.
+
+### Browser Runtime Blocked Evidence
+
+- Recorded At: 2026-08-13T21:22:34Z.
+- Transition: `Running -> Blocked`.
+- Canonical Task and Conversation: `019ffca1-15fa-7940-a0cb-e0a51da36aae`.
+- Preserved Dev Orchestrator: `/root/align_skill_examples`.
+- Preserved Candidate: `344ac687`; content and code review verdict `GOOD`.
+- Exhausted Recovery: The authorized repository-owned browser-runtime retry could not produce valid browser evidence.
+- Exact Blocker: `evals/agent-tests/runtime/playwright-harness.mjs` always calls `server.listen(0, "127.0.0.1")`, exposes no fixed-port binding, and exposes no direct-file navigation mode. The required exact port claim therefore cannot precede listener creation.
+- Recovery Owner: `evals/agent-tests` runtime owner.
+- Unblock Condition: Provide a repository-authorized command that binds a preclaimed exact port, or authorize and support direct-file navigation without a listener.
+- Browser Claim Releases: Initial event `2c1a5933-b211-4ee5-ad04-a05f9439dfdb`; retry event `8016e3a3-c9a6-45c6-86d7-8db01feae20e`.
+- Path Claim Release: `paths-resumed-specialization-019ffca1`; event `6a884256-88d2-42d9-825f-5c5b1a701c8f`.
+- Work Claim Release: `work-resumed-specialization-019ffca1`; disposition `blocked`; event `03bb2e5a-8c4f-4599-80d0-f04d0ad2b30b`.
+- Provider Transition Claim: `block-specialization-browser-runtime-019ff2c3`; event `fb669a84-4ac4-4ecb-b49e-e5b118eb0f6c`.
+- Required Runtime Title: `Blocked — Align Agent And Skill Specialization Examples With Documentation Design System`.
+- Safe Resume: Preserve the same task and candidate, then resume only through `Blocked -> Ready -> Starting -> Running` after the unblock proof.
 
 ### Authorized Resumed Running Acceptance
 
