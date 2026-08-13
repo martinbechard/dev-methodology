@@ -121,3 +121,15 @@ Do not modify either governed skill definition or its focused contract tests unt
 - Dispatch Architecture: Create one user-visible Codex task whose initial reference-plus-delta prompt starts one Dev Orchestrator collaboration subagent for this provider record.
 - Transition Claim: `start-clarify-discovered-defect-routing-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `5d9d0cd7-6333-462f-9c4f-8aa7ab51437c`.
 - Next Reconciliation: Adopt the exact visible task identity. Its nested Dev Orchestrator records Starting -> Running before mutation.
+
+## Canonical Runtime Assignment
+
+- Assigned At: 2026-08-13T06:41:05Z.
+- Codex Task ID: `019ff9da-3110-7022-86b1-e10cc6f0ece8`.
+- Conversation ID: `019ff9da-3110-7022-86b1-e10cc6f0ece8`.
+- Host: `local`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Requested Title: `Starting — Clarify Discovered Defect Routing`.
+- Initial Action: Start one Dev Orchestrator collaboration subagent for this authoritative provider record.
+- Creation Outcome: Unique success with no pending client identity and no retry.
+- Lifecycle Boundary: This assignment remains Starting until the nested Dev Orchestrator accepts and records Starting -> Running.
