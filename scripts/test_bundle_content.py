@@ -256,6 +256,41 @@ def validate_estimate_output_shape(shape: object) -> dict[str, dict[str, tuple[f
     )
     if range_pair(estimate.get("total_agent_hours"), "total agent hours") != total_generated:
         raise ValueError("total agent hours does not preserve all generated effort")
+
+    expected_parallelism = estimate.get("expected_parallelism")
+    if not isinstance(expected_parallelism, dict) or set(expected_parallelism) != {
+        "low",
+        "high",
+        "overlap",
+    }:
+        raise ValueError("expected_parallelism must contain exactly low, high, and overlap")
+    concurrency_low = expected_parallelism["low"]
+    concurrency_high = expected_parallelism["high"]
+    if (
+        isinstance(concurrency_low, bool)
+        or isinstance(concurrency_high, bool)
+        or not isinstance(concurrency_low, int)
+        or not isinstance(concurrency_high, int)
+    ):
+        raise ValueError("expected_parallelism bounds must be integers")
+    if concurrency_low <= 0 or concurrency_high <= 0:
+        raise ValueError("expected_parallelism bounds must be positive")
+    if concurrency_low > concurrency_high:
+        raise ValueError("expected_parallelism low cannot exceed high")
+    overlap_paths = expected_parallelism["overlap"]
+    if not isinstance(overlap_paths, list) or not all(
+        isinstance(path_name, str) for path_name in overlap_paths
+    ):
+        raise ValueError("expected_parallelism overlap must be a path list")
+    if len(overlap_paths) != len(set(overlap_paths)):
+        raise ValueError("expected_parallelism overlap paths must be unique")
+    unknown_paths = set(overlap_paths) - set(paths)
+    if unknown_paths:
+        raise ValueError("expected_parallelism overlap names an undeclared path")
+    if set(overlap_paths) != set(paths):
+        raise ValueError("expected_parallelism omits a concurrently evaluated path")
+    if concurrency_high != len(overlap_paths):
+        raise ValueError("expected_parallelism high must equal the overlapping path count")
     return calculated
 NEW_WORKFLOW_SKILLS = (
     "bootstrap-project-documentation",
@@ -3537,6 +3572,10 @@ class BundleContentTests(unittest.TestCase):
         parsed_shape = yaml.safe_load(reusable_shape["yaml"])
         calculated_paths = validate_estimate_output_shape(parsed_shape)
         self.assertEqual(
+            {"low": 1, "high": 2, "overlap": ["path-a", "path-b"]},
+            parsed_shape["estimate"]["expected_parallelism"],
+        )
+        self.assertEqual(
             {
                 "path-a": {
                     "generated_effort_agent_hours": (1.0, 2.0),
@@ -3569,6 +3608,55 @@ class BundleContentTests(unittest.TestCase):
         ] = "path-a"
         with self.assertRaisesRegex(ValueError, "off_critical_path runtime"):
             validate_estimate_output_shape(malformed_disposition)
+
+        malformed_parallelism_cases = (
+            (
+                "zero",
+                {"low": 0, "high": 2, "overlap": ["path-a", "path-b"]},
+                "positive",
+            ),
+            (
+                "negative",
+                {"low": -1, "high": 2, "overlap": ["path-a", "path-b"]},
+                "positive",
+            ),
+            (
+                "nonnumeric",
+                {"low": "one", "high": 2, "overlap": ["path-a", "path-b"]},
+                "integers",
+            ),
+            (
+                "reversed",
+                {"low": 2, "high": 1, "overlap": ["path-a", "path-b"]},
+                "cannot exceed",
+            ),
+            (
+                "duplicate",
+                {"low": 1, "high": 2, "overlap": ["path-a", "path-a"]},
+                "unique",
+            ),
+            (
+                "unknown",
+                {"low": 1, "high": 2, "overlap": ["path-a", "path-c"]},
+                "undeclared",
+            ),
+            (
+                "missing",
+                {"low": 1, "high": 1, "overlap": ["path-a"]},
+                "omits",
+            ),
+            (
+                "inconsistent",
+                {"low": 1, "high": 3, "overlap": ["path-a", "path-b"]},
+                "path count",
+            ),
+        )
+        for case_name, malformed_parallelism, message in malformed_parallelism_cases:
+            with self.subTest(malformed_parallelism=case_name):
+                malformed_shape = json.loads(json.dumps(parsed_shape))
+                malformed_shape["estimate"]["expected_parallelism"] = malformed_parallelism
+                with self.assertRaisesRegex(ValueError, message):
+                    validate_estimate_output_shape(malformed_shape)
 
         dev_coder = load_yaml_object(
             ROLES_ROOT / "dev-activities" / "dev-coder.role.yaml"

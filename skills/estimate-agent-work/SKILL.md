@@ -122,9 +122,13 @@ and path runtime. They can be different. When reporting `critical_path_agent_hou
 selected path and include only its generated effort. Never select a generation-only path and
 then add runtime from another path.
 
-Report `expected_parallelism` as the expected concurrent agent count or a bounded range and name
-which workstreams and waits can overlap. Parallelism does not reduce total agent-hours. It can
-reduce wall-clock time only when the dependency graph permits overlap.
+Report `expected_parallelism.low` as the minimum expected concurrently active agent count while
+delivery work remains, and `expected_parallelism.high` as the maximum. The `overlap` list contains
+the unique dependency-path IDs scheduled to overlap; every ID must name a declared path. When
+wall-clock duration takes the maximum rather than the sum of concurrent paths, list every such
+path and set `high` to their count. `low` can be 1 when only one path remains active during part of
+delivery. Parallelism does not reduce total agent-hours. It can reduce wall-clock time only when
+the dependency graph permits overlap.
 
 ## State Uncertainty And Confidence
 
@@ -239,7 +243,7 @@ estimate:
   generated_effort_critical_path: {path: path-a, agent_hours: {low: 1.0, high: 2.0}}
   delivery_critical_path: {path: path-a, combined_hours: {low: 1.25, high: 2.5}}
   critical_path_agent_hours: {path: path-a, low: 1.0, high: 2.0}
-  expected_parallelism: {low: 1, high: 1, overlap: []}
+  expected_parallelism: {low: 1, high: 2, overlap: [path-a, path-b]}
   wall_clock_duration_hours: {low: 1.25, high: 2.5}
   uncertainty:
     assumptions: []
