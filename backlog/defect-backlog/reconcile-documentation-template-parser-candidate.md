@@ -1,6 +1,6 @@
 # Reconcile Documentation Template Parser Candidate
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -81,3 +81,16 @@ None.
 - Creation Outcome: Unique success decoded from a complete JSON-string envelope, with no client or pending identity and no retry.
 - Lifecycle Boundary: This assignment remains `Starting` until the nested Dev Orchestrator accepts and records `Starting -> Running`.
 - Adoption Claims: `adopt-reconcile-documentation-template-parser-candidate-visible-task`; event `e19fe050-5824-40ea-8e61-7bcc73f3889a`. `adopt-reconcile-documentation-template-parser-candidate-provider`; event `c2558b55-6929-4697-ab70-1ba6646d4e99`.
+
+## Running Acceptance Evidence
+
+- Accepted At: 2026-08-13T11:47:54Z.
+- Transition: `Starting -> Running`.
+- Owner: Dev Orchestrator.
+- Canonical Conversation ID: `019ffaf1-8f30-7470-b274-de3293c49bec`.
+- Canonical Codex Task ID: `019ffaf1-8f30-7470-b274-de3293c49bec`.
+- Branch: `main`.
+- Worktree: `/Users/martinbechard/dev/dev-methodology`.
+- Phase: implementation planning and current-main reconciliation.
+- Accepted Execution Evidence: The canonical Dev Orchestrator acquired work-item update ownership and accepted the normalized assignment on the reserved primary-main execution.
+- Next Action: Compare the four candidate commits with current main, review a bounded implementation and TDD plan, then port only confirmed gaps.
