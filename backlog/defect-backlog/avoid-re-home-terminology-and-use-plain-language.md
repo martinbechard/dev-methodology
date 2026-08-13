@@ -1,6 +1,6 @@
 # Avoid Re-Home Terminology and Use Plain Language
 
-Status: Running
+Status: Blocked
 
 Type: Defect
 
@@ -96,3 +96,15 @@ None.
 - Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
 - Coordinator Execution: `/root/backlog_coordinator`.
 - Work Claim: `avoid-re-home-terminology-work`; event `803910c4-bdbd-4b6f-907c-725f4fb69ab4`.
+
+## Blocked Evidence
+
+- Blocked At: 2026-08-13T15:52:16Z.
+- Transition: `Running -> Blocked`.
+- Blocker: Configured terminology refresh and matching-revision load do not return the tracked project `terminology.md`.
+- Recovery Work Item: `reconcile-project-terminology-reference-discovery`.
+- Blocker Owner: The recovery Work Item and its pending user-selected Persistence and Commit workflows for `/Users/martinbechard/dev/mcp-agent-ops`.
+- Unblock Trigger: The recovery Work Item delivers and verifies project `terminology.md` discovery through matching-revision refresh and load.
+- Preserved Execution: Task and Conversation `019ffbcc-b014-72e0-b6bc-ea5925712b74`; no source mutation or candidate exists.
+- Work Claim Release: `avoid-re-home-terminology-work`; outcome `RELEASED`; event `9a64d328-0f99-454f-b993-1191820c026c`; disposition `blocked`; blocker reference `reconcile-project-terminology-reference-discovery`.
+- Recovery Route: Resume this same execution only through `Blocked -> Ready -> Starting -> Running` after the unblock trigger.
