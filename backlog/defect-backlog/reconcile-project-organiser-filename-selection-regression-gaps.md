@@ -83,4 +83,10 @@ None.
 - Overlap: Offline owns only its exact evaluation runner, test, fixture, and plan paths. This task must claim its exact current regression-test and evidence scope before mutation and must not touch Offline paths or unrelated artifacts.
 - Dispatch Architecture: Create one visible Codex task whose initial prompt launches one Dev Orchestrator subagent and assigns title and messaging responsibility to the visible root task.
 - Transition Claims: Work Item `start-project-organiser-regression-work-item`; event `5dd010aa-956f-4eb2-ad85-d42956981895`. Provider `start-project-organiser-regression-provider`; event `cafe677b-b3cb-4794-8c73-8dec4eddb3cc`.
-- Runtime Identity: Pending caller-owned visible task creation. Creation does not imply Running.
+- Canonical Codex Task ID: `019ffbd4-33a1-7e91-8460-1f5ab8a10bcd`.
+- Canonical Conversation ID: `019ffbd4-33a1-7e91-8460-1f5ab8a10bcd` (combined runtime identity).
+- Runtime Host: `local`.
+- Runtime Project: saved `dev-methodology` project at `/Users/martinbechard/dev/dev-methodology`.
+- Runtime Created At: `2026-08-13T15:53:35Z` (`1786636415`).
+- Requested Title: `Starting — Reconcile Project Organiser Filename Selection Regression Gaps`; the runtime preview is ellipsized only.
+- Runtime Creation Outcome: Unique success with no client or pending identity. Creation does not imply Running.
