@@ -2,7 +2,7 @@
 
 Owner: Dev Orchestrator `/root/align_skill_examples`
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -160,6 +160,19 @@ Option A is accepted. It authorizes only useful known page-specific provenance, 
 - Capacity: Existing canonical execution resumed under available priority and capacity.
 - Work-Item Update Claim: `restart-update-specialization-examples-019ffca1`; event `154d7b1a-1254-4f01-bcf2-d7d67ffc5af9`.
 - Backlog Claim: `restart-backlog-specialization-examples-019ffca1`; event `52f9ffcb-fb97-4c56-98aa-7b7cf50a9a79`.
+
+### Resumed Running Acceptance Evidence
+
+- Transition: `Starting -> Running`.
+- Accepted At: 2026-08-13T20:37:26Z.
+- Canonical Task and Conversation: `019ffca1-15fa-7940-a0cb-e0a51da36aae`.
+- Agent: Dev Orchestrator `/root/align_skill_examples`.
+- Phase: `Implementing`.
+- Preserved Candidate: `9b768f37adf8d96fbfbae47d9eb663d67929c383`.
+- Accepted Scope: Add only useful known page-specific provenance, scope, and compatibility facts, then repeat fresh content review, browser verification, and Documentation Design System review.
+- Work-Item Update Claim: `reaccept-update-specialization-examples-019ffca1`; event `09f058ff-aa88-433a-8ebb-25403c9c0947`.
+- Backlog Claim: `reaccept-backlog-specialization-examples-019ffca1`; event `29fcffa7-e537-43c7-be2a-b074693c449b`.
+- Required Runtime Title: `Implementing — Align Agent And Skill Specialization Examples With Documentation Design System`.
 
 ### Unattended Work Boundary
 
