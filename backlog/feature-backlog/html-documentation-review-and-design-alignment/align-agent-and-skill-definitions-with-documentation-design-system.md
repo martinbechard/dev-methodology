@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -107,3 +107,15 @@ Dependency Resolution: Satisfied by completed Work Item `review-agent-and-skill-
 - Launch Reconciliation: The first nested launch was rejected before creation because role override and full-history inheritance were incompatible. One corrected self-contained launch with no inherited conversation succeeded; no duplicate execution exists.
 - Lifecycle Boundary: Provider remains `Starting` until this nested Dev Orchestrator durably records `Starting -> Running`.
 - Adoption Claim: `adopt-align-agent-skill-definitions-task-019ffc29`; event `47ac7e16-bc50-42c7-bd1e-e0f40a1bf1b8`.
+
+## Running Acceptance Evidence
+
+- Accepted At: 2026-08-13T17:28:18Z.
+- Transition: `Starting -> Running`.
+- Canonical Task: `019ffc29-0d20-78f1-b3d6-f0797e7bb5b6`.
+- Dev Orchestrator: `/root/align_agent_skill_docs_design/align_agent_skill_docs_design_orchestrator`.
+- Work Claim: `align-agent-skill-definitions-work-019ffc29`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `8d00c260-8e57-48f1-946b-efdb10e59145`.
+- Provider Mutation Claim: `align-agent-skill-definitions-running-019ffc29`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `f952726e-0ffe-4b57-a199-23750aab1a88`.
+- Accepted Scope: Align the generated target page with the adopted Documentation Design System while preserving the immutable accepted content baseline and avoiding every active claim overlap.
+- Active Exclusion: `scripts/test_bundle_content.py` remains unavailable because claim `simplify-provenance-authorized-paths` owns it.
+- Complex Plan Gate: Pending bounded decomposition and premise discovery; no implementation mutation is authorized until the gate, plan, technical review, and exact path claims complete.
