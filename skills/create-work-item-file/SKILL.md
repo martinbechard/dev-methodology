@@ -185,8 +185,10 @@ Treat a question as an invalid User Action Required classification when an agent
 
 When the user explicitly requests creation of a work item whose requested outcome creates or
 modifies named skills, treat that request as approval for the exact named skill-definition
-paths resolved from the request and recorded in the work item. Assign Ready only when no hard
-prerequisite remains, or Blocked with the exact dependency and unblock condition otherwise.
+paths resolved from the request and recorded in the work item. Store Blocked only when an
+external or other genuine condition on that child prevents work, and record its exact unblock
+condition. A required Work Item predecessor leaves the child's stored lifecycle unchanged and
+affects only its derived effective state.
 Do not ask the user to approve those same requested skill definitions again, and do not route
 the item to User Action Required solely because the recorded paths are governed.
 

@@ -239,11 +239,12 @@ If closed items remain in active folders, explicit status is the open or closed 
   answers its recorded question.
 
 Do not move an independently identified defect or enhancement into a typed active folder
-until the user explicitly authorizes that new work. A direct request or explicit authorization permits active work but does not satisfy
-a hard dependency: create Ready only when every hard prerequisite is satisfied, otherwise
-create Blocked in the typed active folder. Only after execution reaches a distinct concrete
-user-owned question that the original request did not resolve may the same item move to User
-Action Required.
+until the user explicitly authorizes that new work. A direct request or explicit authorization
+permits active work. Store Blocked only when an external or other genuine condition on that
+child prevents work. A required Work Item predecessor leaves stored lifecycle unchanged; do
+not require every required predecessor to be terminal before storing Ready. Only after
+execution reaches a distinct concrete user-owned question that the original request did not
+resolve may the same item move to User Action Required.
 
 ## Transition Evidence
 

@@ -134,9 +134,13 @@ Use the effective Persistence-selected management skill when a material lifecycl
 
 Dependent Work Items must be children of one series folder when one child requires another.
 The folder's index.md coordination artifact defines required predecessor sets or ordered lanes
-for each dependent child. Only the predecessors named for that child gate it. An earlier
-Markdown link, list entry, or child outside that lane is not a predecessor and does not create
-a dependency merely because it appears earlier in the index.
+for each dependent child. In an ordered lane, the required predecessors are the preceding
+members in that child's lane. An explicit predecessor set lists its members in causal-priority
+order. That order breaks reporting ties only; it does not serialize otherwise independent
+predecessors. Only the predecessors named for that child gate it. An earlier Markdown link,
+list entry, or child outside that lane is not a predecessor and does not create a dependency
+merely because it appears earlier in the index. Never use ordinary Markdown order or global
+list order to infer a predecessor or causal priority.
 
 Reject a new active cross-folder Work Item dependency edge. Move the related active items
 under one index-defined series through a same-series migration before dispatch. An archived
@@ -148,13 +152,33 @@ conditions, not Work Item dependency edges, and apply only to the genuinely affe
 Stored Status remains the canonical lifecycle. Resolve a dependent child's effective state
 without mutating its provider record:
 
-1. Find the earliest required predecessor whose stored Status is Blocked. Derive effective
-   Blocked for the child and report that predecessor's opaque identity as the causal Work Item ID.
+1. Find the first required predecessor in the child's causal-priority order whose stored Status
+   is Blocked. Derive effective Blocked for the child and report that predecessor's opaque
+   identity as the causal Work Item ID.
 2. When no required predecessor stores Blocked but at least one required predecessor lacks a
    terminal-successful disposition, derive effective Holding. This includes a healthy wait
    behind a Ready, Starting, Running, or Awaiting Review predecessor.
 3. When every required predecessor has a terminal-successful disposition, use the child's own
    stored lifecycle as its effective state.
+
+Count each stored Blocked Work Item exactly once when supplying blockage-declaration inputs.
+Derived downstream effects never increment stored Blocked counts or shared-cause totals. For
+every derived effect, report the affected child Work Item ID, stored Status, effective state,
+and causal Work Item ID. Apply the declaration thresholds only through
+resolve-backlog-blockage.
+
+Treat any of these observations as a dependency contradiction that requires Coordinator
+attention without a downstream lifecycle write:
+
+- a missing, duplicate, self-referential, unresolved, or prohibited cross-folder predecessor;
+- multiple predecessors without an explicit causal-priority order;
+- an effective state differs from this algorithm;
+- effective Blocked lacks a causal Work Item ID;
+- the causal Work Item ID is not a required stored-Blocked predecessor or is not first by the
+  child's declared causal priority;
+- a causal Work Item ID appears on a non-derived result; or
+- a provider copied derived Holding or Blocked into stored lifecycle when no genuine condition
+  exists on that child.
 
 The resolver must not rewrite the downstream child's record to copy Blocked or Holding.
 Recalculate effective state whenever a required predecessor's stored lifecycle changes.

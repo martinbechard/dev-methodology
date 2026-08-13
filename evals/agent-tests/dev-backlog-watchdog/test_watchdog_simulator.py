@@ -138,44 +138,79 @@ class WatchdogSimulatorTests(unittest.TestCase):
     def test_first_stored_blocker_counts_once_and_derives_downstream_effects(
         self,
     ) -> None:
-        """One stored blocker remains one crisis input despite downstream effects."""
+        """Stored blockers and one pre-normalized downstream effect stay distinct."""
 
-        blocker = WorkItem(
-            "blocked-predecessor",
-            "Blocked",
-            preventing_cause="missing approval",
-            blocker_owner="user",
-            unblock_condition="approval received",
-            next_action_owner="user",
-            git_state="candidate preserved",
-        )
-        downstream = tuple(
+        blockers = tuple(
             WorkItem(
-                f"downstream-{index}",
-                "Ready",
-                effective_status="Blocked",
-                causal_work_item_id=blocker.provider_identity,
+                f"blocked-predecessor-{index}",
+                "Blocked",
+                preventing_cause=f"condition-{index}",
+                blocker_owner="external owner",
+                unblock_condition=f"condition-{index} satisfied",
+                next_action_owner="external owner",
+                git_state="candidate preserved",
             )
-            for index in range(3)
+            for index in range(2)
         )
-        items = (blocker, *downstream)
+        downstream = WorkItem(
+            "downstream",
+            "Ready",
+            effective_status="Blocked",
+            causal_work_item_id=blockers[1].provider_identity,
+        )
+        items = (*blockers, downstream)
         before = deepcopy(items)
 
         self.assertEqual((), backlog_blockage_reasons(items))
         result = WatchdogCycle().evaluate(items)
 
         self.assertEqual(
-            "Observed 3 derived dependency effect(s); no actionable watchdog "
+            "Observed 1 derived dependency effect(s); no actionable watchdog "
             "condition observed.",
             result.message,
         )
-        self.assertEqual(1, len(result.blocked_reconciliations))
-        self.assertEqual(3, len(result.dependency_effects))
+        self.assertEqual(2, len(result.blocked_reconciliations))
+        self.assertEqual(1, len(result.dependency_effects))
         self.assertEqual(
-            {blocker.provider_identity},
-            {effect.causal_work_item_id for effect in result.dependency_effects},
+            blockers[1].provider_identity,
+            result.dependency_effects[0].causal_work_item_id,
         )
         self.assertEqual(before, items)
+        self.assertFalse(result.mutated)
+
+    def test_normalized_dependency_envelope_contradictions_alert(self) -> None:
+        """Envelope contradictions alert without dependency resolution."""
+
+        cases = (
+            WorkItem(
+                "missing-causal",
+                "Ready",
+                effective_status="Blocked",
+            ),
+            WorkItem(
+                "causal-on-non-derived",
+                "Ready",
+                effective_status="Ready",
+                causal_work_item_id="predecessor",
+            ),
+            WorkItem(
+                "invalid-effective",
+                "Ready",
+                effective_status="Waiting Somewhere",
+            ),
+        )
+        before = deepcopy(cases)
+
+        result = WatchdogCycle().evaluate(cases)
+
+        self.assertEqual("ALERT", result.status)
+        self.assertIsNotNone(result.alert)
+        alert = result.alert
+        assert alert is not None
+        self.assertIn("derived Blocked lacks causal Work Item ID", alert.evidence)
+        self.assertIn("causal Work Item ID on non-derived result", alert.evidence)
+        self.assertIn("invalid effective status", alert.evidence)
+        self.assertEqual(before, cases)
         self.assertFalse(result.mutated)
 
     def test_recovery_recalculates_effective_states_without_downstream_mutation(

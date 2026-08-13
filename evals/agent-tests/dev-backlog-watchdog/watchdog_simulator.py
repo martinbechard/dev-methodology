@@ -49,6 +49,17 @@ _SAFE_CLEANUP_BRANCH_DISPOSITIONS = {"absent", "removed"}
 _SAFE_SOURCE_BRANCH_DISPOSITIONS = {"absent", "removed"}
 _PRESERVABLE_SOURCE_BRANCH_RELATIONS = {"non-ancestral", "non-equivalent"}
 _CLAIM_APPLICABILITY_VALUES = {"unknown", "not-applicable", "applicable"}
+_NORMALIZED_EFFECTIVE_STATUSES = {
+    "Ready",
+    "Starting",
+    "Running",
+    "Stalled",
+    "Blocked",
+    "User Action Required",
+    "Holding",
+    "Awaiting Review",
+    *TERMINAL_STATUSES,
+}
 
 
 @dataclass(frozen=True)
@@ -340,12 +351,32 @@ class WatchdogCycle:
                         causal_work_item_id=item.causal_work_item_id,
                     )
                 )
+            envelope_issues: list[str] = []
+            if (
+                item.effective_status
+                and item.effective_status not in _NORMALIZED_EFFECTIVE_STATUSES
+            ):
+                envelope_issues.append(
+                    f"invalid effective status: {item.effective_status}"
+                )
+            if (
+                item.effective_status == "Blocked"
+                and item.status != "Blocked"
+                and not item.causal_work_item_id.strip()
+            ):
+                envelope_issues.append("derived Blocked lacks causal Work Item ID")
+            if item.causal_work_item_id.strip() and (
+                not item.effective_status or item.effective_status == item.status
+            ):
+                envelope_issues.append("causal Work Item ID on non-derived result")
             if item.dependency_state_issue.strip():
+                envelope_issues.append(item.dependency_state_issue)
+            if envelope_issues:
                 observations.append(
                     WatchdogAlert(
                         provider_identity=item.provider_identity,
-                        evidence=item.dependency_state_issue,
-                        reason="normalized dependency state contradicts its source evidence",
+                        evidence="; ".join(envelope_issues),
+                        reason="normalized dependency envelope is contradictory",
                         recommended_action=(
                             "Coordinator reconciles the series index and normalized "
                             "stored/effective view without changing provider lifecycle"

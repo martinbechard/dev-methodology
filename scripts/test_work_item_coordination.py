@@ -150,11 +150,16 @@ class WorkItemCoordinationPackageTests(unittest.TestCase):
             "one series folder",
             "required predecessor sets or ordered lanes",
             "index.md",
+            "preceding members in that child's lane",
+            "lists its members in causal-priority order",
+            "breaks reporting ties only",
+            "does not serialize otherwise independent predecessors",
             "Only the predecessors named for that child gate it.",
             "An earlier Markdown link, list entry, or child outside that lane is not a predecessor",
+            "Never use ordinary Markdown order or global list order",
             "Stored Status remains the canonical lifecycle",
             "derive effective Holding",
-            "earliest required predecessor whose stored Status is Blocked",
+            "first required predecessor in the child's causal-priority order whose stored Status is Blocked",
             "causal Work Item ID",
             "must not rewrite the downstream child's record",
             "Recalculate effective state",
@@ -165,6 +170,28 @@ class WorkItemCoordinationPackageTests(unittest.TestCase):
             "archived terminal-successful predecessor",
             "stable Work Item identity and canonical index link",
             "External prerequisites are conditions, not Work Item dependency edges",
+        ):
+            with self.subTest(clause=clause):
+                self.assertIn(clause, policy)
+
+    def test_dependency_counts_reporting_and_contradictions_are_normative(self) -> None:
+        """Coordination owns counts, normalized reports, and contradiction criteria."""
+
+        policy = " ".join(
+            _section(self.portable, "Ordered Series Dependency State").split()
+        )
+        for clause in (
+            "Count each stored Blocked Work Item exactly once",
+            "never increment stored Blocked counts or shared-cause totals",
+            "affected child Work Item ID, stored Status, effective state, and causal Work Item ID",
+            "missing, duplicate, self-referential, unresolved, or prohibited cross-folder predecessor",
+            "multiple predecessors without an explicit causal-priority order",
+            "effective state differs from this algorithm",
+            "effective Blocked lacks a causal Work Item ID",
+            "not a required stored-Blocked predecessor",
+            "not first by the child's declared causal priority",
+            "causal Work Item ID appears on a non-derived result",
+            "copied derived Holding or Blocked into stored lifecycle",
         ):
             with self.subTest(clause=clause):
                 self.assertIn(clause, policy)

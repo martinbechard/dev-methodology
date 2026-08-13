@@ -2239,12 +2239,19 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("Never infer or inherit a campaign-wide pause", watchdog_text)
         for clause in (
             "Consume the normalized stored and effective dependency view",
+            "apply the dependency observation and contradiction policy from coordinate-work-items",
+            "Apply blockage declaration thresholds only through resolve-backlog-blockage",
+        ):
+            with self.subTest(watchdog_dependency_clause=clause):
+                self.assertIn(clause, watchdog_text)
+        for duplicate_policy in (
+            "five active items are Blocked",
             "Count each stored Blocked Work Item once",
             "Exclude derived downstream effects from crisis counts",
             "Alert on series-order or stored/effective contradictions",
         ):
-            with self.subTest(watchdog_dependency_clause=clause):
-                self.assertIn(clause, watchdog_text)
+            with self.subTest(watchdog_duplicate_policy=duplicate_policy):
+                self.assertNotIn(duplicate_policy, watchdog_text)
         for scenario_id in (
             "canonical-title-drift-alert",
             "finished-bounded-verifier-title-drift",
@@ -2297,6 +2304,19 @@ class BundleContentTests(unittest.TestCase):
                     generated_text,
                 )
                 self.assertIn("Send exactly one aggregate parent alert", generated_text)
+                self.assertIn(
+                    "Apply blockage declaration thresholds only through resolve-backlog-blockage",
+                    generated_text,
+                )
+                self.assertNotIn("Count each stored Blocked Work Item once", generated_text)
+                self.assertNotIn(
+                    "Declare a backlog blockage when five active items are Blocked",
+                    generated_text,
+                )
+                self.assertNotIn(
+                    "Alert on series-order or stored/effective contradictions",
+                    generated_text,
+                )
         self.assertTrue(
             {
                 "terminal-archive-pause-does-not-pause-cleanup",
@@ -8258,6 +8278,14 @@ class BundleContentTests(unittest.TestCase):
         self.assertNotIn(
             "provider reconcile that invalid lifecycle to Blocked",
             coordinate_contract,
+        )
+        self.assertNotIn(
+            "Assign Ready only when no hard prerequisite remains, or Blocked with the exact dependency and unblock condition otherwise",
+            create_contract,
+        )
+        self.assertNotIn(
+            "create Ready only when every hard prerequisite is satisfied, otherwise create Blocked in the typed active folder",
+            manage_contract,
         )
 
     def test_file_work_item_template_and_approval_boundary_are_complete(self) -> None:
