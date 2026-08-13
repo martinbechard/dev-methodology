@@ -78,4 +78,10 @@ None.
 - Overlap: Offline owns only runner staging, Dev Orchestrator fixture tests, and its plan pair. This task must claim exact terminology, coordination-skill, focused-test, and mechanically required generated paths before mutation. It must not touch Offline paths or unrelated plan artifacts.
 - Dispatch Architecture: Create one visible Codex task whose initial prompt launches one Dev Orchestrator subagent and states the visible root title-and-messaging responsibility.
 - Transition Claims: Work Item `start-avoid-rehome-terminology-work-item`; event `de86c91d-a756-4225-93c9-ad94d648014c`. Provider `start-avoid-rehome-terminology-provider`; event `da5011ff-50e2-403b-b2a2-9fa4c94b27a5`.
-- Runtime Identity: Pending caller-owned visible task creation. Creation does not imply Running.
+- Canonical Codex Task ID: `019ffbcc-b014-72e0-b6bc-ea5925712b74`.
+- Canonical Conversation ID: `019ffbcc-b014-72e0-b6bc-ea5925712b74` (combined runtime identity).
+- Runtime Host: `local`.
+- Runtime Project: saved `dev-methodology` project at `/Users/martinbechard/dev/dev-methodology`.
+- Runtime Created At: `2026-08-13T15:45:23Z` (`1786635923`).
+- Requested Title: `Starting — Avoid Re-Home Terminology And Use Plain Language`; the runtime preview is ellipsized only.
+- Runtime Creation Outcome: Unique success with no client or pending identity. Creation does not imply Running.
