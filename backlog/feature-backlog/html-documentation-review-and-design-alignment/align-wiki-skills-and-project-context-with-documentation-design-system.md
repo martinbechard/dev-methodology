@@ -2,7 +2,7 @@
 
 Owner: Dev Orchestrator
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -144,3 +144,15 @@ Dependency Reconciliation: Satisfied by completed Work Item `review-wiki-skills-
 - Preserved Canonical Task and Conversation: `019ffcd2-a09c-7c91-a09c-d61bc1c04a64`.
 - Provider Transition Claim: `unblock-wiki-skill-version-019ff2c3`; event `0ca0a1f7-43c6-4ba9-a799-64e471a954bd`.
 - Required Runtime Title: `Ready — Align Wiki Skills And Project Context With Documentation Design System`.
+
+## Recovered Starting Evidence
+
+- Reserved At: 2026-08-13T21:12:06Z.
+- Transition: `Ready -> Starting`.
+- Capacity: Slot 5 of 5.
+- Preserved Canonical Task and Conversation: `019ffcd2-a09c-7c91-a09c-d61bc1c04a64`.
+- Preserved Dev Orchestrator: the same nested execution.
+- Recovery Baseline: `037e093d`.
+- Transition Claim: `unblock-wiki-skill-version-019ff2c3`; event `0ca0a1f7-43c6-4ba9-a799-64e471a954bd`.
+- Required Runtime Title: `Starting — Align Wiki Skills And Project Context With Documentation Design System`.
+- Next Action: The same nested Dev Orchestrator records `Starting -> Running`, reacquires its Work Item claim, and resumes planning with the revision-matched v1.0.0 review skill and checklists.
