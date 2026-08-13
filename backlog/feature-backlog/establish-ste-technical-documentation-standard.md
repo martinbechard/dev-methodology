@@ -1,6 +1,6 @@
 # Establish The STE Technical Documentation Standard
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -10,7 +10,7 @@ Work Item ID: establish-ste-technical-documentation-standard
 
 Provider Reference: backlog/feature-backlog/establish-ste-technical-documentation-standard.md
 
-Owner: Unowned
+Owner: Dev Orchestrator /root/ste_documentation_standard
 
 ## Reopened Cleanup Review
 
@@ -465,3 +465,17 @@ Do you explicitly approve integration mutation of exactly the 14 governed defini
 - Initial Action: Start one Dev Orchestrator collaboration subagent for this authoritative provider record.
 - Creation Outcome: Unique success with no pending client identity and no retry.
 - Lifecycle Boundary: This assignment remains Starting until the nested Dev Orchestrator accepts and records Starting -> Running.
+
+## Current Running Acceptance
+
+- Accepted At: 2026-08-13T07:30:08Z.
+- Transition: `Starting -> Running`.
+- Codex Task ID: `019ffa05-1b39-7720-864c-2b06f41a45cb`.
+- Conversation ID: `019ffa05-1b39-7720-864c-2b06f41a45cb`.
+- Nested Dev Orchestrator: `/root/ste_documentation_standard`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Reconciliation Boundary: Reconcile the recorded approval, review, verification, delivery, and completion evidence. Do not authorize new implementation unless current evidence proves that it is required.
+- Preserved State: Candidate `03a94762451efe4322fe781f77191b769bf6c7b1`, its User Action Required provider record, and the four existing plan artifacts remain excluded from this work item.
+- Claim Evidence: Work-item claim `accept-ste-running-019ffa05` acquired with event `11340ead-fa72-4ffa-bd44-3daed3b81db6`. Provider claim `accept-ste-running-provider-019ffa05` acquired with event `ef61aa8e-ac4c-4c9b-b25f-a4f79506a9a3`.
+- Requested Title: `Running — Establish STE Technical Documentation Standard`.
