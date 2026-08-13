@@ -94,3 +94,16 @@ Dependency Resolution: Satisfied by accepted candidate 6874526448340418cd5b074a2
 - Dispatch Architecture: Create one visible Codex task whose initial prompt launches one Dev Orchestrator subagent and states the visible root title-and-messaging responsibility.
 - Transition Claims: Work Item `start-align-index-design-system-work-item`; event `6fe37a78-c4f9-4833-9b4d-90f389ff33b3`. Provider `start-align-index-design-system-provider`; event `359b50cc-b290-4043-be04-d360634bca42`.
 - Runtime Identity: Pending caller-owned visible task creation. Creation does not imply Running.
+
+## Canonical Runtime Assignment
+
+- Assigned At: 2026-08-13T13:36:05Z.
+- Codex Task ID: `019ffb56-187f-7563-aabf-a679c63994d1`.
+- Conversation ID: `019ffb56-187f-7563-aabf-a679c63994d1`.
+- Host: `local`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Requested Title: `Starting — Align Index Page With Documentation Design System`.
+- Initial Action: The visible root starts one Dev Orchestrator subagent for this authoritative Work Item and owns required Codex title and subagent messaging.
+- Creation Outcome: Unique direct `threadId` and host success in the saved dev-methodology project, with no client or pending identity and no retry.
+- Lifecycle Boundary: This assignment remains `Starting` until the nested Dev Orchestrator accepts and records `Starting -> Running`.
+- Adoption Claims: Work Item `adopt-align-index-design-task`; event `f447d04f-7e99-4017-8382-96b12856bbb7`. Provider `adopt-align-index-design-provider`; event `bb1e45e8-2c13-4da6-ae9a-1aa54832ff29`.
