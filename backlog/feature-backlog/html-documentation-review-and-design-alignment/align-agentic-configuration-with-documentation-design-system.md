@@ -2,7 +2,7 @@
 
 Owner: Dev Orchestrator
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -105,3 +105,14 @@ Dependency Resolution: Satisfied by the completed Work Item archived in provider
 - Creation Outcome: Unique direct success with no client or pending identity and no retry.
 - Lifecycle Boundary: Provider remains `Starting` until exactly one nested Dev Orchestrator accepts and records `Starting -> Running`.
 - Adoption Claim: `adopt-agentic-configuration-task-019ff2c3`; event `32c578d1-cec6-4a3f-a1fe-2f94de37b6c2`.
+
+## Running Acceptance Evidence
+
+- Accepted At: 2026-08-13T20:34:56Z.
+- Transition: `Starting -> Running`.
+- Canonical Codex Task: `019ffcd1-c9a0-78f0-8713-ef8951f1f9b5`.
+- Accepted Baseline: `00705f4a7fcb25e305d5e4487850a25b7d6e8187` on primary `main`.
+- Work Claim: `align-agentic-configuration-work-019ffcd1`; event `7ab7d65f-4a6c-4cdb-89cf-bea3f54cd1bd`.
+- Provider Record Claim: `align-agentic-configuration-running-record-019ffcd1`; event `2dd35652-58f4-4fb7-9d74-1fd0e2714b83`.
+- Adoption Release Evidence: task event `409f0116-ed86-4953-9b12-64e8a079744a`; backlog event `c62b4717-5a71-49aa-b331-174b3c7f22c8`.
+- Next Action: Evaluate implementation complexity, confirm the accepted content baseline and generator boundary, then route the bounded plan for independent technical review.
