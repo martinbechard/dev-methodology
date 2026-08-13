@@ -1,6 +1,6 @@
 # Distinguish Blocked From Queued Dependency Waits
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -83,3 +83,15 @@ Approved at creation by the user's explicit 2026-08-12 lifecycle-policy clarific
 - `backlog/feature-backlog/inspect-ai-evaluation-adoption/` already contains all eight active dependent children and an ordered `index.md`; no path migration is required. Its seven downstream children retain stored Ready and derive effective Holding behind the first Ready child.
 - `backlog/feature-backlog/html-documentation-review-and-design-alignment/` already groups the active alignment children. Completed text-review and alignment predecessors remain linked through the series index at their canonical archive paths; no active cross-folder migration is required.
 - No active standalone file-provider Work Item declares a cross-folder Work Item dependency. No exception is currently required.
+
+## Starting Handoff Evidence
+
+- Reserved At: 2026-08-13T00:39:12Z.
+- Parent Runtime Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Intended Root Role: Dev Orchestrator.
+- Baseline: `16b1267d9208e8e1b3d21be50f7372abd0b8aa74` on primary `main`.
+- Dispatch Reservation: Exactly one new canonical collaboration execution; identity pending caller-owned creation.
+- Launch State: Authorized under restored MULTITASK mode; successful creation does not imply Running.
+- Transition Claim: `start-folder-derived-dependency-policy-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `fa8af8ea-a2bd-49a2-ae75-e5b6ebee2e31`.
+- Next Reconciliation: Reconcile the exact creation result; the Dev Orchestrator records Starting -> Running before mutation.
