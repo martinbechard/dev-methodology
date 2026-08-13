@@ -1,6 +1,6 @@
 # Enforce Reference-Plus-Delta Dispatch Packets
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -160,3 +160,16 @@ Approved at creation by the user's explicit 2026-08-12 instruction to incorporat
 - Canonical Execution: `/root/enforce_reference_plus_delta`.
 - Resume Delta: Reconcile the exact dispatcher-focused method in `scripts/test_bundle_content.py` with the reference-plus-delta contract; all other stable assignment facts remain in this provider record.
 - Acceptance Boundary: The same execution records Starting -> Running before mutation. Claims remain suspended and no cross-project runtime control is permitted.
+
+## Same-Execution Running Acceptance
+
+- Accepted At: 2026-08-12.
+- Transition: Starting -> Running.
+- Canonical Execution: `/root/enforce_reference_plus_delta`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Authorizing Coordinator: `/root/backlog_coordinator`.
+- Branch and Worktree: `main` at `/Users/martinbechard/dev/dev-methodology`.
+- Accepted Baseline: `1a7a3e481a69be36950c140da35b228e967fb50a` with the focused bundle-content method preserved from `66a2a5663a527b7772801038fb556ff6d9552cda`.
+- Phase: Resumed implementation planning and review.
+- Runtime Display Handoff: `NOT_APPLICABLE`; this collaboration runtime exposes no separate title-control surface.
+- Claim Boundary: Claims remain suspended; no claim operation is permitted or performed.
