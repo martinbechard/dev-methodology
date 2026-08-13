@@ -1,6 +1,6 @@
 # Estimate Agent Work In Agent-Hours
 
-Status: User Action Required
+Status: Ready
 
 Type: Feature
 
@@ -247,3 +247,15 @@ Do not modify, review, verify, deliver, or close this Work Item until the user a
 - Required User Decision: Authorize another bounded correction and fresh independent review for exactly these two P1 findings, or authorize exclusion with provider-owned follow-up work items and explicit residual-risk acceptance.
 - Unattended Work Boundary: Do not modify, review, verify, deliver, or close this Work Item until the user answers in canonical Task and Conversation `019ffa3d-191f-7343-aaeb-2499de1ad605`.
 - Required Title: `Waiting for User — Estimate Agent Work`.
+
+## Second User Decision Recovery
+
+- Recorded At: 2026-08-13T16:54:56Z.
+- Transition: `User Action Required -> Ready`.
+- Decision Provenance: Exact answer received in canonical Task and Conversation `019ffa3d-191f-7343-aaeb-2499de1ad605`.
+- Exact User Answer: `ok I authorize 2 more`.
+- Authorization: At most two additional bounded correction-and-fresh-independent-review cycles, limited exactly to separate low/high critical-path attribution when estimate bounds select different delivery paths and replacing compact scalar `expected_parallelism` examples with the required explanatory mapping form.
+- Preserved Candidate: `12d5c5c978592f01c8d71d4bd26b60705bfbed89`.
+- Preserved State: The completed plan pair, prior reviews, canonical execution, excluded artifacts, and candidate history remain unchanged.
+- Capacity Decision: Two other provider Work Items are currently `Starting` or `Running`, below the root five-active-Work-Item limit. A slot is available for this preserved finish lane.
+- Next Action: Record `Ready -> Starting -> Running` for this same canonical execution, reacquire implementation claims, and begin correction cycle 1 of 2.
