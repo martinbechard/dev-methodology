@@ -1,6 +1,6 @@
 # Simplify New-Document Provenance Headers
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
@@ -238,3 +238,17 @@ Make no source mutation while this question is pending. Preserve the accepted pl
 - Accepted By: preserved Dev Orchestrator `/root/simplify_new_document_provenance_header`.
 - Provider Transition Claim: `run-simplify-provenance-resumed-provider`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `bd92e6a5-5a38-4d9a-8162-9d78beefbe32`.
 - Next Gate: Correct the preserved authoritative plan for the approved six-template scope and obtain fresh Dev Architect acceptance before source implementation.
+
+## Completion Evidence
+
+- Completed At: 2026-08-13T18:47:29Z.
+- Completion Selector: `main-branch`.
+- Accepted Candidate Commits: `803657eb736471da38c65e439958b022239f7172`, `1e92f173309703a0f5d260e02ec46953e55de8b3`, and `a2549ab3a3809a0deabd8addfdeae6d4ab363c66`.
+- Observed Main: `main` at `a2549ab3a3809a0deabd8addfdeae6d4ab363c66`; all three accepted commits are ancestors of the observed tip.
+- Independent Plan Review: accepted after the approved six-template correction.
+- Independent Source Review: passed after two bounded correction cycles; every confirmed issue was corrected in the current delivery.
+- Independent Verification: passed with 19 focused provenance tests, representative route and negative CLI checks, schema validation, generated freshness, skill and link validation, and bounded HTML semantic checks.
+- Clean Verification: a detached checkout at the observed main tip passed the 19-test suite and generated-freshness check with Python 3.11.10 and had no tracked or untracked residue.
+- Primary Checkout: unrelated active evaluation changes and untracked execution plans were preserved; no delivery residue overlaps the accepted contribution.
+- Resource Coordination: exact source claim released by event `1852ea73-5839-4306-b3cd-2ab9330887b5`; main-integration claim released by event `68a02466-d7bc-43cd-8dda-7beba6520163`.
+- Delivery Disposition: `READY`; requested lifecycle `COMPLETED`.
