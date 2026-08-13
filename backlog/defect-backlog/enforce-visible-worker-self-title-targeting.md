@@ -83,4 +83,10 @@ None.
 - Overlap: Project Organiser has accepted a no-change classification and no longer owns a mutation path. Inspect mapping is bounded to its mapping artifact and direct verification. This task must claim its exact two skill sources, focused title-control tests, and mechanically required projections before mutation.
 - Dispatch Architecture: Create one visible Codex task whose initial prompt launches one Dev Orchestrator subagent and assigns self-title and messaging responsibility to that visible root task.
 - Transition Claims: Work Item `start-self-title-targeting-work-item`; event `9516f52e-2c2f-46ff-88c0-5f0367945603`. Provider `start-self-title-targeting-provider`; event `3a912f7b-1440-4034-8571-a61034793571`.
-- Runtime Identity: Pending caller-owned visible task creation. Creation does not imply Running.
+- Canonical Codex Task ID: `019ffbf3-4f9c-70c0-956c-884e832d11d8`.
+- Canonical Conversation ID: `019ffbf3-4f9c-70c0-956c-884e832d11d8` (combined runtime identity).
+- Runtime Host: `local`.
+- Runtime Project: saved `dev-methodology` project at `/Users/martinbechard/dev/dev-methodology`.
+- Runtime Created At: `2026-08-13T16:27:34Z` (`1786638454`).
+- Requested Title: `Starting — Enforce Visible Worker Self-Task Title Targeting`; the runtime preview is ellipsized only.
+- Runtime Creation Outcome: Unique success with no client or pending identity. Creation does not imply Running.
