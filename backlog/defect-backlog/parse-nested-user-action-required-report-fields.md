@@ -1,6 +1,6 @@
 # Parse Nested User Action Required Report Fields
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -83,3 +83,18 @@ None.
 - Concurrency: Safe beside `/root/document_external_cleanup`; exact owned source/test paths do not overlap. Preserve the blocked policy item's untracked hierarchy-plan artifacts.
 - Transition Claim: `start-backlog-report-runtime-fields-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `dd691a2e-e1c4-4911-b51d-f7d592c36e30`.
 - Next Reconciliation: Reconcile the exact creation result; the Dev Orchestrator records Starting -> Running before mutation.
+
+## Running Acceptance Evidence
+
+- Accepted At: 2026-08-13T01:34:38Z.
+- Owner: `/root/parse_nested_uar_report_fields`.
+- Canonical Execution: `/root/parse_nested_uar_report_fields`.
+- Canonical Conversation: Runtime conversation identity is not exposed for this collaboration execution.
+- Root Agent Task: `/root/parse_nested_uar_report_fields`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Branch and Worktree: `main` in `/Users/martinbechard/dev/dev-methodology`.
+- Baseline: `0524dd1202f1532bc0013b028d1f4df365c0de54`.
+- Phase: Planning.
+- Accepted Execution Evidence: The canonical Dev Orchestrator execution accepted the exact source and test scope after reconciling the provider reservation and non-overlapping concurrent ownership.
+- Runtime Display Handoff: Conversation rename authority is unavailable in this collaboration execution; the canonical title remains unsynchronized without affecting lifecycle authority.
