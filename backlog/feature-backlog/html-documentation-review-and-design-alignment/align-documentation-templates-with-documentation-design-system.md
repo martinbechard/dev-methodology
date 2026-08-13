@@ -1,8 +1,8 @@
 # Align Documentation Templates with the Documentation Design System
 
-Owner: Unowned
+Owner: Dev Orchestrator
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -79,3 +79,16 @@ Dependency Resolution: Satisfied by completed Work Item `review-documentation-te
 
 - This item must not start before its page-specific text review is Completed.
 - Creation of this work item does not dispatch it while backlog crisis recovery remains active.
+
+## Starting Handoff Evidence
+
+- Reserved At: 2026-08-13T20:27:39Z.
+- Transition: `Ready -> Starting`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Baseline: `4c4b2b71d6ee482925719787e7ec314243db4e44` on primary `main`.
+- Capacity: Slot 2 of 5; all User Action Required and Blocked items are excluded.
+- Dependency Evidence: The page-specific text review is Completed, and the HTML series explicitly permits pages to proceed independently.
+- Transition Claim: `reserve-documentation-templates-019ff2c3`; event `3a3e8e6e-5712-4f86-a89b-4203a894a3b3`.
+- Dispatch Architecture: Create one visible Codex task whose reference-plus-delta prompt starts one Dev Orchestrator collaboration subagent.
+- Next Action: Reconcile the unique visible task identity; its nested Dev Orchestrator records `Starting -> Running` before mutation.
