@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: Running
+Status: Blocked
 
 Type: Feature
 
@@ -119,3 +119,22 @@ Dependency Resolution: Satisfied by completed Work Item `review-agent-and-skill-
 - Accepted Scope: Align the generated target page with the adopted Documentation Design System while preserving the immutable accepted content baseline and avoiding every active claim overlap.
 - Active Exclusion: `scripts/test_bundle_content.py` remains unavailable because claim `simplify-provenance-authorized-paths` owns it.
 - Complex Plan Gate: Pending bounded decomposition and premise discovery; no implementation mutation is authorized until the gate, plan, technical review, and exact path claims complete.
+
+## Blocked Evidence
+
+- Recorded At: 2026-08-13T19:18:53Z.
+- Transition: `Running -> Blocked`.
+- Preserved Canonical Task and Conversation: `019ffc29-0d20-78f1-b3d6-f0797e7bb5b6` on host `local`.
+- Preserved Dev Orchestrator: `/root/align_agent_skill_docs_design` and its same canonical nested execution.
+- Preserved Candidate: `42476c0169fc8347b8675f839d7c578679d39036` on branch `codex/align-agent-skill-definitions-019ffc29` in clean worktree `/Users/martinbechard/dev/dev-methodology-worktrees/align-agent-skill-definitions-019ffc29`.
+- Accepted Gates: Source review `ACCEPTED`; artifact review `GOOD`. No integration occurred.
+- Blocker 1: Playwright verification fails before Chromium launch because the project runner imports `index.js` through an incompatible default-export boundary.
+- Blocker 1 Owner: Dev Runtime Diagnostician or the authorized Playwright runtime owner.
+- Blocker 1 Unblock Condition: A bounded focused Playwright smoke imports the project runner and reaches Chromium launch without the `index.js` default-export failure.
+- Blocker 2: The Shared Documentation Design System review runner returned a malformed report with no attempt evidence, so no valid integrated verdict exists.
+- Blocker 2 Owner: Documentation Design System review coordinator or runner owner.
+- Blocker 2 Unblock Condition: The same Shared review input returns a schema-valid report containing attempt evidence and a valid integrated verdict.
+- Coordinator Recovery: Diagnose and correct both authorized supporting runtime failures without changing the accepted four-file candidate scope. Then reconcile `Blocked -> Ready -> Starting` and resume this same canonical task for final verification and delivery.
+- Claim Handoff: Work Item claim `align-agent-skill-definitions-work-019ffc29` released `blocked` with blocker `align-definitions-verification-runtime-blockers`; event `08fd6063-66ae-4493-9b99-5628c62077c1`.
+- Provider Transition Claim: `block-align-definitions-runtime-019ff2c3`; event `99c57074-bc39-4fd3-98e1-0fa9265ef4d7`.
+- Required Runtime Title: `Blocked — Align Agent And Skill Definitions With Documentation Design System`.
