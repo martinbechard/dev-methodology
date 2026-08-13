@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -208,3 +208,17 @@ Do not mutate, integrate, deliver, or close this candidate until the user answer
 - Update Claim: `resume-align-definitions-update-019ffc29`; event `ea69c867-826e-45f7-b866-f287b59ad0c1`.
 - Provider Path Claim: `resume-align-definitions-backlog-019ffc29`; event `04def548-e7ca-4f84-a982-4be3d4cf3867`.
 - Capacity Boundary: This transaction stops at Ready. It does not record `Ready -> Starting` or `Starting -> Running`, acquire implementation scope, mutate source, or change the runtime title.
+
+## Resumed Running Acceptance
+
+- Accepted At: 2026-08-13T20:44:14Z.
+- Transition: `Starting -> Running`.
+- Canonical Task and Conversation: `019ffc29-0d20-78f1-b3d6-f0797e7bb5b6`.
+- Preserved Candidate: `42476c0169fc8347b8675f839d7c578679d39036`.
+- Preserved Branch: `codex/align-agent-skill-definitions-019ffc29`.
+- Preserved Clean Worktree: `/Users/martinbechard/dev/dev-methodology-worktrees/align-agent-skill-definitions-019ffc29`.
+- Preserved Nested Execution: `/root/align_agent_skill_docs_design/align_agent_skill_docs_design_orchestrator`.
+- Authorized Scope: Apply only Option 1's concise visible footer context using known page-specific provenance, scope, or compatibility facts, then obtain fresh content review, repository-owned browser verification, and complete Shared review.
+- Update Claim: `accept-resumed-definitions-update-019ffc29`; event `329b631d-c7b2-4282-be54-ca96a529fd3a`.
+- Provider Path Claim: `accept-resumed-definitions-backlog-019ffc29`; event `b3b84e28-0e5f-4133-8500-e62a66055807`.
+- Checkout Topology: Private-worktree correction remains claim-free. Exact primary-main coordination is deferred to integration; browser resources are deferred to browser verification.
