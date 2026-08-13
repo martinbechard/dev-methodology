@@ -1,6 +1,6 @@
 # Replace Evaluation Oracle Terminology With Judge
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -90,3 +90,15 @@ None.
 - Creation Outcome: Unique success with no client or pending identity and no retry. The caller decoded a JSON-string tool envelope containing this complete canonical result.
 - Lifecycle Boundary: This assignment remains `Starting` until the nested Dev Orchestrator accepts and records `Starting -> Running`.
 - Adoption Claims: `adopt-oracle-judge-visible-task`; event `d3ea8fb8-7d63-49fb-8bf4-67efd74ca7c5`. `adopt-oracle-judge-provider`; event `45ee8b72-6ed6-4fa3-8a8f-470709fffa79`.
+
+## Running Acceptance Evidence
+
+- Accepted At: 2026-08-13T11:46:01Z.
+- Transition: `Starting -> Running`.
+- Codex Task ID: `019ffaf0-4bd1-72a1-b66d-335c429a88be`.
+- Conversation ID: `019ffaf0-4bd1-72a1-b66d-335c429a88be`.
+- Branch: `main`.
+- Worktree: `/Users/martinbechard/dev/dev-methodology`.
+- Baseline At Acceptance: `35c585ef1466b6753db12e84fd6aac993b7e0447`.
+- Active Execution Claim: `replace-evaluation-oracle-terminology-with-judge-work`; event `5b8c151e-53d0-4ee6-8cf5-cf2bc6b40bf3`; activity `work`.
+- Requested Title: `Running — Replace Evaluation Oracle Terminology With Judge`.
