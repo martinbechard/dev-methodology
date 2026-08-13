@@ -73,4 +73,10 @@ None.
 - Overlap: This Analysis may inspect evaluation sources read-only and must claim only its mapping artifact and directly required verification paths before mutation. It must not mutate Project Organiser's shared bundle-test surface or unrelated plan artifacts.
 - Dispatch Architecture: Create one visible Codex task whose initial prompt launches one Dev Orchestrator subagent and assigns title and messaging responsibility to the visible root task.
 - Transition Claims: Work Item `start-map-evaluation-contracts-work-item`; event `efb03db7-eff3-4716-b0b9-8ca920c696fb`. Provider `start-map-evaluation-contracts-provider`; event `7e9bbe1d-58c6-499a-8082-1e78d5692137`.
-- Runtime Identity: Pending caller-owned visible task creation. Creation does not imply Running.
+- Canonical Codex Task ID: `019ffbeb-02ee-7d52-9460-d1bfdbdbe20b`.
+- Canonical Conversation ID: `019ffbeb-02ee-7d52-9460-d1bfdbdbe20b` (combined runtime identity).
+- Runtime Host: `local`.
+- Runtime Project: saved `dev-methodology` project at `/Users/martinbechard/dev/dev-methodology`.
+- Runtime Created At: `2026-08-13T16:18:30Z` (`1786637910`).
+- Requested Title: `Starting — Map Evaluation Contracts To Inspect AI`; the runtime preview is ellipsized only.
+- Runtime Creation Outcome: Unique success with no client or pending identity. Creation does not imply Running.
