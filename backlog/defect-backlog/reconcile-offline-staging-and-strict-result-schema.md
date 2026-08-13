@@ -1,6 +1,6 @@
 # Reconcile Offline Staging and Strict Result Schema
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -63,3 +63,17 @@ None.
 
 - The integration and revert commits document the failed current-main gate; neither establishes delivery.
 - Both legacy branches and worktrees can be deleted after this work item is committed and verified.
+
+## Starting Handoff Evidence
+
+- Reserved At: 2026-08-13T15:10:07Z.
+- Transition: `Ready -> Starting`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Baseline: `e5491bb6c20b68a662830db63a53779c1de21a0d` on primary `main`.
+- Priority: Oldest eligible process-correctness defect after receipt-integrity delivery completed and released its runner/evaluation claims.
+- Capacity: Uses one available slot alongside the active Index alignment lane; User Action Required and Blocked items remain excluded.
+- Overlap: Index owns only `index.html`, documentation-design-system tests, bundle-content tests, and one shared CSS asset. This item must limit initial diagnosis and claims to offline runner/staging and strict-result schema paths, preserve all plan artifacts, and return any newly discovered overlap before mutation.
+- Dispatch Architecture: Create one visible Codex task whose initial prompt launches one Dev Orchestrator subagent and states the visible root title-and-messaging responsibility.
+- Transition Claims: Work Item `start-offline-staging-strict-schema-work-item`; event `198251b6-5468-42f4-92d0-a829582c9d9e`. Provider `start-offline-staging-strict-schema-provider`; event `3172aaa9-ed3c-46e5-8842-b7df75e61c27`.
+- Runtime Identity: Pending caller-owned visible task creation. Creation does not imply Running.
