@@ -2040,6 +2040,7 @@ class BundleContentTests(unittest.TestCase):
                     expects_top_link=Path(relative_path).name
                     in {
                         "agent-and-skill-evaluations.html",
+                        "documentation-templates.html",
                         "orchestrated-development-lifecycle.html",
                     },
                 )
