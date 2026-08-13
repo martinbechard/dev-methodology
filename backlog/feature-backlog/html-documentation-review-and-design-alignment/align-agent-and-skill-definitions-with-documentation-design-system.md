@@ -185,6 +185,17 @@ Dependency Resolution: Satisfied by completed Work Item `review-agent-and-skill-
 - Prohibition: Until selected under crisis sequencing or until crisis exit, perform no provider, claim, title, source, plan, resource, dispatch, resume, or external-repository mutation from this task.
 - Claim Boundary: Do not query, release, reacquire, reset, or otherwise reconcile its claim state during the crisis. Retain the two release outcomes as audit evidence for post-exit ordinary reconciliation.
 
+#### Continued Violation After Preservation Marker
+
+- Recorded At: 2026-08-13T23:18:00Z.
+- Sequence: After crisis-marker commit `7bb552e5`, the same terminology task accepted a user-provided reference-root design, acquired two task-local claims, and changed its provider-record bytes before receiving and acknowledging the renewed preservation stop.
+- Preserved Dirty Provider Path: `backlog/defect-backlog/reconcile-project-terminology-reference-discovery.md`, with an uncommitted 41-line addition and 7-line deletion relative to current `HEAD` at observation. The diff records recursive project and user `.agents/reference` and `.codex/reference` design plus the still-unresolved Persistence/Commit question.
+- Preserved Claim Evidence: Two task-local post-reset claims were reported acquired by the canonical terminology task. Their exact state and identities remain task-local because any claim query is prohibited. Do not infer, release, reconstruct, or repeat them during the epoch.
+- Current Runtime: Canonical task `019ffb67-9ecc-7c53-8412-c486d62d06c2` is idle and acknowledges the stop.
+- Preservation Rule: Do not revert, stage, commit, adopt, edit, move, or validate the dirty provider bytes during this epoch. Do not perform provider, claim, title, source, plan, resource, dispatch, resume, or external-repository mutation from that task.
+- Deferred Reconciliation: Only after the current sole crisis Work Item is terminal may the Coordinator decide whether this terminology recovery becomes the next sole crisis item. If selected, the same canonical task must first reconcile the dirty provider bytes and task-local claims under the claim-free crisis contract; otherwise preserve them until crisis exit and ordinary claim restoration. No second execution is authorized.
+- Sole Mutator: `support-configured-primary-branches-in-file-provider-transactions`, canonical task `019ffd4d-f252-7e42-a6bc-f13d0c80c30e`, remains the only authorized crisis mutator.
+
 ## User Action Required
 
 ### Question for the User
