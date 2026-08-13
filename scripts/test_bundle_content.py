@@ -4249,7 +4249,9 @@ class BundleContentTests(unittest.TestCase):
             "Do not request lifecycle COMPLETED while Commit is AWAITING_REVIEW",
             "Resume the same effective Commit-selected skill through review corrections, checks, dependency order, merge, and main observation until it returns READY or BLOCKED.",
             "directly apply the effective Persistence-selected management skill for the distinct terminal COMPLETED update",
-            "verify the selected manager's recorded closure and the applicable runtime cleanup before reporting READY",
+            "verify the selected manager's recorded closure before reporting terminal delivery eligibility",
+            "Return the complete terminal evidence and cleanup eligibility to the parent Dev Backlog Coordinator",
+            "The active Dev Orchestrator must not remove its active worktree, delete its checked-out branch, or archive its active task",
             "When coordinate-codex-tasks is active, verify its terminal title handoff",
             "For other runtimes, do not require Codex title behavior",
             "For provider none, do not mutate Persistence",
@@ -9657,7 +9659,9 @@ Visible after.
             "If current source contracts disagree about the integration branch or checkout shape, stop for source-contract disposition instead of choosing silently.",
             "Use the integration and cleanup checkout required by the effective Commit source.",
             "Before handoff, commit completed work and prove either the required clean state or preserved unrelated dirt with no integration residue.",
-            "Delete delivery and cleanup branches only when the effective Commit contract created them and their cleanup gates pass.",
+            "The Dev Orchestrator returns that evidence without cleaning up its own active execution.",
+            "The Coordinator decides whether the gates pass",
+            "the root Dispatcher executes only the exact authorized cleanup packet.",
         ):
             with self.subTest(design_contract=required_contract):
                 self.assertIn(required_contract, design_text)
