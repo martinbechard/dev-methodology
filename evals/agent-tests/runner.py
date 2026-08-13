@@ -1259,6 +1259,23 @@ def _validate_target_skills(suite: _Suite, scenario_ids: Sequence[str], reposito
                 raise ValueError(f"{suite.suite_id}:{scenario['id']} requires missing skill {skill_name}")
 
 
+def _canonical_primary_worktree(repository_root: Path) -> Path | None:
+    """Return Git's first, canonical primary worktree when it is available."""
+    completed = subprocess.run(
+        ("git", "-C", str(repository_root), "worktree", "list", "--porcelain", "-z"),
+        check=False,
+        capture_output=True,
+    )
+    if completed.returncode != 0:
+        return None
+    first_field = completed.stdout.split(b"\0", 1)[0]
+    prefix = b"worktree "
+    if not first_field.startswith(prefix):
+        return None
+    primary = Path(os.fsdecode(first_field[len(prefix) :])).resolve()
+    return primary if primary.is_dir() else None
+
+
 def _stage_offline_project_dependencies(
     batch: Sequence[_RunSpec],
     repository_root: Path,
@@ -1283,29 +1300,57 @@ def _stage_offline_project_dependencies(
             relative = Path("evals") / "projects" / executable_case / "node_modules"
             project_root = (repository_root / "evals" / "projects").resolve()
             workspace_project_root = (workspace / "evals" / "projects").resolve()
-            source = (repository_root / relative).resolve()
+            selected_source = (repository_root / relative).resolve()
+            source = selected_source
+            primary_source: Path | None = None
+            primary = None if source.is_dir() else _canonical_primary_worktree(repository_root)
+            if primary is not None and primary != repository_root.resolve():
+                primary_project_root = (primary / "evals" / "projects").resolve()
+                candidate = (primary / relative).resolve()
+                if not candidate.is_relative_to(primary_project_root):
+                    raise RuntimeError(
+                        f"Offline Node fixture escapes its primary project root: "
+                        f"{run.suite.suite_id}:{scenario['id']}"
+                    )
+                primary_source = candidate
+                if primary_source.is_dir():
+                    source = primary_source
             destination = (workspace / relative).resolve()
-            if not source.is_relative_to(project_root) or not destination.is_relative_to(workspace_project_root):
+            if not selected_source.is_relative_to(project_root) or not destination.is_relative_to(
+                workspace_project_root
+            ):
                 raise RuntimeError(
                     f"Offline Node fixture escapes its project root: {run.suite.suite_id}:{scenario['id']}"
                 )
             if not source.is_dir():
+                checked = f"checked selected checkout {selected_source}"
+                if primary_source is not None:
+                    checked += f"; checked canonical primary worktree {primary_source}"
                 raise RuntimeError(
                     f"Pinned offline Node dependencies are unavailable for {run.suite.suite_id}:"
-                    f"{scenario['id']}: {source}"
+                    f"{scenario['id']}: {checked}"
                 )
             for candidate in source.rglob("*"):
-                if candidate.is_symlink() and not candidate.resolve().is_relative_to(source):
+                if not candidate.is_symlink():
+                    continue
+                if candidate.readlink().is_absolute():
+                    raise RuntimeError(f"Offline Node fixture contains an absolute symlink: {candidate}")
+                if not candidate.resolve().is_relative_to(source):
                     raise RuntimeError(f"Offline Node fixture contains an escaping symlink: {candidate}")
-            package_lock = source.parent / "package-lock.json"
+            package_lock = selected_source.parent / "package-lock.json"
             installed_package = source / "typescript" / "package.json"
             if not package_lock.is_file() or not installed_package.is_file():
-                raise RuntimeError(f"Offline Node fixture lacks TypeScript lock evidence: {source.parent}")
+                raise RuntimeError(
+                    f"Offline Node fixture lacks TypeScript lock evidence: {selected_source.parent}"
+                )
             locked = json.loads(package_lock.read_text(encoding="utf-8"))
             installed = json.loads(installed_package.read_text(encoding="utf-8"))
             locked_version = (locked.get("packages", {}).get("node_modules/typescript", {}) or {}).get("version")
             if not locked_version or locked_version != installed.get("version"):
-                raise RuntimeError(f"Offline Node fixture TypeScript version does not match its lockfile: {source.parent}")
+                raise RuntimeError(
+                    f"Offline Node fixture TypeScript version does not match its lockfile: "
+                    f"{selected_source.parent}"
+                )
             if destination.exists():
                 continue
             destination.parent.mkdir(parents=True, exist_ok=True)
@@ -1619,7 +1664,7 @@ def _delivery_result_schema() -> dict[str, Any]:
     """Return the configured delivery workflow's result schema."""
 
     return {
-        "type": "object",
+        "type": ["object", "null"],
         "additionalProperties": False,
         "required": ["status"],
         "properties": {
@@ -1668,6 +1713,7 @@ def _coordinator_schema() -> dict[str, Any]:
                                     "cleanup",
                                     "evidence",
                                     "handoffReceipts",
+                                    "deliveryResult",
                                 ],
                                 "properties": {
                                     "scenario": {"type": "string"},
@@ -1705,6 +1751,7 @@ def _coordinator_schema() -> dict[str, Any]:
                                                 "commit",
                                                 "review",
                                                 "verification",
+                                                "claimRelease",
                                             ],
                                             "properties": {
                                                 "lane": {"type": "string"},
@@ -1755,7 +1802,7 @@ def _coordinator_schema() -> dict[str, Any]:
                                                     },
                                                 },
                                                 "claimRelease": {
-                                                    "type": "object",
+                                                    "type": ["object", "null"],
                                                     "additionalProperties": False,
                                                     "required": ["eventIds"],
                                                     "properties": {
@@ -2499,9 +2546,10 @@ def _coordinator_prompt(
         "failed and residualRisk must be a string. Each assignment-declared handoffReceipts entry must be an object whose "
         "lane is a string and whose role, commit, review, and verification values are objects, never prose strings. "
         "role must contain exactly invocation and sessionIds; commit must contain exactly repository and sha; review and "
-        "verification must each contain exactly sessionIds. claimRelease is required only when the scenario's "
-        "requiredHandoffReceiptFieldsByScenario includes it, must then contain exactly eventIds, and must otherwise be "
-        "omitted. A scenario whose resourceCoordinationByScenario value is none must not invoke resource-claim through a "
+        "verification must each contain exactly sessionIds. The claimRelease key is required on every receipt. Use null "
+        "unless the receipt lane is claimed by the scenario's resourceCoordinationByScenario contract; a claimed lane "
+        "must instead contain exactly eventIds. A scenario whose resourceCoordinationByScenario value is none must not "
+        "invoke resource-claim through a "
         "script or tool and must not report claim evidence on any receipt, including an extra lane. Pre-existing "
         "repository claim files do not count as scenario activity. A scenario whose value is resource-claim must retain its "
         "configured acquisition and normal-release evidence. The "
@@ -2515,8 +2563,9 @@ def _coordinator_prompt(
         "repository is relative to the active scenario's scenarioRoots[scenario] directory, every sessionIds and "
         "eventIds value is a "
         "non-empty string array, "
-        "and the commit sha must be an ancestor. When requiredDeliveryResultFieldsByScenario names status, include "
-        "deliveryResult as an object containing exactly status. Use COMPLETED only after delivery finishes successfully. "
+        "and the commit sha must be an ancestor. The deliveryResult key is required on every checkpoint and final "
+        "scenario result. Use null unless requiredDeliveryResultFieldsByScenario names status; when required, use an "
+        "object containing exactly status. Use COMPLETED only after delivery finishes successfully. "
         "Use NEEDS_REVIEW when required review or a user decision remains. Use BLOCKED for a stated technical or external "
         "blocker. Do not invoke Dev Backlog Steward closeout unless deliveryResult.status is COMPLETED. "
         "The final coordinator scenario result must repeat the checkpoint's status, "
@@ -3407,13 +3456,6 @@ def _load_checkpoint_report(
                 for scenario in run.suite.scenarios
                 if str(scenario["id"]) == scenario_id
             )
-            delivery_result = loaded.get("deliveryResult")
-            if scenario_contract.get("requiredDeliveryResultFields") and not isinstance(
-                delivery_result, dict
-            ):
-                raise RuntimeError(
-                    f"Scenario checkpoint deliveryResult must be an object: {path}"
-                )
             if loaded.get("status") not in _TERMINAL_STATUSES:
                 raise RuntimeError(f"Scenario checkpoint status must be terminal: {path}")
             if type(loaded.get("targetInvoked")) is not bool or type(loaded.get("judgeInvoked")) is not bool:
@@ -3422,6 +3464,15 @@ def _load_checkpoint_report(
                 raise RuntimeError(f"Scenario checkpoint cleanup must be clean or failed: {path}")
             if not isinstance(loaded.get("residualRisk"), str):
                 raise RuntimeError(f"Scenario checkpoint residualRisk must be a string: {path}")
+            checkpoint_identity = f"{run.suite.suite_id}:{scenario_id} checkpoint"
+            _audit_delivery_result(checkpoint_identity, scenario_contract, loaded)
+            _validate_conditional_handoff_receipts(
+                checkpoint_identity,
+                run.suite,
+                scenario_contract,
+                handoff_receipts,
+            )
+            delivery_result = loaded["deliveryResult"]
             receipt_audit = _validate_evidence_receipts(
                 checkpoint_root,
                 evidence_receipts,
@@ -3460,11 +3511,7 @@ def _load_checkpoint_report(
                     "cleanup": loaded["cleanup"],
                     "evidence": retained_evidence,
                     "handoffReceipts": handoff_receipts,
-                    **(
-                        {"deliveryResult": delivery_result}
-                        if delivery_result is not None
-                        else {}
-                    ),
+                    "deliveryResult": delivery_result,
                 }
             )
             if loaded.get("residualRisk"):
@@ -3521,12 +3568,14 @@ def _audit_checkpoint_agreement(
     }
     for identity in sorted(expected):
         compared_fields = [
-            "status", "targetInvoked", "judgeInvoked", "evidenceReceipts", "cleanup"
+            "status",
+            "targetInvoked",
+            "judgeInvoked",
+            "evidenceReceipts",
+            "cleanup",
+            "handoffReceipts",
+            "deliveryResult",
         ]
-        if scenarios[identity].get("requiredHandoffReceiptFields"):
-            compared_fields.append("handoffReceipts")
-        if scenarios[identity].get("requiredDeliveryResultFields"):
-            compared_fields.append("deliveryResult")
         if any(final_results[identity].get(field) != checkpoints[identity].get(field) for field in compared_fields):
             raise RuntimeError(f"Final report disagrees with checkpoint for {identity[0]}:{identity[1]}")
 
@@ -3567,6 +3616,47 @@ def _require_exact_handoff_lanes(
         )
 
 
+def _validate_conditional_handoff_receipts(
+    identity: str,
+    suite: _Suite,
+    scenario: Mapping[str, Any],
+    receipts: Sequence[Mapping[str, Any]],
+) -> None:
+    """Validate required nullable claim-release fields against lane applicability."""
+    selected_coordination, coordination_case = _scenario_resource_coordination(suite, scenario)
+    claimed_lanes = (
+        set(coordination_case.get("claimedLanes", []))
+        if selected_coordination == "resource-claim"
+        else set()
+    )
+    for receipt in receipts:
+        lane = str(receipt.get("lane", ""))
+        if "claimRelease" not in receipt:
+            raise RuntimeError(f"{identity} handoff receipt {lane} omits claimRelease")
+        claim_release = receipt["claimRelease"]
+        if lane not in claimed_lanes:
+            if claim_release is not None:
+                raise RuntimeError(
+                    f"{identity} handoff receipt {lane} has unexpected claimRelease evidence"
+                )
+            continue
+        if not isinstance(claim_release, Mapping):
+            raise RuntimeError(
+                f"{identity} handoff receipt {lane} claimRelease must be an object"
+            )
+        event_ids = claim_release.get("eventIds")
+        if (
+            set(claim_release) != {"eventIds"}
+            or not isinstance(event_ids, list)
+            or len(event_ids) != 1
+            or not isinstance(event_ids[0], str)
+            or not event_ids[0]
+        ):
+            raise RuntimeError(
+                f"{identity} handoff receipt {lane} claimRelease must contain exactly one claim release eventId"
+            )
+
+
 def _audit_report(
     batch: Sequence[_RunSpec],
     report: dict[str, Any],
@@ -3603,6 +3693,11 @@ def _audit_report(
         for scenario_result in scenario_results:
             scenario_id = str(scenario_result.get("scenario", ""))
             scenario = scenarios.get((suite_id, scenario_id), {})
+            _audit_delivery_result(
+                f"{suite_id}:{scenario_id}",
+                scenario,
+                scenario_result,
+            )
             if scenario_result.get("status") not in _TERMINAL_STATUSES:
                 raise RuntimeError(f"Invalid terminal status for {suite_id}:{scenario_result.get('scenario')}")
             if not isinstance(scenario_result.get("targetInvoked"), bool) or not isinstance(
@@ -3708,6 +3803,12 @@ def _audit_report(
                 required_lanes,
                 tuple(receipts_by_lane),
             )
+            _validate_conditional_handoff_receipts(
+                f"{suite_id}:{scenario_id}",
+                suites[suite_id],
+                scenario,
+                tuple(receipts_by_lane.values()),
+            )
             if required_lanes or required_fields:
                 selected_coordination, coordination_case = _scenario_resource_coordination(
                     suites[suite_id],
@@ -3718,11 +3819,6 @@ def _audit_report(
                     if selected_coordination == "resource-claim"
                     else set()
                 )
-                for lane, receipt in receipts_by_lane.items():
-                    if lane not in claimed_lanes and "claimRelease" in receipt:
-                        raise RuntimeError(
-                            f"{suite_id}:{scenario_id} handoff receipt {lane} has unexpected claimRelease evidence"
-                        )
                 for lane in required_lanes:
                     lane_required_fields = [
                         *required_fields,
@@ -5094,7 +5190,9 @@ def _audit_delivery_result(
     """Return the validated delivery status required by one scenario."""
 
     required_fields = scenario.get("requiredDeliveryResultFields", [])
-    result = scenario_result.get("deliveryResult")
+    if "deliveryResult" not in scenario_result:
+        raise RuntimeError(f"{identity} omits deliveryResult")
+    result = scenario_result["deliveryResult"]
     if not required_fields:
         if result is not None:
             raise RuntimeError(f"{identity} has an unexpected deliveryResult")
@@ -5189,6 +5287,12 @@ def _audit_handoff_evidence(
                 required_lanes,
                 tuple(receipts),
             )
+            _validate_conditional_handoff_receipts(
+                identity,
+                run.suite,
+                scenario,
+                tuple(receipts.values()),
+            )
             if not scenario.get("requiredHandoffReceiptFields"):
                 continue
             target = target_bindings.get((run.suite.suite_id, scenario_id))
@@ -5213,11 +5317,6 @@ def _audit_handoff_evidence(
             )
             bound_file_claim_ids: dict[Path, set[str]] = {}
             if selected_coordination == "none":
-                for lane, receipt in receipts.items():
-                    if "claimRelease" in receipt:
-                        raise RuntimeError(
-                            f"{identity} malformed handoff receipt {lane}: unexpected claimRelease evidence"
-                        )
                 _audit_no_claim_session_activity(target, sessions, identity)
             for lane in required_lanes:
                 receipt = receipts[lane]

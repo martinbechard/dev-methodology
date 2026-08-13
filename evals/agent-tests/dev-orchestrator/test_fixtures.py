@@ -202,9 +202,13 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
             contract["orchestration"]["closeout"]["owner"],
         )
 
-    def test_none_coordination_report_omits_claim_release_evidence(self) -> None:
-        """Provider-none receipts remain structured without claim release objects."""
+    def test_none_coordination_report_uses_null_claim_release_evidence(self) -> None:
+        """Provider-none receipts retain required null claim-release fields."""
         run, report = self._complete_dependency_routing_report()
+
+        receipts = report["runs"][0]["scenarioResults"][0]["handoffReceipts"]
+        self.assertTrue(receipts)
+        self.assertTrue(all(receipt["claimRelease"] is None for receipt in receipts))
 
         runner._audit_report((run,), report)
 
@@ -1318,6 +1322,7 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
                 "commit": {"repository": "candidate", "sha": "a" * 40},
                 "review": {"sessionIds": ["review-evidence"]},
                 "verification": {"sessionIds": ["verification-evidence"]},
+                "claimRelease": None,
             }
             for lane in scenario["requiredHandoffReceiptLanes"]
         ]
@@ -1368,12 +1373,13 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
 
             scenario_result = report["runs"][0]["scenarioResults"][0]
             invalid_cases = (
+                ("omitted", "omits deliveryResult"),
                 (None, "missing the structured deliveryResult"),
                 ({"status": "UNKNOWN"}, "unknown status"),
             )
             for delivery_result, diagnostic in invalid_cases:
                 with self.subTest(delivery_result=delivery_result):
-                    if delivery_result is None:
+                    if delivery_result == "omitted":
                         scenario_result.pop("deliveryResult", None)
                     else:
                         scenario_result["deliveryResult"] = delivery_result
@@ -1596,6 +1602,7 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
                 "commit": {"repository": "candidate", "sha": sha},
                 "review": {"sessionIds": review_ids},
                 "verification": {"sessionIds": verification_ids},
+                "claimRelease": None,
             }
             if claim_release and lane in claimed_lanes:
                 receipt["claimRelease"] = {"eventIds": [event_id]}

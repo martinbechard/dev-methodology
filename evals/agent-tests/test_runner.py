@@ -329,6 +329,9 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             "deliveryResult.status is COMPLETED.",
             prompt,
         )
+        self.assertIn("deliveryResult key is required", prompt)
+        self.assertIn("claimRelease key is required", prompt)
+        self.assertIn("Use null", prompt)
         self.assertIn(
             '"resourceCoordinationByScenario": {"happy": "none"}',
             prompt,
@@ -406,6 +409,7 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                 "evidenceReceipts",
                 "evidence",
                 "handoffReceipts",
+                "deliveryResult",
             }
             <= set(scenario_schema["required"])
         )
@@ -417,16 +421,40 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                 "commit",
                 "review",
                 "verification",
+                "claimRelease",
             ],
             handoff_schema["required"],
         )
-        self.assertIn("claimRelease", handoff_schema["properties"])
+        self.assertEqual(
+            ["object", "null"],
+            handoff_schema["properties"]["claimRelease"]["type"],
+        )
         delivery_schema = scenario_schema["properties"]["deliveryResult"]
+        self.assertEqual(["object", "null"], delivery_schema["type"])
         self.assertEqual(["status"], delivery_schema["required"])
         self.assertEqual(
             ["BLOCKED", "COMPLETED", "NEEDS_REVIEW"],
             delivery_schema["properties"]["status"]["enum"],
         )
+
+    def test_coordinator_schema_requires_every_strict_object_property(self) -> None:
+        """Codex strict-object schemas require every declared property at every object level."""
+        pending = [("$", runner._coordinator_schema())]
+        while pending:
+            path, schema = pending.pop()
+            schema_type = schema.get("type")
+            if (
+                (schema_type == "object" or isinstance(schema_type, list) and "object" in schema_type)
+                and schema.get("additionalProperties") is False
+            ):
+                properties = schema.get("properties", {})
+                with self.subTest(path=path):
+                    self.assertEqual(set(properties), set(schema.get("required", [])))
+            for name, child in schema.get("properties", {}).items():
+                pending.append((f"{path}.properties.{name}", child))
+            items = schema.get("items")
+            if isinstance(items, dict):
+                pending.append((f"{path}.items", items))
 
     def test_cleanup_audit_rejects_active_claim_in_nested_fixture_repository(self) -> None:
         """A candidate repository cannot retain a claim outside the workspace registry."""
@@ -1293,6 +1321,77 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                 ),
             )
 
+    def test_offline_node_dependencies_fall_back_to_primary_worktree(self) -> None:
+        """A linked checkout copies ignored pinned dependencies from its canonical primary worktree."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            primary, linked = self._linked_offline_fixture(root, installed_version="7.0.2")
+            workspace = root / "workspace"
+            workspace.mkdir()
+
+            staged = runner._stage_offline_project_dependencies(
+                self._offline_node_batch(), linked, workspace
+            )
+
+            self.assertEqual(("evals/projects/fixture/node_modules",), staged)
+            copied = workspace / "evals" / "projects" / "fixture" / "node_modules"
+            self.assertEqual("primary", (copied / "source.txt").read_text(encoding="utf-8"))
+            self.assertFalse(
+                copied.samefile(primary / "evals" / "projects" / "fixture" / "node_modules")
+            )
+            copied_link = copied / "source-link.txt"
+            self.assertTrue(copied_link.is_symlink())
+            self.assertTrue(copied_link.resolve().is_relative_to(copied.resolve()))
+
+    def test_primary_worktree_dependencies_reject_absolute_internal_symlink(self) -> None:
+        """Copied dependencies cannot retain an executable path into the canonical primary tree."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            primary, linked = self._linked_offline_fixture(root, installed_version="7.0.2")
+            modules = primary / "evals" / "projects" / "fixture" / "node_modules"
+            (modules / "source-link.txt").unlink()
+            (modules / "source-link.txt").symlink_to(modules / "source.txt")
+            workspace = root / "workspace"
+            workspace.mkdir()
+
+            with self.assertRaisesRegex(RuntimeError, "absolute symlink"):
+                runner._stage_offline_project_dependencies(
+                    self._offline_node_batch(), linked, workspace
+                )
+
+    def test_primary_worktree_dependencies_must_match_linked_checkout_lockfile(self) -> None:
+        """Fallback dependencies cannot override the selected checkout's tracked package contract."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            _, linked = self._linked_offline_fixture(root, installed_version="7.0.1")
+            workspace = root / "workspace"
+            workspace.mkdir()
+
+            with self.assertRaisesRegex(RuntimeError, "does not match its lockfile"):
+                runner._stage_offline_project_dependencies(
+                    self._offline_node_batch(), linked, workspace
+                )
+
+    def test_missing_offline_dependencies_report_linked_and_primary_locations(self) -> None:
+        """An absent ignored tree identifies every deterministic source checked by the runner."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            primary, linked = self._linked_offline_fixture(root)
+            workspace = root / "workspace"
+            workspace.mkdir()
+
+            with self.assertRaisesRegex(
+                RuntimeError,
+                "checked selected checkout.*canonical primary worktree",
+            ) as raised:
+                runner._stage_offline_project_dependencies(
+                    self._offline_node_batch(), linked, workspace
+                )
+
+            message = str(raised.exception)
+            self.assertIn(str(linked / "evals" / "projects" / "fixture" / "node_modules"), message)
+            self.assertIn(str(primary / "evals" / "projects" / "fixture" / "node_modules"), message)
+
     def test_wiki_ingester_builder_stages_every_scenario_source(self) -> None:
         """Wiki Ingester cases cannot depend on files created by another concurrent suite."""
         builder = _RUNNER_PATH.parent / "wiki-ingester" / "fixtures" / "stage_fixture.py"
@@ -1653,7 +1752,7 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             )
             outside = root / "outside.txt"
             outside.write_text("host", encoding="utf-8")
-            (modules / "escape").symlink_to(outside)
+            (modules / "escape").symlink_to(os.path.relpath(outside, modules))
             workspace.mkdir()
             suite = self._suite("offline-suite")
             suite = runner._Suite(
@@ -2845,6 +2944,7 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             "commit": {"repository": "candidate", "sha": "a" * 40},
             "review": {"sessionIds": ["review"]},
             "verification": {"sessionIds": ["verification"]},
+            "claimRelease": None,
         }
         structured_extra = json.loads(json.dumps(structured_source))
         structured_extra["lane"] = "extra"
@@ -2853,11 +2953,11 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             "eventIds": ["extra-release"],
         }
         malformed_receipts = {
-            "missing-lane": ([{}], "handoff receipt"),
-            "wrong-type-lane": ([{"lane": []}], "handoff receipt"),
-            "missing-role": ([{"lane": "source"}], "handoff receipt"),
+            "missing-lane": ([{"claimRelease": None}], "handoff receipt"),
+            "wrong-type-lane": ([{"lane": [], "claimRelease": None}], "handoff receipt"),
+            "missing-role": ([{"lane": "source", "claimRelease": None}], "handoff receipt"),
             "wrong-type-role": (
-                [{"lane": "source", "role": []}],
+                [{"lane": "source", "role": [], "claimRelease": None}],
                 "handoff receipt",
             ),
             "missing-commit": (
@@ -2868,6 +2968,7 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                             "invocation": "dev_coder",
                             "sessionIds": ["producer"],
                         },
+                        "claimRelease": None,
                     }
                 ],
                 "handoff receipt",
@@ -2879,8 +2980,7 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             ),
             "extra-lane-with-claim": (
                 [structured_source, structured_extra_with_claim],
-                "checkpoint-suite:happy handoff receipt lanes mismatch: "
-                "expected ['source'], observed ['extra', 'source']",
+                "unexpected claimRelease evidence",
             ),
         }
         for name, (receipts, diagnostic) in malformed_receipts.items():
@@ -2904,6 +3004,11 @@ class AgentSuiteRunnerTests(unittest.TestCase):
 
                 def run_process(command: object, *arguments: object, **keywords: object) -> dict[str, object]:
                     values = list(command)
+                    schema_path = Path(values[values.index("--output-schema") + 1])
+                    self.assertEqual(
+                        runner._coordinator_schema(),
+                        json.loads(schema_path.read_text(encoding="utf-8")),
+                    )
                     add_dirs = [Path(values[index + 1]) for index, value in enumerate(values) if value == "--add-dir"]
                     checkpoint_root = add_dirs[-1]
                     checkpoint = checkpoint_root / "checkpoint-suite" / "happy.json"
@@ -2924,6 +3029,7 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                                 "cleanup": "clean",
                                 "residualRisk": "none",
                                 "handoffReceipts": receipts,
+                                "deliveryResult": None,
                             }
                         ),
                         encoding="utf-8",
@@ -3018,7 +3124,6 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             "commit",
             "review",
             "verification",
-            "claimRelease",
         ]
         suite = runner._Suite(
             suite.suite_id,
@@ -3103,6 +3208,7 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                         {
                             "scenario": "happy",
                             "targetInvoked": True,
+                            "deliveryResult": None,
                             "handoffReceipts": [
                                 {
                                     "lane": "source",
@@ -3116,6 +3222,7 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                                     },
                                     "review": {"sessionIds": ["reviewer"]},
                                     "verification": {"sessionIds": ["verifier"]},
+                                    "claimRelease": None,
                                 }
                             ],
                         }
@@ -5138,6 +5245,87 @@ class AgentSuiteRunnerTests(unittest.TestCase):
 
         runner._audit_checkpoint_agreement(final_report, checkpoint_report, batch)
 
+    def test_checkpoint_enforces_nullable_conditional_result_fields(self) -> None:
+        """Checkpoints require explicit nulls when delivery and claim-release evidence do not apply."""
+        run = self._checkpoint_handoff_run_spec()
+        batch = (run,)
+        run_identity = "codex-batch-01-nullable-checkpoint"
+        valid_receipt = {
+            "lane": "source",
+            "role": {"invocation": "dev_coder", "sessionIds": ["producer"]},
+            "commit": {"repository": "candidate", "sha": "a" * 40},
+            "review": {"sessionIds": ["review"]},
+            "verification": {"sessionIds": ["verification"]},
+            "claimRelease": None,
+        }
+        with tempfile.TemporaryDirectory() as temporary:
+            checkpoint_root = Path(temporary)
+            document = self._write_receipt_checkpoint(checkpoint_root, run, run_identity)
+            document["handoffReceipts"] = [valid_receipt]
+            checkpoint_path = checkpoint_root / "checkpoint-suite" / "happy.json"
+
+            checkpoint_path.write_text(json.dumps(document), encoding="utf-8")
+            loaded = runner._load_checkpoint_report(checkpoint_root, batch, run_identity)
+            assert loaded is not None
+            retained = loaded["runs"][0]["scenarioResults"][0]
+            self.assertIsNone(retained["deliveryResult"])
+            self.assertIsNone(retained["handoffReceipts"][0]["claimRelease"])
+
+            invalid_cases = (
+                ("missing-delivery", lambda value: value.pop("deliveryResult"), "omits deliveryResult"),
+                (
+                    "unexpected-delivery",
+                    lambda value: value.update({"deliveryResult": {"status": "BLOCKED"}}),
+                    "unexpected deliveryResult",
+                ),
+                (
+                    "missing-claim-release",
+                    lambda value: value["handoffReceipts"][0].pop("claimRelease"),
+                    "omits claimRelease",
+                ),
+                (
+                    "unexpected-claim-release",
+                    lambda value: value["handoffReceipts"][0].update(
+                        {"claimRelease": {"eventIds": ["unexpected-release"]}}
+                    ),
+                    "unexpected claimRelease evidence",
+                ),
+            )
+            for name, mutate, diagnostic in invalid_cases:
+                with self.subTest(name=name):
+                    invalid = json.loads(json.dumps(document))
+                    mutate(invalid)
+                    checkpoint_path.write_text(json.dumps(invalid), encoding="utf-8")
+                    with self.assertRaisesRegex(RuntimeError, diagnostic):
+                        runner._load_checkpoint_report(checkpoint_root, batch, run_identity)
+
+    def test_report_enforces_nullable_conditional_result_fields(self) -> None:
+        """Coordinator reports distinguish required null keys from applicable evidence objects."""
+        run = self._run_spec("one", 1)
+        report = {
+            "runs": [self._suite_report("one", "BLOCKED")],
+            "batchCleanup": "clean",
+            "residualRisk": "none",
+        }
+
+        runner._audit_report((run,), report)
+
+        result = report["runs"][0]["scenarioResults"][0]
+        invalid_cases = (
+            ("missing", lambda value: value.pop("deliveryResult"), "omits deliveryResult"),
+            (
+                "unexpected",
+                lambda value: value.update({"deliveryResult": {"status": "BLOCKED"}}),
+                "unexpected deliveryResult",
+            ),
+        )
+        for name, mutate, diagnostic in invalid_cases:
+            with self.subTest(name=name):
+                invalid = json.loads(json.dumps(report))
+                mutate(invalid["runs"][0]["scenarioResults"][0])
+                with self.assertRaisesRegex(RuntimeError, diagnostic):
+                    runner._audit_report((run,), invalid)
+
     def test_checkpoint_rejects_nested_evidence_objects(self) -> None:
         """Durable checkpoints use the same compact scalar contract as the coordinator report."""
         batch = (self._run_spec("one", 1),)
@@ -5275,12 +5463,12 @@ class AgentSuiteRunnerTests(unittest.TestCase):
 
         with self.assertRaisesRegex(
             RuntimeError,
-            "dependency-routing:happy handoff receipt source missing field claimRelease",
+            "dependency-routing:happy handoff receipt source omits claimRelease",
         ):
             runner._audit_report((run,), report)
 
     def test_report_accepts_receipt_without_disabled_claim_evidence(self) -> None:
-        """A scenario without claimRelease accepts structured non-claim evidence."""
+        """A scenario without claim evidence requires a null claimRelease field."""
         suite = self._suite("dependency-routing")
         scenario = dict(suite.scenarios[0])
         scenario["requiredHandoffReceiptFields"] = [
@@ -5314,14 +5502,18 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                 "commit": {"repository": "candidate", "sha": "a" * 40},
                 "review": {"sessionIds": ["review-session"]},
                 "verification": {"sessionIds": ["verification-session"]},
+                "claimRelease": None,
             }
         ]
 
         runner._audit_report((run,), report)
 
-        report["runs"][0]["scenarioResults"][0]["handoffReceipts"][0][
-            "claimRelease"
-        ] = {"eventIds": ["unexpected-release"]}
+        receipt = report["runs"][0]["scenarioResults"][0]["handoffReceipts"][0]
+        receipt.pop("claimRelease")
+        with self.assertRaisesRegex(RuntimeError, "omits claimRelease"):
+            runner._audit_report((run,), report)
+
+        receipt["claimRelease"] = {"eventIds": ["unexpected-release"]}
         with self.assertRaisesRegex(RuntimeError, "unexpected claimRelease evidence"):
             runner._audit_report((run,), report)
 
@@ -5410,6 +5602,68 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                 },
             ),
         )
+
+    @classmethod
+    def _offline_node_batch(cls) -> tuple[object, ...]:
+        suite = cls._suite("offline-suite")
+        suite = runner._Suite(
+            suite_id=suite.suite_id,
+            priority=suite.priority,
+            path=suite.path,
+            manifest=suite.manifest,
+            scenarios=(
+                {
+                    "id": "happy",
+                    "status": "executable",
+                    "executableCase": "fixture",
+                    "runtimeCapabilities": ["offline-node-modules"],
+                },
+            ),
+        )
+        return (runner._RunSpec(suite=suite, scenario_ids=("happy",)),)
+
+    @staticmethod
+    def _linked_offline_fixture(
+        root: Path,
+        installed_version: str | None = None,
+    ) -> tuple[Path, Path]:
+        primary = root / "primary"
+        fixture = primary / "evals" / "projects" / "fixture"
+        fixture.mkdir(parents=True)
+        (primary / ".gitignore").write_text("node_modules/\n", encoding="utf-8")
+        (fixture / "package-lock.json").write_text(
+            '{"packages":{"node_modules/typescript":{"version":"7.0.2"}}}',
+            encoding="utf-8",
+        )
+        subprocess.run(("git", "init", "-b", "main", str(primary)), check=True, capture_output=True)
+        subprocess.run(("git", "-C", str(primary), "config", "user.name", "Runner Test"), check=True)
+        subprocess.run(
+            ("git", "-C", str(primary), "config", "user.email", "runner@example.invalid"),
+            check=True,
+        )
+        subprocess.run(("git", "-C", str(primary), "add", "."), check=True)
+        subprocess.run(
+            ("git", "-C", str(primary), "commit", "-m", "fixture"),
+            check=True,
+            capture_output=True,
+        )
+        if installed_version is not None:
+            modules = fixture / "node_modules"
+            typescript = modules / "typescript"
+            typescript.mkdir(parents=True)
+            (typescript / "package.json").write_text(
+                json.dumps({"version": installed_version}),
+                encoding="utf-8",
+            )
+            (modules / "source.txt").write_text("primary", encoding="utf-8")
+            (modules / "source-link.txt").symlink_to("source.txt")
+        linked = root / "linked"
+        subprocess.run(
+            ("git", "-C", str(primary), "worktree", "add", "--detach", str(linked), "HEAD"),
+            check=True,
+            capture_output=True,
+        )
+        return primary, linked
 
     @classmethod
     def _run_spec(cls, suite_id: str, priority: int) -> object:
@@ -5537,6 +5791,8 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                     "evidenceReceipts": [],
                     "cleanup": "clean",
                     "evidence": ["synthetic"],
+                    "handoffReceipts": [],
+                    "deliveryResult": None,
                 }
             ],
             "maximumActiveChildrenObserved": 1,
@@ -5699,6 +5955,8 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             "evidence": ["diagnostic summary only"],
             "cleanup": "clean",
             "residualRisk": "none",
+            "handoffReceipts": [],
+            "deliveryResult": None,
         }
         checkpoint.write_text(json.dumps(document, indent=2, sort_keys=True) + "\n", encoding="utf-8")
         return document
