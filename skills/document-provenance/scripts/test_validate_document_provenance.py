@@ -249,6 +249,18 @@ class DocumentProvenanceValidatorTest(unittest.TestCase):
             findings,
         )
 
+    def test_rejects_forbidden_metadata_split_across_inline_elements(self) -> None:
+        findings = validate_document(
+            _FIXTURES / "invalid/html-split-task-id.html",
+            route="new",
+            copyright_statement=_COPYRIGHT,
+            runtime_envelope=self.runtime_envelope,
+        )
+        self.assertTrue(
+            any(finding.field == "Footnote" for finding in findings),
+            findings,
+        )
+
     def test_historical_known_and_unknown_facts_control_visibility(self) -> None:
         known_findings = validate_document(
             _FIXTURES / "invalid/historical-known-omitted.html",

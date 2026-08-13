@@ -748,16 +748,15 @@ def _validate_compact_html(
     versions = footnote.fields.pop("Footnote-Version", [])
     if versions != ["v2"]:
         findings.append(_finding(path, "Footnote", "provenance footnote marker must equal v2"))
-    inspected_metadata = " ".join(
-        [
-            _normalize_text(" ".join(footnote.text_parts)),
-            *footnote.comments,
-            *footnote.attribute_values,
-        ]
-    )
-    if (
-        _FORBIDDEN_VISIBLE_METADATA.search(inspected_metadata)
-        or _PLACEHOLDER_PATTERN.search(inspected_metadata)
+    inspected_values = [
+        _normalize_text("".join(footnote.text_parts)),
+        *footnote.comments,
+        *footnote.attribute_values,
+    ]
+    if any(
+        _FORBIDDEN_VISIBLE_METADATA.search(value)
+        or _PLACEHOLDER_PATTERN.search(value)
+        for value in inspected_values
     ):
         findings.append(
             _finding(
