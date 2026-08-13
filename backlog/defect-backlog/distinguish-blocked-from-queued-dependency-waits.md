@@ -1,6 +1,6 @@
 # Distinguish Blocked From Queued Dependency Waits
 
-Status: Blocked
+Status: Ready
 
 Type: Defect
 
@@ -143,6 +143,16 @@ Approved at creation by the user's explicit 2026-08-12 lifecycle-policy clarific
 - Unblock Condition: `document-external-terminal-cleanup` reaches Completed on main with fresh generated-output verification and a clean projection baseline. Then resume `/root/distinguish_blocked_waits` through Blocked -> Ready -> Starting and regenerate from current authoritative sources.
 - Preserved Evidence: Authoritative JSON/HTML hierarchy plan exists at the repository root; no implementation candidate exists and no source mutation began.
 - Transition Claim: `block-folder-policy-generated-projection-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `c1370c23-40e1-4525-b2fb-245342e61de3`.
+
+## Projection-Owner Recovery Evidence
+
+- Recovered At: 2026-08-13T03:38:55Z.
+- Resolved Blocker: `document-external-terminal-cleanup` is Completed on main at `37c634029c9f0da3ff4028ecfdb52576bf696b16` with fresh generated-output verification and a clean projection baseline.
+- Cleanup: Its retained worktree and branch were externally removed after source-mapped delivery equivalence was verified; claims are empty.
+- Preserved Execution: `/root/distinguish_blocked_waits`.
+- Preserved Plans: The authoritative JSON and HTML plan artifacts remain untracked at the primary repository root.
+- Transition: `Blocked -> Ready`.
+- Transition Claim: `ready-distinguish-blocked-waits-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `221653b9-c464-4eb3-b7ca-62895019e876`.
 
 ## Same-Execution Running Acceptance
 
