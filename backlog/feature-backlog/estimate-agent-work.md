@@ -1,6 +1,6 @@
 # Estimate Agent Work In Agent-Hours
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -209,3 +209,15 @@ Do not modify, review, verify, deliver, or close this Work Item until the user a
 - Authorized Correction Budget: At most two additional correction-and-fresh-independent-review cycles for cross-path concurrency and malformed `expected_parallelism` validation.
 - Capacity Decision: Five other Work Items remain `Starting` or `Running`. This item waits in `Ready` for the first released slot and does not consume active capacity.
 - Next Action: This same canonical Dev Orchestrator records `Ready -> Starting -> Running` when one active slot becomes available, then reacquires required implementation claims before mutation.
+
+## Correction Resumption Starting Evidence
+
+- Reserved At: 2026-08-13T12:09:28Z.
+- Transition: `Ready -> Starting`.
+- Capacity Wait: Satisfied. One reserved active slot is available within the five-item limit.
+- Canonical Task and Conversation: `019ffa3d-191f-7343-aaeb-2499de1ad605`.
+- Root Agent Execution: `/root/estimate_agent_work`.
+- Preserved Candidate: `e6931e2a9bbdf28db7fd1fc59cd01c7f188b0850`.
+- Normalized Objective: Complete correction cycle 1 of 2 by defining cross-path concurrency, rejecting malformed `expected_parallelism`, obtaining fresh independent review, and preserving every accepted reusable-output requirement.
+- Launch Result: Existing canonical execution resumed; no replacement execution created.
+- Next Action: The same Dev Orchestrator records `Starting -> Running`, then acquires outcome and project-files claims before mutation.
