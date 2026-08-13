@@ -1,6 +1,6 @@
 # Estimate Agent Work In Agent-Hours
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -221,3 +221,15 @@ Do not modify, review, verify, deliver, or close this Work Item until the user a
 - Normalized Objective: Complete correction cycle 1 of 2 by defining cross-path concurrency, rejecting malformed `expected_parallelism`, obtaining fresh independent review, and preserving every accepted reusable-output requirement.
 - Launch Result: Existing canonical execution resumed; no replacement execution created.
 - Next Action: The same Dev Orchestrator records `Starting -> Running`, then acquires outcome and project-files claims before mutation.
+
+## Correction Resumption Running Evidence
+
+- Accepted At: 2026-08-13T12:09:55Z.
+- Transition: `Starting -> Running`.
+- Canonical Task and Conversation: `019ffa3d-191f-7343-aaeb-2499de1ad605`.
+- Root Agent Execution: `/root/estimate_agent_work`.
+- Branch and Worktree: `main` at `/Users/martinbechard/dev/dev-methodology`.
+- Preserved Candidate: `e6931e2a9bbdf28db7fd1fc59cd01c7f188b0850`.
+- Phase: Implementing correction cycle 1 of 2.
+- Accepted Execution: Define and validate cross-path concurrency and reject malformed `expected_parallelism` while preserving every accepted requirement and the reusable output-shape contract.
+- Required Title: `Implementing — Estimate Agent Work`.
