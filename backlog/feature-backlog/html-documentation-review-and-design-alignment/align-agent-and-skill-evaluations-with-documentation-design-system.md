@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -79,3 +79,19 @@ Dependency Resolution: Satisfied by completed Work Item `review-agent-and-skill-
 
 - This item must not start before its page-specific text review is Completed.
 - Creation of this work item does not dispatch it while backlog crisis recovery remains active.
+
+## Starting Handoff Evidence
+
+- Reserved At: 2026-08-13T18:04:09Z.
+- Transition: `Ready -> Starting`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Baseline: `baa8731ab2db18633b64895f88c495c2ea3b7e87` on primary `main`.
+- Normalized Objective: Align `design/agent-and-skill-evaluations.html` with the Documentation Design System while preserving the accepted text baseline and generator ownership.
+- Dependency Evidence: `review-agent-and-skill-evaluations-text` is Completed; no hard prerequisite remains.
+- Capacity: Slot 3 of 5. Map is User Action Required and excluded; provenance and the definitions-page alignment are Running.
+- Disjointness Evidence: The target page and its existing dedicated `design/agent-and-skill-evaluations.js` dependency are outside provenance's exact claimed scope and the definitions-page alignment's authorized four implementation paths and plan pair.
+- Overlap Boundary: Shared paths may be inspected read-only. Before mutation, the new execution must publish and acquire its exact page, dedicated dependency, generator, and focused-test scope. It must not claim or mutate provenance-owned paths, `design/agent-browser.js`, `design/skill-browser.js`, `scripts/test_documentation_design_system.py`, or the other alignment's plan pair. Return a specific decision if acceptance requires any excluded path.
+- Dispatch Architecture: Create one visible Codex task whose reference-plus-delta prompt starts one Dev Orchestrator collaboration subagent and assigns exact self-task title and messaging responsibility to the visible root.
+- Transition Claim: `reserve-align-agent-skill-evaluations-019ff2c3`; event `3a1c0383-9231-4fbf-8682-8cb8fbd08777`.
+- Next Action: Reconcile the unique visible task identity; its nested Dev Orchestrator records `Starting -> Running` before mutation.
