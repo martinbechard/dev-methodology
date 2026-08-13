@@ -1,6 +1,6 @@
 # Enforce Visible Worker Self-Task Title Targeting
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
@@ -103,3 +103,22 @@ None.
 - Work-Item Claim: `enforce-visible-worker-self-title-targeting-work`; event `99536d47-ed70-4e96-8eca-83718c5de755`.
 - Provider Mutation Claim: `enforce-visible-worker-self-title-targeting-provider-running`; event `3e719a29-e9fa-49d8-888a-d4ad0976f4e8`.
 - Requested Running Title: `Running — Enforce Visible Worker Self-Task Title Targeting`.
+
+## Completion Evidence
+
+- Completed At: 2026-08-13T17:19:11Z.
+- Accepted Source Commit: `d1cdf00ffd07967183a46188b02339e3cd9c4ed4`.
+- Configured Completion: `main-branch`.
+- Observed Main Branch: `main`.
+- Observed Main Tip: `cf30388e125cc543a69b318827b5cb8a055917f1`.
+- Reachability: the accepted source commit is an ancestor of the observed main tip.
+- Source Review: fresh replacement-candidate review passed with no findings.
+- Confirmed Issue Disposition: the initial P2 atomic-pair coverage finding was corrected in the replacement candidate, then passed fresh re-review and reverification.
+- Source Verification: 48 focused tests passed; both changed skills validated; generated documentation, metadata, hierarchy, and diff checks passed.
+- Overlap Reconciliation: later commit `cf30388e125cc543a69b318827b5cb8a055917f1` changed the two formerly overlapping paths after the accepted candidate. Fresh current-main review and verification confirmed that the changes are estimate-related additions and preserve all self-title behavior.
+- Current-Main Review: passed with no findings at `cf30388e125cc543a69b318827b5cb8a055917f1`.
+- Current-Main Verification: 48 focused tests and all accepted freshness, metadata, hierarchy, diff, and skill-validation checks passed.
+- Cleanliness: the tracked worktree and index were clean at main observation. Unrelated untracked planning artifacts were preserved and excluded from the accepted path set.
+- Remote Observation: not required by the configured local main-branch completion contract.
+- Completion Disposition: `READY` with requested lifecycle `COMPLETED`.
+- Terminal Provider Claim: `enforce-visible-worker-self-title-targeting-terminal-backlog`; event `2c7020c0-bdd4-4fd6-8e37-ee992e874913`.
