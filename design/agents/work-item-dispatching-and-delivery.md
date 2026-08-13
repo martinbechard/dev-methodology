@@ -178,7 +178,7 @@ sequenceDiagram
     Coordinator-->>Dispatcher: Return reconciled dispatch or recovery result
 ```
 
-The Coordinator executes an approved runtime operation when its runtime exposes the required control. Otherwise, it returns an exact packet to Backlog Dispatcher for caller-owned execution. Runtime placement changes only the operation executor. It does not change coordination authority or create a second queue record.
+The Coordinator executes an approved nonterminal runtime operation when its runtime exposes the required control. Otherwise, it returns an exact packet to Backlog Dispatcher for caller-owned execution. Runtime placement changes only the operation executor. It does not change coordination authority or create a second queue record.
 
 [OpenAI Build Skills](https://learn.chatgpt.com/docs/build-skills) describes Skills as reusable packages of instructions, resources, and optional scripts. A Skill can be invoked explicitly or selected implicitly from its description. [OpenAI Projects And Chats](https://learn.chatgpt.com/docs/projects) recommends a separate chat for each distinct outcome and documents saved-chat resumption. These product capabilities support the package and retained-context parts of this process. They do not establish the project's caller-owned root task-creation boundary.
 

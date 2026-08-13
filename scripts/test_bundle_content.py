@@ -4574,6 +4574,16 @@ class BundleContentTests(unittest.TestCase):
             "The Coordinator archives directly only when its runtime exposes the control",
             normalized_codex,
         )
+        self.assertIn(
+            "The Coordinator executes an approved nonterminal runtime operation when "
+            "its runtime exposes the required control.",
+            dispatch_design,
+        )
+        self.assertNotIn(
+            "The Coordinator executes an approved runtime operation when its runtime "
+            "exposes the required control.",
+            dispatch_design,
+        )
 
         ordered_cleanup = (
             "remove the authorized worktree",
