@@ -1,6 +1,6 @@
 # Simplify New-Document Provenance Headers
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -229,3 +229,12 @@ Make no source mutation while this question is pending. Preserve the accepted pl
 - Dispatch Result: Resume the same canonical visible task and nested Dev Orchestrator; no new task or replacement execution is authorized.
 - Transition Claim: `reserve-simplify-provenance-019ff2c3`; event `cae3ec2b-9a9d-4f10-8fd0-55d474d34325`.
 - Next Action: The preserved Dev Orchestrator records `Starting -> Running`, then reacquires the Work Item and exact path claims before any mutation.
+
+## Approved-Scope Running Acceptance Evidence
+
+- Accepted At: 2026-08-13T17:24:20Z.
+- Transition: `Starting -> Running`.
+- Canonical Codex Task ID: `019ffaf1-7879-7973-9bcb-a34652fbce7f`.
+- Accepted By: preserved Dev Orchestrator `/root/simplify_new_document_provenance_header`.
+- Provider Transition Claim: `run-simplify-provenance-resumed-provider`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `bd92e6a5-5a38-4d9a-8162-9d78beefbe32`.
+- Next Gate: Correct the preserved authoritative plan for the approved six-template scope and obtain fresh Dev Architect acceptance before source implementation.
