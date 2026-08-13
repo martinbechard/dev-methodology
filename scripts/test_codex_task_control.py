@@ -64,6 +64,47 @@ def _prompt_template(text: str, heading: str) -> str:
     return match.group(1)
 
 
+def _user_action_required_section(text: str) -> str:
+    """Return the normalized project-private User Action Required contract."""
+
+    section = text.split("## User Action Required Handoff", 1)[1].split(
+        "## Dispatch Workflow",
+        1,
+    )[0]
+    return " ".join(section.split())
+
+
+def _assert_user_action_required_contract(
+    test_case: unittest.TestCase,
+    section: str,
+) -> None:
+    """Assert the visible-task ownership and outcome contract for one section."""
+
+    for clause in (
+        "visible Work Item root task owns the user-facing question and retained conversation",
+        "The question must not exist only in the hidden nested Dev Orchestrator context",
+        "User Action Required releases active execution capacity",
+        "must not replace or archive that preserved task while the answer is pending",
+        "clear answer selects an offered in-scope option that approves continued work",
+        "A clear deferral does not run the restart sequence",
+        "A clear decline does not run the restart sequence",
+    ):
+        test_case.assertIn(clause, section)
+
+    forbidden_patterns = (
+        r"\b(?:root backlog )?dispatcher\b.{0,40}\b(?:may|can|must|should|will)\b(?!\s+not\b).{0,25}\bwait(?:s|ing)?\b",
+        r"\bquestion\b.{0,40}\b(?:may|can|must|should|will)\b(?!\s+not\b).{0,30}\b(?:exist|remain|stay|be)\b.{0,30}\b(?:only|solely)\b.{0,30}\bhidden\b",
+        r"\b(?:hidden|nested dev orchestrator)\b.{0,40}\b(?:may|can|must|should|will)\b(?!\s+not\b).{0,30}\b(?:be|own|hold)\b.{0,30}\b(?:only|sole)\b.{0,30}\b(?:context|question)\b",
+        r"\b(?:preserved|canonical|visible)\b.{0,30}\btask\b.{0,30}\b(?:may|can|must|should|will)\b(?!\s+not\b).{0,25}\b(?:archiv(?:e|ed|ing)|replac(?:e|ed|ing))\b",
+        r"\b(?:root )?(?:backlog )?dispatcher\b.{0,40}\b(?:may|can|must|should|will)\b(?!\s+not\b).{0,25}\b(?:archiv(?:e|ed|ing)|replac(?:e|ed|ing))\b.{0,40}\b(?:preserved|canonical|visible)\b.{0,20}\btask\b",
+        r"\b(?:user action required|uar)\b.{0,40}\b(?:may|can|must|should|will)\b(?!\s+not\b).{0,30}\b(?:retain|consume|occupy|hold)\b.{0,30}\b(?:active )?capacity\b",
+        r"\b(?:all|every|any)\b.{0,20}\bclear answers?\b.{0,30}\b(?:may|can|must|should|will)\b(?!\s+not\b).{0,25}\b(?:restart|resume)\b",
+    )
+    normalized_lower = section.lower()
+    for pattern in forbidden_patterns:
+        test_case.assertNotRegex(normalized_lower, pattern)
+
+
 class CodexTaskControlPackageTests(unittest.TestCase):
     """Keep Codex task creation, identity, reconciliation, and cleanup in one peer."""
 
@@ -291,11 +332,9 @@ class CodexTaskControlPackageTests(unittest.TestCase):
                 self.assertIn(clause, self.normalized_dispatcher)
 
     def test_user_action_required_question_stays_in_visible_context(self) -> None:
-        handoff = self.dispatcher.split(
-            "## User Action Required Handoff",
-            1,
-        )[1].split("## Dispatch Workflow", 1)[0]
-        normalized_handoff = " ".join(handoff.split())
+        normalized_handoff = _user_action_required_section(self.dispatcher)
+
+        _assert_user_action_required_contract(self, normalized_handoff)
 
         for clause in (
             "visible Work Item root task owns the user-facing question and retained conversation",
@@ -306,14 +345,45 @@ class CodexTaskControlPackageTests(unittest.TestCase):
             with self.subTest(clause=clause):
                 self.assertIn(clause, normalized_handoff)
 
-        for contradiction in (
-            "The root Backlog Dispatcher waits for the user's answer",
-            "The root Backlog Dispatcher owns the waiting conversation",
-            "The question may exist only in the hidden nested Dev Orchestrator context",
-            "The hidden nested Dev Orchestrator owns the user-facing question",
-        ):
-            with self.subTest(contradiction=contradiction):
-                self.assertNotIn(contradiction, normalized_handoff)
+
+    def test_user_action_required_contract_rejects_semantic_mutations(self) -> None:
+        section = _user_action_required_section(self.dispatcher)
+        mutations = (
+            ("dispatcher wait", "The root Backlog Dispatcher may wait for the answer."),
+            ("dispatcher wait actor", "A dispatcher can wait for the user reply."),
+            (
+                "hidden-only question",
+                "The question can exist solely in the hidden Dev Orchestrator context.",
+            ),
+            (
+                "hidden-only actor",
+                "The nested Dev Orchestrator may be the only context for the question.",
+            ),
+            (
+                "archive pending task",
+                "The preserved task may be archived while the answer is pending.",
+            ),
+            (
+                "replace pending task",
+                "The root Dispatcher can replace the canonical task while waiting.",
+            ),
+            (
+                "retain capacity",
+                "User Action Required may retain an active capacity slot.",
+            ),
+            (
+                "restart every clear answer",
+                "Every clear answer must restart the work.",
+            ),
+        )
+
+        for label, mutation in mutations:
+            with self.subTest(mutation=label):
+                with self.assertRaises(AssertionError):
+                    _assert_user_action_required_contract(
+                        self,
+                        f"{section} {mutation}",
+                    )
 
     def test_visible_root_synchronizes_own_title_before_reporting(self) -> None:
         for clause in (
