@@ -335,6 +335,36 @@ class AgentSuiteRunnerTests(unittest.TestCase):
         )
         self.assertIn("must not invoke resource-claim", prompt)
 
+    def test_project_configurator_invalid_checks_are_catalogued_before_prompt_construction(self) -> None:
+        """Every selected invalid-configuration check must have one critical catalog row."""
+        suite = runner._load_catalog(include_ids={"project-configurator"})["project-configurator"]
+        scenario = next(
+            value for value in suite.scenarios if value["id"] == "invalid-configuration"
+        )
+        selected = tuple(scenario["deterministicChecks"])
+        catalog = runner._deterministic_check_catalog()
+        missing = [check_id for check_id in selected if check_id not in catalog]
+        prompt_error: Exception | None = None
+        prompt = ""
+        try:
+            prompt = runner._coordinator_prompt(
+                (runner._RunSpec(suite, ("invalid-configuration",)),),
+                Path("/tmp/checkpoints"),
+                Path("/tmp/fixtures"),
+                "project-configurator-catalog-test",
+            )
+        except KeyError as error:
+            prompt_error = error
+
+        self.assertEqual([], missing, f"prompt construction failed: {prompt_error}")
+        self.assertIsNone(prompt_error)
+        self.assertNotIn("runner-owned-repository-read-receipts", selected)
+        self.assertNotIn("runner-owned-repository-read-receipts", catalog)
+        for check_id in selected:
+            with self.subTest(check_id=check_id):
+                self.assertIs(True, catalog[check_id])
+                self.assertIn(f'"checkId": "{check_id}", "critical": true', prompt)
+
     def test_claim_checks_require_an_explicit_claim_focused_scenario(self) -> None:
         """Ordinary scenarios default to none even when another check has a claim-like name."""
         ordinary_suite = self._suite("ordinary")
@@ -3228,6 +3258,358 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, "instruction binding"):
                 runner._audit_identity(staged, codex_home, {"target_agent": 1})
 
+    def test_project_configurator_accepts_literal_pre_verdict_repository_read_receipts(self) -> None:
+        """Multiline quoted and unquoted exec inputs can prove all three exact file reads."""
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            run, target, fixture_root, _ = self._project_configurator_inspection_fixture(root)
+
+            with mock.patch.object(
+                runner,
+                "_bind_target_sessions",
+                return_value={("project-configurator", "invalid-configuration"): target},
+            ):
+                audit = runner._audit_project_configurator_repository_reads(
+                    (run,), self._project_configurator_report(), (target,), fixture_root
+                )
+
+        self.assertEqual("verified", audit["status"])
+        self.assertEqual(
+            ["PROJECT.yaml", "available-skills.txt", "proposed-role.yaml"],
+            audit["scenarios"][0]["files"],
+        )
+
+    def test_project_configurator_rejects_missing_or_partial_repository_read_receipts(self) -> None:
+        """Self-attestation and partial output cannot replace complete paired tool evidence."""
+        diagnostics = {
+            "self-attestation": "runner-owned read receipt",
+            "partial-output": "exact complete contents",
+            "post-verdict": "before the target verdict",
+        }
+        for name in diagnostics:
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                run, target, fixture_root, events = self._project_configurator_inspection_fixture(root)
+                if name == "self-attestation":
+                    events[1:-1] = []
+                elif name == "partial-output":
+                    events[2]["payload"]["output"] = [
+                        {"type": "input_text", "text": "schema: project\n"}
+                    ]
+                else:
+                    final = events.pop()
+                    events.insert(1, final)
+                self._write_project_configurator_events(target, events)
+                with (
+                    mock.patch.object(
+                        runner,
+                        "_bind_target_sessions",
+                        return_value={("project-configurator", "invalid-configuration"): target},
+                    ),
+                    self.assertRaisesRegex(RuntimeError, diagnostics[name]),
+                ):
+                    runner._audit_project_configurator_repository_reads(
+                        (run,), self._project_configurator_report(), (target,), fixture_root
+                    )
+
+    def test_project_configurator_rejects_non_literal_or_ambiguous_exec_protocol(self) -> None:
+        """Only one literal exec_command call and explicit output forwarding qualify per outer call."""
+        cases = {
+            "multiple-nested-calls": (
+                'const first = await tools.exec_command({cmd: "cat PROJECT.yaml", workdir: %s});\n'
+                'const second = await tools.exec_command({cmd: "cat PROJECT.yaml", workdir: %s});\n'
+                "text(first.output);"
+            ),
+            "dynamic-value": (
+                'const command = "cat PROJECT.yaml";\n'
+                "const result = await tools.exec_command({cmd: command, workdir: %s});\n"
+                "text(result.output);"
+            ),
+            "computed-key": (
+                'const result = await tools.exec_command({["cmd"]: "cat PROJECT.yaml", workdir: %s});\n'
+                "text(result.output);"
+            ),
+            "spread": (
+                'const result = await tools.exec_command({...base, cmd: "cat PROJECT.yaml", workdir: %s});\n'
+                "text(result.output);"
+            ),
+            "additional-tool": (
+                'const result = await tools.exec_command({cmd: "cat PROJECT.yaml", workdir: %s});\n'
+                "text(result.output);\ntext(await tools.claim_status({}));"
+            ),
+            "missing-forwarding": (
+                'const result = await tools.exec_command({cmd: "cat PROJECT.yaml", workdir: %s});'
+            ),
+            "multi-file": (
+                'const result = await tools.exec_command({cmd: "cat PROJECT.yaml proposed-role.yaml", '
+                "workdir: %s});\ntext(result.output);"
+            ),
+            "fabricated-output": (
+                'const result = await tools.exec_command({cmd: "printf PROJECT.yaml", workdir: %s});\n'
+                "text(result.output);"
+            ),
+        }
+        for name, source_template in cases.items():
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                run, target, fixture_root, events = self._project_configurator_inspection_fixture(root)
+                candidate = str(fixture_root / "project-configurator" / "invalid-configuration" / "candidate")
+                replacements = source_template.count("%s")
+                events[1]["payload"]["input"] = source_template % tuple(
+                    json.dumps(candidate) for _ in range(replacements)
+                )
+                self._write_project_configurator_events(target, events)
+                with (
+                    mock.patch.object(
+                        runner,
+                        "_bind_target_sessions",
+                        return_value={("project-configurator", "invalid-configuration"): target},
+                    ),
+                    self.assertRaisesRegex(RuntimeError, "malformed required-file read"),
+                ):
+                    runner._audit_project_configurator_repository_reads(
+                        (run,), self._project_configurator_report(), (target,), fixture_root
+                    )
+
+    def test_project_configurator_rejects_duplicate_calls_outputs_and_malformed_envelopes(self) -> None:
+        """Call IDs and output envelopes must form one unique ordered pair per read."""
+        cases = {
+            "duplicate-call-id": lambda events: events.insert(3, json.loads(json.dumps(events[1]))),
+            "duplicate-output": lambda events: events.insert(3, json.loads(json.dumps(events[2]))),
+            "malformed-output": lambda events: events[2]["payload"].__setitem__(
+                "output", {"type": "input_text", "text": "fabricated"}
+            ),
+        }
+        for name, mutate in cases.items():
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                run, target, fixture_root, events = self._project_configurator_inspection_fixture(root)
+                mutate(events)
+                self._write_project_configurator_events(target, events)
+                with (
+                    mock.patch.object(
+                        runner,
+                        "_bind_target_sessions",
+                        return_value={("project-configurator", "invalid-configuration"): target},
+                    ),
+                    self.assertRaisesRegex(RuntimeError, "ambiguous|required-file output envelope"),
+                ):
+                    runner._audit_project_configurator_repository_reads(
+                        (run,), self._project_configurator_report(), (target,), fixture_root
+                    )
+
+    def test_project_configurator_rejects_two_distinct_valid_receipts_for_one_file(self) -> None:
+        """A second otherwise valid call/output pair cannot make one file receipt ambiguous."""
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            run, target, fixture_root, events = self._project_configurator_inspection_fixture(root)
+            duplicate_call = json.loads(json.dumps(events[1]))
+            duplicate_output = json.loads(json.dumps(events[2]))
+            duplicate_call["payload"]["call_id"] = "duplicate-project-call"
+            duplicate_output["payload"]["call_id"] = "duplicate-project-call"
+            events[-1:-1] = [duplicate_call, duplicate_output]
+            self._write_project_configurator_events(target, events)
+
+            with (
+                mock.patch.object(
+                    runner,
+                    "_bind_target_sessions",
+                    return_value={("project-configurator", "invalid-configuration"): target},
+                ),
+                self.assertRaisesRegex(RuntimeError, "duplicate|ambiguous"),
+            ):
+                runner._audit_project_configurator_repository_reads(
+                    (run,), self._project_configurator_report(), (target,), fixture_root
+                )
+
+    def test_project_configurator_rejects_missing_duplicate_or_substituted_root_marker(self) -> None:
+        """One exact marker must bind every read to a candidate below the active scenario root."""
+        for name in ("missing", "duplicate", "substituted"):
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                run, target, fixture_root, events = self._project_configurator_inspection_fixture(root)
+                if name == "missing":
+                    events[0]["payload"]["content"][0]["text"] = "Inspect the candidate."
+                elif name == "duplicate":
+                    marker = events[0]["payload"]["content"][0]["text"]
+                    events[0]["payload"]["content"][0]["text"] = f"{marker}\n{marker}"
+                else:
+                    outside = root / "substituted-candidate"
+                    outside.mkdir()
+                    events[0]["payload"]["content"][0]["text"] = (
+                        f"CANDIDATE_REPOSITORY_ROOT: {outside}"
+                    )
+                self._write_project_configurator_events(target, events)
+                with (
+                    mock.patch.object(
+                        runner,
+                        "_bind_target_sessions",
+                        return_value={("project-configurator", "invalid-configuration"): target},
+                    ),
+                    self.assertRaisesRegex(RuntimeError, "candidate repository root"),
+                ):
+                    runner._audit_project_configurator_repository_reads(
+                        (run,), self._project_configurator_report(), (target,), fixture_root
+                    )
+
+    def test_project_configurator_rejects_mixed_root_and_contaminating_reads(self) -> None:
+        """Valid receipts cannot conceal one wrong-root or non-exact required-file attempt."""
+        for name in (
+            "wrong-root",
+            "extra-argument",
+            "multi-file",
+            "dynamic",
+            "spread",
+            "multiple-nested-calls",
+            "additional-tool",
+        ):
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                run, target, fixture_root, events = self._project_configurator_inspection_fixture(root)
+                candidate = fixture_root / "project-configurator" / "invalid-configuration" / "candidate"
+                workdir = root / "wrong-root" if name == "wrong-root" else candidate
+                workdir.mkdir(exist_ok=True)
+                literal_workdir = json.dumps(str(workdir))
+                sources = {
+                    "wrong-root": (
+                        "const result = await tools.exec_command({"
+                        f'cmd: "cat PROJECT.yaml", workdir: {literal_workdir}'
+                        "});\ntext(result.output);"
+                    ),
+                    "extra-argument": (
+                        "const result = await tools.exec_command({"
+                        f'cmd: "cat PROJECT.yaml extra", workdir: {literal_workdir}'
+                        "});\ntext(result.output);"
+                    ),
+                    "multi-file": (
+                        "const result = await tools.exec_command({"
+                        f'cmd: "cat PROJECT.yaml proposed-role.yaml", workdir: {literal_workdir}'
+                        "});\ntext(result.output);"
+                    ),
+                    "dynamic": (
+                        'const command = "cat PROJECT.yaml";\n'
+                        f"const result = await tools.exec_command({{cmd: command, workdir: {literal_workdir}}});\n"
+                        "text(result.output);"
+                    ),
+                    "spread": (
+                        "const result = await tools.exec_command({"
+                        f'...base, cmd: "cat PROJECT.yaml", workdir: {literal_workdir}'
+                        "});\ntext(result.output);"
+                    ),
+                    "multiple-nested-calls": (
+                        "const first = await tools.exec_command({"
+                        f'cmd: "cat PROJECT.yaml", workdir: {literal_workdir}'
+                        "});\n"
+                        "const second = await tools.exec_command({"
+                        f'cmd: "cat PROJECT.yaml", workdir: {literal_workdir}'
+                        "});\ntext(first.output);"
+                    ),
+                    "additional-tool": (
+                        "const result = await tools.exec_command({"
+                        f'cmd: "cat PROJECT.yaml", workdir: {literal_workdir}'
+                        "});\ntext(result.output);\ntext(await tools.claim_status({}));"
+                    ),
+                }
+                contaminating = {
+                    "type": "response_item",
+                    "payload": {
+                        "type": "custom_tool_call",
+                        "name": "exec",
+                        "call_id": "contaminating-call",
+                        "input": sources[name],
+                    },
+                }
+                events.insert(-1, contaminating)
+                self._write_project_configurator_events(target, events)
+                diagnostic = (
+                    "outside the bound candidate root"
+                    if name == "wrong-root"
+                    else "malformed required-file read"
+                )
+                with (
+                    mock.patch.object(
+                        runner,
+                        "_bind_target_sessions",
+                        return_value={("project-configurator", "invalid-configuration"): target},
+                    ),
+                    self.assertRaisesRegex(RuntimeError, diagnostic),
+                ):
+                    runner._audit_project_configurator_repository_reads(
+                        (run,), self._project_configurator_report(), (target,), fixture_root
+                    )
+
+    def test_project_configurator_rejects_constructed_filename_exec_contamination(self) -> None:
+        """Split or escaped filename construction cannot hide one nested exec_command attempt."""
+        for name, filename_source in (
+            ("split", 'const filename = "PROJECT" + ".yaml";'),
+            ("escaped", 'const filename = "PROJECT\\u002eyaml";'),
+        ):
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                run, target, fixture_root, events = self._project_configurator_inspection_fixture(root)
+                candidate = (
+                    fixture_root / "project-configurator" / "invalid-configuration" / "candidate"
+                )
+                events.insert(
+                    -1,
+                    {
+                        "type": "response_item",
+                        "payload": {
+                            "type": "custom_tool_call",
+                            "name": "exec",
+                            "call_id": f"constructed-{name}-call",
+                            "input": (
+                                f"{filename_source}\n"
+                                "const result = await tools.exec_command({"
+                                f'cmd: "cat " + filename, workdir: {json.dumps(str(candidate))}'
+                                "});\ntext(result.output);"
+                            ),
+                        },
+                    },
+                )
+                self._write_project_configurator_events(target, events)
+                with (
+                    mock.patch.object(
+                        runner,
+                        "_bind_target_sessions",
+                        return_value={("project-configurator", "invalid-configuration"): target},
+                    ),
+                    self.assertRaisesRegex(
+                        RuntimeError,
+                        "unclassifiable nested exec_command contamination",
+                    ),
+                ):
+                    runner._audit_project_configurator_repository_reads(
+                        (run,), self._project_configurator_report(), (target,), fixture_root
+                    )
+
+    def test_project_configurator_requires_exact_target_observation_packet(self) -> None:
+        """Missing, duplicate, or supervisor-repetition prose cannot satisfy target observations."""
+        packet = self._project_configurator_observation_packet()
+        final_texts = {
+            "missing": "\n".join(packet.splitlines()[1:]),
+            "duplicate": f"{packet.splitlines()[0]}\n{packet}",
+            "repetition": "The supervisor says the candidate is invalid.\nTerminal: BLOCKED",
+        }
+        for name, final_text in final_texts.items():
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                run, target, fixture_root, events = self._project_configurator_inspection_fixture(
+                    root, final_text=final_text
+                )
+                self._write_project_configurator_events(target, events)
+                with (
+                    mock.patch.object(
+                        runner,
+                        "_bind_target_sessions",
+                        return_value={("project-configurator", "invalid-configuration"): target},
+                    ),
+                    self.assertRaisesRegex(RuntimeError, "target-owned observation packet"),
+                ):
+                    runner._audit_project_configurator_repository_reads(
+                        (run,), self._project_configurator_report(), (target,), fixture_root
+                    )
+
     def test_nested_use_of_a_direct_role_does_not_inflate_direct_identity_count(self) -> None:
         """A validated depth-three dependency may share an invocation with direct suite targets."""
         with tempfile.TemporaryDirectory() as temporary:
@@ -5636,6 +6018,183 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                 ("dependency", "d"),
             )
         )
+
+    @staticmethod
+    def _project_configurator_report() -> dict[str, object]:
+        return {
+            "runs": [
+                {
+                    "suite": "project-configurator",
+                    "scenarioResults": [
+                        {
+                            "scenario": "invalid-configuration",
+                            "targetInvoked": True,
+                            "evidence": ["Target returned a BLOCKED verdict."],
+                        }
+                    ],
+                }
+            ]
+        }
+
+    @staticmethod
+    def _project_configurator_observation_packet() -> str:
+        return "\n".join(
+            (
+                "TARGET_OBSERVATION proposed-role.yaml repositoryMutation required",
+                "TARGET_OBSERVATION proposed-role.yaml skills careful-coding",
+                "TARGET_OBSERVATION PROJECT.yaml technology_skill_loadouts[0].skills unavailable-framework",
+                (
+                    "TARGET_OBSERVATION PROJECT.yaml "
+                    "technology_skill_loadouts[0].sourceEvidence[0].runtimeAvailability UNAVAILABLE"
+                ),
+                "TARGET_OBSERVATION PROJECT.yaml technology_skill_loadouts[0].status READY",
+                "TARGET_OBSERVATION available-skills.txt careful-coding ABSENT",
+                "TARGET_OBSERVATION available-skills.txt unavailable-framework ABSENT",
+                "Terminal: BLOCKED",
+            )
+        )
+
+    @staticmethod
+    def _write_project_configurator_events(
+        target: object,
+        events: list[dict[str, object]],
+    ) -> None:
+        assert target.rollout_path is not None
+        target.rollout_path.write_text(
+            "\n".join(json.dumps(event) for event in events) + "\n",
+            encoding="utf-8",
+        )
+
+    @classmethod
+    def _project_configurator_inspection_fixture(
+        cls,
+        root: Path,
+        *,
+        final_text: str | None = None,
+    ) -> tuple[object, object, Path, list[dict[str, object]]]:
+        contents = {
+            "PROJECT.yaml": (
+                "schema: project\n"
+                "technology_skill_loadouts:\n"
+                "  - skills: [unavailable-framework]\n"
+                "    sourceEvidence:\n"
+                "      - runtimeAvailability: UNAVAILABLE\n"
+                "    status: READY\n"
+            ),
+            "proposed-role.yaml": (
+                "repositoryMutation: required\n"
+                "skills:\n"
+                "  - careful-coding\n"
+            ),
+            "available-skills.txt": "agent-claim\ncreate-project-configuration\n",
+        }
+        suite_path = root / "project-configurator"
+        executable_case = suite_path / "fixtures" / "invalid-configuration"
+        executable_case.mkdir(parents=True)
+        fixture_root = root / "owned-fixtures"
+        scenario_root = fixture_root / "project-configurator" / "invalid-configuration"
+        candidate_root = scenario_root / "candidate"
+        candidate_root.mkdir(parents=True)
+        for name, content in contents.items():
+            (executable_case / name).write_text(content, encoding="utf-8")
+            (candidate_root / name).write_text(content, encoding="utf-8")
+
+        base = cls._suite("project-configurator")
+        suite = runner._Suite(
+            suite_id="project-configurator",
+            priority=base.priority,
+            path=suite_path,
+            manifest=base.manifest,
+            scenarios=(
+                {
+                    "id": "invalid-configuration",
+                    "executableCase": "fixtures/invalid-configuration",
+                },
+            ),
+        )
+        run = runner._RunSpec(suite=suite, scenario_ids=("invalid-configuration",))
+        events: list[dict[str, object]] = [
+            {
+                "type": "response_item",
+                "payload": {
+                    "type": "message",
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "input_text",
+                            "text": f"CANDIDATE_REPOSITORY_ROOT: {candidate_root}",
+                        }
+                    ],
+                },
+            }
+        ]
+        for index, (name, output) in enumerate(contents.items()):
+            call_id = f"read-{index}"
+            if index % 2:
+                properties = (
+                    f'"cmd": "sed -n \'1,240p\' {name}",\n'
+                    f'  "workdir": {json.dumps(str(candidate_root))}'
+                )
+            else:
+                properties = (
+                    f'cmd: "sed -n \'1,240p\' {name}",\n'
+                    f"  workdir: {json.dumps(str(candidate_root))}"
+                )
+            events.extend(
+                (
+                    {
+                        "type": "response_item",
+                        "payload": {
+                            "type": "custom_tool_call",
+                            "name": "exec",
+                            "call_id": call_id,
+                            "input": (
+                                "const result = await tools.exec_command({\n"
+                                f"  {properties}\n"
+                                "});\n"
+                                "text(result.output);"
+                            ),
+                        },
+                    },
+                    {
+                        "type": "response_item",
+                        "payload": {
+                            "type": "custom_tool_call_output",
+                            "call_id": call_id,
+                            "output": [{"type": "input_text", "text": output}],
+                        },
+                    },
+                )
+            )
+        events.append(
+            {
+                "type": "response_item",
+                "payload": {
+                    "type": "message",
+                    "role": "assistant",
+                    "phase": "final_answer",
+                    "content": [
+                        {
+                            "type": "output_text",
+                            "text": final_text or cls._project_configurator_observation_packet(),
+                        }
+                    ],
+                },
+            }
+        )
+        rollout = root / "target-rollout.jsonl"
+        target = runner._Session(
+            "target-session",
+            "supervisor-session",
+            "project_configurator",
+            2,
+            1.0,
+            10.0,
+            frozenset(),
+            rollout_path=rollout,
+        )
+        cls._write_project_configurator_events(target, events)
+        return run, target, fixture_root, events
 
     @staticmethod
     def _write_rollout(

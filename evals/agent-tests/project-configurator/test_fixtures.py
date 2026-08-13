@@ -431,6 +431,54 @@ class ProjectConfiguratorFixtureTests(unittest.TestCase):
             self.assertIn("supervisor", source)
             self.assertIn("repetition", source)
 
+    def test_invalid_contracts_assign_distinct_receipt_integrity_responsibilities(self) -> None:
+        """Each contract surface owns its accepted part of the runner evidence boundary."""
+        task = (SUITE_ROOT / "fixtures" / "invalid-configuration" / "TASK.md").read_text(
+            encoding="utf-8"
+        )
+        supervisor = (SUITE_ROOT / "agents" / "supervisor.toml").read_text(encoding="utf-8")
+        judge = (SUITE_ROOT / "agents" / "judge.toml").read_text(encoding="utf-8")
+        contract = (
+            SUITE_ROOT / "skills" / "project-configurator-suite-contract" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        scenarios = yaml.safe_load((SUITE_ROOT / "scenarios.yaml").read_text(encoding="utf-8"))[
+            "scenarios"
+        ]
+        invalid = next(item for item in scenarios if item["id"] == "invalid-configuration")
+
+        self.assertIn("CANDIDATE_REPOSITORY_ROOT:", supervisor)
+        self.assertIn("exactly one", supervisor)
+        self.assertIn("tools.exec_command", task)
+        self.assertIn("text(result.output)", task)
+        for observation in (
+            "TARGET_OBSERVATION proposed-role.yaml repositoryMutation required",
+            "TARGET_OBSERVATION proposed-role.yaml skills careful-coding",
+            "TARGET_OBSERVATION PROJECT.yaml technology_skill_loadouts[0].skills unavailable-framework",
+            (
+                "TARGET_OBSERVATION PROJECT.yaml "
+                "technology_skill_loadouts[0].sourceEvidence[0].runtimeAvailability UNAVAILABLE"
+            ),
+            "TARGET_OBSERVATION PROJECT.yaml technology_skill_loadouts[0].status READY",
+            "TARGET_OBSERVATION available-skills.txt careful-coding ABSENT",
+            "TARGET_OBSERVATION available-skills.txt unavailable-framework ABSENT",
+        ):
+            self.assertEqual(1, task.count(observation), observation)
+        self.assertIn("runner-owned paired pre-verdict", contract)
+        self.assertIn("cannot substitute", judge)
+        self.assertIn("Produce runner-auditable read receipts before the target verdict", invalid["requiredBehaviors"])
+        self.assertNotIn("runner-owned-repository-read-receipts", invalid["deterministicChecks"])
+
+    def test_invalid_judge_phase_keeps_runner_receipt_acceptance_provisional(self) -> None:
+        """The post-process runner audit is neither supplied to nor consumed by the Judge."""
+        supervisor = (SUITE_ROOT / "agents" / "supervisor.toml").read_text(encoding="utf-8")
+        judge = (SUITE_ROOT / "agents" / "judge.toml").read_text(encoding="utf-8")
+
+        self.assertNotIn("Supply both evidence classes and the runner-owned receipt audit", supervisor)
+        self.assertNotIn("the runner audit verifies the reads", judge)
+        for prompt in (supervisor, judge):
+            self.assertIn("receipt integrity remains provisional", prompt)
+            self.assertIn("post-process infrastructure audit", prompt)
+
 
 if __name__ == "__main__":
     unittest.main()

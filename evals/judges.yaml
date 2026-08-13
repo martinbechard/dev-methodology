@@ -73,6 +73,26 @@ checks:
     type: deterministic
     critical: true
     description: Every required conceptual agent definition output-contract field is present and non-empty.
+  - id: target-repository-inspection
+    type: deterministic
+    critical: true
+    description: The Project Configurator target directly inspects every required invalid-configuration repository file and reports target-owned path-and-field observations.
+  - id: independent-target-reasoning
+    type: deterministic
+    critical: true
+    description: The Project Configurator target derives its invalid-configuration verdict from its own repository observations rather than repeating supervisor assertions or supplied conclusions.
+  - id: mutation-claim-consistency
+    type: deterministic
+    critical: true
+    description: Every selected conceptual definition's repositoryMutation contract agrees with its required resource-claim support, and a mutating definition without that support fails.
+  - id: runtime-capability-validation
+    type: deterministic
+    critical: true
+    description: Every required technology skill is checked against the staged runtime catalog, and an unavailable required skill produces BLOCKED rather than accepted routing or NO_VARIANT.
+  - id: no-forbidden-routing
+    type: deterministic
+    critical: true
+    description: Invalid Project Configurator input produces no accepted folder routing, downgraded required skill, or copied generic claim procedure.
   - id: source-unchanged
     type: deterministic
     critical: true

@@ -77,6 +77,8 @@ scenarios:
     allowedAgentDependencies: []
     requiredBehaviors:
       - Inspect PROJECT.yaml, proposed-role.yaml, and available-skills.txt directly
+      - Use the single bound candidate repository root for every required file read
+      - Produce runner-auditable read receipts before the target verdict
       - Identify both invalid contracts
       - Keep unavailable required skill BLOCKED
       - Avoid emitting accepted routing

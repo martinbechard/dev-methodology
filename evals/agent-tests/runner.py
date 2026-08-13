@@ -8,6 +8,7 @@
 from __future__ import annotations
 
 import argparse
+import ast
 import contextlib
 import dataclasses
 import datetime as dt
@@ -4362,6 +4363,316 @@ def _bind_target_sessions(
     return bindings
 
 
+def _rollout_events(session: _Session) -> tuple[dict[str, Any], ...]:
+    """Load the structured rollout events retained for one bound target session."""
+    if session.rollout_path is None or not session.rollout_path.is_file():
+        raise RuntimeError(f"Session {session.session_id} lacks a retained rollout")
+    events: list[dict[str, Any]] = []
+    for line in session.rollout_path.read_text(encoding="utf-8", errors="replace").splitlines():
+        try:
+            event = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if isinstance(event, dict):
+            events.append(event)
+    return tuple(events)
+
+
+_JAVASCRIPT_STRING_LITERAL = r'(?:"(?:\\.|[^"\\])*"|\'(?:\\.|[^\'\\])*\')'
+_JAVASCRIPT_EXEC_PROPERTY = r'(?:cmd|workdir|"(?:cmd|workdir)"|\'(?:cmd|workdir)\')'
+_LITERAL_EXEC_COMMAND = re.compile(
+    rf"""
+    \s*(?:const|let|var)\s+(?P<variable>[A-Za-z_$][A-Za-z0-9_$]*)\s*=\s*await\s+
+    tools\.exec_command\s*\(\s*\{{\s*
+    (?P<key_one>{_JAVASCRIPT_EXEC_PROPERTY})\s*:\s*
+    (?P<value_one>{_JAVASCRIPT_STRING_LITERAL})\s*,\s*
+    (?P<key_two>{_JAVASCRIPT_EXEC_PROPERTY})\s*:\s*
+    (?P<value_two>{_JAVASCRIPT_STRING_LITERAL})\s*
+    \}}\s*\)\s*;\s*
+    text\s*\(\s*(?P=variable)\.output\s*\)\s*;?\s*\Z
+    """,
+    re.DOTALL | re.VERBOSE,
+)
+_NESTED_TOOL_CALL = re.compile(r"\btools\.([A-Za-z_$][A-Za-z0-9_$]*)\s*\(")
+_PROJECT_CONFIGURATOR_REQUIRED_FILES = (
+    "PROJECT.yaml",
+    "proposed-role.yaml",
+    "available-skills.txt",
+)
+_PROJECT_CONFIGURATOR_TARGET_OBSERVATIONS = frozenset(
+    {
+        "TARGET_OBSERVATION proposed-role.yaml repositoryMutation required",
+        "TARGET_OBSERVATION proposed-role.yaml skills careful-coding",
+        "TARGET_OBSERVATION PROJECT.yaml technology_skill_loadouts[0].skills unavailable-framework",
+        (
+            "TARGET_OBSERVATION PROJECT.yaml "
+            "technology_skill_loadouts[0].sourceEvidence[0].runtimeAvailability UNAVAILABLE"
+        ),
+        "TARGET_OBSERVATION PROJECT.yaml technology_skill_loadouts[0].status READY",
+        "TARGET_OBSERVATION available-skills.txt careful-coding ABSENT",
+        "TARGET_OBSERVATION available-skills.txt unavailable-framework ABSENT",
+    }
+)
+
+
+def _javascript_string_literal(value: str) -> str | None:
+    """Decode the quoted string subset admitted by the literal receipt protocol."""
+    try:
+        decoded = ast.literal_eval(value)
+    except (SyntaxError, ValueError):
+        return None
+    return decoded if isinstance(decoded, str) else None
+
+
+def _literal_exec_command(source: object) -> dict[str, str] | None:
+    """Parse one exact nested exec_command plus explicit output forwarding."""
+    if not isinstance(source, str):
+        return None
+    if _NESTED_TOOL_CALL.findall(source) != ["exec_command"]:
+        return None
+    match = _LITERAL_EXEC_COMMAND.fullmatch(source)
+    if match is None:
+        return None
+    properties: dict[str, str] = {}
+    for raw_key, raw_value in (
+        (match.group("key_one"), match.group("value_one")),
+        (match.group("key_two"), match.group("value_two")),
+    ):
+        key = raw_key.strip("\"'")
+        value = _javascript_string_literal(raw_value)
+        if key in properties or value is None:
+            return None
+        properties[key] = value
+    return properties if set(properties) == {"cmd", "workdir"} else None
+
+
+def _command_reads_project_configurator_file(command: str) -> str | None:
+    """Recognize one exact shlex-tokenized read of one required fixture file."""
+    try:
+        tokens = shlex.split(command)
+    except ValueError:
+        return None
+    for filename in _PROJECT_CONFIGURATOR_REQUIRED_FILES:
+        if tokens == ["cat", filename] or tokens == ["sed", "-n", "1,240p", filename]:
+            return filename
+    return None
+
+
+def _required_file_attempt(source: object) -> bool:
+    """Identify any outer exec source that mentions a governed required-file path."""
+    return isinstance(source, str) and any(
+        filename in source for filename in _PROJECT_CONFIGURATOR_REQUIRED_FILES
+    )
+
+
+def _candidate_repository_root(events: Sequence[Mapping[str, Any]], scenario_root: Path) -> Path:
+    """Bind one exact prompt marker to a child of the runner-owned active scenario root."""
+    marker = re.compile(r"^CANDIDATE_REPOSITORY_ROOT: (.+)$", re.MULTILINE)
+    values: list[str] = []
+    for event in events:
+        payload = event.get("payload")
+        if (
+            event.get("type") != "response_item"
+            or not isinstance(payload, Mapping)
+            or payload.get("type") != "message"
+            or payload.get("role") != "user"
+        ):
+            continue
+        content = payload.get("content")
+        if not isinstance(content, Sequence):
+            continue
+        for item in content:
+            if isinstance(item, Mapping) and isinstance(item.get("text"), str):
+                values.extend(match.group(1).strip() for match in marker.finditer(str(item["text"])))
+    if len(values) != 1:
+        raise RuntimeError("Project Configurator target prompt lacks one exact candidate repository root")
+    raw_candidate = Path(values[0])
+    if not raw_candidate.is_absolute() or raw_candidate.is_symlink() or not raw_candidate.is_dir():
+        raise RuntimeError("Project Configurator candidate repository root is not one real directory")
+    candidate = raw_candidate.resolve(strict=True)
+    boundary = scenario_root.resolve(strict=True)
+    if candidate == boundary or not candidate.is_relative_to(boundary):
+        raise RuntimeError("Project Configurator candidate repository root escapes its active scenario root")
+    return raw_candidate
+
+
+def _target_observation_packet(events: Sequence[Mapping[str, Any]], final_index: int) -> tuple[str, ...]:
+    """Extract exact target-owned observations from the sole final response."""
+    payload = events[final_index].get("payload")
+    if not isinstance(payload, Mapping) or not isinstance(payload.get("content"), Sequence):
+        return ()
+    return tuple(
+        line.strip()
+        for item in payload["content"]
+        if isinstance(item, Mapping) and isinstance(item.get("text"), str)
+        for line in str(item["text"]).splitlines()
+        if line.strip().startswith("TARGET_OBSERVATION ")
+    )
+
+
+def _receipt_output_text(value: object) -> str | None:
+    """Accept the one retained output-envelope shape emitted for an outer functions.exec call."""
+    if not isinstance(value, list) or not value:
+        return None
+    if not all(
+        isinstance(item, Mapping)
+        and item.get("type") == "input_text"
+        and isinstance(item.get("text"), str)
+        for item in value
+    ):
+        return None
+    return "\n".join(str(item["text"]) for item in value)
+
+
+def _audit_project_configurator_repository_reads(
+    batch: Sequence[_RunSpec],
+    report: Mapping[str, Any],
+    sessions: Sequence[_Session],
+    fixture_root: Path,
+) -> dict[str, Any]:
+    """Prove target inspection from literal, paired, pre-verdict retained tool receipts."""
+    relevant = [
+        (run, scenario)
+        for run in batch
+        if run.suite.suite_id == "project-configurator"
+        for scenario in run.suite.scenarios
+        if scenario.get("id") == "invalid-configuration"
+        and "invalid-configuration" in run.scenario_ids
+    ]
+    if not relevant:
+        return {"status": "not-applicable", "scenarios": []}
+    bindings = _bind_target_sessions(sessions, batch, dict(report))
+    scenario_roots = _validate_scenario_roots(batch, fixture_root)
+    audited: list[dict[str, Any]] = []
+    for run, scenario in relevant:
+        identity = (run.suite.suite_id, str(scenario["id"]))
+        target = bindings.get(identity)
+        if target is None:
+            raise RuntimeError(f"{identity[0]}:{identity[1]} lacks a bound target for repository inspection")
+        events = _rollout_events(target)
+        final_indexes = [
+            index
+            for index, event in enumerate(events)
+            if event.get("type") == "response_item"
+            and isinstance(event.get("payload"), Mapping)
+            and event["payload"].get("type") == "message"
+            and event["payload"].get("role") == "assistant"
+            and event["payload"].get("phase") == "final_answer"
+        ]
+        if len(final_indexes) != 1:
+            raise RuntimeError(f"{identity[0]}:{identity[1]} has no unambiguous target verdict")
+        final_index = final_indexes[0]
+        candidate_root = _candidate_repository_root(events, scenario_roots[identity])
+        observations = _target_observation_packet(events, final_index)
+        if len(observations) != len(_PROJECT_CONFIGURATOR_TARGET_OBSERVATIONS) or frozenset(
+            observations
+        ) != _PROJECT_CONFIGURATOR_TARGET_OBSERVATIONS:
+            raise RuntimeError(
+                f"{identity[0]}:{identity[1]} lacks the complete target-owned observation packet"
+            )
+
+        calls: dict[str, tuple[int, dict[str, str], str]] = {}
+        outputs: dict[str, list[tuple[int, object]]] = {}
+        recorded_call_ids: set[str] = set()
+        for index, event in enumerate(events):
+            payload = event.get("payload")
+            if event.get("type") != "response_item" or not isinstance(payload, Mapping):
+                continue
+            call_id = payload.get("call_id")
+            if payload.get("type") == "custom_tool_call_output" and isinstance(call_id, str):
+                outputs.setdefault(call_id, []).append((index, payload.get("output")))
+                continue
+            if payload.get("type") != "custom_tool_call":
+                continue
+            if not isinstance(call_id, str) or not call_id or call_id in recorded_call_ids:
+                raise RuntimeError(f"{identity[0]}:{identity[1]} has ambiguous tool call IDs")
+            recorded_call_ids.add(call_id)
+            if payload.get("name") != "exec":
+                continue
+            source = payload.get("input")
+            nested_tools = _NESTED_TOOL_CALL.findall(source) if isinstance(source, str) else []
+            if "exec_command" not in nested_tools:
+                continue
+            arguments = _literal_exec_command(source)
+            if arguments is None:
+                if not _required_file_attempt(source) and index < final_index:
+                    raise RuntimeError(
+                        f"{identity[0]}:{identity[1]} recorded unclassifiable nested "
+                        "exec_command contamination"
+                    )
+                if not _required_file_attempt(source):
+                    continue
+                raise RuntimeError(f"{identity[0]}:{identity[1]} recorded a malformed required-file read")
+            filename = _command_reads_project_configurator_file(arguments["cmd"])
+            if filename is None:
+                if not _required_file_attempt(source):
+                    raise RuntimeError(
+                        f"{identity[0]}:{identity[1]} recorded unclassifiable nested "
+                        "exec_command contamination"
+                    )
+                raise RuntimeError(f"{identity[0]}:{identity[1]} recorded a malformed required-file read")
+            workdir = Path(arguments["workdir"])
+            if not workdir.is_absolute() or workdir != candidate_root:
+                raise RuntimeError(
+                    f"{identity[0]}:{identity[1]} recorded a required-file read outside the bound candidate root"
+                )
+            calls[call_id] = (index, arguments, filename)
+
+        verified: list[str] = []
+        fixture = run.suite.path / str(scenario["executableCase"])
+        for filename in _PROJECT_CONFIGURATOR_REQUIRED_FILES:
+            matching = [
+                (call_id, call_index)
+                for call_id, (call_index, _, observed_file) in calls.items()
+                if observed_file == filename
+            ]
+            if not matching:
+                raise RuntimeError(
+                    f"{identity[0]}:{identity[1]} lacks a runner-owned read receipt for {filename}"
+                )
+            if len(matching) != 1:
+                raise RuntimeError(
+                    f"{identity[0]}:{identity[1]} has duplicate or ambiguous runner-owned read receipts "
+                    f"for {filename}"
+                )
+            expected = (fixture / filename).read_text(encoding="utf-8")
+            accepted = False
+            for call_id, call_index in matching:
+                paired = outputs.get(call_id, [])
+                if len(paired) != 1:
+                    raise RuntimeError(
+                        f"{identity[0]}:{identity[1]} has ambiguous required-file output receipts"
+                    )
+                output_index, envelope = paired[0]
+                output = _receipt_output_text(envelope)
+                if output is None:
+                    raise RuntimeError(
+                        f"{identity[0]}:{identity[1]} has a malformed required-file output envelope"
+                    )
+                if not call_index < output_index < final_index:
+                    raise RuntimeError(
+                        f"{identity[0]}:{identity[1]} did not read {filename} before the target verdict"
+                    )
+                if expected in output:
+                    accepted = True
+            if not accepted:
+                raise RuntimeError(
+                    f"{identity[0]}:{identity[1]} lacks exact complete contents for {filename}"
+                )
+            verified.append(filename)
+        audited.append(
+            {
+                "suite": identity[0],
+                "scenario": identity[1],
+                "sessionId": target.session_id,
+                "candidateRepositoryRoot": str(candidate_root),
+                "files": sorted(verified),
+                "evidence": "runner-owned literal paired pre-verdict exec_command receipts",
+            }
+        )
+    return {"status": "verified", "scenarios": audited}
+
+
 def _git_common_directory(
     repository: Path,
     containment_root: Path | None = None,
@@ -6390,6 +6701,7 @@ def _run_live_batch(
                 "identityAudit": {"status": "not-run", "targetInvoked": False},
                 "browserAudit": {"status": "infrastructure-blocked", "cleanup": "preserved"},
                 "concurrencyAudit": {"status": "not-run"},
+                "projectConfiguratorInspectionAudit": {"status": "not-run"},
                 "handoffAudit": {"status": "not-run"},
                 "workspaceCleanup": workspace_cleanup,
                 "capabilityPreflight": ["infrastructure-blocked before coordinator; cleanup evidence preserved"],
@@ -6509,6 +6821,17 @@ def _run_live_batch(
             browser_audit = {"error": browser_error}
         concurrency_error: str | None = None
         retained_sessions = _load_sessions(codex_home)
+        inspection_error: str | None = None
+        try:
+            project_configurator_inspection = _audit_project_configurator_repository_reads(
+                batch,
+                partial_report or {},
+                retained_sessions,
+                fixture_root,
+            )
+        except RuntimeError as error:
+            inspection_error = str(error)
+            project_configurator_inspection = {"status": "invalid", "error": inspection_error}
         try:
             concurrency = _audit_session_concurrency(
                 retained_sessions, maximum_threads, batch, partial_report or {}
@@ -6537,6 +6860,7 @@ def _run_live_batch(
                 report_error,
                 identity_error,
                 browser_error,
+                inspection_error,
                 concurrency_error,
                 handoff_error,
                 broker_cleanup_error,
@@ -6553,6 +6877,7 @@ def _run_live_batch(
             "infrastructureErrors": infrastructure_errors,
             "identityAudit": identity,
             "browserAudit": browser_audit,
+            "projectConfiguratorInspectionAudit": project_configurator_inspection,
             "concurrencyAudit": concurrency,
             "handoffAudit": "bound" if handoff_error is None else {"error": handoff_error},
             "workspaceCleanup": workspace_cleanup,
