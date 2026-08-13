@@ -1,6 +1,6 @@
 # Require Durable Defect Logging And Direct-Main Work-Item Creation
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
@@ -8,11 +8,11 @@ Provider: file
 
 Work Item ID: require-durable-defect-logging-and-direct-main-creation
 
-Provider Reference: backlog/feature-backlog/require-durable-defect-logging-and-direct-main-creation.md
+Provider Reference: backlog/completed-backlog/features/require-durable-defect-logging-and-direct-main-creation.md
 
 Completion: direct-main
 
-Owner: Dev Orchestrator (`/root/durable_defect_logging`)
+Owner: Unowned
 
 Claim: None
 
@@ -231,4 +231,23 @@ Until this feature is delivered, the current short backlog-domain claim requirem
 - Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
 - Scope: Reconcile the existing accepted delivery and terminal evidence before any new implementation.
 - Complexity Gate: False. This is one bounded evidence-reconciliation and provider-closeout lane; no implementation decomposition or externalized development plan is required.
-- Delivery Reconciliation: Accepted commit `503de4bc4cfd28155f6f4e2c020581889a24687e` and final policy commit `637760d006058eac74f7b2b65622f7f67a18a6ad` are ancestors of current `main`. The recorded delivery branch and worktree are absent. No replacement implementation is authorized.
+- Delivery Reconciliation: Final policy commit `637760d006058eac74f7b2b65622f7f67a18a6ad` is an ancestor of current `main`. Accepted source commit `503de4bc4cfd28155f6f4e2c020581889a24687e` is not graph-ancestral, but its stable patch ID exactly matches the final policy commit. The recorded delivery branch and worktree are absent. No replacement implementation is authorized.
+
+## Terminal Completion Reconciliation
+
+- Completed At: 2026-08-13T06:15:05Z.
+- Completion Disposition: `READY`.
+- Lifecycle Transition: `Running -> Completed`.
+- Commit Provider: `main-branch`.
+- Persistence Provider: `file`.
+- Accepted Source Commit: `503de4bc4cfd28155f6f4e2c020581889a24687e`.
+- Integration Commit: `637760d006058eac74f7b2b65622f7f67a18a6ad`.
+- Integration Mapping: The accepted source commit is not graph-ancestral to current `main`. Its stable patch ID `79e69c81c1c8dc4c7dd121e82035cb8119e2b1d7` exactly matches the stable patch ID of integration commit `637760d006058eac74f7b2b65622f7f67a18a6ad`, which is graph-ancestral to current `main`.
+- Main Observation: Primary branch `main` at `b0d549e356101c08d8d28c6d75ca6af40751e201` contains integration commit `637760d006058eac74f7b2b65622f7f67a18a6ad`.
+- Independent Review And Source Verification: The existing completion evidence records fresh methodology review `GOOD`, independent verification `GOOD/READY`, focused checks `2/2`, definition precheck `ALLOWED`, YAML checks `3/3`, generator freshness, `validate-agent-skills`, hierarchy/support checks, and clean diff checks.
+- Integrated Verification: `python3 -m unittest scripts.test_bundle_content.BundleContentTests.test_dev_coder_and_orchestrator_preserve_candidate_review_commit_order` passed on current `main`; `git diff --check` passed.
+- Confirmed Issue Dispositions: The three unrelated baseline defects recorded in Completion Evidence each have a durable provider record. No new confirmed issue was found during terminal reconciliation.
+- Resource Coordination: Running-acceptance path claim acquisition event `7bd1cf04-b3b4-4e18-a3b2-fdcfdbfb2c11` released by event `46b80336-46d2-48a9-a8d1-9dfd4eb84bc5`; work-item acquisition event `b33b91ac-4231-44b3-8410-5ce8213232fa` released by event `a9f9ab16-a6ef-4f78-91ec-172b93fdd98d`. Terminal archive claims are released after the immutable provider commit is verified.
+- Preservation: The four dispatch-identified untracked plan artifacts were not modified, staged, or committed. Candidate commit `03a94762` remains preserved in current `main` ancestry.
+- Delivery Branch And Worktree: The historical recorded delivery branch and worktree remain absent. No replacement branch, worktree, candidate, or implementation was created.
+- Complex Development Plan: Gate false; no authoritative hierarchy plan was created or mutated.
