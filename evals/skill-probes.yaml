@@ -1283,6 +1283,20 @@ probes:
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
+  - id: probe-estimate-agent-work
+    skill: estimate-agent-work
+    source: skills/estimate-agent-work/SKILL.md
+    evaluationCategory: development-practice
+    evaluationKind: activation-and-behavior
+    activationCondition: Dev Coder is asked to estimate the AI-delivery effort or duration for an accepted engineering scope before or during bounded implementation planning.
+    negativeCondition: No estimate is requested, or the requested output would substitute person-days, inferred prices, or estimation for the owners of scope, architecture, backlog priority, dispatch, or acceptance.
+    expectedBehavior: Score the fixed complexity factors; estimate implementation generated-token and autonomous-turn ranges; record scoped assumed or observed throughput; calculate total and critical-path agent-hours without converting input or cached tokens; report expected parallelism, separate non-model runtime categories, separate live-evaluation consumption, wall-clock range, uncertainty, and confidence; keep total effort unchanged by parallelism; and include monetary cost only with supplied or verified current prices.
+    judgePlan: {deterministicChecks: [skill-read-trace, output-contract-presence, contradiction-scan], modelRubric: workflow-quality}
+    scenarioAssociations: [dev-coder-happy, dev-coder-boundary]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: test-strategy}
   - id: probe-manage-future-ideas
     skill: manage-future-ideas
     source: skills/manage-future-ideas/SKILL.md

@@ -3158,6 +3158,127 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(obsolete_term=obsolete_term):
                 self.assertNotIn(obsolete_term, obsolete_scope)
 
+    def test_estimate_agent_work_package_and_dev_coder_assignment_are_aligned(self) -> None:
+        """Keep AI-work estimates explicit, separable, and conditionally routed."""
+        skill_root = SKILLS_ROOT / "estimate-agent-work"
+        skill_path = skill_root / "SKILL.md"
+        metadata_path = skill_root / "agents" / "openai.yaml"
+        self.assertTrue(skill_path.is_file())
+        self.assertTrue(metadata_path.is_file())
+        self.assertFalse((skill_root / "scripts").exists())
+
+        frontmatter = load_yaml_object_from_frontmatter(skill_path)
+        metadata = load_yaml_object(metadata_path)
+        skill_text = skill_path.read_text(encoding="utf-8")
+        self.assertEqual("estimate-agent-work", frontmatter["name"])
+        self.assertEqual("development-practice", frontmatter["metadata"]["category"])
+        self.assertEqual("Estimate Agent Work", metadata["interface"]["display_name"])
+        self.assertIn("$estimate-agent-work", metadata["interface"]["default_prompt"])
+
+        throughput = re.search(
+            r"default_generated_tokens_per_second:\s*(\d+)",
+            skill_text,
+        )
+        self.assertIsNotNone(throughput)
+        assert throughput is not None
+        self.assertEqual(180_000, int(throughput.group(1)) * 3_600)
+        self.assertIn("50 × 3,600 = 180,000", skill_text)
+        for level in ("1 — Low", "2 — Moderate", "3 — High", "4 — Very high"):
+            with self.subTest(complexity_level=level):
+                self.assertIn(level, skill_text)
+        for factor in (
+            "reasoning uncertainty",
+            "integration breadth",
+            "verification burden",
+            "correction risk",
+            "coordination depth",
+        ):
+            with self.subTest(complexity_factor=factor):
+                self.assertIn(factor, skill_text.lower())
+        for runtime_field in (
+            "tool_runtime",
+            "build_runtime",
+            "test_runtime",
+            "browser_runtime",
+            "live_evaluation_runtime",
+            "external_service_runtime",
+            "approval_runtime",
+            "other_runtime",
+        ):
+            with self.subTest(runtime_field=runtime_field):
+                self.assertIn(runtime_field, skill_text)
+        for output_field in (
+            "generated_tokens",
+            "agent_hours",
+            "autonomous_turns",
+            "total_agent_hours",
+            "critical_path_agent_hours",
+            "expected_parallelism",
+            "wall_clock_hours",
+            "uncertainty",
+            "confidence",
+        ):
+            with self.subTest(output_field=output_field):
+                self.assertIn(output_field, skill_text)
+        for contract in (
+            "Input and cached tokens",
+            "implementation generation",
+            "live-evaluation consumption",
+            "Parallelism does not reduce total agent-hours",
+            "Do not use person-days as the primary AI effort measure",
+            "Only include monetary cost when current prices are supplied or verified",
+            "A turn is one checkable work cycle",
+            "## Serial Example",
+            "## Parallel Example",
+            "## Reusable Estimate Shape",
+        ):
+            with self.subTest(contract=contract):
+                self.assertIn(contract, skill_text)
+
+        dev_coder = load_yaml_object(
+            ROLES_ROOT / "dev-activities" / "dev-coder.role.yaml"
+        )
+        coder_skills = {
+            skill_name: contract
+            for entry in dev_coder["skills"]
+            for skill_name, contract in entry.items()
+        }
+        self.assertIn("estimate-agent-work", coder_skills)
+        self.assertIn("condition", coder_skills["estimate-agent-work"])
+        self.assertIn(
+            "AI-delivery effort or duration estimate",
+            coder_skills["estimate-agent-work"]["condition"],
+        )
+
+        probes = load_yaml_object(REPOSITORY_ROOT / "evals" / "skill-probes.yaml")
+        probe = next(
+            entry
+            for entry in probes["probes"]
+            if entry["id"] == "probe-estimate-agent-work"
+        )
+        self.assertEqual("estimate-agent-work", probe["skill"])
+        self.assertEqual("skills/estimate-agent-work/SKILL.md", probe["source"])
+        self.assertEqual("development-practice", probe["evaluationCategory"])
+        self.assertEqual("activation-and-behavior", probe["evaluationKind"])
+        for field in (
+            "activationCondition",
+            "negativeCondition",
+            "expectedBehavior",
+            "judgePlan",
+        ):
+            self.assertIn(field, probe)
+        self.assertEqual(
+            ["dev-coder-happy", "dev-coder-boundary"],
+            probe["scenarioAssociations"],
+        )
+        self.assertEqual(["code-delivery"], probe["workflowAssociations"])
+        self.assertEqual([], probe["executableCases"])
+        self.assertEqual("declared", probe["coverageStatus"])
+        self.assertEqual(
+            {"omitTargetSkill": True, "wrongSkillControl": "test-strategy"},
+            probe["ablation"],
+        )
+
     def test_work_item_creation_interface_and_provider_names_are_canonical(self) -> None:
         """Creation uses one interface stem and provider implementations preserve it."""
         interface_name = "create-work-item"

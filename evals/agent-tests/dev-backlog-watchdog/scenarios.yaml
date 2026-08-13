@@ -73,7 +73,7 @@ scenarios:
     expectedOutputs: [cycle result]
     expectedTerminalStatus: PASS
   - id: canonical-title-drift-alert
-    priority: 12
+    priority: 15
     status: executable
     executableCase: fixtures/cases.yaml
     purpose: Detect stale or noncanonical conversation titles from current provider lifecycle and Running phase without treating display state as lifecycle authority.
@@ -87,7 +87,7 @@ scenarios:
     expectedOutputs: [actionable parent alert]
     expectedTerminalStatus: PASS
   - id: finished-bounded-verifier-title-drift
-    priority: 13
+    priority: 16
     status: executable
     executableCase: fixtures/cases.yaml
     purpose: Prevent a completed bounded verifier from remaining visibly in the active Verifying phase.
@@ -101,7 +101,7 @@ scenarios:
     expectedOutputs: [actionable parent alert]
     expectedTerminalStatus: PASS
   - id: blocked-agent-recovery-unattended
-    priority: 14
+    priority: 17
     status: executable
     executableCase: fixtures/cases.yaml
     purpose: Surface agent-actionable Blocked recovery when no active owner is carrying it.
@@ -115,7 +115,7 @@ scenarios:
     expectedOutputs: [actionable parent alert]
     expectedTerminalStatus: PASS
   - id: blocked-agent-recovery-active
-    priority: 15
+    priority: 18
     status: executable
     executableCase: fixtures/cases.yaml
     purpose: Suppress duplicate recovery alerts while acknowledged agent-owned recovery remains actively owned.
@@ -129,7 +129,7 @@ scenarios:
     expectedOutputs: [cycle result]
     expectedTerminalStatus: PASS
   - id: blocked-preservation-contradiction
-    priority: 16
+    priority: 19
     status: executable
     executableCase: fixtures/cases.yaml
     purpose: Detect when provider preservation evidence contradicts current Git or runtime state.

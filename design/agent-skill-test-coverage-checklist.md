@@ -20,8 +20,8 @@ This page is generated from the live conceptual agent and skill inventories, all
 
 ## Summary
 
-- [x] 33 conceptual agents and 145 bundled skills have structural coverage.
-- [x] 32 agents are scenario-declared and 143 skills are probe-declared.
+- [x] 33 conceptual agents and 146 bundled skills have structural coverage.
+- [x] 32 agents are scenario-declared and 144 skills are probe-declared.
 - Agents missing scenario declarations: dev-skill-lint-reviewer.
 - Skills missing probe declarations: analyze-document-topics, revise-document-topics.
 - [x] 75 agent scenarios and 5 workflow packs are declared.
@@ -33,7 +33,7 @@ This page is generated from the live conceptual agent and skill inventories, all
 - 33 skills have positive-case support, 0 have negative-activation cases, 0 have executable paired controls, and 0 satisfy the full probe contract.
 - 2 agents and 0 skills have executable full fixtures.
 - 0 agents and 0 skills have calibrated Model Judge status.
-- 32 agents and 119 skills have pending Model Judge status.
+- 32 agents and 120 skills have pending Model Judge status.
 - 0 agents and 24 skills use Deterministic Judges only and do not require Model Judge calibration.
 - 0 agents and 0 skills have classified executions.
 - 0 agents and 0 skills have Judge-passed evidence.
@@ -175,6 +175,7 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | deliver-work-item-main-branch | [x] | [x] probe-deliver-work-item-main-branch | [x] main-branch-unrelated-dirty-contract | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | detect-technology-skills | [x] | [x] probe-detect-technology-skills | [x] project-configuration-routing | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
 | effective-communication | [x] | [x] probe-effective-communication | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| estimate-agent-work | [x] | [x] probe-estimate-agent-work | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | explain-code-fix | [x] | [x] probe-explain-code-fix | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | integrate-agent-work | [x] | [x] probe-integrate-agent-work | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | manage-complex-development-plan | [x] | [x] probe-manage-complex-development-plan | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |

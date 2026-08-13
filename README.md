@@ -570,6 +570,7 @@ The development practice skills are:
 - structured-explanation
 - structured-design
 - manage-complex-development-plan
+- estimate-agent-work
 - review-structured-artifact
 - resource-claim
 - resource-claim-helper
