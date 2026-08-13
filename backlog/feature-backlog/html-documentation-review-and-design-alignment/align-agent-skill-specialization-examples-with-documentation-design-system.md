@@ -2,7 +2,7 @@
 
 Owner: Dev Orchestrator `/root/align_skill_examples`
 
-Status: Blocked
+Status: Starting
 
 Type: Feature
 
@@ -252,6 +252,22 @@ Option A is accepted. It authorizes only useful known page-specific provenance, 
 - Provider Path Claim: `block-specialization-hold-open-runtime-path-019ff2c3`; event `0071ee70-7a2b-4984-afbe-2b9b00299c9f`.
 - Required Runtime Title: `Blocked — Align Agent And Skill Specialization Examples With Documentation Design System`.
 - Supporting Recovery: Use exactly one bounded runtime repair under this preserved canonical task. Do not mutate the page candidate, rerun page verification before repair evidence, or create a replacement execution.
+
+### Hold-Open Harness Recovery And Reservation
+
+- Recovered At: 2026-08-13T22:27:21Z.
+- Transitions: `Blocked -> Ready -> Starting`.
+- Recovery Delivery: `ab5aff3f124d14efe230f29d2f4c7603ad40627e` is present on local main and is an ancestor of this reservation.
+- Supported Lifecycle: Run `node <staged-runtime>/playwright-harness.mjs serve --scenario <suite:scenario> --port <preclaimed-port>`, wait for ready, complete persistence and remaining checks against the loopback URL, signal shutdown, require `cleanup.server.closed=true`, then release the port.
+- Verification: Independent review `GOOD`; focused tests `4/4 PASS`; real Chromium persistence reload, syntax, compile, diff, listener/process cleanup, and main reachability pass.
+- Supporting Claim Releases: Browser `da275794`; port `4cc689fb`; files `ba567d9c`; Work Item handoff `b725d3f1`.
+- Preserved Candidate: `344ac687e628d9c4958731558d9c3e75ea2fac93`.
+- Preserved Canonical Task and Conversation: `019ffca1-15fa-7940-a0cb-e0a51da36aae` on host `local`.
+- Preserved Dev Orchestrator: `/root/align_skill_examples`.
+- Provider Update Claim: `resume-specialization-hold-open-019ff2c3`; event `c1c6f61c-bdc9-490c-9e6b-4a2bbb0d9267`.
+- Provider Path Claim: `resume-specialization-hold-open-path-019ff2c3`; event `ef10d0ba-2c96-4a45-9ad2-26d789e38b5c`.
+- Required Runtime Title: `Starting — Align Agent And Skill Specialization Examples With Documentation Design System`.
+- Next Action: The same Dev Orchestrator records `Starting -> Running`, reacquires the Work Item, browser, and exact-port claims, and performs the final browser verification through the supported hold-open lifecycle before delivery. No source retry or replacement is authorized.
 
 ### Fixed-Port Verification Running Acceptance
 
