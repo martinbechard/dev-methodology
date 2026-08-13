@@ -1,6 +1,6 @@
 # Document External Terminal Cleanup
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -87,3 +87,16 @@ Approved at creation. On 2026-08-12, the user explicitly requested later updates
 This Ready item is a distinct later delivery. Coordinate its exact design and role paths against the immediate skill item at mutation and integration boundaries; do not merge the two canonical executions.
 
 The immediate source-only item intentionally leaves `design/generated/skill-definitions.js` stale because the user separated generated documentation updates into this later item. Treat the exact `build-skill-docs.py --check` delta caused only by those three delivered skill sources as accepted input to this item, not as evidence that the immediate item may mutate the projection.
+
+## Starting Handoff Evidence
+
+- Reserved At: 2026-08-13T01:19:45Z.
+- Parent Runtime Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Intended Root Role: Dev Orchestrator.
+- Baseline: `a95d78f06f936ddd31824e39abbc491eb3eeb405` on primary `main`.
+- Dispatch Reservation: Exactly one new canonical collaboration execution; identity pending caller-owned creation.
+- Dispatch Ordering: This item owns the pre-existing `coordinate-codex-tasks` generated projection drift and must complete before `distinguish-blocked-from-queued-dependency-waits` resumes generation of the same whole projection.
+- Operational Boundary: The primary checkout contains only the other item's two untracked hierarchy-plan artifacts. Preserve them; use configured resource coordination and an isolated checkout when required.
+- Transition Claim: `start-document-external-cleanup-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `a14302c0-3757-4d67-aa4f-688578873af2`.
+- Next Reconciliation: Reconcile the exact creation result; the Dev Orchestrator records Starting -> Running before mutation.
