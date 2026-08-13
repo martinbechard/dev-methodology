@@ -2091,6 +2091,21 @@ figure {
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .card--link {
+    transition: none;
+  }
+
+  .card--link:hover,
+  .card--link:focus-visible {
+    transform: none;
+  }
+}
+
 @media print {
   .skip-link,
   .suite-nav,

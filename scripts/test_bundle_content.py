@@ -1928,14 +1928,60 @@ class BundleContentTests(unittest.TestCase):
         )
 
     def test_index_detail_pages_expose_complete_section_navigation(self) -> None:
-        """Every index detail page has one complete menu and keeps sequence links."""
+        """Index suite links and detail-page section navigation stay complete."""
         index_text = (REPOSITORY_ROOT / "index.html").read_text(encoding="utf-8")
+        self.assertIn('<main id="main-content" tabindex="-1">', index_text)
+        suite_nav_match = re.search(
+            r'<nav class="suite-nav" aria-label="Documentation pages">(.*?)</nav>',
+            index_text,
+            flags=re.DOTALL,
+        )
+        self.assertIsNotNone(suite_nav_match)
+        assert suite_nav_match is not None
+        suite_nav = suite_nav_match.group(1)
+        suite_links = re.findall(
+            r'<a href="([^"]+)"(?: aria-current="page")?>([^<]+)</a>',
+            suite_nav,
+        )
+        expected_labels = (
+            "Index",
+            "Agent And Skill Definitions",
+            "Agent And Skill Evaluations",
+            "Agent-Owned Evaluation Suites",
+            "Agentic Configuration",
+            "Skills Modularization",
+            "Generic Agent Definitions Source",
+            "Agent And Skill Specialization Examples",
+            "Orchestrated Development Lifecycle",
+            "Documentation Templates",
+            "Wiki Skills And Project Context",
+        )
+        expected_suite_links = [("index.html", expected_labels[0])]
+        expected_suite_links.extend(
+            (f"design/{filename}", label)
+            for filename, label in zip(
+                DOCUMENT_NAVIGATION_ORDER,
+                expected_labels[1:],
+                strict=True,
+            )
+        )
         detail_pages = re.findall(
-            r'<a class="doc-card\b[^"]*"[^>]*href="(design/[^"#]+\.html)"',
+            r'<a class="card card--link" data-information-owner="[^"]+" '
+            r'href="(design/[^"#]+\.html)">',
             index_text,
         )
 
+        self.assertEqual(expected_suite_links, suite_links)
+        self.assertEqual(1, suite_nav.count('aria-current="page"'))
+        self.assertIn(
+            '<a href="index.html" aria-current="page">Index</a>',
+            suite_nav,
+        )
         self.assertEqual(10, len(detail_pages))
+        self.assertEqual(
+            tuple(f"design/{filename}" for filename in DOCUMENT_NAVIGATION_ORDER),
+            tuple(detail_pages),
+        )
         for page_index, relative_path in enumerate(detail_pages):
             with self.subTest(detail_page=relative_path):
                 expected_sequence_links: list[tuple[str, str]] = []
@@ -15852,14 +15898,14 @@ Visible after.
         )
         index_owners = tuple(
             re.findall(
-                r'<a class="doc-card [^"]+" data-information-owner="([^"]+)"',
+                r'<a class="card card--link" data-information-owner="([^"]+)"',
                 index_text,
             )
         )
         self.assertEqual(expected_index_owners, index_owners)
         index_pages = tuple(
             re.findall(
-                r'<a class="doc-card [^"]+" data-information-owner="[^"]+" '
+                r'<a class="card card--link" data-information-owner="[^"]+" '
                 r'href="design/([^"]+)">',
                 index_text,
             )
@@ -15967,11 +16013,22 @@ Visible after.
         html_pages = {"index.html": index_text, **page_text}
         for filename, text in html_pages.items():
             with self.subTest(site_chrome=filename):
-                self.assertEqual(1, text.count('<header class="site-header">'))
-                self.assertEqual(1, text.count('<footer class="site-footer">'))
                 self.assertIn("AI-Assisted Coding Toolkit", text)
-                self.assertEqual(1, text.count(expected_gradient))
                 if filename == "index.html":
+                    self.assertEqual(
+                        1,
+                        text.count('<header class="site-header ds-header">'),
+                    )
+                    self.assertEqual(
+                        1,
+                        text.count('<footer class="site-footer ds-footer">'),
+                    )
+                    self.assertEqual(0, text.count(expected_gradient))
+                    self.assertIn(
+                        '<link rel="stylesheet" '
+                        'href="design/documentation-design-system/assets/design-system.css">',
+                        text,
+                    )
                     self.assertIn(
                         '<a class="site-brand" href="index.html">',
                         text,
@@ -15979,6 +16036,9 @@ Visible after.
                     self.assertIn('src="logo.png"', text)
                     self.assertIn('href="LICENSE">MIT License</a>', text)
                 else:
+                    self.assertEqual(1, text.count('<header class="site-header">'))
+                    self.assertEqual(1, text.count('<footer class="site-footer">'))
+                    self.assertEqual(1, text.count(expected_gradient))
                     self.assertIn('src="../logo.png"', text)
                     self.assertIn('href="../LICENSE">MIT License</a>', text)
 
@@ -15996,12 +16056,24 @@ Visible after.
         }
         for filename, text in settings_site_chrome_pages.items():
             with self.subTest(settings_site_chrome=filename):
-                site_header = css_rule_declarations(text, ".site-header")
+                style_source = text
+                if filename == "index.html":
+                    style_source = (
+                        REPOSITORY_ROOT
+                        / "design"
+                        / "documentation-design-system"
+                        / "assets"
+                        / "design-system.css"
+                    ).read_text(encoding="utf-8")
+                header_selector = (
+                    ".ds-header" if filename == "index.html" else ".site-header"
+                )
+                site_header = css_rule_declarations(style_source, header_selector)
                 self.assertEqual("flex", site_header.get("display"))
                 self.assertEqual("center", site_header.get("align-items"))
                 self.assertTrue(site_header.get("gap"))
 
-                site_brand = css_rule_declarations(text, ".site-brand")
+                site_brand = css_rule_declarations(style_source, ".site-brand")
                 self.assertEqual("inline-flex", site_brand.get("display"))
                 self.assertEqual("0", site_brand.get("min-width"))
 
@@ -16015,7 +16087,7 @@ Visible after.
         self.assertNotIn('class="pill"', index_text)
         index_indicators = tuple(
             re.findall(
-                r'<span class="icon" aria-hidden="true">(\d{2})</span>',
+                r'<span class="card-index" aria-hidden="true">(\d{2})</span>',
                 index_text,
             )
         )
