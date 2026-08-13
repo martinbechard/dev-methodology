@@ -1,6 +1,6 @@
 # Document External Terminal Cleanup
 
-Status: Running
+Status: Completed
 
 Owner: /root/document_external_cleanup
 
@@ -113,3 +113,17 @@ The immediate source-only item intentionally leaves `design/generated/skill-defi
 - Worktree: `/Users/martinbechard/dev/dev-methodology`.
 - Phase: Reviewing preserved implementation candidate.
 - Accepted Execution: The root Dev Orchestrator resolved reservation commit `8c53dc117f909e95fce3bc997e7c47e33a79a9ee`, acquired the exact Work Item ID through the configured claim helper, and accepted the authorized canonical execution.
+
+## Completion Evidence
+
+- Completed At: 2026-08-13T03:35:01Z.
+- Accepted Source Commit: `5f01cca9af78540eb840a85f5e17b241e12cc57c`.
+- Integration Commits: `23043503`, `c0748a39`, and `73f2b0fd` on `main`.
+- Observed Main: `73f2b0fd6e3bba52011bce66b1d966d067f28d6a`.
+- Integration Mapping: The three conflict-free cherry-picks have patch-equivalent source and integration commits. All 17 accepted paths match the source tip.
+- Independent Review: Final source review, completed-document review, and conceptual-role review passed with no remaining candidate findings.
+- Independent Verification: Source and integrated verification passed. Focused ownership, ordering, generation, lifecycle, navigation, accessibility, provenance, YAML, Markdown-link, and whitespace checks passed.
+- Generated Freshness: The two role sources generate the exact eight Codex, Claude, Gemini, and Junie adapters, both generated catalogs, and the manifest.
+- Scoped Omissions: Broader unchanged baseline assertions remain outside this delivery. No candidate regression was confirmed.
+- Coordination: Integration file and `main-integration` claims were released. The source worktree and checked-out source branch are externally eligible for cleanup; the Dev Orchestrator did not remove them.
+- Delivery Disposition: READY through `main-branch`; requested provider lifecycle `COMPLETED`.
