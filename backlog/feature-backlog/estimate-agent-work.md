@@ -1,6 +1,6 @@
 # Estimate Agent Work In Agent-Hours
 
-Status: User Action Required
+Status: Ready
 
 Type: Feature
 
@@ -190,8 +190,22 @@ The normal correction limit is exhausted. Continuing would require new authority
 
 ### Resolution
 
-Pending.
+Answered on 2026-08-13 in canonical Task and Conversation `019ffa3d-191f-7343-aaeb-2499de1ad605`.
+
+Exact user answer: `ok I approve two more cycles`
+
+Disposition: Authorized. The answer permits at most two additional correction-and-fresh-independent-review cycles addressing cross-path concurrency and malformed `expected_parallelism` validation. The accepted reusable output-shape requirement remains in scope.
 
 ### Unattended Work Boundary
 
 Do not modify, review, verify, deliver, or close this Work Item until the user answers in canonical Task and Conversation `019ffa3d-191f-7343-aaeb-2499de1ad605`. Unrelated eligible Work Items may continue.
+
+## User Decision Recovery
+
+- Recorded At: 2026-08-13T11:55:04Z.
+- Transition: `User Action Required -> Ready`.
+- Decision Provenance: Exact answer received in canonical Task and Conversation `019ffa3d-191f-7343-aaeb-2499de1ad605`.
+- Preserved Candidate: `e6931e2a9bbdf28db7fd1fc59cd01c7f188b0850`.
+- Authorized Correction Budget: At most two additional correction-and-fresh-independent-review cycles for cross-path concurrency and malformed `expected_parallelism` validation.
+- Capacity Decision: Five other Work Items remain `Starting` or `Running`. This item waits in `Ready` for the first released slot and does not consume active capacity.
+- Next Action: This same canonical Dev Orchestrator records `Ready -> Starting -> Running` when one active slot becomes available, then reacquires required implementation claims before mutation.
