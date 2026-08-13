@@ -1,6 +1,6 @@
 # Clarify Discovered Defect Routing
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -74,7 +74,7 @@ None.
 
 ### Approval Resolution
 
-Pending. The user requested creation of a defect about the workflow but did not explicitly name or approve mutation of these two governed skill-definition paths. The proposed manifest is the smallest source-backed correction scope and requires a user answer before implementation.
+Approved on 2026-08-13. The user explicitly approved changing both governed canonical paths, `skills/manage-work-items-file/SKILL.md` and `skills/create-work-item-file/SKILL.md`, with focused tests.
 
 ## User Action Required
 
@@ -108,3 +108,16 @@ Do not modify either governed skill definition or its focused contract tests unt
 - Approval Provenance: Direct user instruction on 2026-08-13.
 - Next Action: Schedule through ordinary priority and capacity after current Starting reservations are reconciled.
 - Transition Claim: `resolve-discovered-defect-routing-uar-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `9d85eaa9-1345-4cec-9fa7-95d94d05a5a8`.
+
+## Starting Handoff Evidence
+
+- Reserved At: 2026-08-13T06:40:07Z.
+- Transition: `Ready -> Starting`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Baseline: `6b7ca5546d416ad82fc06bea15b62be2d22c065d` on primary `main`.
+- Priority: Oldest eligible independent Ready process-correctness defect. It improves durable defect routing and has no series dependency.
+- Overlap: Exact governed sources and focused tests do not overlap the preserved User Action Required candidate. The four untracked plan artifacts remain excluded.
+- Dispatch Architecture: Create one user-visible Codex task whose initial reference-plus-delta prompt starts one Dev Orchestrator collaboration subagent for this provider record.
+- Transition Claim: `start-clarify-discovered-defect-routing-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `5d9d0cd7-6333-462f-9c4f-8aa7ab51437c`.
+- Next Reconciliation: Adopt the exact visible task identity. Its nested Dev Orchestrator records Starting -> Running before mutation.
