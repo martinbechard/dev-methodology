@@ -76,6 +76,16 @@ Definition: A named collection of related Evaluations.
 
 Definition: An Agent that performs an Evaluation.
 
+### Judge
+
+Definition: The evaluator that applies Evaluation criteria and produces or validates an Evaluation result.
+
+Relationship: A Judge is the evaluator role in an Evaluation. An Agent that performs this role is an Evaluator agent.
+
+Avoid:
+
+- Oracle: Do not use for the evaluator in an Evaluation. Maintained evaluation sources used the term for both an evaluator and evaluator-owned expected or reference data; use expected result or another precise term when no evaluation actor exists.
+
 ### Evidence
 
 Definition: Retained information that supports or contradicts a claim about an Artifact, action, or result.

@@ -5,6 +5,7 @@
 
 from __future__ import annotations
 
+import ast
 import hashlib
 import importlib.util
 import json
@@ -8137,6 +8138,171 @@ class BundleContentTests(unittest.TestCase):
         for guidance in required_guidance:
             with self.subTest(guidance=guidance):
                 self.assertIn(guidance, skill_text)
+
+    def test_evaluation_terminology_uses_judge(self) -> None:
+        """The project standard names the evaluator role without conflating result data."""
+        terminology = (REPOSITORY_ROOT / "terminology.md").read_text(encoding="utf-8")
+        legacy_term = "ora" + "cle"
+
+        self.assertRegex(
+            terminology,
+            re.compile(
+                r"^### Evaluator agent\n(?:(?!^### ).)*^### Judge\n",
+                flags=re.MULTILINE | re.DOTALL,
+            ),
+        )
+        self.assertIn(
+            "Definition: The evaluator that applies Evaluation criteria and produces or "
+            "validates an Evaluation result.",
+            terminology,
+        )
+        self.assertIn(
+            "Relationship: A Judge is the evaluator role in an Evaluation. An Agent that "
+            "performs this role is an Evaluator agent.",
+            terminology,
+        )
+        self.assertIn(
+            f"- {legacy_term.capitalize()}: Do not use for the evaluator in an Evaluation.",
+            terminology,
+        )
+        self.assertIn(
+            "use expected result or another precise term when no evaluation actor exists.",
+            terminology,
+        )
+        self.assertEqual(
+            1, len(re.findall(legacy_term, terminology, flags=re.IGNORECASE))
+        )
+
+    def test_coordination_fixture_uses_precise_evaluation_terms(self) -> None:
+        """The coordination fixture describes a deterministic check, not an actor."""
+        legacy_term = "ora" + "cle"
+        verifier = (
+            AGENT_TEST_SUITES_ROOT
+            / "methodology-design-system-review-coordinator"
+            / "fixtures"
+            / "coordination"
+            / "verify.py"
+        ).read_text(encoding="utf-8")
+
+        self.assertNotRegex(verifier, re.compile(legacy_term, flags=re.IGNORECASE))
+        self.assertIn("coordination fixture check: PASS", verifier)
+        self.assertIn("Load the coordinator simulator from the suite under test.", verifier)
+
+    def test_dev_code_reviewer_fixture_uses_judge_terminology(self) -> None:
+        """Reviewer fixtures use precise prose while retaining exact compatibility fields."""
+        legacy_term = "ora" + "cle"
+        compatibility_check = "candidate-" + legacy_term + "-isolation"
+        compatibility_field = legacy_term + "FilesPresent"
+        reviewer_root = AGENT_TEST_SUITES_ROOT / "dev-code-reviewer"
+        stage_path = (
+            reviewer_root
+            / "fixtures"
+            / "header-policy-authority-boundary"
+            / "stage_candidate.py"
+        )
+        fixture_test_path = reviewer_root / "test_fixtures.py"
+        windows_path = REPOSITORY_ROOT / "scripts" / "test_python_windows_portability.py"
+
+        tracked_matches = subprocess.run(
+            [
+                "git",
+                "grep",
+                "-n",
+                "-i",
+                "-I",
+                legacy_term,
+                "--",
+                ".",
+                ":(exclude)backlog/**",
+                ":(exclude).archive/**",
+                ":(exclude)temp/**",
+            ],
+            cwd=REPOSITORY_ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(0, tracked_matches.returncode, tracked_matches.stderr)
+        observed: dict[tuple[str, str], int] = {}
+        for match_line in tracked_matches.stdout.splitlines():
+            path, _, remainder = match_line.partition(":")
+            _, _, content = remainder.partition(":")
+            token = re.search(legacy_term, content, flags=re.IGNORECASE)
+            self.assertIsNotNone(token, match_line)
+            key = (path, token.group(0))
+            observed[key] = observed.get(key, 0) + 1
+
+        self.assertEqual(
+            {
+                ("terminology.md", legacy_term.capitalize()): 1,
+                (
+                    "evals/agent-tests/dev-code-reviewer/agents/judge.toml",
+                    legacy_term,
+                ): 1,
+                (
+                    "evals/agent-tests/dev-code-reviewer/agents/supervisor.toml",
+                    legacy_term,
+                ): 1,
+                (
+                    "evals/agent-tests/dev-code-reviewer/scenarios.yaml",
+                    legacy_term,
+                ): 1,
+                (stage_path.relative_to(REPOSITORY_ROOT).as_posix(), legacy_term): 1,
+                (
+                    fixture_test_path.relative_to(REPOSITORY_ROOT).as_posix(),
+                    legacy_term,
+                ): 1,
+            },
+            observed,
+        )
+
+        judge_text = (reviewer_root / "agents" / "judge.toml").read_text(
+            encoding="utf-8"
+        )
+        supervisor_text = (reviewer_root / "agents" / "supervisor.toml").read_text(
+            encoding="utf-8"
+        )
+        scenarios_text = (reviewer_root / "scenarios.yaml").read_text(encoding="utf-8")
+        stage_text = stage_path.read_text(encoding="utf-8")
+        fixture_test_text = fixture_test_path.read_text(encoding="utf-8")
+        self.assertIn(compatibility_check + " manifest", judge_text)
+        self.assertIn(compatibility_check + " receipt", supervisor_text)
+        self.assertEqual(1, scenarios_text.count("- " + compatibility_check))
+        self.assertEqual(1, stage_text.count(f'"{compatibility_field}": False'))
+        self.assertEqual(1, fixture_test_text.count(f'"{compatibility_field}": False'))
+
+        fixture_tree = ast.parse(fixture_test_text)
+        fixture_class = next(
+            node
+            for node in fixture_tree.body
+            if isinstance(node, ast.ClassDef) and node.name == "DevCodeReviewerFixtureTests"
+        )
+        fixture_methods = {
+            node.name for node in fixture_class.body if isinstance(node, ast.FunctionDef)
+        }
+        renamed_method = "test_candidate_staging_enforces_evaluator_input_boundary"
+        old_method = "test_candidate_staging_enforces_" + legacy_term + "_boundary"
+        self.assertIn(renamed_method, fixture_methods)
+        self.assertNotIn(old_method, fixture_methods)
+
+        windows_tree = ast.parse(windows_path.read_text(encoding="utf-8"))
+        unsupported_assignment = next(
+            node
+            for node in windows_tree.body
+            if isinstance(node, ast.Assign)
+            and any(
+                isinstance(target, ast.Name)
+                and target.id == "_WINDOWS_UNSUPPORTED_TEST_CASES"
+                for target in node.targets
+            )
+        )
+        unsupported_cases = ast.literal_eval(unsupported_assignment.value)
+        key_prefix = (
+            "evals/agent-tests/dev-code-reviewer/test_fixtures.py::"
+            "DevCodeReviewerFixtureTests."
+        )
+        self.assertIn(key_prefix + renamed_method, unsupported_cases)
+        self.assertNotIn(key_prefix + old_method, unsupported_cases)
 
     def test_terminology_standard_family_is_positive_first_and_role_routed(self) -> None:
         skill_names = (

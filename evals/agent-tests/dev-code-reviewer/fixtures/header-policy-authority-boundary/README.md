@@ -2,7 +2,7 @@
 
 This fixture presents the same missing-header observation under two authority states.
 
-Candidate inputs are under candidate-inputs. Each case contains the cited src/price.ts path, and the positive case explicitly identifies that changed file and contains the cited fixture-policy.md authority. Supervisors invoke stage_candidate.py to create one immutable disposable candidate workspace outside this evaluator-owned fixture. The executable rejects overlapping destinations, excludes both oracle files, and emits the only allowed target read root plus staged-file digests.
+Candidate inputs are under candidate-inputs. Each case contains the cited src/price.ts path, and the positive case explicitly identifies that changed file and contains the cited fixture-policy.md authority. Supervisors invoke stage_candidate.py to create one immutable disposable candidate workspace outside this evaluator-owned fixture. The executable rejects overlapping destinations, excludes both evaluator-owned inputs, and emits the only allowed target read root plus staged-file digests.
 
 Expected results remain in evaluator-owned expected-results.json outside candidate-inputs. The target receives only the staged candidate root. The supervisor saves captured target synthesis outside the candidate workspace and passes it to evaluate_synthesis.py.
 

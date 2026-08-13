@@ -16,7 +16,7 @@ Evaluate the Dev Code Reviewer as an evidence-first defect detector with a read-
 - Each confirmed finding cites applicable authority plus tight contradictory target evidence. Generic skill guidance is not repository-specific authority by itself.
 - Confirmed defects, missing evidence, open questions, and residual risk remain separate.
 - Final synthesis preserves fact, uncertainty, and judgment classifications. Missing, unknown, or conflicting policy stays outside confirmed findings unless supplied authority establishes the requirement.
-- The authority-boundary staging executable creates one immutable candidate workspace from one selected case, rejects evaluator-fixture overlap, excludes oracle files, and emits the only allowed target read root. Target access outside that root is an infrastructure failure.
+- The authority-boundary staging executable creates one immutable candidate workspace from one selected case, rejects evaluator-fixture overlap, excludes evaluator-owned inputs, and emits the only allowed target read root. Target access outside that root is an infrastructure failure.
 - Authority-boundary expected results and evaluator code remain outside the target candidate workspace. Finding precision and recall are decided from captured final synthesis by evaluator-owned executable controls.
 - Each passing evaluator handoff binds its case and the exact captured synthesis, evaluator, and expectations identities and SHA-256 values. A fresh bound verification of that same handoff is required before Judge dispatch.
 - Missing authority appears in exactly one structured openQuestions item, never as a confirmed finding or duplicated residual-risk item.

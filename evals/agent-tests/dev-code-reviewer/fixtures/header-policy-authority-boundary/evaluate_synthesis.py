@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Generated with AI assistance.
-# Summary: Evaluates structured review semantics and binds passing evidence to exact capture and oracle identities.
+# Summary: Evaluates structured review semantics and binds passing evidence to exact capture, evaluator, and expected-result identities.
 
 from __future__ import annotations
 

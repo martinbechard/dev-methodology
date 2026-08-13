@@ -1,7 +1,7 @@
 """
 Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 AI attribution: Generated with AI assistance.
-Responsibility: Executes the deterministic coordinator oracle against every fixture boundary.
+Responsibility: Executes the deterministic coordinator check against every fixture boundary.
 Design: TASK.md
 Tests: evals/agent-tests/methodology-design-system-review-coordinator/test_coordination_simulator.py
 """
@@ -22,21 +22,21 @@ SIMULATOR_PATH = Path(__file__).resolve().parents[2] / "coordination_simulator.p
 
 
 def _load_simulator() -> Any:
-    """Load the coordinator oracle from the suite under test."""
+    """Load the coordinator simulator from the suite under test."""
 
     spec = importlib.util.spec_from_file_location(
-        "documentation_design_system_coordination_fixture_oracle",
+        "documentation_design_system_coordination_fixture_checker",
         SIMULATOR_PATH,
     )
     if spec is None or spec.loader is None:
-        raise SystemExit("coordinator oracle could not be loaded")
+        raise SystemExit("coordinator simulator could not be loaded")
     simulator = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(simulator)
     return simulator
 
 
 def _assignment(payload: dict[str, object]) -> tuple[str, str, tuple[str, ...]]:
-    """Convert the exact fixture assignment to the oracle contract."""
+    """Convert the exact fixture assignment to the simulator contract."""
 
     return (
         str(payload["page"]),
@@ -86,7 +86,7 @@ def _report(
 
 
 def _candidate(candidate: dict[str, object]) -> dict[str, object]:
-    """Map fixture-facing measurement names to the oracle contract."""
+    """Map fixture-facing measurement names to the simulator contract."""
 
     return {
         "id": candidate["id"],
@@ -97,7 +97,7 @@ def _candidate(candidate: dict[str, object]) -> dict[str, object]:
 
 
 def _expect(actual: object, expected: object, label: str) -> None:
-    """Stop with a focused fixture failure when an oracle result changes."""
+    """Stop with a focused fixture failure when an expected result is not observed."""
 
     if actual != expected:
         raise SystemExit(f"{label}: expected {expected!r}, got {actual!r}")
@@ -218,7 +218,7 @@ def main() -> int:
         Decimal(cached["expectedCost"]),
         "cachedAccounting exact cost",
     )
-    print("coordination fixture oracle: PASS")
+    print("coordination fixture check: PASS")
     return 0
 
 

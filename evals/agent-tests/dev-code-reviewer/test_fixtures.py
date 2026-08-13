@@ -289,8 +289,8 @@ class DevCodeReviewerFixtureTests(unittest.TestCase):
         self.assertTrue((explicit / "src" / "price.ts").is_file())
         self.assertTrue((explicit / "fixture-policy.md").is_file())
 
-    def test_candidate_staging_enforces_oracle_boundary(self) -> None:
-        """The executable staging boundary exposes one case without either oracle file."""
+    def test_candidate_staging_enforces_evaluator_input_boundary(self) -> None:
+        """The executable staging boundary exposes one case without evaluator inputs."""
         fixture = SUITE_ROOT / "fixtures" / "header-policy-authority-boundary"
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -360,7 +360,7 @@ class DevCodeReviewerFixtureTests(unittest.TestCase):
             self.assertIn("candidate destination overlaps evaluator-owned fixture", rejected.stderr)
 
     def test_candidate_staging_rejects_evaluator_owned_manifest_path(self) -> None:
-        """The staging manifest cannot replace an evaluator-owned oracle file."""
+        """The staging manifest cannot replace an evaluator-owned expected result."""
         fixture = SUITE_ROOT / "fixtures" / "header-policy-authority-boundary"
         expectations = fixture / "expected-results.json"
         original_digest = hashlib.sha256(expectations.read_bytes()).hexdigest()
@@ -386,7 +386,7 @@ class DevCodeReviewerFixtureTests(unittest.TestCase):
         self.assertIn("candidate manifest overlaps evaluator-owned fixture", completed.stderr)
         self.assertEqual(original_digest, hashlib.sha256(expectations.read_bytes()).hexdigest())
 
-    def test_evaluator_handoff_binds_exact_capture_and_oracle_identity(self) -> None:
+    def test_evaluator_handoff_binds_exact_capture_and_evaluator_identity(self) -> None:
         """Passing evaluation evidence identifies every byte sequence consumed by the gate."""
         fixture = SUITE_ROOT / "fixtures" / "header-policy-authority-boundary"
         synthesis = {

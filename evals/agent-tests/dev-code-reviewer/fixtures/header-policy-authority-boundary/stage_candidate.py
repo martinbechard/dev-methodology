@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Generated with AI assistance.
-# Summary: Stages one reviewer candidate behind a path-checked boundary that excludes evaluator-owned oracle files.
+# Summary: Stages one reviewer candidate behind a path-checked boundary that excludes evaluator-owned inputs.
 
 from __future__ import annotations
 
@@ -16,7 +16,7 @@ from pathlib import Path
 FIXTURE_ROOT = Path(__file__).resolve().parent
 CANDIDATE_INPUTS = FIXTURE_ROOT / "candidate-inputs"
 CASES = frozenset({"absent-header-policy", "explicit-header-policy"})
-ORACLE_NAMES = frozenset({"evaluate_synthesis.py", "expected-results.json"})
+EVALUATOR_INPUT_NAMES = frozenset({"evaluate_synthesis.py", "expected-results.json"})
 
 
 def _sha256(path: Path) -> str:
@@ -47,10 +47,14 @@ def _stage(case_id: str, destination: Path, manifest: Path) -> dict[str, object]
 
     shutil.copytree(source, destination)
     staged_files = sorted(path for path in destination.rglob("*") if path.is_file())
-    forbidden = sorted(path.name for path in staged_files if path.name in ORACLE_NAMES)
+    forbidden = sorted(
+        path.name for path in staged_files if path.name in EVALUATOR_INPUT_NAMES
+    )
     if forbidden:
         shutil.rmtree(destination)
-        raise ValueError(f"candidate workspace contains evaluator oracle: {', '.join(forbidden)}")
+        raise ValueError(
+            f"candidate workspace contains evaluator-owned input: {', '.join(forbidden)}"
+        )
     for path in staged_files:
         path.chmod(0o444)
     for path in sorted(

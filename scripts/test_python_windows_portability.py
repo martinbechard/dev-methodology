@@ -227,7 +227,7 @@ _MIXED_PLATFORM_COVERAGE = {
 # mixed suite remain selected on Windows. The key is repository path, test class, and method.
 _WINDOWS_UNSUPPORTED_TEST_CASES = {
     "evals/agent-tests/dev-backlog-steward/test_contract.py::DevBacklogStewardContractTests.test_success_and_safe_rollback_preserve_dirty_bytes_modes_and_index": "asserts POSIX mode-bit preservation",
-    "evals/agent-tests/dev-code-reviewer/test_fixtures.py::DevCodeReviewerFixtureTests.test_candidate_staging_enforces_oracle_boundary": "asserts POSIX read-only directory mode bits",
+    "evals/agent-tests/dev-code-reviewer/test_fixtures.py::DevCodeReviewerFixtureTests.test_candidate_staging_enforces_evaluator_input_boundary": "asserts POSIX read-only directory mode bits",
     "evals/agent-tests/dev-runtime-diagnostician/test_fixtures.py::DevRuntimeDiagnosticianFixtureTests.test_retained_process_reproduction_cleans_its_child": "requires lsof and POSIX signal inspection",
     "evals/agent-tests/test_runner.py::AgentSuiteRunnerTests.test_runtime_uses_current_app_bundled_codex": "asserts the macOS application-bundled Codex path",
     "evals/agent-tests/test_runner.py::AgentSuiteRunnerTests.test_offline_typescript_launcher_uses_bundled_node": "asserts a POSIX executable shell launcher and mode bit",
