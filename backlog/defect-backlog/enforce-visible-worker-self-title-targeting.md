@@ -1,6 +1,6 @@
 # Enforce Visible Worker Self-Task Title Targeting
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -90,3 +90,16 @@ None.
 - Runtime Created At: `2026-08-13T16:27:34Z` (`1786638454`).
 - Requested Title: `Starting — Enforce Visible Worker Self-Task Title Targeting`; the runtime preview is ellipsized only.
 - Runtime Creation Outcome: Unique success with no client or pending identity. Creation does not imply Running.
+
+## Running Acceptance Evidence
+
+- Accepted At: 2026-08-13T16:29:27Z.
+- Transition: `Starting -> Running`.
+- Canonical Codex Task ID: `019ffbf3-4f9c-70c0-956c-884e832d11d8`.
+- Canonical Conversation ID: `019ffbf3-4f9c-70c0-956c-884e832d11d8`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4` is routing evidence only and is not a self-title target.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Root Orchestrator: `/root/enforce_visible_worker_self_title_targeting`.
+- Work-Item Claim: `enforce-visible-worker-self-title-targeting-work`; event `99536d47-ed70-4e96-8eca-83718c5de755`.
+- Provider Mutation Claim: `enforce-visible-worker-self-title-targeting-provider-running`; event `3e719a29-e9fa-49d8-888a-d4ad0976f4e8`.
+- Requested Running Title: `Running — Enforce Visible Worker Self-Task Title Targeting`.
