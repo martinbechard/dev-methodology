@@ -1,16 +1,24 @@
 # Align AI-Assisted Coding Toolkit Index with the Documentation Design System
 
-Owner: Dev Orchestrator `/root/align_index_page_orchestrator`
+Owner: Dev Orchestrator
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
 Provider: file
 
+Provider Reference: backlog/completed-backlog/features/html-documentation-review-and-design-alignment/align-index-page-with-documentation-design-system.md
+
 Work Item ID: align-index-page-with-documentation-design-system
 
 Completion: main-branch
+
+Accepted Candidate Commit: dd7131f6051363dadcdbfba26b41e02976c6cebf
+
+Delivery Commit: 5c0a6287398754fcbb573902be11a22dc03a9177
+
+Completed At: 2026-08-13T15:40:46Z
 
 Series: backlog/feature-backlog/html-documentation-review-and-design-alignment/index.md
 
@@ -119,3 +127,23 @@ Dependency Resolution: Satisfied by accepted candidate 6874526448340418cd5b074a2
 - Provider Mutation Claim: `align-index-page-running-provider`; acquisition outcome `SHARED_CHECKOUT_ACQUIRED`; event `99dc5f10-4249-42d7-a318-b06de4168e02`.
 - Accepted Baseline: `d38242ad65b352dc502a18815343db5bbb169425` on primary `main`.
 - Scope Boundary: Align `index.html` and directly required page-specific verification only. Preserve the accepted semantic baseline and do not absorb unrelated active work.
+
+## Completion Evidence
+
+- Completion Disposition: `READY` through the configured `main-branch` delivery route.
+- Accepted Candidate: `dd7131f6051363dadcdbfba26b41e02976c6cebf`, superseding `eabc33d70ebbaeadc26ead71194fcddeb7ce31cf` after confirmed source and UX corrections.
+- Delivery: merge commit `5c0a6287398754fcbb573902be11a22dc03a9177` on configured `main`; the accepted candidate is an ancestor of the observed main tip.
+- Delivered Paths: `index.html`, `design/documentation-design-system/assets/design-system.css`, `scripts/test_bundle_content.py`, and `scripts/test_documentation_design_system.py`.
+- Source Review: Fresh source rereview returned `GOOD` with no material findings.
+- Artifact Review: Fresh completed-artifact rereview returned `ACCEPTED` with no material findings.
+- Documentation Design System Review: The coordinator returned `ACCEPTED`; Shared checklist `DDS-COM-001` through `DDS-COM-010` all passed with no findings or limits. The Index specimen checklist was not applicable, and the one-catalog no-section-navigation variation was accepted.
+- UX and Accessibility Review: Fresh independent review returned `ACCEPTED` at 1280, 820, 560, and 360 pixel widths, including keyboard focus transfer, settings behavior, reduced motion, forced colors, links, resources, and clean browser error channels.
+- Final Verification: Fresh Dev Verifier returned `VERDICT: VERIFIED`. Seven focused Python tests, eight settings tests, and five provenance tests passed. Six complete-suite failures reproduced unchanged on the accepted baseline and did not concern candidate behavior.
+- Post-Integration Verification: A clean detached checkout at the observed main tip passed the same seven focused Python tests, eight settings tests, and five provenance tests. `git diff --check` passed.
+- Semantic Baseline: Accepted normalized visible-text SHA-256 remained `f35a9a08bcfeaae5ce4b0425adf202a8729fd78cf06b1eee6ebd9047ac2107d4`.
+- Page Artifact: Delivered `index.html` SHA-256 is `573bf872f30d256ce7cbfcff05a4b50c313c17d2df988d292ea2db0296909dd2`.
+- Generation and Provenance: Root `index.html` is hand-maintained, has no generator or generated region, and is outside configured maintained-document provenance paths. Existing attribution and license text remain intact.
+- Complex Plan: Authoritative runtime plan `align-index-page-design-system-plan-019ffb56.json` and synchronized sibling HTML contain 60 complete items and no incomplete item; both are excluded from delivery source.
+- Coordination: All source, browser, plan, provider, and main-integration claims triggered by this task received explicit release or clean handoff. Main-integration release event: `49ed0d26-2bfd-4438-9729-b9b84eba041b`.
+- Confirmed Issue Dispositions: All confirmed review and verification issues were corrected in this delivery. No confirmed issue was excluded and no follow-up Work Item was required.
+- Unrelated State: Concurrent changes and untracked runtime artifacts outside the delivered paths were preserved unchanged and were not included in the delivery.

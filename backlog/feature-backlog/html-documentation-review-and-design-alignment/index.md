@@ -42,7 +42,7 @@ Pages may proceed independently. A design-alignment item may not start merely be
 
 ## Design Alignment Items
 
-- [Align AI-Assisted Coding Toolkit Index with the Documentation Design System](align-index-page-with-documentation-design-system.md)
+- [Align AI-Assisted Coding Toolkit Index with the Documentation Design System](../../completed-backlog/features/html-documentation-review-and-design-alignment/align-index-page-with-documentation-design-system.md)
 - [Align Conceptual Agent and Skill Definitions with the Documentation Design System](align-agent-and-skill-definitions-with-documentation-design-system.md)
 - [Align Agent and Skill Evaluations with the Documentation Design System](align-agent-and-skill-evaluations-with-documentation-design-system.md)
 - [Align Agent-Owned Evaluation Suites with the Documentation Design System](align-agent-owned-evaluation-suites-with-documentation-design-system.md)
