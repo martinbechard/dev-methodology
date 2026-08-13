@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: User Action Required
+Status: Blocked
 
 Type: Feature
 
@@ -131,7 +131,9 @@ Adding visible footer context changes the accepted content baseline. Preserving 
 
 ### Resolution
 
-Pending in canonical Task and Conversation `019ffcd1-c9a0-78f0-8713-ef8951f1f9b5`.
+User Answer: `A`.
+
+Result: Option A is approved. Add only source-backed known-facts footer context after the technical prerequisite is restored.
 
 ### Additional Technical Prerequisite
 
@@ -151,6 +153,21 @@ Do not mutate, integrate, deliver, or close this item until the user answers and
 - Redundant Release Reconciliation: Event `c88a0d9c` returned `CLAIM_NOT_FOUND`, confirming no live claim remained; no retry occurred.
 - Provider Transition Claim: `agentic-footer-uar-019ff2c3`; event `51e2550f-ebbd-462b-8fe6-7b802a0818f7`.
 - Required Runtime Title: `Waiting for User — Align Coding Agent Runtime Configuration With Documentation Design System`.
+
+## Review Catalog Technical Blocker
+
+- Recorded At: 2026-08-13T22:26:11Z.
+- Transition: `User Action Required -> Blocked`.
+- Preserved Canonical Task and Conversation: `019ffcd1-c9a0-78f0-8713-ef8951f1f9b5` on host `local`.
+- User Decision: Exact answer `A` selects concise source-backed known-facts footer context.
+- Source State: No source mutation or candidate exists.
+- Exact Blocker: Configured `mcp-agent-ops` must restore the repository-current version `1.0.0` Documentation Design System review skill and applicable checklist bytes.
+- Recovery Owner: Project Configurator and configured MCP skill-catalog owner.
+- Unblock Condition: A revision-matched configured load proves the repository-current `review-documentation-design-system` version `1.0.0` and applicable checklist bytes.
+- Provider Update Claim: `block-agentic-review-catalog-019ff2c3`; event `3b6d7d5e-32e4-471d-aae0-f1ae99b087c7`.
+- Provider Paths Claim: `block-agentic-review-catalog-paths-019ff2c3`; event `97bfa378-b352-40ae-8827-28f24b8fae6c`.
+- Required Runtime Title: `Blocked — Align Coding Agent Runtime Configuration With Documentation Design System`.
+- Safe Resume: Preserve this task and execution. Resume only through `Blocked -> Ready -> Starting -> Running` after the exact catalog proof.
 - Provider Record Claim: `align-agentic-configuration-running-record-019ffcd1`; event `2dd35652-58f4-4fb7-9d74-1fd0e2714b83`.
 - Adoption Release Evidence: task event `409f0116-ed86-4953-9b12-64e8a079744a`; backlog event `c62b4717-5a71-49aa-b331-174b3c7f22c8`.
 - Next Action: Evaluate implementation complexity, confirm the accepted content baseline and generator boundary, then route the bounded plan for independent technical review.
