@@ -111,6 +111,36 @@ TOOLKIT_SUITE_NAV_START = (
 TOOLKIT_DESIGN_VERSION = (
     f'<span class="ds-version">Design system v{VERSION}</span>'
 )
+DOCUMENTATION_TEMPLATES_PATH = REPOSITORY_ROOT / "design" / "documentation-templates.html"
+DOCUMENTATION_TEMPLATES_BASELINE_SEMANTIC_SHA256 = (
+    "b039d2756f356a3e7e33ebbfb43ce8fa14fa60b34238a04692d367b0aa5d6687"
+)
+DOCUMENTATION_TEMPLATES_SKIP_LINK = (
+    '<a class="skip-link" href="#main-content">Skip to main content</a>'
+)
+DOCUMENTATION_TEMPLATES_SUITE_NAV_START = (
+    '<nav class="suite-nav" aria-label="Documentation pages">'
+)
+DOCUMENTATION_TEMPLATES_DESIGN_VERSION = (
+    f'<span class="ds-version">Design system v{VERSION}</span>'
+)
+DOCUMENTATION_TEMPLATES_PROVENANCE = """<!--
+Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+Artifact-ID: 5121ccbe-4e4a-410e-aa1d-e543ea401a41
+Created-UTC: 2026-07-15T12:29:28Z
+Creating-Agent: historical-unknown
+Runtime: historical-unknown
+Dispatched-Model: historical-unknown
+Reasoning-Effort: historical-unknown
+Task-ID: historical-unknown
+Artifact-ID-Evidence: migration-assigned
+Created-UTC-Evidence: git-derived
+Creating-Agent-Evidence: historical-unknown
+Runtime-Evidence: historical-unknown
+Dispatched-Model-Evidence: historical-unknown
+Reasoning-Effort-Evidence: historical-unknown
+Task-ID-Evidence: historical-unknown
+-->"""
 
 
 class _PageParser(HTMLParser):
@@ -238,6 +268,164 @@ def _toolkit_semantic_text(source: str) -> str:
     )
     visible_text = re.sub(r"<[^>]+>", " ", visible_markup)
     return " ".join(unescape(visible_text).split())
+
+
+def _documentation_templates_semantic_text(source: str) -> str:
+    """Validate the migrated shell and return the accepted page semantics."""
+
+    _validate_documentation_templates_structure(source)
+    suite_nav_match = re.search(
+        rf"{re.escape(DOCUMENTATION_TEMPLATES_SUITE_NAV_START)}.*?</nav>",
+        source,
+        flags=re.DOTALL,
+    )
+    if suite_nav_match is None:
+        raise ValueError("suite navigation must be available for normalization")
+
+    without_additions = source.replace(DOCUMENTATION_TEMPLATES_SKIP_LINK, "", 1)
+    without_additions = without_additions.replace(suite_nav_match.group(0), "", 1)
+    without_additions = without_additions.replace('<a href="#top">Top</a>', "", 1)
+    without_additions = re.sub(
+        rf"{re.escape(DOCUMENTATION_TEMPLATES_DESIGN_VERSION)}\s*[·-]?\s*",
+        "",
+        without_additions,
+        count=1,
+    )
+    visible_markup = re.sub(
+        r"<(?:style|script)\b.*?</(?:style|script)>",
+        "",
+        without_additions,
+        flags=re.DOTALL,
+    )
+    visible_text = re.sub(r"<[^>]+>", " ", visible_markup)
+    return " ".join(unescape(visible_text).split())
+
+
+def _validate_documentation_templates_structure(source: str) -> None:
+    """Reject unauthorized shell or accessibility drift before normalization."""
+
+    def require(condition: bool, message: str) -> None:
+        if not condition:
+            raise ValueError(message)
+
+    require(
+        source.startswith(f"<!doctype html>\n{DOCUMENTATION_TEMPLATES_PROVENANCE}\n"),
+        "creation provenance must remain byte-for-byte unchanged",
+    )
+    require(
+        source.count(DOCUMENTATION_TEMPLATES_SKIP_LINK) == 1,
+        "skip link must be exact and unique",
+    )
+    require(
+        re.search(
+            rf'<body id="top">\s*{re.escape(DOCUMENTATION_TEMPLATES_SKIP_LINK)}',
+            source,
+        )
+        is not None,
+        "skip link must be the first body child",
+    )
+    require(
+        source.count('<main id="main-content" tabindex="-1">') == 1,
+        "main content must be an exact programmatic focus target",
+    )
+
+    suite_nav_matches = re.findall(
+        rf"{re.escape(DOCUMENTATION_TEMPLATES_SUITE_NAV_START)}(.*?)</nav>",
+        source,
+        flags=re.DOTALL,
+    )
+    require(len(suite_nav_matches) == 1, "suite navigation must be exact and unique")
+    suite_nav = suite_nav_matches[0]
+    anchor_pattern = re.compile(
+        r'<a href="([^"]+)"( aria-current="page")?>([^<]+)</a>'
+    )
+    navigation_links = [
+        (href, label, current == ' aria-current="page"')
+        for href, current, label in anchor_pattern.findall(suite_nav)
+    ]
+    require(
+        navigation_links
+        == [
+            (href, label, index == 8)
+            for index, (label, href) in enumerate(LIFECYCLE_NAVIGATION)
+        ],
+        "suite navigation must match the authoritative anchor inventory",
+    )
+    require(
+        not anchor_pattern.sub("", suite_nav).strip(),
+        "suite navigation must contain anchors and whitespace only",
+    )
+
+    parser = _PageParser()
+    parser.feed(source)
+    require(
+        parser.ids
+        == [
+            "top",
+            "main-content",
+            "page-title",
+            "catalog-title",
+            "workflow-title",
+            "selection-title",
+            "prose-boundary-title",
+            "completion-title",
+            "wiki-format-title",
+        ],
+        "identifier inventory must match the accepted page structure",
+    )
+    require(
+        re.findall(r'aria-label="([^"]+)"', source)
+        == [
+            "Documentation pages",
+            "Documentation navigation",
+            "Page sections",
+            "Template selection comparison",
+            "Project wiki topic page format",
+        ],
+        "aria-label inventory must remain exact",
+    )
+    require(
+        re.findall(r'aria-labelledby="([^"]+)"', source)
+        == [
+            "page-title",
+            "catalog-title",
+            "workflow-title",
+            "selection-title",
+            "prose-boundary-title",
+            "completion-title",
+            "wiki-format-title",
+        ],
+        "aria-labelledby inventory must remain exact",
+    )
+    require(
+        re.findall(r'aria-current="([^"]+)"', source) == ["page"],
+        "aria-current inventory must remain exact",
+    )
+    require(
+        re.findall(r'aria-hidden="([^"]+)"', source) == ["true", "true"],
+        "decorative-arrow inventory must remain exact",
+    )
+    require(
+        re.findall(r'alt="([^"]+)"', source) == ["DevConsult Canada logo"],
+        "image alternative text inventory must remain exact",
+    )
+    require(
+        source.count(DOCUMENTATION_TEMPLATES_DESIGN_VERSION) == 1,
+        "design-system version must be exact and unique",
+    )
+    for exact_structure in (
+        '<header class="site-header ds-header">',
+        '<footer class="site-footer ds-footer">',
+        '<section class="hero" aria-labelledby="page-title">',
+        '<h1 id="page-title">Documentation Templates</h1>',
+        '<nav class="chapter-nav" aria-label="Page sections">',
+        '<div class="table-wrap" tabindex="0" role="region" '
+        'aria-label="Template selection comparison">',
+    ):
+        require(
+            source.count(exact_structure) == 1,
+            f"required structure must remain exact: {exact_structure}",
+        )
 
 
 def _validate_toolkit_index_structure(source: str) -> None:
@@ -548,6 +736,148 @@ class DocumentationDesignSystemTests(unittest.TestCase):
                         "every card index must retain exact aria-hidden markup",
                     ):
                         _toolkit_semantic_text(mutation)
+
+    def test_documentation_templates_uses_versioned_shared_shell_and_preserves_semantics(
+        self,
+    ) -> None:
+        """The template catalog adopts the shared shell without content drift."""
+
+        page_text, parser = _parse_page(DOCUMENTATION_TEMPLATES_PATH)
+        self.assertEqual([VERSION], parser.version_meta)
+        self.assertEqual(
+            ["documentation-design-system/assets/design-system.css"],
+            parser.stylesheets,
+        )
+        suite_nav = page_text.split(
+            DOCUMENTATION_TEMPLATES_SUITE_NAV_START,
+            1,
+        )[1].split("</nav>", 1)[0]
+        navigation_links = re.findall(
+            r'<a href="([^"]+)"(?: aria-current="page")?>([^<]+)</a>',
+            suite_nav,
+        )
+
+        self.assertNotIn("<style>", page_text)
+        self.assertNotIn("page-section-navigation.css", page_text)
+        self.assertEqual(
+            [(href, label) for label, href in LIFECYCLE_NAVIGATION],
+            navigation_links,
+        )
+        self.assertEqual(1, suite_nav.count('aria-current="page"'))
+        self.assertIn(
+            '<a href="documentation-templates.html" aria-current="page">'
+            "Documentation Templates</a>",
+            suite_nav,
+        )
+        self.assertEqual(1, parser.h1_count)
+        self.assertEqual(len(parser.ids), len(set(parser.ids)))
+        self.assertEqual(
+            [
+                "documentation-settings.js",
+                "generated/template-definitions.js",
+                "template-browser.js",
+            ],
+            parser.scripts,
+        )
+        for href in parser.hrefs:
+            parts = urlsplit(href)
+            if parts.scheme or parts.netloc:
+                continue
+            target = (
+                DOCUMENTATION_TEMPLATES_PATH
+                if not parts.path
+                else DOCUMENTATION_TEMPLATES_PATH.parent / parts.path
+            )
+            self.assertTrue(target.is_file(), href)
+            if parts.fragment:
+                _, target_parser = _parse_page(target)
+                self.assertIn(parts.fragment, target_parser.ids, href)
+        for template_name in (
+            "project-template.yaml",
+            "project-wiki-template.md",
+            "functional-spec-template.md",
+            "architecture-template.md",
+            "high-level-design-template.md",
+            "module-design-template.md",
+            "unit-test-plan-template.md",
+            "file-work-item-template.md",
+        ):
+            with self.subTest(template=template_name):
+                self.assertEqual(
+                    1,
+                    page_text.count(f'data-template-definition="{template_name}"'),
+                )
+        self.assertEqual(
+            DOCUMENTATION_TEMPLATES_BASELINE_SEMANTIC_SHA256,
+            hashlib.sha256(
+                _documentation_templates_semantic_text(page_text).encode("utf-8")
+            ).hexdigest(),
+        )
+
+    def test_documentation_templates_semantics_reject_adversarial_accessibility_mutations(
+        self,
+    ) -> None:
+        """Normalization must expose shell, attribute, and accepted-text drift."""
+
+        page_text = DOCUMENTATION_TEMPLATES_PATH.read_text(encoding="utf-8")
+        structural_mutations = {
+            "suite navigation text": (
+                page_text.replace(
+                    DOCUMENTATION_TEMPLATES_SUITE_NAV_START,
+                    f"{DOCUMENTATION_TEMPLATES_SUITE_NAV_START}Unauthorized text",
+                    1,
+                ),
+                "anchors and whitespace only",
+            ),
+            "main target": (
+                page_text.replace('id="main-content"', 'id="content"', 1),
+                "programmatic focus target",
+            ),
+            "section name": (
+                page_text.replace(
+                    'aria-labelledby="catalog-title"',
+                    'aria-labelledby="page-title"',
+                    1,
+                ),
+                "aria-labelledby inventory",
+            ),
+            "table name": (
+                page_text.replace(
+                    'aria-label="Template selection comparison"',
+                    'aria-label="Table"',
+                    1,
+                ),
+                "aria-label inventory",
+            ),
+            "decorative arrow": (
+                page_text.replace(' aria-hidden="true"', "", 1),
+                "decorative-arrow inventory",
+            ),
+            "duplicate identifier": (
+                page_text.replace(
+                    '<h3 id="selection-title">',
+                    '<h3 id="workflow-title">',
+                    1,
+                ),
+                "identifier inventory",
+            ),
+        }
+        for mutation_name, (mutation, expected_error) in structural_mutations.items():
+            with self.subTest(mutation=mutation_name):
+                self.assertNotEqual(page_text, mutation)
+                with self.assertRaisesRegex(ValueError, expected_error):
+                    _documentation_templates_semantic_text(mutation)
+
+        semantic_mutation = page_text.replace(
+            "Choose the smallest artifact that fully owns the requested knowledge.",
+            "Choose any artifact.",
+            1,
+        )
+        self.assertNotEqual(page_text, semantic_mutation)
+        self.assertNotEqual(
+            _documentation_templates_semantic_text(page_text),
+            _documentation_templates_semantic_text(semantic_mutation),
+        )
 
     def test_shared_css_honors_reduced_motion(self) -> None:
         """Reduced motion disables smooth scrolling and decorative card movement."""

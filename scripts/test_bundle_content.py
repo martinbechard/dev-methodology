@@ -16249,7 +16249,11 @@ Visible after.
         for filename, text in html_pages.items():
             with self.subTest(site_chrome=filename):
                 self.assertIn("AI-Assisted Coding Toolkit", text)
-                if filename == "index.html":
+                uses_shared_shell = (
+                    filename == "index.html"
+                    or '<header class="site-header ds-header">' in text
+                )
+                if uses_shared_shell:
                     self.assertEqual(
                         1,
                         text.count('<header class="site-header ds-header">'),
@@ -16259,17 +16263,30 @@ Visible after.
                         text.count('<footer class="site-footer ds-footer">'),
                     )
                     self.assertEqual(0, text.count(expected_gradient))
-                    self.assertIn(
-                        '<link rel="stylesheet" '
-                        'href="design/documentation-design-system/assets/design-system.css">',
-                        text,
-                    )
-                    self.assertIn(
-                        '<a class="site-brand" href="index.html">',
-                        text,
-                    )
-                    self.assertIn('src="logo.png"', text)
-                    self.assertIn('href="LICENSE">MIT License</a>', text)
+                    if filename == "index.html":
+                        self.assertIn(
+                            '<link rel="stylesheet" '
+                            'href="design/documentation-design-system/assets/design-system.css">',
+                            text,
+                        )
+                        self.assertIn(
+                            '<a class="site-brand" href="index.html">',
+                            text,
+                        )
+                        self.assertIn('src="logo.png"', text)
+                        self.assertIn('href="LICENSE">MIT License</a>', text)
+                    else:
+                        self.assertIn(
+                            '<link rel="stylesheet" '
+                            'href="documentation-design-system/assets/design-system.css">',
+                            text,
+                        )
+                        self.assertIn(
+                            '<a class="site-brand" href="../index.html">',
+                            text,
+                        )
+                        self.assertIn('src="../logo.png"', text)
+                        self.assertIn('href="../LICENSE">MIT License</a>', text)
                 else:
                     self.assertEqual(1, text.count('<header class="site-header">'))
                     self.assertEqual(1, text.count('<footer class="site-footer">'))
