@@ -1,6 +1,6 @@
 # Reconcile Dev Orchestrator Dependency-Routing Residual Gaps
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
@@ -104,3 +104,18 @@ None.
 - Work Claim: `reconcile-dev-orchestrator-dependency-routing-residual-gaps-work`; event `8281a2ab-94f6-4aa9-a674-a17730e00b3a`.
 - Provider Mutation Claim: `run-reconcile-dev-orchestrator-dependency-routing-residual-gaps-provider`; event `7d8b1234-45d9-4919-8d5c-0f6166550b3f`.
 - Complex Development Plan Gate: Not yet evaluated.
+
+## Completion Evidence
+
+- Completed At: 2026-08-13T13:40:41Z.
+- Transition: `Running -> Completed`.
+- Complex Development Plan Gate: Required because material discovery could add or reorder corrective work.
+- Authoritative Plan: `reconcile-dev-orchestrator-dependency-routing-residual-gaps-plan.json` with synchronized sibling HTML; all 22 numbered items complete.
+- Residual Dispositions: linked-worktree release-journal containment was a confirmed defect and was corrected; malformed receipt handling and exact producer identity were already correct on current main.
+- Accepted Source Commit: `b823450a28290ccc06889d1bf6cb6ff51fc8d7af`.
+- Accepted Combined Commit: `3c54b256`.
+- Observed Main: `e93ecf26e80a49fa9d423f5f8584c6a6ec0e707b`; accepted commit is reachable and all accepted blobs are unchanged.
+- Independent Review: source, plan artifact, post-integration source and artifact, and final plan reviews approved with no remaining findings.
+- Verification: focused runner and fixture tests passed; complete runner suite passed 136 of 136; complete dependency-routing fixture suite passed 32 of 32; Python compilation, plan parity, and `git diff --check` passed.
+- Delivery: main-branch completion returned `READY`; accepted paths are clean, unrelated untracked paths were preserved byte-for-byte, and the temporary verification checkout was removed.
+- Completion Claim: `complete-reconcile-dev-orchestrator-dependency-routing-residual-gaps-provider`; event `65e71c55-3ee7-40fd-a2fa-17661bf8578e`.
