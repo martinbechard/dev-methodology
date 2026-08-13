@@ -1,6 +1,6 @@
 # Estimate Agent Work In Agent-Hours
 
-Status: Running
+Status: User Action Required
 
 Type: Feature
 
@@ -233,3 +233,17 @@ Do not modify, review, verify, deliver, or close this Work Item until the user a
 - Phase: Implementing correction cycle 1 of 2.
 - Accepted Execution: Define and validate cross-path concurrency and reject malformed `expected_parallelism` while preserving every accepted requirement and the reusable output-shape contract.
 - Required Title: `Implementing — Estimate Agent Work`.
+
+## Exhausted Additional Correction Disposition
+
+- Recorded At: 2026-08-13T13:06:16Z.
+- Transition: `Running -> User Action Required`.
+- Correction Budget: The two additional correction-and-fresh-independent-review cycles authorized by the exact answer `ok I approve two more cycles` are exhausted (`2/2`).
+- Preserved Candidate: `12d5c5c978592f01c8d71d4bd26b60705bfbed89` on primary `main`.
+- Unresolved P1 Finding 1: Valid crossing dependency-path ranges require separate low-bound and high-bound critical-path attribution. The current single-path output field rejects or misattributes ranges when different paths determine each bound.
+- Unresolved P1 Finding 2: The compact serial and parallel examples use scalar `expected_parallelism` values that contradict the required mapping contract and its validator.
+- Preserved Evidence: The completed estimate plan pair, all prior candidate commits, fresh reviews, verification results, canonical Task and Conversation, and nested Dev Orchestrator remain unchanged.
+- Claim Handoff: Source and generated-output claims were released before this provider transition. No implementation or delivery claim remains live for this Work Item.
+- Required User Decision: Authorize another bounded correction and fresh independent review for exactly these two P1 findings, or authorize exclusion with provider-owned follow-up work items and explicit residual-risk acceptance.
+- Unattended Work Boundary: Do not modify, review, verify, deliver, or close this Work Item until the user answers in canonical Task and Conversation `019ffa3d-191f-7343-aaeb-2499de1ad605`.
+- Required Title: `Waiting for User — Estimate Agent Work`.
