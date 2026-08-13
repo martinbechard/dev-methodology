@@ -70,3 +70,16 @@ None.
 - Dispatch Architecture: Create one visible Codex task whose initial prompt launches one Dev Orchestrator subagent and states the visible root title-and-messaging responsibility.
 - Transition Claims: `start-reconcile-project-configurator-receipt-integrity-candidate-work-item`; event `5d2b2e28-2dda-488b-a5c3-f0b963e1e468`. `start-reconcile-project-configurator-receipt-integrity-candidate-provider`; event `a1b856ac-4632-4d96-8e77-44a1597b02d7`.
 - Runtime Identity: Pending caller-owned visible task creation. Creation does not imply Running.
+
+## Canonical Runtime Assignment
+
+- Assigned At: 2026-08-13T12:15:33Z.
+- Codex Task ID: `019ffb0c-4e81-73a2-abd5-a7fd6b76dd83`.
+- Conversation ID: `019ffb0c-4e81-73a2-abd5-a7fd6b76dd83`.
+- Host: `local`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Requested Title: `Starting — Reconcile Project Configurator Receipt Integrity`.
+- Initial Action: The visible root launches one Dev Orchestrator subagent for this authoritative provider record and owns required Codex title and subagent messaging.
+- Creation Outcome: Unique direct `threadId` and `hostId` success with no client or pending identity and no retry.
+- Lifecycle Boundary: This assignment remains `Starting` until the nested Dev Orchestrator accepts and records `Starting -> Running`.
+- Adoption Claims: `adopt-project-configurator-receipt-task`; event `9c50f3a7-9c69-458e-8ac7-420ade137454`. `adopt-project-configurator-receipt-provider`; event `c3ed1310-eff7-4c4d-8445-609738d00720`.
