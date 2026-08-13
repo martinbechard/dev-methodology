@@ -2,7 +2,7 @@
 
 Owner: Dev Orchestrator `/root/align_skill_examples`
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -11,6 +11,19 @@ Provider: file
 Work Item ID: align-agent-skill-specialization-examples-with-documentation-design-system
 
 Completion: main-branch
+
+## Hold-Open Verification Running Acceptance
+
+- Transition: `Starting -> Running`.
+- Accepted At: 2026-08-13T22:30:32Z.
+- Canonical Task and Conversation: `019ffca1-15fa-7940-a0cb-e0a51da36aae`.
+- Dev Orchestrator: `/root/align_skill_examples`.
+- Phase: `Verifying`.
+- Preserved Candidate: `344ac687e628d9c4958731558d9c3e75ea2fac93`.
+- Runtime Capability: Hold-open fixed-port fixture lifecycle delivered on main at `ab5aff3f124d14efe230f29d2f4c7603ad40627e`.
+- Work-Item Update Claim: `accept-hold-open-specialization-019ffca1`; event `306b7194-dc47-4ab7-8120-3123f22dc452`.
+- Backlog Claim: `accept-hold-open-specialization-backlog-019ffca1`; event `331ef644-8ca1-437f-b9e1-c19f5d8991f0`.
+- Required Runtime Title: `Verifying — Align Agent And Skill Specialization Examples With Documentation Design System`.
 
 Series: backlog/feature-backlog/html-documentation-review-and-design-alignment/index.md
 
