@@ -2,7 +2,7 @@
 
 Owner: Dev Orchestrator
 
-Status: Blocked
+Status: User Action Required
 
 Type: Feature
 
@@ -172,6 +172,39 @@ Do not create upstream provider records or resume implementation until the user 
 - Provider Paths Claim: `block-agent-owned-pyjson-main-paths-019ff2c3`; event `a2376ef0-a674-4274-b300-4776fe368561`.
 - Required Runtime Title: `Blocked — Align Agent-Owned Evaluation Suites With Documentation Design System`.
 - Safe Resume: Preserve this task, execution, plan, candidate if any, and evidence. Resume only through `Blocked -> Ready -> Starting -> Running` after the exact upstream provider-authority proof.
+
+### Primary-Branch Authority Decision
+
+- Recorded At: 2026-08-13T22:37:06Z.
+- Transition: `Blocked -> User Action Required`.
+- Preserved Canonical Task and Conversation: `019ffc96-f685-7481-b2eb-1557d82119bf` on host `local`.
+- Completed Diagnosis: The upstream repository has no local or remote `main` branch. Its primary `master` branch tracks `origin/master`. Neither its `AGENTS.md` nor `PROJECT.yaml` authorizes atomic file-provider transactions on `master`, and Git branch state is not provider authority. No upstream mutation, claim, branch, provider record, or source change occurred.
+- Exhausted Technical Recovery: The Project Configurator support investigation found no existing configuration or project-specific guidance that can satisfy the recorded unblock condition without new authority.
+
+### Question for the User
+
+Which authority should unblock file-backed work-item transactions in `py-json-render`?
+
+### Why User Input Is Required
+
+The remaining alternatives both expand authority beyond the accepted implementation: either change the upstream repository's canonical primary branch, or authorize a governed methodology change to support a configured non-`main` primary branch. The Coordinator cannot choose either direction from Git state.
+
+### Options and Tradeoffs
+
+- **Option A — make `main` canonical:** Authorize the `py-json-render` project owner to migrate its canonical primary branch from `master` to `main`, including the required remote/default-branch coordination. This uses the existing file-provider transaction contract but changes the upstream repository's branch convention.
+- **Option B — support configured primary branches:** Authorize a focused dev-methodology Work Item to change the governed file-provider transaction contract and directly dependent provider skills/tests so an explicitly configured canonical branch such as `master` can have atomic provider authority. This preserves the upstream branch convention but broadens methodology behavior and requires independent governed-definition review.
+
+### Resolution
+
+Pending.
+
+### Unattended Work Boundary
+
+Do not rename an upstream branch, create upstream provider records, change governed methodology sources, or resume implementation until the user selects one option. Preserve the same canonical task, execution, plan, evidence, and source state. Unrelated eligible Work Items may continue.
+
+- Provider Update Claim: `agent-owned-primary-branch-authority-019ff2c3`; event `9e3d097c-8998-470f-8707-b1f28a0fecb1`.
+- Provider Paths Claim: `agent-owned-primary-branch-provider-path-019ff2c3`; acquisition event `c6426fe8-cc0d-424c-a80b-169fba885e57`; destination extension event `b4b42000-5277-4958-8668-44a1f8ad58e9`.
+- Required Runtime Title: `Waiting for User — Align Agent-Owned Evaluation Suites With Documentation Design System`.
 
 ### Transition Evidence
 
