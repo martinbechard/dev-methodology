@@ -72,7 +72,11 @@ When durable authoritative evidence records User Action Required, the visible Wo
 
 User Action Required releases active execution capacity and preserves the same canonical visible Work Item root task, candidate, provider evidence, and resumption context. The root Backlog Dispatcher must not become the waiting conversation or relay the question or answer. It continues dispatching unrelated eligible Work Items and does not wait for the user's answer. It must not replace or archive that preserved task while the answer is pending.
 
-The visible task forwards the user's clear answer directly to its nested Dev Orchestrator. The nested Dev Orchestrator persists that exact answer through the selected Persistence manager, records User Action Required -> Ready, then Ready -> Starting, then Starting -> Running, reacquires each claim only at its applicable Claim Event boundary, and resumes the preserved work. For this handoff, consult the Coordinator only for an ambiguous answer, conflicting authoritative evidence, an out-of-scope request or authority expansion, or a cross-item priority or capacity decision.
+When the user's clear answer selects an offered in-scope option that approves continued work, the visible task forwards that approved answer directly to its nested Dev Orchestrator. The nested Dev Orchestrator persists that exact answer through the selected Persistence manager, records User Action Required -> Ready, then Ready -> Starting, then Starting -> Running, reacquires each claim only at its applicable Claim Event boundary, and resumes the preserved work.
+
+A clear deferral does not run the restart sequence. The nested Dev Orchestrator persists the exact answer and records the portable Holding outcome. A clear decline does not run the restart sequence. The nested Dev Orchestrator persists the exact answer and records the applicable portable rejection or abandonment outcome. This direct classification and provider mutation by the existing nested Dev Orchestrator is the user-authorized project-private specialization. It does not require the root Backlog Dispatcher to relay a clear in-scope answer through the Coordinator.
+
+For this handoff, consult the Coordinator only for an ambiguous answer, conflicting authoritative evidence, an out-of-scope request or authority expansion, or a cross-item priority or capacity decision.
 
 ## Dispatch Workflow
 

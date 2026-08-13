@@ -291,6 +291,12 @@ class CodexTaskControlPackageTests(unittest.TestCase):
                 self.assertIn(clause, self.normalized_dispatcher)
 
     def test_user_action_required_question_stays_in_visible_context(self) -> None:
+        handoff = self.dispatcher.split(
+            "## User Action Required Handoff",
+            1,
+        )[1].split("## Dispatch Workflow", 1)[0]
+        normalized_handoff = " ".join(handoff.split())
+
         for clause in (
             "visible Work Item root task owns the user-facing question and retained conversation",
             "one exact clear question with concrete examples or options",
@@ -298,7 +304,16 @@ class CodexTaskControlPackageTests(unittest.TestCase):
             "The root Backlog Dispatcher must not become the waiting conversation or relay the question or answer",
         ):
             with self.subTest(clause=clause):
-                self.assertIn(clause, self.normalized_dispatcher)
+                self.assertIn(clause, normalized_handoff)
+
+        for contradiction in (
+            "The root Backlog Dispatcher waits for the user's answer",
+            "The root Backlog Dispatcher owns the waiting conversation",
+            "The question may exist only in the hidden nested Dev Orchestrator context",
+            "The hidden nested Dev Orchestrator owns the user-facing question",
+        ):
+            with self.subTest(contradiction=contradiction):
+                self.assertNotIn(contradiction, normalized_handoff)
 
     def test_visible_root_synchronizes_own_title_before_reporting(self) -> None:
         for clause in (
@@ -310,14 +325,15 @@ class CodexTaskControlPackageTests(unittest.TestCase):
             with self.subTest(clause=clause):
                 self.assertIn(clause, self.normalized_dispatcher)
 
-    def test_clear_answer_runs_ordered_recovery_directly(self) -> None:
+    def test_approved_in_scope_answer_runs_ordered_recovery_directly(self) -> None:
         handoff = self.dispatcher.split(
             "## User Action Required Handoff",
             1,
         )[1].split("## Dispatch Workflow", 1)[0]
         normalized_handoff = " ".join(handoff.split())
         sequence = (
-            "forwards the user's clear answer directly to its nested Dev Orchestrator",
+            "clear answer selects an offered in-scope option that approves continued work",
+            "forwards that approved answer directly to its nested Dev Orchestrator",
             "persists that exact answer through the selected Persistence manager",
             "records User Action Required -> Ready",
             "Ready -> Starting",
@@ -328,17 +344,72 @@ class CodexTaskControlPackageTests(unittest.TestCase):
         for clause in sequence:
             with self.subTest(clause=clause):
                 self.assertIn(clause, normalized_handoff)
-        positions = [normalized_handoff.index(clause) for clause in sequence]
-        self.assertEqual(sorted(positions), positions)
+        if all(clause in normalized_handoff for clause in sequence):
+            positions = [normalized_handoff.index(clause) for clause in sequence]
+            self.assertEqual(sorted(positions), positions)
+
+    def test_deferred_answer_records_holding_without_restart(self) -> None:
+        handoff = self.dispatcher.split(
+            "## User Action Required Handoff",
+            1,
+        )[1].split("## Dispatch Workflow", 1)[0]
+        normalized_handoff = " ".join(handoff.split())
+
+        for clause in (
+            "A clear deferral does not run the restart sequence",
+            "records the portable Holding outcome",
+        ):
+            with self.subTest(clause=clause):
+                self.assertIn(clause, normalized_handoff)
+
+    def test_declined_answer_records_rejection_without_restart(self) -> None:
+        handoff = self.dispatcher.split(
+            "## User Action Required Handoff",
+            1,
+        )[1].split("## Dispatch Workflow", 1)[0]
+        normalized_handoff = " ".join(handoff.split())
+
+        for clause in (
+            "A clear decline does not run the restart sequence",
+            "records the applicable portable rejection or abandonment outcome",
+        ):
+            with self.subTest(clause=clause):
+                self.assertIn(clause, normalized_handoff)
+
+        self.assertNotIn(
+            "Every clear answer runs the restart sequence",
+            normalized_handoff,
+        )
+        for contradiction in (
+            "A clear deferral runs the restart sequence",
+            "A clear decline runs the restart sequence",
+            "The nested Dev Orchestrator restarts work for every clear answer",
+        ):
+            with self.subTest(contradiction=contradiction):
+                self.assertNotIn(contradiction, normalized_handoff)
 
     def test_user_action_required_preserves_same_task_and_evidence(self) -> None:
+        handoff = self.dispatcher.split(
+            "## User Action Required Handoff",
+            1,
+        )[1].split("## Dispatch Workflow", 1)[0]
+        normalized_handoff = " ".join(handoff.split())
+
         for clause in (
             "preserves the same canonical visible Work Item root task",
             "candidate, provider evidence, and resumption context",
             "must not replace or archive that preserved task while the answer is pending",
         ):
             with self.subTest(clause=clause):
-                self.assertIn(clause, self.normalized_dispatcher)
+                self.assertIn(clause, normalized_handoff)
+
+        for contradiction in (
+            "replace the preserved task while the answer is pending",
+            "archive the preserved task while the answer is pending",
+            "The root Backlog Dispatcher may replace the canonical task while the answer is pending",
+        ):
+            with self.subTest(contradiction=contradiction):
+                self.assertNotIn(contradiction, normalized_handoff)
 
     def test_recovery_reacquires_claims_only_at_claim_events(self) -> None:
         self.assertIn(
@@ -347,13 +418,19 @@ class CodexTaskControlPackageTests(unittest.TestCase):
         )
 
     def test_user_action_required_releases_active_capacity(self) -> None:
+        handoff = self.dispatcher.split(
+            "## User Action Required Handoff",
+            1,
+        )[1].split("## Dispatch Workflow", 1)[0]
+        normalized_handoff = " ".join(handoff.split())
+
         self.assertIn(
             "User Action Required releases active execution capacity",
-            self.normalized_dispatcher,
+            normalized_handoff,
         )
         self.assertNotIn(
             "User Action Required retains active execution capacity",
-            self.normalized_dispatcher,
+            normalized_handoff,
         )
 
     def test_dispatcher_continues_unrelated_eligible_work(self) -> None:
@@ -379,6 +456,15 @@ class CodexTaskControlPackageTests(unittest.TestCase):
         ):
             with self.subTest(clause=clause):
                 self.assertIn(clause, self.normalized_dispatcher)
+
+        self.assertIn(
+            "This direct classification and provider mutation by the existing nested Dev Orchestrator is the user-authorized project-private specialization",
+            self.normalized_dispatcher,
+        )
+        self.assertIn(
+            "It does not require the root Backlog Dispatcher to relay a clear in-scope answer through the Coordinator",
+            self.normalized_dispatcher,
+        )
 
     def test_resumption_preserves_canonical_live_hidden_execution(self) -> None:
         launch_contract = self.dispatcher.split(
