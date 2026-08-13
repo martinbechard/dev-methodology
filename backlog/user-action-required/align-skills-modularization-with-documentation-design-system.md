@@ -1,8 +1,8 @@
 # Align Agent Skill Architecture with the Documentation Design System
 
-Owner: Dev Orchestrator
+Owner: Unowned
 
-Status: Running
+Status: User Action Required
 
 Type: Feature
 
@@ -115,3 +115,36 @@ Dependency Reconciliation: Satisfied by completed Work Item `review-skills-modul
 - Backlog-Mutation Claim: `align-skills-running-transition-019ffcd2`; event `e9dc1241-f90b-46f5-998a-d2dd9f02c544`.
 - Accepted Baseline: `e65b32ed1957bc4e9dcac9e4b7f4635c483de887`.
 - Next Action: Plan the bounded source and TDD work, obtain Dev Architect acceptance, then implement in an isolated contribution lane.
+
+## User Action Required
+
+### Question for the User
+
+For DDS-COM-010, should the Agent Skill Architecture page add concise visible footer wording using only useful known page-specific provenance, scope, and compatibility facts, or preserve the accepted content baseline and seek an independently reviewed source-backed variation?
+
+### Why User Input Is Required
+
+The first option deliberately changes visible content. The second preserves the accepted baseline but requires an explicit design-system variation. This content-boundary choice belongs to the user.
+
+### Options and Tradeoffs
+
+- **Add concise known-facts footer wording (recommended):** Authorize only a short visible footer note containing useful facts already established by the accepted source lineage, then obtain fresh content, browser, and Documentation Design System review.
+- **Preserve the baseline and seek a variation:** Add no visible wording. Obtain an independently reviewed, source-backed DDS-COM-010 variation; delivery remains paused unless it is accepted.
+
+### Resolution
+
+Pending in canonical Task and Conversation `019ffcd2-9428-7bb1-9446-049d52f87bca`.
+
+### Unattended Work Boundary
+
+Do not implement, integrate, deliver, or close this item until the user answers and the accepted final lineage of its predecessor alignment is present on `main`. Preserve the same canonical task and nested Dev Orchestrator. No implementation or candidate exists.
+
+### Transition Evidence
+
+- Transition: `Running -> User Action Required`.
+- Recorded At: 2026-08-13T20:58:09Z.
+- Canonical Task and Conversation: `019ffcd2-9428-7bb1-9446-049d52f87bca`.
+- Source State: No implementation mutation or candidate exists.
+- Work Claim Release: `align-skills-modularization-work-019ffcd2`; disposition `blocked`; blocker `DDS-COM-010 user decision and predecessor integration`; event `c0e8b66a-f002-4094-b621-8c005ea7e20a`.
+- Provider Transition Claim: `skills-modularization-footer-uar-019ff2c3`; event `21d20b56-6cce-4498-8043-4afcfc3d2b30`.
+- Required Runtime Title: `Waiting for User — Align Agent Skill Architecture With Documentation Design System`.
