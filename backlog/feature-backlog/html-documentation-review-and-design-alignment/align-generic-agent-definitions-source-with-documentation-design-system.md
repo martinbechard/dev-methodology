@@ -1,8 +1,8 @@
 # Align Generic Agent Definitions Source with the Documentation Design System
 
-Owner: Unowned
+Owner: Dev Orchestrator
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -79,3 +79,16 @@ Dependency Resolution: Satisfied by completed Work Item `review-generic-agent-de
 
 - This item must not start before its page-specific text review is Completed.
 - Creation of this work item does not dispatch it while backlog crisis recovery remains active.
+
+## Starting Handoff Evidence
+
+- Reserved At: 2026-08-13T20:28:08Z.
+- Transition: `Ready -> Starting`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Baseline: `ef2addc2b0c626e4111ca25bbc2229535fb54c81` on primary `main`.
+- Capacity: Slot 3 of 5; all User Action Required and Blocked items are excluded.
+- Dependency Evidence: The page-specific text review is Completed, and the HTML series explicitly permits pages to proceed independently.
+- Transition Claim: `reserve-generic-agent-definitions-019ff2c3`; event `43cce56b-a841-41d2-9819-4b66219b1c75`.
+- Dispatch Architecture: Create one visible Codex task whose reference-plus-delta prompt starts one Dev Orchestrator collaboration subagent.
+- Next Action: Reconcile the unique visible task identity; its nested Dev Orchestrator records `Starting -> Running` before mutation.
