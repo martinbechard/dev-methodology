@@ -1,6 +1,6 @@
 # Launch Work Items Through Visible Codex Tasks
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -71,3 +71,15 @@ Approved at creation. On 2026-08-13, the user explicitly requested the concise B
 
 - Existing `/root/document_external_cleanup` and `/root/parse_nested_uar_report_fields` executions remain their Work Items' preserved owners until they stop or complete. Do not create visible replacement tasks while either execution is live.
 - Apply the corrected architecture to every new dispatch after this item is delivered.
+
+## Starting Handoff Evidence
+
+- Reserved At: 2026-08-13T01:59:39Z.
+- Parent Runtime Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Intended Visible Task Role: runtime launch wrapper for one Dev Orchestrator collaboration subagent.
+- Baseline: `73af4876cfddc725ad1599f8d2f7c3a3e04b2587` on primary `main`.
+- Dispatch Reservation: Exactly one user-visible Codex task in the saved dev-methodology project. Its initial reference-plus-delta prompt launches the nested Dev Orchestrator collaboration subagent for this provider record.
+- Capacity and Overlap: Immediate policy correction is authorized alongside the two preserved live executions. Its exact source and focused-test paths do not overlap their mutation scope.
+- Transition Claim: `start-visible-codex-task-dispatch-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `11915b40-70c9-45e5-8e46-b445dee56fa9`.
+- Next Reconciliation: Reconcile the exact visible task-creation result. Task creation does not establish Running; the nested Dev Orchestrator records Starting -> Running before mutation.
