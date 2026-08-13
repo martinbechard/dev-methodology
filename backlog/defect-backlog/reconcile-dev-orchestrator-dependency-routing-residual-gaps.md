@@ -1,6 +1,6 @@
 # Reconcile Dev Orchestrator Dependency-Routing Residual Gaps
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -94,3 +94,13 @@ None.
 - Creation Outcome: Unique success decoded from a complete JSON-string envelope, with no client or pending identity and no retry.
 - Lifecycle Boundary: This assignment remains `Starting` until the nested Dev Orchestrator accepts and records `Starting -> Running`.
 - Adoption Claims: `adopt-reconcile-dev-orchestrator-dependency-routing-residual-gaps-visible-task`; event `015759a3-1ca2-44cd-8922-0d09f6ff58ab`. `adopt-reconcile-dev-orchestrator-dependency-routing-residual-gaps-provider`; event `3dc87295-54f0-4b2f-9174-5e0c9671ab72`.
+
+## Running Acceptance
+
+- Accepted At: 2026-08-13T11:48:24Z.
+- Transition: `Starting -> Running`.
+- Dev Orchestrator Task: `019ffaf1-81d3-7b82-9e97-20fad7cf56ba`.
+- Accepted Baseline: `b1e10c9881a9a1a011ae049118f28562ebb1a9db` on `main`.
+- Work Claim: `reconcile-dev-orchestrator-dependency-routing-residual-gaps-work`; event `8281a2ab-94f6-4aa9-a674-a17730e00b3a`.
+- Provider Mutation Claim: `run-reconcile-dev-orchestrator-dependency-routing-residual-gaps-provider`; event `7d8b1234-45d9-4919-8d5c-0f6166550b3f`.
+- Complex Development Plan Gate: Not yet evaluated.
