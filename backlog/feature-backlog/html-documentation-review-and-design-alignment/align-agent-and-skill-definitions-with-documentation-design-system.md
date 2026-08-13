@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -172,6 +172,19 @@ Resulting Disposition: `User Action Required -> Ready`. Option 1 authorizes only
 ### Unattended Work Boundary
 
 Do not mutate, integrate, deliver, or close this candidate until the user answers in the canonical visible task. Preserve candidate `42476c0169fc8347b8675f839d7c578679d39036`, its clean branch/worktree, accepted source and artifact reviews, plans, and all browser/review evidence. Unrelated eligible Work Items may continue.
+
+### Resumed Starting Evidence
+
+- Reserved At: 2026-08-13T20:42:38Z.
+- Transition: `Ready -> Starting`.
+- Capacity Trigger: Wiki Skills and Project Context entered `Blocked` at provider commit `724803ea3197a2c196fe3b1cb0680e28c00257bb`, releasing one of five active slots.
+- Preserved Answer: `I authorize Option 1`.
+- Preserved Candidate: `42476c0169fc8347b8675f839d7c578679d39036`.
+- Preserved Canonical Task and Conversation: `019ffc29-0d20-78f1-b3d6-f0797e7bb5b6`.
+- Preserved Dev Orchestrator: the same nested execution and accepted plan/review evidence.
+- Transition Claim: `reserve-resumed-definitions-019ff2c3`; event `a15c0643-9871-4a04-aab0-4ed018ef1a02`.
+- Required Runtime Title: `Starting — Align Agent And Skill Definitions With Documentation Design System`.
+- Next Action: The same nested Dev Orchestrator records `Starting -> Running`, reacquires its required claims, and continues only the authorized Option 1 correction.
 
 ### Transition Evidence
 
