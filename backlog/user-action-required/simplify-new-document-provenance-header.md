@@ -1,6 +1,6 @@
 # Simplify New-Document Provenance Headers
 
-Status: Running
+Status: User Action Required
 
 Type: Feature
 
@@ -92,6 +92,12 @@ None.
 - skills/document-provenance/SKILL.md
 - skills/document-provenance/references/format-contract.md
 - skills/document-provenance/references/historical-migration.md
+- skills/route-documentation-work/assets/templates/architecture-template.md
+- skills/route-documentation-work/assets/templates/functional-spec-template.md
+- skills/route-documentation-work/assets/templates/high-level-design-template.md
+- skills/route-documentation-work/assets/templates/module-design-template.md
+- skills/route-documentation-work/assets/templates/project-wiki-template.md
+- skills/route-documentation-work/assets/templates/unit-test-plan-template.md
 
 ### Allowed Dependent Artifacts
 
@@ -156,3 +162,44 @@ Approved at creation from the user's 2026-08-12 message and expanded by the user
 - Accepted By: Dev Orchestrator `/root/simplify_new_document_provenance_header`.
 - Work Claim: `simplify-new-document-provenance-header-work`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `ff8a99c5-d9cf-49e6-a94d-43340cff459b`.
 - Provider Transition Claim: `run-simplify-new-document-provenance-header-provider`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `1da6ec1b-a055-49b0-8d0c-b364f109c98c`.
+
+## User Action Required
+
+### Question for the User
+
+Do you approve adding these six route-documentation-work template sources to this Work Item's governed canonical scope?
+
+- skills/route-documentation-work/assets/templates/architecture-template.md
+- skills/route-documentation-work/assets/templates/functional-spec-template.md
+- skills/route-documentation-work/assets/templates/high-level-design-template.md
+- skills/route-documentation-work/assets/templates/module-design-template.md
+- skills/route-documentation-work/assets/templates/project-wiki-template.md
+- skills/route-documentation-work/assets/templates/unit-test-plan-template.md
+
+### Why User Input Is Required
+
+Full acceptance requires changes to these six owning sources, but the previously approved Governed Definition boundary did not authorize them. Dev Architect rejected substitution or partial delivery, so only the user or provider owner can expand the governed canonical scope.
+
+### Options and Tradeoffs
+
+- Approve all six (recommended): update the owning templates with the compact provenance contract and complete the already accepted end-to-end requirement. Newly created architecture, functional specification, high-level design, module design, project wiki, and unit-test-plan documents stop reproducing the legacy verbose block.
+- Do not approve: preserve all work and make no changes to those templates. The Work Item cannot satisfy its accepted reusable new-document provenance requirement, and partial or substitute delivery is not authorized.
+
+### Resolution
+
+Pending.
+
+### Unattended Work Boundary
+
+Make no source mutation while this question is pending. Preserve the accepted plan, existing Work Item, canonical execution, worktree, claims until the transition boundary, and all current evidence. Read-only evidence inspection may continue.
+
+### Transition Evidence
+
+- Transition: Running -> User Action Required.
+- Decision Owner: user/provider owner.
+- Exact Blocker: Full acceptance requires changes to the six listed owning templates outside the previously approved governed scope.
+- Blocker Reference: simplify-provenance-six-template-scope-approval.
+- Unblock Condition: explicit approval of all six named template paths, recorded in this authoritative provider record, followed by corrected plan review.
+- Canonical Execution: Codex Task 019ffaf1-7879-7973-9bcb-a34652fbce7f with Dev Orchestrator /root/simplify_new_document_provenance_header.
+- Preserved Evidence: accepted JSON and HTML plan, existing Work Item history, claims through the transition boundary, and all current execution evidence.
+- Source Mutation: None; source coding had not started.
