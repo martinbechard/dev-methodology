@@ -1,6 +1,6 @@
 # Replace Evaluation Oracle Terminology With Judge
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -66,3 +66,14 @@ None.
 
 - This item governs project terminology and its application. It does not rename third-party products or rewrite historical evidence.
 - Use Judge only for the evaluation actor or evaluator role. Do not use Judge as a generic synonym for every assertion, comparison function, fixture, or expected-result file.
+
+## Starting Handoff Evidence
+
+- Reserved At: 2026-08-13T11:43:10Z.
+- Transition: `Ready -> Starting`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Baseline: `e8923f2cb1fe967806a0542359d15af01d94ac19` on primary `main`.
+- Capacity: Slot 2 of 5. Independent terminology/evaluation scope; exclude private Backlog Dispatcher, document provenance, Dev Orchestrator routing, and documentation-template parser paths.
+- Transition Claims: `start-replace-evaluation-oracle-terminology-with-judge-work-item`; event `4923f794-562d-422e-a1d2-f7599efbace4`. `start-replace-evaluation-oracle-terminology-with-judge-provider`; event `a1c95fda-d302-4200-a62d-0d469bdfb783`.
+- Runtime Identity: Pending caller-owned visible task creation. Creation does not imply Running.
