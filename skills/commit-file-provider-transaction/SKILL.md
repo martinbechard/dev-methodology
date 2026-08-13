@@ -38,8 +38,16 @@ arbitrary repository files.
 
 ## Snapshot And Coordination
 
-Require the repository's primary worktree on main. Return BLOCKED before mutation when the
-worktree or branch does not have file-provider mutation authority.
+Consume the validated workflow_selection.canonical_primary_branch scalar supplied by the
+caller. Require main or master. Use Git only to observe the checkout's Git directory, common
+Git directory, and symbolic HEAD. Require the primary worktree and an attached symbolic branch
+that exactly matches the configured value. Do not derive the value from Git, remotes, tracking
+configuration, origin/HEAD, branch defaults, the Commit selector, or the current checkout.
+
+Return zero-mutation BLOCKED before exclusive creation, source writes, staging, or commit when
+the configured value is missing, invalid, or UNSET; the checkout is linked; HEAD is detached;
+or the attached branch differs. Return the configured value, observed topology, observed branch,
+and blocker evidence.
 
 Before mutation, capture and retain:
 

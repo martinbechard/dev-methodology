@@ -228,6 +228,7 @@ technology_skill_loadouts:
 folder_route_precedence: "Most-specific matching path pattern wins. Prefer non-overlapping routes and use this rule only when overlap is unavoidable."
 
 workflow_selection:
+  canonical_primary_branch: "TODO: main, master, or UNSET when the repository's canonical primary branch is not selected. Do not infer this value from Git."
   persistence:
     default: "TODO: file, github, gitlab, azure-devops, jira, none, or UNSET when the user has not selected a durable work-item provider."
     folder_overrides:

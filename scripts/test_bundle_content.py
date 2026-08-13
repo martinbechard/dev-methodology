@@ -5130,6 +5130,9 @@ class BundleContentTests(unittest.TestCase):
             'commit: "TODO: main-branch, feature-branch, or UNSET."',
             project_template,
         )
+        self.assertIn("canonical_primary_branch:", project_template)
+        self.assertIn("main, master, or UNSET", project_template)
+        self.assertIn("Do not infer this value from Git", project_template)
         self.assertNotIn("  provider:", project_template)
         self.assertNotIn("  completion:", project_template)
         self.assertNotIn("  workitem:", project_template)
@@ -5144,12 +5147,18 @@ class BundleContentTests(unittest.TestCase):
             "main-branch",
             project_configuration["workflow_selection"]["commit"]["default"],
         )
+        self.assertEqual(
+            "main",
+            project_configuration["workflow_selection"]["canonical_primary_branch"],
+        )
         agents_text = (REPOSITORY_ROOT / "AGENTS.md").read_text(encoding="utf-8")
         self.assertIn("## Work-Item Workflow Skill References", agents_text)
         self.assertIn("create-work-item-file", agents_text)
         self.assertIn("manage-work-items-file", agents_text)
         self.assertIn("deliver-work-item-main-branch", agents_text)
         self.assertIn("technology skill routing remains separate", agents_text)
+        self.assertIn("Configured canonical primary branch: main", agents_text)
+        self.assertIn("never supplies this configured value", agents_text)
 
         probes = load_yaml_object(REPOSITORY_ROOT / "evals" / "skill-probes.yaml")
         probe_ids = {entry["id"] for entry in probes["probes"]}
@@ -8279,6 +8288,13 @@ class BundleContentTests(unittest.TestCase):
         by_id = {scenario["id"]: scenario for scenario in scenarios}
         future_scenario = by_id["future-ideas-capture-and-promotion"]
         self.assertEqual("PASS", future_scenario["expectedTerminalStatus"])
+        future_fixture = load_yaml_object(suite_root / "fixtures" / "cases.yaml")[
+            "cases"
+        ]["future-ideas-capture-and-promotion"]
+        self.assertEqual("primary", future_fixture["currentWorktree"])
+        self.assertEqual("main", future_fixture["currentBranch"])
+        self.assertEqual("main", future_fixture["configuredPrimaryBranch"])
+        self.assertEqual("MATCHED", future_fixture["branchAuthorityResult"])
         self.assertIn("manage-future-ideas", future_scenario["targetSkills"])
         self.assertIn(
             "commit-file-provider-transaction", future_scenario["targetSkills"]
@@ -9674,20 +9690,79 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("cannot create or widen approval", requests_text)
         self.assertIn("checker-approval.yaml", requests_text)
 
+    def test_file_provider_uses_configured_canonical_primary_branch(self) -> None:
+        """Every direct file-provider consumer uses one configuration authority."""
+
+        project = load_yaml_object(REPOSITORY_ROOT / "PROJECT.yaml")
+        self.assertEqual(
+            "main", project["workflow_selection"]["canonical_primary_branch"]
+        )
+
+        consumer_clauses = {
+            "create-work-item-file": (
+                "workflow_selection.canonical_primary_branch",
+                "Require main or master",
+                "Do not infer the configured value from Git",
+            ),
+            "manage-work-items-file": (
+                "workflow_selection.canonical_primary_branch",
+                "Require main or master",
+                "Never infer the configured value from Git",
+            ),
+            "manage-future-ideas": (
+                "workflow_selection.canonical_primary_branch",
+                "configured value is missing, invalid, or UNSET",
+                "Never infer the configured value from Git",
+            ),
+            "commit-file-provider-transaction": (
+                "workflow_selection.canonical_primary_branch",
+                "Require main or master",
+                "Do not derive the value from Git",
+                "before exclusive creation, source writes, staging, or commit",
+            ),
+        }
+        for skill_name, clauses in consumer_clauses.items():
+            skill_text = (SKILLS_ROOT / skill_name / "SKILL.md").read_text(
+                encoding="utf-8"
+            )
+            normalized = " ".join(skill_text.split())
+            for clause in clauses:
+                with self.subTest(skill=skill_name, clause=clause):
+                    self.assertIn(clause, normalized)
+
+        authority = load_yaml_object(
+            REPOSITORY_ROOT
+            / "evals"
+            / "projects"
+            / "file-work-item-no-mutation"
+            / "AUTHORITY.yaml"
+        )
+        self.assertEqual("main", authority["configuredPrimaryBranch"])
+        self.assertNotIn("primaryMainAvailable", authority)
+        task_text = (
+            REPOSITORY_ROOT
+            / "evals"
+            / "projects"
+            / "file-work-item-no-mutation"
+            / "TASK.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn("CONFIGURED-PRIMARY-BRANCH-MISMATCH", task_text)
+        self.assertNotIn("NON-MAIN-AUTHORITY", task_text)
+
     def test_file_work_item_skills_own_behavior_after_legacy_retirement(self) -> None:
         primary_root = resolve_primary_repository_root()
         canonical_contracts = {
             "create-work-item-file": (
-                "Only the primary worktree on main may create canonical files under backlog.",
+                "Only the primary worktree on the configured canonical primary branch may create canonical files under backlog.",
                 "Do not create another queue elsewhere.",
                 "Before writing, search every active typed folder",
                 "Source Evidence",
                 "applicable coordination evidence",
             ),
             "manage-work-items-file": (
-                "Only the primary worktree on main may change canonical files under backlog.",
+                "Only the primary worktree on the configured canonical primary branch may change canonical files under backlog.",
                 "must not create, transition, or archive an item",
-                "Each startup or terminal transition remains its own short primary-main provider transaction.",
+                "Each startup or terminal transition remains its own short configured-primary-branch provider transaction.",
                 "AWAITING_REVIEW",
                 "same delivery identity remains lifecycle AWAITING_REVIEW",
                 "Do not change lifecycle back to RUNNING for same-delivery corrections.",

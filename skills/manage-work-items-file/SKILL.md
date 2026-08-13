@@ -47,13 +47,13 @@ the requested atomic provider transition.
 
 ## File Authority
 
-Only the primary worktree on main may change canonical files under backlog. The file provider resolves an opaque Work Item ID to its current active or archive path. Moving the backing file does not change the Work Item ID.
+Only the primary worktree on the configured canonical primary branch may change canonical files under backlog. Read workflow_selection.canonical_primary_branch from the validated root PROJECT.yaml. Require main or master, then use Git only to confirm primary-worktree topology and an attached symbolic HEAD on that exact branch. The file provider resolves an opaque Work Item ID to its current active or archive path. Moving the backing file does not change the Work Item ID.
 
 Acquire the exact opaque Work Item ID before any work or provider mutation. Use activity work for outcome work and activity update for provider mutation. Release the work-item claim with disposition done, blocked, or handoff at the activity boundary. Blocked may include a bounded blocker reference; when present, it must be canonical, non-empty, single-line, and at most 200 characters. A handoff release must complete before the next owner acquires the same ID. Path and resource claims remain independently applicable. The lifecycle state in the Work-item content remains authoritative.
 
-Another worktree may inspect backlog but must not create, transition, or archive an item. If the primary worktree is not on main, it must not change the item. Return BLOCKED with the observed worktree, branch, requested transition, and required handoff. Never create another queue elsewhere.
+Another worktree may inspect backlog but must not create, transition, or archive an item. Return zero-mutation BLOCKED when the configured value is missing, invalid, or UNSET; the checkout is linked; HEAD is detached; or the attached branch differs. Report the configured value, observed topology, observed branch, requested transition, and required handoff. Never infer the configured value from Git or create another queue elsewhere.
 
-Each startup or terminal transition remains its own short primary-main provider transaction. Before finish or handoff, commit completed work and prove the applicable worktree clean.
+Each startup or terminal transition remains its own short configured-primary-branch provider transaction. Before finish or handoff, commit completed work and prove the applicable worktree clean.
 
 ## Folder Model
 

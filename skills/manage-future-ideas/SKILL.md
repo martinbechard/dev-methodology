@@ -25,8 +25,13 @@ capture, inventory, validation, ideation, or promotion.
 - When the provider is UNSET, ask the user to select a provider before durable mutation.
 - When another provider applies, return BLOCKED without creating a provider issue, shadow file,
   or second queue.
-- Only the primary worktree on main may create or change canonical records under
-  backlog/future-ideas.
+- Read workflow_selection.canonical_primary_branch from the validated root PROJECT.yaml.
+- Only the primary worktree on that configured main or master branch may create or change
+  canonical records under backlog/future-ideas. Use Git only to observe primary-worktree
+  topology and an attached symbolic HEAD on the exact configured branch.
+- Return zero-mutation BLOCKED when the configured value is missing, invalid, or UNSET; the
+  checkout is linked; HEAD is detached; or the attached branch differs. Never infer the
+  configured value from Git.
 - Another worktree may perform explicitly requested read-only inventory or validation but must
   return BLOCKED for capture or promotion mutation.
 - Treat only resolved regular files contained by the canonical backlog/future-ideas root as

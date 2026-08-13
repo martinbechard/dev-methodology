@@ -562,6 +562,7 @@ def project_with_helper(selected: str, availability: str = "AVAILABLE") -> dict[
             "verification": [f"{selected} claim-helper fixture evidence"],
         },
         "workflow_selection": {
+            "canonical_primary_branch": "UNSET",
             "provider": {"default": "UNSET"},
             "completion": {"default": "UNSET"},
         },

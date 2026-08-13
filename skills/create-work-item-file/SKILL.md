@@ -42,9 +42,9 @@ separate from unattended work.
 
 ## File Authority
 
-Only the primary worktree on main may create canonical files under backlog. The file provider's Work Item ID is the immutable lowercase filename stem. It is unique across active, non-dispatchable, completed, and failed work-item folders. The current repository-relative path is provider-owned storage and diagnostic evidence, not generic identity.
+Only the primary worktree on the configured canonical primary branch may create canonical files under backlog. Read workflow_selection.canonical_primary_branch from the validated root PROJECT.yaml. Require main or master, then use Git only to confirm primary-worktree topology and an attached symbolic HEAD on that exact branch. The file provider's Work Item ID is the immutable lowercase filename stem. It is unique across active, non-dispatchable, completed, and failed work-item folders. The current repository-relative path is provider-owned storage and diagnostic evidence, not generic identity.
 
-Another worktree may inspect backlog but must not create the item. If the primary worktree is not on main, it must not create the item. Return BLOCKED with the observed worktree, branch, and required handoff. Do not create another queue elsewhere.
+Another worktree may inspect backlog but must not create the item. Return zero-mutation BLOCKED when the configured value is missing, invalid, or UNSET; the checkout is linked; HEAD is detached; or the attached branch differs. Report the configured value, observed topology, observed branch, and required handoff. Do not infer the configured value from Git. Do not create another queue elsewhere.
 
 Keep backlog creation separate from implementation ownership. Record and commit the child's
 own canonical stored lifecycle first. Use Ready when no condition on that child prevents its
@@ -281,7 +281,7 @@ Do not send a routine task message after creating a work item. The Dev Backlog C
 
 Before reporting completion:
 
-- Confirm the effective provider is file and the mutation occurred only under backlog in the primary main worktree.
+- Confirm the effective provider is file and the mutation occurred only under backlog in the primary worktree on the configured canonical primary branch.
 - Confirm commit-file-provider-transaction returned successful immutable proof for the exact
   ordinary-creation destination and preserved unrelated state.
 - Confirm the item is in the right typed folder and has a stable globally unique Work Item ID.

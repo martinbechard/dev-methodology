@@ -159,7 +159,12 @@ def _configuration_case(case: str, repository_root: Path) -> dict[str, Any]:
     if case == "legacy":
         project.pop("project_setup", None)
         selection_policy = project["workflow_selection"].get("selection_policy")
+        configured_primary_branch = project["workflow_selection"].get(
+            "canonical_primary_branch",
+            "UNSET",
+        )
         project["workflow_selection"] = {
+            "canonical_primary_branch": configured_primary_branch,
             "backlog": {
                 "default": "file-based-backlog",
                 "folder_overrides": [],

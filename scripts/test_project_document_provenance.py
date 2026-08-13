@@ -30,6 +30,7 @@ def _project(*, provenance: object | None = None, include_route: bool = True) ->
     project: dict[str, object] = {
         "resource_coordination": {"selected": "none"},
         "workflow_selection": {
+            "canonical_primary_branch": "UNSET",
             "persistence": {"default": "UNSET"},
             "commit": {"default": "UNSET"},
         },

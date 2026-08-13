@@ -185,12 +185,15 @@ If the server cannot return status, ask Project Configurator for help. Do not us
 
 Project Configurator owns the independent Persistence and Commit selectors. Persistence routes durable work-item storage; Commit routes delivery. Workflow skills are referenced by name only and technology skill routing remains separate.
 
+- Configured canonical primary branch: main.
+- File-provider mutation requires the primary worktree on that exact attached branch. Git observes checkout topology and the symbolic branch but never supplies this configured value.
 - Default persistence file: create with create-work-item-file; manage with manage-work-items-file.
 - Default commit main-branch: use deliver-work-item-main-branch.
 
 Most-specific matching folder pattern wins independently for Persistence and Commit overrides. A folder override changes only its own selector.
 
 When a selector is UNSET, the pertinent agent asks at the stated operation boundary and does not infer either value from repository or hosting evidence, files, remotes, templates, plugins, or available tools.
+When the configured canonical primary branch is UNSET, file-provider mutation is BLOCKED until Project Configurator records main or master.
 
 ## Technology Skills
 

@@ -1,7 +1,7 @@
 effectiveProvider: github
 currentWorktree: isolated
 currentBranch: feature/provider-boundary
-primaryMainAvailable: false
+configuredPrimaryBranch: main
 requestedOperations:
   - create backlog/feature-backlog/new-file-item.md
   - transition backlog/feature-backlog/existing-file-item.md to RUNNING

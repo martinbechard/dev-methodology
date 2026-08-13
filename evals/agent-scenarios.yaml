@@ -353,7 +353,7 @@ agents:
         expectedOutcome: One authoritative set of Work-item content with durable source, dependency, ownership, claim, delivery, verification, recovery, completion or failure, and archive evidence without a duplicate shadow queue.
         requiredBehaviors:
           - Use only the configured backend and ask when no backend is selected.
-          - For provider file, create only under backlog in the primary main worktree through atomic no-overwrite creation without a claim.
+          - For provider file, create only under backlog in the primary worktree on the configured canonical primary branch through atomic no-overwrite creation without a claim.
           - Detect matching active items before creation and preserve related-series index and child links.
           - Record explicit Ready or claimed state and dependency evidence.
           - Keep dispatched mutable work isolated from other concurrent items and separate from backlog mutation ownership.
@@ -397,10 +397,10 @@ agents:
       - id: dev-backlog-steward-provider-boundary
         kind: boundary-failure
         fixtureProfile: backlog-state-machine
-        promptIntent: Evaluate file-provider create, transition, and archive requests when another provider is selected and primary-main authority is unavailable.
-        expectedOutcome: BLOCKED evidence for provider mismatch, isolated and non-main authority, SHARED_CHECKOUT_REQUIRED handoff, and zero backlog or shadow-provider mutations.
+        promptIntent: Evaluate file-provider create, transition, and archive requests when another provider is selected or configured canonical-primary-branch authority does not match the observed worktree topology and symbolic branch.
+        expectedOutcome: BLOCKED evidence for provider mismatch, isolated worktree, configured-primary-branch mismatch, SHARED_CHECKOUT_REQUIRED handoff, and zero backlog or shadow-provider mutations.
         requiredBehaviors:
-          - Read effective provider and worktree authority from current fixture state.
+          - Read the effective provider and configured canonical primary branch from current fixture state, using Git only to observe worktree topology and the symbolic branch.
           - Block every file mutation and report the exact next safe handoff.
           - Preserve the existing item and all provider boundaries.
         forbiddenBehaviors:

@@ -86,6 +86,7 @@ technology_skill_loadouts:
     notes: Python source and tests remain authoritative.
 folder_route_precedence: Most-specific matching path pattern wins.
 workflow_selection:
+  canonical_primary_branch: UNSET
   provider:
     default: UNSET
     folder_overrides: []

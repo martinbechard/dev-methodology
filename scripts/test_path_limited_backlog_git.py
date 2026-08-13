@@ -5,11 +5,97 @@
 
 from __future__ import annotations
 
+import os
 import subprocess
 import tempfile
 import unittest
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
+
+
+CANONICAL_PRIMARY_BRANCHES = frozenset({"main", "master"})
+
+
+def observe_file_provider_authority(
+    repository: Path,
+    configured_primary_branch: object,
+) -> dict[str, str | None]:
+    """Validate supplied authority and observe only Git topology and symbolic HEAD."""
+
+    if configured_primary_branch == "UNSET":
+        return {
+            "status": "BLOCKED",
+            "reason": "configured-primary-branch-unset",
+            "configuredBranch": "UNSET",
+            "observedBranch": None,
+        }
+    if (
+        not isinstance(configured_primary_branch, str)
+        or configured_primary_branch not in CANONICAL_PRIMARY_BRANCHES
+    ):
+        return {
+            "status": "BLOCKED",
+            "reason": "configured-primary-branch-invalid",
+            "configuredBranch": (
+                configured_primary_branch
+                if isinstance(configured_primary_branch, str)
+                else None
+            ),
+            "observedBranch": None,
+        }
+
+    def git(*arguments: str) -> subprocess.CompletedProcess[str]:
+        return subprocess.run(
+            ["git", "-C", str(repository), *arguments],
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+
+    absolute_git_directory = git("rev-parse", "--absolute-git-dir")
+    common_git_directory = git("rev-parse", "--git-common-dir")
+    if absolute_git_directory.returncode or common_git_directory.returncode:
+        return {
+            "status": "BLOCKED",
+            "reason": "git-topology-unavailable",
+            "configuredBranch": configured_primary_branch,
+            "observedBranch": None,
+        }
+    git_directory = Path(absolute_git_directory.stdout.strip()).resolve()
+    common_path = Path(common_git_directory.stdout.strip())
+    if not common_path.is_absolute():
+        common_path = repository / common_path
+    if git_directory != common_path.resolve():
+        return {
+            "status": "BLOCKED",
+            "reason": "linked-worktree",
+            "configuredBranch": configured_primary_branch,
+            "observedBranch": None,
+        }
+
+    symbolic_head = git("symbolic-ref", "--quiet", "HEAD")
+    if symbolic_head.returncode:
+        return {
+            "status": "BLOCKED",
+            "reason": "detached-head",
+            "configuredBranch": configured_primary_branch,
+            "observedBranch": None,
+        }
+    reference = symbolic_head.stdout.strip()
+    observed_branch = reference.removeprefix("refs/heads/")
+    if reference != f"refs/heads/{configured_primary_branch}":
+        return {
+            "status": "BLOCKED",
+            "reason": "configured-primary-branch-mismatch",
+            "configuredBranch": configured_primary_branch,
+            "observedBranch": observed_branch,
+        }
+    return {
+        "status": "READY",
+        "reason": None,
+        "configuredBranch": configured_primary_branch,
+        "observedBranch": observed_branch,
+    }
 
 
 class _InvalidManifest(ValueError):
@@ -100,7 +186,7 @@ class PathLimitedBacklogGitTests(unittest.TestCase):
         self._temporary_directory = tempfile.TemporaryDirectory()
         self.addCleanup(self._temporary_directory.cleanup)
         self.repository = Path(self._temporary_directory.name)
-        self._git("init", "-q")
+        self._git("init", "-q", "--initial-branch=main")
         self._git("config", "user.name", "Contract Test")
         self._git("config", "user.email", "contract@example.invalid")
 
@@ -226,23 +312,134 @@ class PathLimitedBacklogGitTests(unittest.TestCase):
         self._seed_unrelated_state()
         path = "backlog/feature-backlog/create.md"
         content = self._work_item(path)
-        self._write(path, content)
 
         commit_oid = self._commit_exact(
-            _ProviderPathManifest("create", (path,)), "Create work item"
+            _ProviderPathManifest("create", (path,)),
+            "Create work item",
+            configured_primary_branch="main",
+            intended={path: content},
         )
 
         self._assert_immutable_commit(commit_oid, {path: content})
         self._assert_unrelated_state()
 
+    def test_creation_requires_supplied_configured_primary_branch_authority(self) -> None:
+        """Block before index mutation when configured and observed authority differ."""
+
+        self._seed_unrelated_state()
+        path = "backlog/feature-backlog/configured-authority.md"
+        content = self._work_item(path)
+        head_before = self._git("rev-parse", "HEAD").stdout
+        index_path = Path(self._git("rev-parse", "--git-path", "index").stdout.strip())
+        if not index_path.is_absolute():
+            index_path = self.repository / index_path
+        index_before = index_path.read_bytes()
+        status_before = self._git("status", "--porcelain=v1").stdout
+
+        manifest = _ProviderPathManifest("create", (path,))
+        result = self._commit_exact(
+            manifest,
+            "Create work item",
+            configured_primary_branch="master",
+            intended={path: content},
+        )
+
+        self.assertEqual("BLOCKED", result["status"])
+        self.assertEqual(manifest.paths, result["manifestPaths"])
+        self.assertEqual(head_before, self._git("rev-parse", "HEAD").stdout)
+        self.assertEqual(index_before, index_path.read_bytes())
+        self.assertEqual(status_before, self._git("status", "--porcelain=v1").stdout)
+        self.assertFalse((self.repository / path).exists())
+        self._assert_unrelated_state()
+
+    def test_blocked_authority_matrix_preserves_exact_repository_state(self) -> None:
+        """Missing, unsupported, unset, wrong, and detached authority are zero-mutation."""
+
+        cases: tuple[tuple[str, object, bool], ...] = (
+            ("missing", None, False),
+            ("unsupported", "trunk", False),
+            ("unset", "UNSET", False),
+            ("wrong", "master", False),
+            ("detached", "main", True),
+        )
+        for name, configured_branch, detached in cases:
+            with self.subTest(case=name):
+                if detached:
+                    self._git("checkout", "--detach", "--quiet")
+                path = f"backlog/feature-backlog/{name}-authority.md"
+                content = self._work_item(path)
+                self._seed_unrelated_state()
+                before = self._repository_state()
+
+                manifest = _ProviderPathManifest("create", (path,))
+                result = self._commit_exact(
+                    manifest,
+                    "Create work item",
+                    configured_primary_branch=configured_branch,
+                    intended={path: content},
+                )
+
+                self.assertEqual("BLOCKED", result["status"])
+                self.assertEqual(manifest.paths, result["manifestPaths"])
+                self.assertEqual(before, self._repository_state())
+                if detached:
+                    self._git("checkout", "main", "--quiet")
+                self._git("restore", "--staged", "--worktree", "README.md", "notes.txt")
+                (self.repository / "scratch.txt").unlink()
+
+    def test_master_primary_worktree_executes_the_same_creation_transaction(self) -> None:
+        """A supplied master value authorizes a primary worktree attached to master."""
+
+        self._git("branch", "-m", "master")
+        path = "backlog/feature-backlog/master-authority.md"
+        content = self._work_item(path)
+        commit_oid = self._commit_exact(
+            _ProviderPathManifest("create", (path,)),
+            "Create work item",
+            configured_primary_branch="master",
+            intended={path: content},
+        )
+        self._assert_immutable_commit(commit_oid, {path: content})
+
+    def test_linked_worktree_blocks_even_when_its_branch_matches_configuration(self) -> None:
+        """Physical primary-worktree topology outranks a matching linked branch name."""
+
+        self._git("branch", "master")
+        self._git("checkout", "master", "--quiet")
+        linked_temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(linked_temporary.cleanup)
+        linked = Path(linked_temporary.name) / "linked"
+        self._git("worktree", "add", "--quiet", str(linked), "main")
+        original_repository = self.repository
+        self.repository = linked
+        try:
+            path = "backlog/feature-backlog/linked-authority.md"
+            content = self._work_item(path)
+            self._seed_unrelated_state()
+            before = self._repository_state()
+            manifest = _ProviderPathManifest("create", (path,))
+            result = self._commit_exact(
+                manifest,
+                "Create work item",
+                configured_primary_branch="main",
+                intended={path: content},
+            )
+            self.assertEqual("BLOCKED", result["status"])
+            self.assertEqual(manifest.paths, result["manifestPaths"])
+            self.assertEqual(before, self._repository_state())
+        finally:
+            self.repository = original_repository
+
     def test_one_file_update_preserves_unrelated_staged_and_dirty_state(self) -> None:
         self._seed_unrelated_state()
         path = "backlog/defect-backlog/update.md"
         content = self._work_item(path, status="Running")
-        self._write(path, content)
 
         commit_oid = self._commit_exact(
-            _ProviderPathManifest("update", (path,)), "Update work item"
+            _ProviderPathManifest("update", (path,)),
+            "Update work item",
+            configured_primary_branch="main",
+            intended={path: content},
         )
 
         self._assert_immutable_commit(commit_oid, {path: content})
@@ -253,8 +450,6 @@ class PathLimitedBacklogGitTests(unittest.TestCase):
         source = "backlog/feature-backlog/move.md"
         destination = "backlog/completed-backlog/features/move.md"
         content = self._work_item(destination, status="Completed")
-        (self.repository / source).unlink()
-        self._write(destination, content)
         manifest = _ProviderPathManifest(
             "move",
             (source, destination),
@@ -262,7 +457,12 @@ class PathLimitedBacklogGitTests(unittest.TestCase):
             destination_path=destination,
         )
 
-        commit_oid = self._commit_exact(manifest, "Move work item")
+        commit_oid = self._commit_exact(
+            manifest,
+            "Move work item",
+            configured_primary_branch="main",
+            intended={source: None, destination: content},
+        )
 
         self._assert_immutable_commit(
             commit_oid, {source: None, destination: content}
@@ -274,8 +474,32 @@ class PathLimitedBacklogGitTests(unittest.TestCase):
         self._assert_unrelated_state()
 
     def _commit_exact(
-        self, manifest: _ProviderPathManifest, message: str
-    ) -> str:
+        self,
+        manifest: _ProviderPathManifest,
+        message: str,
+        *,
+        configured_primary_branch: object,
+        intended: dict[str, bytes | None],
+    ) -> str | dict[str, object]:
+        manifest_paths = _validated_manifest_paths(manifest)
+        authority = observe_file_provider_authority(
+            self.repository,
+            configured_primary_branch,
+        )
+        if authority["status"] != "READY":
+            return {
+                "status": "BLOCKED",
+                "authority": authority,
+                "manifestPaths": manifest_paths,
+            }
+        if set(intended) != set(manifest_paths):
+            raise _InvalidManifest("intended path set differs from manifest")
+        for path, content in intended.items():
+            target = self.repository / path
+            if content is None:
+                target.unlink()
+            else:
+                self._write(path, content)
         add_argv, commit_argv = _mutating_argv(manifest, message)
         subprocess.run(
             add_argv, cwd=self.repository, check=True, capture_output=True
@@ -332,6 +556,32 @@ class PathLimitedBacklogGitTests(unittest.TestCase):
         self.assertEqual("M  README.md", self._status_line("README.md"))
         self.assertEqual(" M notes.txt", self._status_line("notes.txt"))
         self.assertEqual("?? scratch.txt", self._status_line("scratch.txt"))
+
+    def _repository_state(self) -> dict[str, object]:
+        """Capture exact HEAD, index, status, manifest, and unrelated worktree state."""
+
+        index_location = self._git("rev-parse", "--git-path", "index").stdout.strip()
+        index_path = Path(index_location)
+        if not index_path.is_absolute():
+            index_path = self.repository / index_path
+        worktree: dict[str, tuple[str, int, bytes | str]] = {}
+        for path in self.repository.rglob("*"):
+            relative = path.relative_to(self.repository).as_posix()
+            if relative == ".git" or relative.startswith(".git/"):
+                continue
+            mode = path.lstat().st_mode & 0o7777
+            if path.is_symlink():
+                worktree[relative] = ("symlink", mode, os.readlink(path))
+            elif path.is_file():
+                worktree[relative] = ("regular", mode, path.read_bytes())
+        return {
+            "head": self._git("rev-parse", "HEAD").stdout,
+            "indexExists": index_path.exists(),
+            "indexBytes": index_path.read_bytes() if index_path.exists() else b"",
+            "indexEntries": self._git_bytes("ls-files", "--stage", "-z"),
+            "status": self._git_bytes("status", "--porcelain=v1", "-z"),
+            "worktree": worktree,
+        }
 
     @staticmethod
     def _work_item_ids(content: bytes) -> list[str]:

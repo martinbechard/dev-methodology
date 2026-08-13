@@ -391,6 +391,7 @@ technology_skill_loadouts:
     notes: "Load both skills because fastapi explicitly composes with python."
 
 workflow_selection:
+  canonical_primary_branch: main
   persistence:
     default: file
     folder_overrides: []

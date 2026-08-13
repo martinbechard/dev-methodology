@@ -168,6 +168,7 @@ class ProjectSharedAgentSkillsTests(unittest.TestCase):
         project = {
             "resource_coordination": {"selected": "none"},
             "workflow_selection": {
+                "canonical_primary_branch": "UNSET",
                 "persistence": {"default": "UNSET"},
                 "commit": {"default": "UNSET"},
             },

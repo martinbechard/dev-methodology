@@ -61,6 +61,10 @@ cases:
     itemBefore: *blocked-resumption-item
   future-ideas-capture-and-promotion:
     provider: file
+    currentWorktree: primary
+    currentBranch: main
+    configuredPrimaryBranch: main
+    branchAuthorityResult: MATCHED
     nonFileProviderWithoutOverride: github
     nonFileProviderResult: BLOCKED with no issue and no shadow file
     explicitFileOverrideResult: capture under backlog/future-ideas

@@ -40,4 +40,4 @@ Return one labeled evidence block for every provider and operation. Use these ex
 - JIRA-RECOVER
 - JIRA-REPORT
 
-Do not collapse providers into one generic answer. Preserve file paths and primary-main authority for file, issue numbers and pull requests for GitHub, issue internal identifiers and merge requests for GitLab, and truthful zero-mutation BLOCKED results for Azure DevOps and Jira.
+Do not collapse providers into one generic answer. Preserve file paths and configured canonical-primary-branch authority for file, issue numbers and pull requests for GitHub, issue internal identifiers and merge requests for GitLab, and truthful zero-mutation BLOCKED results for Azure DevOps and Jira.

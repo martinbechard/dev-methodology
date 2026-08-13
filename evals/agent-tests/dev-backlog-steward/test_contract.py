@@ -19,6 +19,8 @@ from typing import Any, Callable
 
 import yaml
 
+from scripts.test_path_limited_backlog_git import observe_file_provider_authority
+
 
 SUITE_ROOT = Path(__file__).resolve().parent
 _PROMOTION_FIXTURE = yaml.safe_load(
@@ -286,9 +288,23 @@ def _execute_capture_transaction(
     repository: Path,
     idea: Path,
     idea_bytes: bytes,
+    *,
+    configured_primary_branch: object,
 ) -> dict[str, object]:
     """Create and commit one Future Idea through real exclusive file and Git operations."""
     idea_relative = idea.relative_to(repository).as_posix()
+    manifest = (idea_relative,)
+    authority = observe_file_provider_authority(
+        repository,
+        configured_primary_branch,
+    )
+    if authority["status"] != "READY":
+        return {
+            "status": "BLOCKED",
+            "reason": authority["reason"],
+            "authority": authority,
+            "manifestPaths": manifest,
+        }
     if os.path.lexists(idea):
         return {"status": "BLOCKED", "reason": "target collision"}
     descriptor = os.open(idea, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o666)
@@ -408,6 +424,7 @@ def _execute_promotion_transaction(
     idea_after: bytes,
     target_after: bytes,
     *,
+    configured_primary_branch: object,
     resource_coordination: str,
     claim_registry: _FakeClaimRegistry | None = None,
     after_claims: Callable[[], None] | None = None,
@@ -426,6 +443,21 @@ def _execute_promotion_transaction(
     calls; none performs the same Git transaction without claim operations or
     claim evidence.
     """
+    manifest = (
+        idea.relative_to(repository).as_posix(),
+        target.relative_to(repository).as_posix(),
+    )
+    authority = observe_file_provider_authority(
+        repository,
+        configured_primary_branch,
+    )
+    if authority["status"] != "READY":
+        return {
+            "status": "BLOCKED",
+            "reason": authority["reason"],
+            "authority": authority,
+            "manifestPaths": manifest,
+        }
     if resource_coordination not in {"resource-claim", "none"}:
         raise ValueError("unsupported resource coordination selection")
     if resource_coordination == "resource-claim" and claim_registry is None:
@@ -883,7 +915,7 @@ class DevBacklogStewardContractTests(unittest.TestCase):
         """Create a repository with complete idea and varied unrelated dirty state."""
         temporary = tempfile.TemporaryDirectory()
         repository = Path(temporary.name)
-        self._git(repository, "init", "--quiet")
+        self._git(repository, "init", "--quiet", "--initial-branch=main")
         self._git(repository, "config", "user.name", "Contract Test")
         self._git(repository, "config", "user.email", "contract@example.invalid")
         idea = repository / "backlog/future-ideas/retry-dashboard.md"
@@ -953,6 +985,110 @@ class DevBacklogStewardContractTests(unittest.TestCase):
             with self.subTest(preserved_line=preserved_line):
                 self.assertIn(preserved_line, after)
 
+    def test_future_idea_promotion_blocks_before_write_on_branch_mismatch(self) -> None:
+        """Preserve every transaction snapshot when supplied authority does not match Git."""
+
+        temporary, repository, idea, target, unrelated, index_path = (
+            self._promotion_repository()
+        )
+        self.addCleanup(temporary.cleanup)
+        head_before = self._git(repository, "rev-parse", "HEAD").stdout
+        index_before = index_path.read_bytes()
+        index_entries_before = _index_entries(repository)
+        idea_before = idea.read_bytes()
+        unrelated_before = unrelated.read_bytes()
+        status_before = self._git(repository, "status", "--porcelain=v1").stdout
+        manifest = (
+            idea.relative_to(repository).as_posix(),
+            target.relative_to(repository).as_posix(),
+        )
+        unrelated_state_before = _unrelated_worktree_state(repository, manifest)
+
+        result = _execute_promotion_transaction(
+            repository,
+            idea,
+            target,
+            _PROMOTED_IDEA_BYTES,
+            _PROMOTED_ITEM_BYTES,
+            configured_primary_branch="master",
+            resource_coordination="none",
+        )
+
+        self.assertEqual("BLOCKED", result["status"])
+        self.assertEqual(manifest, result["manifestPaths"])
+        self.assertEqual(head_before, self._git(repository, "rev-parse", "HEAD").stdout)
+        self.assertEqual(index_before, index_path.read_bytes())
+        self.assertEqual(index_entries_before, _index_entries(repository))
+        self.assertEqual(idea_before, idea.read_bytes())
+        self.assertFalse(target.exists())
+        self.assertEqual(unrelated_before, unrelated.read_bytes())
+        self.assertEqual(status_before, self._git(repository, "status", "--porcelain=v1").stdout)
+        self.assertEqual(
+            unrelated_state_before,
+            _unrelated_worktree_state(repository, manifest),
+        )
+
+    def test_future_idea_capture_blocks_before_write_on_branch_mismatch(self) -> None:
+        """Capture preserves HEAD, index, manifest, and unrelated bytes on mismatch."""
+
+        with tempfile.TemporaryDirectory() as temporary_name:
+            repository = Path(temporary_name)
+            self._git(repository, "init", "--quiet", "--initial-branch=main")
+            self._git(repository, "config", "user.name", "Contract Test")
+            self._git(repository, "config", "user.email", "contract@example.invalid")
+            staged = repository / "staged.txt"
+            dirty = repository / "dirty.txt"
+            staged.write_bytes(b"base staged bytes\n")
+            dirty.write_bytes(b"base dirty bytes\n")
+            self._git(repository, "add", "--", staged.name, dirty.name)
+            self._git(repository, "commit", "--quiet", "-m", "Initial state")
+            staged.write_bytes(b"unrelated staged bytes\n")
+            staged.chmod(0o640)
+            self._git(repository, "add", "--", staged.name)
+            dirty.write_bytes(b"unrelated dirty bytes\n")
+            dirty.chmod(0o744)
+            untracked = repository / "untracked.txt"
+            untracked.write_bytes(b"unrelated untracked bytes\n")
+            untracked.chmod(0o600)
+            idea = repository / _IDEA_CLAIM_PATH
+            idea.parent.mkdir(parents=True)
+            manifest = (_IDEA_CLAIM_PATH,)
+            index_location = self._git(
+                repository, "rev-parse", "--git-path", "index"
+            ).stdout.strip()
+            index_path = Path(index_location)
+            if not index_path.is_absolute():
+                index_path = repository / index_path
+            head_before = self._git(repository, "rev-parse", "HEAD").stdout
+            index_before = index_path.read_bytes()
+            index_entries_before = _index_entries(repository)
+            status_before = self._git(
+                repository, "status", "--porcelain=v1", "-z"
+            ).stdout
+            unrelated_before = _unrelated_worktree_state(repository, manifest)
+
+            result = _execute_capture_transaction(
+                repository,
+                idea,
+                _IDEA_BEFORE_BYTES,
+                configured_primary_branch="master",
+            )
+
+            self.assertEqual("BLOCKED", result["status"])
+            self.assertEqual(manifest, result["manifestPaths"])
+            self.assertEqual(head_before, self._git(repository, "rev-parse", "HEAD").stdout)
+            self.assertEqual(index_before, index_path.read_bytes())
+            self.assertEqual(index_entries_before, _index_entries(repository))
+            self.assertEqual(
+                status_before,
+                self._git(repository, "status", "--porcelain=v1", "-z").stdout,
+            )
+            self.assertFalse(idea.exists())
+            self.assertEqual(
+                unrelated_before,
+                _unrelated_worktree_state(repository, manifest),
+            )
+
     def test_future_ideas_case_and_output_contract_are_aligned(self) -> None:
         """Every suite surface exposes a meaningful Future Idea output contract."""
         fixture = yaml.safe_load(
@@ -981,6 +1117,10 @@ class DevBacklogStewardContractTests(unittest.TestCase):
         expected_output = "backlog item, Future Idea, or status update"
 
         self.assertEqual("file", fixture["provider"])
+        self.assertEqual("primary", fixture["currentWorktree"])
+        self.assertEqual("main", fixture["currentBranch"])
+        self.assertEqual("main", fixture["configuredPrimaryBranch"])
+        self.assertEqual("MATCHED", fixture["branchAuthorityResult"])
         self.assertEqual("github", fixture["nonFileProviderWithoutOverride"])
         self.assertIn("BLOCKED", fixture["nonFileProviderResult"])
         self.assertFalse(fixture["ordinaryScanIncludesIdea"])
@@ -1053,7 +1193,7 @@ class DevBacklogStewardContractTests(unittest.TestCase):
         )["cases"]["future-ideas-capture-and-promotion"]
         with tempfile.TemporaryDirectory() as temporary_name:
             repository = Path(temporary_name)
-            self._git(repository, "init", "--quiet")
+            self._git(repository, "init", "--quiet", "--initial-branch=main")
             self._git(repository, "config", "user.name", "Contract Test")
             self._git(
                 repository,
@@ -1074,7 +1214,12 @@ class DevBacklogStewardContractTests(unittest.TestCase):
             idea.parent.mkdir(parents=True)
             idea_bytes = fixture["ideaBefore"].encode("utf-8")
 
-            result = _execute_capture_transaction(repository, idea, idea_bytes)
+            result = _execute_capture_transaction(
+                repository,
+                idea,
+                idea_bytes,
+                configured_primary_branch="main",
+            )
 
             self.assertEqual("READY", result["status"])
             self.assertEqual((fixture["ideaPath"],), result["committedPaths"])
@@ -1412,6 +1557,7 @@ class DevBacklogStewardContractTests(unittest.TestCase):
                     target,
                     _PROMOTED_IDEA_BYTES,
                     _PROMOTED_ITEM_BYTES,
+                    configured_primary_branch="main",
                     resource_coordination="resource-claim",
                     claim_registry=registry,
                     fail_boundary=boundary,
@@ -1453,6 +1599,7 @@ class DevBacklogStewardContractTests(unittest.TestCase):
             target,
             _PROMOTED_IDEA_BYTES,
             _PROMOTED_ITEM_BYTES,
+            configured_primary_branch="main",
             resource_coordination="resource-claim",
             claim_registry=registry,
             fail_commit=True,
@@ -1491,6 +1638,7 @@ class DevBacklogStewardContractTests(unittest.TestCase):
             target,
             _PROMOTED_IDEA_BYTES,
             _PROMOTED_ITEM_BYTES,
+            configured_primary_branch="main",
             resource_coordination="resource-claim",
             claim_registry=registry,
         )
@@ -1579,6 +1727,7 @@ class DevBacklogStewardContractTests(unittest.TestCase):
                     target,
                     _PROMOTED_IDEA_BYTES,
                     _PROMOTED_ITEM_BYTES,
+                    configured_primary_branch="main",
                     resource_coordination="resource-claim",
                     claim_registry=registry,
                     fail_boundary=failure_boundary,
@@ -1670,6 +1819,7 @@ class DevBacklogStewardContractTests(unittest.TestCase):
                     target,
                     _PROMOTED_IDEA_BYTES,
                     _PROMOTED_ITEM_BYTES,
+                    configured_primary_branch="main",
                     resource_coordination="resource-claim",
                     claim_registry=registry,
                     after_claims=inject_drift,
@@ -1724,6 +1874,7 @@ class DevBacklogStewardContractTests(unittest.TestCase):
             target,
             _PROMOTED_IDEA_BYTES,
             _PROMOTED_ITEM_BYTES,
+            configured_primary_branch="main",
             resource_coordination="resource-claim",
             claim_registry=registry,
         )
@@ -1774,6 +1925,7 @@ class DevBacklogStewardContractTests(unittest.TestCase):
             target,
             _PROMOTED_IDEA_BYTES,
             _PROMOTED_ITEM_BYTES,
+            configured_primary_branch="main",
             resource_coordination="resource-claim",
             claim_registry=registry,
         )
@@ -1820,6 +1972,7 @@ class DevBacklogStewardContractTests(unittest.TestCase):
             target,
             _PROMOTED_IDEA_BYTES,
             _PROMOTED_ITEM_BYTES,
+            configured_primary_branch="main",
             resource_coordination="resource-claim",
             claim_registry=registry,
             after_claims=escape_destination_authority,
@@ -1864,6 +2017,7 @@ class DevBacklogStewardContractTests(unittest.TestCase):
             target,
             _PROMOTED_IDEA_BYTES,
             _PROMOTED_ITEM_BYTES,
+            configured_primary_branch="main",
             resource_coordination="resource-claim",
             claim_registry=registry,
             fail_boundary="rollback-verification",
@@ -1906,6 +2060,7 @@ class DevBacklogStewardContractTests(unittest.TestCase):
             target,
             _PROMOTED_IDEA_BYTES,
             _PROMOTED_ITEM_BYTES,
+            configured_primary_branch="main",
             resource_coordination="resource-claim",
             claim_registry=registry,
             fail_staging=True,
@@ -1940,6 +2095,7 @@ class DevBacklogStewardContractTests(unittest.TestCase):
             target,
             _PROMOTED_IDEA_BYTES,
             _PROMOTED_ITEM_BYTES,
+            configured_primary_branch="main",
             resource_coordination="resource-claim",
             claim_registry=registry,
             fail_boundary="post-commit-verification",
@@ -1991,6 +2147,7 @@ class DevBacklogStewardContractTests(unittest.TestCase):
             target,
             _PROMOTED_IDEA_BYTES,
             _PROMOTED_ITEM_BYTES,
+            configured_primary_branch="main",
             resource_coordination="resource-claim",
             claim_registry=registry,
             after_commit=move_head,
@@ -2034,6 +2191,7 @@ class DevBacklogStewardContractTests(unittest.TestCase):
                     target,
                     _PROMOTED_IDEA_BYTES,
                     _PROMOTED_ITEM_BYTES,
+                    configured_primary_branch="main",
                     resource_coordination="none",
                     claim_registry=registry,
                     fail_staging=fail_staging,

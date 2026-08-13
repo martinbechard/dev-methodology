@@ -76,6 +76,7 @@ technology_skill_loadouts:
     notes: The required skill is absent from available-skills.txt.
 folder_route_precedence: Most-specific matching path pattern wins.
 workflow_selection:
+  canonical_primary_branch: UNSET
   provider:
     default: UNSET
     folder_overrides: []

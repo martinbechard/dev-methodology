@@ -76,7 +76,7 @@ Project-specific evaluation skills may freeze inputs and compare completed candi
 - adapters/[runtime]/skills/[skill-name]/SKILL.md contains directives that belong only to that runtime. The installer includes these skills only with the matching adapter.
 - agents/roles contains conceptual agent definition sources grouped by Dev Activities, Wiki Activities, Project Setup, and Methodology Maintenance.
 - generated/adapters contains ready-to-copy native agent definitions and agent-generation-manifest.json. Codex, Claude Code, Gemini CLI, and Junie CLI definitions are generated from the same conceptual sources.
-- backlog contains the repository's typed active work, separate Stalled and Blocked lifecycle inventories, user-action-required queue, holding state, lightweight future-ideas area, and outcome archives. It is available only from the primary worktree.
+- backlog contains the repository's typed active work, separate Stalled and Blocked lifecycle inventories, user-action-required queue, holding state, lightweight future-ideas area, and outcome archives. File-provider mutation is available only from the primary worktree on the configured canonical primary branch.
 - .worktrees contains ignored linked agent checkouts beneath the primary worktree. It is operational state rather than distributable project source.
 - design/generated/technology-skill-detection-registry.js exposes the same detection registry for documentation.
 - design/role-catalog-groups.yaml owns presentation-only role group order, source-backed role overrides, and labels shared by the role cards and hierarchy diagram.
@@ -148,7 +148,7 @@ PROJECT.yaml selects resource-claim or none. When resource-claim is selected, Pr
 
 Skills that apply claims refer to that table instead of copying its rules.
 
-The primary worktree contains main and backlog. Private worktrees are separate checkouts under .worktrees.
+The primary worktree contains the configured canonical primary branch and backlog. Private worktrees are separate checkouts under .worktrees.
 
 Project setup keeps the canonical checkout root out of repository status with this anchored ignore entry:
 
@@ -611,8 +611,10 @@ creation provider delegates its exact commit to commit-file-provider-transaction
 provider excludes Future Ideas and routes an explicit ideation operation to manage-future-ideas.
 The four skills have non-overlapping responsibilities. GitHub Issues store GitHub-backed authoritative
 Work-item content, while the file-provider pair stores file-backed authoritative Work-item content only
-under backlog in the primary worktree on main. PROJECT.yaml selects Persistence and Commit independently,
-while AGENTS.md supplies only the corresponding provider references.
+under backlog in the primary worktree on workflow_selection.canonical_primary_branch. PROJECT.yaml
+supplies that explicit main, master, or UNSET authority independently from the Persistence and Commit
+selectors. Git confirms only primary-worktree topology and the current symbolic branch; it never selects
+the configured value. AGENTS.md supplies the corresponding provider references and rendered authority.
 
 deliver-work-item is the provider-neutral Commit interface consumed by Dev Orchestrator. It defines the accepted commit input, READY, AWAITING_REVIEW, and BLOCKED results, state-keyed evidence, and prepared Persistence handoff. AGENTS.md still selects deliver-work-item-main-branch or deliver-work-item-feature-branch from the effective Commit value.
 

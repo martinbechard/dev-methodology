@@ -66,6 +66,7 @@ def with_unset_workflows(value: dict[str, object]) -> dict[str, object]:
     return {
         **with_claim_helper({}),
         "workflow_selection": {
+            "canonical_primary_branch": "UNSET",
             "persistence": {"default": "UNSET"},
             "commit": {"default": "UNSET"},
         },
@@ -213,6 +214,82 @@ def run_detection(
 class TechnologyDetectionTests(unittest.TestCase):
     """Verify detector clauses, ownership isolation, generated mirrors, and routing output."""
 
+    def test_configured_primary_branch_is_explicit_preserved_and_validated(self) -> None:
+        """Keep file-provider branch authority separate from Git and Commit selection."""
+
+        renderer = load_renderer_module()
+        for branch in ("main", "master", "UNSET"):
+            with self.subTest(branch=branch):
+                rendered = renderer.workflow_lines({
+                    "workflow_selection": {
+                        "canonical_primary_branch": branch,
+                        "persistence": {"default": "file"},
+                        "commit": {"default": "main-branch"},
+                    },
+                })
+                self.assertIn(
+                    f"Configured canonical primary branch: {branch}.",
+                    "\n".join(rendered),
+                )
+
+        master_feature_branch = "\n".join(
+            renderer.workflow_lines({
+                "workflow_selection": {
+                    "canonical_primary_branch": "master",
+                    "persistence": {"default": "file"},
+                    "commit": {"default": "feature-branch"},
+                },
+            })
+        )
+        self.assertIn(
+            "Configured canonical primary branch: master.", master_feature_branch
+        )
+        self.assertIn("Default commit feature-branch", master_feature_branch)
+
+        for invalid in (None, True, ["main"], {"branch": "main"}, "trunk"):
+            with self.subTest(invalid=invalid), self.assertRaisesRegex(
+                ValueError,
+                "canonical_primary_branch",
+            ):
+                renderer.workflow_lines({
+                    "workflow_selection": {
+                        "canonical_primary_branch": invalid,
+                        "persistence": {"default": "file"},
+                        "commit": {"default": "main-branch"},
+                    },
+                })
+
+        with self.assertRaisesRegex(ValueError, "canonical_primary_branch is required"):
+            renderer.workflow_lines({
+                "workflow_selection": {
+                    "persistence": {"default": "file"},
+                    "commit": {"default": "main-branch"},
+                },
+            })
+
+        legacy = renderer.workflow_lines({
+            "workflow_selection": {
+                "backlog": {"default": "file-based-backlog"},
+                "workitem": {"default": "simple-workitem"},
+            },
+        })
+        self.assertIn(
+            "Configured canonical primary branch: UNSET.",
+            "\n".join(legacy),
+        )
+
+        preserved = renderer.workflow_lines({
+            "workflow_selection": {
+                "canonical_primary_branch": "master",
+                "provider": {"default": "file"},
+                "completion": {"default": "main-branch"},
+            },
+        })
+        self.assertIn(
+            "Configured canonical primary branch: master.",
+            "\n".join(preserved),
+        )
+
     def test_basic_setup_renders_resolved_values_without_hidden_controls(self) -> None:
         """Keep Basic setup inspectable while hiding fixed decisions."""
 
@@ -232,6 +309,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                 "technology_confirmation_required": True,
             },
             "workflow_selection": {
+                "canonical_primary_branch": "UNSET",
                 "persistence": {"default": "none"},
                 "commit": {"default": "main-branch"},
             },
@@ -289,6 +367,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                 "technology_confirmation_required": True,
             },
             "workflow_selection": {
+                "canonical_primary_branch": "UNSET",
                 "persistence": {"default": "file"},
                 "commit": {"default": "main-branch"},
             },
@@ -351,6 +430,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             },
             "technology_confirmation": confirmed_technology_selection(),
             "workflow_selection": {
+                "canonical_primary_branch": "UNSET",
                 "provider": {"default": "file"},
                 "completion": {"default": "feature-branch"},
             },
@@ -393,6 +473,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             with self.subTest(selector=selector):
                 rendered = renderer.render(with_claim_helper({
                     "workflow_selection": {
+                        "canonical_primary_branch": "UNSET",
                         "persistence": {"default": "none"},
                         selector: {
                             "default": "direct-main",
@@ -433,6 +514,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                 "technology_confirmation_required": True,
             },
             "workflow_selection": {
+                "canonical_primary_branch": "UNSET",
                 "persistence": {"default": "none"},
                 "commit": {"default": "direct-main"},
             },
@@ -455,6 +537,7 @@ class TechnologyDetectionTests(unittest.TestCase):
         ):
             renderer.workflow_lines({
                 "workflow_selection": {
+                    "canonical_primary_branch": "UNSET",
                     "persistence": {"default": "none"},
                     "commit": {
                         "default": "main-branch",
@@ -469,6 +552,7 @@ class TechnologyDetectionTests(unittest.TestCase):
         renderer = load_renderer_module()
         rendered = renderer.render(with_claim_helper({
             "workflow_selection": {
+                "canonical_primary_branch": "UNSET",
                 "backlog": {
                     "default": "file-based-backlog",
                     "folder_overrides": [{
@@ -508,6 +592,7 @@ class TechnologyDetectionTests(unittest.TestCase):
         ):
             renderer.render(with_claim_helper({
                 "workflow_selection": {
+                    "canonical_primary_branch": "UNSET",
                     "persistence": {"default": "file"},
                     "provider": {"default": "file"},
                     "commit": {"default": "main-branch"},
@@ -533,6 +618,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                 "technology_confirmation_required": True,
             },
             "workflow_selection": {
+                "canonical_primary_branch": "UNSET",
                 "persistence": {"default": "none"},
                 "commit": {"default": "main-branch"},
             },
@@ -603,6 +689,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                 "technology_confirmation_required": True,
             },
             "workflow_selection": {
+                "canonical_primary_branch": "UNSET",
                 "persistence": {"default": "none"},
                 "commit": {"default": "main-branch"},
             },
@@ -668,6 +755,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                 "technology_confirmation_required": True,
             },
             "workflow_selection": {
+                "canonical_primary_branch": "UNSET",
                 "persistence": {"default": "none"},
                 "commit": {"default": "main-branch"},
             },
@@ -733,6 +821,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                 "technology_confirmation_required": True,
             },
             "workflow_selection": {
+                "canonical_primary_branch": "UNSET",
                 "persistence": {"default": "none"},
                 "commit": {"default": "main-branch"},
             },
@@ -2634,6 +2723,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             (
                 {
                     "workflow_selection": {
+                        "canonical_primary_branch": "UNSET",
                         "commit": {"default": "UNSET"},
                     },
                 },
@@ -2642,6 +2732,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             (
                 {
                     "workflow_selection": {
+                        "canonical_primary_branch": "UNSET",
                         "persistence": {"default": "UNSET"},
                     },
                 },
@@ -2650,6 +2741,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             (
                 {
                     "workflow_selection": {
+                        "canonical_primary_branch": "UNSET",
                         "persistence": {},
                         "commit": {"default": "UNSET"},
                     },
@@ -2659,6 +2751,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             (
                 {
                     "workflow_selection": {
+                        "canonical_primary_branch": "UNSET",
                         "persistence": {"default": "UNSET"},
                         "commit": {},
                     },
@@ -2678,6 +2771,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             (
                 {
                     "workflow_selection": {
+                        "canonical_primary_branch": "UNSET",
                         "provider": {
                             "default": "file",
                             "folder_overrides": [
@@ -2693,6 +2787,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             (
                 {
                     "workflow_selection": {
+                        "canonical_primary_branch": "UNSET",
                         "provider": {
                             "default": "file",
                             "folder_overrides": [
@@ -2708,6 +2803,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             (
                 {
                     "workflow_selection": {
+                        "canonical_primary_branch": "UNSET",
                         "provider": {"default": "file"},
                         "completion": {
                             "default": "main-branch",
@@ -2723,6 +2819,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             (
                 {
                     "workflow_selection": {
+                        "canonical_primary_branch": "UNSET",
                         "provider": {"default": "file"},
                         "completion": {
                             "default": "main-branch",
@@ -2746,6 +2843,7 @@ class TechnologyDetectionTests(unittest.TestCase):
         renderer = load_renderer_module()
         rendered = renderer.render(with_claim_helper({
             "workflow_selection": {
+                "canonical_primary_branch": "UNSET",
                 "persistence": {
                     "default": "file",
                     "folder_overrides": [
@@ -2791,6 +2889,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                 with self.subTest(persistence=persistence, commit=commit):
                     rendered = renderer.render(with_claim_helper({
                         "workflow_selection": {
+                            "canonical_primary_branch": "UNSET",
                             "persistence": {"default": persistence},
                             "commit": {"default": commit},
                         },
@@ -2809,6 +2908,7 @@ class TechnologyDetectionTests(unittest.TestCase):
         renderer = load_renderer_module()
         rendered = renderer.render(with_claim_helper({
             "workflow_selection": {
+                "canonical_primary_branch": "UNSET",
                 "persistence": {
                     "default": "file",
                     "folder_overrides": [{
@@ -2849,18 +2949,21 @@ class TechnologyDetectionTests(unittest.TestCase):
         renderer = load_renderer_module()
         none_rendered = renderer.render(with_claim_helper({
             "workflow_selection": {
+                "canonical_primary_branch": "UNSET",
                 "persistence": {"default": "none"},
                 "commit": {"default": "feature-branch"},
             },
         }))
         unset_rendered = renderer.render(with_claim_helper({
             "workflow_selection": {
+                "canonical_primary_branch": "UNSET",
                 "persistence": {"default": "UNSET"},
                 "commit": {"default": "UNSET"},
             },
         }))
         placeholder_rendered = renderer.render(with_claim_helper({
             "workflow_selection": {
+                "canonical_primary_branch": "UNSET",
                 "persistence": {"default": "azure-devops"},
                 "commit": {"default": "main-branch"},
             },
@@ -2884,6 +2987,7 @@ class TechnologyDetectionTests(unittest.TestCase):
         renderer = load_renderer_module()
         rendered = renderer.render(with_claim_helper({
             "workflow_selection": {
+                "canonical_primary_branch": "UNSET",
                 "persistence": {"default": "github"},
                 "commit": {"default": "feature-branch"},
             },
@@ -3059,6 +3163,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             (
                 {
                     "workflow_selection": {
+                        "canonical_primary_branch": "UNSET",
                         "provider": {"default": "bitbucket"},
                         "completion": {"default": "main-branch"},
                     },
@@ -3068,6 +3173,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             (
                 {
                     "workflow_selection": {
+                        "canonical_primary_branch": "UNSET",
                         "provider": {"default": "file"},
                         "completion": {"default": "merge-when-green"},
                     },
@@ -3077,6 +3183,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             (
                 {
                     "workflow_selection": {
+                        "canonical_primary_branch": "UNSET",
                         "provider": {
                             "default": "file",
                             "folder_overrides": [{
@@ -3092,6 +3199,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             (
                 {
                     "workflow_selection": {
+                        "canonical_primary_branch": "UNSET",
                         "provider": {"default": "file"},
                         "completion": {
                             "default": "main-branch",
@@ -3107,6 +3215,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             (
                 {
                     "workflow_selection": {
+                        "canonical_primary_branch": "UNSET",
                         "provider": {
                             "default": "file",
                             "folder_overrides": [{"pattern": "", "provider": "github"}],
@@ -3119,6 +3228,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             (
                 {
                     "workflow_selection": {
+                        "canonical_primary_branch": "UNSET",
                         "provider": {"default": "file"},
                         "completion": {
                             "default": "main-branch",
@@ -3174,6 +3284,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                 canonical_default = "main-branch" if canonical_key == "commit" else "file"
                 project = {
                     "workflow_selection": {
+                        "canonical_primary_branch": "UNSET",
                         legacy_key: {"default": legacy_default},
                         canonical_key: {"default": canonical_default},
                     },
@@ -3210,6 +3321,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                 canonical_default = "main-branch" if canonical_key == "commit" else "file"
                 project = {
                     "workflow_selection": {
+                        "canonical_primary_branch": "UNSET",
                         legacy_key: {
                             "default": legacy_default,
                             "folder_overrides": [{
@@ -3268,6 +3380,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                 )
                 rendered = renderer.render(with_claim_helper({
                     "workflow_selection": {
+                        "canonical_primary_branch": "UNSET",
                         selector: {"default": legacy_value},
                         **other,
                     },
@@ -3306,6 +3419,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             (
                 {
                     "workflow_selection": {
+                        "canonical_primary_branch": "UNSET",
                         "workitem": {
                             "default": "simple-workitem",
                             "folder_overrides": "services/**",
@@ -3317,6 +3431,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             (
                 {
                     "workflow_selection": {
+                        "canonical_primary_branch": "UNSET",
                         "backlog": {
                             "default": "file-based-backlog",
                             "folder_overrides": ["not-a-mapping"],
@@ -3328,6 +3443,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             (
                 {
                     "workflow_selection": {
+                        "canonical_primary_branch": "UNSET",
                         "workitem": {
                             "default": "simple-workitem",
                             "folder_overrides": [{"process": "feature-branch-workitem"}],
@@ -3339,6 +3455,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             (
                 {
                     "workflow_selection": {
+                        "canonical_primary_branch": "UNSET",
                         "backlog": {
                             "default": "file-based-backlog",
                             "folder_overrides": [{"pattern": "services/**"}],
@@ -3351,6 +3468,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             (
                 {
                     "workflow_selection": {
+                        "canonical_primary_branch": "UNSET",
                         "workitem": {
                             "default": "simple-workitem",
                             "folder_overrides": [{
@@ -3365,6 +3483,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             (
                 {
                     "workflow_selection": {
+                        "canonical_primary_branch": "UNSET",
                         "backlog": {
                             "default": "file-based-backlog",
                             "folder_overrides": [{
@@ -3379,6 +3498,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             (
                 {
                     "workflow_selection": {
+                        "canonical_primary_branch": "UNSET",
                         "backlog": {
                             "default": "file-based-backlog",
                             "folder_overrides": [
@@ -3393,6 +3513,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             (
                 {
                     "workflow_selection": {
+                        "canonical_primary_branch": "UNSET",
                         "workitem": {
                             "default": "simple-workitem",
                             "folder_overrides": [
@@ -3417,6 +3538,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             (
                 {
                     "workflow_selection": {
+                        "canonical_primary_branch": "UNSET",
                         "provider": {"default": "file-based-backlog"},
                         "completion": {"default": "main-branch"},
                     },
@@ -3426,6 +3548,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             (
                 {
                     "workflow_selection": {
+                        "canonical_primary_branch": "UNSET",
                         "provider": {"default": "github"},
                         "completion": {"default": "simple-workitem"},
                     },

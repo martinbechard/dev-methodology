@@ -66,6 +66,7 @@ COMPLETION_SKILLS = {
     "feature-branch": "deliver-work-item-feature-branch",
 }
 COMPLETION_VALUES = (*COMPLETION_SKILLS, "UNSET")
+CANONICAL_PRIMARY_BRANCH_VALUES = ("main", "master", "UNSET")
 LEGACY_MAIN_BRANCH_COMMIT = "direct-main"
 SETUP_MODES = ("basic", "advanced")
 DOCUMENTATION_CHOICES = ("none", "wiki", "specifications", "both")
@@ -635,6 +636,7 @@ def _canonical_workflow_selection(
     """Normalize one compatible selector family per domain to Persistence and Commit."""
 
     allowed_keys = {
+        "canonical_primary_branch",
         "persistence",
         "commit",
         "provider",
@@ -646,11 +648,36 @@ def _canonical_workflow_selection(
     unsupported = set(selection) - allowed_keys
     if unsupported:
         raise ValueError(
-            "workflow_selection keys must be canonical persistence and commit, compatibility "
-            "provider, completion, backlog, or workitem, and optional selection_policy"
+            "workflow_selection keys must be canonical_primary_branch, canonical persistence "
+            "and commit, compatibility provider, completion, backlog, or workitem, and optional "
+            "selection_policy"
         )
     normalized: dict[str, object] = {}
     notices: list[str] = []
+    configured_primary_branch = selection.get("canonical_primary_branch")
+    legacy_selector_present = any(
+        key in selection for key in ("provider", "completion", "backlog", "workitem")
+    )
+    if "canonical_primary_branch" not in selection:
+        if not legacy_selector_present:
+            raise ValueError(
+                "workflow_selection.canonical_primary_branch is required; use UNSET when the "
+                "configured canonical primary branch is not selected"
+            )
+        configured_primary_branch = "UNSET"
+        notices.append(
+            "Normalized missing legacy workflow_selection.canonical_primary_branch to UNSET."
+        )
+    if (
+        not isinstance(configured_primary_branch, str)
+        or configured_primary_branch not in CANONICAL_PRIMARY_BRANCH_VALUES
+    ):
+        rendered_values = ", ".join(CANONICAL_PRIMARY_BRANCH_VALUES)
+        raise ValueError(
+            "workflow_selection.canonical_primary_branch rejects "
+            f"{configured_primary_branch!r}; supported values: {rendered_values}"
+        )
+    normalized["canonical_primary_branch"] = configured_primary_branch
     for target_key, families in (
         ("persistence", ("persistence", "provider", "backlog")),
         ("commit", ("commit", "completion", "workitem")),
@@ -941,6 +968,7 @@ def workflow_lines(value: dict[str, object]) -> list[str]:
         "commit",
         COMPLETION_VALUES,
     )
+    configured_primary_branch = canonical_selection["canonical_primary_branch"]
 
     lines = [
         "## Work-Item Workflow Skill References",
@@ -948,6 +976,8 @@ def workflow_lines(value: dict[str, object]) -> list[str]:
         "Project Configurator owns the independent Persistence and Commit selectors. Persistence routes durable work-item storage; Commit routes delivery. Workflow skills are referenced by name only and technology skill routing remains separate.",
         "",
         *(f"- {notice}" for notice in notices),
+        f"- Configured canonical primary branch: {configured_primary_branch}.",
+        "- File-provider mutation requires the primary worktree on that exact attached branch. Git observes checkout topology and the symbolic branch but never supplies this configured value.",
         _persistence_reference("Default persistence", persistence),
     ]
     lines.extend(
@@ -964,6 +994,7 @@ def workflow_lines(value: dict[str, object]) -> list[str]:
         "Most-specific matching folder pattern wins independently for Persistence and Commit overrides. A folder override changes only its own selector.",
         "",
         "When a selector is UNSET, the pertinent agent asks at the stated operation boundary and does not infer either value from repository or hosting evidence, files, remotes, templates, plugins, or available tools.",
+        "When the configured canonical primary branch is UNSET, file-provider mutation is BLOCKED until Project Configurator records main or master.",
         "",
     ])
     return lines
