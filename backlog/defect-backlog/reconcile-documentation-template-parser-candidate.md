@@ -1,6 +1,6 @@
 # Reconcile Documentation Template Parser Candidate
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -57,3 +57,14 @@ None.
 ## Notes
 
 - The legacy branch and worktree can be deleted after this work item is committed and verified.
+
+## Starting Handoff Evidence
+
+- Reserved At: 2026-08-13T11:43:11Z.
+- Transition: `Ready -> Starting`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Baseline: `e8923f2cb1fe967806a0542359d15af01d94ac19` on primary `main`.
+- Capacity: Slot 5 of 5. Independent Dev Documentation Writer parser-fixture scope; exclude private Backlog Dispatcher, provenance, evaluation terminology, and Dev Orchestrator routing paths.
+- Transition Claims: `start-reconcile-documentation-template-parser-candidate-work-item`; event `15cd995b-42fc-4349-b444-1e6285b3566d`. `start-reconcile-documentation-template-parser-candidate-provider`; event `2a464966-4444-480a-ad81-fc595bbe1e79`.
+- Runtime Identity: Pending caller-owned visible task creation. Creation does not imply Running.
