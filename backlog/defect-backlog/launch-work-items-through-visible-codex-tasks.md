@@ -83,3 +83,15 @@ Approved at creation. On 2026-08-13, the user explicitly requested the concise B
 - Capacity and Overlap: Immediate policy correction is authorized alongside the two preserved live executions. Its exact source and focused-test paths do not overlap their mutation scope.
 - Transition Claim: `start-visible-codex-task-dispatch-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `11915b40-70c9-45e5-8e46-b445dee56fa9`.
 - Next Reconciliation: Reconcile the exact visible task-creation result. Task creation does not establish Running; the nested Dev Orchestrator records Starting -> Running before mutation.
+
+## Canonical Runtime Assignment
+
+- Assigned At: 2026-08-13T02:00:55Z.
+- Codex Task ID: `019ff8d9-8cfa-7010-85ca-ee778a40a30a`.
+- Conversation ID: `019ff8d9-8cfa-7010-85ca-ee778a40a30a`.
+- Host: `local`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Requested Title: `Starting — Launch Work Items Through Visible Codex Tasks`.
+- Initial Action: Start one Dev Orchestrator collaboration subagent for this authoritative provider record.
+- Creation Outcome: Unique success with no pending client identity and no retry.
+- Lifecycle Boundary: This assignment remains Starting until the nested Dev Orchestrator accepts and records Starting -> Running.
