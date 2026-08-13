@@ -1,6 +1,6 @@
 # Launch Work Items Through Visible Codex Tasks
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -95,3 +95,12 @@ Approved at creation. On 2026-08-13, the user explicitly requested the concise B
 - Initial Action: Start one Dev Orchestrator collaboration subagent for this authoritative provider record.
 - Creation Outcome: Unique success with no pending client identity and no retry.
 - Lifecycle Boundary: This assignment remains Starting until the nested Dev Orchestrator accepts and records Starting -> Running.
+
+## Running Acceptance Evidence
+
+- Accepted At: 2026-08-13T02:03:10Z.
+- Accepted By: `/root/launch_visible_codex_tasks/visible_codex_work_item_orchestrator`.
+- Canonical Codex Task ID: `019ff8d9-8cfa-7010-85ca-ee778a40a30a`.
+- Transition: `Starting -> Running`.
+- Requested Title: `Running — Launch Work Items Through Visible Codex Tasks`.
+- Transition Claim: `launch-visible-codex-running-transition-019ff8d9`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `9c088936-fee3-449e-b3ca-087e07191aa5`.
