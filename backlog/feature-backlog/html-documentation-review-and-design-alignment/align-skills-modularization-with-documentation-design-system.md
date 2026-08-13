@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: User Action Required
+Status: Blocked
 
 Type: Feature
 
@@ -118,9 +118,9 @@ Dependency Reconciliation: Satisfied by completed Work Item `review-skills-modul
 
 ## User Action Required
 
-### Question for the User
+### Resolved Decision
 
-For DDS-COM-010, should the Agent Skill Architecture page add concise visible footer wording using only useful known page-specific provenance, scope, and compatibility facts, or preserve the accepted content baseline and seek an independently reviewed source-backed variation?
+The user's durable blanket answer is Option A: add a short visible footer using only provenance, scope, and compatibility facts established by accepted source lineage, then obtain fresh content, browser, and Documentation Design System review. Do not ask this DDS-COM-010 question again.
 
 ### Why User Input Is Required
 
@@ -133,7 +133,7 @@ The first option deliberately changes visible content. The second preserves the 
 
 ### Resolution
 
-Pending in canonical Task and Conversation `019ffcd2-9428-7bb1-9446-049d52f87bca`.
+Resolved by the user's blanket Option A answer for this exact bounded DDS-COM-010 contract.
 
 ### Unattended Work Boundary
 
@@ -148,3 +148,18 @@ Do not implement, integrate, deliver, or close this item until the user answers 
 - Work Claim Release: `align-skills-modularization-work-019ffcd2`; disposition `blocked`; blocker `DDS-COM-010 user decision and predecessor integration`; event `c0e8b66a-f002-4094-b621-8c005ea7e20a`.
 - Provider Transition Claim: `skills-modularization-footer-uar-019ff2c3`; event `21d20b56-6cce-4498-8043-4afcfc3d2b30`.
 - Required Runtime Title: `Waiting for User — Align Agent Skill Architecture With Documentation Design System`.
+
+## Predecessor Integration Blocker
+
+- Recorded At: 2026-08-13T22:28:15Z.
+- Transition: `User Action Required -> Blocked`.
+- Preserved Canonical Task and Conversation: `019ffcd2-9428-7bb1-9446-049d52f87bca` on host `local`.
+- User Decision: The known-facts-only DDS-COM-010 footer contract is approved and must not be asked again.
+- Source State: No implementation or candidate exists.
+- Exact Blocker: The accepted final lineage of predecessor `align-agent-and-skill-definitions-with-documentation-design-system` has not reached main; that predecessor remains technical `Blocked` with preserved candidate `05b2bda3b929d8258a9a096b8dbc9870ab2d5629`.
+- Recovery Owner: Dev Backlog Coordinator through the predecessor's recorded Project Configurator capability recovery.
+- Unblock Condition: The predecessor is Completed and its accepted final lineage is present on main.
+- Provider Update Claim: `block-skills-modularization-predecessor-019ff2c3`; event `181c918f-859a-4f2c-ae5a-1450d302d71c`.
+- Provider Paths Claim: `block-skills-modularization-predecessor-paths-019ff2c3`; event `7517b6bc-a3e8-48c5-b31e-cfa61b2cd67f`.
+- Required Runtime Title: `Blocked — Align Agent Skill Architecture With Documentation Design System`.
+- Safe Resume: Preserve this task and execution. Resume only through `Blocked -> Ready -> Starting -> Running` after the predecessor trigger.
