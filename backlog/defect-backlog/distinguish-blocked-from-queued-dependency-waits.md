@@ -1,6 +1,6 @@
 # Distinguish Blocked From Queued Dependency Waits
 
-Status: Blocked
+Status: Ready
 
 Type: Defect
 
@@ -117,3 +117,10 @@ Approved at creation by the user's explicit 2026-08-12 lifecycle-policy clarific
 - Unblock Condition: Retry the same create operation once with `output_folder` omitted, then use and verify the provider-returned JSON path and sibling HTML.
 - Preserved Execution: `/root/distinguish_blocked_waits`; safe to resume without replacement.
 - Transition Claim: `block-folder-dependency-plan-path-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `6a55d2e4-257d-4493-b454-ce9086f7910f`.
+
+## Plan Workspace Recovery
+
+- Reconciled At: 2026-08-13T00:49:36Z.
+- Decision: The rejected custom visualization folder was optional dispatch data, not a required provider configuration. The configured default output folder is the supported recovery route.
+- Ready Action: Resume the same execution and retry `create_hierarchy_plan` exactly once with `output_folder` omitted. Accept only the returned authoritative JSON path after verifying its JSON and sibling HTML.
+- Recovery Claim: `ready-folder-dependency-plan-default-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `fde79ab0-7b47-4e6e-b13d-fdfb97d5db4d`.
