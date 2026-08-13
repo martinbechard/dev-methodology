@@ -5,435 +5,91 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Wiki Skills And Project Context</title>
+  <meta name="design-system-version" content="1.0.0">
+  <link rel="stylesheet" href="documentation-design-system/assets/design-system.css">
   <style>
-    :root {
-      --color-ink: #172033;
-      --color-muted: #5b6678;
-      --color-page: #f6f8fb;
-      --color-panel: #ffffff;
-      --color-line: #d9e1ea;
-      --color-blue: #2563eb;
-      --color-green: #0f766e;
-      --color-amber: #b45309;
-      --color-purple: #7c3aed;
-      --color-rose: #be123c;
-      --color-soft-blue: #e8f0ff;
-      --color-soft-green: #e4f7f4;
-      --color-soft-amber: #fff1d8;
-      --color-soft-purple: #f0e8ff;
-      --color-soft-rose: #ffe5ec;
-      --color-soft-gray: #edf1f6;
-      --shadow-panel: 0 14px 32px rgba(31, 41, 55, 0.08);
-      --space-2: 0.5rem;
-      --space-3: 0.75rem;
-      --space-4: 1rem;
-      --space-5: 1.25rem;
-      --space-6: 1.5rem;
-      --space-8: 2rem;
-      --space-10: 2.5rem;
-      --radius: 0.5rem;
-      --radius-small: 0.35rem;
-      --content-max: 1220px;
-      --font-sm: 0.92rem;
-      --font-xs: 0.78rem;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      display: flex;
-      min-height: 100vh;
-      margin: 0;
-      flex-direction: column;
-      color: var(--color-ink);
-      background:
-        linear-gradient(180deg, rgba(232, 240, 255, 0.9), rgba(246, 248, 251, 0) 340px),
-        var(--color-page);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      line-height: 1.52;
-    }
-
-    a {
-      color: var(--color-blue);
-    }
-
-    a:focus-visible {
-      outline: 3px solid var(--color-amber);
-      outline-offset: 3px;
-    }
-
-    .skip-link {
-      position: fixed;
-      z-index: 10;
-      top: var(--space-3);
-      left: var(--space-3);
-      padding: var(--space-3) var(--space-4);
-      transform: translateY(-180%);
-      border-radius: var(--radius-small);
-      background: var(--color-ink);
-      color: var(--color-panel);
-      font-weight: 750;
-    }
-
-    .skip-link:focus {
-      transform: translateY(0);
-    }
-
-    main {
-      width: 100%;
-      max-width: var(--content-max);
-      margin: 0 auto;
-      padding: var(--space-10) var(--space-6);
-      flex: 1 0 auto;
-    }
-
-    h1,
-    h2,
-    h3 {
-      margin: 0;
-      line-height: 1.15;
-    }
-
-    h1 {
-      max-width: 940px;
-      font-size: clamp(2rem, 4vw, 3.7rem);
-    }
-
-    h2 {
-      margin-bottom: var(--space-4);
-      font-size: clamp(1.35rem, 2vw, 2rem);
-    }
-
-    h3 {
-      font-size: 1.05rem;
-    }
-
-    p {
-      margin: 0;
-      color: var(--color-muted);
-    }
-
-    p + p {
-      margin-top: 0.65rem;
-    }
-
-    ul,
-    ol {
-      margin: 0;
-      padding-left: var(--space-5);
-    }
-
-    li + li {
-      margin-top: var(--space-2);
-    }
-
-    code {
-      padding: 0.1rem 0.24rem;
-      border-radius: 0.25rem;
-      background: var(--color-soft-gray);
-      font-size: 0.9em;
-    }
-
-    .site-header,
-    .site-footer {
-      width: 100%;
-      max-width: var(--content-max);
-      margin: 0 auto;
-      padding-right: var(--space-6);
-      padding-left: var(--space-6);
-    }
-
-    .site-header {
-      display: flex;
-      align-items: center;
-      gap: var(--space-3);
-      padding-top: var(--space-4);
-    }
-
-    .site-brand {
-      display: inline-flex;
-      min-width: 0;
-      align-items: center;
-      gap: var(--space-3);
-      color: var(--color-ink);
-      font-size: clamp(0.88rem, 1.4vw, 0.95rem);
-      font-weight: 750;
-      line-height: 1.2;
-      text-decoration: none;
-    }
-
-    .site-logo {
-      width: 2.25rem;
-      height: 2.25rem;
-      border-radius: var(--radius-small);
-      object-fit: cover;
-      box-shadow: 0 4px 12px rgba(31, 41, 55, 0.14);
-    }
-
-    .document-nav {
-      display: grid;
-      gap: var(--space-3);
-      margin-bottom: var(--space-6);
-    }
-
-    .document-sequence {
-      display: flex;
-      flex-wrap: wrap;
-      gap: var(--space-3);
-    }
-
-    .document-nav a {
-      display: inline-flex;
-      width: max-content;
-      align-items: center;
-      gap: var(--space-2);
-      padding: 0.45rem 0.75rem;
-      border: 1px solid var(--color-line);
-      border-radius: var(--radius);
-      background: var(--color-panel);
-      color: var(--color-muted);
-      font-size: var(--font-sm);
-      font-weight: 700;
-      text-decoration: none;
-      box-shadow: var(--shadow-panel);
-      transition: border-color 160ms ease, color 160ms ease, transform 160ms ease;
-    }
-
-    .document-nav a:hover,
-    .document-nav a:focus-visible {
-      transform: translateY(-1px);
-      border-color: var(--color-blue);
-      color: var(--color-ink);
-    }
-
-    .hero {
-      display: grid;
-      gap: var(--space-5);
-      margin-bottom: var(--space-8);
-    }
-
-    .eyebrow {
-      color: var(--color-green);
-      font-size: var(--font-xs);
-      font-weight: 800;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-    }
-
-    .lede {
-      max-width: 940px;
-      font-size: 1.08rem;
-    }
+    .card.pattern { border-top: 0.35rem solid var(--ds-blue); }
+    .card.format { border-top: 0.35rem solid var(--ds-purple); }
+    .card.method { border-top: 0.35rem solid var(--ds-teal); }
+    .card.hybrid { border-top: 0.35rem solid var(--ds-amber); }
 
     .hero-note {
-      max-width: 940px;
-      padding: var(--space-4) var(--space-5);
-      border-left: 0.35rem solid var(--color-green);
-      border-radius: 0 var(--radius) var(--radius) 0;
-      background: var(--color-soft-green);
-    }
-
-    .hero-note p {
-      color: var(--color-ink);
-    }
-
-    .section {
-      margin-top: var(--space-8);
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: var(--space-4);
-    }
-
-    .card,
-    .panel,
-    .matrix,
-    .flow-shell {
-      border: 1px solid var(--color-line);
-      border-radius: var(--radius);
-      background: var(--color-panel);
-      box-shadow: var(--shadow-panel);
-    }
-
-    .card,
-    .panel {
-      display: grid;
-      gap: var(--space-3);
-      padding: var(--space-5);
-    }
-
-    .card {
-      border-top: 0.35rem solid var(--accent, var(--color-blue));
-    }
-
-    .card p,
-    .card li,
-    .panel li,
-    td {
-      color: var(--color-muted);
-    }
-
-    .pattern {
-      --accent: var(--color-blue);
-    }
-
-    .format {
-      --accent: var(--color-purple);
-    }
-
-    .method {
-      --accent: var(--color-green);
-    }
-
-    .hybrid {
-      --accent: var(--color-amber);
-    }
-
-    .tag {
-      width: max-content;
-      padding: 0.25rem 0.5rem;
-      border-radius: 999px;
-      background: var(--color-soft-gray);
-      color: var(--color-muted);
-      font-size: var(--font-xs);
-      font-weight: 800;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
+      border-left: 0.35rem solid var(--ds-teal);
+      background: var(--ds-soft-teal);
     }
 
     .flow-shell {
-      padding: var(--space-5);
       overflow: hidden;
       background:
         radial-gradient(circle at 50% 0, rgba(232, 240, 255, 0.95), transparent 44%),
-        var(--color-panel);
+        var(--ds-panel);
     }
 
     .flow {
       display: grid;
       grid-template-columns: minmax(170px, 0.85fr) auto minmax(230px, 1.2fr) auto minmax(190px, 0.95fr);
       align-items: stretch;
-      gap: var(--space-3);
+      gap: var(--ds-space-3);
     }
 
     .flow-stage {
       display: grid;
-      gap: var(--space-3);
       align-content: start;
-      padding: var(--space-4);
-      border: 1px solid var(--color-line);
-      border-radius: var(--radius-small);
-      background: var(--color-panel);
+      gap: var(--ds-space-3);
     }
 
-    .flow-stage.sources {
-      border-top: 0.35rem solid var(--color-rose);
-    }
-
-    .flow-stage.compilation {
-      border-top: 0.35rem solid var(--color-green);
-    }
-
-    .flow-stage.use {
-      border-top: 0.35rem solid var(--color-blue);
-    }
+    .flow-stage.sources { border-top: 0.35rem solid var(--ds-rose); }
+    .flow-stage.compilation { border-top: 0.35rem solid var(--ds-teal); }
+    .flow-stage.use { border-top: 0.35rem solid var(--ds-blue); }
 
     .flow-stage ul {
-      color: var(--color-muted);
-      font-size: var(--font-sm);
+      color: var(--ds-muted);
+      font-size: 0.92rem;
     }
 
     .flow-arrow {
       display: grid;
       place-items: center;
-      color: var(--color-green);
-      font-size: 1.8rem;
-      font-weight: 800;
     }
 
     .code-rail {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: var(--space-3);
-      margin-top: var(--space-4);
-      padding-top: var(--space-4);
-      border-top: 1px dashed var(--color-line);
+      gap: var(--ds-space-3);
+      margin-top: var(--ds-space-4);
+      padding-top: var(--ds-space-4);
+      border-top: 1px dashed var(--ds-line);
     }
 
     .code-input {
-      padding: var(--space-3);
+      padding: var(--ds-space-3);
       border: 1px solid #edc998;
-      border-radius: var(--radius-small);
-      background: var(--color-soft-amber);
-      color: var(--color-ink);
-      font-size: var(--font-sm);
+      border-radius: var(--ds-radius-sm);
+      background: var(--ds-soft-amber);
+      color: var(--ds-ink);
+      font-size: 0.92rem;
       font-weight: 700;
       text-align: center;
     }
 
     .flow-caption {
-      margin-top: var(--space-4);
-      font-size: var(--font-sm);
+      margin-top: var(--ds-space-4);
+      font-size: 0.92rem;
     }
 
-    .matrix {
-      overflow-x: auto;
-    }
-
-    table {
-      width: 100%;
-      min-width: 760px;
-      border-collapse: collapse;
-      font-size: var(--font-sm);
-    }
-
-    th,
-    td {
-      padding: var(--space-3) var(--space-4);
-      border-bottom: 1px solid var(--color-line);
-      text-align: left;
-      vertical-align: top;
-    }
-
-    th {
-      background: var(--color-soft-blue);
-      color: var(--color-ink);
-      font-size: var(--font-xs);
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-    }
-
-    tbody tr:last-child td {
-      border-bottom: 0;
-    }
-
-    .skill-link {
-      font-weight: 780;
-    }
+    .ownership-table { min-width: 760px; }
+    .skill-link { font-weight: 780; }
 
     .boundary-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: var(--space-4);
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+      gap: var(--ds-space-4);
     }
 
     .boundary-card {
       display: grid;
-      grid-template-columns: auto 1fr;
-      gap: var(--space-3);
-      padding: var(--space-5);
-      border: 1px solid var(--color-line);
-      border-radius: var(--radius);
-      background: var(--color-panel);
-      box-shadow: var(--shadow-panel);
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: var(--ds-space-3);
     }
 
     .boundary-mark {
@@ -442,33 +98,21 @@
       height: 2.1rem;
       place-items: center;
       border-radius: 50%;
-      background: var(--color-soft-green);
-      color: var(--color-green);
-      font-size: var(--font-xs);
+      background: var(--ds-soft-teal);
+      color: var(--ds-teal);
+      font-size: 0.78rem;
       font-weight: 850;
     }
 
     .boundary-copy {
       display: grid;
-      gap: var(--space-2);
-    }
-
-    .note {
-      margin-top: var(--space-4);
-      padding: var(--space-4) var(--space-5);
-      border-left: 0.35rem solid var(--color-purple);
-      border-radius: 0 var(--radius) var(--radius) 0;
-      background: var(--color-soft-purple);
-    }
-
-    .note p {
-      color: var(--color-ink);
+      gap: var(--ds-space-2);
     }
 
     .source-list {
       display: flex;
       flex-wrap: wrap;
-      gap: var(--space-3);
+      gap: var(--ds-space-3);
       padding: 0;
       list-style: none;
     }
@@ -476,129 +120,60 @@
     .source-list a {
       display: inline-flex;
       padding: 0.45rem 0.7rem;
-      border: 1px solid var(--color-line);
-      border-radius: var(--radius-small);
-      background: var(--color-panel);
-      font-size: var(--font-sm);
+      border: 1px solid var(--ds-line);
+      border-radius: var(--ds-radius-sm);
+      background: var(--ds-panel);
+      font-size: 0.92rem;
       font-weight: 700;
       text-decoration: none;
     }
 
-    .site-footer {
-      flex: 0 0 auto;
-      padding-bottom: var(--space-6);
+    .ds-footer > .ds-version {
+      display: block;
+      padding-top: var(--ds-space-4);
+      border-top: 1px solid var(--ds-line);
+      margin-bottom: var(--ds-space-2);
+      font-size: 0.78rem;
     }
 
-    .site-footer p {
-      padding-top: var(--space-4);
-      border-top: 1px solid var(--color-line);
-      color: var(--color-muted);
-      font-size: var(--font-xs);
-    }
-
-    .site-footer a {
-      color: inherit;
-      font-weight: 700;
+    .ds-footer > p {
+      padding-top: 0;
+      border-top: 0;
     }
 
     @media (max-width: 860px) {
-      main {
-        padding: var(--space-8) var(--space-4);
-      }
-
-      .site-header,
-      .site-footer {
-        padding-right: var(--space-4);
-        padding-left: var(--space-4);
-      }
-
-      .flow {
-        grid-template-columns: 1fr;
-      }
-
-      .flow-arrow {
-        transform: rotate(90deg);
-      }
-
-      .code-rail {
-        grid-template-columns: repeat(2, 1fr);
-      }
+      .flow { grid-template-columns: 1fr; }
+      .flow-arrow { transform: rotate(90deg); }
+      .code-rail { grid-template-columns: repeat(2, 1fr); }
     }
 
     @media (max-width: 520px) {
-      .document-nav a {
-        width: 100%;
-      }
-
-      .code-rail {
-        grid-template-columns: 1fr;
-      }
-
-      .boundary-card {
-        grid-template-columns: 1fr;
-      }
-
-      .boundary-grid {
-        grid-template-columns: minmax(0, 1fr);
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      html {
-        scroll-behavior: auto;
-      }
-
-      *,
-      *::before,
-      *::after {
-        scroll-behavior: auto !important;
-        transition-duration: 0.01ms !important;
-      }
-    }
-
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --color-ink: #edf4ff;
-        --color-muted: #b8c4d8;
-        --color-page: #0f1728;
-        --color-panel: #172238;
-        --color-line: #33425b;
-        --color-blue: #86b2ff;
-        --color-green: #72d6c9;
-        --color-amber: #f3bf77;
-        --color-purple: #bea7ff;
-        --color-rose: #ff9ab3;
-        --color-soft-blue: #203b64;
-        --color-soft-green: #1b4542;
-        --color-soft-amber: #4b381d;
-        --color-soft-purple: #392a57;
-        --color-soft-rose: #512636;
-        --color-soft-gray: #29354a;
-        --shadow-panel: 0 14px 32px rgba(0, 0, 0, 0.32);
-      }
-
-      body {
-        background:
-          linear-gradient(180deg, rgba(32, 59, 100, 0.72), rgba(15, 23, 40, 0) 340px),
-          var(--color-page);
-      }
-
-      .code-input {
-        border-color: #74542b;
-      }
+      .code-rail { grid-template-columns: 1fr; }
+      .boundary-card { grid-template-columns: 1fr; }
     }
   </style>
-  <link rel="stylesheet" href="page-section-navigation.css">
 </head>
-<body>
+<body id="top">
   <a class="skip-link" href="#main-content">Skip to main content</a>
-  <header class="site-header">
+  <header class="site-header ds-header">
     <a class="site-brand" href="../index.html">
       <img class="site-logo" src="../logo.png" alt="DevConsult Canada logo">
       <span>AI-Assisted Coding Toolkit Index</span>
     </a>
   </header>
-  <main id="main-content">
+  <nav class="suite-nav" aria-label="Documentation pages">
+    <a href="agent-and-skill-definitions.html">Agent And Skill Definitions</a>
+    <a href="agent-and-skill-evaluations.html">Agent And Skill Evaluations</a>
+    <a href="agent-owned-evaluation-suites.html">Agent-Owned Evaluation Suites</a>
+    <a href="agentic-configuration.html">Agentic Configuration</a>
+    <a href="skills-modularization.html">Skills Modularization</a>
+    <a href="generic-agent-definitions-source.html">Generic Agent Definitions Source</a>
+    <a href="agent-skill-specialization-examples.html">Agent And Skill Specialization Examples</a>
+    <a href="orchestrated-development-lifecycle.html">Orchestrated Development Lifecycle</a>
+    <a href="documentation-templates.html">Documentation Templates</a>
+    <a href="wiki-skills-and-project-context.html" aria-current="page">Wiki Skills And Project Context</a>
+  </nav>
+  <main id="main-content" tabindex="-1">
     <nav class="document-nav" aria-label="Documentation navigation">
       <div class="document-sequence">
         <a href="documentation-templates.html" rel="prev"><span aria-hidden="true">&larr;</span> Previous: Documentation Templates</a>
@@ -614,7 +189,8 @@
       </aside>
     </section>
 
-    <nav class="page-section-nav" aria-label="Page sections">
+    <nav class="page-nav" aria-label="Page sections">
+      <a href="#top">Top</a>
       <a href="#layers-title">Context layers</a>
       <a href="#flow-title">Compiled flow</a>
       <a href="#authority-title">Operating model</a>
@@ -660,10 +236,10 @@
 
     <section class="section" aria-labelledby="flow-title">
       <h2 id="flow-title">Compiled Context Flow</h2>
-      <div class="flow-shell">
+      <div class="flow-shell panel">
         <p>The raw-ingest process separates approved public evidence and bounded research reports across three ownership areas.</p>
         <div class="flow">
-          <article class="flow-stage sources">
+          <article class="flow-stage panel sources">
             <h3>Raw evidence producers</h3>
             <ul>
               <li>Source Collector captures approved public evidence</li>
@@ -671,7 +247,7 @@
             </ul>
           </article>
           <div class="flow-arrow" aria-hidden="true">&rarr;</div>
-          <article class="flow-stage compilation">
+          <article class="flow-stage panel compilation">
             <h3>Wiki Ingester</h3>
             <ul>
               <li>Reads assigned raw or Clippings evidence</li>
@@ -681,7 +257,7 @@
             </ul>
           </article>
           <div class="flow-arrow" aria-hidden="true">&rarr;</div>
-          <article class="flow-stage use">
+          <article class="flow-stage panel use">
             <h3>Independent acceptance</h3>
             <ul>
               <li>Wiki Topic Verifier reviews the changed pages read-only</li>
@@ -728,9 +304,9 @@
 
     <section class="section" aria-labelledby="separation-title">
       <h2 id="separation-title">Separation Of Work</h2>
-      <div class="matrix">
-        <table>
-          <caption>Ownership boundaries for wiki collection, research, ingest, writing, verification, and query use</caption>
+      <div class="table-wrap" tabindex="0" role="region" aria-labelledby="ownership-caption">
+        <table class="ownership-table">
+          <caption id="ownership-caption">Ownership boundaries for wiki collection, research, ingest, writing, verification, and query use</caption>
           <thead>
             <tr>
               <th scope="col">Stage</th>
@@ -855,56 +431,56 @@
     <section class="section" aria-labelledby="skills-title">
       <h2 id="skills-title">Skill Collaboration Boundaries</h2>
       <div class="boundary-grid">
-        <article class="boundary-card">
+        <article class="boundary-card panel">
           <span class="boundary-mark" aria-hidden="true">01</span>
           <div class="boundary-copy">
             <h3><a class="skill-link" href="../skills/project-wiki/SKILL.md">project-wiki</a></h3>
             <p>Owns the shared wiki engine: shape, authority, setup recommendations, source ingest, federation, hub and leaf rules, operations, lint, and OKF validation.</p>
           </div>
         </article>
-        <article class="boundary-card">
+        <article class="boundary-card panel">
           <span class="boundary-mark" aria-hidden="true">02</span>
           <div class="boundary-copy">
             <h3><a class="skill-link" href="../skills/project-wiki-create/SKILL.md">project-wiki-create</a></h3>
             <p>Creates or substantially rewrites one repository's wiki methodology artifact from the supplied template. Ordinary topic editing stays with project-wiki.</p>
           </div>
         </article>
-        <article class="boundary-card">
+        <article class="boundary-card panel">
           <span class="boundary-mark" aria-hidden="true">03</span>
           <div class="boundary-copy">
             <h3><a class="skill-link" href="../skills/project-wiki-query/SKILL.md">project-wiki-query</a></h3>
             <p>Answers from docs/wiki first and verifies against authoritative files. When the durable-gap trigger passes, mutation-capable direct use saves a raw query fragment only if mutation is allowed; otherwise it reports the fragment that should be created.</p>
           </div>
         </article>
-        <article class="boundary-card">
+        <article class="boundary-card panel">
           <span class="boundary-mark" aria-hidden="true">04</span>
           <div class="boundary-copy">
             <h3><a class="skill-link" href="../skills/project-wiki-research/SKILL.md">project-wiki-research</a></h3>
             <p>Checks existing and federated coverage before bounded external research. A genuine gap becomes one sourced raw report for later ingest, not an immediate wiki edit.</p>
           </div>
         </article>
-        <article class="boundary-card">
+        <article class="boundary-card panel">
           <span class="boundary-mark" aria-hidden="true">05</span>
           <div class="boundary-copy">
             <h3><a class="skill-link" href="../skills/project-wiki-review/SKILL.md">project-wiki-review</a></h3>
             <p>Reviews a project-wiki methodology artifact against its template, source authority, maintenance rules, page contract, and code-aware navigation.</p>
           </div>
         </article>
-        <article class="boundary-card">
+        <article class="boundary-card panel">
           <span class="boundary-mark" aria-hidden="true">06</span>
           <div class="boundary-copy">
             <h3><a class="skill-link" href="../skills/project-wiki-topic-write/SKILL.md">project-wiki-topic-write</a></h3>
             <p>Owns topic-page edits, leaf splitting, hub and index updates, source links, local validation, corrections, and the verification handoff. The conceptual writer or ingester role owns independent verifier routing and interruption handling.</p>
           </div>
         </article>
-        <article class="boundary-card">
+        <article class="boundary-card panel">
           <span class="boundary-mark" aria-hidden="true">07</span>
           <div class="boundary-copy">
             <h3><a class="skill-link" href="../skills/project-wiki-topic-verify/SKILL.md">project-wiki-topic-verify</a></h3>
             <p>Independently and read-only judges the changed topic pages, leaf coverage, source links, digest and federation boundaries, lint, and OKF validation.</p>
           </div>
         </article>
-        <article class="boundary-card">
+        <article class="boundary-card panel">
           <span class="boundary-mark" aria-hidden="true">08</span>
           <div class="boundary-copy">
             <h3><a class="skill-link" href="../skills/code-project-wiki/SKILL.md">code-project-wiki</a></h3>
@@ -987,7 +563,8 @@
       </ul>
     </section>
   </main>
-  <footer class="site-footer">
+  <footer class="site-footer ds-footer">
+    <span class="ds-version">Design system v1.0.0</span>
     <p data-document-provenance="v2"><span data-provenance-field="Copyright">Copyright (c) 2026 Martin.Bechard@DevConsult.ca</span> - <a href="../LICENSE">MIT License</a> · Created <time data-provenance-field="Created-Local" datetime="2026-07-20T04:01:32-04:00">2026-07-20T04:01:32-04:00</time></p>
   </footer>
   <script src="documentation-settings.js"></script>

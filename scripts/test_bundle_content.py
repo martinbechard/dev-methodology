@@ -2042,6 +2042,7 @@ class BundleContentTests(unittest.TestCase):
                         "agent-and-skill-evaluations.html",
                         "documentation-templates.html",
                         "orchestrated-development-lifecycle.html",
+                        "wiki-skills-and-project-context.html",
                     },
                 )
 

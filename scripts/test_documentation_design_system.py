@@ -141,6 +141,47 @@ Dispatched-Model-Evidence: historical-unknown
 Reasoning-Effort-Evidence: historical-unknown
 Task-ID-Evidence: historical-unknown
 -->"""
+WIKI_CONTEXT_PATH = (
+    REPOSITORY_ROOT / "design" / "wiki-skills-and-project-context.html"
+)
+WIKI_CONTEXT_BASELINE_SEMANTIC_SHA256 = (
+    "33f0fa6bc31b9c25d2f9ff9fe1b5fc63d0d2cf6b0cd2460a293a81be42d1b9ad"
+)
+WIKI_CONTEXT_SKIP_LINK = (
+    '<a class="skip-link" href="#main-content">Skip to main content</a>'
+)
+WIKI_CONTEXT_SUITE_NAV_START = (
+    '<nav class="suite-nav" aria-label="Documentation pages">'
+)
+WIKI_CONTEXT_DESIGN_VERSION = (
+    f'<span class="ds-version">Design system v{VERSION}</span>'
+)
+WIKI_CONTEXT_PROVENANCE = (
+    "<!-- Document-Provenance Artifact-ID: "
+    "7f38cb8f-35da-4dbe-82a5-58c78bb305be -->"
+)
+WIKI_CONTEXT_PROVENANCE_FOOTER = (
+    '<p data-document-provenance="v2"><span data-provenance-field="Copyright">'
+    "Copyright (c) 2026 Martin.Bechard@DevConsult.ca</span> - "
+    '<a href="../LICENSE">MIT License</a> · Created '
+    '<time data-provenance-field="Created-Local" '
+    'datetime="2026-07-20T04:01:32-04:00">'
+    "2026-07-20T04:01:32-04:00</time></p>"
+)
+WIKI_CONTEXT_SECTION_NAVIGATION = (
+    ("Top", "#top"),
+    ("Context layers", "#layers-title"),
+    ("Compiled flow", "#flow-title"),
+    ("Operating model", "#authority-title"),
+    ("Work separation", "#separation-title"),
+    ("Role ownership", "#roles-title"),
+    ("Federation", "#federation-title"),
+    ("Skill boundaries", "#skills-title"),
+    ("Code-aware hybrid", "#hybrid-title"),
+    ("Verification", "#verification-title"),
+    ("Compounding context", "#health-title"),
+    ("Sources", "#sources-title"),
+)
 
 
 class _PageParser(HTMLParser):
@@ -299,6 +340,230 @@ def _documentation_templates_semantic_text(source: str) -> str:
     )
     visible_text = re.sub(r"<[^>]+>", " ", visible_markup)
     return " ".join(unescape(visible_text).split())
+
+
+def _wiki_context_semantic_text(source: str) -> str:
+    """Validate the migrated shell and return the accepted page semantics."""
+
+    _validate_wiki_context_structure(source)
+    suite_nav_match = re.search(
+        rf"{re.escape(WIKI_CONTEXT_SUITE_NAV_START)}.*?</nav>",
+        source,
+        flags=re.DOTALL,
+    )
+    if suite_nav_match is None:
+        raise ValueError("suite navigation must be available for normalization")
+
+    without_additions = source.replace(suite_nav_match.group(0), "", 1)
+    without_additions = without_additions.replace('<a href="#top">Top</a>', "", 1)
+    without_additions = without_additions.replace(WIKI_CONTEXT_DESIGN_VERSION, "", 1)
+    visible_markup = re.sub(
+        r"<(?:style|script)\b.*?</(?:style|script)>",
+        "",
+        without_additions,
+        flags=re.DOTALL,
+    )
+    visible_text = re.sub(r"<[^>]+>", " ", visible_markup)
+    return " ".join(unescape(visible_text).split())
+
+
+def _validate_wiki_context_structure(source: str) -> None:
+    """Reject unauthorized shell, semantic, or accessibility drift."""
+
+    def require(condition: bool, message: str) -> None:
+        if not condition:
+            raise ValueError(message)
+
+    require(
+        source.startswith(f"<!doctype html>\n{WIKI_CONTEXT_PROVENANCE}\n"),
+        "compact historical provenance must remain byte-for-byte unchanged",
+    )
+    require(
+        source.count(WIKI_CONTEXT_SKIP_LINK) == 1,
+        "skip link must be exact and unique",
+    )
+    require(
+        re.search(
+            rf'<body id="top">\s*{re.escape(WIKI_CONTEXT_SKIP_LINK)}',
+            source,
+        )
+        is not None,
+        "skip link must be the first body child",
+    )
+    require(
+        source.count('<main id="main-content" tabindex="-1">') == 1,
+        "main content must be an exact programmatic focus target",
+    )
+
+    suite_nav_matches = re.findall(
+        rf"{re.escape(WIKI_CONTEXT_SUITE_NAV_START)}(.*?)</nav>",
+        source,
+        flags=re.DOTALL,
+    )
+    require(len(suite_nav_matches) == 1, "suite navigation must be exact and unique")
+    suite_nav = suite_nav_matches[0]
+    anchor_pattern = re.compile(
+        r'<a href="([^"]+)"( aria-current="page")?>([^<]+)</a>'
+    )
+    navigation_links = [
+        (href, label, current == ' aria-current="page"')
+        for href, current, label in anchor_pattern.findall(suite_nav)
+    ]
+    require(
+        navigation_links
+        == [
+            (href, label, index == 9)
+            for index, (label, href) in enumerate(LIFECYCLE_NAVIGATION)
+        ],
+        "suite navigation must match the authoritative anchor inventory",
+    )
+    require(
+        not anchor_pattern.sub("", suite_nav).strip(),
+        "suite navigation must contain anchors and whitespace only",
+    )
+
+    page_nav_matches = re.findall(
+        r'<nav class="page-nav" aria-label="Page sections">(.*?)</nav>',
+        source,
+        flags=re.DOTALL,
+    )
+    require(len(page_nav_matches) == 1, "page navigation must be exact and unique")
+    page_navigation_links = [
+        (label, href)
+        for href, current, label in anchor_pattern.findall(page_nav_matches[0])
+        if not current
+    ]
+    require(
+        page_navigation_links == list(WIKI_CONTEXT_SECTION_NAVIGATION),
+        "page navigation must preserve every accepted section in exact order",
+    )
+    require(
+        not anchor_pattern.sub("", page_nav_matches[0]).strip(),
+        "page navigation must contain anchors and whitespace only",
+    )
+
+    parser = _PageParser()
+    parser.feed(source)
+    require(parser.version_meta == [VERSION], "design-system metadata must be exact")
+    require(
+        parser.stylesheets
+        == ["documentation-design-system/assets/design-system.css"],
+        "the page must load only the adopted shared stylesheet",
+    )
+    require(
+        parser.scripts == ["documentation-settings.js"],
+        "the page must retain only its persistent-settings script",
+    )
+    require(
+        parser.ids
+        == [
+            "top",
+            "main-content",
+            "page-title",
+            "layers-title",
+            "flow-title",
+            "authority-title",
+            "separation-title",
+            "ownership-caption",
+            "roles-title",
+            "federation-title",
+            "skills-title",
+            "hybrid-title",
+            "verification-title",
+            "health-title",
+            "sources-title",
+        ],
+        "identifier inventory must match the accepted page structure",
+    )
+    require(len(parser.ids) == len(set(parser.ids)), "identifiers must remain unique")
+    require(
+        re.findall(r'aria-label="([^"]+)"', source)
+        == [
+            "Documentation pages",
+            "Documentation navigation",
+            "Page sections",
+            "Authoritative project evidence inputs for direct wiki maintenance",
+        ],
+        "aria-label inventory must remain exact",
+    )
+    require(
+        re.findall(r'aria-labelledby="([^"]+)"', source)
+        == [
+            "page-title",
+            "layers-title",
+            "flow-title",
+            "authority-title",
+            "separation-title",
+            "ownership-caption",
+            "roles-title",
+            "federation-title",
+            "skills-title",
+            "hybrid-title",
+            "verification-title",
+            "health-title",
+            "sources-title",
+        ],
+        "aria-labelledby inventory must remain exact",
+    )
+    require(
+        re.findall(r'aria-current="([^"]+)"', source) == ["page"],
+        "aria-current inventory must remain exact",
+    )
+    require(
+        re.findall(r'aria-hidden="([^"]+)"', source) == ["true"] * 11,
+        "decorative marker inventory must remain exact",
+    )
+    require(
+        re.findall(r'alt="([^"]+)"', source) == ["DevConsult Canada logo"],
+        "image alternative text inventory must remain exact",
+    )
+    require(parser.h1_count == 1, "the page must retain one h1")
+    require(
+        source.count(WIKI_CONTEXT_DESIGN_VERSION) == 1,
+        "design-system version must be exact and unique",
+    )
+    require(
+        source.count(WIKI_CONTEXT_PROVENANCE_FOOTER) == 1,
+        "compact historical provenance footer must remain exact and unique",
+    )
+    sequence_links = re.findall(
+        r'<a href="([^"]+)" rel="(prev|next)">',
+        source,
+    )
+    require(
+        sequence_links == [("documentation-templates.html", "prev")],
+        "the previous-only document sequence must remain exact",
+    )
+    for exact_structure in (
+        '<header class="site-header ds-header">',
+        '<footer class="site-footer ds-footer">',
+        '<section class="hero" aria-labelledby="page-title">',
+        '<h1 id="page-title">Wiki Skills And Project Context</h1>',
+        '<div class="table-wrap" tabindex="0" role="region" '
+        'aria-labelledby="ownership-caption">',
+        '<caption id="ownership-caption">Ownership boundaries for wiki collection, '
+        "research, ingest, writing, verification, and query use</caption>",
+    ):
+        require(
+            source.count(exact_structure) == 1,
+            f"required structure must remain exact: {exact_structure}",
+        )
+    for href in parser.hrefs:
+        parts = urlsplit(href)
+        if parts.scheme or parts.netloc:
+            continue
+        target = (
+            WIKI_CONTEXT_PATH
+            if not parts.path
+            else WIKI_CONTEXT_PATH.parent / parts.path
+        )
+        require(target.is_file(), f"local link must resolve: {href}")
+        if parts.fragment:
+            _, target_parser = _parse_page(target)
+            require(
+                target_parser.ids.count(parts.fragment) == 1,
+                f"fragment must resolve exactly once: {href}",
+            )
 
 
 def _validate_documentation_templates_structure(source: str) -> None:
@@ -565,6 +830,87 @@ class DocumentationDesignSystemTests(unittest.TestCase):
                     if parts.fragment:
                         _, target_parser = _parse_page(target)
                         self.assertIn(parts.fragment, target_parser.ids, href)
+
+    def test_wiki_context_uses_versioned_shared_shell_and_preserves_semantics(
+        self,
+    ) -> None:
+        """The wiki-context page adopts the shared shell without prose drift."""
+
+        source = WIKI_CONTEXT_PATH.read_text(encoding="utf-8")
+
+        self.assertEqual(
+            WIKI_CONTEXT_BASELINE_SEMANTIC_SHA256,
+            hashlib.sha256(
+                _wiki_context_semantic_text(source).encode("utf-8")
+            ).hexdigest(),
+        )
+
+    def test_wiki_context_rejects_shell_semantic_and_accessibility_drift(
+        self,
+    ) -> None:
+        """Wiki-context normalization must reject unauthorized contract changes."""
+
+        source = WIKI_CONTEXT_PATH.read_text(encoding="utf-8")
+        mutations = {
+            "missing-shared-shell": source.replace(
+                '<header class="site-header ds-header">',
+                '<header class="site-header">',
+                1,
+            ),
+            "duplicate-suite-navigation": source.replace(
+                WIKI_CONTEXT_SUITE_NAV_START,
+                WIKI_CONTEXT_SUITE_NAV_START
+                + "\n  </nav>\n  "
+                + WIKI_CONTEXT_SUITE_NAV_START,
+                1,
+            ),
+            "changed-navigation-label": source.replace(
+                ">Wiki Skills And Project Context</a>",
+                ">Wiki Context</a>",
+                1,
+            ),
+            "changed-prose": source.replace(
+                "Persistent context, disciplined authority",
+                "Persistent context",
+                1,
+            ),
+            "reordered-sections": source.replace(
+                '<a href="#layers-title">Context layers</a>\n'
+                '      <a href="#flow-title">Compiled flow</a>',
+                '<a href="#flow-title">Compiled flow</a>\n'
+                '      <a href="#layers-title">Context layers</a>',
+                1,
+            ),
+            "removed-accessible-name": source.replace(
+                'aria-label="Authoritative project evidence inputs for direct wiki maintenance"',
+                "",
+                1,
+            ),
+            "duplicate-id": source.replace(
+                'id="flow-title"',
+                'id="layers-title"',
+                1,
+            ),
+            "unwrapped-table": source.replace(
+                '<div class="table-wrap" tabindex="0" role="region" '
+                'aria-labelledby="ownership-caption">',
+                '<div class="table-wrap">',
+                1,
+            ),
+            "changed-provenance": source.replace(
+                "2026-07-20T04:01:32-04:00",
+                "2026-07-20T04:01:33-04:00",
+                1,
+            ),
+        }
+        for mutation_name, mutation in mutations.items():
+            with self.subTest(wiki_context_mutation=mutation_name):
+                with self.assertRaises((AssertionError, ValueError)):
+                    normalized = _wiki_context_semantic_text(mutation)
+                    self.assertEqual(
+                        WIKI_CONTEXT_BASELINE_SEMANTIC_SHA256,
+                        hashlib.sha256(normalized.encode("utf-8")).hexdigest(),
+                    )
 
     def test_toolkit_index_uses_versioned_shared_shell_and_preserves_semantics(
         self,
