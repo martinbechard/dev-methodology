@@ -83,6 +83,180 @@ REMOVED_DEVELOPMENT_REFERENCES = (
     "documentation-methodology.md",
     "procedure-reverse-engineer-project-documentation.md",
 )
+
+
+def validate_estimate_output_shape(shape: object) -> dict[str, dict[str, tuple[float, float]]]:
+    """Validate and independently calculate one estimate-agent-work output example."""
+    if not isinstance(shape, dict) or not isinstance(shape.get("estimate"), dict):
+        raise ValueError("estimate shape must contain an estimate mapping")
+    estimate = shape["estimate"]
+    paths = estimate.get("paths")
+    runtimes = estimate.get("non_model_runtime")
+    summaries = estimate.get("path_summaries")
+    if not all(isinstance(value, dict) for value in (paths, runtimes, summaries)):
+        raise ValueError("estimate paths, non_model_runtime, and path_summaries must be mappings")
+
+    def range_pair(value: object, label: str) -> tuple[float, float]:
+        if not isinstance(value, dict) or set(value) != {"low", "high"}:
+            raise ValueError(f"{label} must contain exactly low and high")
+        low, high = value["low"], value["high"]
+        if not isinstance(low, (int, float)) or not isinstance(high, (int, float)):
+            raise ValueError(f"{label} bounds must be numeric")
+        if low < 0 or high < low:
+            raise ValueError(f"{label} bounds must be nonnegative and ordered")
+        return float(low), float(high)
+
+    delivery = estimate.get("delivery_critical_path")
+    if not isinstance(delivery, dict) or delivery.get("path") not in paths:
+        raise ValueError("delivery_critical_path must name a declared path")
+    delivery_path = delivery["path"]
+    expected_runtime_categories = {
+        "tool_runtime",
+        "build_runtime",
+        "test_runtime",
+        "browser_runtime",
+        "live_evaluation_runtime",
+        "external_service_runtime",
+        "approval_runtime",
+        "other_runtime",
+    }
+    if set(runtimes) != expected_runtime_categories:
+        raise ValueError("non_model_runtime must contain every required runtime category")
+    runtime_by_path: dict[str, list[tuple[str, dict[str, object]]]] = {
+        path_name: [] for path_name in paths
+    }
+    for category, interval in runtimes.items():
+        if not isinstance(interval, dict):
+            raise ValueError(f"{category} must be a runtime interval mapping")
+        path_name = interval.get("path")
+        disposition = interval.get("disposition")
+        overlap_group = interval.get("overlap_group")
+        if path_name not in paths:
+            raise ValueError(f"{category} names an undeclared path")
+        if disposition not in {"blocking", "parallelizable", "off_critical_path"}:
+            raise ValueError(f"{category} has an invalid disposition")
+        if disposition == "parallelizable" and not isinstance(overlap_group, str):
+            raise ValueError(f"{category} parallelizable runtime requires an overlap group")
+        if disposition != "parallelizable" and overlap_group is not None:
+            raise ValueError(f"{category} nonparallel runtime cannot name an overlap group")
+        if disposition == "off_critical_path" and path_name == delivery_path:
+            raise ValueError(f"{category} off_critical_path runtime is on the delivery critical path")
+        range_pair({"low": interval.get("low"), "high": interval.get("high")}, category)
+        runtime_by_path[path_name].append((category, interval))
+
+    for category, interval in runtimes.items():
+        peers = interval.get("overlaps_with", [])
+        if not isinstance(peers, list) or not all(isinstance(peer, str) for peer in peers):
+            raise ValueError(f"{category} overlaps_with must be a string list")
+        for peer_name in peers:
+            peer = runtimes.get(peer_name)
+            if not isinstance(peer, dict):
+                raise ValueError(f"{category} names an unknown overlap peer")
+            if category not in peer.get("overlaps_with", []):
+                raise ValueError(f"{category} overlap peer must be reciprocal")
+            if interval.get("path") != peer.get("path"):
+                raise ValueError(f"{category} overlap peer must share its path")
+            if interval.get("overlap_group") != peer.get("overlap_group"):
+                raise ValueError(f"{category} overlap peer must share its overlap group")
+
+    calculated: dict[str, dict[str, tuple[float, float]]] = {}
+    throughput = estimate.get("throughput")
+    if not isinstance(throughput, dict):
+        raise ValueError("throughput must be a mapping")
+    generated_per_hour = throughput.get("value_generated_tokens_per_second")
+    if not isinstance(generated_per_hour, (int, float)) or generated_per_hour <= 0:
+        raise ValueError("throughput must name a positive generated-token rate")
+    generated_per_hour *= 3_600
+    for path_name, path in paths.items():
+        if not isinstance(path, dict):
+            raise ValueError(f"{path_name} must be a path mapping")
+        generated = range_pair(
+            path.get("generated_effort_agent_hours"),
+            f"{path_name} generated effort",
+        )
+        generated_tokens = range_pair(
+            path.get("generated_tokens"),
+            f"{path_name} generated tokens",
+        )
+        if tuple(value / generated_per_hour for value in generated_tokens) != generated:
+            raise ValueError(f"{path_name} generated effort does not match throughput")
+        serial = [0.0, 0.0]
+        groups: dict[str, list[tuple[float, float]]] = {}
+        for category, interval in runtime_by_path[path_name]:
+            bounds = range_pair(
+                {"low": interval.get("low"), "high": interval.get("high")},
+                category,
+            )
+            group = interval.get("overlap_group")
+            if group is None:
+                serial[0] += bounds[0]
+                serial[1] += bounds[1]
+            else:
+                groups.setdefault(str(group), []).append(bounds)
+        overlap = (
+            sum(max(bounds[0] for bounds in group) for group in groups.values()),
+            sum(max(bounds[1] for bounds in group) for group in groups.values()),
+        )
+        runtime = (serial[0] + overlap[0], serial[1] + overlap[1])
+        combined = (generated[0] + runtime[0], generated[1] + runtime[1])
+        calculated[path_name] = {
+            "generated_effort_agent_hours": generated,
+            "serial_runtime_hours": tuple(serial),
+            "overlap_runtime_hours": overlap,
+            "non_model_runtime_hours": runtime,
+            "combined_delivery_hours": combined,
+        }
+        summary = summaries.get(path_name)
+        if not isinstance(summary, dict):
+            raise ValueError(f"{path_name} is missing its path summary")
+        for field, expected in calculated[path_name].items():
+            if range_pair(summary.get(field), f"{path_name} {field}") != expected:
+                raise ValueError(f"{path_name} {field} does not match its inputs")
+
+    selected_low = max(calculated, key=lambda name: calculated[name]["combined_delivery_hours"][0])
+    selected_high = max(calculated, key=lambda name: calculated[name]["combined_delivery_hours"][1])
+    if selected_low != selected_high or delivery_path != selected_low:
+        raise ValueError("delivery critical path does not match the longest combined path")
+    delivery_combined = calculated[delivery_path]["combined_delivery_hours"]
+    if range_pair(delivery.get("combined_hours"), "delivery critical path") != delivery_combined:
+        raise ValueError("delivery critical path total does not match its path summary")
+
+    generated_path_low = max(
+        calculated,
+        key=lambda name: calculated[name]["generated_effort_agent_hours"][0],
+    )
+    generated_path_high = max(
+        calculated,
+        key=lambda name: calculated[name]["generated_effort_agent_hours"][1],
+    )
+    generated_path = estimate.get("generated_effort_critical_path")
+    if (
+        generated_path_low != generated_path_high
+        or not isinstance(generated_path, dict)
+        or generated_path.get("path") != generated_path_low
+        or range_pair(generated_path.get("agent_hours"), "generated-effort critical path")
+        != calculated[generated_path_low]["generated_effort_agent_hours"]
+    ):
+        raise ValueError("generated-effort critical path does not match path inputs")
+
+    critical_generated = estimate.get("critical_path_agent_hours")
+    if not isinstance(critical_generated, dict) or critical_generated.get("path") != delivery_path:
+        raise ValueError("critical_path_agent_hours must name the delivery critical path")
+    if range_pair(
+        {"low": critical_generated.get("low"), "high": critical_generated.get("high")},
+        "critical_path_agent_hours",
+    ) != calculated[delivery_path]["generated_effort_agent_hours"]:
+        raise ValueError("critical_path_agent_hours must contain only selected-path generated effort")
+
+    if range_pair(estimate.get("wall_clock_duration_hours"), "wall clock") != delivery_combined:
+        raise ValueError("wall clock duration does not match the delivery critical path")
+    total_generated = (
+        sum(values["generated_effort_agent_hours"][0] for values in calculated.values()),
+        sum(values["generated_effort_agent_hours"][1] for values in calculated.values()),
+    )
+    if range_pair(estimate.get("total_agent_hours"), "total agent hours") != total_generated:
+        raise ValueError("total agent hours does not preserve all generated effort")
+    return calculated
 NEW_WORKFLOW_SKILLS = (
     "bootstrap-project-documentation",
     "reverse-engineer-project-documentation",
@@ -3214,7 +3388,7 @@ class BundleContentTests(unittest.TestCase):
             "total_agent_hours",
             "critical_path_agent_hours",
             "expected_parallelism",
-            "wall_clock_hours",
+            "wall_clock_duration_hours",
             "uncertainty",
             "confidence",
         ):
@@ -3339,7 +3513,7 @@ class BundleContentTests(unittest.TestCase):
         self.assertEqual(0.75, delivery_path_generated_effort)
         self.assertEqual(0.5, max(0.5, 0.5))
         self.assertIn(
-            "wall_clock_hours = max(path_delivery_hours for every dependency path)",
+            "wall_clock_duration_hours = max(path_delivery_hours for every dependency path)",
             skill_text,
         )
         self.assertIn(
@@ -3352,6 +3526,49 @@ class BundleContentTests(unittest.TestCase):
             self.assertIn(f"disposition: {disposition}", skill_text)
         for audit_field in ("path:", "overlap_group:"):
             self.assertIn(audit_field, skill_text)
+
+        reusable_shape = re.search(
+            r"## Reusable Estimate Shape\n\n```yaml\n(?P<yaml>.*?)\n```",
+            skill_text,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(reusable_shape)
+        assert reusable_shape is not None
+        parsed_shape = yaml.safe_load(reusable_shape["yaml"])
+        calculated_paths = validate_estimate_output_shape(parsed_shape)
+        self.assertEqual(
+            {
+                "path-a": {
+                    "generated_effort_agent_hours": (1.0, 2.0),
+                    "serial_runtime_hours": (0.0, 0.0),
+                    "overlap_runtime_hours": (0.25, 0.5),
+                    "non_model_runtime_hours": (0.25, 0.5),
+                    "combined_delivery_hours": (1.25, 2.5),
+                },
+                "path-b": {
+                    "generated_effort_agent_hours": (0.5, 0.75),
+                    "serial_runtime_hours": (0.0, 0.0),
+                    "overlap_runtime_hours": (0, 0),
+                    "non_model_runtime_hours": (0.0, 0.0),
+                    "combined_delivery_hours": (0.5, 0.75),
+                },
+            },
+            calculated_paths,
+        )
+
+        malformed_overlap = json.loads(json.dumps(parsed_shape))
+        malformed_overlap["estimate"]["non_model_runtime"]["test_runtime"][
+            "overlap_group"
+        ] = "different-group"
+        with self.assertRaisesRegex(ValueError, "share its overlap group"):
+            validate_estimate_output_shape(malformed_overlap)
+
+        malformed_disposition = json.loads(json.dumps(parsed_shape))
+        malformed_disposition["estimate"]["non_model_runtime"]["tool_runtime"][
+            "path"
+        ] = "path-a"
+        with self.assertRaisesRegex(ValueError, "off_critical_path runtime"):
+            validate_estimate_output_shape(malformed_disposition)
 
         dev_coder = load_yaml_object(
             ROLES_ROOT / "dev-activities" / "dev-coder.role.yaml"

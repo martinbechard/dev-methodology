@@ -113,7 +113,7 @@ Calculate:
 ```text
 total_agent_hours = sum(all implementation-generation agent-hours)
 path_delivery_hours = path_generated_effort_agent_hours + path_non_model_runtime_hours
-wall_clock_hours = max(path_delivery_hours for every dependency path)
+wall_clock_duration_hours = max(path_delivery_hours for every dependency path)
 ```
 
 The generated-effort critical path is the path with the greatest implementation-generation
@@ -199,30 +199,48 @@ estimate:
     reasoning_profile: "recorded profile or unknown"
     harness: "recorded harness or unknown"
     execution_environment: "recorded environment or unknown"
-  implementation_generation:
-    generated_tokens: {low: 180000, high: 360000}
-    agent_hours: {low: 1.0, high: 2.0}
-    autonomous_turns: {low: 3, high: 5}
+  paths:
+    path-a:
+      generated_tokens: {low: 180000, high: 360000}
+      generated_effort_agent_hours: {low: 1.0, high: 2.0}
+      autonomous_turns: {low: 3, high: 5}
+    path-b:
+      generated_tokens: {low: 90000, high: 135000}
+      generated_effort_agent_hours: {low: 0.5, high: 0.75}
+      autonomous_turns: {low: 1, high: 2}
   live_evaluation:
     input_tokens: {low: 0, high: 0}
     cached_tokens: {low: 0, high: 0}
     generated_tokens: {low: 0, high: 0}
     runtime_hours: {low: 0.0, high: 0.0}
   non_model_runtime:
-    tool_runtime: {low: 0.0, high: 0.0, disposition: off_critical_path, path: path-a, overlap_group: null}
-    build_runtime: {low: 0.25, high: 0.5, disposition: parallelizable, path: path-a, overlap_group: compile-and-test}
-    test_runtime: {low: 0.25, high: 0.5, disposition: blocking, path: path-a, overlap_group: null}
-    browser_runtime: {low: 0.0, high: 0.0, disposition: off_critical_path, path: path-a, overlap_group: null}
-    live_evaluation_runtime: {low: 0.0, high: 0.0, disposition: off_critical_path, path: path-a, overlap_group: null}
-    external_service_runtime: {low: 0.0, high: 0.0, disposition: off_critical_path, path: path-a, overlap_group: null}
-    approval_runtime: {low: 0.0, high: 0.0, disposition: off_critical_path, path: path-a, overlap_group: null}
-    other_runtime: {low: 0.0, high: 0.0, disposition: off_critical_path, path: path-a, overlap_group: null}
-  total_agent_hours: {low: 1.0, high: 2.0}
+    tool_runtime: {low: 0.0, high: 0.0, disposition: off_critical_path, path: path-b, overlap_group: null, overlaps_with: []}
+    build_runtime: {low: 0.25, high: 0.5, disposition: parallelizable, path: path-a, overlap_group: compile-and-test, overlaps_with: [test_runtime]}
+    test_runtime: {low: 0.25, high: 0.5, disposition: parallelizable, path: path-a, overlap_group: compile-and-test, overlaps_with: [build_runtime]}
+    browser_runtime: {low: 0.0, high: 0.0, disposition: off_critical_path, path: path-b, overlap_group: null, overlaps_with: []}
+    live_evaluation_runtime: {low: 0.0, high: 0.0, disposition: off_critical_path, path: path-b, overlap_group: null, overlaps_with: []}
+    external_service_runtime: {low: 0.0, high: 0.0, disposition: off_critical_path, path: path-b, overlap_group: null, overlaps_with: []}
+    approval_runtime: {low: 0.0, high: 0.0, disposition: blocking, path: path-a, overlap_group: null, overlaps_with: []}
+    other_runtime: {low: 0.0, high: 0.0, disposition: off_critical_path, path: path-b, overlap_group: null, overlaps_with: []}
+  path_summaries:
+    path-a:
+      generated_effort_agent_hours: {low: 1.0, high: 2.0}
+      serial_runtime_hours: {low: 0.0, high: 0.0}
+      overlap_runtime_hours: {low: 0.25, high: 0.5}
+      non_model_runtime_hours: {low: 0.25, high: 0.5}
+      combined_delivery_hours: {low: 1.25, high: 2.5}
+    path-b:
+      generated_effort_agent_hours: {low: 0.5, high: 0.75}
+      serial_runtime_hours: {low: 0.0, high: 0.0}
+      overlap_runtime_hours: {low: 0.0, high: 0.0}
+      non_model_runtime_hours: {low: 0.0, high: 0.0}
+      combined_delivery_hours: {low: 0.5, high: 0.75}
+  total_agent_hours: {low: 1.5, high: 2.75}
   generated_effort_critical_path: {path: path-a, agent_hours: {low: 1.0, high: 2.0}}
   delivery_critical_path: {path: path-a, combined_hours: {low: 1.25, high: 2.5}}
   critical_path_agent_hours: {path: path-a, low: 1.0, high: 2.0}
   expected_parallelism: {low: 1, high: 1, overlap: []}
-  wall_clock_hours: {low: 1.25, high: 2.5}
+  wall_clock_duration_hours: {low: 1.25, high: 2.5}
   uncertainty:
     assumptions: []
     low_range_drivers: []
