@@ -1,6 +1,6 @@
 # Avoid Re-Home Terminology and Use Plain Language
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -65,3 +65,17 @@ None.
 
 - This defect targets current guidance and user-facing language. It does not rewrite archived Work items or source-native historical evidence solely for terminology modernization.
 - The terminology change must preserve the underlying recovery choices and authority boundaries.
+
+## Starting Handoff Evidence
+
+- Reserved At: 2026-08-13T15:43:10Z.
+- Transition: `Ready -> Starting`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Baseline: `2e64e8000185dc3b207962ee7f6dbe01cb2aee31` on primary `main`.
+- Priority: Oldest eligible process-correctness defect after provider-authority and Index delivery released their shared terminology and bundle-test boundaries.
+- Capacity: Runs alongside `reconcile-offline-staging-and-strict-result-schema`; User Action Required, Blocked, and terminal items are excluded.
+- Overlap: Offline owns only runner staging, Dev Orchestrator fixture tests, and its plan pair. This task must claim exact terminology, coordination-skill, focused-test, and mechanically required generated paths before mutation. It must not touch Offline paths or unrelated plan artifacts.
+- Dispatch Architecture: Create one visible Codex task whose initial prompt launches one Dev Orchestrator subagent and states the visible root title-and-messaging responsibility.
+- Transition Claims: Work Item `start-avoid-rehome-terminology-work-item`; event `de86c91d-a756-4225-93c9-ad94d648014c`. Provider `start-avoid-rehome-terminology-provider`; event `da5011ff-50e2-403b-b2a2-9fa4c94b27a5`.
+- Runtime Identity: Pending caller-owned visible task creation. Creation does not imply Running.
