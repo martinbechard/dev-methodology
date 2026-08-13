@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -79,3 +79,19 @@ Dependency Resolution: Satisfied by completed Work Item `review-agent-skill-spec
 
 - This item must not start before its page-specific text review is Completed.
 - Creation of this work item does not dispatch it while backlog crisis recovery remains active.
+
+## Starting Handoff Evidence
+
+- Reserved At: 2026-08-13T19:36:23Z.
+- Transition: `Ready -> Starting`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Baseline: `8f533e62243e760d8583d29933bf479b0a07dfbc` on primary `main`.
+- Normalized Objective: Align `design/agent-skill-specialization-examples.html` with the Documentation Design System while preserving the accepted text baseline and authoritative ownership.
+- Dependency Evidence: `review-agent-skill-specialization-examples-text` is Completed; no hard prerequisite remains.
+- Capacity: Slot 1 of 5. Definitions, Map, and Agent-Owned Suites are User Action Required and excluded.
+- Release Evidence: Fresh schema-version-2 claim status is empty. The prior owner released `design/documentation-settings.js`, shared CSS, generator, test, and target-page ownership before this reservation.
+- Overlap Boundary: Before mutation, publish and acquire exact target-page, shared-asset, focused-test, and browser-resource scope. Preserve all UAR candidates, Definitions worktree/branch, archived Evaluations delivery, and every untracked plan or temporary artifact.
+- Dispatch Architecture: Create one visible Codex task whose reference-plus-delta prompt starts one Dev Orchestrator collaboration subagent and assigns exact self-task title and messaging responsibility to the visible root.
+- Transition Claim: `reserve-align-specialization-examples-019ff2c3`; event `fd6c968b-f215-4da2-926e-920f6efd67ec`.
+- Next Action: Reconcile the unique visible task identity; its nested Dev Orchestrator records `Starting -> Running` before mutation.
