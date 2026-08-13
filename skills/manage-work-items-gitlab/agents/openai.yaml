@@ -4,7 +4,7 @@ interface:
   # User-facing name shown in Codex skill surfaces.
   display_name: Manage Work Items Gitlab
   # User-facing summary shown in Codex skill surfaces.
-  short_description: Manage authoritative GitLab issues through lookup, ownership, lifecycle, dependency, recovery...
+  short_description: Manage authoritative Work-item content stored in GitLab issues through lookup, ownership...
   # Prompt Codex can use when launching this skill directly.
   default_prompt: Use $manage-work-items-gitlab to manage verified GitLab issue lifecycle without a fallback queue.
 

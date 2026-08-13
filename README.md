@@ -604,13 +604,14 @@ create-work-item is the provider-neutral creation Interface Skill. The Work-item
 
 manage-work-items is the provider-neutral management Interface Skill. The manage-work-items-* providers preserve the same five lifecycle procedures while retaining provider-native storage, operations, and evidence.
 
-create-work-item-github and manage-work-items-github are the canonical split GitHub Persistence skills. They keep GitHub Issues authoritative and never create a shadow repository queue.
+create-work-item-github and manage-work-items-github are the canonical split GitHub Persistence skills. GitHub Issues store authoritative Work-item content, and the skills never create a shadow repository queue.
 
 create-work-item-file and manage-work-items-file are the canonical file Persistence pair. The
 creation provider delegates its exact commit to commit-file-provider-transaction. The lifecycle
 provider excludes Future Ideas and routes an explicit ideation operation to manage-future-ideas.
-The four skills have non-overlapping responsibilities and keep authoritative records only under
-backlog in the primary worktree on main. PROJECT.yaml selects Persistence and Commit independently,
+The four skills have non-overlapping responsibilities. GitHub Issues store GitHub-backed authoritative
+Work-item content, while the file-provider pair stores file-backed authoritative Work-item content only
+under backlog in the primary worktree on main. PROJECT.yaml selects Persistence and Commit independently,
 while AGENTS.md supplies only the corresponding provider references.
 
 deliver-work-item is the provider-neutral Commit interface consumed by Dev Orchestrator. It defines the accepted commit input, READY, AWAITING_REVIEW, and BLOCKED results, state-keyed evidence, and prepared Persistence handoff. AGENTS.md still selects deliver-work-item-main-branch or deliver-work-item-feature-branch from the effective Commit value.

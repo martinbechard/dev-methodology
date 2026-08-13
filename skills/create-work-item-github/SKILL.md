@@ -1,13 +1,13 @@
 ---
 name: create-work-item-github
-description: Create one authoritative GitHub issue after provider-backed duplicate detection. Use when the effective work-item provider is github or an explicit one-item request selects GitHub issue creation.
+description: Create authoritative Work-item content in one GitHub issue after provider-backed duplicate detection. Use when the effective work-item provider is github or an explicit one-item request selects GitHub issue creation.
 metadata:
   category: development-practice
 ---
 
 # Create Work Item GitHub
 
-The Work-item content is the Work-item authority and is stored according to the Persistence provider's specific format. Create one independently actionable GitHub issue as that provider-specific format.
+The Work-item content is the Work-item authority and is stored according to the Persistence provider's specific format. GitHub issues store authoritative Work-item content. Create one independently actionable GitHub issue as that provider-specific format.
 
 ## Work Item ID
 

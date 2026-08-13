@@ -1,13 +1,13 @@
 ---
 name: manage-work-items-gitlab
-description: Manage authoritative GitLab issues through lookup, ownership, lifecycle, dependency, recovery, and terminal updates with verified provider evidence. Use when the effective work-item provider is GitLab or the user explicitly requests management of identified GitLab issues without changing the project default.
+description: Manage authoritative Work-item content stored in GitLab issues through lookup, ownership, lifecycle, dependency, recovery, and terminal updates with verified provider evidence. Use when the effective work-item provider is GitLab or the user explicitly requests management of identified GitLab issues without changing the project default.
 metadata:
   category: development-practice
 ---
 
 # Manage GitLab Work Items
 
-The Work-item content is the Work-item authority and is stored according to the Persistence provider's specific format. Manage that content in GitLab issues while keeping Work-item lifecycle and delivery completion distinct.
+The Work-item content is the Work-item authority and is stored according to the Persistence provider's specific format. GitLab issues store authoritative Work-item content. Manage that content while keeping Work-item lifecycle and delivery completion distinct.
 
 ## Work Item ID
 
@@ -20,7 +20,7 @@ Acquire the exact opaque Work Item ID before any work or provider mutation. Use 
 
 - Use the configured GitLab instance, namespace, and project when GitLab is the effective provider. A one-item explicit request may select GitLab for that item but does not rewrite the project default.
 - Require an authenticated GitLab issue interface with project authority and every capability needed by the requested operation. Return BLOCKED without mutation when authentication, project authority, permission, or a required capability is unavailable.
-- Use GitLab provider reads and mutations as the sole issue authority. Do not read from or write repository backlog files, cached issue mirrors, GitHub issues, or generic external records as a fallback.
+- Use GitLab provider reads as the sole source of observed issue state and its mutations as the sole mechanism for changing that state. Do not read from or write repository backlog files, cached issue mirrors, GitHub issues, or generic external records as a fallback.
 - Resolve each item from its Work Item ID to the observed GitLab instance, namespace, project, and issue IID. Treat the issue URL as diagnostic location evidence; a branch, commit, or merge request never replaces that identity.
 - Keep sensitive, private, proprietary, credential, or company-internal evidence out of an issue whose visibility is unsuitable. An explicitly requested export is non-authoritative and must identify itself as an export.
 

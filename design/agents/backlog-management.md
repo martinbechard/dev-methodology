@@ -313,8 +313,8 @@ Creation and management providers share public procedure names while retaining p
 | create-work-item-file | Create Work Item | Creates complete ordinary file-backed work items and delegates their exact commit. |
 | manage-future-ideas | Capture Future Idea; Inventory And Validate Future Ideas; Promote Future Idea; Result | Owns explicit file-backed Future Ideas operations outside ordinary lifecycle management. |
 | commit-file-provider-transaction | Commit File Provider Transaction | Owns the ordinary one-path and promotion two-path no-overwrite transaction. |
-| create-work-item-github | Create Work Item | Creates and verifies one authoritative GitHub issue. |
-| create-work-item-gitlab | Create Work Item | Creates and verifies one authoritative GitLab issue. |
+| create-work-item-github | Create Work Item | Creates and verifies authoritative Work-item content stored in one GitHub issue. |
+| create-work-item-gitlab | Create Work Item | Creates and verifies authoritative Work-item content stored in one GitLab issue. |
 | create-work-item-azure-devops | Create Work Item | Returns a truthful blocked result because Azure DevOps creation is not implemented. |
 | create-work-item-jira | Create Work Item | Returns a truthful blocked result because Jira creation is not implemented. |
 | manage-work-items | Work Item Identity; Lifecycle Definitions; Result Vocabulary; Inventory Work Items; Transition Work Item; Reconcile Work Item Completion; Recover Work Item; Report Work Items | Publishes the provider-neutral management contract consumed by lifecycle roles. |

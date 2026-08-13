@@ -4,7 +4,7 @@ interface:
   # User-facing name shown in Codex skill surfaces.
   display_name: Create Work Item Gitlab
   # User-facing summary shown in Codex skill surfaces.
-  short_description: Create one authoritative GitLab issue with duplicate prevention, typed requirements...
+  short_description: Create authoritative Work-item content in one GitLab issue with duplicate prevention, typed...
   # Prompt Codex can use when launching this skill directly.
   default_prompt: Use $create-work-item-gitlab to create one verified GitLab issue without a fallback record.
 

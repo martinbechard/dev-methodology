@@ -1,13 +1,13 @@
 ---
 name: manage-work-items-github
-description: Inventory, select, claim, update, recover, block, complete, reopen, and report authoritative GitHub issues through observed provider state. Use when the effective work-item provider is github or an explicit one-item request selects GitHub issue management.
+description: Inventory, select, claim, update, recover, block, complete, reopen, and report authoritative Work-item content stored in GitHub issues through observed provider state. Use when the effective work-item provider is github or an explicit one-item request selects GitHub issue management.
 metadata:
   category: development-practice
 ---
 
 # Manage GitHub Work Items
 
-The Work-item content is the Work-item authority and is stored according to the Persistence provider's specific format. Manage that content in GitHub issues while keeping Work-item lifecycle separate from delivery completion.
+The Work-item content is the Work-item authority and is stored according to the Persistence provider's specific format. GitHub issues store authoritative Work-item content. Manage that content while keeping Work-item lifecycle separate from delivery completion.
 
 ## Work Item ID
 
@@ -21,7 +21,7 @@ Acquire the exact opaque Work Item ID before any work or provider mutation. Use 
 - Resolve the repository owner and name, issue number or selection criteria, requested operation, expected current state, owner, dependencies, lifecycle evidence, delivery references, and fields authorized to change.
 - Use this skill when applicable project guidance selects provider github or an explicit one-item request selects GitHub. A task override does not silently change the project default.
 - Require an authenticated GitHub provider interface with every read and mutation capability needed by the operation. Return BLOCKED when authentication, repository authority, a required capability, or mutation permission is unavailable.
-- Re-read provider state before a transition. Do not rely on conversation state, cached search output, local files, or a branch name as issue authority.
+- Re-read provider state before a transition. Do not rely on conversation state, cached search output, local files, or a branch name as the source of observed issue state or Work-item content.
 
 ## Inventory Work Items
 

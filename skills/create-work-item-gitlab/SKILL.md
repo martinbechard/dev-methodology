@@ -1,13 +1,13 @@
 ---
 name: create-work-item-gitlab
-description: Create one authoritative GitLab issue with duplicate prevention, typed requirements, provider-native relationships, and verified observed identity. Use when the effective work-item provider is GitLab or the user explicitly requests one GitLab issue without changing the project default.
+description: Create authoritative Work-item content in one GitLab issue with duplicate prevention, typed requirements, provider-native relationships, and verified observed identity. Use when the effective work-item provider is GitLab or the user explicitly requests one GitLab issue without changing the project default.
 metadata:
   category: development-practice
 ---
 
 # Create Work Item GitLab
 
-The Work-item content is the Work-item authority and is stored according to the Persistence provider's specific format. Create one independently actionable GitLab issue without creating a shadow queue.
+The Work-item content is the Work-item authority and is stored according to the Persistence provider's specific format. GitLab issues store authoritative Work-item content. Create one independently actionable GitLab issue without creating a shadow queue.
 
 ## Work Item ID
 
@@ -19,7 +19,7 @@ The Work-item content is the Work-item authority and is stored according to the 
 - Use the configured GitLab instance, namespace, and project when GitLab is the effective provider. A one-item explicit request may select GitLab for that item but does not rewrite the project default.
 - Resolve the title, type, summary, requirements, acceptance criteria, dependencies, verification expectations, source evidence, labels, milestone or project fields, relationships, and initial ownership evidence.
 - Require an authenticated GitLab issue interface with project authority and every capability needed by the requested operation. Return BLOCKED before mutation when authentication, project authority, permission, or a required capability is unavailable.
-- Use GitLab provider reads and mutations as the sole issue authority. Do not create repository backlog files, cached issue mirrors, GitHub issues, or generic external records as a fallback.
+- Use GitLab provider reads as the sole source of observed issue state and its mutations as the sole mechanism for changing that state. Do not create repository backlog files, cached issue mirrors, GitHub issues, or generic external records as a fallback.
 - Keep sensitive, private, proprietary, credential, or company-internal evidence out of an issue whose visibility is unsuitable. An explicitly requested export is non-authoritative and must identify itself as an export.
 
 ## Create Work Item

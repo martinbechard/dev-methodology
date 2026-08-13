@@ -32,19 +32,10 @@ CANONICAL_WORK_ITEM_AUTHORITY = (
     "The Work-item content is the Work-item authority and is stored according to the "
     "Persistence provider's specific format."
 )
-CURRENT_TERMINOLOGY_PATHS = (
+EXPLICIT_CURRENT_TERMINOLOGY_PATHS = (
     Path(".agents/skills/backlog-dispatcher/SKILL.md"),
     Path("README.md"),
-    Path("skills/create-work-item/SKILL.md"),
-    Path("skills/create-work-item-file/SKILL.md"),
-    Path("skills/create-work-item-github/SKILL.md"),
-    Path("skills/create-work-item-gitlab/SKILL.md"),
-    Path("skills/manage-work-items/SKILL.md"),
-    Path("skills/manage-work-items-file/SKILL.md"),
-    Path("skills/manage-work-items-github/SKILL.md"),
-    Path("skills/manage-work-items-gitlab/SKILL.md"),
-    Path("skills/manage-work-items-azure-devops/SKILL.md"),
-    Path("skills/manage-work-items-jira/SKILL.md"),
+    Path("skills/commit-file-provider-transaction/SKILL.md"),
     Path("skills/coordinate-work-items/SKILL.md"),
     Path("skills/coordinate-codex-tasks/SKILL.md"),
     Path("skills/resource-claim/SKILL.md"),
@@ -56,6 +47,7 @@ CURRENT_TERMINOLOGY_PATHS = (
     Path("agents/roles/dev-activities/dev-backlog-steward.role.yaml"),
     Path("agents/roles/dev-activities/dev-backlog-watchdog.role.yaml"),
     Path("agents/roles/dev-activities/dev-orchestrator.role.yaml"),
+    Path("design/agents/backlog-management.md"),
     Path("design/work-item-provider-and-completion-contracts.md"),
     Path("design/orchestrated-development-lifecycle.html"),
     Path("design/documentation-templates.html"),
@@ -80,6 +72,26 @@ CURRENT_TERMINOLOGY_PATHS = (
     Path("design/generated/role-definitions.js"),
     Path("design/agent-and-skill-evaluations.html"),
 )
+DERIVED_CURRENT_TERMINOLOGY_PATHS = tuple(
+    sorted(
+        {
+            path.relative_to(ROOT)
+            for pattern in (
+                "create-work-item*/SKILL.md",
+                "manage-work-items*/SKILL.md",
+                "deliver-work-item*/SKILL.md",
+            )
+            for skill_path in (ROOT / "skills").glob(pattern)
+            for path in (skill_path, skill_path.parent / "agents" / "openai.yaml")
+            if path.is_file()
+        }
+    )
+)
+CURRENT_TERMINOLOGY_PATHS = tuple(
+    dict.fromkeys(
+        (*EXPLICIT_CURRENT_TERMINOLOGY_PATHS, *DERIVED_CURRENT_TERMINOLOGY_PATHS)
+    )
+)
 GENERIC_PROVIDER_RECORD_PATTERN = re.compile(
     r"(?<!file-)\bprovider records?\b", re.IGNORECASE
 )
@@ -88,6 +100,35 @@ PROVIDER_AUTHORITY_PATTERNS = (
     re.compile(r"\bprovider records? as lifecycle authority\b", re.IGNORECASE),
     re.compile(r"\bprovider remains (?:the durable )?lifecycle authority\b", re.IGNORECASE),
 )
+PROVIDER_NATIVE_OBJECT_AUTHORITY_PATTERNS = (
+    re.compile(
+        r"\bauthoritative\s+(?:GitHub|GitLab|Azure DevOps|Jira)\s+"
+        r"(?:issues?|work items?|records?)\b",
+        re.IGNORECASE,
+    ),
+    re.compile(
+        r"\b(?:GitHub|GitLab|Azure DevOps|Jira)\s+"
+        r"(?:issues?|work items?|records?)\s+"
+        r"(?:(?:is|are|remain|remains|stay|stays)\s+(?:the\s+)?)?"
+        r"(?:authority|authoritative)\b",
+        re.IGNORECASE,
+    ),
+    re.compile(r"\b(?:sole\s+)?issue(?: object)? authority\b", re.IGNORECASE),
+)
+PROVIDER_NATIVE_CONTENT_SENTENCES = {
+    Path("skills/create-work-item-github/SKILL.md"): (
+        "GitHub issues store authoritative Work-item content."
+    ),
+    Path("skills/manage-work-items-github/SKILL.md"): (
+        "GitHub issues store authoritative Work-item content."
+    ),
+    Path("skills/create-work-item-gitlab/SKILL.md"): (
+        "GitLab issues store authoritative Work-item content."
+    ),
+    Path("skills/manage-work-items-gitlab/SKILL.md"): (
+        "GitLab issues store authoritative Work-item content."
+    ),
+}
 
 
 def _section(text: str, heading: str) -> str:
@@ -175,9 +216,39 @@ class WorkItemCoordinationPackageTests(unittest.TestCase):
                 self.assertIn(clause, normalized)
 
     def test_current_methodology_uses_work_item_content_authority(self) -> None:
-        """Reject generic storage terminology on every maintained current surface."""
+        """Reject object authority across derived maintained current surfaces."""
 
         self.assertIn(CANONICAL_WORK_ITEM_AUTHORITY, self.portable)
+        file_provider_transaction = (
+            ROOT / "skills" / "commit-file-provider-transaction" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn("canonical file-provider record", file_provider_transaction)
+        self.assertIsNone(GENERIC_PROVIDER_RECORD_PATTERN.search(file_provider_transaction))
+        for invalid_phrase in (
+            "Create one authoritative GitHub issue.",
+            "GitLab issues are authoritative.",
+            "Preserve GitHub issue authority.",
+            "Use provider reads as the sole issue authority.",
+        ):
+            with self.subTest(invalid_provider_object_authority=invalid_phrase):
+                self.assertTrue(
+                    any(
+                        pattern.search(invalid_phrase)
+                        for pattern in PROVIDER_NATIVE_OBJECT_AUTHORITY_PATTERNS
+                    )
+                )
+        for qualified_phrase in PROVIDER_NATIVE_CONTENT_SENTENCES.values():
+            with self.subTest(qualified_provider_content=qualified_phrase):
+                self.assertFalse(
+                    any(
+                        pattern.search(qualified_phrase)
+                        for pattern in PROVIDER_NATIVE_OBJECT_AUTHORITY_PATTERNS
+                    )
+                )
+        for path, sentence in PROVIDER_NATIVE_CONTENT_SENTENCES.items():
+            with self.subTest(provider_content_path=path):
+                self.assertIn(sentence, (ROOT / path).read_text(encoding="utf-8"))
+
         errors: list[str] = []
         paths = list(CURRENT_TERMINOLOGY_PATHS)
         paths.extend(
@@ -193,6 +264,10 @@ class WorkItemCoordinationPackageTests(unittest.TestCase):
             for pattern in PROVIDER_AUTHORITY_PATTERNS:
                 if match := pattern.search(text):
                     errors.append(f"{path}: provider authority {match.group(0)!r}")
+                    break
+            for pattern in PROVIDER_NATIVE_OBJECT_AUTHORITY_PATTERNS:
+                if match := pattern.search(text):
+                    errors.append(f"{path}: provider-native object authority {match.group(0)!r}")
                     break
         self.assertEqual([], errors, "\n".join(errors))
 
