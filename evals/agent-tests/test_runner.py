@@ -2704,6 +2704,138 @@ class AgentSuiteRunnerTests(unittest.TestCase):
         self.assertIn("--port must be a canonical decimal integer from 1 to 65535", completed.stderr)
         self.assertFalse(evidence_created)
 
+    def test_playwright_fixture_server_holds_fixed_port_through_persistence_reload(self) -> None:
+        """A preclaimed fixture listener remains available through reload and closes after verification."""
+        configured_port = os.environ.get("DEV_METHODOLOGY_PLAYWRIGHT_FIXED_PORT")
+        if configured_port is None:
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as probe:
+                probe.bind(("127.0.0.1", 0))
+                requested_port = int(probe.getsockname()[1])
+        else:
+            requested_port = int(configured_port)
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            codex_home, _ = self._write_playwright_broker_fixture(root, ("browser-suite:happy",))
+            runtime = codex_home / "playwright-runtime"
+            runtime_config = json.loads((runtime / "runtime-config.json").read_text(encoding="utf-8"))
+            fixture_root = Path(
+                runtime_config["scenarios"]["browser-suite:happy"]["fixtureBinding"]["configuredPath"]
+            )
+            (fixture_root / "index.html").write_text(
+                """<!doctype html><html><body><h1>Ready</h1>
+                <label><input id="remember" type="checkbox">Remember setting</label>
+                <script>
+                const remember = document.querySelector('#remember');
+                remember.checked = localStorage.getItem('remember') === 'yes';
+                remember.addEventListener('change', () => {
+                  localStorage.setItem('remember', remember.checked ? 'yes' : 'no');
+                });
+                </script></body></html>""",
+                encoding="utf-8",
+            )
+            browser_check = runtime / "persistence-reload-check.mjs"
+            browser_check.write_text(
+                """import { chromium } from 'playwright';
+                const [url, executablePath] = process.argv.slice(2);
+                const browser = await chromium.launch({ executablePath, headless: true });
+                try {
+                  const page = await browser.newPage();
+                  await page.goto(url, { waitUntil: 'domcontentloaded' });
+                  await page.getByRole('checkbox', { name: 'Remember setting' }).check();
+                  await page.reload({ waitUntil: 'domcontentloaded' });
+                  const persisted = await page.getByRole('checkbox', { name: 'Remember setting' }).isChecked();
+                  await page.getByRole('heading', { name: 'Ready' }).waitFor({ state: 'visible' });
+                  if (!persisted) throw new Error('Reload did not restore the persisted setting');
+                  process.stdout.write(`${JSON.stringify({ persisted, laterCheckPassed: true })}\n`);
+                } finally {
+                  await browser.close();
+                }
+                """,
+                encoding="utf-8",
+            )
+            process = subprocess.Popen(
+                [
+                    str(runner._bundled_node_executable()),
+                    str(runtime / "playwright-harness.mjs"),
+                    "serve",
+                    "--scenario",
+                    "browser-suite:happy",
+                    "--port",
+                    str(requested_port),
+                ],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                start_new_session=True,
+            )
+            try:
+                ready = runner._read_broker_ready(process)
+                browser_result = subprocess.run(
+                    [
+                        str(runner._bundled_node_executable()),
+                        str(browser_check),
+                        f"http://127.0.0.1:{requested_port}",
+                        str(runner._resolve_playwright_chromium(_RUNNER_PATH.parent)),
+                    ],
+                    check=False,
+                    text=True,
+                    capture_output=True,
+                    timeout=30,
+                )
+                listener_alive_after_reload = process.poll() is None
+                process.terminate()
+                remaining_stdout, stderr = process.communicate(timeout=10)
+            finally:
+                if process.poll() is None:
+                    process.kill()
+                    process.wait(timeout=2)
+            receipt = json.loads((root / "evidence-0" / "fixture-server.json").read_text(encoding="utf-8"))
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as probe:
+                probe.settimeout(1)
+                closed_connection_result = probe.connect_ex(("127.0.0.1", requested_port))
+
+        self.assertEqual("dev-methodology-playwright-fixture-ready", ready["schema"])
+        self.assertEqual(requested_port, ready["requestedPort"])
+        self.assertEqual(requested_port, ready["selectedPort"])
+        self.assertEqual(0, browser_result.returncode, browser_result.stderr)
+        self.assertEqual(
+            {"persisted": True, "laterCheckPassed": True},
+            json.loads(browser_result.stdout),
+        )
+        self.assertTrue(listener_alive_after_reload)
+        self.assertEqual(0, process.returncode, stderr)
+        self.assertEqual("completed", receipt["status"])
+        self.assertEqual("SIGTERM", receipt["stoppedBy"])
+        self.assertTrue(receipt["cleanup"]["server"]["closed"])
+        self.assertGreaterEqual(len(receipt["serviceEvents"]), 2)
+        self.assertIn("dev-methodology-playwright-fixture-evidence", remaining_stdout)
+        self.assertNotEqual(0, closed_connection_result)
+
+    def test_playwright_fixture_server_requires_a_preclaimed_fixed_port(self) -> None:
+        """Hold-open mode cannot create an operating-system-selected listener."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            codex_home, _ = self._write_playwright_broker_fixture(root, ("browser-suite:happy",))
+            runtime = codex_home / "playwright-runtime"
+            completed = subprocess.run(
+                [
+                    str(runner._bundled_node_executable()),
+                    str(runtime / "playwright-harness.mjs"),
+                    "serve",
+                    "--scenario",
+                    "browser-suite:happy",
+                ],
+                check=False,
+                text=True,
+                capture_output=True,
+                timeout=10,
+            )
+            fixture_receipt_exists = (root / "evidence-0" / "fixture-server.json").exists()
+
+        self.assertNotEqual(0, completed.returncode)
+        self.assertIn("serve requires --port for a preclaimed fixed listener", completed.stderr)
+        self.assertFalse(fixture_receipt_exists)
+
     def test_playwright_broker_rejects_fixture_root_swap_after_startup(self) -> None:
         """A protected fixture snapshot cannot be replaced with an attacker-controlled symlink after readiness."""
         with tempfile.TemporaryDirectory() as temporary:

@@ -26,8 +26,8 @@ const mimeTypes = new Map([
 
 function parseArguments(values) {
   const [mode, ...rest] = values;
-  if (!new Set(["broker", "client", "inspect", "preflight", "run", "validate"]).has(mode)) {
-    throw new Error("Usage: playwright-harness.mjs broker|client|inspect|preflight|run|validate [options]");
+  if (!new Set(["broker", "client", "inspect", "preflight", "run", "serve", "validate"]).has(mode)) {
+    throw new Error("Usage: playwright-harness.mjs broker|client|inspect|preflight|run|serve|validate [options]");
   }
   const options = { mode };
   for (let index = 0; index < rest.length; index += 2) {
@@ -615,6 +615,68 @@ async function writeBrokerReceipt(scenario, receipt) {
   await writeFile(join(evidenceRoot, "broker.json"), `${JSON.stringify(receipt, null, 2)}\n`);
 }
 
+async function runFixtureServer(options) {
+  const config = await readConfiguration();
+  const scenario = config.scenarios?.[options.scenario];
+  if (!scenario) throw new Error(`Unknown configured browser scenario: ${options.scenario ?? "missing"}`);
+  const requestedPort = parseFixedPort(options.port);
+  if (requestedPort === null) throw new Error("serve requires --port for a preclaimed fixed listener");
+  await validateFixtureBinding(scenario.fixtureBinding);
+  const evidenceRoot = resolve(scenario.evidenceRoot);
+  await mkdir(evidenceRoot, { recursive: true });
+  const serviceEvents = [];
+  const startedAt = new Date().toISOString();
+  const service = await startFixtureServer(scenario.fixtureBinding, serviceEvents, requestedPort);
+  let stopSignal = null;
+  let resolveStop;
+  const stopped = new Promise((resolvePromise) => { resolveStop = resolvePromise; });
+  const stop = (signal) => {
+    stopSignal ??= signal;
+    resolveStop();
+  };
+  const stopOnInterrupt = () => stop("SIGINT");
+  const stopOnTerminate = () => stop("SIGTERM");
+  process.once("SIGINT", stopOnInterrupt);
+  process.once("SIGTERM", stopOnTerminate);
+  process.stdout.write(`${JSON.stringify({
+    schema: "dev-methodology-playwright-fixture-ready",
+    version: 1,
+    scenario: options.scenario,
+    requestedPort,
+    selectedPort: service.port,
+  })}\n`);
+  await stopped;
+  const requestedAt = new Date().toISOString();
+  await closeServer(service.server);
+  const closedAt = new Date().toISOString();
+  process.removeListener("SIGINT", stopOnInterrupt);
+  process.removeListener("SIGTERM", stopOnTerminate);
+  const receipt = {
+    schema: "dev-methodology-playwright-fixture-evidence",
+    version: 1,
+    status: "completed",
+    scenario: options.scenario,
+    fixtureRoot: scenario.fixtureBinding.canonicalRoot,
+    requestedPort,
+    selectedPort: service.port,
+    startedAt,
+    stoppedBy: stopSignal,
+    serviceEvents,
+    cleanup: {
+      server: {
+        created: true,
+        requested: true,
+        requestedAt,
+        closed: true,
+        closedAt,
+        disposition: "closed",
+      },
+    },
+  };
+  await writeFile(join(evidenceRoot, "fixture-server.json"), `${JSON.stringify(receipt, null, 2)}\n`);
+  return receipt;
+}
+
 async function runBroker(options) {
   const config = await readConfiguration();
   const scenario = config.scenarios?.[options.scenario];
@@ -810,6 +872,7 @@ async function runClient(options) {
 async function execute(options) {
   if (options.mode === "broker") return runBroker(options);
   if (options.mode === "client") return runClient(options);
+  if (options.mode === "serve") return runFixtureServer(options);
   return executeBrowser(options);
 }
 
