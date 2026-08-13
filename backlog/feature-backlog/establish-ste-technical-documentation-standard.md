@@ -453,3 +453,15 @@ Do you explicitly approve integration mutation of exactly the 14 governed defini
 - Dispatch Architecture: Create one user-visible Codex task whose initial reference-plus-delta prompt starts one Dev Orchestrator collaboration subagent for this provider record.
 - Transition Claim: `start-ste-terminal-reconciliation-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `0a6b980f-0d9a-423a-925d-02359e5be3d5`.
 - Next Reconciliation: Adopt the exact visible task identity. Its nested Dev Orchestrator records Starting -> Running before provider reconciliation or mutation.
+
+## Current Canonical Runtime Assignment
+
+- Assigned At: 2026-08-13T07:27:58Z.
+- Codex Task ID: `019ffa05-1b39-7720-864c-2b06f41a45cb`.
+- Conversation ID: `019ffa05-1b39-7720-864c-2b06f41a45cb`.
+- Host: `local`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Requested Title: `Starting — Establish STE Technical Documentation Standard`.
+- Initial Action: Start one Dev Orchestrator collaboration subagent for this authoritative provider record.
+- Creation Outcome: Unique success with no pending client identity and no retry.
+- Lifecycle Boundary: This assignment remains Starting until the nested Dev Orchestrator accepts and records Starting -> Running.
