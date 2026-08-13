@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -79,3 +79,18 @@ Dependency Resolution: Satisfied by completed Work Item `review-agent-and-skill-
 
 - This item must not start before its page-specific text review is Completed.
 - Creation of this work item does not dispatch it while backlog crisis recovery remains active.
+
+## Starting Handoff Evidence
+
+- Reserved At: 2026-08-13T17:25:18Z.
+- Transition: `Ready -> Starting`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Baseline: `463955fbe97a86f7fd3f0412d80542a1ccc3607a` on primary `main`.
+- Normalized Objective: Align `design/agent-and-skill-definitions.html` with the Documentation Design System while preserving its accepted text baseline and generator ownership.
+- Dependency Evidence: `review-agent-and-skill-definitions-text` is Completed; no hard prerequisite remains.
+- Capacity: Slot 3 of 5. `map-evaluation-contracts-to-inspect-ai` and `simplify-new-document-provenance-header` are Running.
+- Overlap: The active provenance claim does not include this target page. Before mutation, the new execution must publish and acquire its exact authoritative-source, generator, shared-asset, and focused-test scope. Do not overlap provenance-owned `scripts/test_bundle_content.py` or any other live claim.
+- Dispatch Architecture: Create one visible Codex task whose reference-plus-delta prompt starts one Dev Orchestrator collaboration subagent and assigns exact self-task title and messaging responsibility to the visible root.
+- Transition Claim: `reserve-align-agent-skill-definitions-019ff2c3`; event `c5534ab2-38a1-477b-af9e-5234411996a8`.
+- Next Action: Reconcile the unique visible task identity; its nested Dev Orchestrator records `Starting -> Running` before mutation.
