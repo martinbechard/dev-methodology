@@ -1,6 +1,6 @@
 # Map Evaluation Contracts To Inspect AI
 
-Status: Running
+Status: User Action Required
 
 Type: Analysis
 
@@ -90,3 +90,40 @@ None.
 - Branch and Worktree: primary `main` at `/Users/martinbechard/dev/dev-methodology`.
 - Phase: source inspection and bounded implementation planning.
 - Acceptance: The dispatched root accepted execution ownership after acquiring the exact Work Item ID and provider path.
+
+## Exhausted Correction Disposition
+
+- Recorded At: 2026-08-13T17:53:55Z.
+- Transition: `Running -> User Action Required`.
+- Canonical Task and Conversation: `019ffbeb-02ee-7d52-9460-d1bfdbdbe20b` on host `local`.
+- Preserved Dev Orchestrator: `/root/map_evaluation_contracts_to_inspect_ai`.
+- Preserved Candidate: `33d6a25350f5230cb359c1ad76397fea4dda44fc` on primary `main`.
+- Attempt History: Three artifact-review correction cycles are consumed. A fourth cycle requires explicit user authority.
+- Unresolved Finding 1: Responsibilities `R-001` through `R-062` require one-to-one metadata keyed by `Responsibility-ID`.
+- Unresolved Finding 2: Every retirement row and each Phase 2–8 gate require explicit retirement-evidence traceability.
+- Preserved State: The mapping artifact is clean and committed; all Map claims are released. Preserve the canonical execution, plan pair, candidate, review history, and series evidence.
+- Series Effect: Later Inspect AI adoption children remain effective `Holding` while this first ordered item is nonterminal.
+- Transition Claim: `map-inspect-ai-exhausted-review-uar-019ff2c3`; event `5866571d-9dc4-40b3-87eb-c19f081b1824`.
+
+## User Action Required
+
+### Question for the User
+
+Do you authorize one exceptional fourth correction and fresh independent review cycle, limited exactly to adding one-to-one `Responsibility-ID` metadata for `R-001` through `R-062` and retirement-evidence traceability for every retirement row and the Phase 2–8 gates?
+
+### Why User Input Is Required
+
+The normal correction limit is exhausted. Both omissions affect required mapping completeness, so the Coordinator cannot authorize another cycle or silently exclude them.
+
+### Options and Tradeoffs
+
+- **Authorize one exceptional fourth cycle (recommended):** Complete only the two missing ledgers, obtain fresh independent review and focused verification, and preserve the existing candidate and all accepted content.
+- **Do not authorize and abandon this delivery:** Preserve candidate `33d6a253` as incomplete evidence, end this Work Item without successful delivery, and keep later Inspect AI adoption phases from proceeding because their ordered prerequisite remains unsatisfied.
+
+### Resolution
+
+Pending in canonical Task and Conversation `019ffbeb-02ee-7d52-9460-d1bfdbdbe20b`.
+
+### Unattended Work Boundary
+
+Do not modify, review, verify, deliver, or close this Work Item until the user answers in its canonical visible task. Unrelated eligible Work Items may continue.
