@@ -4,7 +4,7 @@ interface:
   # User-facing name shown in Codex skill surfaces.
   display_name: Estimate Agent Work
   # User-facing summary shown in Codex skill surfaces.
-  short_description: Estimate AI-delivered engineering work in complexity, generated tokens, autonomous turns,...
+  short_description: Estimate AI-delivered engineering work in complexity, generated tokens, autonomous turns...
   # Prompt Codex can use when launching this skill directly.
   default_prompt: Use $estimate-agent-work to estimate this AI-delivered engineering work in generated-token agent-hours, separate runtime, and wall-clock time.
 
