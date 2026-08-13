@@ -95,6 +95,43 @@ MARKDOWN_LINK_PATTERN = re.compile(
 )
 DEPENDENCY_LINK_PATTERN = re.compile(r"\[[^]\r\n]+\]\(([^)\r\n]+)\)")
 INLINE_MARKDOWN_PATTERN = re.compile(r"(`[^`]*`|\*\*([^*]+)\*\*|\*([^*]+)\*|\[([^]]+)\]\([^)]+\))")
+MAX_RUNTIME_SNAPSHOT_BYTES = 1_048_576
+MAX_RUNTIME_SNAPSHOT_OBSERVATIONS = 4_096
+MAX_RUNTIME_SNAPSHOT_STRING_CHARACTERS = 4_096
+RUNTIME_IDENTITY_TYPES = frozenset(
+    {"task", "conversation", "thread", "collaboration_execution"}
+)
+AUTHORITATIVE_IDENTITY_SECTIONS = frozenset(
+    {"Starting Handoff Evidence", "Running Acceptance Evidence", "Stalled Evidence"}
+)
+IDENTITY_LABEL_TYPES = {
+    "Codex Task ID": "task",
+    "Canonical Codex Task ID": "task",
+    "Canonical Task": "task",
+    "Root Agent Task": "task",
+    "Canonical Root Agent Task": "task",
+    "Canonical Root Agent Task ID": "task",
+    "Conversation ID": "conversation",
+    "Canonical Conversation ID": "conversation",
+    "Canonical Conversation": "conversation",
+    "Canonical Thread": "thread",
+    "Canonical Thread ID": "thread",
+    "Canonical Work-Item Thread": "thread",
+    "Canonical Execution": "collaboration_execution",
+}
+IDENTITY_PLACEHOLDERS = frozenset(
+    {"none", "pending", "unknown", "unavailable", "not present", "n/a", "not exposed"}
+)
+ACTUALLY_RUNNING_STATES = frozenset({"live", "in-progress"})
+NOT_ACTUALLY_RUNNING_STATES = frozenset(
+    {"idle", "interrupted", "terminal", "archived", "notLoaded"}
+)
+
+
+@dataclass(frozen=True)
+class _AssignedIdentity:
+    identity_type: str
+    identity: str
 
 
 @dataclass
@@ -119,6 +156,7 @@ class _Item:
     diagnostic_owner: str = ""
     next_investigation_action: str = ""
     source_evidence: str = ""
+    assigned_identities: tuple[_AssignedIdentity, ...] = ()
     stalled_evidence: dict[str, str] = field(default_factory=dict)
     stalled_evidence_missing: list[str] = field(default_factory=list)
     missing: list[str] = field(default_factory=list)
@@ -143,12 +181,139 @@ class _FutureIdea:
 
 
 @dataclass(frozen=True)
+class _RuntimeObservation:
+    identity_type: str
+    identity: str
+    state: str | None
+    updated_at: str | None
+
+
+@dataclass(frozen=True)
+class _RuntimeSnapshot:
+    captured_at: str
+    source: str
+    observations: tuple[_RuntimeObservation, ...]
+
+
+@dataclass(frozen=True)
 class _Snapshot:
     source_commit: str
     generated_at: str
     claim_captured_at: str
     claims: tuple[dict[str, object], ...]
     claim_status: str
+    runtime_snapshot: _RuntimeSnapshot | None
+
+
+def _runtime_snapshot_string(
+    value: object,
+    field_name: str,
+    *,
+    nullable: bool = False,
+) -> str | None:
+    """Validate one bounded snapshot string without changing caller text."""
+    if value is None and nullable:
+        return None
+    if not isinstance(value, str) or not value or value.isspace():
+        raise ValueError(
+            f"Runtime snapshot field {field_name} must be a nonempty string"
+            + (" or null." if nullable else ".")
+        )
+    if len(value) > MAX_RUNTIME_SNAPSHOT_STRING_CHARACTERS:
+        raise ValueError(
+            f"Runtime snapshot field {field_name} exceeds "
+            f"{MAX_RUNTIME_SNAPSHOT_STRING_CHARACTERS} characters."
+        )
+    return value
+
+
+def _read_runtime_snapshot(path: Path) -> _RuntimeSnapshot:
+    """Read and validate one bounded caller-supplied runtime snapshot."""
+    with path.open("rb") as handle:
+        raw = handle.read(MAX_RUNTIME_SNAPSHOT_BYTES + 1)
+    if len(raw) > MAX_RUNTIME_SNAPSHOT_BYTES:
+        raise ValueError(
+            f"Runtime snapshot exceeds {MAX_RUNTIME_SNAPSHOT_BYTES} bytes."
+        )
+    try:
+        payload = json.loads(raw.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise ValueError(f"Runtime snapshot is not valid UTF-8 JSON: {exc}") from exc
+    required_root_fields = {"captured_at", "source", "observations"}
+    if not isinstance(payload, dict) or set(payload) != required_root_fields:
+        raise ValueError(
+            "Runtime snapshot must be an object containing exactly "
+            "captured_at, source, and observations."
+        )
+    captured_at = _runtime_snapshot_string(payload["captured_at"], "captured_at")
+    source = _runtime_snapshot_string(payload["source"], "source")
+    raw_observations = payload["observations"]
+    if not isinstance(raw_observations, list):
+        raise ValueError("Runtime snapshot observations must be an array.")
+    if len(raw_observations) > MAX_RUNTIME_SNAPSHOT_OBSERVATIONS:
+        raise ValueError(
+            "Runtime snapshot observations exceed "
+            f"{MAX_RUNTIME_SNAPSHOT_OBSERVATIONS} entries."
+        )
+    required_observation_fields = {
+        "identity_type",
+        "identity",
+        "state",
+        "updated_at",
+    }
+    observations: list[_RuntimeObservation] = []
+    seen_identities: set[tuple[str, str]] = set()
+    for index, raw_observation in enumerate(raw_observations):
+        if (
+            not isinstance(raw_observation, dict)
+            or set(raw_observation) != required_observation_fields
+        ):
+            raise ValueError(
+                "Runtime snapshot observation "
+                f"{index} must contain exactly identity_type, identity, state, "
+                "and updated_at."
+            )
+        identity_type_value = _runtime_snapshot_string(
+            raw_observation["identity_type"],
+            f"observations[{index}].identity_type",
+        )
+        identity_value = _runtime_snapshot_string(
+            raw_observation["identity"],
+            f"observations[{index}].identity",
+        )
+        assert identity_type_value is not None
+        assert identity_value is not None
+        if identity_type_value not in RUNTIME_IDENTITY_TYPES:
+            raise ValueError(
+                "Runtime snapshot observation "
+                f"{index} has unsupported identity_type {identity_type_value}."
+            )
+        identity_key = (identity_type_value, identity_value)
+        if identity_key in seen_identities:
+            raise ValueError(
+                "Runtime snapshot contains duplicate typed identity "
+                f"{identity_type_value}:{identity_value}."
+            )
+        seen_identities.add(identity_key)
+        observations.append(
+            _RuntimeObservation(
+                identity_type=identity_type_value,
+                identity=identity_value,
+                state=_runtime_snapshot_string(
+                    raw_observation["state"],
+                    f"observations[{index}].state",
+                    nullable=True,
+                ),
+                updated_at=_runtime_snapshot_string(
+                    raw_observation["updated_at"],
+                    f"observations[{index}].updated_at",
+                    nullable=True,
+                ),
+            )
+        )
+    assert captured_at is not None
+    assert source is not None
+    return _RuntimeSnapshot(captured_at, source, tuple(observations))
 
 
 def _plain_text(markdown: str) -> str:
@@ -157,28 +322,105 @@ def _plain_text(markdown: str) -> str:
     return INLINE_MARKDOWN_PATTERN.sub(lambda match: next((group for group in match.groups()[1:] if group), match.group(0).strip("`")), text)
 
 
-def _parse_document(path: Path) -> tuple[str, dict[str, str], dict[str, str]]:
-    """Parse a backlog Markdown file into its title, scalar fields, and level-two sections."""
+def _parse_document(
+    path: Path,
+) -> tuple[
+    str,
+    dict[str, str],
+    dict[str, str],
+    tuple[tuple[str, str], ...],
+]:
+    """Parse title, scalar fields, sections, and ordered level-two occurrences."""
     content = path.read_text(encoding="utf-8")
     title = ""
     fields: dict[str, str] = {}
     sections: dict[str, list[str]] = {}
+    section_occurrences: list[tuple[str, list[str]]] = []
     current_section = ""
+    current_occurrence: list[str] | None = None
+    current_user_subsection = ""
     for line in content.splitlines():
         if line.startswith("# ") and not title:
             title = line[2:].strip()
             continue
         if line.startswith("## "):
             current_section = line[3:].strip()
+            current_user_subsection = ""
             sections.setdefault(current_section, [])
+            current_occurrence = []
+            section_occurrences.append((current_section, current_occurrence))
+            continue
+        if line.startswith("### ") and current_section == "User Action Required":
+            current_user_subsection = line[4:].strip()
+            if current_user_subsection in {"Question for the User", "Resolution"}:
+                sections.setdefault(current_user_subsection, [])
+            sections[current_section].append(line)
+            assert current_occurrence is not None
+            current_occurrence.append(line)
             continue
         if current_section:
             sections[current_section].append(line)
+            assert current_occurrence is not None
+            current_occurrence.append(line)
+            if current_user_subsection in {"Question for the User", "Resolution"}:
+                sections[current_user_subsection].append(line)
             continue
         match = re.match(r"^([A-Za-z][A-Za-z ]+):\s*(.*?)\s*$", line)
         if match:
             fields[match.group(1)] = match.group(2)
-    return title, fields, {name: "\n".join(lines).strip() for name, lines in sections.items()}
+    return (
+        title,
+        fields,
+        {name: "\n".join(lines).strip() for name, lines in sections.items()},
+        tuple(
+            (name, "\n".join(lines).strip())
+            for name, lines in section_occurrences
+        ),
+    )
+
+
+def _identity_scalar(value: str) -> str | None:
+    """Return one complete canonical identity token from an assignment value."""
+    code_span = re.fullmatch(r"`([^`\s]+)`(\.)?", value)
+    if code_span:
+        identity = code_span.group(1)
+    elif re.fullmatch(r"[^\s`]+", value) and value[-1] not in ".,;!?":
+        identity = value
+    else:
+        return None
+    if identity.casefold() in IDENTITY_PLACEHOLDERS:
+        return None
+    return identity
+
+
+def _assigned_identities(
+    section_occurrences: tuple[tuple[str, str], ...],
+) -> tuple[_AssignedIdentity, ...]:
+    """Extract exact typed identities from each latest authoritative section."""
+    latest_occurrence = {
+        name: index
+        for index, (name, _) in enumerate(section_occurrences)
+        if name in AUTHORITATIVE_IDENTITY_SECTIONS
+    }
+    assigned: list[_AssignedIdentity] = []
+    seen: set[tuple[str, str]] = set()
+    for index, (name, content) in enumerate(section_occurrences):
+        if latest_occurrence.get(name) != index:
+            continue
+        for line in content.splitlines():
+            candidate = re.sub(r"^[-*+]\s+", "", line.strip(), count=1)
+            match = re.fullmatch(r"([^:]+):\s*(.*?)\s*", candidate)
+            if not match:
+                continue
+            identity_type = IDENTITY_LABEL_TYPES.get(match.group(1))
+            if identity_type is None:
+                continue
+            identity = _identity_scalar(match.group(2))
+            if identity is None or (identity_type, identity) in seen:
+                continue
+            seen.add((identity_type, identity))
+            assigned.append(_AssignedIdentity(identity_type, identity))
+    return tuple(assigned)
 
 
 def _parse_labeled_section(section: str) -> dict[str, str]:
@@ -334,7 +576,7 @@ def _series_orders(
             if not _is_resolved_regular_file_within(path, folder, repository_root):
                 continue
             try:
-                _, fields, _ = _parse_document(path)
+                _, fields, _, _ = _parse_document(path)
             except (OSError, UnicodeError) as exc:
                 unreadable_items[relative_item] = f"{type(exc).__name__}: {exc}"
                 continue
@@ -432,7 +674,7 @@ def _series_orders(
                     unreadable = unreadable_items.get(relative_child)
                     if unreadable is None:
                         try:
-                            _, child_fields, _ = _parse_document(child)
+                            _, child_fields, _, _ = _parse_document(child)
                         except (OSError, UnicodeError) as exc:
                             unreadable = f"{type(exc).__name__}: {exc}"
                         else:
@@ -651,7 +893,7 @@ def _read_items(
                 items.append(item)
                 continue
             try:
-                title, fields, sections = _parse_document(path)
+                title, fields, sections, section_occurrences = _parse_document(path)
             except (OSError, UnicodeError) as exc:
                 item = _Item(relative_text, path.stem, path.stem, path.stem, queue, "", "", "", [])
                 item.anomalies.append(f"Unreadable item: {type(exc).__name__}: {exc}")
@@ -701,6 +943,7 @@ def _read_items(
                     "",
                 ),
                 source_evidence=sections.get("Source Evidence", ""),
+                assigned_identities=_assigned_identities(section_occurrences),
                 stalled_evidence=stalled_evidence,
                 stalled_evidence_missing=stalled_evidence_missing,
                 missing=missing,
@@ -842,7 +1085,7 @@ def _read_future_ideas(
             ideas.append(idea)
             continue
         try:
-            title, fields, sections = _parse_document(path)
+            title, fields, sections, _ = _parse_document(path)
         except (OSError, UnicodeError) as exc:
             idea = _FutureIdea(relative_text, path.stem, "", "", "", "", "")
             idea.anomalies.append(
@@ -1062,7 +1305,75 @@ def _status_badge(status: str) -> str:
     return f'<span class="{" ".join(classes)}">{_escape(status or "Missing")}</span>'
 
 
-def _item_card(item: _Item) -> str:
+def _actually_running(observation: _RuntimeObservation | None) -> str:
+    """Classify only exact supported runtime states with complete evidence."""
+    if (
+        observation is None
+        or observation.state is None
+        or observation.updated_at is None
+    ):
+        return "Unavailable"
+    if observation.state in ACTUALLY_RUNNING_STATES:
+        return "Yes"
+    if observation.state in NOT_ACTUALLY_RUNNING_STATES:
+        return "No"
+    return "Unavailable"
+
+
+def _runtime_observation_detail(
+    item: _Item,
+    snapshot: _RuntimeSnapshot | None,
+) -> str:
+    """Render one separate runtime observation row per assigned typed identity."""
+    if not item.assigned_identities:
+        return ""
+    observations = (
+        {
+            (observation.identity_type, observation.identity): observation
+            for observation in snapshot.observations
+        }
+        if snapshot is not None
+        else {}
+    )
+    rows: list[str] = []
+    for assigned in item.assigned_identities:
+        observation = observations.get(
+            (assigned.identity_type, assigned.identity)
+        )
+        if snapshot is None:
+            state = "Unavailable — no runtime snapshot"
+            updated_at = "Unavailable"
+            source = "Unavailable"
+            captured_at = "Unavailable"
+        elif observation is None:
+            state = "Unavailable — identity absent from snapshot"
+            updated_at = "Unavailable"
+            source = snapshot.source
+            captured_at = snapshot.captured_at
+        else:
+            state = observation.state if observation.state is not None else "Unavailable"
+            updated_at = (
+                observation.updated_at
+                if observation.updated_at is not None
+                else "Unavailable"
+            )
+            source = snapshot.source
+            captured_at = snapshot.captured_at
+        rows.append(
+            '<dl class="interaction runtime-observation">'
+            f"<dt>Runtime identity type</dt><dd>{_escape(assigned.identity_type)}</dd>"
+            f"<dt>Runtime identity</dt><dd><code>{_escape(assigned.identity)}</code></dd>"
+            f"<dt>Latest runtime update</dt><dd>{_escape(updated_at)}</dd>"
+            f"<dt>Observed runtime state</dt><dd>{_escape(state)}</dd>"
+            f"<dt>Observation source</dt><dd>{_escape(source)}</dd>"
+            f"<dt>Snapshot time</dt><dd>{_escape(captured_at)}</dd>"
+            f"<dt>Actually running</dt><dd>{_actually_running(observation)}</dd>"
+            "</dl>"
+        )
+    return "".join(rows)
+
+
+def _item_card(item: _Item, runtime_snapshot: _RuntimeSnapshot | None) -> str:
     """Render a traceable backlog item card with lifecycle and dependency evidence."""
     metadata = [_badge(item.declared_type, "type"), _status_badge(item.status)]
     if item.series:
@@ -1109,7 +1420,8 @@ def _item_card(item: _Item) -> str:
         f'<p class="detail"><strong>Work Item ID:</strong> '
         f'<code>{_escape(item.work_item_id)}</code></p>'
         f'<p class="detail"><strong>Dependencies:</strong> {_escape(dependency_text)}</p>'
-        f'{detail}<p class="source"><strong>Source:</strong> <code>{_escape(item.path)}</code></p>'
+        f"{detail}{_runtime_observation_detail(item, runtime_snapshot)}"
+        f'<p class="source"><strong>Source:</strong> <code>{_escape(item.path)}</code></p>'
         '</article>'
     )
 
@@ -1139,9 +1451,15 @@ def _future_idea_card(idea: _FutureIdea) -> str:
     )
 
 
-def _section(title: str, description: str, items: Iterable[_Item], empty: str) -> str:
+def _section(
+    title: str,
+    description: str,
+    items: Iterable[_Item],
+    empty: str,
+    runtime_snapshot: _RuntimeSnapshot | None,
+) -> str:
     """Render a named report section and a stable empty state."""
-    rendered = "".join(_item_card(item) for item in items)
+    rendered = "".join(_item_card(item, runtime_snapshot) for item in items)
     body = f'<div class="item-grid">{rendered}</div>' if rendered else f'<p class="empty">{_escape(empty)}</p>'
     return f'<section class="section"><div class="section-head"><div><h2>{_escape(title)}</h2><p>{_escape(description)}</p></div></div>{body}</section>'
 
@@ -1258,15 +1576,15 @@ def _render_report(
 <body><main>
 <header><p class="meta">Repository backlog · source commit {_escape(snapshot.source_commit)}</p><h1>Backlog operator report</h1><p class="lede">A source-backed view of dispatchable work, lifecycle evidence, dependencies, archives, and decisions that need your input.</p><p class="meta">Generated {_escape(snapshot.generated_at)}</p></header>
 <section aria-labelledby="summary-title"><h2 id="summary-title">Summary</h2><div class="metric-grid">{metrics_html}</div><div class="count-grid"><div class="panel"><h3>Underlying type counts</h3><table><tbody>{count_rows}</tbody></table></div><div class="panel"><h3>Declared status counts</h3><table><tbody>{status_rows}</tbody></table></div></div></section>
-{_section("Needs Your Input", "Waiting for a decision, approval, action, or information from you. These items retain Status: User Action Required and are excluded from unattended work.", needs_input, "No user action is currently required.")}
-{_section("Runnable Work", "Items whose canonical lifecycle is Ready. A malformed Ready record with an unmet hard dependency is rejected and reported for provider reconciliation.", runnable, "No canonical Ready items are dispatchable.")}
-{_section("Stalled Work", "Active items with evidence that progress has stopped while the cause remains unknown. Each item names its diagnostic owner and next investigation action.", stalled, "No stalled active items.")}
-{_section("Blocked Work", "Active items whose canonical provider status is Blocked.", blocked, "No blocked active items.")}
-{_section("Holding", "Visible work intentionally excluded from unattended dispatch.", holding, "No holding items.")}
+{_section("Needs Your Input", "Waiting for a decision, approval, action, or information from you. These items retain Status: User Action Required and are excluded from unattended work.", needs_input, "No user action is currently required.", snapshot.runtime_snapshot)}
+{_section("Runnable Work", "Items whose canonical lifecycle is Ready. A malformed Ready record with an unmet hard dependency is rejected and reported for provider reconciliation.", runnable, "No canonical Ready items are dispatchable.", snapshot.runtime_snapshot)}
+{_section("Stalled Work", "Active items with evidence that progress has stopped while the cause remains unknown. Each item names its diagnostic owner and next investigation action.", stalled, "No stalled active items.", snapshot.runtime_snapshot)}
+{_section("Blocked Work", "Active items whose canonical provider status is Blocked.", blocked, "No blocked active items.", snapshot.runtime_snapshot)}
+{_section("Holding", "Visible work intentionally excluded from unattended dispatch.", holding, "No holding items.", snapshot.runtime_snapshot)}
 {_future_ideas_section(future_ideas) if include_future_ideas else ""}
-{_section("Active Typed Work", "All items found in typed active queues, including running and non-runnable states.", active, "No active typed items.")}
-{_section("Completed Archive", "Successful outcomes found in the completed archive.", completed, "No completed archive items.")}
-{_section("Failed Archive", "Failed or abandoned outcomes found in the failed archive.", failed, "No failed archive items.")}
+{_section("Active Typed Work", "All items found in typed active queues, including running and non-runnable states.", active, "No active typed items.", snapshot.runtime_snapshot)}
+{_section("Completed Archive", "Successful outcomes found in the completed archive.", completed, "No completed archive items.", snapshot.runtime_snapshot)}
+{_section("Failed Archive", "Failed or abandoned outcomes found in the failed archive.", failed, "No failed archive items.", snapshot.runtime_snapshot)}
 <section class="section" aria-labelledby="findings-title"><div class="section-head"><div><h2 id="findings-title">Lifecycle Reconciliation</h2><p>Read-only findings about metadata, dependencies, status, placement, and archives. Status: Proposed is treated as migration debt and never as an operational bucket.</p></div></div><div class="panel"><ul class="findings">{anomaly_rows}</ul></div></section>
 <section class="section" aria-labelledby="claims-title"><div class="section-head"><div><h2 id="claims-title">Workspace Claim Snapshot</h2><p>Captured {_escape(snapshot.claim_captured_at)}. Claims and worktrees are workspace coordination evidence, not backlog lifecycle status or dispatch eligibility.</p></div></div><div class="panel snapshot"><ul>{claims_html}</ul></div></section>
 <section class="section" aria-labelledby="scope-title"><div class="section-head"><div><h2 id="scope-title">Report Scope</h2><p>Freshness and inventory boundaries for this generated snapshot.</p></div></div><div class="count-grid"><div class="panel"><h3>Scanned folders</h3><ul>{scope_rows}</ul></div><div class="panel"><h3>Ignored guidance files</h3><ul>{ignored_rows}</ul></div></div></section>
@@ -1336,6 +1654,7 @@ def generate_report(
     generated_at: str | None = None,
     *,
     include_future_ideas: bool = False,
+    runtime_snapshot: Path | None = None,
 ) -> None:
     """Generate a report from repository_root and write it to output.
 
@@ -1345,7 +1664,9 @@ def generate_report(
     snapshot value for reproducible automation and otherwise defaults to the
     current UTC time. include_future_ideas explicitly adds the lightweight
     backlog/future-ideas inventory; the default ordinary scan does not read or
-    count that folder. Output is always rejected when its lexical path is inside
+    count that folder. runtime_snapshot optionally identifies bounded runtime
+    evidence captured by the caller; the report performs no live lookup. Output
+    is always rejected when its lexical path is inside
     backlog/future-ideas, its resolved destination enters that folder, or an
     existing output has multiple hard links. The default mode neither
     enumerates nor stats backlog/future-ideas; only include_future_ideas opens
@@ -1390,6 +1711,11 @@ def generate_report(
             f"Output path would overwrite a backlog source: {resolved_output}"
         )
     timestamp = generated_at or datetime.now(timezone.utc).isoformat(timespec="seconds")
+    runtime_evidence = (
+        _read_runtime_snapshot(runtime_snapshot)
+        if runtime_snapshot is not None
+        else None
+    )
     items, scanned, ignored, scope_findings = _read_items(resolved_root)
     future_ideas: list[_FutureIdea] = []
     if include_future_ideas:
@@ -1408,7 +1734,12 @@ def generate_report(
     _reconcile(items)
     claim_captured_at, claims, claim_status = _claim_snapshot(resolved_root, timestamp)
     snapshot = _Snapshot(
-        _source_commit(resolved_root), timestamp, claim_captured_at, claims, claim_status
+        _source_commit(resolved_root),
+        timestamp,
+        claim_captured_at,
+        claims,
+        claim_status,
+        runtime_evidence,
     )
     rendered = _render_report(
         items,
@@ -1440,12 +1771,18 @@ def main(argv: Sequence[str] | None = None) -> int:
         action="store_true",
         help="explicitly include and validate backlog/future-ideas",
     )
+    parser.add_argument(
+        "--runtime-snapshot",
+        type=Path,
+        help="caller-supplied bounded JSON runtime observation snapshot",
+    )
     arguments = parser.parse_args(argv)
     generate_report(
         arguments.repository_root,
         arguments.output,
         arguments.generated_at,
         include_future_ideas=arguments.include_future_ideas,
+        runtime_snapshot=arguments.runtime_snapshot,
     )
     return 0
 

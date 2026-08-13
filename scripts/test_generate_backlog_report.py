@@ -8,6 +8,7 @@
 from __future__ import annotations
 
 import importlib.util
+import inspect
 import os
 import subprocess
 import sys
@@ -187,6 +188,7 @@ Summary for {title}.
         timestamp: str = "2026-07-19T06:00:00+00:00",
         *,
         include_future_ideas: bool = False,
+        runtime_snapshot: Path | None = None,
     ) -> str:
         """Generate and return one report at a controlled snapshot time."""
         REPORT.generate_report(
@@ -194,8 +196,30 @@ Summary for {title}.
             self.output,
             timestamp,
             include_future_ideas=include_future_ideas,
+            runtime_snapshot=runtime_snapshot,
         )
         return self.output.read_text(encoding="utf-8")
+
+    def write_runtime_snapshot(
+        self,
+        observations: list[dict[str, object]],
+        *,
+        captured_at: str = "2026-08-13T02:00:00Z",
+        source: str = "fixture-runtime",
+    ) -> Path:
+        """Write one bounded caller-owned runtime snapshot fixture."""
+        path = self.root / "runtime-snapshot.json"
+        path.write_text(
+            REPORT.json.dumps(
+                {
+                    "captured_at": captured_at,
+                    "source": source,
+                    "observations": observations,
+                }
+            ),
+            encoding="utf-8",
+        )
+        return path
 
     def test_future_ideas_are_excluded_by_default_and_listed_only_by_opt_in(self) -> None:
         """Future Ideas stay outside ordinary inventory, runnable counts, and Holding."""
@@ -621,6 +645,113 @@ Do not implement.
         self.assertNotIn("<script", rendered.lower())
         self.assertNotIn("https://", rendered.lower())
 
+    def test_nested_user_action_fields_render_without_false_missing_findings(self) -> None:
+        """Canonical nested question and resolution fields populate the report card."""
+        self.write_item(
+            "backlog/user-action-required/nested-fields.md",
+            title="Nested Fields",
+            status="User Action Required",
+            item_type="Analysis",
+            extra="""## User Action Required
+
+The user owns the remaining decision.
+
+### Question for the User
+
+May we use option A & preserve its exact name?
+
+### Resolution
+
+Pending — no answer inferred.
+
+## Why User Input Is Required
+
+Only the user can authorize the choice.
+
+## Unattended Work Boundary
+
+Do not implement the choice.
+""",
+        )
+
+        rendered = self.generate()
+
+        self.assertIn(
+            "May we use option A &amp; preserve its exact name?",
+            rendered,
+        )
+        self.assertIn("Pending — no answer inferred.", rendered)
+        self.assertNotIn("Missing user-action fields", rendered)
+
+    def test_genuinely_absent_nested_user_action_fields_render_missing(self) -> None:
+        """Each absent canonical nested field remains visibly Missing."""
+        self.write_item(
+            "backlog/user-action-required/missing-question.md",
+            title="Missing Question",
+            status="User Action Required",
+            item_type="Analysis",
+            extra="""## User Action Required
+
+The user owns the remaining decision.
+
+### Resolution
+
+Pending resolution.
+
+## Why User Input Is Required
+
+Only the user can authorize the choice.
+
+## Unattended Work Boundary
+
+Do not implement the choice.
+""",
+        )
+        self.write_item(
+            "backlog/user-action-required/missing-resolution.md",
+            title="Missing Resolution",
+            status="User Action Required",
+            item_type="Analysis",
+            extra="""## User Action Required
+
+The user owns the remaining decision.
+
+### Question for the User
+
+Should this proceed?
+
+## Why User Input Is Required
+
+Only the user can authorize the choice.
+
+## Unattended Work Boundary
+
+Do not implement the choice.
+""",
+        )
+
+        rendered = self.generate()
+        question_start = rendered.index("<h3>Missing Question</h3>")
+        question_card = rendered[question_start:rendered.index("</article>", question_start)]
+        resolution_start = rendered.index("<h3>Missing Resolution</h3>")
+        resolution_card = rendered[
+            resolution_start:rendered.index("</article>", resolution_start)
+        ]
+
+        self.assertIn(
+            "<dt>Question for the User</dt><dd>Missing</dd>",
+            question_card,
+        )
+        self.assertIn(
+            "<dt>Resolution</dt><dd>Pending resolution.</dd>",
+            question_card,
+        )
+        self.assertIn(
+            "<dt>Question for the User</dt><dd>Should this proceed?</dd>",
+            resolution_card,
+        )
+        self.assertIn("<dt>Resolution</dt><dd>Missing</dd>", resolution_card)
+
     def test_stalled_inventory_is_separate_and_shows_diagnostic_action(self) -> None:
         """Stalled work must not be rendered as runnable or Blocked inventory."""
 
@@ -716,6 +847,266 @@ Do not implement.
             rendered,
         )
         self.assertNotIn("<dt>Canonical Thread</dt>", rendered)
+
+    def test_authoritative_identity_extraction_uses_latest_exact_scalar_assignments(
+        self,
+    ) -> None:
+        """Latest canonical sections retain every exact typed scalar identity."""
+        self.write_item(
+            "backlog/feature-backlog/runtime-identities.md",
+            title="Runtime Identities",
+            status="Running",
+            item_type="Feature",
+            extra="""## Running Acceptance Evidence
+
+- Canonical Execution: `/root/historical_execution`.
+- Root Agent Task: `/root/historical_task`.
+
+## Running Acceptance Evidence
+
+- Canonical Execution: `/root/parse_nested_uar_report_fields`.
+- Root Agent Task: `/root/parse_nested_uar_report_fields`.
+- Canonical Conversation: `conversation-current`.
+- Canonical Thread: thread-current
+- Canonical Task: Codex task task-descriptive on host local.
+- Canonical Root Agent Task: task-one task-two
+- Canonical Thread ID: thread-with-punctuation,
+- Conversation ID: None
+- Canonical Conversation ID: Not exposed
+""",
+        )
+
+        items, _, _, _ = REPORT._read_items(self.root)
+        item = next(item for item in items if item.work_item_id == "runtime-identities")
+
+        self.assertEqual(
+            (
+                (
+                    "collaboration_execution",
+                    "/root/parse_nested_uar_report_fields",
+                ),
+                ("task", "/root/parse_nested_uar_report_fields"),
+                ("conversation", "conversation-current"),
+                ("thread", "thread-current"),
+            ),
+            tuple(
+                (identity.identity_type, identity.identity)
+                for identity in item.assigned_identities
+            ),
+        )
+
+    def test_runtime_observations_match_every_exact_typed_identity(self) -> None:
+        """Typed matches never fall back to titles, another item, or value alone."""
+        self.write_item(
+            "backlog/feature-backlog/runtime-identities.md",
+            title="Runtime Identities",
+            status="Running",
+            item_type="Feature",
+            extra="""## Running Acceptance Evidence
+
+- Canonical Execution: `/root/parse_nested_uar_report_fields`.
+- Root Agent Task: `/root/parse_nested_uar_report_fields`.
+- Canonical Conversation: `conversation-current`.
+- Canonical Thread: `thread-current`.
+""",
+        )
+        snapshot_path = self.write_runtime_snapshot(
+            [
+                {
+                    "identity_type": "collaboration_execution",
+                    "identity": "/root/parse_nested_uar_report_fields",
+                    "state": "live",
+                    "updated_at": "2026-08-13T02:01:00Z",
+                },
+                {
+                    "identity_type": "task",
+                    "identity": "/root/parse_nested_uar_report_fields",
+                    "state": "idle",
+                    "updated_at": "2026-08-13T02:02:00Z",
+                },
+                {
+                    "identity_type": "conversation",
+                    "identity": "conversation-current",
+                    "state": "runtime-paused-by-host",
+                    "updated_at": "2026-08-13T02:03:00Z",
+                },
+                {
+                    "identity_type": "thread",
+                    "identity": "thread-current",
+                    "state": None,
+                    "updated_at": None,
+                },
+                {
+                    "identity_type": "task",
+                    "identity": "Runtime Identities",
+                    "state": "live",
+                    "updated_at": "2026-08-13T02:04:00Z",
+                },
+                {
+                    "identity_type": "task",
+                    "identity": "another-work-item-task",
+                    "state": "live",
+                    "updated_at": "2026-08-13T02:05:00Z",
+                },
+            ]
+        )
+
+        rendered = self.generate(runtime_snapshot=snapshot_path)
+        card_start = rendered.index("<h3>Runtime Identities</h3>")
+        card = rendered[card_start:rendered.index("</article>", card_start)]
+
+        self.assertEqual(4, card.count("<dt>Runtime identity type</dt>"))
+        self.assertIn(
+            "<dt>Runtime identity type</dt><dd>collaboration_execution</dd>"
+            "<dt>Runtime identity</dt>"
+            "<dd><code>/root/parse_nested_uar_report_fields</code></dd>",
+            card,
+        )
+        self.assertIn(
+            "<dt>Runtime identity type</dt><dd>task</dd>"
+            "<dt>Runtime identity</dt>"
+            "<dd><code>/root/parse_nested_uar_report_fields</code></dd>",
+            card,
+        )
+        self.assertIn("<dt>Observed runtime state</dt><dd>live</dd>", card)
+        self.assertIn("<dt>Observed runtime state</dt><dd>idle</dd>", card)
+        self.assertIn(
+            "<dt>Observed runtime state</dt><dd>runtime-paused-by-host</dd>",
+            card,
+        )
+        self.assertNotIn("another-work-item-task", card)
+        self.assertNotIn("<code>Runtime Identities</code>", card)
+
+    def test_runtime_state_mapping_and_provider_lifecycle_remain_separate(self) -> None:
+        """Observed execution state never changes canonical provider lifecycle."""
+        cases = (
+            ("live", "live", "2026-08-13T02:01:00Z", "Yes"),
+            ("in-progress", "in-progress", "2026-08-13T02:02:00Z", "Yes"),
+            ("idle", "idle", "2026-08-13T02:03:00Z", "No"),
+            ("interrupted", "interrupted", "2026-08-13T02:04:00Z", "No"),
+            ("terminal", "terminal", "2026-08-13T02:05:00Z", "No"),
+            ("archived", "archived", "2026-08-13T02:06:00Z", "No"),
+            ("not-loaded", "notLoaded", "2026-08-13T02:07:00Z", "No"),
+            (
+                "unknown",
+                "runtime-paused-by-host",
+                "2026-08-13T02:08:00Z",
+                "Unavailable",
+            ),
+            ("null-state", None, "2026-08-13T02:09:00Z", "Unavailable"),
+            ("null-update", "live", None, "Unavailable"),
+        )
+        observations: list[dict[str, object]] = []
+        for slug, state, updated_at, _ in cases:
+            identity = f"task-{slug}"
+            self.write_item(
+                f"backlog/feature-backlog/{slug}.md",
+                title=f"Runtime {slug}",
+                status="Running",
+                item_type="Feature",
+                extra=f"""## Running Acceptance Evidence
+
+Root Agent Task: `{identity}`.
+""",
+            )
+            observations.append(
+                {
+                    "identity_type": "task",
+                    "identity": identity,
+                    "state": state,
+                    "updated_at": updated_at,
+                }
+            )
+        self.write_item(
+            "backlog/feature-backlog/identity-absent.md",
+            title="Runtime identity-absent",
+            status="Running",
+            item_type="Feature",
+            extra="""## Running Acceptance Evidence
+
+Root Agent Task: `task-identity-absent`.
+""",
+        )
+        self.write_item(
+            "backlog/feature-backlog/provider-ready.md",
+            title="Provider Ready Runtime Live",
+            status="Ready",
+            item_type="Feature",
+            extra="""## Running Acceptance Evidence
+
+Root Agent Task: `task-provider-ready`.
+""",
+        )
+        observations.append(
+            {
+                "identity_type": "task",
+                "identity": "task-provider-ready",
+                "state": "live",
+                "updated_at": "2026-08-13T02:10:00Z",
+            }
+        )
+        snapshot_path = self.write_runtime_snapshot(observations)
+
+        rendered = self.generate(runtime_snapshot=snapshot_path)
+
+        def item_card(title: str) -> str:
+            heading = rendered.index(f"<h3>{title}</h3>")
+            start = rendered.rfind('<article class="item">', 0, heading)
+            return rendered[start:rendered.index("</article>", start)]
+
+        for slug, state, updated_at, actually_running in cases:
+            with self.subTest(slug=slug):
+                card = item_card(f"Runtime {slug}")
+                expected_state = state if state is not None else "Unavailable"
+                expected_update = (
+                    updated_at if updated_at is not None else "Unavailable"
+                )
+                self.assertIn(
+                    f"<dt>Observed runtime state</dt><dd>{expected_state}</dd>",
+                    card,
+                )
+                self.assertIn(
+                    f"<dt>Latest runtime update</dt><dd>{expected_update}</dd>",
+                    card,
+                )
+                self.assertIn(
+                    "<dt>Actually running</dt>"
+                    f"<dd>{actually_running}</dd>",
+                    card,
+                )
+                self.assertIn(
+                    '<span class="badge badge-status">Running</span>',
+                    card,
+                )
+        absent_card = item_card("Runtime identity-absent")
+        self.assertIn(
+            "<dt>Observed runtime state</dt>"
+            "<dd>Unavailable — identity absent from snapshot</dd>",
+            absent_card,
+        )
+        self.assertIn(
+            "<dt>Actually running</dt><dd>Unavailable</dd>",
+            absent_card,
+        )
+        ready_card = item_card("Provider Ready Runtime Live")
+        self.assertIn('<span class="badge badge-status">Ready</span>', ready_card)
+        self.assertIn("<dt>Actually running</dt><dd>Yes</dd>", ready_card)
+        self.assertIn("<span>Runnable now</span><strong>1</strong>", rendered)
+
+        offline = self.generate()
+        offline_start = offline.index("<h3>Runtime live</h3>")
+        offline_card = offline[
+            offline_start:offline.index("</article>", offline_start)
+        ]
+        self.assertIn(
+            "<dt>Observed runtime state</dt>"
+            "<dd>Unavailable — no runtime snapshot</dd>",
+            offline_card,
+        )
+        self.assertIn(
+            "<dt>Actually running</dt><dd>Unavailable</dd>",
+            offline_card,
+        )
 
     def test_semantic_status_badges_are_distinct_and_wcag_aa_conformant(self) -> None:
         """Critical lifecycle badges need distinct classes and accessible palettes."""
@@ -2296,6 +2687,216 @@ Do not proceed.
 
         self.assertIn("No active claims were present", rendered)
         self.assertNotIn("claim registries contradict", rendered)
+
+    def test_runtime_snapshot_validation_preserves_existing_output(self) -> None:
+        """Malformed and over-limit snapshots fail before replacing prior output."""
+        self.write_item(
+            "backlog/defect-backlog/fix.md",
+            title="Fix",
+            status="Ready",
+            item_type="Defect",
+        )
+        snapshot_path = self.root / "runtime-snapshot.json"
+        observations = [
+            {
+                "identity_type": "task",
+                "identity": f"task-{index}",
+                "state": "idle",
+                "updated_at": "2026-08-13T02:00:00Z",
+            }
+            for index in range(4_097)
+        ]
+        invalid_payloads: tuple[tuple[str, object | bytes], ...] = (
+            ("invalid-root", []),
+            (
+                "missing-source",
+                {"captured_at": "2026-08-13T02:00:00Z", "observations": []},
+            ),
+            (
+                "over-limit-string",
+                {
+                    "captured_at": "2026-08-13T02:00:00Z",
+                    "source": "x" * 4_097,
+                    "observations": [],
+                },
+            ),
+            (
+                "over-limit-observations",
+                {
+                    "captured_at": "2026-08-13T02:00:00Z",
+                    "source": "fixture-runtime",
+                    "observations": observations,
+                },
+            ),
+            (
+                "duplicate-identity",
+                {
+                    "captured_at": "2026-08-13T02:00:00Z",
+                    "source": "fixture-runtime",
+                    "observations": [
+                        {
+                            "identity_type": "task",
+                            "identity": "task-one",
+                            "state": "live",
+                            "updated_at": "2026-08-13T02:00:00Z",
+                        },
+                        {
+                            "identity_type": "task",
+                            "identity": "task-one",
+                            "state": "idle",
+                            "updated_at": "2026-08-13T02:01:00Z",
+                        },
+                    ],
+                },
+            ),
+            (
+                "invalid-entry-shape",
+                {
+                    "captured_at": "2026-08-13T02:00:00Z",
+                    "source": "fixture-runtime",
+                    "observations": [
+                        {
+                            "identity_type": "task",
+                            "identity": "task-one",
+                            "state": "live",
+                        }
+                    ],
+                },
+            ),
+            (
+                "empty-identity",
+                {
+                    "captured_at": "2026-08-13T02:00:00Z",
+                    "source": "fixture-runtime",
+                    "observations": [
+                        {
+                            "identity_type": "task",
+                            "identity": "",
+                            "state": "live",
+                            "updated_at": "2026-08-13T02:00:00Z",
+                        }
+                    ],
+                },
+            ),
+            (
+                "over-limit-observation-string",
+                {
+                    "captured_at": "2026-08-13T02:00:00Z",
+                    "source": "fixture-runtime",
+                    "observations": [
+                        {
+                            "identity_type": "task",
+                            "identity": "task-one",
+                            "state": "x" * 4_097,
+                            "updated_at": "2026-08-13T02:00:00Z",
+                        }
+                    ],
+                },
+            ),
+            (
+                "unsupported-identity-type",
+                {
+                    "captured_at": "2026-08-13T02:00:00Z",
+                    "source": "fixture-runtime",
+                    "observations": [
+                        {
+                            "identity_type": "title",
+                            "identity": "Fix",
+                            "state": "live",
+                            "updated_at": "2026-08-13T02:00:00Z",
+                        }
+                    ],
+                },
+            ),
+            ("invalid-json", b"{"),
+            ("over-limit-bytes", b" " * 1_048_577),
+        )
+        for name, payload in invalid_payloads:
+            with self.subTest(name=name):
+                self.output.parent.mkdir(parents=True, exist_ok=True)
+                self.output.write_bytes(b"prior report bytes")
+                if isinstance(payload, bytes):
+                    snapshot_path.write_bytes(payload)
+                else:
+                    snapshot_path.write_text(
+                        REPORT.json.dumps(payload),
+                        encoding="utf-8",
+                    )
+
+                with self.assertRaises(ValueError):
+                    REPORT.generate_report(
+                        self.root,
+                        self.output,
+                        "2026-08-13T02:05:00Z",
+                        runtime_snapshot=snapshot_path,
+                    )
+
+                self.assertEqual(b"prior report bytes", self.output.read_bytes())
+
+    def test_runtime_snapshot_preserves_nullable_and_unknown_observations(self) -> None:
+        """Unavailable fields and unknown states remain valid caller evidence."""
+        snapshot_path = self.root / "runtime-snapshot.json"
+        snapshot_path.write_text(
+            REPORT.json.dumps(
+                {
+                    "captured_at": "2026-08-13T02:00:00Z",
+                    "source": "fixture-runtime",
+                    "observations": [
+                        {
+                            "identity_type": "task",
+                            "identity": "task-null",
+                            "state": None,
+                            "updated_at": None,
+                        },
+                        {
+                            "identity_type": "conversation",
+                            "identity": "conversation-unknown",
+                            "state": "runtime-paused-by-host",
+                            "updated_at": "2026-08-13T02:01:00Z",
+                        },
+                    ],
+                }
+            ),
+            encoding="utf-8",
+        )
+
+        snapshot = REPORT._read_runtime_snapshot(snapshot_path)
+
+        self.assertEqual("2026-08-13T02:00:00Z", snapshot.captured_at)
+        self.assertEqual("fixture-runtime", snapshot.source)
+        self.assertIsNone(snapshot.observations[0].state)
+        self.assertIsNone(snapshot.observations[0].updated_at)
+        self.assertEqual("runtime-paused-by-host", snapshot.observations[1].state)
+
+    def test_runtime_snapshot_argument_is_keyword_only_and_cli_passes_path(self) -> None:
+        """The optional snapshot preserves API compatibility and has explicit CLI flow."""
+        parameter = inspect.signature(REPORT.generate_report).parameters[
+            "runtime_snapshot"
+        ]
+        self.assertEqual(inspect.Parameter.KEYWORD_ONLY, parameter.kind)
+        self.assertIsNone(parameter.default)
+        snapshot_path = self.root / "runtime-snapshot.json"
+
+        with mock.patch.object(REPORT, "generate_report") as generate_report:
+            result = REPORT.main(
+                [
+                    "--repository-root",
+                    str(self.root),
+                    "--output",
+                    str(self.output),
+                    "--runtime-snapshot",
+                    str(snapshot_path),
+                ]
+            )
+
+        self.assertEqual(0, result)
+        generate_report.assert_called_once_with(
+            self.root,
+            self.output,
+            None,
+            include_future_ideas=False,
+            runtime_snapshot=snapshot_path,
+        )
 
     def test_cli_writes_explicit_output_and_missing_backlog_fails(self) -> None:
         """The CLI owns explicit output creation and reports an absent backlog as input failure."""
