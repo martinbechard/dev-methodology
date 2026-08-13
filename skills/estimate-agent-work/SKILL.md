@@ -98,21 +98,33 @@ Report each non-model runtime range separately:
 - `approval_runtime`
 - `other_runtime`
 
-For each range, state whether it is blocking, parallelizable, or off the critical path. Record
-live-evaluation consumption separately with its own input, cached, generated-token, and runtime
-ranges. Do not relabel live-evaluation consumption as implementation generation.
+For each range, record one disposition: `blocking` when it extends its dependency path,
+`parallelizable` when it overlaps another interval on that path, or `off_critical_path` when it
+belongs only to a path that does not set delivery duration. Also record its dependency `path`
+and an `overlap_group` for intervals that run concurrently. Within one path, add serial intervals
+and take the maximum duration of intervals in the same overlap group. Do not double-count a wait
+merely because more than one workstream observes it.
+
+Record live-evaluation consumption separately with its own input, cached, generated-token, and
+runtime ranges. Do not relabel live-evaluation consumption as implementation generation.
 
 Calculate:
 
 ```text
 total_agent_hours = sum(all implementation-generation agent-hours)
-critical_path_agent_hours = sum(implementation-generation agent-hours on the longest dependency path)
-wall_clock_hours = critical_path_agent_hours + blocking_non_model_runtime_hours
+path_delivery_hours = path_generated_effort_agent_hours + path_non_model_runtime_hours
+wall_clock_hours = max(path_delivery_hours for every dependency path)
 ```
 
+The generated-effort critical path is the path with the greatest implementation-generation
+agent-hours. The delivery critical path is the path with the greatest combined generated effort
+and path runtime. They can be different. When reporting `critical_path_agent_hours`, name the
+selected path and include only its generated effort. Never select a generation-only path and
+then add runtime from another path.
+
 Report `expected_parallelism` as the expected concurrent agent count or a bounded range and name
-which workstreams can overlap. Parallelism does not reduce total agent-hours. It can reduce
-critical-path agent-hours and wall-clock time only when the dependency graph permits overlap.
+which workstreams and waits can overlap. Parallelism does not reduce total agent-hours. It can
+reduce wall-clock time only when the dependency graph permits overlap.
 
 ## State Uncertainty And Confidence
 
@@ -134,27 +146,38 @@ categories, and keep cost distinct from generated-token effort and elapsed time.
 3. Estimate implementation generated tokens and autonomous turns by dependency-ordered workstream.
 4. Record the throughput value, evidence kind, model, reasoning profile, harness, and environment.
 5. Convert each implementation range to agent-hours and sum total effort.
-6. Identify the generated-effort critical path and expected parallelism without reducing total effort.
-7. Add only blocking non-model runtime to the wall-clock critical path; keep every runtime category visible.
+6. Calculate every path's generated effort and runtime, including serial and overlapping intervals.
+7. Select wall-clock duration from the longest combined delivery path, name its generated-only `critical_path_agent_hours`, and separately identify a different generated-effort critical path when applicable.
 8. Record separate live-evaluation consumption, uncertainty, confidence, and optional price-backed cost.
 9. Return the reusable shape with compact arithmetic and the evidence that would change it.
 
 ## Serial Example
 
 One workstream is estimated at 180,000–360,000 implementation generated tokens, or 1.0–2.0
-agent-hours at the assumed 50 generated tokens per second. It needs 3–5 autonomous turns and
-0.5 hours of blocking test runtime. With `expected_parallelism: 1`, total and critical-path
-agent-hours are both 1.0–2.0, and expected wall-clock time is 1.5–2.5 hours. A live evaluation
+generated-effort agent-hours at the assumed 50 generated tokens per second. It needs 3–5
+autonomous turns and 0.5–0.5 hours of serial blocking test runtime on the same path. With
+`expected_parallelism: 1`, total and critical-path agent-hours are both 1.0–2.0, and the combined
+path produces 1.5–2.5 wall-clock hours. A live evaluation
 may separately consume 100,000 input tokens, 20,000 cached tokens, 40,000 generated tokens, and
 0.25 runtime hours; none of those tokens are implementation generated-token effort.
 
 ## Parallel Example
 
 Two independent workstreams total 360,000–540,000 implementation generated tokens, or 2.0–3.0
-total agent-hours. Each path is 1.0–1.5 agent-hours, so `expected_parallelism: 2` gives
-1.0–1.5 critical-path agent-hours. Adding 0.25–0.5 hours of blocking build and test runtime gives
-1.25–2.0 wall-clock hours. Parallelism does not reduce total agent-hours: the estimate remains
-2.0–3.0 even though the elapsed range is shorter.
+total agent-hours. Each path has 1.0–1.5 generated-effort agent-hours. On each path, 0.25–0.5
+hours of overlapping build runtime and 0.25–0.5 hours of overlapping test runtime share one
+overlap group, so they contribute 0.25–0.5 hours rather than 0.5–1.0 hours. With
+`expected_parallelism: 2`, the longest combined path is 1.25–2.0 wall-clock hours. Parallelism
+does not reduce total agent-hours: the estimate remains 2.0–3.0.
+
+## Asymmetric Path Example
+
+The generation-heavy path A has 1.5 generated-effort agent-hours and 0.25 hours of path runtime,
+for 1.75 delivery hours. The runtime-heavy path B has 0.75 generated-effort agent-hours and 1.5
+hours of path runtime, for 2.25 delivery hours. Path B is therefore the 2.25-hour delivery
+critical path and reports `critical_path_agent_hours: 0.75`, while path A remains the separate
+generated-effort critical path. A 0.5-hour external-service wait overlaps a 0.5-hour test wait in
+the same path overlap group and is not double-counted; together they contribute 0.5 hours.
 
 ## Reusable Estimate Shape
 
@@ -186,16 +209,18 @@ estimate:
     generated_tokens: {low: 0, high: 0}
     runtime_hours: {low: 0.0, high: 0.0}
   non_model_runtime:
-    tool_runtime: {low: 0.0, high: 0.0, critical_path: false}
-    build_runtime: {low: 0.0, high: 0.0, critical_path: false}
-    test_runtime: {low: 0.25, high: 0.5, critical_path: true}
-    browser_runtime: {low: 0.0, high: 0.0, critical_path: false}
-    live_evaluation_runtime: {low: 0.0, high: 0.0, critical_path: false}
-    external_service_runtime: {low: 0.0, high: 0.0, critical_path: false}
-    approval_runtime: {low: 0.0, high: 0.0, critical_path: false}
-    other_runtime: {low: 0.0, high: 0.0, critical_path: false}
+    tool_runtime: {low: 0.0, high: 0.0, disposition: off_critical_path, path: path-a, overlap_group: null}
+    build_runtime: {low: 0.25, high: 0.5, disposition: parallelizable, path: path-a, overlap_group: compile-and-test}
+    test_runtime: {low: 0.25, high: 0.5, disposition: blocking, path: path-a, overlap_group: null}
+    browser_runtime: {low: 0.0, high: 0.0, disposition: off_critical_path, path: path-a, overlap_group: null}
+    live_evaluation_runtime: {low: 0.0, high: 0.0, disposition: off_critical_path, path: path-a, overlap_group: null}
+    external_service_runtime: {low: 0.0, high: 0.0, disposition: off_critical_path, path: path-a, overlap_group: null}
+    approval_runtime: {low: 0.0, high: 0.0, disposition: off_critical_path, path: path-a, overlap_group: null}
+    other_runtime: {low: 0.0, high: 0.0, disposition: off_critical_path, path: path-a, overlap_group: null}
   total_agent_hours: {low: 1.0, high: 2.0}
-  critical_path_agent_hours: {low: 1.0, high: 2.0}
+  generated_effort_critical_path: {path: path-a, agent_hours: {low: 1.0, high: 2.0}}
+  delivery_critical_path: {path: path-a, combined_hours: {low: 1.25, high: 2.5}}
+  critical_path_agent_hours: {path: path-a, low: 1.0, high: 2.0}
   expected_parallelism: {low: 1, high: 1, overlap: []}
   wall_clock_hours: {low: 1.25, high: 2.5}
   uncertainty:

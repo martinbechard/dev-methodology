@@ -3235,6 +3235,124 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(contract=contract):
                 self.assertIn(contract, skill_text)
 
+        serial = re.search(
+            r"## Serial Example\n\n(?P<body>.*?)(?=\n## Parallel Example)",
+            skill_text,
+            re.DOTALL,
+        )
+        parallel = re.search(
+            r"## Parallel Example\n\n(?P<body>.*?)(?=\n## Asymmetric Path Example)",
+            skill_text,
+            re.DOTALL,
+        )
+        asymmetric = re.search(
+            r"## Asymmetric Path Example\n\n(?P<body>.*?)(?=\n## Reusable Estimate Shape)",
+            skill_text,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(serial)
+        self.assertIsNotNone(parallel)
+        self.assertIsNotNone(asymmetric)
+        assert serial is not None and parallel is not None and asymmetric is not None
+        serial_text = " ".join(serial["body"].split())
+        parallel_text = " ".join(parallel["body"].split())
+        asymmetric_text = " ".join(asymmetric["body"].split())
+        for exact_value in (
+            "180,000–360,000 implementation generated tokens",
+            "1.0–2.0 generated-effort agent-hours",
+            "0.5–0.5 hours of serial blocking test runtime",
+            "1.5–2.5 wall-clock hours",
+        ):
+            self.assertIn(exact_value, serial_text)
+        for exact_value in (
+            "360,000–540,000 implementation generated tokens",
+            "2.0–3.0 total agent-hours",
+            "1.0–1.5 generated-effort agent-hours",
+            "0.25–0.5 hours of overlapping build runtime",
+            "0.25–0.5 hours of overlapping test runtime",
+            "1.25–2.0 wall-clock hours",
+        ):
+            self.assertIn(exact_value, parallel_text)
+        for exact_value in (
+            "generation-heavy path A",
+            "1.5 generated-effort agent-hours",
+            "0.25 hours of path runtime",
+            "runtime-heavy path B",
+            "0.75 generated-effort agent-hours",
+            "1.5 hours of path runtime",
+            "2.25-hour delivery critical path",
+            "critical_path_agent_hours: 0.75",
+            "0.5-hour external-service wait overlaps",
+            "not double-counted",
+        ):
+            self.assertIn(exact_value, asymmetric_text)
+        serial_tokens = re.search(
+            r"([\d,]+)–([\d,]+) implementation generated tokens",
+            serial_text,
+        )
+        serial_hours = re.search(
+            r"(\d+\.\d+)–(\d+\.\d+) generated-effort agent-hours",
+            serial_text,
+        )
+        serial_wall = re.search(
+            r"(\d+\.\d+)–(\d+\.\d+) wall-clock hours",
+            serial_text,
+        )
+        assert (
+            serial_tokens is not None
+            and serial_hours is not None
+            and serial_wall is not None
+        )
+        generated_per_hour = 50 * 3_600
+        self.assertEqual(
+            tuple(
+                float(value.replace(",", "")) / generated_per_hour
+                for value in serial_tokens.groups()
+            ),
+            tuple(float(value) for value in serial_hours.groups()),
+        )
+        self.assertEqual(
+            tuple(float(value) + 0.5 for value in serial_hours.groups()),
+            tuple(float(value) for value in serial_wall.groups()),
+        )
+
+        parallel_path_hours = (1.0, 1.5)
+        concurrent_waits = ((0.25, 0.5), (0.25, 0.5))
+        parallel_runtime = tuple(
+            max(wait[index] for wait in concurrent_waits) for index in range(2)
+        )
+        self.assertEqual(
+            (1.25, 2.0),
+            tuple(
+                parallel_path_hours[index] + parallel_runtime[index]
+                for index in range(2)
+            ),
+        )
+        self.assertEqual((2.0, 3.0), tuple(value * 2 for value in parallel_path_hours))
+
+        generation_heavy_delivery = 1.5 + 0.25
+        runtime_heavy_delivery = 0.75 + 1.5
+        self.assertEqual(2.25, max(generation_heavy_delivery, runtime_heavy_delivery))
+        delivery_path_generated_effort = (
+            0.75 if runtime_heavy_delivery > generation_heavy_delivery else 1.5
+        )
+        self.assertEqual(0.75, delivery_path_generated_effort)
+        self.assertEqual(0.5, max(0.5, 0.5))
+        self.assertIn(
+            "wall_clock_hours = max(path_delivery_hours for every dependency path)",
+            skill_text,
+        )
+        self.assertIn(
+            "path_delivery_hours = path_generated_effort_agent_hours + path_non_model_runtime_hours",
+            skill_text,
+        )
+        self.assertIn("generated-effort critical path", skill_text)
+        self.assertIn("delivery critical path", skill_text)
+        for disposition in ("blocking", "parallelizable", "off_critical_path"):
+            self.assertIn(f"disposition: {disposition}", skill_text)
+        for audit_field in ("path:", "overlap_group:"):
+            self.assertIn(audit_field, skill_text)
+
         dev_coder = load_yaml_object(
             ROLES_ROOT / "dev-activities" / "dev-coder.role.yaml"
         )
