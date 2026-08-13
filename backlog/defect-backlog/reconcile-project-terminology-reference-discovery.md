@@ -73,3 +73,16 @@ None.
 - Dispatch Architecture: Create one visible Codex task whose initial prompt launches one Dev Orchestrator subagent and states the visible root title-and-messaging responsibility.
 - Transition Claims: Work Item `start-terminology-reference-discovery-work-item`; event `c3b646c6-3be4-4ad1-8d90-e94fba536ddf`. Provider `start-terminology-reference-discovery-provider`; event `cc4ae5c5-884c-4f05-ba21-3dfafa5e8929`.
 - Runtime Identity: Pending caller-owned visible task creation. Creation does not imply Running.
+
+## Canonical Runtime Assignment
+
+- Assigned At: 2026-08-13T13:55:15Z.
+- Codex Task ID: `019ffb67-9ecc-7c53-8412-c486d62d06c2`.
+- Conversation ID: `019ffb67-9ecc-7c53-8412-c486d62d06c2`.
+- Host: `local`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Requested Title: `Starting — Reconcile Project Terminology Reference Discovery`.
+- Initial Action: The visible root starts one Dev Orchestrator subagent for this authoritative Work Item and owns required Codex title and subagent messaging.
+- Creation Outcome: Unique direct `threadId` and host success in the saved dev-methodology project, with no client or pending identity and no retry.
+- Lifecycle Boundary: This assignment remains `Starting` until the nested Dev Orchestrator accepts and records `Starting -> Running`.
+- Adoption Claims: Work Item `adopt-terminology-reference-discovery-task`; event `18b6eb70-c19b-4dbe-99ac-37877f84e211`. Provider `adopt-terminology-reference-discovery-provider`; event `60cc1726-3cd2-4396-a536-74dc3d84d2c9`.
