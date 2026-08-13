@@ -2,7 +2,7 @@
 
 Owner: Dev Orchestrator
 
-Status: User Action Required
+Status: Blocked
 
 Type: Feature
 
@@ -141,7 +141,7 @@ The user approved using and extending `py-json-render` and authorized creation o
 
 Original Decision: The user said exactly `ok I added the py-json-render project, you can create backlog items for it`. This approves the recommended use and extension of `py-json-render` and authorizes creating its upstream backlog items.
 
-Current Decision: Pending selection of the `py-json-render` Persistence provider in canonical Task and Conversation `019ffc96-f685-7481-b2eb-1557d82119bf`.
+Current Decision: User answer `A` selects file-backed persistence under `/Users/martinbechard/dev/py-json-render/backlog`.
 
 ### Unattended Work Boundary
 
@@ -157,6 +157,21 @@ Do not create upstream provider records or resume implementation until the user 
 - Provider Update Claim: `update-agent-owned-suites-upstream-provider-question-019ff2c3`; event `bffb7169-77e5-49e9-b2fa-f401c175988e`.
 - Provider Path Claim: `update-agent-owned-suites-upstream-provider-path-019ff2c3`; event `9c4931c2-3c10-4d8d-a6b5-e8ee21486071`.
 - Required Runtime Title: `Waiting for User — Align Agent-Owned Evaluation Suites With Documentation Design System`.
+
+### Upstream Primary-Branch Technical Blocker
+
+- Recorded At: 2026-08-13T22:26:45Z.
+- Transition: `User Action Required -> Blocked`.
+- Preserved Canonical Task and Conversation: `019ffc96-f685-7481-b2eb-1557d82119bf` on host `local`.
+- User Decision: Exact answer `A` selects file persistence for authorized upstream `py-json-render` work.
+- Source State: No upstream files, claims, commits, or existing modifications changed.
+- Exact Blocker: `/Users/martinbechard/dev/py-json-render` uses primary branch `master`, while the selected file-provider transaction requires its primary worktree on `main`.
+- Recovery Owner: Project Configurator for `py-json-render` or its project-specific provider-guidance owner.
+- Unblock Condition: Configure the canonical primary branch as `main`, or provide validated project-specific provider guidance that explicitly authorizes atomic file-provider transactions on `master`.
+- Provider Update Claim: `block-agent-owned-pyjson-main-019ff2c3`; event `10c65619-e148-4518-87a7-f84139eb97ba`.
+- Provider Paths Claim: `block-agent-owned-pyjson-main-paths-019ff2c3`; event `a2376ef0-a674-4274-b300-4776fe368561`.
+- Required Runtime Title: `Blocked — Align Agent-Owned Evaluation Suites With Documentation Design System`.
+- Safe Resume: Preserve this task, execution, plan, candidate if any, and evidence. Resume only through `Blocked -> Ready -> Starting -> Running` after the exact upstream provider-authority proof.
 
 ### Transition Evidence
 
