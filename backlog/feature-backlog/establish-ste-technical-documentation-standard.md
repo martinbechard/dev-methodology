@@ -1,6 +1,6 @@
 # Establish The STE Technical Documentation Standard
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -439,3 +439,17 @@ Do you explicitly approve integration mutation of exactly the 14 governed defini
 - Integration Claim Evidence: Project-files acquire event 5b1950b5-e9a0-4f59-bfad-f2cdeea82de2 and release event 2f9048ed-d441-4ca5-8399-db041a5b94e4.
 - Completion Transaction Claim: `complete-ste-feature-019fa9be`; claim outcome SHARED_CHECKOUT_ACQUIRED; claim event 5c0d4d66-3bc6-452d-aae2-1cec98ff8b09; claimed 2026-07-29T01:03:01.951315Z. Release follows this provider commit.
 - Clean-State Evidence: Main was clean at delivery commit 0c7784ca4dda436730e927102c0de28662d74bdd; unrelated concurrent project-file state remains outside this backlog transaction.
+
+## Current Terminal-Reconciliation Reservation
+
+- Reserved At: 2026-08-13T07:26:55Z.
+- Transition: `Ready -> Starting`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Baseline: `549e2d2551be34af602c0d33eb1aa444d840b2ff` on primary `main`.
+- Finish-Lane Decision: This is the oldest eligible independent Ready item and preserves accepted review, verification, approval, and delivery evidence. Reconcile that evidence before any new implementation.
+- Live Reconciliation: Source candidate `a4165c21f464e0cf74d72c6f81b7a64d49c90f62` exists; final delivery `0c7784ca4dda436730e927102c0de28662d74bdd` is in main ancestry; recorded candidate and integration branches/worktrees are absent; claims are empty.
+- Preserved State: Candidate `03a94762451efe4322fe781f77191b769bf6c7b1`, its User Action Required provider record, and all four untracked plan artifacts remain excluded.
+- Dispatch Architecture: Create one user-visible Codex task whose initial reference-plus-delta prompt starts one Dev Orchestrator collaboration subagent for this provider record.
+- Transition Claim: `start-ste-terminal-reconciliation-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `0a6b980f-0d9a-423a-925d-02359e5be3d5`.
+- Next Reconciliation: Adopt the exact visible task identity. Its nested Dev Orchestrator records Starting -> Running before provider reconciliation or mutation.
