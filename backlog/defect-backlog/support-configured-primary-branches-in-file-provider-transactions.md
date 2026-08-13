@@ -1,6 +1,6 @@
 # Support Configured Primary Branches In File Provider Transactions
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -105,6 +105,22 @@ Approved by the user's 2026-08-13 instruction to log the defect and update all l
 - Requested Title: `Starting — Support Configured Primary Branches In File Provider Transactions`.
 - Root Responsibility: The visible task supplies its own Codex title and required nested-execution messaging.
 - Lifecycle Boundary: Creation does not imply Running. Provider remains `Starting` until the one nested Dev Orchestrator durably accepts `Starting -> Running` without claims.
+
+## Running Acceptance Evidence
+
+- Transition: `Starting -> Running`.
+- Accepted At: 2026-08-13T22:47:26Z.
+- Canonical Visible Task: `019ffd4d-f252-7e42-a6bc-f13d0c80c30e`.
+- Canonical Conversation: `019ffd4d-f252-7e42-a6bc-f13d0c80c30e`.
+- Parent Coordinator Task: `/root`.
+- Root Dev Orchestrator: `/root/configured_primary_branches`.
+- Delivery Branch: `main`.
+- Delivery Worktree: `/Users/martinbechard/dev/dev-methodology`.
+- Accepted Baseline: `92a75a791e6f45f33769a29e618951eec77169b1`.
+- Phase: Implementation planning accepted.
+- Crisis Authority: The active `blocked-crisis-20260813T223935Z` serial exception authorizes exactly this Work Item to mutate without claims.
+- Claim Boundary: No claim operation is permitted or performed.
+- Accepted Execution Evidence: The canonical visible task launched this one Dev Orchestrator collaboration subagent to execute the complete Work Item.
 
 ## Notes
 
