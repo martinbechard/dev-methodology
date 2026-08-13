@@ -1,6 +1,6 @@
 # Launch Work Items Through Visible Codex Tasks
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
@@ -104,3 +104,22 @@ Approved at creation. On 2026-08-13, the user explicitly requested the concise B
 - Transition: `Starting -> Running`.
 - Requested Title: `Running — Launch Work Items Through Visible Codex Tasks`.
 - Transition Claim: `launch-visible-codex-running-transition-019ff8d9`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `9c088936-fee3-449e-b3ca-087e07191aa5`.
+
+## Completion Evidence
+
+- Completed At: 2026-08-13T02:30:56Z.
+- Completion Selector: `main-branch`.
+- Accepted Source Commit: `472099f4076cd181e92be3abfd501f6636986e77`.
+- Integration Commit: `472099f4076cd181e92be3abfd501f6636986e77`.
+- Observed Main Branch: `main`.
+- Observed Main Tip: `472099f4076cd181e92be3abfd501f6636986e77`.
+- Reachability: The accepted commit is the observed `main` tip and is reachable from `main`.
+- Source Review: Fresh Dev Code Reviewer re-review returned `PASS` for the replacement candidate.
+- Skill Review: Fresh Methodology Artifact Reviewer returned `GOOD` with all 36 checklist questions complete.
+- Verification: Configured skill validation returned no findings; all 26 focused tests passed; scoped and worktree whitespace checks passed.
+- Confirmed Issue Disposition: The legacy hidden-execution resumption contradiction was corrected in the replacement candidate and passed fresh re-review and reverification.
+- Post-Integration Verification: The same configured skill validation and 26 focused tests passed from the observed `main` tip.
+- Coordination: Main delivery claim `launch-visible-codex-main-delivery-019ff8d9` was released; event `feeae034-51f5-468f-9015-fa4f02447e02`.
+- Delivery Disposition: `READY`; requested lifecycle `COMPLETED`.
+- Canonical Codex Task ID: `019ff8d9-8cfa-7010-85ca-ee778a40a30a`.
+- Terminal Requested Title: `Completed — Launch Work Items Through Visible Codex Tasks`.
