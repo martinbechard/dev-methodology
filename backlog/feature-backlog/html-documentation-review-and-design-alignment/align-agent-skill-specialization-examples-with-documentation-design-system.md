@@ -2,7 +2,7 @@
 
 Owner: Dev Orchestrator `/root/align_skill_examples`
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -184,6 +184,19 @@ Option A is accepted. It authorizes only useful known page-specific provenance, 
 - Preserved Execution: Dev Orchestrator `/root/align_skill_examples` in canonical Task and Conversation `019ffca1-15fa-7940-a0cb-e0a51da36aae`.
 - Mutation Boundary: No source, browser, integration, delivery, archival, duplicate execution, or replacement execution work is authorized while the item remains Ready.
 - Required Runtime Title: `Ready — Align Agent And Skill Specialization Examples With Documentation Design System`.
+
+### Authorized Restart After Capacity Release
+
+- Reserved At: 2026-08-13T20:58:56Z.
+- Transition: `Ready -> Starting`.
+- Capacity Trigger: Agent Skill Architecture entered `User Action Required` at provider commit `cd032ae37579646da584849038c842e59ec69ae2`, releasing one of five active slots.
+- Preserved Answer: `I approve Option A`.
+- Preserved Candidate: `9b768f37adf8d96fbfbae47d9eb663d67929c383`.
+- Preserved Canonical Task and Conversation: `019ffca1-15fa-7940-a0cb-e0a51da36aae`.
+- Preserved Dev Orchestrator: `/root/align_skill_examples`.
+- Transition Claim: `reserve-resumed-specialization-019ff2c3`; event `b5446199-9756-4fc2-8022-d1636bce0c38`.
+- Required Runtime Title: `Starting — Align Agent And Skill Specialization Examples With Documentation Design System`.
+- Next Action: The same Dev Orchestrator records `Starting -> Running`, reacquires its Work Item and exact implementation/browser claims, and continues only the approved Option A correction and fresh reviews.
 
 ### Unattended Work Boundary
 
