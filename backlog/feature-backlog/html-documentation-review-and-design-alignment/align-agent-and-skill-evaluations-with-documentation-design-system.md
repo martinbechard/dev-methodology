@@ -95,3 +95,16 @@ Dependency Resolution: Satisfied by completed Work Item `review-agent-and-skill-
 - Dispatch Architecture: Create one visible Codex task whose reference-plus-delta prompt starts one Dev Orchestrator collaboration subagent and assigns exact self-task title and messaging responsibility to the visible root.
 - Transition Claim: `reserve-align-agent-skill-evaluations-019ff2c3`; event `3a1c0383-9231-4fbf-8682-8cb8fbd08777`.
 - Next Action: Reconcile the unique visible task identity; its nested Dev Orchestrator records `Starting -> Running` before mutation.
+
+## Canonical Runtime Assignment
+
+- Assigned At: 2026-08-13T18:05:18Z.
+- Codex Task ID: `019ffc4c-8e83-7d43-8049-95db4f2460be`.
+- Conversation ID: `019ffc4c-8e83-7d43-8049-95db4f2460be`.
+- Host: `local`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Runtime Project: saved `dev-methodology` project at `/Users/martinbechard/dev/dev-methodology`.
+- Requested Title: `Starting — Align Agent And Skill Evaluations With Documentation Design System`.
+- Creation Outcome: Unique direct success with no client or pending identity and no retry.
+- Lifecycle Boundary: Provider remains `Starting` until one nested Dev Orchestrator accepts and durably records `Starting -> Running`.
+- Adoption Claim: `adopt-align-agent-skill-evaluations-task-019ffc4c`; event `37aab2f9-b83f-4302-a027-c52907aef996`.
