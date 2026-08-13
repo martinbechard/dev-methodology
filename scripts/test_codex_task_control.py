@@ -266,6 +266,35 @@ class CodexTaskControlPackageTests(unittest.TestCase):
             with self.subTest(clause=clause):
                 self.assertIn(clause, normalized_contract)
 
+    def test_resumption_preserves_canonical_live_hidden_execution(self) -> None:
+        launch_contract = self.dispatcher.split(
+            "## Visible Work Item Task Launch",
+            1,
+        )[1].split("## Dispatch Workflow", 1)[0]
+        workflow = self.dispatcher.split("## Dispatch Workflow", 1)[1].split(
+            "## Dispatch Packet",
+            1,
+        )[0]
+        normalized_launch = " ".join(launch_contract.split())
+        normalized_workflow = " ".join(workflow.split())
+
+        self.assertIn(
+            "Preserve an already-live hidden Work Item execution as its existing owner until it stops or completes",
+            normalized_launch,
+        )
+        self.assertIn(
+            "For a resumption, resume the canonical existing execution, including an already-live hidden execution preserved as the existing owner",
+            normalized_workflow,
+        )
+        self.assertIn(
+            "Require the visible wrapper only for a new dispatch",
+            normalized_workflow,
+        )
+        self.assertNotIn(
+            "resume the canonical visible task",
+            normalized_workflow,
+        )
+
     def test_dispatcher_rejects_reconstructed_launch_packets(self) -> None:
         packet_contract = self.dispatcher.split("## Dispatch Packet", 1)[1].split(
             "## Incoming Coordination Messages",
