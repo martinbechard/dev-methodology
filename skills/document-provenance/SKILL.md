@@ -32,7 +32,7 @@ Document provenance records the immutable creation identity of a governed docume
 - Let document-provenance own only maintained non-code documents that project guidance selects.
 - Let the document format continue to own YAML front matter, OKF metadata, titles, metadata elements, accessibility, and content structure.
 - Use the exact copyright statement from applicable project instructions. Stop when the statement is absent or ambiguous. Do not invent a holder, address, year, license, or ownership claim.
-- Keep the provenance block hidden from normal rendering. Do not put document content or mutable status in the block.
+- Keep correlation and evidence metadata hidden from normal rendering. Compact HTML exposes only the required reader-facing provenance fields in its semantic footer. Do not put document content or mutable status in provenance metadata.
 
 ## Inclusion And Exclusion
 
@@ -52,24 +52,25 @@ When a selected format cannot carry comments, use a project-authorized sidecar o
 
 The coordinator, orchestrator, or harness supplies one creation record before document acceptance. The document-writing model does not infer or self-report dispatch identity.
 
-The envelope supplies these values:
+For a new document, use a schema-version-2 record with these values:
 
 - Artifact-ID is an opaque durable identifier. Create it once and keep it stable across ordinary moves and renames. Do not derive it from the current path.
-- Created-UTC is the creation time in ISO 8601 form with the Z or +00:00 UTC offset.
+- Created-Local is the authoritative creation time in ISO 8601 form with an explicit numeric UTC offset. Do not use `Z` or an offset-free value.
+- Created-UTC is the machine-only UTC form of the same instant. Keep it in the external envelope and do not render it in a compact document.
 - Creating-Agent is the conceptual Agent identity used for dispatch. It is not a nickname or inferred Git author.
 - Runtime is the harness that dispatched the Agent.
 - Dispatched-Model is the model selected for dispatch. Do not relabel it as the model that executed the request without separate authoritative runtime evidence.
 - Reasoning-Effort is the effort selected for dispatch.
-- Task-ID is the stable task or execution identity supplied by the coordinator or harness.
+- Task-ID is optional correlation metadata. When supplied, keep it in the external envelope and do not render it in a compact document.
 
-For a new document, each matching evidence field is runtime-supplied. The validator also compares the document values with the external envelope. A label in the document is not a substitute for that comparison.
+The validator compares the rendered values with the external envelope and proves that Created-Local and Created-UTC represent the same instant. A label in the document is not a substitute for that comparison. Do not create a timezone evidence taxonomy or add an IANA timezone field when the authoritative local timestamp already includes its numeric offset.
 
 Never copy values from the current model profile, an adapter mapping, Git author data, or model-authored prose. Those sources do not prove the historical dispatch.
 
 ## Create Or Generate A Document
 
 1. Obtain the exact copyright statement and runtime provenance envelope.
-2. Render the canonical block from [Format Contract](references/format-contract.md).
+2. Render the compact Markdown block or semantic HTML form from [Format Contract](references/format-contract.md).
 3. Replace every template placeholder before acceptance.
 4. Put the block at the format-specific location.
 5. Run deterministic validation against the runtime envelope.
@@ -83,13 +84,13 @@ For Markdown with YAML front matter, keep the front matter as the first construc
 
 For Markdown without YAML front matter, put the provenance HTML comment before the first heading or other content. Reserved project-wiki index.md and log.md pages remain free of OKF concept front matter.
 
-For maintained HTML, keep the HTML doctype first. Put the provenance comment immediately after the doctype and before the html element. Do not move metadata, language, accessibility, or rendering content into the comment.
+For maintained HTML, keep the HTML doctype first. Put the exact Artifact-ID correlation comment immediately after the doctype and before the html element. Put one visible semantic provenance footnote inside the footer. Do not move metadata, language, accessibility, or rendering content into the comment.
 
 ## Historical Documents
 
-Historical migration is an explicit validation state. It is never a fallback for a new or newly generated document.
+Historical migration is an explicit validation route. It is never a fallback for a new or newly generated document. The route accepts an existing verbose historical block or compact historical HTML backed by a schema-version-2 external record.
 
-Use [Historical Migration](references/historical-migration.md) for evidence priority, allowed evidence labels, correction rules, and bounded audit steps. Record historical-unknown for an unavailable creation fact. Do not infer the fact from current configuration.
+Use [Historical Migration](references/historical-migration.md) for evidence priority, allowed evidence labels, correction rules, and bounded audit steps. In retained verbose blocks, record historical-unknown for an unavailable creation fact. In compact historical HTML, list the unavailable fact in external Unknown-Facts and omit it from the document. Do not infer the fact from current configuration.
 
 ## Ordinary Edits And Corrections
 
@@ -101,7 +102,7 @@ Correct demonstrably false creation metadata only with named retained evidence a
 
 ## Deterministic Validation
 
-The bundled validator reads only explicit paths. Use new for documents that require a runtime envelope. Use historical only for an authorized migration.
+The bundled validator reads only explicit paths. Use `--new` for compact documents backed by schema version 2. Use `--legacy` with schema version 1 to preserve and validate existing legacy package headers. Use `--historical` only for an authorized verbose legacy migration or compact historical HTML.
 
 ```bash
 python3 [document-provenance-skill-root]/scripts/validate_document_provenance.py \
@@ -111,10 +112,12 @@ python3 [document-provenance-skill-root]/scripts/validate_document_provenance.py
   --historical /path/to/migrated-document.html
 ```
 
-The validator reports the exact path, field, and failure. It returns a failing process result for missing blocks, invalid placement, missing or duplicate fields, placeholders, malformed timestamps, unsupported evidence, inferred profile values, envelope mismatches, and unsupported formats.
+Use a separate invocation with a schema-version-1 envelope for `--legacy`; one envelope cannot serve both schema versions. A verbose historical document needs no envelope, but compact historical HTML requires schema version 2.
+
+The validator reports the exact path, field, and failure. It returns a failing process result for missing blocks or HTML markers, invalid placement, missing or duplicate fields, placeholders, malformed timestamps or offsets, UTC/local instant mismatches, unsupported evidence, inferred profile values, route/schema mismatches, envelope mismatches, and unsupported formats.
 
 Validate only project-selected governed paths. Passing a path to the validator does not make an excluded file governed.
 
 ## Result
 
-Return the governed paths, validation state for each path, runtime-envelope evidence for new documents, validation result, exclusions, and any unsupported format or missing authority.
+Return the governed paths, exact validation route for each path, runtime-envelope evidence where required, validation result, exclusions, and any unsupported format or missing authority.

@@ -1,10 +1,10 @@
 <!--
 Copyright (c) 2026 Martin.Bechard@DevConsult.ca
-Artifact-ID: artifact-invalid-utc
-Created-Local: 2026-08-08 14:36:00
+Artifact-ID: artifact-test-compact
+Created-Local: 2026-08-08T14:15:00+25:00
 Creating-Agent: Dev Documentation Writer
 Runtime: Codex
 Dispatched-Model: gpt-5.5
 Reasoning-Effort: high
 -->
-# Malformed Timestamp
+# Malformed Positive Offset Fixture

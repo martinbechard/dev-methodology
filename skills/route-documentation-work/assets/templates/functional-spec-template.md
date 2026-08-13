@@ -1,19 +1,11 @@
 <!--
 {{COPYRIGHT}}
 Artifact-ID: {{ARTIFACT_ID}}
-Created-UTC: {{CREATED_UTC}}
+Created-Local: {{CREATED_LOCAL}}
 Creating-Agent: {{CREATING_AGENT}}
 Runtime: {{RUNTIME}}
 Dispatched-Model: {{DISPATCHED_MODEL}}
 Reasoning-Effort: {{REASONING_EFFORT}}
-Task-ID: {{TASK_ID}}
-Artifact-ID-Evidence: runtime-supplied
-Created-UTC-Evidence: runtime-supplied
-Creating-Agent-Evidence: runtime-supplied
-Runtime-Evidence: runtime-supplied
-Dispatched-Model-Evidence: runtime-supplied
-Reasoning-Effort-Evidence: runtime-supplied
-Task-ID-Evidence: runtime-supplied
 -->
 
 # TODO Functional Specification Name

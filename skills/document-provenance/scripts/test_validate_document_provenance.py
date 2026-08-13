@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Generated with AI assistance.
-# Summary: Verifies the deterministic document provenance validator and its representative fixtures.
+# Summary: Verifies compact, legacy, and historical document provenance validation.
 
 from __future__ import annotations
 
 import contextlib
 import io
-import json
 import tempfile
 import unittest
 from pathlib import Path
@@ -23,18 +22,30 @@ from validate_document_provenance import (
 _PACKAGE_ROOT = Path(__file__).resolve().parents[1]
 _FIXTURES = _PACKAGE_ROOT / "fixtures"
 _COPYRIGHT = "Copyright (c) 2026 Martin.Bechard@DevConsult.ca"
-
-
+_COMPACT_MARKDOWN = """<!--
+Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+Artifact-ID: artifact-test-compact
+Created-Local: 2026-08-08T14:15:00-04:00
+Creating-Agent: Dev Documentation Writer
+Runtime: Codex
+Dispatched-Model: gpt-5.5
+Reasoning-Effort: high
+-->
+# Compact
+"""
 class DocumentProvenanceValidatorTest(unittest.TestCase):
-    """Exercise valid, invalid, generated, and historical document records."""
+    """Exercise compact new, compatible legacy, and historical provenance."""
 
     @classmethod
     def setUpClass(cls) -> None:
-        """Load the runtime envelope shared by new-document fixtures."""
+        cls.runtime_envelope = load_runtime_envelope(
+            _FIXTURES / "runtime-envelope.json"
+        )
+        cls.legacy_envelope = load_runtime_envelope(
+            _FIXTURES / "runtime-envelope-v1.json"
+        )
 
-        cls.runtime_envelope = load_runtime_envelope(_FIXTURES / "runtime-envelope.json")
-
-    def test_accepts_new_governed_document_formats(self) -> None:
+    def test_accepts_compact_new_governed_document_formats(self) -> None:
         valid_paths = (
             "valid/markdown-without-front-matter.md",
             "valid/markdown-with-okf-front-matter.md",
@@ -42,224 +53,255 @@ class DocumentProvenanceValidatorTest(unittest.TestCase):
             "valid/wiki/log.md",
             "valid/maintained.html",
             "valid/generated.md",
+            "valid/positive-offset.md",
         )
 
         for relative_path in valid_paths:
             with self.subTest(relative_path=relative_path):
-                findings = validate_document(
-                    _FIXTURES / relative_path,
-                    state="new",
-                    copyright_statement=_COPYRIGHT,
-                    runtime_envelope=self.runtime_envelope,
+                self.assertEqual(
+                    [],
+                    validate_document(
+                        _FIXTURES / relative_path,
+                        route="new",
+                        copyright_statement=_COPYRIGHT,
+                        runtime_envelope=self.runtime_envelope,
+                    ),
                 )
 
-                self.assertEqual([], findings)
+    def test_accepts_positive_and_negative_local_offsets(self) -> None:
+        paths = (
+            _FIXTURES / "valid/markdown-without-front-matter.md",
+            _FIXTURES / "valid/positive-offset.md",
+        )
+        for path in paths:
+            with self.subTest(path=path):
+                self.assertEqual(
+                    [],
+                    validate_document(
+                        path,
+                        route="new",
+                        copyright_statement=_COPYRIGHT,
+                        runtime_envelope=self.runtime_envelope,
+                    ),
+                )
 
-    def test_package_documentation_has_runtime_enveloped_provenance(self) -> None:
-        package_documents = (
+    def test_legacy_route_accepts_unchanged_package_headers(self) -> None:
+        paths = (
             _PACKAGE_ROOT / "SKILL.md",
             _PACKAGE_ROOT / "references/format-contract.md",
             _PACKAGE_ROOT / "references/historical-migration.md",
         )
 
-        for path in package_documents:
+        for path in paths:
             with self.subTest(path=path):
+                self.assertEqual(
+                    [],
+                    validate_document(
+                        path,
+                        route="legacy",
+                        copyright_statement=_COPYRIGHT,
+                        runtime_envelope=self.legacy_envelope,
+                    ),
+                )
+
+    def test_historical_route_accepts_verbose_and_compact_forms(self) -> None:
+        self.assertEqual(
+            [],
+            validate_document(
+                _FIXTURES / "valid/historical-unknown.md",
+                route="historical",
+                copyright_statement=_COPYRIGHT,
+            ),
+        )
+        self.assertEqual(
+            [],
+            validate_document(
+                _FIXTURES / "valid/historical-compact.html",
+                route="historical",
+                copyright_statement=_COPYRIGHT,
+                runtime_envelope=self.runtime_envelope,
+            ),
+        )
+        self.assertEqual(
+            [],
+            validate_document(
+                _FIXTURES / "valid/historical-all-known.html",
+                route="historical",
+                copyright_statement=_COPYRIGHT,
+                runtime_envelope=self.runtime_envelope,
+            ),
+        )
+
+    def test_rejects_invalid_local_time_and_instant_mismatch(self) -> None:
+        cases = {
+            "offset-free-local.md": "numeric UTC offset",
+            "z-local.md": "numeric UTC offset",
+            "malformed-positive-offset.md": "numeric UTC offset",
+            "malformed-negative-offset.md": "numeric UTC offset",
+            "nonexistent-local-time.md": "valid ISO 8601",
+            "instant-mismatch.md": "same instant",
+        }
+
+        for filename, message in cases.items():
+            with self.subTest(filename=filename):
                 findings = validate_document(
-                    path,
-                    state="new",
+                    _FIXTURES / "invalid" / filename,
+                    route="new",
                     copyright_statement=_COPYRIGHT,
                     runtime_envelope=self.runtime_envelope,
                 )
+                self.assertTrue(
+                    any(
+                        finding.field == "Created-Local"
+                        and message in finding.message
+                        for finding in findings
+                    ),
+                    findings,
+                )
 
-                self.assertEqual([], findings)
-
-    def test_accepts_historical_unknowns_only_in_historical_mode(self) -> None:
-        historical_path = _FIXTURES / "valid/historical-unknown.md"
-
-        historical_findings = validate_document(
-            historical_path,
-            state="historical",
-            copyright_statement=_COPYRIGHT,
+    def test_rejects_html_marker_and_footnote_failures(self) -> None:
+        cases = (
+            "html-missing-correlation.html",
+            "html-duplicate-correlation.html",
+            "html-misplaced-correlation.html",
+            "html-missing-footnote.html",
+            "html-duplicate-footnote.html",
+            "html-footnote-outside-footer.html",
+            "html-wrong-footnote-version.html",
+            "html-missing-field.html",
+            "html-duplicate-field.html",
+            "html-artifact-mismatch.html",
+            "html-value-mismatch.html",
+            "html-visible-evidence.html",
         )
-        new_findings = validate_document(
-            historical_path,
-            state="new",
+
+        for filename in cases:
+            with self.subTest(filename=filename):
+                findings = validate_document(
+                    _FIXTURES / "invalid" / filename,
+                    route="new",
+                    copyright_statement=_COPYRIGHT,
+                    runtime_envelope=self.runtime_envelope,
+                )
+                self.assertNotEqual([], findings)
+
+    def test_historical_known_and_unknown_facts_control_visibility(self) -> None:
+        known_findings = validate_document(
+            _FIXTURES / "invalid/historical-known-omitted.html",
+            route="historical",
+            copyright_statement=_COPYRIGHT,
+            runtime_envelope=self.runtime_envelope,
+        )
+        unknown_findings = validate_document(
+            _FIXTURES / "invalid/historical-unknown-displayed.html",
+            route="historical",
             copyright_statement=_COPYRIGHT,
             runtime_envelope=self.runtime_envelope,
         )
 
-        self.assertEqual([], historical_findings)
-        self.assertTrue(any(finding.field == "Created-UTC-Evidence" for finding in new_findings))
-        self.assertTrue(any(finding.field == "Creating-Agent" for finding in new_findings))
+        self.assertIn("Created-Local", {finding.field for finding in known_findings})
+        self.assertIn("Runtime", {finding.field for finding in unknown_findings})
 
-    def test_rejects_each_required_negative_fixture(self) -> None:
-        expected_findings = {
-            "missing-copyright.md": {"Copyright"},
-            "missing-provenance.md": {"Provenance"},
-            "comment-before-front-matter.md": {"Placement"},
-            "missing-field.md": {"Task-ID"},
-            "duplicate-field.md": {"Task-ID"},
-            "placeholder.md": {"Creating-Agent"},
-            "malformed-utc.md": {"Created-UTC"},
-            "unsupported-evidence.md": {"Created-UTC-Evidence"},
-            "inferred-profile.md": {
-                "Dispatched-Model-Evidence",
-                "Reasoning-Effort-Evidence",
-            },
-            "indented-provenance.md": {"Placement"},
-        }
-
-        for fixture_name, expected_fields in expected_findings.items():
-            with self.subTest(fixture_name=fixture_name):
-                findings = validate_document(
-                    _FIXTURES / "invalid" / fixture_name,
-                    state="new",
-                    copyright_statement=_COPYRIGHT,
-                    runtime_envelope=self.runtime_envelope,
+    def test_rejects_compact_internal_metadata(self) -> None:
+        fixtures = (
+            "compact-task-id.md",
+            "compact-evidence.md",
+            "compact-placeholder.md",
+            "compact-inferred.md",
+        )
+        for filename in fixtures:
+            with self.subTest(filename=filename):
+                self.assertNotEqual(
+                    [],
+                    validate_document(
+                        _FIXTURES / "invalid" / filename,
+                        route="new",
+                        copyright_statement=_COPYRIGHT,
+                        runtime_envelope=self.runtime_envelope,
+                    ),
                 )
 
-                self.assertTrue(expected_fields.issubset({finding.field for finding in findings}))
-
-    def test_rejects_space_and_tab_indented_provenance_openers(self) -> None:
-        source = (_FIXTURES / "invalid/indented-provenance.md").read_text(
-            encoding="utf-8"
-        )
+    def test_optional_external_task_id_is_not_a_document_field(self) -> None:
+        records = {
+            "artifact-test-compact": {
+                "Record-Type": "new",
+                "Artifact-ID": "artifact-test-compact",
+                "Created-Local": "2026-08-08T14:15:00-04:00",
+                "Created-UTC": "2026-08-08T18:15:00Z",
+                "Creating-Agent": "Dev Documentation Writer",
+                "Runtime": "Codex",
+                "Dispatched-Model": "gpt-5.5",
+                "Reasoning-Effort": "high",
+                "Task-ID": "external-only-task",
+            }
+        }
         with tempfile.TemporaryDirectory() as directory:
-            tab_indented = Path(directory) / "tab-indented.md"
-            tab_indented.write_text(
-                source.replace("    <!--", "\t<!--", 1),
-                encoding="utf-8",
-            )
-            html_source = (_FIXTURES / "valid/maintained.html").read_text(
-                encoding="utf-8"
-            )
-            space_indented_html = Path(directory) / "space-indented.html"
-            space_indented_html.write_text(
-                html_source.replace("\n<!--", "\n    <!--", 1),
-                encoding="utf-8",
-            )
-            tab_indented_html = Path(directory) / "tab-indented.html"
-            tab_indented_html.write_text(
-                html_source.replace("\n<!--", "\n\t<!--", 1),
-                encoding="utf-8",
-            )
-
-            space_findings = validate_document(
-                _FIXTURES / "invalid/indented-provenance.md",
-                state="new",
-                copyright_statement=_COPYRIGHT,
-                runtime_envelope=self.runtime_envelope,
-            )
-            tab_findings = validate_document(
-                tab_indented,
-                state="new",
-                copyright_statement=_COPYRIGHT,
-                runtime_envelope=self.runtime_envelope,
-            )
-            html_findings = [
+            path = Path(directory) / "document.md"
+            path.write_text(_COMPACT_MARKDOWN, encoding="utf-8")
+            self.assertEqual(
+                [],
                 validate_document(
                     path,
-                    state="new",
+                    route="new",
                     copyright_statement=_COPYRIGHT,
-                    runtime_envelope=self.runtime_envelope,
-                )
-                for path in (space_indented_html, tab_indented_html)
-            ]
+                    runtime_envelope=self.runtime_envelope.with_records(records),
+                ),
+            )
 
-        self.assertIn("Placement", {finding.field for finding in space_findings})
-        self.assertIn("Placement", {finding.field for finding in tab_findings})
-        for findings in html_findings:
-            self.assertIn("Placement", {finding.field for finding in findings})
-
-    def test_accepts_blank_line_separation_without_opener_indentation(self) -> None:
+    def test_rejects_schema_and_route_mismatches(self) -> None:
+        compact = _FIXTURES / "valid/markdown-without-front-matter.md"
+        legacy = _PACKAGE_ROOT / "SKILL.md"
         cases = (
-            (
-                "valid/markdown-with-okf-front-matter.md",
-                "---\n<!--",
-                "---\n\n<!--",
-            ),
-            (
-                "valid/maintained.html",
-                "<!doctype html>\n<!--",
-                "<!doctype html>\n\n<!--",
-            ),
+            (compact, "new", self.legacy_envelope),
+            (legacy, "legacy", self.runtime_envelope),
+            (legacy, "new", self.runtime_envelope),
+            (compact, "legacy", self.legacy_envelope),
         )
-
-        with tempfile.TemporaryDirectory() as directory:
-            findings_by_name: dict[str, list[ValidationFinding]] = {}
-            for relative_path, marker, replacement in cases:
-                source_path = _FIXTURES / relative_path
-                separated = Path(directory) / source_path.name
-                separated.write_text(
-                    source_path.read_text(encoding="utf-8").replace(
-                        marker,
-                        replacement,
-                        1,
+        for path, route, envelope in cases:
+            with self.subTest(path=path, route=route):
+                self.assertNotEqual(
+                    [],
+                    validate_document(
+                        path,
+                        route=route,
+                        copyright_statement=_COPYRIGHT,
+                        runtime_envelope=envelope,
                     ),
-                    encoding="utf-8",
-                )
-                findings_by_name[relative_path] = validate_document(
-                    separated,
-                    state="new",
-                    copyright_statement=_COPYRIGHT,
-                    runtime_envelope=self.runtime_envelope,
                 )
 
-        for relative_path, findings in findings_by_name.items():
-            with self.subTest(relative_path=relative_path):
-                self.assertEqual([], findings)
-
-    def test_requires_runtime_envelope_for_new_documents(self) -> None:
-        findings = validate_document(
-            _FIXTURES / "valid/markdown-without-front-matter.md",
-            state="new",
-            copyright_statement=_COPYRIGHT,
+    def test_rejects_invalid_historical_partitions(self) -> None:
+        cases = (
+            _FIXTURES / "invalid/runtime-envelope-historical-overlap.json",
+            _FIXTURES / "invalid/runtime-envelope-historical-incomplete.json",
         )
-
-        self.assertIn("Runtime-Envelope", {finding.field for finding in findings})
-
-    def test_reports_runtime_envelope_mismatch_on_the_exact_field(self) -> None:
-        mismatched_envelope = {
-            **self.runtime_envelope,
-            "artifact-valid-markdown": {
-                **self.runtime_envelope["artifact-valid-markdown"],
-                "Dispatched-Model": "different-model",
-            },
-        }
-
-        findings = validate_document(
-            _FIXTURES / "valid/markdown-without-front-matter.md",
-            state="new",
-            copyright_statement=_COPYRIGHT,
-            runtime_envelope=mismatched_envelope,
-        )
-
-        self.assertIn("Dispatched-Model", {finding.field for finding in findings})
+        for path in cases:
+            with self.subTest(path=path):
+                with self.assertRaisesRegex(ValueError, "Known-Facts|Unknown-Facts"):
+                    load_runtime_envelope(path)
 
     def test_generated_fixture_matches_its_owning_template(self) -> None:
-        template = (_FIXTURES / "generated/source-template.md.tmpl").read_text(encoding="utf-8")
+        template = (
+            _FIXTURES / "generated/source-template.md.tmpl"
+        ).read_text(encoding="utf-8")
         rendered = template
         replacements = {
             "{{COPYRIGHT}}": _COPYRIGHT,
             "{{ARTIFACT_ID}}": "artifact-valid-generated",
-            "{{CREATED_UTC}}": "2026-08-08T18:20:00Z",
+            "{{CREATED_LOCAL}}": "2026-08-08T14:20:00-04:00",
             "{{CREATING_AGENT}}": "Dev Documentation Writer",
             "{{RUNTIME}}": "Codex",
             "{{DISPATCHED_MODEL}}": "gpt-5.5",
             "{{REASONING_EFFORT}}": "high",
-            "{{TASK_ID}}": "task-generated-001",
         }
         for placeholder, value in replacements.items():
             rendered = rendered.replace(placeholder, value)
 
         expected = (_FIXTURES / "valid/generated.md").read_text(encoding="utf-8")
-
         self.assertNotIn("{{", rendered)
         self.assertEqual(expected, rendered)
 
-    def test_cli_validates_a_bounded_mixed_state_set(self) -> None:
+    def test_cli_validates_each_exact_route(self) -> None:
         output = io.StringIO()
-
         with contextlib.redirect_stdout(output):
             result = main(
                 [
@@ -270,17 +312,32 @@ class DocumentProvenanceValidatorTest(unittest.TestCase):
                     "--new",
                     str(_FIXTURES / "valid/markdown-without-front-matter.md"),
                     "--historical",
-                    str(_FIXTURES / "valid/historical-unknown.md"),
+                    str(_FIXTURES / "valid/historical-compact.html"),
                 ]
             )
-
         self.assertEqual(0, result)
         self.assertIn("validated 2 documents", output.getvalue())
 
-    def test_cli_returns_failure_with_exact_path_and_field(self) -> None:
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output):
+            result = main(
+                [
+                    "--copyright",
+                    _COPYRIGHT,
+                    "--envelope",
+                    str(_FIXTURES / "runtime-envelope-v1.json"),
+                    "--legacy",
+                    str(_PACKAGE_ROOT / "SKILL.md"),
+                    "--historical",
+                    str(_FIXTURES / "valid/historical-unknown.md"),
+                ]
+            )
+        self.assertEqual(0, result)
+        self.assertIn("validated 2 documents", output.getvalue())
+
+    def test_cli_reports_exact_path_and_field(self) -> None:
         path = _FIXTURES / "invalid/malformed-utc.md"
         output = io.StringIO()
-
         with contextlib.redirect_stdout(output):
             result = main(
                 [
@@ -292,61 +349,19 @@ class DocumentProvenanceValidatorTest(unittest.TestCase):
                     str(path),
                 ]
             )
-
         self.assertEqual(1, result)
-        self.assertIn(f"{path}: Created-UTC:", output.getvalue())
-
-    def test_cli_rejects_indented_provenance_opener(self) -> None:
-        path = _FIXTURES / "invalid/indented-provenance.md"
-        output = io.StringIO()
-
-        with contextlib.redirect_stdout(output):
-            result = main(
-                [
-                    "--copyright",
-                    _COPYRIGHT,
-                    "--envelope",
-                    str(_FIXTURES / "runtime-envelope.json"),
-                    "--new",
-                    str(path),
-                ]
-            )
-
-        self.assertEqual(1, result)
-        self.assertIn(f"{path}: Placement:", output.getvalue())
-
-    def test_runtime_envelope_rejects_current_profile_inference(self) -> None:
-        record = {
-            "Artifact-ID": "artifact-invalid-envelope",
-            "Created-UTC": "2026-08-08T18:45:00Z",
-            "Creating-Agent": "Dev Documentation Writer",
-            "Runtime": "Codex",
-            "Dispatched-Model": "current-profile",
-            "Reasoning-Effort": "high",
-            "Task-ID": "task-invalid-envelope",
-        }
-        with tempfile.TemporaryDirectory() as directory:
-            path = Path(directory) / "envelope.json"
-            path.write_text(
-                json.dumps({"schema_version": 1, "records": [record]}),
-                encoding="utf-8",
-            )
-
-            with self.assertRaisesRegex(ValueError, "inferred configuration"):
-                load_runtime_envelope(path)
+        self.assertIn(f"{path}: Created-Local:", output.getvalue())
 
     def test_rejects_unsupported_document_formats_without_mutation(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "document.pdf"
             path.write_bytes(b"%PDF-1.7")
-
             findings = validate_document(
                 path,
-                state="new",
+                route="new",
                 copyright_statement=_COPYRIGHT,
                 runtime_envelope=self.runtime_envelope,
             )
-
         self.assertEqual("Format", findings[0].field)
 
 

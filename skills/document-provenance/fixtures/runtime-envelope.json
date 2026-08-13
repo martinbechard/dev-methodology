@@ -1,35 +1,10 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "records": [
     {
-      "Artifact-ID": "f633e99c-ffc4-4bc9-9c11-75e8dc070914",
-      "Created-UTC": "2026-08-08T18:22:49Z",
-      "Creating-Agent": "Dev Coder",
-      "Runtime": "Codex",
-      "Dispatched-Model": "gpt-5.6-sol",
-      "Reasoning-Effort": "high",
-      "Task-ID": "019fe291-1ba8-7a43-8d21-391a04dfa9a9"
-    },
-    {
-      "Artifact-ID": "0b7a6eef-de34-488e-957d-11788f18314d",
-      "Created-UTC": "2026-08-08T18:22:49Z",
-      "Creating-Agent": "Dev Coder",
-      "Runtime": "Codex",
-      "Dispatched-Model": "gpt-5.6-sol",
-      "Reasoning-Effort": "high",
-      "Task-ID": "019fe291-1ba8-7a43-8d21-391a04dfa9a9"
-    },
-    {
-      "Artifact-ID": "52badfc3-ee93-4a3c-8aa8-b4195cacb745",
-      "Created-UTC": "2026-08-08T18:22:49Z",
-      "Creating-Agent": "Dev Coder",
-      "Runtime": "Codex",
-      "Dispatched-Model": "gpt-5.6-sol",
-      "Reasoning-Effort": "high",
-      "Task-ID": "019fe291-1ba8-7a43-8d21-391a04dfa9a9"
-    },
-    {
+      "Record-Type": "new",
       "Artifact-ID": "artifact-valid-markdown",
+      "Created-Local": "2026-08-08T14:15:00-04:00",
       "Created-UTC": "2026-08-08T18:15:00Z",
       "Creating-Agent": "Dev Documentation Writer",
       "Runtime": "Codex",
@@ -38,121 +13,162 @@
       "Task-ID": "task-markdown-001"
     },
     {
+      "Record-Type": "new",
       "Artifact-ID": "artifact-valid-okf",
+      "Created-Local": "2026-08-08T14:16:00-04:00",
       "Created-UTC": "2026-08-08T18:16:00Z",
       "Creating-Agent": "Wiki Writer",
       "Runtime": "Codex",
       "Dispatched-Model": "gpt-5.5",
-      "Reasoning-Effort": "high",
-      "Task-ID": "task-okf-001"
+      "Reasoning-Effort": "high"
     },
     {
+      "Record-Type": "new",
       "Artifact-ID": "artifact-valid-index",
+      "Created-Local": "2026-08-08T14:17:00-04:00",
       "Created-UTC": "2026-08-08T18:17:00Z",
       "Creating-Agent": "Wiki Writer",
       "Runtime": "Codex",
       "Dispatched-Model": "gpt-5.5",
-      "Reasoning-Effort": "high",
-      "Task-ID": "task-index-001"
+      "Reasoning-Effort": "high"
     },
     {
+      "Record-Type": "new",
       "Artifact-ID": "artifact-valid-log",
+      "Created-Local": "2026-08-08T14:18:00-04:00",
       "Created-UTC": "2026-08-08T18:18:00Z",
       "Creating-Agent": "Wiki Writer",
       "Runtime": "Codex",
       "Dispatched-Model": "gpt-5.5",
-      "Reasoning-Effort": "high",
-      "Task-ID": "task-log-001"
+      "Reasoning-Effort": "high"
     },
     {
+      "Record-Type": "new",
       "Artifact-ID": "artifact-valid-html",
-      "Created-UTC": "2026-08-08T18:19:00+00:00",
+      "Created-Local": "2026-08-08T14:19:00-04:00",
+      "Created-UTC": "2026-08-08T18:19:00Z",
       "Creating-Agent": "Dev Documentation Writer",
       "Runtime": "Codex",
       "Dispatched-Model": "gpt-5.5",
-      "Reasoning-Effort": "high",
-      "Task-ID": "task-html-001"
+      "Reasoning-Effort": "high"
     },
     {
+      "Record-Type": "new",
       "Artifact-ID": "artifact-valid-generated",
+      "Created-Local": "2026-08-08T14:20:00-04:00",
       "Created-UTC": "2026-08-08T18:20:00Z",
       "Creating-Agent": "Dev Documentation Writer",
       "Runtime": "Codex",
       "Dispatched-Model": "gpt-5.5",
-      "Reasoning-Effort": "high",
-      "Task-ID": "task-generated-001"
+      "Reasoning-Effort": "high"
     },
     {
-      "Artifact-ID": "artifact-invalid-copyright",
-      "Created-UTC": "2026-08-08T18:31:00Z",
+      "Record-Type": "new",
+      "Artifact-ID": "artifact-valid-positive",
+      "Created-Local": "2026-08-09T03:45:00+09:30",
+      "Created-UTC": "2026-08-08T18:15:00Z",
       "Creating-Agent": "Dev Documentation Writer",
       "Runtime": "Codex",
       "Dispatched-Model": "gpt-5.5",
-      "Reasoning-Effort": "high",
-      "Task-ID": "task-invalid-copyright"
+      "Reasoning-Effort": "high"
     },
     {
-      "Artifact-ID": "artifact-invalid-frontmatter",
-      "Created-UTC": "2026-08-08T18:32:00Z",
-      "Creating-Agent": "Wiki Writer",
-      "Runtime": "Codex",
-      "Dispatched-Model": "gpt-5.5",
-      "Reasoning-Effort": "high",
-      "Task-ID": "task-invalid-frontmatter"
-    },
-    {
-      "Artifact-ID": "artifact-invalid-missing-field",
-      "Created-UTC": "2026-08-08T18:33:00Z",
-      "Creating-Agent": "Dev Documentation Writer",
-      "Runtime": "Codex",
-      "Dispatched-Model": "gpt-5.5",
-      "Reasoning-Effort": "high",
-      "Task-ID": "task-invalid-missing-field"
-    },
-    {
-      "Artifact-ID": "artifact-invalid-duplicate",
-      "Created-UTC": "2026-08-08T18:34:00Z",
-      "Creating-Agent": "Dev Documentation Writer",
-      "Runtime": "Codex",
-      "Dispatched-Model": "gpt-5.5",
-      "Reasoning-Effort": "high",
-      "Task-ID": "task-invalid-duplicate"
-    },
-    {
-      "Artifact-ID": "artifact-invalid-value",
-      "Created-UTC": "2026-08-08T18:35:00Z",
-      "Creating-Agent": "Dev Documentation Writer",
-      "Runtime": "Codex",
-      "Dispatched-Model": "gpt-5.5",
-      "Reasoning-Effort": "high",
-      "Task-ID": "task-invalid-value"
-    },
-    {
+      "Record-Type": "new",
       "Artifact-ID": "artifact-invalid-utc",
+      "Created-Local": "2026-08-08T14:36:00-04:00",
       "Created-UTC": "2026-08-08T18:36:00Z",
       "Creating-Agent": "Dev Documentation Writer",
       "Runtime": "Codex",
       "Dispatched-Model": "gpt-5.5",
-      "Reasoning-Effort": "high",
-      "Task-ID": "task-invalid-utc"
+      "Reasoning-Effort": "high"
     },
     {
-      "Artifact-ID": "artifact-invalid-evidence",
-      "Created-UTC": "2026-08-08T18:37:00Z",
+      "Record-Type": "new",
+      "Artifact-ID": "artifact-test-html",
+      "Created-Local": "2026-08-08T14:19:00-04:00",
+      "Created-UTC": "2026-08-08T18:19:00Z",
       "Creating-Agent": "Dev Documentation Writer",
       "Runtime": "Codex",
       "Dispatched-Model": "gpt-5.5",
-      "Reasoning-Effort": "high",
-      "Task-ID": "task-invalid-evidence"
+      "Reasoning-Effort": "high"
     },
     {
-      "Artifact-ID": "artifact-invalid-inferred",
-      "Created-UTC": "2026-08-08T18:38:00Z",
+      "Record-Type": "new",
+      "Artifact-ID": "artifact-test-compact",
+      "Created-Local": "2026-08-08T14:15:00-04:00",
+      "Created-UTC": "2026-08-08T18:15:00Z",
       "Creating-Agent": "Dev Documentation Writer",
       "Runtime": "Codex",
       "Dispatched-Model": "gpt-5.5",
-      "Reasoning-Effort": "high",
-      "Task-ID": "task-invalid-inferred"
+      "Reasoning-Effort": "high"
+    },
+    {
+      "Record-Type": "historical",
+      "Artifact-ID": "artifact-historical-compact",
+      "Artifact-ID-Evidence": "migration-assigned",
+      "Known-Facts": {
+        "Created-Local": {
+          "Value": "2026-07-20T04:01:32-04:00",
+          "Evidence": "git-derived"
+        }
+      },
+      "Unknown-Facts": [
+        "Created-UTC",
+        "Creating-Agent",
+        "Runtime",
+        "Dispatched-Model",
+        "Reasoning-Effort"
+      ]
+    },
+    {
+      "Record-Type": "historical",
+      "Artifact-ID": "artifact-historical-all-known",
+      "Artifact-ID-Evidence": "retained-task-evidence",
+      "Known-Facts": {
+        "Created-UTC": {
+          "Value": "2026-07-20T08:01:32Z",
+          "Evidence": "retained-rollout-evidence"
+        },
+        "Created-Local": {
+          "Value": "2026-07-20T04:01:32-04:00",
+          "Evidence": "git-derived"
+        },
+        "Creating-Agent": {
+          "Value": "Wiki Writer",
+          "Evidence": "retained-task-evidence"
+        },
+        "Runtime": {
+          "Value": "Codex",
+          "Evidence": "retained-rollout-evidence"
+        },
+        "Dispatched-Model": {
+          "Value": "gpt-5.5",
+          "Evidence": "retained-rollout-evidence"
+        },
+        "Reasoning-Effort": {
+          "Value": "high",
+          "Evidence": "retained-task-evidence"
+        }
+      },
+      "Unknown-Facts": []
+    },
+    {
+      "Record-Type": "historical",
+      "Artifact-ID": "7f38cb8f-35da-4dbe-82a5-58c78bb305be",
+      "Artifact-ID-Evidence": "migration-assigned",
+      "Known-Facts": {
+        "Created-Local": {
+          "Value": "2026-07-20T04:01:32-04:00",
+          "Evidence": "git-derived"
+        }
+      },
+      "Unknown-Facts": [
+        "Created-UTC",
+        "Creating-Agent",
+        "Runtime",
+        "Dispatched-Model",
+        "Reasoning-Effort"
+      ]
     }
   ]
 }

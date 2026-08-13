@@ -1670,6 +1670,7 @@ class BundleContentTests(unittest.TestCase):
             skill_root / "scripts" / "test_validate_document_provenance.py"
         )
         envelope_path = skill_root / "fixtures" / "runtime-envelope.json"
+        legacy_envelope_path = skill_root / "fixtures" / "runtime-envelope-v1.json"
         schema_path = skill_root / "assets" / "provenance-envelope.schema.json"
 
         for path in (
@@ -1680,6 +1681,7 @@ class BundleContentTests(unittest.TestCase):
             validator_path,
             validator_test_path,
             envelope_path,
+            legacy_envelope_path,
             schema_path,
         ):
             with self.subTest(path=path.relative_to(REPOSITORY_ROOT)):
@@ -1732,7 +1734,16 @@ class BundleContentTests(unittest.TestCase):
             },
         ]
         envelope = json.loads(envelope_path.read_text(encoding="utf-8"))
-        self.assertEqual(expected_creation_records, envelope["records"][:3])
+        legacy_envelope = json.loads(
+            legacy_envelope_path.read_text(encoding="utf-8")
+        )
+        self.assertEqual(2, envelope["schema_version"])
+        self.assertTrue(
+            {"new", "historical"}.issubset(
+                {record["Record-Type"] for record in envelope["records"]}
+            )
+        )
+        self.assertEqual(expected_creation_records, legacy_envelope["records"])
         for path, record in zip(
             (skill_path, format_contract_path, migration_path),
             expected_creation_records,
@@ -1757,29 +1768,20 @@ class BundleContentTests(unittest.TestCase):
         placeholder_fields = (
             "COPYRIGHT",
             "ARTIFACT_ID",
-            "CREATED_UTC",
+            "CREATED_LOCAL",
             "CREATING_AGENT",
             "RUNTIME",
             "DISPATCHED_MODEL",
             "REASONING_EFFORT",
-            "TASK_ID",
-        )
-        evidence_labels = (
-            "Artifact-ID",
-            "Created-UTC",
-            "Creating-Agent",
-            "Runtime",
-            "Dispatched-Model",
-            "Reasoning-Effort",
-            "Task-ID",
         )
         for template_name in governed_templates:
             template_text = (template_root / template_name).read_text(encoding="utf-8")
             with self.subTest(template=template_name):
                 for field in placeholder_fields:
                     self.assertIn(f"{{{{{field}}}}}", template_text)
-                for label in evidence_labels:
-                    self.assertIn(f"{label}-Evidence: runtime-supplied", template_text)
+                self.assertNotIn("{{CREATED_UTC}}", template_text)
+                self.assertNotIn("{{TASK_ID}}", template_text)
+                self.assertNotIn("-Evidence:", template_text)
                 self.assertNotIn("Copyright (c) 2025", template_text)
                 self.assertNotIn("MIT License", template_text)
                 self.assertNotIn("File path:", template_text)
@@ -15967,6 +15969,31 @@ Visible after.
 
         wiki_context_path = design_root / "wiki-skills-and-project-context.html"
         wiki_context_text = page_text["wiki-skills-and-project-context.html"]
+        self.assertTrue(
+            wiki_context_text.startswith(
+                "<!doctype html>\n"
+                "<!-- Document-Provenance Artifact-ID: "
+                "7f38cb8f-35da-4dbe-82a5-58c78bb305be -->\n"
+            )
+        )
+        self.assertEqual(1, wiki_context_text.count('data-document-provenance="v2"'))
+        self.assertEqual(
+            1,
+            wiki_context_text.count('data-provenance-field="Created-Local"'),
+        )
+        self.assertNotIn("historical-unknown", wiki_context_text)
+        wiki_visible_blocks = visible_prose_from_html(wiki_context_text)
+        self.assertEqual(
+            "9b27ea050831506462f65cb2ac8cc8a1f190309324469b88bc0d5725a541da80",
+            hashlib.sha256(
+                "\n".join(wiki_visible_blocks[:-1]).encode("utf-8")
+            ).hexdigest(),
+        )
+        self.assertEqual(
+            "Copyright (c) 2026 Martin.Bechard@DevConsult.ca - MIT License "
+            "· Created 2026-07-20T04:01:32-04:00",
+            wiki_visible_blocks[-1],
+        )
         self.assertEqual(
             1,
             wiki_context_text.count(
