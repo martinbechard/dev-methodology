@@ -1,6 +1,6 @@
 # Simplify New-Document Provenance Headers
 
-Status: User Action Required
+Status: Ready
 
 Type: Feature
 
@@ -187,7 +187,7 @@ Full acceptance requires changes to these six owning sources, but the previously
 
 ### Resolution
 
-Pending.
+Approved all six on 2026-08-13 by the user in canonical Codex Task `019ffaf1-7879-7973-9bcb-a34652fbce7f`. This approval adds the six exact `route-documentation-work` owning template paths listed above to this Work Item's governed canonical scope. Preserve the accepted plan and require corrected plan review before source implementation.
 
 ### Unattended Work Boundary
 
@@ -203,3 +203,13 @@ Make no source mutation while this question is pending. Preserve the accepted pl
 - Canonical Execution: Codex Task 019ffaf1-7879-7973-9bcb-a34652fbce7f with Dev Orchestrator /root/simplify_new_document_provenance_header.
 - Preserved Evidence: accepted JSON and HTML plan, existing Work Item history, claims through the transition boundary, and all current execution evidence.
 - Source Mutation: None; source coding had not started.
+
+## User Action Required Recovery Evidence
+
+- Answered At: 2026-08-13 in canonical Codex Task `019ffaf1-7879-7973-9bcb-a34652fbce7f`.
+- User Answer: `I approve all six`.
+- Resolution: All six exact `route-documentation-work` template sources listed in Governed Canonical Sources are approved.
+- Transition: `User Action Required -> Ready`.
+- Canonical Execution Preserved: Codex Task `019ffaf1-7879-7973-9bcb-a34652fbce7f` and Dev Orchestrator `/root/simplify_new_document_provenance_header`.
+- Next Action: Parent Dev Backlog Coordinator reconciles capacity and records `Ready -> Starting` for this preserved canonical task; the root Dev Orchestrator then separately accepts `Starting -> Running` before source mutation.
+- Corrected Gate: Revise the accepted plan for the expanded six-template scope and obtain corrected Dev Architect review before implementation.
