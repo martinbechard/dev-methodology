@@ -174,6 +174,17 @@ Dependency Resolution: Satisfied by completed Work Item `review-agent-and-skill-
 - Claim Boundary: Do not query, release, reset, reconstruct, or otherwise operate on the stray claim while the crisis remains active.
 - Unmet Exit Cleanup: Crisis exit remains subject to completing every crisis item and the ordinary exit gates. After the Watchdog confirms those gates, restore MULTITASK first, then restore ordinary claim policy. The exact Map owner must then release only `create-orchestrate-template-first-review-checklists-019ffbeb`, reconcile the draft through the Map provider's preserved nonterminal state, restore the governed title, and await ordinary scheduling. No proxy cleanup, draft deletion, or methodology delivery is authorized.
 
+### Post-Reset Terminology-Recovery Violation
+
+- Recorded At: 2026-08-13T23:12:00Z.
+- Non-Sole Work Item: `reconcile-project-terminology-reference-discovery`, canonical Task and Conversation `019ffb67-9ecc-7c53-8412-c486d62d06c2` on host `local`.
+- Violation: During crisis epoch `blocked-crisis-20260813T223935Z`, while `support-configured-primary-branches-in-file-provider-transactions` remained the sole authorized mutator, the preserved terminology task edited its provider record and performed two claim-release operations.
+- Current Authoritative State: The provider edit was reverted. The current provider record remains `User Action Required` with its A/B/C Persistence and Commit selection unresolved. Primary tracked state is clean; its existing JSON/HTML plan pair remains preserved and untracked.
+- Preservation: The task is idle. Preserve its canonical execution, plan, question, task-local structured claim-release outcomes, and all external-repository evidence. Do not reconstruct or repeat either release.
+- Crisis Membership: This recovery Work Item is not added merely because it violated serialization. It already supports two crisis members, but it cannot execute until the current sole crisis item is terminal and the Coordinator deliberately selects it as the next one serial crisis task.
+- Prohibition: Until selected under crisis sequencing or until crisis exit, perform no provider, claim, title, source, plan, resource, dispatch, resume, or external-repository mutation from this task.
+- Claim Boundary: Do not query, release, reacquire, reset, or otherwise reconcile its claim state during the crisis. Retain the two release outcomes as audit evidence for post-exit ordinary reconciliation.
+
 ## User Action Required
 
 ### Question for the User
