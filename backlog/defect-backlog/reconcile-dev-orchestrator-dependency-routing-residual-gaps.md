@@ -1,6 +1,6 @@
 # Reconcile Dev Orchestrator Dependency-Routing Residual Gaps
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -70,3 +70,14 @@ None.
 
 - The completed specify-deterministic-dev-orchestrator-dependency-routing-fixtures item remains the original delivery record. This item covers only residual gaps found after that delivery.
 - The legacy branch is an evidence source, not an accepted implementation candidate.
+
+## Starting Handoff Evidence
+
+- Reserved At: 2026-08-13T11:43:11Z.
+- Transition: `Ready -> Starting`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Baseline: `e8923f2cb1fe967806a0542359d15af01d94ac19` on primary `main`.
+- Capacity: Slot 4 of 5. Independent Dev Orchestrator evaluation-fixture scope; exclude private Backlog Dispatcher, provenance, evaluation-terminology targets, and documentation-template parser paths.
+- Transition Claims: `start-reconcile-dev-orchestrator-dependency-routing-residual-gaps-work-item`; event `6304333c-89a7-4665-8dee-4d6b913bded1`. `start-reconcile-dev-orchestrator-dependency-routing-residual-gaps-provider`; event `968c81d8-b150-444a-9b01-53c10e2ac578`.
+- Runtime Identity: Pending caller-owned visible task creation. Creation does not imply Running.
