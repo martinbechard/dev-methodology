@@ -1,6 +1,6 @@
 # Estimate Agent Work In Agent-Hours
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -259,3 +259,16 @@ Do not modify, review, verify, deliver, or close this Work Item until the user a
 - Preserved State: The completed plan pair, prior reviews, canonical execution, excluded artifacts, and candidate history remain unchanged.
 - Capacity Decision: Two other provider Work Items are currently `Starting` or `Running`, below the root five-active-Work-Item limit. A slot is available for this preserved finish lane.
 - Next Action: Record `Ready -> Starting -> Running` for this same canonical execution, reacquire implementation claims, and begin correction cycle 1 of 2.
+
+## Second Correction Resumption Starting Evidence
+
+- Reserved At: 2026-08-13T16:55:24Z.
+- Transition: `Ready -> Starting`.
+- Capacity Gate: Satisfied. Two other provider Work Items are `Starting` or `Running`, leaving capacity within the root five-active-Work-Item limit.
+- Parent Coordination Identity: `/root`.
+- Canonical Task and Conversation: `019ffa3d-191f-7343-aaeb-2499de1ad605`.
+- Root Agent Execution: `/root/estimate_agent_work`.
+- Preserved Candidate: `12d5c5c978592f01c8d71d4bd26b60705bfbed89`.
+- Normalized Objective: Complete correction cycle 1 of 2 for separate low/high critical-path attribution and mapping-form compact `expected_parallelism` examples, then obtain fresh independent review.
+- Launch Result: Existing canonical execution resumed; no replacement execution created.
+- Next Action: The same Dev Orchestrator records `Starting -> Running`, then acquires exact outcome and implementation-path ownership before mutation.
