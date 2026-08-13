@@ -10,6 +10,7 @@ import importlib.util
 import json
 import os
 import shutil
+import socket
 import subprocess
 import sys
 import tempfile
@@ -2639,6 +2640,69 @@ class AgentSuiteRunnerTests(unittest.TestCase):
         self.assertEqual(1, len(evidence))
         self.assertEqual({"id": broker.broker_id, "port": broker.port}, browser_receipt["broker"])
         self.assertTrue(all(value["closed"] for value in browser_receipt["cleanup"].values()))
+
+    def test_playwright_preflight_binds_an_explicit_fixture_port(self) -> None:
+        """A caller can claim one exact port before the fixture listener is created."""
+        configured_port = os.environ.get("DEV_METHODOLOGY_PLAYWRIGHT_FIXED_PORT")
+        if configured_port is None:
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as probe:
+                probe.bind(("127.0.0.1", 0))
+                requested_port = int(probe.getsockname()[1])
+        else:
+            requested_port = int(configured_port)
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            codex_home, _ = self._write_playwright_broker_fixture(root, ("browser-suite:happy",))
+            runtime = codex_home / "playwright-runtime"
+            completed = subprocess.run(
+                [
+                    str(runner._bundled_node_executable()),
+                    str(runtime / "playwright-harness.mjs"),
+                    "preflight",
+                    "--scenario",
+                    "browser-suite:happy",
+                    "--port",
+                    str(requested_port),
+                ],
+                check=False,
+                text=True,
+                capture_output=True,
+                timeout=30,
+            )
+            receipt = json.loads((root / "preflight-0" / "receipt.json").read_text(encoding="utf-8"))
+
+        self.assertEqual(0, completed.returncode, completed.stderr)
+        self.assertEqual("completed", receipt["status"])
+        self.assertEqual(requested_port, receipt["requestedPort"])
+        self.assertEqual(requested_port, receipt["selectedPort"])
+        self.assertTrue(receipt["cleanup"]["server"]["closed"])
+
+    def test_playwright_preflight_rejects_an_invalid_fixed_port_before_evidence_creation(self) -> None:
+        """An invalid fixed-port request fails before a listener or browser can be created."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            codex_home, _ = self._write_playwright_broker_fixture(root, ("browser-suite:happy",))
+            runtime = codex_home / "playwright-runtime"
+            completed = subprocess.run(
+                [
+                    str(runner._bundled_node_executable()),
+                    str(runtime / "playwright-harness.mjs"),
+                    "preflight",
+                    "--scenario",
+                    "browser-suite:happy",
+                    "--port",
+                    "0",
+                ],
+                check=False,
+                text=True,
+                capture_output=True,
+                timeout=30,
+            )
+            evidence_created = (root / "preflight-0").exists()
+
+        self.assertNotEqual(0, completed.returncode)
+        self.assertIn("--port must be a canonical decimal integer from 1 to 65535", completed.stderr)
+        self.assertFalse(evidence_created)
 
     def test_playwright_broker_rejects_fixture_root_swap_after_startup(self) -> None:
         """A protected fixture snapshot cannot be replaced with an attacker-controlled symlink after readiness."""

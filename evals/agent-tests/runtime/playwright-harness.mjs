@@ -50,6 +50,18 @@ function isLoopbackUrl(value) {
   return ["127.0.0.1", "localhost", "[::1]"].includes(parsed.hostname);
 }
 
+function parseFixedPort(value) {
+  if (value === undefined) return null;
+  if (typeof value !== "string" || !/^[1-9]\d{0,4}$/.test(value)) {
+    throw new Error("--port must be a canonical decimal integer from 1 to 65535");
+  }
+  const port = Number(value);
+  if (port > 65535) {
+    throw new Error("--port must be a canonical decimal integer from 1 to 65535");
+  }
+  return port;
+}
+
 async function validateFixtureBinding(binding) {
   if (!binding || typeof binding !== "object" || !isAbsolute(binding.configuredPath ?? "") ||
       !isAbsolute(binding.canonicalRoot ?? "") || !Array.isArray(binding.chain) || !binding.chain.length) {
@@ -110,7 +122,7 @@ async function safeFixtureFile(fixtureBinding, requestUrl) {
   }
 }
 
-async function startFixtureServer(fixtureBinding, serviceEvents) {
+async function startFixtureServer(fixtureBinding, serviceEvents, requestedPort) {
   const server = createServer(async (request, response) => {
     const handle = await safeFixtureFile(fixtureBinding, request.url ?? "/");
     if (!handle || !new Set(["GET", "HEAD"]).has(request.method ?? "")) {
@@ -136,11 +148,15 @@ async function startFixtureServer(fixtureBinding, serviceEvents) {
   });
   await new Promise((resolvePromise, reject) => {
     server.once("error", reject);
-    server.listen(0, "127.0.0.1", resolvePromise);
+    server.listen(requestedPort ?? 0, "127.0.0.1", resolvePromise);
   });
   const address = server.address();
   if (!address || typeof address === "string") {
     throw new Error("Fixture server did not expose a TCP port");
+  }
+  if (requestedPort !== null && address.port !== requestedPort) {
+    await closeServer(server);
+    throw new Error(`Fixture server did not bind requested port ${requestedPort}`);
   }
   return { server, port: address.port };
 }
@@ -388,6 +404,7 @@ async function executeBrowser(options) {
   const scenario = config.scenarios?.[options.scenario];
   if (!scenario) throw new Error(`Unknown configured browser scenario: ${options.scenario ?? "missing"}`);
   const phase = options.mode === "preflight" ? "preflight" : "run";
+  const requestedPort = parseFixedPort(options.port);
   const evidenceRoot = resolve(phase === "preflight" ? scenario.preflightEvidenceRoot : scenario.evidenceRoot);
   const fixtureRoot = await validateFixtureBinding(scenario.fixtureBinding);
   const interactionPath = options.mode === "run" ? resolve(options.interaction ?? "") : null;
@@ -425,7 +442,7 @@ async function executeBrowser(options) {
   let browserVersion;
   try {
     await validateFixtureBinding(scenario.fixtureBinding);
-    const service = await startFixtureServer(scenario.fixtureBinding, serviceEvents);
+    const service = await startFixtureServer(scenario.fixtureBinding, serviceEvents, requestedPort);
     fixtureServer = service.server;
     selectedPort = service.port;
     cleanup.server = { created: true, requested: false, closed: false };
@@ -522,6 +539,7 @@ async function executeBrowser(options) {
     targetIdentity: scenario.targetIdentity,
     fixtureRoot,
     fixtureBinding: scenario.fixtureBinding,
+    requestedPort,
     selectedPort,
     interaction: {
       path: interactionPath,
