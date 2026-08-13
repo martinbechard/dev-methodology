@@ -168,7 +168,25 @@ governed-definition boundary or other possible future user-owned decision is not
 hard dependency: record it as an implementation constraint or Note without manufacturing a
 creation-time approval question for work the user already requested.
 
-Use User Action Required at creation when an agent independently identifies definite work, such as a confirmed defect or necessary enhancement, while performing other work and the user has not requested or authorized that new work. Ask whether the newly identified work should proceed before moving it into a typed active backlog.
+Use User Action Required at creation when an agent independently identifies definite work while
+performing other work. This rule includes a confirmed defect or necessary enhancement when the
+user has not requested or authorized that new work. A confirmed independently discovered defect
+without implementation authorization must receive one durable file-provider work item under
+backlog/user-action-required. An ephemeral report or residual gap does not satisfy this
+requirement.
+
+create-work-item-file owns record creation. For a confirmed independently discovered defect,
+create one record with this content:
+
+- Assign exactly one globally unique Work Item ID.
+- Preserve Type: Defect.
+- Set Status: User Action Required.
+- Put the exact approval question under Question for the User.
+- Preserve the source evidence and unattended-work boundary.
+
+Ask whether the newly identified work should proceed. Creating the record does not authorize
+implementation. manage-work-items-file owns later lifecycle persistence after the user and Dev
+Backlog Coordinator supply the applicable decisions.
 
 After creation, route a user-requested item to backlog/user-action-required only when execution
 reaches a distinct concrete user-owned decision, authority grant, action, risk acceptance, or

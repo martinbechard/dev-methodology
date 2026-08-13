@@ -8198,6 +8198,8 @@ class BundleContentTests(unittest.TestCase):
         manage_text = (SKILLS_ROOT / "manage-work-items-file" / "SKILL.md").read_text(
             encoding="utf-8"
         )
+        create_contract = " ".join(create_text.split())
+        manage_contract = " ".join(manage_text.split())
 
         for skill_name, skill_text in (
             ("create-work-item-file", create_text),
@@ -8218,7 +8220,7 @@ class BundleContentTests(unittest.TestCase):
             "Why User Input Is Required",
             "Do not place an item in backlog/user-action-required merely because",
             "synthetic evaluation boundary",
-            "Status: Ready only when dependency resolution proves",
+            "Use Ready when no condition on that child prevents its work",
             "without manufacturing a",
             "an agent independently identifies definite work",
             "Route an explicit Future Ideas, ideation, or promotion request",
@@ -8227,7 +8229,7 @@ class BundleContentTests(unittest.TestCase):
             "the original request did not resolve",
         ):
             with self.subTest(create_guidance=required_guidance):
-                self.assertIn(required_guidance, create_text)
+                self.assertIn(required_guidance, create_contract)
 
         for required_guidance in (
             "Do not own, dispatch, implement, or resolve user-action-required work",
@@ -8242,6 +8244,52 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(manage_guidance=required_guidance):
                 self.assertIn(required_guidance, manage_text)
         self.assertNotIn("set its active status according to project convention", manage_text)
+
+        shared_discovered_defect_contract = (
+            "A confirmed independently discovered defect without implementation "
+            "authorization must receive one durable file-provider work item under "
+            "backlog/user-action-required.",
+            "An ephemeral report or residual gap does not satisfy this requirement.",
+        )
+        for skill_name, skill_contract in (
+            ("create-work-item-file", create_contract),
+            ("manage-work-items-file", manage_contract),
+        ):
+            for clause in shared_discovered_defect_contract:
+                with self.subTest(skill=skill_name, discovered_defect_clause=clause):
+                    self.assertIn(clause, skill_contract)
+
+        for clause in (
+            "create-work-item-file owns record creation",
+            "exactly one globally unique Work Item ID",
+            "Type: Defect",
+            "Status: User Action Required",
+            "exact approval question",
+            "source evidence",
+            "unattended-work boundary",
+            "Creating the record does not authorize implementation.",
+        ):
+            with self.subTest(create_discovered_defect_clause=clause):
+                self.assertIn(clause, create_contract)
+
+        management_pair = (
+            "Do not move an independently identified defect or enhancement into a typed "
+            "active folder until the user explicitly authorizes that new work. "
+            + shared_discovered_defect_contract[0]
+        )
+        self.assertIn(management_pair, manage_contract)
+        for clause in (
+            "manage-work-items-file persists only caller-authorized lifecycle transitions",
+            "The user and Dev Backlog Coordinator supply lifecycle decisions",
+            "The user supplies the approval answer",
+            "Dev Backlog Coordinator authorizes each provider transition",
+            "backlog/defect-backlog with Status: Ready",
+            "Ready -> Starting -> Running",
+            "backlog/holding with Status: Holding",
+            "backlog/failed-backlog/defects with Status: Abandoned",
+        ):
+            with self.subTest(manage_discovered_defect_clause=clause):
+                self.assertIn(clause, manage_contract)
 
     def test_file_backlog_dependency_lifecycle_is_canonical_before_dispatch(self) -> None:
         """File providers preserve stored lifecycle and expose derived dependency state."""

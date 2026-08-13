@@ -239,12 +239,21 @@ If closed items remain in active folders, explicit status is the open or closed 
   answers its recorded question.
 
 Do not move an independently identified defect or enhancement into a typed active folder
-until the user explicitly authorizes that new work. A direct request or explicit authorization
-permits active work. Store Blocked only when an external or other genuine condition on that
-child prevents work. A required Work Item predecessor leaves stored lifecycle unchanged; do
-not require every required predecessor to be terminal before storing Ready. Only after
-execution reaches a distinct concrete user-owned question that the original request did not
-resolve may the same item move to User Action Required.
+until the user explicitly authorizes that new work. A confirmed independently discovered defect
+without implementation authorization must receive one durable file-provider work item under
+backlog/user-action-required. An ephemeral report or residual gap does not satisfy this
+requirement. Use create-work-item-file to create the record; manage-work-items-file persists only
+caller-authorized lifecycle transitions. The user and Dev Backlog Coordinator supply lifecycle
+decisions within their respective authority. The user supplies the approval answer. Dev Backlog
+Coordinator authorizes each provider transition. Neither record creation nor lifecycle
+persistence grants implementation authority.
+
+A direct request or explicit authorization permits active work. Store Blocked only when an
+external or other genuine condition on that child prevents work. A required Work Item
+predecessor leaves stored lifecycle unchanged; do not require every required predecessor to be
+terminal before storing Ready. After creation, move an already authorized item to User Action
+Required only when execution reaches a distinct concrete user-owned question that the original
+request did not resolve.
 
 ## Transition Evidence
 
@@ -380,12 +389,12 @@ technical or external blocker in Blocked with an exact owner and unblock conditi
 10. When the answer arrives in the canonical work-item conversation, keep that conversation
    as the resumption context and send one lifecycle resumption request to the parent
    Coordinator. Do not require the user to switch conversations or repeat the answer.
-11. Move an approved or answered item into its typed active backlog folder and set Status: Ready before any Running transition.
+11. Move an approved or answered item into its typed active backlog folder and set Status: Ready before any Running transition. For an approved confirmed defect, move the same record to backlog/defect-backlog with Status: Ready. Preserve Ready -> Starting -> Running before implementation.
 12. When the parent Coordinator authorizes resumption, record Ready -> Starting for the
     existing canonical conversation. When its root Dev Orchestrator separately authorizes
     accepted execution, record Starting -> Running for that same conversation before further
     repository mutation or delivery.
-13. Move a deferred item to backlog/holding. Archive a clearly rejected or abandoned item under the matching failed type.
+13. Move a deferred item to backlog/holding. For a deferred confirmed defect, use backlog/holding with Status: Holding. For a rejected or abandoned confirmed defect, use backlog/failed-backlog/defects with Status: Abandoned.
 14. Keep a partially answered item in User Action Required with a narrowed question.
 
 Work performed before User Action Required -> Ready -> Starting -> Running reconciliation is not automatically accepted or discarded. Preserve its diff, commits, branch, worktree, review, verification, and delivery evidence. Report the sequence problem to the parent. Do not continue delivery until the parent and the same root Orchestrator reconcile the provider state, commits, independent gates, and delivery state.
