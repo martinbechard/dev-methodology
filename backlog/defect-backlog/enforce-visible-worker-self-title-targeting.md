@@ -1,6 +1,6 @@
 # Enforce Visible Worker Self-Task Title Targeting
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -70,3 +70,17 @@ None.
 - This defect does not change provider lifecycle authority or permit title inference from text.
 - Do not interrupt current Running work or rewrite historical runtime evidence.
 - The existing corrected root Dispatcher title is terminal suppression evidence for this repeated alert; it is not an implementation candidate.
+
+## Starting Handoff Evidence
+
+- Reserved At: 2026-08-13T16:26:39Z.
+- Transition: `Ready -> Starting`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Baseline: `a48b46396ed786f6e418caa1261542be63b6b70a` on primary `main`.
+- Priority: Process-correctness defect created from a repeated live title-target incident.
+- Capacity: Runs alongside Inspect mapping and Project Organiser finish-lane verification. Blocked and User Action Required items are excluded.
+- Overlap: Project Organiser has accepted a no-change classification and no longer owns a mutation path. Inspect mapping is bounded to its mapping artifact and direct verification. This task must claim its exact two skill sources, focused title-control tests, and mechanically required projections before mutation.
+- Dispatch Architecture: Create one visible Codex task whose initial prompt launches one Dev Orchestrator subagent and assigns self-title and messaging responsibility to that visible root task.
+- Transition Claims: Work Item `start-self-title-targeting-work-item`; event `9516f52e-2c2f-46ff-88c0-5f0367945603`. Provider `start-self-title-targeting-provider`; event `3a912f7b-1440-4034-8571-a61034793571`.
+- Runtime Identity: Pending caller-owned visible task creation. Creation does not imply Running.
