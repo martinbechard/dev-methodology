@@ -1,6 +1,6 @@
 # Reconcile Project Terminology Reference Discovery
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -59,3 +59,17 @@ None.
 
 - This is the finish-lane recovery item for `replace-evaluation-oracle-terminology-with-judge`.
 - Ordinary terminology application may continue with ABSENT status; mutation publication cannot.
+
+## Starting Handoff Evidence
+
+- Reserved At: 2026-08-13T13:54:14Z.
+- Transition: `Ready -> Starting`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Baseline: `7322557a0e5841b2a432a6fdb1db7dc80feabf33` on primary `main`.
+- Priority: Mandatory finish-lane recovery for the preserved Blocked Oracle terminology candidate.
+- Capacity: Replaces the slot released by `replace-evaluation-oracle-terminology-with-judge` entering Blocked. Active usage remains four of five.
+- Overlap: Diagnose before mutation. Do not touch Oracle candidate paths, active Project Configurator receipt files, provider-terminology paths, Index alignment paths, or unrelated plan artifacts. Any mcp-agent-ops source work must use its repository's own provider, claims, review, release, and publication boundary.
+- Dispatch Architecture: Create one visible Codex task whose initial prompt launches one Dev Orchestrator subagent and states the visible root title-and-messaging responsibility.
+- Transition Claims: Work Item `start-terminology-reference-discovery-work-item`; event `c3b646c6-3be4-4ad1-8d90-e94fba536ddf`. Provider `start-terminology-reference-discovery-provider`; event `cc4ae5c5-884c-4f05-ba21-3dfafa5e8929`.
+- Runtime Identity: Pending caller-owned visible task creation. Creation does not imply Running.
