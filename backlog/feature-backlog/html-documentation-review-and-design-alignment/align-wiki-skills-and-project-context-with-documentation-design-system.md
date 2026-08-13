@@ -1,8 +1,8 @@
 # Align Wiki Skills and Project Context with the Documentation Design System
 
-Owner: Unowned
+Owner: Dev Orchestrator
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -79,3 +79,16 @@ Dependency Reconciliation: Satisfied by completed Work Item `review-wiki-skills-
 
 - This item must not start before its page-specific text review is Completed.
 - Creation of this work item does not dispatch it while backlog crisis recovery remains active.
+
+## Starting Handoff Evidence
+
+- Reserved At: 2026-08-13T20:29:11Z.
+- Transition: `Ready -> Starting`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Baseline: `e65b32ed1957bc4e9dcac9e4b7f4635c483de887` on primary `main`.
+- Capacity: Slot 5 of 5; all User Action Required and Blocked items are excluded.
+- Dependency Evidence: The page-specific text review is Completed, and the HTML series explicitly permits pages to proceed independently.
+- Transition Claim: `reserve-wiki-skills-context-019ff2c3`; event `f209fd16-bfa9-473e-9849-aa3518812cdf`.
+- Dispatch Architecture: Create one visible Codex task whose reference-plus-delta prompt starts one Dev Orchestrator collaboration subagent.
+- Next Action: Reconcile the unique visible task identity; its nested Dev Orchestrator records `Starting -> Running` before mutation.
