@@ -77,3 +77,16 @@ None.
 - Capacity: Slot 2 of 5. Independent terminology/evaluation scope; exclude private Backlog Dispatcher, document provenance, Dev Orchestrator routing, and documentation-template parser paths.
 - Transition Claims: `start-replace-evaluation-oracle-terminology-with-judge-work-item`; event `4923f794-562d-422e-a1d2-f7599efbace4`. `start-replace-evaluation-oracle-terminology-with-judge-provider`; event `a1c95fda-d302-4200-a62d-0d469bdfb783`.
 - Runtime Identity: Pending caller-owned visible task creation. Creation does not imply Running.
+
+## Canonical Runtime Assignment
+
+- Assigned At: 2026-08-13T11:44:58Z.
+- Codex Task ID: `019ffaf0-4bd1-72a1-b66d-335c429a88be`.
+- Conversation ID: `019ffaf0-4bd1-72a1-b66d-335c429a88be`.
+- Host: `local`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Requested Title: `Starting — Replace Evaluation Oracle Terminology With Judge`.
+- Initial Action: Launch one Dev Orchestrator subagent for this authoritative provider record.
+- Creation Outcome: Unique success with no client or pending identity and no retry. The caller decoded a JSON-string tool envelope containing this complete canonical result.
+- Lifecycle Boundary: This assignment remains `Starting` until the nested Dev Orchestrator accepts and records `Starting -> Running`.
+- Adoption Claims: `adopt-oracle-judge-visible-task`; event `d3ea8fb8-7d63-49fb-8bf4-67efd74ca7c5`. `adopt-oracle-judge-provider`; event `45ee8b72-6ed6-4fa3-8a8f-470709fffa79`.
