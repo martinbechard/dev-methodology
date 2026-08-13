@@ -238,3 +238,17 @@ Do not mutate, integrate, deliver, or close this candidate until the user answer
 - Provider Update Claim: `block-definitions-file-provider-capability-019ff2c3`; event `70213173-629e-46b0-a704-e95e5eb5c35f`.
 - Provider Path Claim: `block-definitions-file-provider-path-019ff2c3`; event `a9103a44-edaa-42df-8b33-25528437b8e3`.
 - Required Runtime Title: `Blocked — Align Agent And Skill Definitions With Documentation Design System`.
+
+## File-Provider Transaction Recovery Result
+
+- Reconciled At: 2026-08-13T21:40:21Z.
+- Supporting Execution: `/root/verify_file_provider_transaction` under the preserved canonical task.
+- Result: The `commit-file-provider-transaction` skill contract loads, but this runtime exposes no callable MCP tool, command, executable, or schema for its atomic `ordinary-creation` operation. Per-file mutation tools cannot substitute for that operation.
+- Durable Inventory: No existing active file-provider Work Item owns this capability recovery. Creating a new focused capability item is itself unavailable until the atomic ordinary-creation operation exists.
+- Continuing Lifecycle: `Blocked`. This is a Project Configurator capability boundary, not User Action Required.
+- Recovery Owner: Project Configurator or the configured file-provider transaction capability owner.
+- Observable Trigger: The current runtime exposes a verified callable `ordinary-creation` operation that implements `commit-file-provider-transaction` and returns immutable transaction proof.
+- After Trigger: Create exactly one focused Defect for the obsolete exact-header assertion in `scripts/test_bundle_content.py`, then resume the same canonical task and candidate for integration.
+- Preservation: Candidate `05b2bda3b929d8258a9a096b8dbc9870ab2d5629`, the clean branch/worktree, all PASS gates, and the canonical execution remain unchanged.
+- Provider Update Claim: `record-definitions-transaction-recovery-019ff2c3`; event `26230dda-d55e-48a1-a762-171d536055fb`.
+- Provider Path Claim: `record-definitions-transaction-recovery-path-019ff2c3`; event `dfc51cea-aa36-4c48-bc3b-907708203a79`.
