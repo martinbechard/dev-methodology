@@ -1,8 +1,8 @@
 # Align Coding-Agent Runtime Configuration with the Documentation Design System
 
-Owner: Unowned
+Owner: Dev Orchestrator
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -79,3 +79,17 @@ Dependency Resolution: Satisfied by the completed Work Item archived in provider
 
 - This item must not start before its page-specific text review is Completed.
 - Creation of this work item does not dispatch it while backlog crisis recovery remains active.
+
+## Starting Handoff Evidence
+
+- Reserved At: 2026-08-13T20:27:08Z.
+- Transition: `Ready -> Starting`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Baseline: `7f2056599fd86efb24f93c23abc12f9ad125eb89` on primary `main`.
+- Capacity: Slot 1 of 5; all User Action Required and Blocked items are excluded.
+- Dependency Evidence: The page-specific text review is Completed, and the HTML series explicitly permits pages to proceed independently.
+- Coordination Evidence: Claim registry was empty before reservation.
+- Transition Claim: `reserve-agentic-configuration-019ff2c3`; event `09bdaa3e-f660-4962-b6a9-bae4962ea8ca`.
+- Dispatch Architecture: Create one visible Codex task whose reference-plus-delta prompt starts one Dev Orchestrator collaboration subagent.
+- Next Action: Reconcile the unique visible task identity; its nested Dev Orchestrator records `Starting -> Running` before mutation.
