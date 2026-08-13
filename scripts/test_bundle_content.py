@@ -16056,6 +16056,53 @@ Visible after.
                 )
                 self.assertEqual(expected_h3_topics, actual_h3_topics)
 
+        wiki_context_role_links = (
+            (
+                "Wiki Architect",
+                "../agents/roles/wiki-activities/wiki-architect.role.yaml",
+            ),
+            (
+                "Wiki Source Collector",
+                "../agents/roles/wiki-activities/wiki-source-collector.role.yaml",
+            ),
+            (
+                "Wiki Researcher",
+                "../agents/roles/wiki-activities/wiki-researcher.role.yaml",
+            ),
+            (
+                "Wiki Ingester",
+                "../agents/roles/wiki-activities/wiki-ingester.role.yaml",
+            ),
+            (
+                "Wiki Writer",
+                "../agents/roles/wiki-activities/wiki-writer.role.yaml",
+            ),
+            (
+                "Wiki Topic Verifier",
+                "../agents/roles/wiki-activities/wiki-topic-verifier.role.yaml",
+            ),
+            (
+                "Wiki Query Responder",
+                "../agents/roles/wiki-activities/wiki-query-responder.role.yaml",
+            ),
+            (
+                "Wiki Artifact Reviewer",
+                "../agents/roles/wiki-activities/wiki-artifact-reviewer.role.yaml",
+            ),
+        )
+        actual_wiki_context_role_links = tuple(
+            (label, href)
+            for href, label in re.findall(
+                r'<h3><a class="skill-link" href="([^"]+)">([^<]+)</a></h3>',
+                wiki_context_text,
+            )
+            if label.startswith("Wiki ")
+        )
+        self.assertEqual(
+            wiki_context_role_links,
+            actual_wiki_context_role_links,
+        )
+
         for source_derived_contract in (
             "whole-project reverse-engineering audit mode",
             "mutation-capable direct use saves a raw query fragment only if mutation is allowed",

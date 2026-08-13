@@ -11,6 +11,7 @@ from __future__ import annotations
 from html import unescape
 from html.parser import HTMLParser
 import hashlib
+import json
 from pathlib import Path
 import re
 import unittest
@@ -147,6 +148,12 @@ WIKI_CONTEXT_PATH = (
 WIKI_CONTEXT_BASELINE_SEMANTIC_SHA256 = (
     "33f0fa6bc31b9c25d2f9ff9fe1b5fc63d0d2cf6b0cd2460a293a81be42d1b9ad"
 )
+WIKI_CONTEXT_ACCESSIBILITY_CONTRACT_SHA256 = (
+    "35582cc947489a1d4f463918b29d19d0d8725c9d3b1f401d306c0ba973834276"
+)
+WIKI_CONTEXT_ANCHOR_CONTRACT_SHA256 = (
+    "c3b5bd45ea27a55359b011ffb585cefbd6d4424f93d338c19a2016537b1280de"
+)
 WIKI_CONTEXT_SKIP_LINK = (
     '<a class="skip-link" href="#main-content">Skip to main content</a>'
 )
@@ -199,6 +206,9 @@ class _PageParser(HTMLParser):
         self.version_meta: list[str] = []
         self.stylesheets: list[str] = []
         self.scripts: list[str] = []
+        self.script_sources: list[str | None] = []
+        self.script_contents: list[str] = []
+        self._active_script_index: int | None = None
         self.h1_count = 0
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
@@ -224,8 +234,13 @@ class _PageParser(HTMLParser):
             self.version_meta.append(attributes.get("content") or "")
         if tag == "link" and attributes.get("rel") == "stylesheet":
             self.stylesheets.append(href or "")
-        if tag == "script" and attributes.get("src"):
-            self.scripts.append(attributes["src"] or "")
+        if tag == "script":
+            source = attributes.get("src")
+            self.script_sources.append(source)
+            self.script_contents.append("")
+            self._active_script_index = len(self.script_sources) - 1
+            if source:
+                self.scripts.append(source)
         if tag == "h1":
             self.h1_count += 1
 
@@ -239,6 +254,135 @@ class _PageParser(HTMLParser):
 
         if tag == "nav":
             self.in_suite_nav = False
+        if tag == "script":
+            self._active_script_index = None
+
+    def handle_data(self, data: str) -> None:
+        """Record inline content for every script element."""
+
+        if self._active_script_index is not None:
+            self.script_contents[self._active_script_index] += data
+
+
+class _WikiContextContractParser(HTMLParser):
+    """Bind non-suite link destinations and accessibility text to their elements."""
+
+    _VOID_ELEMENTS = {
+        "area",
+        "base",
+        "br",
+        "col",
+        "embed",
+        "hr",
+        "img",
+        "input",
+        "link",
+        "meta",
+        "param",
+        "source",
+        "track",
+        "wbr",
+    }
+    _TEXT_BEARING_ACCESSIBILITY_ATTRIBUTES = (
+        "aria-label",
+        "aria-labelledby",
+        "alt",
+        "title",
+    )
+
+    def __init__(self) -> None:
+        """Initialize ordered contract inventories and parser scope."""
+
+        super().__init__()
+        self._elements: list[tuple[str, bool, bool]] = []
+        self._anchor_depth: int | None = None
+        self._anchor_attributes: dict[str, str | None] = {}
+        self._anchor_visible_text: list[str] = []
+        self._anchor_accessible_text: list[str] = []
+        self.accessibility_attributes: list[tuple[str, str, str]] = []
+        self.anchor_contracts: list[tuple[str, str, str, str, str]] = []
+
+    def handle_starttag(
+        self,
+        tag: str,
+        attrs: list[tuple[str, str | None]],
+    ) -> None:
+        """Record one element in its suite, hidden, and anchor context."""
+
+        attributes = dict(attrs)
+        parent_in_suite = self._elements[-1][1] if self._elements else False
+        parent_hidden = self._elements[-1][2] if self._elements else False
+        classes = set((attributes.get("class") or "").split())
+        in_suite = parent_in_suite or (tag == "nav" and "suite-nav" in classes)
+        hidden = parent_hidden or attributes.get("aria-hidden") == "true"
+
+        if not in_suite:
+            for attribute in self._TEXT_BEARING_ACCESSIBILITY_ATTRIBUTES:
+                value = attributes.get(attribute)
+                if value:
+                    self.accessibility_attributes.append((tag, attribute, value))
+
+        if tag == "a" and not in_suite:
+            self._anchor_depth = len(self._elements) + 1
+            self._anchor_attributes = attributes
+            self._anchor_visible_text = []
+            self._anchor_accessible_text = []
+        elif (
+            tag == "img"
+            and self._anchor_depth is not None
+            and not hidden
+            and attributes.get("alt")
+        ):
+            self._anchor_accessible_text.append(attributes["alt"] or "")
+
+        if tag not in self._VOID_ELEMENTS:
+            self._elements.append((tag, in_suite, hidden))
+
+    def handle_data(self, data: str) -> None:
+        """Collect visible and accessibility-tree text for the active anchor."""
+
+        if self._anchor_depth is None:
+            return
+        self._anchor_visible_text.append(data)
+        if not self._elements or not self._elements[-1][2]:
+            self._anchor_accessible_text.append(data)
+
+    def handle_endtag(self, tag: str) -> None:
+        """Finalize an anchor contract, then leave the matching element scope."""
+
+        depth = len(self._elements)
+        if tag == "a" and self._anchor_depth == depth:
+            visible_text = " ".join("".join(self._anchor_visible_text).split())
+            aria_label = self._anchor_attributes.get("aria-label") or ""
+            aria_labelledby = self._anchor_attributes.get("aria-labelledby") or ""
+            accessible_text = aria_label or " ".join(
+                "".join(self._anchor_accessible_text).split()
+            )
+            self.anchor_contracts.append(
+                (
+                    visible_text,
+                    accessible_text,
+                    aria_label,
+                    aria_labelledby,
+                    self._anchor_attributes.get("href") or "",
+                )
+            )
+            self._anchor_depth = None
+            self._anchor_attributes = {}
+            self._anchor_visible_text = []
+            self._anchor_accessible_text = []
+
+        while self._elements:
+            open_tag, _, _ = self._elements.pop()
+            if open_tag == tag:
+                break
+
+
+def _ordered_contract_sha256(items: object) -> str:
+    """Return a stable digest for an ordered semantic contract inventory."""
+
+    serialized = json.dumps(items, ensure_ascii=False, separators=(",", ":"))
+    return hashlib.sha256(serialized.encode("utf-8")).hexdigest()
 
 
 def _parse_page(path: Path) -> tuple[str, _PageParser]:
@@ -455,6 +599,14 @@ def _validate_wiki_context_structure(source: str) -> None:
         "the page must retain only its persistent-settings script",
     )
     require(
+        parser.script_sources == ["documentation-settings.js"],
+        "the page must contain exactly one external settings script",
+    )
+    require(
+        all(not content.strip() for content in parser.script_contents),
+        "the external settings script element must not contain inline content",
+    )
+    require(
         parser.ids
         == [
             "top",
@@ -516,6 +668,18 @@ def _validate_wiki_context_structure(source: str) -> None:
     require(
         re.findall(r'alt="([^"]+)"', source) == ["DevConsult Canada logo"],
         "image alternative text inventory must remain exact",
+    )
+    contract_parser = _WikiContextContractParser()
+    contract_parser.feed(source)
+    require(
+        _ordered_contract_sha256(contract_parser.accessibility_attributes)
+        == WIKI_CONTEXT_ACCESSIBILITY_CONTRACT_SHA256,
+        "ordered text-bearing accessibility attributes must remain bound to their elements",
+    )
+    require(
+        _ordered_contract_sha256(contract_parser.anchor_contracts)
+        == WIKI_CONTEXT_ANCHOR_CONTRACT_SHA256,
+        "ordered non-suite anchor text and accessibility names must remain bound to hrefs",
     )
     require(parser.h1_count == 1, "the page must retain one h1")
     require(
@@ -900,6 +1064,24 @@ class DocumentationDesignSystemTests(unittest.TestCase):
             "changed-provenance": source.replace(
                 "2026-07-20T04:01:32-04:00",
                 "2026-07-20T04:01:33-04:00",
+                1,
+            ),
+            "inline-script-injection": source.replace(
+                "</body>",
+                "  <script>document.body.remove()</script>\n</body>",
+                1,
+            ),
+            "swapped-content-link-destinations": source.replace(
+                'href="../agents/roles/wiki-activities/wiki-architect.role.yaml"',
+                'href="__WIKI_ARCHITECT_HREF__"',
+                1,
+            ).replace(
+                'href="../agents/roles/wiki-activities/wiki-source-collector.role.yaml"',
+                'href="../agents/roles/wiki-activities/wiki-architect.role.yaml"',
+                1,
+            ).replace(
+                'href="__WIKI_ARCHITECT_HREF__"',
+                'href="../agents/roles/wiki-activities/wiki-source-collector.role.yaml"',
                 1,
             ),
         }
