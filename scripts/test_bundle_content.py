@@ -4359,7 +4359,7 @@ class BundleContentTests(unittest.TestCase):
                 self.assertNotIn("until their separately governed callers move", migration)
 
     def test_codex_successor_recovery_contract_matches_private_dispatcher(self) -> None:
-        """Keep successor recovery narrow and equivalent across its two owners."""
+        """Keep recovery authority complete and dispatcher execution reference-only."""
 
         codex_text = (
             SKILLS_ROOT / "coordinate-codex-tasks" / "SKILL.md"
@@ -4376,19 +4376,12 @@ class BundleContentTests(unittest.TestCase):
             "backlog-dispatcher": " ".join(dispatcher_text.split()).lower(),
         }
 
-        shared_contract = (
+        shared_runtime_contract = (
             "observed failure of an ordinary required capability during the active workload",
             "exhausted bounded identity-preserving recovery through the same canonical task",
             "capability-pilot mismatch",
             "not successor evidence",
             "idle, slow, quiet",
-            "accepted commit",
-            "branch and worktree",
-            "applicable claims",
-            "completed reviews",
-            "verifier evidence",
-            "delivery state",
-            "authoritative recovery evidence",
             "durable old-to-new identity handoff",
             "reconcile active and archived runtime tasks",
             "do not issue another create operation",
@@ -4399,9 +4392,96 @@ class BundleContentTests(unittest.TestCase):
             "truthful non-active provider disposition",
         )
         for source_name, source_text in normalized_sources.items():
-            for clause in shared_contract:
+            for clause in shared_runtime_contract:
                 with self.subTest(source=source_name, clause=clause):
                     self.assertIn(clause, source_text)
+
+        for recovery_evidence in (
+            "provider record and complete Work Item content",
+            "accepted commit",
+            "branch and worktree",
+            "applicable claims",
+            "completed reviews",
+            "verifier evidence",
+            "delivery state",
+            "authoritative recovery evidence",
+        ):
+            with self.subTest(recovery_evidence=recovery_evidence):
+                self.assertIn(
+                    recovery_evidence.lower(),
+                    normalized_sources["coordinate-codex-tasks"],
+                )
+
+        launch_match = re.search(
+            r"^### Reference-Plus-Delta Launch Prompt\n\n```text\n(.*?)\n```$",
+            dispatcher_text,
+            re.MULTILINE | re.DOTALL,
+        )
+        self.assertIsNotNone(launch_match)
+        launch_prompt = launch_match.group(1)
+        self.assertEqual(
+            "Launch one Dev Orchestrator subagent to execute Work Item "
+            "<opaque Work Item ID>.\n"
+            "Authoritative provider: <provider locator>\n"
+            "Dispatch-time delta: <launch-only facts absent from the provider, or none>",
+            launch_prompt,
+        )
+        for copied_content in (
+            "Requirements:",
+            "Scope:",
+            "Acceptance Criteria:",
+            "Verification:",
+            "accepted commit",
+            "branch and worktree",
+            "applicable claims",
+            "completed reviews",
+            "verifier evidence",
+            "delivery state",
+        ):
+            with self.subTest(copied_content=copied_content):
+                self.assertNotIn(copied_content, launch_prompt)
+
+        ambiguous_contract = dispatcher_text.split(
+            "## Partial And Ambiguous Runtime Outcomes",
+            1,
+        )[1].split("## Bounded Successor Execution", 1)[0]
+        self.assertNotIn("normalized objective", ambiguous_contract)
+        self.assertIn("authoritative provider locator", ambiguous_contract)
+
+        successor_contract = dispatcher_text.split(
+            "## Bounded Successor Execution",
+            1,
+        )[1].split("## Capability Boundary", 1)[0]
+        for copied_recovery_content in (
+            "complete Work Item content",
+            "accepted commit",
+            "branch and worktree",
+            "applicable claims",
+            "completed reviews",
+            "verifier evidence",
+            "delivery state",
+        ):
+            with self.subTest(copied_recovery_content=copied_recovery_content):
+                self.assertNotIn(copied_recovery_content, successor_contract)
+        self.assertIn(
+            "Persist all stable recovery evidence in the authoritative provider record",
+            successor_contract,
+        )
+
+        dispatcher_reference_contract = (
+            "persist every stable assignment fact missing from the provider record before launch",
+            "authoritative provider locator",
+            "dispatch-time delta only",
+            "preserve the bytes and evidence",
+            "perform no cross-project runtime mutation",
+            "explicitly authorized recovery decision",
+        )
+        for clause in dispatcher_reference_contract:
+            with self.subTest(dispatcher_reference_clause=clause):
+                self.assertIn(
+                    clause,
+                    normalized_sources["backlog-dispatcher"],
+                )
 
         self.assertIn(
             "exactly one successor root execution",

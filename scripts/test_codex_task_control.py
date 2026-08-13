@@ -36,6 +36,10 @@ Apply skills/coordinate-work-items/SKILL.md for portable capacity, lifecycle rec
 
 Remain strictly read-only. Do not mutate repository files, provider lifecycle, claims, tasks, branches, worktrees, or shared resources. Do not dispatch, integrate, clean up, archive, or run expensive or live verification. Notify Coordinator task {coordinator_task_id} only when a specific Coordinator decision is required. State the affected item, decision, and smallest recommended action without copying durable evidence into the message. When healthy, send nothing."""
 
+REFERENCE_PLUS_DELTA_LAUNCH_PROMPT = """Launch one Dev Orchestrator subagent to execute Work Item <opaque Work Item ID>.
+Authoritative provider: <provider locator>
+Dispatch-time delta: <launch-only facts absent from the provider, or none>"""
+
 
 def _selected_skills(role: dict[str, object]) -> dict[str, dict[str, str]]:
     """Return a role's skill entries by skill identifier."""
@@ -184,6 +188,77 @@ class CodexTaskControlPackageTests(unittest.TestCase):
         ):
             with self.subTest(clause=clause):
                 self.assertIn(clause.lower(), normalized_lower)
+
+    def test_dispatcher_launch_prompt_is_reference_plus_delta(self) -> None:
+        launch_prompt = _prompt_template(
+            self.dispatcher,
+            "Reference-Plus-Delta Launch Prompt",
+        )
+
+        self.assertEqual(REFERENCE_PLUS_DELTA_LAUNCH_PROMPT, launch_prompt)
+        self.assertEqual(1, launch_prompt.count("Launch one Dev Orchestrator subagent"))
+        self.assertEqual(3, len(launch_prompt.splitlines()))
+        for copied_heading in (
+            "Requirements:",
+            "Scope:",
+            "Acceptance Criteria:",
+            "Verification:",
+            "Lifecycle:",
+            "Claims:",
+            "Review:",
+            "Delivery:",
+            "Cleanup:",
+            "Recovery:",
+        ):
+            with self.subTest(copied_heading=copied_heading):
+                self.assertNotIn(copied_heading, launch_prompt)
+
+    def test_dispatcher_rejects_reconstructed_launch_packets(self) -> None:
+        packet_contract = self.dispatcher.split("## Dispatch Packet", 1)[1].split(
+            "## Incoming Coordination Messages",
+            1,
+        )[0]
+        normalized_contract = " ".join(packet_contract.split())
+
+        for clause in (
+            "Persist every stable assignment fact missing from the provider record before launch",
+            "A launch is invalid while a stable assignment fact is absent from the provider record",
+            "Reject a launch prompt that copies provider requirements, scope, acceptance criteria, or verification expectations",
+            "Reject a launch prompt that copies lifecycle, claim, review, verification, delivery, cleanup, or recovery procedures from selected skills",
+            "Reject generic task or worker wording and any instruction to reconstruct root awareness",
+        ):
+            with self.subTest(clause=clause):
+                self.assertIn(clause, normalized_contract)
+
+        for superseded_clause in (
+            "normalized objective and complete initial or follow-up prompt",
+            "work-item and path or resource claim instructions",
+            "verification, delivery, provider closeout, reporting, and cleanup expectations",
+        ):
+            with self.subTest(superseded_clause=superseded_clause):
+                self.assertNotIn(superseded_clause, normalized_contract)
+
+    def test_dispatcher_prohibits_cross_project_runtime_control(self) -> None:
+        for clause in (
+            "A local claim or modified files do not extend runtime-control authority outside the current project or working-directory coordination context",
+            "Do not send a coordination, stop, resume, cleanup, or lifecycle-control message to a task outside that context",
+            "even when one of its subagents owns a local claim or modified files in the current repository",
+        ):
+            with self.subTest(clause=clause):
+                self.assertIn(clause, self.normalized_dispatcher)
+
+    def test_dispatcher_stranded_ownership_requires_coordinator_recovery(
+        self,
+    ) -> None:
+        for clause in (
+            "do not use a cross-project parent task as a relay",
+            "Treat the ownership as unaddressable or stranded",
+            "Preserve the bytes and evidence",
+            "perform no cross-project runtime mutation",
+            "return the limitation to the Dev Backlog Coordinator for an explicitly authorized recovery decision",
+        ):
+            with self.subTest(clause=clause):
+                self.assertIn(clause.lower(), self.normalized_dispatcher.lower())
 
     def test_successor_requires_failed_capability_and_exhausted_same_task_recovery(
         self,

@@ -69,22 +69,21 @@ Coders, writers, and other producers create or correct artifacts within their as
 
 ## Dispatch Packet
 
-A dispatch or resumption packet must be independently executable and contain:
+A launch prompt contains only one execution action, the authoritative provider locator, and dispatch-time delta only. The action must launch one Dev Orchestrator subagent for the identified Work Item. Dispatch-time delta is limited to launch-only facts that cannot already be authoritative in the provider record.
 
-- opaque Work Item ID and provider location;
-- intended root role and canonical existing task identity when one exists;
-- distinct runtime parent and Dev Backlog Coordinator task identities, even when their values are equal;
-- normalized objective and complete initial or follow-up prompt;
-- conversation title for the reserved lifecycle or phase;
-- provider reservation commit or equivalent durable evidence;
-- accepted baseline, preserved candidate, branch, worktree, and isolation requirements when applicable;
-- work-item and path or resource claim instructions;
-- dependencies, capacity evidence, finish-lane priority, and exact overlap constraints;
-- reviewer and producer authority boundaries;
-- verification, delivery, provider closeout, reporting, and cleanup expectations;
-- the exact condition that makes dispatch blocked when the caller cannot execute it.
+Persist every stable assignment fact missing from the provider record before launch. A launch is invalid while a stable assignment fact is absent from the provider record.
 
-Reject a title-only packet, an instruction to rediscover the originating conversation, or a packet that leaves the caller to choose backlog state or work-item identity.
+### Reference-Plus-Delta Launch Prompt
+
+```text
+Launch one Dev Orchestrator subagent to execute Work Item <opaque Work Item ID>.
+Authoritative provider: <provider locator>
+Dispatch-time delta: <launch-only facts absent from the provider, or none>
+```
+
+Reject a launch prompt that copies provider requirements, scope, acceptance criteria, or verification expectations. Reject a launch prompt that copies lifecycle, claim, review, verification, delivery, cleanup, or recovery procedures from selected skills. Reject generic task or worker wording and any instruction to reconstruct root awareness.
+
+Reject a title-only packet, an instruction to rediscover the originating conversation, or a packet that leaves the caller to choose backlog state or work-item identity. A resumption targets the canonical existing execution through the runtime-specific coordination skill; it does not reconstruct or replace the launch prompt.
 
 ## Incoming Coordination Messages
 
@@ -102,6 +101,12 @@ Consult the Dev Backlog Coordinator before acting on any Agent message that requ
 Pass the message as evidence and ask the Coordinator to verify it against authoritative runtime and durable records. Do not accept the sending Agent's requested disposition merely because it supplied detailed evidence.
 
 Ordinary final results may be forwarded to the Coordinator without a second decision request. Routine progress, heartbeat, title-only, and repeated evidence messages remain prohibited.
+
+## Project Runtime Boundary
+
+A local claim or modified files do not extend runtime-control authority outside the current project or working-directory coordination context. Do not send a coordination, stop, resume, cleanup, or lifecycle-control message to a task outside that context, even when one of its subagents owns a local claim or modified files in the current repository.
+
+When the exact owning subagent is not directly addressable, do not use a cross-project parent task as a relay. Treat the ownership as unaddressable or stranded. Preserve the bytes and evidence, perform no cross-project runtime mutation, and return the limitation to the Dev Backlog Coordinator for an explicitly authorized recovery decision.
 
 ## Terminal Cleanup
 
@@ -123,7 +128,7 @@ Treat a timeout, disconnect, delayed worktree setup, pending client identifier, 
 - Preserve every returned client, task, conversation, and host identity.
 - Use the actual runtime parent identity for task lookup and the Coordinator identity for decision routing.
 - Do not issue a duplicate create or resume operation.
-- Inspect active and archived runtime tasks using the packet identity, normalized objective, creation time, and source parent.
+- Inspect active and archived runtime tasks using the authoritative provider locator, returned runtime identity, creation time, source parent, and dispatch-time delta.
 - Report matched, unmatched, and still-pending outcomes separately to the Coordinator.
 - Let the Coordinator decide whether a Starting reservation remains valid, returns to Ready, resumes an existing task, or requires recovery.
 
@@ -131,9 +136,9 @@ Successful creation is not Running evidence. The root execution accepts Running 
 
 ## Bounded Successor Execution
 
-For an unusable canonical task, execute only the Coordinator's exact one-successor authorization. Require the packet to show the observed failure of an ordinary required capability during the active workload and exhausted bounded identity-preserving recovery through the same canonical task. A capability-pilot mismatch is not successor evidence and remains on the pilot correction path. Idle, slow, quiet, or an ordinary bounded wait never permits this operation.
+For an unusable canonical task, execute only the Coordinator's exact one-successor authorization. Before launch, require the authoritative provider record to show the observed failure of an ordinary required capability during the active workload and exhausted bounded identity-preserving recovery through the same canonical task. A capability-pilot mismatch is not successor evidence and remains on the pilot correction path. Idle, slow, quiet, or an ordinary bounded wait never permits this operation.
 
-Require the packet to identify the authoritative provider and complete Work Item content, accepted commit, branch and worktree, applicable claims, completed reviews, verifier evidence, and delivery state. These durable records are authoritative recovery evidence for runtime execution. Preserve the old task identity and return the successor or pending identity so the Coordinator can record the durable old-to-new identity handoff. Do not infer either identity from a title, prompt, branch, worktree, or provider path.
+Persist all stable recovery evidence in the authoritative provider record before launch. Use the reference-plus-delta launch prompt without copying that evidence. Preserve the old task identity and return the successor or pending identity so the Coordinator can record the durable old-to-new identity handoff. Do not infer either identity from a title, prompt, branch, worktree, or provider path.
 
 Before successor creation, reconcile any prior ambiguous runtime outcome. After an error, timeout, disconnect, or incomplete creation response, reconcile active and archived runtime tasks using the packet evidence. Adopt the one matching successor or stop every duplicate as the Coordinator directs. Do not issue another create operation.
 
