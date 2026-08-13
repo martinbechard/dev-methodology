@@ -52,7 +52,7 @@ Pages may proceed independently. A design-alignment item may not start merely be
 - [Align Generic Agent Definitions Source with the Documentation Design System](align-generic-agent-definitions-source-with-documentation-design-system.md)
 - [Align Orchestrated Development Lifecycle with the Documentation Design System](../../completed-backlog/features/html-documentation-review-and-design-alignment/align-orchestrated-development-lifecycle-with-documentation-design-system.md)
 - [Align Agent Skill Architecture with the Documentation Design System](align-skills-modularization-with-documentation-design-system.md)
-- [Align Wiki Skills and Project Context with the Documentation Design System](align-wiki-skills-and-project-context-with-documentation-design-system.md)
+- [Align Wiki Skills and Project Context with the Documentation Design System](../../../completed-backlog/features/align-wiki-skills-and-project-context-with-documentation-design-system.md)
 
 ## Definition of Good
 
