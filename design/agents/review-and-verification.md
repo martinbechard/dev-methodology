@@ -267,7 +267,7 @@ classDiagram
     verify-end-to-end-workflow ..> resource-claim : when verification triggers a claim event
 ```
 
-Verification returns evidence to the delivery owner. None of these scenarios assigns Commit-provider selection or provider-lifecycle authority to Dev Verifier.
+Verification returns evidence to the delivery owner. None of these scenarios assigns Commit-provider selection or Work-item lifecycle authority to Dev Verifier.
 
 ## Skill Responsibilities
 
@@ -277,7 +277,7 @@ The group distinguishes complete review or diagnosis operations from supporting 
 | --- | --- | --- |
 | review-code-with-evidence | Review Code With Evidence; Evidence Packet; Synthesis Rules | Builds cited review evidence and synthesizes actionable findings. |
 | test-strategy | Select And Run Tests; Coverage Principles | Chooses verification from changed behavior, risk, and project-native capabilities. |
-| verify-end-to-end-workflow | Verify End To End Workflow; Evidence Handoff And Commit Authority | Verifies a complete real workflow and returns evidence without taking provider lifecycle authority. |
+| verify-end-to-end-workflow | Verify End To End Workflow; Evidence Handoff And Commit Authority | Verifies a complete real workflow and returns evidence without taking Work-item lifecycle authority. |
 | analyze-root-cause | Analyze Root Cause | Establishes a mechanism-level cause before remediation. |
 | collect-runtime-evidence | Collect Runtime Evidence | Collects bounded observations when source alone cannot establish runtime behavior. |
 | trace-code-execution | Trace Code Execution | Connects entry points, branches, state changes, errors, and exits through source. |

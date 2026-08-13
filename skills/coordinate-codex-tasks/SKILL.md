@@ -7,7 +7,7 @@ metadata:
 
 # Coordinate Codex Tasks
 
-Codex task control maps one portable work-item execution to one canonical Codex task and its retained user-visible context. Apply coordinate-work-items together with this skill. This skill does not create provider lifecycle authority, delivery authority, or resource ownership.
+Codex task control maps one portable work-item execution to one canonical Codex task and its retained user-visible context. Apply coordinate-work-items together with this skill. This skill does not create Work-item lifecycle authority, delivery authority, or resource ownership.
 
 ## Coordinator Subagent And Root Dispatcher
 
@@ -29,7 +29,7 @@ If an ordinary required operation fails because the Agent lacks a capability, th
 
 ## Codex Task Creation And Resumption
 
-The Dev Backlog Coordinator may authorize at most one root Dev Orchestrator task after coordinate-work-items records the Starting reservation and permits runtime dispatch. It supplies the complete task title, prompt, provider reservation, baseline, isolation, claim, authority, verification, reporting, and cleanup packet. The authorized runtime executor may create at most one root Dev Orchestrator task for that packet. The Coordinator executes creation directly only when its runtime exposes the required control; otherwise the authorized root runtime dispatcher executes that exact packet. Return the task or pending client identity and retained user-visible context to the Coordinator as runtime evidence; neither result changes provider lifecycle.
+The Dev Backlog Coordinator may authorize at most one root Dev Orchestrator task after coordinate-work-items records the Starting reservation and permits runtime dispatch. It supplies the complete task title, prompt, provider reservation, baseline, isolation, claim, authority, verification, reporting, and cleanup packet. The authorized runtime executor may create at most one root Dev Orchestrator task for that packet. The Coordinator executes creation directly only when its runtime exposes the required control; otherwise the authorized root runtime dispatcher executes that exact packet. Return the task or pending client identity and retained user-visible context to the Coordinator as runtime evidence; neither result changes Work-item lifecycle.
 
 Collaboration subagent launches follow the Codex Harness Collaboration Subagent Launch Contract. A separate user-visible Codex work-item task is not a collaboration subagent launch. Create it only through explicit provider and canonical-task handoffs. Give it a self-contained dispatch prompt and no implicit parent-conversation inheritance.
 
@@ -51,7 +51,7 @@ Runtime Parent Task ID: [opaque authorized root runtime dispatcher or direct cre
 Coordinator Task ID: [opaque Dev Backlog Coordinator task or subagent identifier]
 ```
 
-The runtime parent is the task that actually invokes Codex task creation. The Coordinator task is the execution that authorizes the operation and receives its result. Record both even when one root task performs both functions and the values are equal. Use Runtime Parent Task ID for runtime lookup and ambiguous-creation reconciliation. Use Coordinator Task ID for decision routing. Do not infer either identity from the conversation title, prompt text, branch, worktree, or provider record path. Preserve the same canonical task and conversation through corrections, review, verification, delivery, and resumable lifecycle pauses. A replacement requires explicit duplicate reconciliation and a recorded identity handoff.
+The runtime parent is the task that actually invokes Codex task creation. The Coordinator task is the execution that authorizes the operation and receives its result. Record both even when one root task performs both functions and the values are equal. Use Runtime Parent Task ID for runtime lookup and ambiguous-creation reconciliation. Use Coordinator Task ID for decision routing. Do not infer either identity from the conversation title, prompt text, branch, worktree, or Work-item storage location. Preserve the same canonical task and conversation through corrections, review, verification, delivery, and resumable lifecycle pauses. A replacement requires explicit duplicate reconciliation and a recorded identity handoff.
 
 ## Conversation Title Contract
 
@@ -75,7 +75,7 @@ The owning Coordinator or Orchestrator is accountable after every successful lif
 
 Apply the title contract when the task is created, after each successful lifecycle transition, and at each material Running phase change. Never use raw prompt text, markup, error output, identifiers, or a generic title.
 
-During every scheduled Watchdog cycle, resolve the current provider lifecycle and material Running phase for each observed canonical Codex task, derive its exact expected title from this contract, and compare it with the runtime title. Apply the same comparison to an observed bounded verifier: Verifying — is valid only while verification is active, and a completed verifier maps to Done —. Report a mismatch to the Coordinator with the Work Item ID and smallest title-reconciliation action. Do not rename the task, infer lifecycle from the title, or suppress a mismatch because the task is idle, terminal, archived, or otherwise healthy. In particular, Completed maps to Done —, Blocked maps to Blocked —, and Waiting for Help — is valid only for a Running task currently awaiting technical help.
+During every scheduled Watchdog cycle, resolve the current Work-item lifecycle and material Running phase for each observed canonical Codex task, derive its exact expected title from this contract, and compare it with the runtime title. Apply the same comparison to an observed bounded verifier: Verifying — is valid only while verification is active, and a completed verifier maps to Done —. Report a mismatch to the Coordinator with the Work Item ID and smallest title-reconciliation action. Do not rename the task, infer lifecycle from the title, or suppress a mismatch because the task is idle, terminal, archived, or otherwise healthy. In particular, Completed maps to Done —, Blocked maps to Blocked —, and Waiting for Help — is valid only for a Running task currently awaiting technical help.
 
 ## Codex Runtime Reconciliation
 
@@ -88,7 +88,7 @@ Treat a task-creation error, timeout, disconnect, or ambiguous response as an am
 - creation time
 - task and conversation state
 
-If exactly one match exists, the Coordinator must adopt it as the canonical task. If multiple matches exist, the Coordinator decides which task to preserve and requires the authorized runtime executor to stop every duplicate before mutation; the executor returns those outcomes before work continues. Verify that no unique work is lost. Do not infer, inherit, carry forward, or persist an archival pause from another conversation, task, or earlier campaign direction. A launch failure leaves the portable provider record in Starting for Watchdog and Coordinator recovery.
+If exactly one match exists, the Coordinator must adopt it as the canonical task. If multiple matches exist, the Coordinator decides which task to preserve and requires the authorized runtime executor to stop every duplicate before mutation; the executor returns those outcomes before work continues. Verify that no unique work is lost. Do not infer, inherit, carry forward, or persist an archival pause from another conversation, task, or earlier campaign direction. A launch failure leaves the portable Work-item content in Starting for Watchdog and Coordinator recovery.
 
 Map Codex task states into portable evidence without inventing lifecycle. A running Codex process can support active-root-execution evidence. A running child can support delegated-work evidence. An idle, completed, failed, interrupted, or missing task requires portable reconciliation and cannot choose a provider transition by itself.
 
@@ -101,7 +101,7 @@ Preserve the same canonical task by default. The Dev Backlog Coordinator may con
 
 A capability-pilot mismatch follows the pilot correction path and is not successor evidence. Idle, slow, quiet, or awaiting an ordinary bounded operation is not capability-failure evidence and never permits a successor.
 
-Before authorization, reconcile the provider record and complete Work Item content, accepted commit, branch and worktree, applicable claims, completed reviews, verifier evidence, and delivery state. These durable records are authoritative recovery evidence. The old Codex task identity is replaceable runtime metadata only after the complete threshold is met. Do not infer a successor identity from a title, prompt, branch, worktree, or provider path.
+Before authorization, reconcile the complete Work-item content, accepted commit, branch and worktree, applicable claims, completed reviews, verifier evidence, and delivery state. These durable sources are authoritative recovery evidence. The old Codex task identity is replaceable runtime metadata only after the complete threshold is met. Do not infer a successor identity from a title, prompt, branch, worktree, or provider path.
 
 The Coordinator may authorize exactly one successor root execution for the Work Item. The portable lifecycle owner records the required Starting handoff before dispatch. Record a durable old-to-new identity handoff with the old task identity, the returned successor identity or pending client identity, and the consumed one-successor authorization.
 
@@ -126,9 +126,9 @@ When coordinate-work-items permits a dedicated read-only Watchdog, create one Co
 ```text
 Act as the dedicated read-only Dev Methodology backlog watchdog created by runtime parent task {runtime_parent_task_id} for Dev Backlog Coordinator task {coordinator_task_id} in {repository_root}.
 
-Apply skills/coordinate-work-items/SKILL.md for portable capacity, lifecycle reconciliation, Blocked, Stalled, and read-only Watchdog criteria. Apply skills/coordinate-codex-tasks/SKILL.md only for Codex task identity, conversation-title observation, bounded resumption, and archival mapping. Observe task state through runtime tools. On every cycle, obtain the current Blocked inventory, compare every observed canonical Codex task title with the exact title derived from current provider lifecycle and material Running phase, and compare each observed bounded verifier title with its current runtime outcome. Consult provider, Git, and resource records only for those reconciliations or another lifecycle decision, anomaly, dependency, delivery, or cleanup question; do not reconstruct lifecycle history on every cycle.
+Apply skills/coordinate-work-items/SKILL.md for portable capacity, lifecycle reconciliation, Blocked, Stalled, and read-only Watchdog criteria. Apply skills/coordinate-codex-tasks/SKILL.md only for Codex task identity, conversation-title observation, bounded resumption, and archival mapping. Observe task state through runtime tools. On every cycle, obtain the current Blocked inventory, compare every observed canonical Codex task title with the exact title derived from current Work-item lifecycle and material Running phase, and compare each observed bounded verifier title with its current runtime outcome. Consult provider, Git, and resource records only for those reconciliations or another lifecycle decision, anomaly, dependency, delivery, or cleanup question; do not reconstruct lifecycle history on every cycle.
 
-Remain strictly read-only. Do not mutate repository files, provider lifecycle, claims, tasks, branches, worktrees, or shared resources. Do not dispatch, integrate, clean up, archive, or run expensive or live verification. Notify Coordinator task {coordinator_task_id} only when a specific Coordinator decision is required. State the affected item, decision, and smallest recommended action without copying durable evidence into the message. When healthy, send nothing.
+Remain strictly read-only. Do not mutate repository files, Work-item lifecycle, claims, tasks, branches, worktrees, or shared resources. Do not dispatch, integrate, clean up, archive, or run expensive or live verification. Notify Coordinator task {coordinator_task_id} only when a specific Coordinator decision is required. State the affected item, decision, and smallest recommended action without copying durable evidence into the message. When healthy, send nothing.
 ```
 
 Substitute only the resolved runtime parent task identifier, Coordinator task identifier, and repository root. Supply provider and resource-coordination variation through resolved task context without rewriting the canonical prompt.
@@ -147,7 +147,7 @@ The Dev Orchestrator returns the complete terminal evidence and cleanup eligibil
 
 Before cleanup authorization, the Dev Backlog Coordinator verifies the terminal conversation title, canonical task identity, terminal provider and delivery evidence, released claims, worktree cleanliness, branch-to-delivery equivalence, and preservation acknowledgement. If no valid current named-task pause exists, it authorizes archival after every ordinary gate passes. Only the authorized root Backlog Dispatcher executes terminal cleanup, even when the Coordinator runtime exposes the required task controls. It executes the exact authorized worktree, branch, and task operations, archives the task last, and returns every outcome to the Coordinator. The Coordinator reconciles capacity only after those outcomes return. If archival fails or no authorized runtime supports it, record the limitation and do not report archival success. An idle, stopped, titled, or archived Codex task proves none of those facts.
 
-Task archival is a runtime cleanup mapping. It does not close a provider record, prove Commit delivery, release a claim, delete a worktree, or delete a branch.
+Task archival is a runtime cleanup mapping. It does not close a Work item, prove Commit delivery, release a claim, delete a worktree, or delete a branch.
 
 ## Task Message Contract
 

@@ -378,7 +378,7 @@ class WatchdogSimulatorTests(unittest.TestCase):
 
         provider_boundaries = {
             "Starting": "provider reservation",
-            "Running": "provider record",
+            "Running": "Work-item content",
         }
         for status in ("Starting", "Running"):
             for task_state in ("stopped", "failed", "missing"):
@@ -447,7 +447,7 @@ class WatchdogSimulatorTests(unittest.TestCase):
             alert.reason,
         )
         self.assertEqual(
-            "Coordinator reconciles the Running task, provider record, and "
+            "Coordinator reconciles the Running task, Work-item content, and "
             "ownership, then validates the separate known cause and "
             "Coordinator-owned action before choosing the Blocked disposition",
             alert.recommended_action,

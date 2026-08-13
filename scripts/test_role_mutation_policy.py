@@ -62,7 +62,7 @@ class RoleMutationPolicyTests(unittest.TestCase):
     """Protect the conceptual definition mutation contract and project-file boundary."""
 
     def test_backlog_steward_leaves_resource_coordination_to_project_guidance(self) -> None:
-        """Keep provider lifecycle authority portable while project guidance owns coordination."""
+        """Keep Work-item lifecycle authority portable while project guidance owns coordination."""
 
         build_skill_docs = _load_build_skill_docs()
         roles = build_skill_docs.load_role_definitions(

@@ -7,6 +7,8 @@ metadata:
 
 # Manage Work Items
 
+The Work-item content is the Work-item authority and is stored according to the Persistence provider's specific format.
+
 Manage Work Items is the Interface Skill for durable work-item management. Lifecycle
 consumers use this contract without naming a provider implementation. Each
 Persistence-selected Provider Skill preserves this vocabulary while it applies its native
@@ -24,8 +26,8 @@ and mutation and must not fall back to a sibling provider or a shadow record.
   reporting. Generic consumers must not parse provider paths, repository identities, issue
   numbers, keys, or URLs from it.
 - Treat a provider path or URL as diagnostic location evidence. Moving, closing, reopening, or
-  archiving the provider record does not create a new logical Work Item ID.
-- Keep provider lifecycle authoritative. Runtime task state, conversation titles, branches,
+  archiving a provider-native storage object does not create a new logical Work Item ID.
+- Keep the lifecycle state stored in the Work-item content authoritative. Runtime task state, conversation titles, branches,
   commits, pull requests, merge requests, and claim records are supporting evidence only.
 
 ## Lifecycle Definitions
@@ -34,7 +36,7 @@ Use one canonical lifecycle vocabulary across providers:
 
 - READY: The item is authorized, complete enough to dispatch, and has no unmet prerequisite.
 - STARTING: The item has a durable dispatch reservation and awaits accepted execution ownership.
-- RUNNING: The provider records accepted execution ownership and current execution evidence.
+- RUNNING: The selected Persistence manager stores accepted execution ownership and current execution evidence.
 - STALLED: Progress has stopped, but the exact cause or unblock condition remains unknown.
 - BLOCKED: A known preventing cause has an owner, evidence, and an observable unblock condition.
 - USER_ACTION_REQUIRED: One genuine user decision, authority grant, value judgment, or user-held
@@ -43,7 +45,7 @@ Use one canonical lifecycle vocabulary across providers:
 - AWAITING_REVIEW: Verified feature-branch publication exists, but review, checks, merge, or main
   observation remains incomplete.
 - COMPLETED: The selected completion contract and provider terminal update are both observed.
-- FAILED: Delivery ended without satisfying completion and the provider records terminal failure
+- FAILED: Delivery ended without satisfying completion and the selected Persistence manager stores terminal failure
   evidence.
 - ABANDONED: Authorized direction ends the work without delivery and preserves terminal evidence.
 
@@ -61,11 +63,11 @@ Return results with these meanings:
   failed boundary, observed state, preserved evidence, blocker owner, and next authorized action.
 - AWAITING_REVIEW: Completion remains nonterminal for the same feature-branch delivery identity.
   Preserve its accepted commit, publication, review, check, merge, and recovery evidence.
-- COMPLETED, FAILED, and ABANDONED: These are provider lifecycle outcomes. Return one only after
+- COMPLETED, FAILED, and ABANDONED: These are Work-item lifecycle outcomes. Return one only after
   the selected provider durably records and verifies that terminal state.
 
 Keep procedure success distinct from lifecycle READY. A successful transition can return result
-READY while the provider lifecycle is STARTING, RUNNING, BLOCKED, USER_ACTION_REQUIRED, HOLDING,
+READY while the Work-item lifecycle is STARTING, RUNNING, BLOCKED, USER_ACTION_REQUIRED, HOLDING,
 or AWAITING_REVIEW.
 
 Every result identifies the selected provider, requested procedure, Work Item ID when known,

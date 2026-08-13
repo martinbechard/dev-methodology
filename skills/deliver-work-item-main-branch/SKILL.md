@@ -1,6 +1,6 @@
 ---
 name: deliver-work-item-main-branch
-description: Complete a verified work item by deliberately integrating its accepted commit into the configured main branch, verifying the integrated state, and observing exact main reachability before any provider lifecycle closure. Use when the effective completion selector is main-branch.
+description: Complete a verified work item by deliberately integrating its accepted commit into the configured main branch, verifying the integrated state, and observing exact main reachability before any Work-item lifecycle closure. Use when the effective completion selector is main-branch.
 metadata:
   category: development-practice
 ---
@@ -33,7 +33,7 @@ Return BLOCKED when the completion selector is not main-branch, required evidenc
 
 ## Provider Independence
 
-This skill owns Git delivery and main observation. It also owns terminal handoff preparation. It does not create, inventory, assign, close, move, or otherwise mutate provider records for file, GitHub, GitLab, Azure DevOps, or Jira providers. It must not dispatch a provider manager, Dev Backlog Steward, or any Persistence mutation.
+This skill owns Git delivery and main observation. It also owns terminal handoff preparation. It does not create, inventory, assign, close, move, or otherwise mutate Work-item content through file, GitHub, GitLab, Azure DevOps, or Jira providers. It must not dispatch a provider manager, Dev Backlog Steward, or any Persistence mutation.
 
 - Preserve the opaque Work Item ID independently of provider location, delivery branch, and commit identifiers. Do not parse provider-specific ID syntax.
 - After successful delivery, return the exact terminal evidence to the caller for the owning orchestrator to route through its Persistence phase.
@@ -104,7 +104,7 @@ A successful Git command is intermediate evidence. It does not establish complet
 
 ## Integrated Verification And Main Observation
 
-Run the smallest project-native post-integration checks that cover the changed behavior and credible regression risk. Expand only after a focused failure or evidence-backed shared impact. A failed required check returns BLOCKED and must not trigger provider lifecycle closure.
+Run the smallest project-native post-integration checks that cover the changed behavior and credible regression risk. Expand only after a focused failure or evidence-backed shared impact. A failed required check returns BLOCKED and must not trigger Work-item lifecycle closure.
 
 For the normal route, run checks and collect observations from the clean integration checkout. For the unrelated-dirty route, create or reuse a clean verification checkout at the resulting configured-main tip so pre-existing dirt cannot contaminate checks. Observe the configured-main branch and resulting tip from the authoritative integration checkout, and prove that the clean verification checkout is at that same full commit before running checks.
 
@@ -153,7 +153,7 @@ claim-specific fields, placeholders, and not-applicable results. Return:
 - review, source-check, and post-integration verification evidence;
 - required local and remote observations;
 - clean-state or unrelated-dirty preservation evidence, exact source-to-integration mapping, and coordination evidence required by the loaded procedure; and
-- the provider lifecycle update or provider-none terminal result.
+- the Work-item lifecycle update or provider-none terminal result.
 
 Return BLOCKED with the preserved source commit, failed check, recovery evidence, and one next action when integration, conflict resolution, verification, publication, or main observation cannot finish safely. If the loaded resource-coordination procedure cannot finish safely, also return BLOCKED with the coordination evidence that procedure requires. A later provider recording failure is a Persistence failure and does not change Commit READY into BLOCKED.
 

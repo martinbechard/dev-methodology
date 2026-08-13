@@ -600,9 +600,9 @@ The development practice skills are:
 - traversal-patterns
 - interpreter-pattern
 
-create-work-item is the provider-neutral creation Interface Skill. The create-work-item-* providers implement that shared identity, input, procedure, and result contract while retaining provider-native authority and evidence.
+create-work-item is the provider-neutral creation Interface Skill. The Work-item content is the Work-item authority and is stored according to the Persistence provider's specific format. The create-work-item-* providers implement that shared identity, input, procedure, and result contract while retaining provider-native storage, operations, and evidence.
 
-manage-work-items is the provider-neutral management Interface Skill. The manage-work-items-* providers preserve the same five lifecycle procedures while retaining provider-native authority and evidence.
+manage-work-items is the provider-neutral management Interface Skill. The manage-work-items-* providers preserve the same five lifecycle procedures while retaining provider-native storage, operations, and evidence.
 
 create-work-item-github and manage-work-items-github are the canonical split GitHub Persistence skills. They keep GitHub Issues authoritative and never create a shadow repository queue.
 
@@ -615,7 +615,7 @@ while AGENTS.md supplies only the corresponding provider references.
 
 deliver-work-item is the provider-neutral Commit interface consumed by Dev Orchestrator. It defines the accepted commit input, READY, AWAITING_REVIEW, and BLOCKED results, state-keyed evidence, and prepared Persistence handoff. AGENTS.md still selects deliver-work-item-main-branch or deliver-work-item-feature-branch from the effective Commit value.
 
-manage-complex-development-plan routes implementation-plan creation to Dev Coder while preserving Dev Orchestrator's complexity gate and plan-review authority. Dev Coder owns the plan semantics and uses the direct configured MCP hierarchy operations to create and target updates in one authoritative JSON plan with a synchronized HTML rendering. Dev Orchestrator inspects and follows that same returned plan without creating a second planning record. Provider lifecycle, commits, independent review, verification, and Commit delivery remain authoritative.
+manage-complex-development-plan routes implementation-plan creation to Dev Coder while preserving Dev Orchestrator's complexity gate and plan-review authority. Dev Coder owns the plan semantics and uses the direct configured MCP hierarchy operations to create and target updates in one authoritative JSON plan with a synchronized HTML rendering. Dev Orchestrator inspects and follows that same returned plan without creating a second planning record. Work-item lifecycle, commits, independent review, verification, and Commit delivery remain authoritative.
 
 Current project configuration writes Commit main-branch. Existing PROJECT.yaml files may use direct-main only at the documented Commit compatibility paths; setup normalizes that exact legacy value to main-branch while rejecting malformed selectors and unrelated unsupported values.
 

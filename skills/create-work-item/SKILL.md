@@ -7,7 +7,7 @@ metadata:
 
 # Create Work Item
 
-Create Work Item is the provider-neutral contract for creating one durable work item. The effective Persistence selection supplies one exact provider implementation without changing this shared input, identity, procedure, or result vocabulary.
+Create Work Item is the provider-neutral contract for creating one durable work item. The Work-item content is the Work-item authority and is stored according to the Persistence provider's specific format. The effective Persistence selection supplies one exact provider implementation without changing this shared input, identity, procedure, or result vocabulary.
 
 ## Work Item Identity
 
@@ -28,7 +28,7 @@ Preserve private, proprietary, sensitive, credential, PII, and company-internal 
 2. When Persistence is UNSET, ask for the provider decision before durable mutation. When it is none, return BLOCKED because no durable provider exists.
 3. Normalize one complete, independently actionable work-item description without replacing provider-native terminology or identifiers.
 4. Apply the exact selected create-work-item provider implementation. Do not call a different provider as a fallback.
-5. Let the provider own duplicate detection, creation authority, mutation, partial-mutation recovery, and read-after-write verification.
+5. Let the provider own duplicate detection, the creation operation, mutation, partial-mutation recovery, and read-after-write verification.
 6. Return the provider's observed result without manufacturing success, an identifier, a location, or lifecycle evidence.
 
 ## Result
@@ -39,4 +39,4 @@ CREATED and EXISTING require provider-observed identity and state. BLOCKED names
 
 ## Provider Boundary
 
-Provider implementations retain their native authority, identifiers, duplicate searches, supported lifecycle values, atomicity, partial-mutation recovery, verification, unsupported-operation results, and no-fallback rules. The interface does not make one provider depend on another provider and does not make an unsupported provider appear implemented.
+Provider implementations retain their native storage formats, identifiers, relationships, supported operations, duplicate searches, atomicity, partial-mutation recovery, verification, unsupported-operation results, and no-fallback rules. The interface does not make one provider depend on another provider and does not make an unsupported provider appear implemented.

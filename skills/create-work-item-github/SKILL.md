@@ -7,7 +7,7 @@ metadata:
 
 # Create Work Item GitHub
 
-Create one independently actionable GitHub issue. The GitHub provider record is the sole durable work-item authority.
+The Work-item content is the Work-item authority and is stored according to the Persistence provider's specific format. Create one independently actionable GitHub issue as that provider-specific format.
 
 ## Work Item ID
 
@@ -19,7 +19,7 @@ Create one independently actionable GitHub issue. The GitHub provider record is 
 - Resolve the repository owner and name, item type, title, summary and context, requirements, acceptance criteria, dependencies, verification expectations, source evidence, requested labels, relationships, and initial ownership evidence.
 - Use this skill when applicable project guidance selects provider github or an explicit one-item request selects GitHub. A task override does not silently change the project default.
 - Require an authenticated GitHub provider interface with repository read and issue mutation capability. Return BLOCKED when authentication, repository authority, a required capability, or mutation permission is unavailable.
-- Keep private, proprietary, sensitive, credential, PII, or company-internal evidence out of a provider record whose visibility is unsuitable.
+- Keep private, proprietary, sensitive, credential, PII, or company-internal evidence out of Work-item content whose visibility is unsuitable.
 
 ## Duplicate Detection
 

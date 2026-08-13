@@ -24,6 +24,8 @@ Task-ID-Evidence: historical-unknown
 
 # Create Work Item File
 
+The Work-item content is the Work-item authority and is stored according to the Persistence provider's specific format.
+
 ## Create Work Item
 
 Create one durable file-provider work item that is clear, typed, and safe to manage later.
@@ -116,8 +118,8 @@ Create an index.md file inside the subfolder. The index describes the overall go
 Create the smaller work items as separate Markdown files in the same subfolder. Each child item must remain independently dispatchable and link back to index.md. The index must link to every child item and group them by sequence or theme.
 
 When one child requires another, the index must name each child's required predecessor set or
-ordered lane. Ordinary link or list order does not create a dependency. The creation provider
-records the child's stored lifecycle and leaves effective-state derivation to
+ordered lane. Ordinary link or list order does not create a dependency. The selected Persistence manager
+stores the child's lifecycle state and leaves effective-state derivation to
 coordinate-work-items.
 
 Use a series folder when:

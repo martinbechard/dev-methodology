@@ -26,7 +26,7 @@ Task-ID-Evidence: runtime-supplied
 
 Use this Skill only when Dev Coder's assignment explicitly requires an externalized hierarchy plan. Dev Coder always owns the plan semantics and decomposition. When the assignment records that no externalized plan is needed, Dev Coder still creates and returns a bounded implementation and TDD plan without MCP persistence. The configured MCP operations own persistence and rendering for an externalized plan. A user instruction to code without planning bypasses both plan forms.
 
-The returned JSON plan is authoritative, and its same-named HTML file is the synchronized rendering. The plan is an implementation aid, not a provider record, work-item queue, review verdict, verification result, Commit result, or source-control record.
+The returned JSON plan is authoritative, and its same-named HTML file is the synchronized rendering. The plan is an implementation aid, not Work-item content, a work-item queue, a review verdict, a verification result, a Commit result, or a source-control record.
 
 ## Required Capabilities
 
@@ -40,7 +40,7 @@ If creation, plan reading, or targeted update is unavailable, stop with `PLAN_TO
 
 ## Create The Plan
 
-Turn the bounded implementation and TDD plan into the `source` hierarchy accepted by `create_hierarchy_plan`. Keep requirements, dependencies, implementation tasks, and focused verification visible without copying the full provider record.
+Turn the bounded implementation and TDD plan into the `source` hierarchy accepted by `create_hierarchy_plan`. Keep requirements, dependencies, implementation tasks, and focused verification visible without copying the full Work-item content.
 
 This generic source produces the requested display numbering 1, 2, 2.1, 2.2, and 3. A single outer mapping supplies the root label without adding another numbered level.
 
@@ -99,7 +99,7 @@ If the result is ambiguous, the target no longer resolves, either artifact canno
 
 ## Shared Plan Progress
 
-Dev Orchestrator may require this plan, compare it with the bounded assignment, and follow material progress. It must inspect the authoritative path returned by Dev Coder without creating a second plan record. Provider lifecycle, accepted commits, independent review, verification, integration, Persistence, and Commit evidence remain authoritative when they differ from plan state.
+Dev Orchestrator may require this plan, compare it with the bounded assignment, and follow material progress. It must inspect the authoritative path returned by Dev Coder without creating a second plan record. Work-item lifecycle, accepted commits, independent review, verification, integration, Persistence, and Commit evidence remain authoritative when they differ from plan state.
 
 Update the same plan after a material discovery or completed development result changes the actionable decomposition. Preserve completed work and unaffected structure.
 

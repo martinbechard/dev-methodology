@@ -28,7 +28,7 @@ Work-item coordination connects a durable provider queue to bounded delivery exe
 
 ## Authority And Roles
 
-- The effective Persistence-selected provider record is the durable work-item authority when a provider is selected. Provider none has no durable provider record.
+- The Work-item content is the Work-item authority and is stored according to the Persistence provider's specific format. Provider none has no durable Work item or Persistence storage format.
 - Git records branches, commits, delivery, and cleanup eligibility; it is not a work-item provider.
 - Project guidance may load resource-claim. Its registry records active claims but does not prove review, verification, or delivery.
 - Runtime state is execution evidence, not lifecycle authority.
@@ -37,7 +37,7 @@ Work-item coordination connects a durable provider queue to bounded delivery exe
 - Dev Backlog Coordinator and Dev Orchestrator apply the effective Persistence-selected management skill directly for lifecycle operations they are authorized to own.
 - Dev Backlog Steward is optional. It owns provider-wide inventory, normalization, archival audit, and recovery that benefits from an independent backlog context.
 - Dev Orchestrator applies the effective Commit-selected skill only after candidate review and verification accept a direct or combined commit.
-- Dev Backlog Watchdog owns scheduled read-only observation and actionable alerts. It never owns provider lifecycle, scheduling, delivery, recovery, claims, or cleanup.
+- Dev Backlog Watchdog owns scheduled read-only observation and actionable alerts. It never owns Work-item lifecycle, scheduling, delivery, recovery, claims, or cleanup.
 
 Do not create a separate parent ledger, baton registry, waiting-execution registry, or runtime database. Do not copy this procedure into project guidance or a Dev Orchestrator definition.
 
@@ -45,7 +45,7 @@ Do not create a separate parent ledger, baton registry, waiting-execution regist
 
 An explicit user-authorized work item that names exact skill definition paths is sufficient user direction to create or modify those named skill definitions. Do not ask for a second approval for those same named definitions.
 
-Each named path still requires auditable approval provenance before mutation. Preserve the authorizing work-item identity, exact named scope, and user-direction provenance in the provider record. The exact approved manifest and provenance are the mutation authority; do not require a separate executable approval checker.
+Each named path still requires auditable approval provenance before mutation. Preserve the authorizing work-item identity, exact named scope, and user-direction provenance in the Work-item content. The exact approved manifest and provenance are the mutation authority; do not require a separate executable approval checker.
 
 A definition outside the work item's exact named scope is additional work and requires new explicit user approval and its own auditable provenance. Never widen named scope through a directory, wildcard, artifact category, generated mirror, related definition, failing test, or general repository mutation authority. Other governed definition categories continue to follow applicable project authority.
 
@@ -74,7 +74,7 @@ Starting is the durable handoff between the parent Dev Backlog Coordinator and o
 
 The new root execution independently accepts the item. Its Dev Orchestrator directly applies the Persistence-selected management skill to record Starting -> Running with the canonical execution identity before implementation begins. The provider owns its resource protection, durable mutation, and cleanup.
 
-Retain this evidence in the provider record:
+Retain this evidence in the Work-item content:
 
 ```markdown
 ## Starting Handoff Evidence
@@ -88,7 +88,7 @@ Canonical Execution: [runtime execution identity or None]
 
 A failed or missing runtime launch, an execution that cannot accept the provider, or an execution that stops before Running leaves the provider in Starting. Do not automatically restore Ready. The dispatcher observes the runtime task through runtime tools and reconciles the item when the task fails, disappears, or requires a decision. The Watchdog never mutates the item or launches a replacement.
 
-Starting consumes active capacity until the provider records Running or the Coordinator records another truthful lifecycle state. A runtime launch response does not replace either provider transaction.
+Starting consumes active capacity until the selected Persistence manager records Running or the Coordinator records another truthful lifecycle state. A runtime launch response does not replace either provider transaction.
 
 ### Running Eligibility
 
@@ -98,7 +98,7 @@ Running is actively eligible only while current runtime state proves at least on
 - live delegated work: a child execution is currently completing a bounded assignment
 - bounded runtime wait: the canonical task remains active while awaiting a runtime operation required by the current phase
 
-The provider records the canonical execution and current phase when Running begins or materially changes. It does not require routine progress refreshes, heartbeat timestamps, deadlines, or reconciliation timestamps.
+The selected Persistence manager records the canonical execution and current phase when Running begins or materially changes. It does not require routine progress refreshes, heartbeat timestamps, deadlines, or reconciliation timestamps.
 
 Running must leave active capacity when runtime observation shows that ownership ended or execution cannot continue. Restore Ready when ordinary redispatch is safe. Record Stalled when progress stopped for an unknown cause and preserved evidence needs diagnosis. Record Blocked for a known preventing cause, User Action Required for a genuine user-owned action, Awaiting Review for an accepted delivery that reached that provider state, or the applicable terminal outcome. The selected provider must record that truthful non-active state before replacement scheduling releases the capacity slot.
 
@@ -106,7 +106,7 @@ Running must leave active capacity when runtime observation shows that ownership
 
 When resource-claim is loaded, use its Claim Events table and supporting rules. Do not define claim behavior in this skill.
 
-Acquire the exact opaque Work Item ID only when an applicable Claim Event requires it. Use activity work for outcome work and activity update for provider mutation. Release the work-item claim with disposition done, blocked, or handoff at the activity boundary. A handoff release must complete before the next owner acquires the same ID. Path and resource claims remain independently applicable. The provider remains the lifecycle authority.
+Acquire the exact opaque Work Item ID only when an applicable Claim Event requires it. Use activity work for outcome work and activity update for provider mutation. Release the work-item claim with disposition done, blocked, or handoff at the activity boundary. A handoff release must complete before the next owner acquires the same ID. Path and resource claims remain independently applicable. The lifecycle state in the Work-item content remains authoritative.
 
 At each mutation or integration event, supply the smallest currently known exact path or resource manifest to the selected coordination skill. Do not request a whole-project claim when a fixed subset is known. A broader request needs an evidence-backed reason and must be narrowed or released at the first safe boundary.
 
@@ -128,7 +128,7 @@ For a selected Persistence provider, use its management skill to record phase-ap
 - for Stalled, last productive evidence, estimate and hard stop when present, progress gap, canonical execution, current ownership, diagnostic owner, and next investigation action
 - for Blocked, exact blocker, blocker owner, unblock condition, next-action owner, dependencies, preserved candidate, review and verification evidence, runtime state, Git state, applicable live claims, current disposition, and correction-attempt history
 
-Use the effective Persistence-selected management skill when a material lifecycle state changes. Preserve the same canonical root execution and provider identity through corrections, delivery, and closeout. Runtime-specific skills may add runtime identity fields without changing provider authority.
+Use the effective Persistence-selected management skill when a material lifecycle state changes. Preserve the same canonical root execution and provider identity through corrections, delivery, and closeout. Runtime-specific skills may add runtime identity fields without changing Work-item authority.
 
 ## Ordered Series Dependency State
 
@@ -150,7 +150,7 @@ history is not permission to create a new cross-folder edge. External prerequisi
 conditions, not Work Item dependency edges, and apply only to the genuinely affected item.
 
 Stored Status remains the canonical lifecycle. Resolve a dependent child's effective state
-without mutating its provider record:
+without mutating its Work-item content:
 
 1. Find the first required predecessor in the child's causal-priority order whose stored Status
    is Blocked. Derive effective Blocked for the child and report that predecessor's opaque
@@ -191,8 +191,8 @@ stored lifecycle is dispatchable under Queue Target And Scheduling.
 Obtain queue inventory, lifecycle counts, provider identities, and dispatchable state only by applying the effective Persistence-selected management skill.
 
 - Provider file uses ordinary repository backlog identities through its selected file-provider manager. Do not scan or count Future Ideas unless the parent explicitly requests ideation or promotion.
-- Provider github uses GitHub issue identities and provider lifecycle evidence. Do not create file backlog records.
-- Provider gitlab uses GitLab issue identities and provider lifecycle evidence. Do not translate them into GitHub or file records.
+- Provider github uses GitHub issue identities and Work-item lifecycle evidence. Do not create file backlog records.
+- Provider gitlab uses GitLab issue identities and Work-item lifecycle evidence. Do not translate them into GitHub or file records.
 - Provider azure-devops or jira applies the selected placeholder management skill, preserves its BLOCKED zero-mutation result, and does not fall back.
 - Provider none has no durable inventory, count, creation, transition, or closure. Coordinate only the explicit execution and retain task-local evidence.
 - Provider UNSET or an unavailable selected skill stops before durable inventory or mutation and requests the missing project selection or capability.
@@ -247,7 +247,7 @@ Keep claim release, Commit delivery, and Persistence closure as distinct operati
 
 ### Candidate Recovery
 
-Preserve candidate recovery evidence in the authoritative Git, review, verification, and provider records. Do not copy that history into task messages. After a mechanical or shared-resource unblock, reconcile the preserved candidate against current integration state once. Rerun only integration-sensitive checks and review required because combined bytes changed meaning.
+Preserve candidate recovery evidence in authoritative Git, review, and verification records and in the Work-item content. Do not copy that history into task messages. After a mechanical or shared-resource unblock, reconcile the preserved candidate against current integration state once. Rerun only integration-sensitive checks and review required because combined bytes changed meaning.
 
 ### Review And Verification Availability
 
@@ -370,7 +370,7 @@ Every cycle obtains the current Blocked inventory. Reconcile each Blocked item f
 
 Alert when current evidence shows agent-owned recovery without an active owner, a missing or invalid next-action owner or observable trigger, a satisfied dependency or unblock condition, exhausted corrections without a current disposition, or preservation evidence contradicted by Git or runtime state. Suppress a repeat alert only while acknowledged recovery remains actively owned or the same concrete user or external trigger remains unsatisfied.
 
-When a runtime mapping defines task titles, compare every observed canonical task title with the current provider lifecycle and material Running phase, and compare each observed bounded verifier title with its current runtime outcome. Title drift requires a Coordinator decision even though it never changes lifecycle authority, active capacity, or delivery evidence.
+When a runtime mapping defines task titles, compare every observed canonical task title with the current Work-item lifecycle and material Running phase, and compare each observed bounded verifier title with its current runtime outcome. Title drift requires a Coordinator decision even though it never changes lifecycle authority, active capacity, or delivery evidence.
 
 Reconcile a terminal task only when runtime observation indicates incomplete cleanup or another specific decision. Consult its durable provider, Git, claim, and archival records as needed; do not construct a repeated cycle history.
 
@@ -378,7 +378,7 @@ A source branch may remain deliberately preserved only when current evidence pro
 
 When a runtime mapping supports execution archival, an archival pause may suppress only archival for the exact named runtime executions validated by that mapping. It never suppresses provider closeout, claim reconciliation, worktree cleanup, delivery-branch cleanup, source-branch cleanup, notification, or another terminal action.
 
-The Watchdog is read-only. It must not change repository files, provider records, lifecycle state, claims, runtime state, branches, worktrees, or shared resources. It must not schedule work, integrate changes, perform cleanup, or run expensive or live verification.
+The Watchdog is read-only. It must not change repository files, Work-item content, lifecycle state, claims, runtime state, branches, worktrees, or shared resources. It must not schedule work, integrate changes, perform cleanup, or run expensive or live verification.
 
 Notify the Coordinator only when a specific decision is required. Send the affected Work Item ID, reason, and smallest recommended action without copying durable evidence into the message. When no decision is required, send nothing. If the Watchdog is unavailable, the parent performs the review directly and does not create a replacement ledger.
 

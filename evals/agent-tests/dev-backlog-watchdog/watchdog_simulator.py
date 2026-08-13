@@ -379,7 +379,7 @@ class WatchdogCycle:
                         reason="normalized dependency envelope is contradictory",
                         recommended_action=(
                             "Coordinator reconciles the series index and normalized "
-                            "stored/effective view without changing provider lifecycle"
+                            "stored/effective view without changing Work-item lifecycle"
                         ),
                         preventing_cause="",
                     )
@@ -436,7 +436,7 @@ class WatchdogCycle:
                 provider_boundary = (
                     "provider reservation"
                     if item.status == "Starting"
-                    else "provider record"
+                    else "Work-item content"
                 )
                 reason = (
                     f"{item.status} canonical task {item.task_state}; task-state "
@@ -515,7 +515,7 @@ class WatchdogCycle:
                         reason="canonical conversation title contradicts current lifecycle or phase",
                         recommended_action=(
                             "Coordinator reconciles the canonical conversation title "
-                            "without changing provider lifecycle"
+                            "without changing Work-item lifecycle"
                         ),
                         preventing_cause=item.preventing_cause,
                     )
@@ -797,7 +797,7 @@ class WatchdogCycle:
 
     @staticmethod
     def _expected_conversation_title(item: WorkItem) -> str:
-        """Derive display state from provider lifecycle or bounded task outcome."""
+        """Derive display state from Work-item lifecycle or bounded task outcome."""
 
         if not item.short_title.strip():
             return ""

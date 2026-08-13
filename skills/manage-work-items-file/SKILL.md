@@ -24,6 +24,8 @@ Task-ID-Evidence: historical-unknown
 
 # Manage File Work Items
 
+The Work-item content is the Work-item authority and is stored according to the Persistence provider's specific format.
+
 ## Purpose
 
 Manage file-provider work as a visible queue with explicit lifecycle state. Active folders
@@ -47,7 +49,7 @@ the requested atomic provider transition.
 
 Only the primary worktree on main may change canonical files under backlog. The file provider resolves an opaque Work Item ID to its current active or archive path. Moving the backing file does not change the Work Item ID.
 
-Acquire the exact opaque Work Item ID before any work or provider mutation. Use activity work for outcome work and activity update for provider mutation. Release the work-item claim with disposition done, blocked, or handoff at the activity boundary. Blocked may include a bounded blocker reference; when present, it must be canonical, non-empty, single-line, and at most 200 characters. A handoff release must complete before the next owner acquires the same ID. Path and resource claims remain independently applicable. The provider remains the lifecycle authority.
+Acquire the exact opaque Work Item ID before any work or provider mutation. Use activity work for outcome work and activity update for provider mutation. Release the work-item claim with disposition done, blocked, or handoff at the activity boundary. Blocked may include a bounded blocker reference; when present, it must be canonical, non-empty, single-line, and at most 200 characters. A handoff release must complete before the next owner acquires the same ID. Path and resource claims remain independently applicable. The lifecycle state in the Work-item content remains authoritative.
 
 Another worktree may inspect backlog but must not create, transition, or archive an item. If the primary worktree is not on main, it must not change the item. Return BLOCKED with the observed worktree, branch, requested transition, and required handoff. Never create another queue elsewhere.
 
@@ -161,7 +163,7 @@ Do not move a nonterminal or mixed-state series merely to remove an active coord
 
 ## Lifecycle States
 
-Use explicit provider lifecycle states and never infer success from silence:
+Use explicit Work-item lifecycle states and never infer success from silence:
 
 - READY: authorized and complete enough for its own work, without a genuine preventing
   condition on that child. Required predecessor state is derived separately.
@@ -377,7 +379,7 @@ technical or external blocker in Blocked with an exact owner and unblock conditi
 
 1. Read the item and current Resolution.
 2. If the Resolution already answers the question, do not ask it again. Route the recorded answer through normal resumption.
-3. Confirm that the Coordinator selected User Action Required and that the provider records that state before presenting the request to the user.
+3. Confirm that the Coordinator selected User Action Required and that the selected Persistence manager stores that state before presenting the request to the user.
 4. Ask one plain-language question. Explain why the user owns the answer. Give real options or an illustrative example when they clarify the choice. State the practical consequence of each option.
 5. State the unattended-work boundary. Name the work that must stop and any independent work that may safely continue.
 6. Put the exact question first. Do not hide it inside background information. Do not invent options, risks, or consequences that current evidence does not support.
@@ -426,7 +428,7 @@ Preserve the same Work Item ID at the terminal destination and report that desti
 ## Recover Work Item
 
 - Read visible active items first.
-- Reconcile the provider record's owner, parent and work-item conversation identifiers,
+- Reconcile the Work-item content's owner, parent and work-item conversation identifiers,
   canonical Task, reservation, branch, worktree, accepted candidate commit, logs, results,
   checks, delivery references, waits, and archive locations.
 - Require the caller to supply the evidence-backed lifecycle decision. This skill must not
@@ -446,7 +448,7 @@ Preserve the same Work Item ID at the terminal destination and report that desti
 For each considered work item, report stored canonical lifecycle and derived effective state as
 distinct fields. Include the causal Work Item ID for effective Blocked, any genuine condition on
 the item, any coordination-only overlap constraint, and any deferred edit, shared-resource, or
-integration event. Derived state is a normalized read-only view, not a second provider record.
+integration event. Derived state is a normalized read-only view, not a second copy of the Work-item content.
 
 Return provider file, each opaque Work Item ID with its current diagnostic active or archive path, lifecycle counts, separate Stalled inventory with diagnostic owners and next investigation actions, User Action Required questions, next runnable items, dependency Work Item IDs, blockers, owner, canonical task, delivery evidence, review and check results, main observation, archive evidence, commit references, invalid or duplicate records, and the next safe action.
 

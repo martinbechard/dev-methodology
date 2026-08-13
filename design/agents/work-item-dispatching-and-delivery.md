@@ -193,7 +193,7 @@ The Coordinator executes an approved nonterminal runtime operation when its runt
 
 #### Runtime And Lifecycle Evidence
 
-Task creation is runtime evidence only. It does not prove that a work item reached Running. The new root execution accepts Starting to Running through the effective Persistence manager when a provider is selected. Provider none retains equivalent task-local evidence without creating a provider record.
+Task creation is runtime evidence only. It does not prove that a work item reached Running. The new root execution accepts Starting to Running through the effective Persistence manager when a provider is selected. Provider none retains equivalent task-local evidence without creating durable Work-item content.
 
 A failed, pending, disconnected, or ambiguous creation response is not retried. The operation executor preserves every returned identity. The Coordinator reconciles active and archived tasks through the canonical identity contract before it authorizes another operation.
 
@@ -497,9 +497,9 @@ An explicit Future Ideas request conditionally selects manage-future-ideas inste
 operation to the creation or lifecycle interfaces. create-work-item-file and manage-future-ideas
 use commit-file-provider-transaction only when their file creation reaches the commit boundary.
 
-### Scenario: Managing Provider Lifecycle
+### Scenario: Managing Work-Item Lifecycle
 
-This scenario applies when an Agent inventories or changes durable provider lifecycle. The manage-work-items Interface Skill publishes the shared management contract. Persistence selects one manage-work-items-* provider.
+This scenario applies when an Agent inventories or changes durable Work-item lifecycle. The manage-work-items Interface Skill publishes the shared management contract. Persistence selects one manage-work-items-* provider.
 
 ```mermaid
 classDiagram

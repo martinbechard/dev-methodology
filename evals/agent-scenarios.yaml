@@ -80,7 +80,7 @@ agents:
       - junie
     outputContractFields:
       - status
-      - provider lifecycle snapshot
+      - Work-item lifecycle snapshot
       - dispatch and capacity outcome
       - stalled delivery actions
       - completed item cleanup
@@ -113,7 +113,7 @@ agents:
           - Use one canonical Dev Orchestrator execution for each Starting or Running work item.
           - Directly apply the effective Persistence-selected manager for authorized Coordinator lifecycle transitions and provider evidence.
           - Require each Dev Orchestrator to directly apply the effective manager for the work-item lifecycle operations it owns.
-          - Record canonical execution id, provider identity, branch, worktree, phase, accepted commit, waits, and delivery evidence in the provider record; when coordinate-codex-tasks is active, also record its task and conversation ids.
+          - Record canonical execution id, provider identity, branch, worktree, phase, accepted commit, waits, and delivery evidence in the Work-item content; when coordinate-codex-tasks is active, also record its task and conversation ids.
           - Route accepted review immediately to that item's Dev Orchestrator with the effective Commit-selected skill.
           - Recount and refill Starting-plus-Running capacity toward ten after every terminal cleanup.
         forbiddenBehaviors:
@@ -253,7 +253,7 @@ agents:
         forbiddenBehaviors:
           - Choose the lifecycle result.
           - Create a synthetic inventory or second registry.
-          - Mutate a provider record, task, claim, branch, or worktree.
+          - Mutate Work-item content, a task, claim, branch, or worktree.
         judgePlan:
           deterministicChecks:
             - suite-simulator-tests
@@ -350,7 +350,7 @@ agents:
         kind: happy-path
         fixtureProfile: backlog-state-machine
         promptIntent: Create and manage typed work through the configured provider, including file-provider duplicate and series placement, lifecycle, recovery, completion, failure, and archive transitions.
-        expectedOutcome: One authoritative provider record with durable source, dependency, ownership, claim, delivery, verification, recovery, completion or failure, and archive evidence without a duplicate shadow queue.
+        expectedOutcome: One authoritative set of Work-item content with durable source, dependency, ownership, claim, delivery, verification, recovery, completion or failure, and archive evidence without a duplicate shadow queue.
         requiredBehaviors:
           - Use only the configured backend and ask when no backend is selected.
           - For provider file, create only under backlog in the primary main worktree through atomic no-overwrite creation without a claim.
@@ -514,7 +514,7 @@ agents:
           - Keep document-writing, production implementation, completed-artifact review, and terminal delivery with their assigned owners.
         forbiddenBehaviors:
           - Approve a preference that has no accepted requirement or repository evidence.
-          - Take over production code, document prose, independent artifact review, or provider lifecycle state.
+          - Take over production code, document prose, independent artifact review, or Work-item lifecycle state.
         judgePlan:
           deterministicChecks:
             - agent-dependency-routing
@@ -667,7 +667,7 @@ agents:
         forbiddenBehaviors:
           - Add speculative abstractions or unrelated cleanup.
           - Finish with anonymous, dirty, or uncommitted changes.
-          - Apply a Commit workflow, publish delivery, or mutate provider lifecycle state.
+          - Apply a Commit workflow, publish delivery, or mutate Work-item lifecycle state.
         judgePlan:
           deterministicChecks:
             - required-command-outcome

@@ -12,9 +12,9 @@ scenarios:
     targetSkills: [structured-explanation, coordinate-work-items, coordinate-codex-tasks]
     allowedAgentDependencies: [dev-orchestrator]
     requiredBehaviors: [Identify as Dev Backlog Coordinator, Count Running from the effective manager, Dispatch three Ready items, Directly record each Ready to Starting transition through the effective manager, Require each root Dev Orchestrator to directly record Starting to Running, Persist the canonical execution identity through the effective manager, When coordinate-codex-tasks is active persist its canonical task id, Avoid placeholder and wait-only tasks]
-    forbiddenBehaviors: [Delegate ordinary lifecycle mutation to Dev Backlog Steward, Create a separate task ledger, Count Blocked or User Action Required as Running, Dispatch more than ten, Match a Codex task by title alone, Read or create a shadow provider record]
+    forbiddenBehaviors: [Delegate ordinary lifecycle mutation to Dev Backlog Steward, Create a separate task ledger, Count Blocked or User Action Required as Running, Dispatch more than ten, Match a Codex task by title alone, Read or create shadow Work-item content]
     deterministicChecks: [harness-agent-identity, suite-simulator-tests, task-identity-fields, provider-selected-workitem-ownership, running-capacity-refill, output-contract-presence]
-    expectedOutputs: [status, provider lifecycle snapshot, dispatch and capacity outcome, stalled delivery actions, completed item cleanup, fifteen-minute throughput summary]
+    expectedOutputs: [status, Work-item lifecycle snapshot, dispatch and capacity outcome, stalled delivery actions, completed item cleanup, fifteen-minute throughput summary]
     expectedTerminalStatus: PASS
   - id: blockage-entry-disables-secondary-dispatch
     priority: 2
@@ -28,7 +28,7 @@ scenarios:
     requiredBehaviors: [Identify as Dev Backlog Coordinator, Disable only new secondary-thread dispatch, Preserve already-running secondary work, Process one blockage item at a time, Preserve the first declaration and solo result on repeated entry, Report DISABLED then ALREADY_SOLO]
     forbiddenBehaviors: [Load set-multitask-mode during entry, Cancel interrupt or reassign existing secondary work, Diagnose the blockage through set-solo-mode, Repeat lifecycle or dispatch mutation for unchanged state, Acquire claims or delegate delivery]
     deterministicChecks: [harness-agent-identity, suite-simulator-tests, no-forbidden-mutation, queue-state-transition, output-contract-presence]
-    expectedOutputs: [status, provider lifecycle snapshot, dispatch and capacity outcome, stalled delivery actions]
+    expectedOutputs: [status, Work-item lifecycle snapshot, dispatch and capacity outcome, stalled delivery actions]
     expectedTerminalStatus: PASS
   - id: selected-commit-retry-and-closeout
     priority: 3
@@ -42,7 +42,7 @@ scenarios:
     requiredBehaviors: [Attempt immediately, Preserve the structured conflict outcome task-locally, Request a direct release or recovery handoff, Retry only after that notification, Leave stale-ownership investigation to the watchdog, Route delivery through Dev Orchestrator with the effective Commit-selected skill, Run focused tests, Require Persistence completion only after Commit READY, Remove clean worktree, Safely delete merged branch]
     forbiddenBehaviors: [Create a waiting task, Poll the claim registry, Retry because time elapsed, Mutate provider state merely to wait, Steal active unpreserved work, Reproduce the selected completion procedure, Run the complete agent catalog for one item, Report Done before provider completion and cleanup evidence]
     deterministicChecks: [harness-agent-identity, suite-simulator-tests, claim-lifecycle, notification-driven-claim-retry, selected-commit-routing, focused-item-verification, workitem-completion-handoff, done-success-title, output-contract-presence]
-    expectedOutputs: [status, provider lifecycle snapshot, dispatch and capacity outcome, stalled delivery actions, completed item cleanup, fifteen-minute throughput summary]
+    expectedOutputs: [status, Work-item lifecycle snapshot, dispatch and capacity outcome, stalled delivery actions, completed item cleanup, fifteen-minute throughput summary]
     expectedTerminalStatus: PASS
   - id: ambiguous-dispatch-and-user-decision-integrity
     priority: 4
@@ -56,7 +56,7 @@ scenarios:
     requiredBehaviors: [Wait one bounded settlement interval, Reconcile active executions, Retry no more than once, Persist one canonical execution id through the effective manager, Record the exact user answer once, When coordinate-codex-tasks is active reconcile active and archived tasks stop verify and archive duplicates and persist one canonical task id]
     forbiddenBehaviors: [Infer absence from one immediate read, Match a Codex task by title alone, Apply task archival without coordinate-codex-tasks, Create a separate registry, Ask the resolved question again, Treat approval as completion]
     deterministicChecks: [harness-agent-identity, suite-simulator-tests, delayed-visibility-settlement, settled-zero-retry, retry-limit, duplicate-containment, provider-selected-workitem-ownership, workitem-completion-handoff, output-contract-presence]
-    expectedOutputs: [status, provider lifecycle snapshot, dispatch and capacity outcome, stalled delivery actions, completed item cleanup, fifteen-minute throughput summary]
+    expectedOutputs: [status, Work-item lifecycle snapshot, dispatch and capacity outcome, stalled delivery actions, completed item cleanup, fifteen-minute throughput summary]
     expectedTerminalStatus: BLOCKED
   - id: provider-selector-boundaries
     priority: 5
@@ -70,7 +70,7 @@ scenarios:
     requiredBehaviors: [Use the file manager for backlog paths, Use GitHub issue identities, Use GitLab issue identities, Preserve Azure DevOps and Jira placeholder BLOCKED results, Coordinate provider none without durable inventory, Ask whether to select the available file provider when UNSET, Make no work-item mutation before the answer, Stop when the selected manager is unavailable]
     forbiddenBehaviors: [Create shadow files for GitHub or GitLab, Translate GitLab records into GitHub terminology, Fall back from a placeholder, Invent a provider-none queue, Infer UNSET from repository or hosting evidence]
     deterministicChecks: [harness-agent-identity, suite-simulator-tests, provider-selected-workitem-ownership, provider-selector-routing, output-contract-presence]
-    expectedOutputs: [status, provider lifecycle snapshot, dispatch and capacity outcome, stalled delivery actions, completed item cleanup, fifteen-minute throughput summary]
+    expectedOutputs: [status, Work-item lifecycle snapshot, dispatch and capacity outcome, stalled delivery actions, completed item cleanup, fifteen-minute throughput summary]
     expectedTerminalStatus: BLOCKED
   - id: same-thread-user-action-resumption
     priority: 6
@@ -84,7 +84,7 @@ scenarios:
     requiredBehaviors: [Accept the answer in the canonical work-item execution, Preserve the canonical execution identity, Directly record User Action Required to Ready and Ready to Starting through the effective manager, Require the same root Dev Orchestrator to directly record Starting to Running, When coordinate-codex-tasks is active preserve canonical Thread and Agent Task identities separately, Keep provider-none evidence task-local without capacity inference, Preserve out-of-sequence work and dirty ownership, Reconcile scope review verification and delivery]
     forbiddenBehaviors: [Delegate ordinary lifecycle mutation to Dev Backlog Steward, Require the user to repeat the answer in the parent execution, Create a replacement execution, When coordinate-codex-tasks is active replace the Thread while retaining the Agent Task id, Dispatch Dev Backlog Steward for provider none, Reject work solely because of execution location, Release or override dirty ownership, Treat the answer or preserved artifacts as delivery]
     deterministicChecks: [harness-agent-identity, suite-simulator-tests, task-identity-fields, provider-selected-workitem-ownership, workitem-completion-handoff, output-contract-presence]
-    expectedOutputs: [status, provider lifecycle snapshot, dispatch and capacity outcome, stalled delivery actions, completed item cleanup, fifteen-minute throughput summary]
+    expectedOutputs: [status, Work-item lifecycle snapshot, dispatch and capacity outcome, stalled delivery actions, completed item cleanup, fifteen-minute throughput summary]
     expectedTerminalStatus: PASS
   - id: exhausted-correction-disposition
     priority: 7
@@ -98,7 +98,7 @@ scenarios:
     requiredBehaviors: [Preserve canonical execution and candidate evidence, When coordinate-codex-tasks is active preserve its canonical task and conversation identities, Preserve review verification Git claim and attempt history, Link recovery and retry evidence to every unresolved finding, Consume the one bounded retry before a new reconciliation, Record an explanation exact user options and tradeoffs only for a genuine user-owned decision, Keep concrete technical or external dependencies Blocked with an observable trigger, Directly apply authorized provider state through the effective manager]
     forbiddenBehaviors: [Delegate ordinary lifecycle mutation to Dev Backlog Steward, Record more than one active outcome, Wait indefinitely, Repeat the bounded retry, Ask the user without an exact user-owned decision, Discard canonical execution candidate review verification Git claim or attempt evidence]
     deterministicChecks: [harness-agent-identity, suite-simulator-tests, exhausted-correction-disposition, provider-selected-workitem-ownership]
-    expectedOutputs: [status, provider lifecycle snapshot, stalled delivery actions]
+    expectedOutputs: [status, Work-item lifecycle snapshot, stalled delivery actions]
     expectedTerminalStatus: PASS
   - id: combined-regression-after-independent-merges
     priority: 8
@@ -112,7 +112,7 @@ scenarios:
     requiredBehaviors: [Record the selected work items, Keep each accepted merge independent, Wait until every selected item is on main, Record the tested main commit, Run one combined regression, Route a distinct failure as a defect against tested main]
     forbiddenBehaviors: [Run the system-wide regression for every item, Delay an accepted item for the combined regression, Run before every selected item reaches main, Run the same combined regression twice, Invalidate unrelated focused evidence automatically]
     deterministicChecks: [harness-agent-identity, suite-simulator-tests, focused-item-verification, combined-regression-scheduling, output-contract-presence]
-    expectedOutputs: [status, provider lifecycle snapshot, combined regression set and tested main commit, defect routing when applicable]
+    expectedOutputs: [status, Work-item lifecycle snapshot, combined regression set and tested main commit, defect routing when applicable]
     expectedTerminalStatus: PASS
   - id: blockage-recovery-resumes-secondary-dispatch
     priority: 9
@@ -126,5 +126,5 @@ scenarios:
     requiredBehaviors: [Confirm every blockage exit condition, Report ENABLED then ALREADY_MULTITASK for the configured mechanism, Report NOT_APPLICABLE without mutation when no mechanism exists, Reread provider inventory, Apply the central active-queue outcome]
     forbiddenBehaviors: [Load set-solo-mode during resumption, Enable dispatch before recovery completes, Launch secondary work from set-multitask-mode, Diagnose lifecycle state through set-multitask-mode, Require a dispatch-mode skill when no mechanism exists]
     deterministicChecks: [harness-agent-identity, suite-simulator-tests, no-forbidden-mutation, running-capacity-refill, output-contract-presence]
-    expectedOutputs: [status, provider lifecycle snapshot, dispatch and capacity outcome, stalled delivery actions]
+    expectedOutputs: [status, Work-item lifecycle snapshot, dispatch and capacity outcome, stalled delivery actions]
     expectedTerminalStatus: PASS

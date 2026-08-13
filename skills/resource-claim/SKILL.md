@@ -71,7 +71,7 @@ Acquire a claim only for an event in this table. Acquire it immediately before s
 | 6 | Call a shared live model or run a suite against it | live-model:&lt;provider&gt;:&lt;suite&gt;. | After the claimed call or suite ends and its evidence is saved. |
 | 7 | Change a shared installed runtime | shared-install:&lt;target&gt;. | After the claimed installation is verified and stable. |
 | 8 | Change a shared deployment | deployment:&lt;environment&gt;. | After the claimed deployment or rollback reaches a verified final state. |
-| 9 | Perform outcome work or mutate a provider record for one recognized work item | The exact opaque Work Item ID with activity work or update. | At the activity boundary, with disposition done, blocked, or handoff. |
+| 9 | Perform outcome work or mutate Work-item content through its selected Persistence provider | The exact opaque Work Item ID with activity work or update. | At the activity boundary, with disposition done, blocked, or handoff. |
 
 ## Shared Claim Records
 
@@ -173,7 +173,7 @@ Status reports overdue resource claims but never releases one. A configured watc
 
 ## Release Claim
 
-Release the exact named live claim when the matching event ends or ownership is handed off. Release no other claim and treat cleanup as separate from completion, delivery, and provider lifecycle state.
+Release the exact named live claim when the matching event ends or ownership is handed off. Release no other claim and treat cleanup as separate from completion, delivery, and Work-item lifecycle state.
 
 Release of a work-item claim requires disposition exactly done, blocked, or handoff. Blocked may include one blocker reference; when present, it must be a canonical non-empty single-line opaque value of at most 200 characters. A blocker reference is prohibited for done and handoff. Invalid combinations are rejected without changing the live registry. Release of a non-work-item claim keeps the legacy disposition-free behavior.
 
@@ -183,6 +183,6 @@ Use ordinary exclusivity for a strict handoff: the current owner releases with h
 
 Release is claim cleanup only. While holding the registry lock, locate the exact named live claim, validate required work-item release evidence, remove only that claim, persist the registry through the locked file, and append a RELEASED journal event.
 
-Release does not inspect or gate on worktree cleanliness, branches, baseline or current HEAD, ancestry, commits, file contents, delivery state, no-change evidence, or out-of-domain changes. Keep completion, delivery, provider lifecycle, and claim cleanup as separate operations.
+Release does not inspect or gate on worktree cleanliness, branches, baseline or current HEAD, ancestry, commits, file contents, delivery state, no-change evidence, or out-of-domain changes. Keep completion, delivery, Work-item lifecycle, and claim cleanup as separate operations.
 
 Structured claim outcomes and technical claim cleanup or recovery remain agent-owned. Do not turn them into User Action Required unless a separate genuine user-owned decision remains after applying this skill.

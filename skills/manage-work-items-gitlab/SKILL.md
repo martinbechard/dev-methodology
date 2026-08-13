@@ -7,14 +7,14 @@ metadata:
 
 # Manage GitLab Work Items
 
-Manage GitLab issue state while keeping provider lifecycle and delivery completion distinct.
+The Work-item content is the Work-item authority and is stored according to the Persistence provider's specific format. Manage that content in GitLab issues while keeping Work-item lifecycle and delivery completion distinct.
 
 ## Work Item ID
 
 - Accept the GitLab Work Item ID as one opaque input. This provider resolves it to the observed instance, namespace, project, and issue IID, checks collisions through GitLab, and reports the URL only as diagnostic location evidence.
 - Preserve the same Work Item ID across native state changes and terminal organization. Generic callers must not parse its provider-specific components.
 
-Acquire the exact opaque Work Item ID before any work or provider mutation. Use activity work for outcome work and activity update for provider mutation. Release the work-item claim with disposition done, blocked, or handoff at the activity boundary. Blocked may include a bounded blocker reference; when present, it must be canonical, non-empty, single-line, and at most 200 characters. A handoff release must complete before the next owner acquires the same ID. Path and resource claims remain independently applicable. The provider remains the lifecycle authority.
+Acquire the exact opaque Work Item ID before any work or provider mutation. Use activity work for outcome work and activity update for provider mutation. Release the work-item claim with disposition done, blocked, or handoff at the activity boundary. Blocked may include a bounded blocker reference; when present, it must be canonical, non-empty, single-line, and at most 200 characters. A handoff release must complete before the next owner acquires the same ID. Path and resource claims remain independently applicable. The lifecycle state in the Work-item content remains authoritative.
 
 ## Authority And Lookup
 
@@ -52,7 +52,7 @@ Report ambiguous matches and their observed identities instead of guessing which
 
 - When a mutation partially succeeds or observed state contradicts the requested transition, preserve the observed issue and delivery evidence and choose the recovery lifecycle from the effective completion mode. For feature-branch delivery, preserve lifecycle AWAITING_REVIEW for the same delivery identity. For main-branch delivery, preserve lifecycle RUNNING. Record lifecycle BLOCKED when safe reconciliation cannot continue. Never unconditionally reset lifecycle to RUNNING. Return the exact reconciliation action. Do not repeat an ambiguous mutation or create a fallback record.
 - Reopen only when authorized recovery or correction requires a nonterminal lifecycle state. Preserve prior terminal and delivery evidence in GitLab history.
-- Reopen, unblock, or resume from the provider record and accepted delivery evidence rather than inferring success from a task title, stopped task, branch, or merge-request state alone.
+- Reopen, unblock, or resume from the Work-item content and accepted delivery evidence rather than inferring success from a task title, stopped task, branch, or merge-request state alone.
 
 ## Report Work Items
 

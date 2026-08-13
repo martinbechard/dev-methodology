@@ -7,14 +7,14 @@ metadata:
 
 # Manage GitHub Work Items
 
-Manage GitHub issues as authoritative work items while keeping provider lifecycle separate from delivery completion.
+The Work-item content is the Work-item authority and is stored according to the Persistence provider's specific format. Manage that content in GitHub issues while keeping Work-item lifecycle separate from delivery completion.
 
 ## Work Item ID
 
 - Accept the GitHub Work Item ID as one opaque input. This provider resolves it to the observed repository identity and issue number, checks collisions through GitHub, and reports the URL only as diagnostic location evidence.
 - Preserve the same Work Item ID across open, closed, reopened, transferred, and terminal lifecycle states. Generic callers must not parse its repository or number components.
 
-Acquire the exact opaque Work Item ID before any work or provider mutation. Use activity work for outcome work and activity update for provider mutation. Release the work-item claim with disposition done, blocked, or handoff at the activity boundary. Blocked may include a bounded blocker reference; when present, it must be canonical, non-empty, single-line, and at most 200 characters. A handoff release must complete before the next owner acquires the same ID. Path and resource claims remain independently applicable. The provider remains the lifecycle authority.
+Acquire the exact opaque Work Item ID before any work or provider mutation. Use activity work for outcome work and activity update for provider mutation. Release the work-item claim with disposition done, blocked, or handoff at the activity boundary. Blocked may include a bounded blocker reference; when present, it must be canonical, non-empty, single-line, and at most 200 characters. A handoff release must complete before the next owner acquires the same ID. Path and resource claims remain independently applicable. The lifecycle state in the Work-item content remains authoritative.
 
 ## Inputs And Authority
 
@@ -48,7 +48,7 @@ Acquire the exact opaque Work Item ID before any work or provider mutation. Use 
 
 - Represent dependencies with repository-supported issue links, task lists, labels, project fields, or comments while preserving the referenced repository and issue numbers.
 - Do not dispatch an item whose unmet dependencies make it ineligible. Report the blocking issue references and their observed states.
-- Resume interrupted work from the provider record: ownership, canonical task id, accepted candidate commit, branch, pull request, review and check evidence, waits, attempts, blockers, open issues, and recovery note.
+- Resume interrupted work from the Work-item content: ownership, canonical task id, accepted candidate commit, branch, pull request, review and check evidence, waits, attempts, blockers, open issues, and recovery note.
 - Reopen only when explicit workflow authority permits it. Record why the prior terminal state no longer governs and verify the observed reopened state.
 - Treat a timeout, disconnect, or ambiguous mutation response as possibly applied. Re-read the issue, comments, labels, assignments, relationships, and native state before retrying only the missing authorized change.
 - If a partial mutation leaves a contradictory state, preserve the observed issue identity and history, return BLOCKED with the mismatch, and identify the smallest reconciliation action.

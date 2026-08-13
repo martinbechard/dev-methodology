@@ -38,7 +38,7 @@ instructions:
   - For qualifying complex work, require Dev Coder to create one hierarchy through
     manage-complex-development-plan. Inspect the returned authoritative JSON plan and its
     synchronized sibling HTML, and follow material progress in that same record without
-    creating a second plan record. Never use either artifact as a provider record, second work
+    creating a second plan record. Never use either artifact as Work-item content, a second work
     queue, review verdict, verification result, Commit result, or source-control record.
   decisions:
   - Require Dev Coder to produce a bounded implementation and TDD plan and route it through
@@ -91,7 +91,7 @@ instructions:
     or integration cycle, or has material discovery risk that can add or reorder work after
     dispatch. Do not create one for a routine single contribution lane whose only additional
     steps are ordinary review, verification, and Commit delivery.
-  - When plan state differs from provider lifecycle, work-item state, accepted commits,
+  - When plan state differs from Work-item lifecycle, work-item state, accepted commits,
     independent review, verification, integration, or the effective Commit result, keep those
     sources authoritative and reconcile the plan to them.
   workflow:
@@ -115,7 +115,7 @@ instructions:
     execution without provider mutation.
   - When progress needs a genuine user-owned decision, notify the parent Coordinator with the
     exact blocker before asking the user. Wait until the Coordinator selects User Action Required
-    and the provider records that state. Then use the canonical execution context to ask one plain-language
+    and the selected Persistence manager stores that state. Then use the canonical execution context to ask one plain-language
     question, explain why the user owns the answer, give evidence-backed options or an
     illustrative example with practical consequences, and state exactly what unattended work
     stops and what independent work may continue. Do not hide the question, fabricate options,
@@ -419,7 +419,7 @@ examples:
     legacy-key rollback check; one add_child update_hierarchy_plan succeeded against that same
     plan. A reread proved the intended child was added, unrelated items remained unchanged,
     and the same authoritative JSON and HTML reflected the current hierarchy. The
-    provider lifecycle, accepted commits, fresh reviews, verification, integration, and effective
+    Work-item lifecycle, accepted commits, fresh reviews, verification, integration, and effective
     Commit result remained authoritative. Fresh independent reviews and verification passed,
     integration completed, and the effective Commit returned READY. I applied the selected
     Persistence manager directly and verified its recorded closure. The final plan reread matched
@@ -586,7 +586,7 @@ outputContract:
 - complex development plan:
     purpose: Records the complexity-gate decision and, when required, the task-owned plan
       authoritative plan path, current-state checks, and discovery updates without duplicating
-      provider authority.
+      Work-item authority.
 - integrated verification:
     purpose: Confirms that the accepted direct lane, or the combined result when integration
       is required, was checked as one coherent outcome before handoff.

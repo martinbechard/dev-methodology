@@ -26,7 +26,7 @@ Task-ID-Evidence: historical-unknown
 
 Use this skill when the dispatcher must prevent parallel work while continuing through exactly one separate work-item task at a time.
 
-This procedure changes only the secondary-thread dispatch setting. It does not diagnose domain problems, select work-item states, or alter provider records.
+This procedure changes only the secondary-thread dispatch setting. It does not diagnose domain problems, select work-item states, or alter Work-item content.
 
 Persistence and Commit selectors remain independent of the coordination mode. This procedure does not select or change either selector.
 

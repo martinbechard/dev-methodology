@@ -58,9 +58,9 @@ Coders, writers, and other producers create or correct artifacts within their as
 
 ## Visible Work Item Task Launch
 
-For Backlog Dispatcher launches, this project-private skill governs launch topology and takes precedence over the generic root Dev Orchestrator task wording in coordinate-codex-tasks. coordinate-codex-tasks supplies task-control mechanics only. This project-private runtime specialization does not move provider lifecycle, capacity, Persistence, or resource-claim authority to the visible task wrapper. The user-visible Codex task is the canonical Work Item runtime identity. The nested Dev Orchestrator collaboration subagent is not that canonical task.
+For Backlog Dispatcher launches, this project-private skill governs launch topology and takes precedence over the generic root Dev Orchestrator task wording in coordinate-codex-tasks. coordinate-codex-tasks supplies task-control mechanics only. This project-private runtime specialization does not move Work-item lifecycle, capacity, Persistence, or resource-claim authority to the visible task wrapper. The user-visible Codex task is the canonical Work Item runtime identity. The nested Dev Orchestrator collaboration subagent is not that canonical task.
 
-The root Backlog Dispatcher creates exactly one user-visible Codex task. The root Dispatcher gives that visible task the exact Reference-Plus-Delta Launch Prompt below as its initial prompt. The visible task then launches exactly one nested Dev Orchestrator collaboration subagent for the authoritative provider record. The root Dispatcher must not directly launch that hidden collaboration subagent as the Work Item launch. The nested Dev Orchestrator independently records Starting -> Running before any source mutation.
+The root Backlog Dispatcher creates exactly one user-visible Codex task. The root Dispatcher gives that visible task the exact Reference-Plus-Delta Launch Prompt below as its initial prompt. The visible task then launches exactly one nested Dev Orchestrator collaboration subagent for the authoritative Work-item content. The root Dispatcher must not directly launch that hidden collaboration subagent as the Work Item launch. The nested Dev Orchestrator independently records Starting -> Running before any source mutation.
 
 Lifecycle and material Running-phase title operations remain on the visible Codex task and its retained user-visible context. They do not target the nested Dev Orchestrator collaboration subagent. The visible Work Item root task synchronizes its own title immediately after durable authoritative lifecycle or material-phase evidence exists and before reporting that evidence. No separate authorization is required solely for this own-title update.
 
@@ -85,15 +85,15 @@ For this handoff, consult the Coordinator only for an ambiguous answer, conflict
 3. Require one decision for each selected Work Item: reserve and dispatch, resume the canonical execution, retain a truthful non-active state, or identify one concrete user decision.
 4. Do not launch until the provider locator resolves to durable reservation evidence and the Coordinator returns the reference-plus-delta packet as the entire launch payload. Treat canonical resumption as a distinct runtime operation without copied provider or selected-skill facts.
 5. For a new dispatch, create the visible task defined above with the reference-plus-delta packet as its initial prompt. Require the visible wrapper only for a new dispatch. For a resumption, resume the canonical existing execution, including an already-live hidden execution preserved as the existing owner. Do not ask the Coordinator's delegated runtime to create tasks when that runtime lacks the capability and the caller has it.
-6. Return every successful, failed, pending, or ambiguous runtime outcome to the Coordinator with the exact Work Item ID and runtime identity. The Coordinator reconciles provider lifecycle; the dispatcher does not infer that task creation means Running.
+6. Return every successful, failed, pending, or ambiguous runtime outcome to the Coordinator with the exact Work Item ID and runtime identity. The Coordinator reconciles Work-item lifecycle; the dispatcher does not infer that task creation means Running.
 7. Observe the created or resumed task until its identity is stable enough for reconciliation. Use runtime waiting and inspection rather than heartbeat or progress messages.
 8. Forward only a final outcome or one specific Coordinator decision between workers and the Coordinator.
 
 ## Dispatch Packet
 
-A launch prompt contains only one execution action, the root-task runtime-responsibility sentence, the authoritative provider locator, and dispatch-time delta only. The action must launch one Dev Orchestrator subagent for the identified Work Item. Dispatch-time delta is limited to launch-only facts that cannot already be authoritative in the provider record.
+A launch prompt contains only one execution action, the root-task runtime-responsibility sentence, the authoritative provider locator, and dispatch-time delta only. The action must launch one Dev Orchestrator subagent for the identified Work Item. Dispatch-time delta is limited to launch-only facts that cannot already be authoritative in the Work-item content.
 
-Persist every stable assignment fact missing from the provider record before launch. A launch is invalid while a stable assignment fact is absent from the provider record.
+Persist every stable assignment fact missing from the Work-item content before launch. A launch is invalid while a stable assignment fact is absent from the Work-item content.
 
 In this prompt, root task means the visible Work Item root task. It does not mean the root Backlog Dispatcher or the nested Dev Orchestrator.
 
@@ -161,9 +161,9 @@ Successful visible task creation is not Running evidence. The nested Dev Orchest
 
 ## Bounded Successor Execution
 
-For an unusable canonical task, execute only the Coordinator's exact one-successor authorization. Before launch, require the authoritative provider record to show the observed failure of an ordinary required capability during the active workload and exhausted bounded identity-preserving recovery through the same canonical task. A capability-pilot mismatch is not successor evidence and remains on the pilot correction path. Idle, slow, quiet, or an ordinary bounded wait never permits this operation.
+For an unusable canonical task, execute only the Coordinator's exact one-successor authorization. Before launch, require the authoritative Work-item content to show the observed failure of an ordinary required capability during the active workload and exhausted bounded identity-preserving recovery through the same canonical task. A capability-pilot mismatch is not successor evidence and remains on the pilot correction path. Idle, slow, quiet, or an ordinary bounded wait never permits this operation.
 
-Persist all stable recovery evidence in the authoritative provider record before launch. Use the reference-plus-delta launch prompt without copying that evidence. Preserve the old task identity and return the successor or pending identity so the Coordinator can record the durable old-to-new identity handoff. Do not infer either identity from a title, prompt, branch, worktree, or provider path.
+Persist all stable recovery evidence in the authoritative Work-item content before launch. Use the reference-plus-delta launch prompt without copying that evidence. Preserve the old task identity and return the successor or pending identity so the Coordinator can record the durable old-to-new identity handoff. Do not infer either identity from a title, prompt, branch, worktree, or provider path.
 
 Before successor creation, reconcile any prior ambiguous runtime outcome. After an error, timeout, disconnect, or incomplete creation response, reconcile active and archived runtime tasks using the packet evidence. Adopt the one matching successor or stop every duplicate as the Coordinator directs. Do not issue another create operation.
 

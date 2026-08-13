@@ -32,9 +32,9 @@ ROLE_PATHS = {
 
 CANONICAL_STANDING_PROMPT = """Act as the dedicated read-only Dev Methodology backlog watchdog created by runtime parent task {runtime_parent_task_id} for Dev Backlog Coordinator task {coordinator_task_id} in {repository_root}.
 
-Apply skills/coordinate-work-items/SKILL.md for portable capacity, lifecycle reconciliation, Blocked, Stalled, and read-only Watchdog criteria. Apply skills/coordinate-codex-tasks/SKILL.md only for Codex task identity, conversation-title observation, bounded resumption, and archival mapping. Observe task state through runtime tools. On every cycle, obtain the current Blocked inventory, compare every observed canonical Codex task title with the exact title derived from current provider lifecycle and material Running phase, and compare each observed bounded verifier title with its current runtime outcome. Consult provider, Git, and resource records only for those reconciliations or another lifecycle decision, anomaly, dependency, delivery, or cleanup question; do not reconstruct lifecycle history on every cycle.
+Apply skills/coordinate-work-items/SKILL.md for portable capacity, lifecycle reconciliation, Blocked, Stalled, and read-only Watchdog criteria. Apply skills/coordinate-codex-tasks/SKILL.md only for Codex task identity, conversation-title observation, bounded resumption, and archival mapping. Observe task state through runtime tools. On every cycle, obtain the current Blocked inventory, compare every observed canonical Codex task title with the exact title derived from current Work-item lifecycle and material Running phase, and compare each observed bounded verifier title with its current runtime outcome. Consult provider, Git, and resource records only for those reconciliations or another lifecycle decision, anomaly, dependency, delivery, or cleanup question; do not reconstruct lifecycle history on every cycle.
 
-Remain strictly read-only. Do not mutate repository files, provider lifecycle, claims, tasks, branches, worktrees, or shared resources. Do not dispatch, integrate, clean up, archive, or run expensive or live verification. Notify Coordinator task {coordinator_task_id} only when a specific Coordinator decision is required. State the affected item, decision, and smallest recommended action without copying durable evidence into the message. When healthy, send nothing."""
+Remain strictly read-only. Do not mutate repository files, Work-item lifecycle, claims, tasks, branches, worktrees, or shared resources. Do not dispatch, integrate, clean up, archive, or run expensive or live verification. Notify Coordinator task {coordinator_task_id} only when a specific Coordinator decision is required. State the affected item, decision, and smallest recommended action without copying durable evidence into the message. When healthy, send nothing."""
 
 REFERENCE_PLUS_DELTA_LAUNCH_PROMPT = """Launch one Dev Orchestrator subagent to execute Work Item <opaque Work Item ID>.
 As the root task, you provide the Codex title and messaging the subagents may need.
@@ -160,7 +160,7 @@ class CodexTaskControlPackageTests(unittest.TestCase):
             self.normalized,
         )
         self.assertIn(
-            "does not create provider lifecycle authority, delivery authority, or resource ownership",
+            "does not create Work-item lifecycle authority, delivery authority, or resource ownership",
             self.normalized,
         )
         self.assertNotIn("coordinate-codex-tasks", self.portable)
@@ -274,7 +274,7 @@ class CodexTaskControlPackageTests(unittest.TestCase):
             "For Backlog Dispatcher launches, this project-private skill governs launch topology",
             "takes precedence over the generic root Dev Orchestrator task wording in coordinate-codex-tasks",
             "coordinate-codex-tasks supplies task-control mechanics only",
-            "This project-private runtime specialization does not move provider lifecycle, capacity, Persistence, or resource-claim authority to the visible task wrapper",
+            "This project-private runtime specialization does not move Work-item lifecycle, capacity, Persistence, or resource-claim authority to the visible task wrapper",
             "except the direct User Action Required answer recovery assigned below to the nested Dev Orchestrator",
             "The user-visible Codex task is the canonical Work Item runtime identity",
             "The nested Dev Orchestrator collaboration subagent is not that canonical task",
@@ -298,7 +298,7 @@ class CodexTaskControlPackageTests(unittest.TestCase):
         sequence = (
             "The root Backlog Dispatcher creates exactly one user-visible Codex task",
             "The root Dispatcher gives that visible task the exact Reference-Plus-Delta Launch Prompt below as its initial prompt",
-            "The visible task then launches exactly one nested Dev Orchestrator collaboration subagent for the authoritative provider record",
+            "The visible task then launches exactly one nested Dev Orchestrator collaboration subagent for the authoritative Work-item content",
             "The nested Dev Orchestrator independently records Starting -> Running before any source mutation",
         )
 
@@ -573,8 +573,8 @@ class CodexTaskControlPackageTests(unittest.TestCase):
         normalized_contract = " ".join(packet_contract.split())
 
         for clause in (
-            "Persist every stable assignment fact missing from the provider record before launch",
-            "A launch is invalid while a stable assignment fact is absent from the provider record",
+            "Persist every stable assignment fact missing from the Work-item content before launch",
+            "A launch is invalid while a stable assignment fact is absent from the Work-item content",
             "Reject a launch prompt that copies provider requirements, scope, acceptance criteria, or verification expectations",
             "Reject a launch prompt that copies lifecycle, claim, review, verification, delivery, cleanup, or recovery procedures from selected skills",
             "Reject generic task or worker wording and any instruction to reconstruct root awareness",
@@ -638,7 +638,7 @@ class CodexTaskControlPackageTests(unittest.TestCase):
 
     def test_successor_preserves_durable_authority_and_runs_once(self) -> None:
         for clause in (
-            "provider record and complete Work Item content",
+            "complete Work-item content",
             "accepted commit",
             "branch and worktree",
             "applicable claims",

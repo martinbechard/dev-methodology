@@ -2816,8 +2816,8 @@ class BundleContentTests(unittest.TestCase):
             "Obtain queue inventory, lifecycle counts, provider identities, and dispatchable state only by applying the effective Persistence-selected management skill.",
             "Provider file uses ordinary repository backlog identities through its selected file-provider manager.",
             "Do not scan or count Future Ideas unless the parent explicitly requests ideation or promotion.",
-            "Provider github uses GitHub issue identities and provider lifecycle evidence.",
-            "Provider gitlab uses GitLab issue identities and provider lifecycle evidence.",
+            "Provider github uses GitHub issue identities and Work-item lifecycle evidence.",
+            "Provider gitlab uses GitLab issue identities and Work-item lifecycle evidence.",
             "Provider azure-devops or jira applies the selected placeholder management skill, preserves its BLOCKED zero-mutation result, and does not fall back.",
             "Provider none has no durable inventory, count, creation, transition, or closure.",
             "Apply or resume the effective Commit-selected skill only after candidate review and source verification accept the direct or combined commit.",
@@ -3174,7 +3174,7 @@ class BundleContentTests(unittest.TestCase):
             "unaffected items remain unchanged",
             "completed development evidence",
             "Do not install or import",
-            "not a provider record",
+            "not Work-item content",
         ):
             with self.subTest(required_contract=required_contract):
                 self.assertIn(required_contract, skill_text)
@@ -3254,7 +3254,7 @@ class BundleContentTests(unittest.TestCase):
             for decision in instructions["decisions"]
             if "When plan state differs" in decision
         )
-        self.assertIn("provider lifecycle", authority_decision)
+        self.assertIn("Work-item lifecycle", authority_decision)
         self.assertIn("effective Commit result", authority_decision)
 
         workflow = instructions["workflow"]
@@ -3317,7 +3317,7 @@ class BundleContentTests(unittest.TestCase):
             "authoritative plan path",
             "current-state checks",
             "discovery updates",
-            "without duplicating provider authority",
+            "without duplicating Work-item authority",
         ):
             self.assertIn(output_field, complex_plan_output)
 
@@ -3345,7 +3345,7 @@ class BundleContentTests(unittest.TestCase):
             "one child for a newly discovered subtask",
             "without creating a second plan record",
             "follow material progress",
-            "provider lifecycle",
+            "Work-item lifecycle",
         ):
             with self.subTest(role_phrase=phrase):
                 self.assertIn(phrase, role_text)
@@ -3947,7 +3947,7 @@ class BundleContentTests(unittest.TestCase):
             "Treat Work Item ID as one opaque provider-owned identifier.",
             "Resolve the effective Persistence selection",
             "Apply the exact selected create-work-item provider implementation. Do not call a different provider as a fallback.",
-            "Let the provider own duplicate detection, creation authority, mutation, partial-mutation recovery, and read-after-write verification.",
+            "Let the provider own duplicate detection, the creation operation, mutation, partial-mutation recovery, and read-after-write verification.",
             "Return CREATED, EXISTING, or BLOCKED",
             "CREATED and EXISTING require provider-observed identity and state.",
             "BLOCKED names the failed authority, capability, ambiguity, or verification boundary",
@@ -5208,7 +5208,7 @@ class BundleContentTests(unittest.TestCase):
                     self.assertIn(clause, source_text)
 
         for recovery_evidence in (
-            "provider record and complete Work Item content",
+            "complete Work-item content",
             "accepted commit",
             "branch and worktree",
             "applicable claims",
@@ -5275,12 +5275,12 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(copied_recovery_content=copied_recovery_content):
                 self.assertNotIn(copied_recovery_content, successor_contract)
         self.assertIn(
-            "Persist all stable recovery evidence in the authoritative provider record",
+            "Persist all stable recovery evidence in the authoritative Work-item content",
             successor_contract,
         )
 
         dispatcher_reference_contract = (
-            "persist every stable assignment fact missing from the provider record before launch",
+            "persist every stable assignment fact missing from the Work-item content before launch",
             "authoritative provider locator",
             "dispatch-time delta only",
             "preserve the bytes and evidence",
@@ -10515,7 +10515,7 @@ Visible after.
             "Release the work-item claim with disposition done, blocked, or handoff at the activity boundary.",
             "Blocked may include a bounded blocker reference; when present, it must be canonical, non-empty, single-line, and at most 200 characters.",
             "Path and resource claims remain independently applicable.",
-            "The provider remains the lifecycle authority.",
+            "The lifecycle state in the Work-item content remains authoritative.",
         )
         for source_name, text in provider_texts.items():
             for required_contract in required_contracts:
@@ -10531,7 +10531,7 @@ Visible after.
             "Use activity work for outcome work and activity update for provider mutation.",
             "Release the work-item claim with disposition done, blocked, or handoff at the activity boundary.",
             "Path and resource claims remain independently applicable.",
-            "The provider remains the lifecycle authority.",
+            "The lifecycle state in the Work-item content remains authoritative.",
         ):
             with self.subTest(source="coordinate-work-items", required_contract=required_contract):
                 self.assertIn(required_contract, coordination_text)
@@ -10654,7 +10654,7 @@ Visible after.
             "A configured watchdog decides whether a live claim is stale.",
             "A heartbeat does not extend a deadline.",
             "Release is claim cleanup only.",
-            "Keep completion, delivery, provider lifecycle, and claim cleanup as separate operations.",
+            "Keep completion, delivery, Work-item lifecycle, and claim cleanup as separate operations.",
         ):
             with self.subTest(claim_contract=required_contract):
                 self.assertIn(required_contract, claim_text)
@@ -11696,9 +11696,9 @@ Visible after.
         )
         role = load_yaml_object(role_path)
         lifecycle_snapshot = next(
-            entry["provider lifecycle snapshot"]["purpose"]
+            entry["Work-item lifecycle snapshot"]["purpose"]
             for entry in role["outputContract"]
-            if "provider lifecycle snapshot" in entry
+            if "Work-item lifecycle snapshot" in entry
         )
         self.assertIn("STALLED", lifecycle_snapshot)
 
@@ -11723,7 +11723,7 @@ Visible after.
         for generated_path in generated_paths:
             with self.subTest(generated_path=generated_path):
                 rendered = generated_path.read_text(encoding="utf-8")
-                self.assertIn("provider lifecycle snapshot", rendered)
+                self.assertIn("Work-item lifecycle snapshot", rendered)
                 self.assertIn("STALLED", rendered)
 
     def test_backlog_roles_reconcile_active_evidence_before_refilling_capacity(
@@ -12703,7 +12703,7 @@ Visible after.
             "Completed",
             "Awaiting Review",
             "Archive placement is provider-owned diagnostic evidence, not another lifecycle status",
-            "When Persistence is selected, the Work item is the durable provider record",
+            "When Persistence is selected, the Work-item content is the Work-item authority",
             "Backlog Coordinator",
             "Backlog Watchdog",
             "Backlog Steward",
@@ -12765,7 +12765,7 @@ Visible after.
             "Archive placement is not another lifecycle status.",
             "The Coordinator commits Ready to Starting, releases its claim",
             "The new execution commits Starting to Running through its own claim.",
-            "The Work item is the only durable provider record.",
+            "The Work-item content is the Work-item authority.",
             "matching native agents",
             "observed Coordinator campaign",
             "terminal campaign task",

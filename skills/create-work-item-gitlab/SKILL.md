@@ -7,7 +7,7 @@ metadata:
 
 # Create Work Item GitLab
 
-Create one independently actionable GitLab issue without creating a shadow queue.
+The Work-item content is the Work-item authority and is stored according to the Persistence provider's specific format. Create one independently actionable GitLab issue without creating a shadow queue.
 
 ## Work Item ID
 
@@ -33,7 +33,7 @@ Create one independently actionable GitLab issue without creating a shadow queue
 
 ## Delivery Boundary
 
-- The GitLab issue is the work-item record. A branch, commit, or merge request is delivery evidence, not the work-item identifier.
+- The GitLab issue stores the Work-item content. A branch, commit, or merge request is delivery evidence, not the Work-item identifier.
 - Issue creation does not prove delivery completion. Use merge request, approval, pipeline, and merge terminology accurately when later evidence is recorded.
 - When delivery is hosted somewhere other than GitLab, record that host and its provider-accurate delivery reference without changing the GitLab work-item provider.
 

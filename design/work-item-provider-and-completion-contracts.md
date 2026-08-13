@@ -7,6 +7,8 @@ This contract separates two project decisions:
 - The Persistence selector chooses where durable work items are created and managed.
 - The Commit selector chooses how verified delivery reaches a terminal state.
 
+The Work-item content is the Work-item authority and is stored according to the Persistence provider's specific format.
+
 The selectors compose independently. A repository, remote, template, installed tool, existing queue, or hosting account is evidence about available capabilities, not authority to select either value.
 
 This document is the policy source for the provider, completion, renderer, role, evaluation, migration, and installed-bundle work that implements these contracts. It defines the intended steady state; it does not itself rename skills or implement provider tools.
@@ -19,11 +21,11 @@ PROJECT.yaml owns both selectors. The canonical keys are workflow_selection.pers
 
 | Value | Meaning | Create skill | Manage skill | Operational support |
 | --- | --- | --- | --- | --- |
-| file | Repository files under backlog are authoritative. | create-work-item-file | manage-work-items-file | Supported |
-| github | GitHub issues are authoritative. | create-work-item-github | manage-work-items-github | Supported when the configured GitHub issue interface is available and authorized |
-| gitlab | GitLab issues are authoritative. | create-work-item-gitlab | manage-work-items-gitlab | Supported when the configured GitLab issue interface is available and authorized |
-| azure-devops | Azure DevOps work items are authoritative in principle. | create-work-item-azure-devops | manage-work-items-azure-devops | Unsupported placeholder; every create or manage operation returns BLOCKED without mutation |
-| jira | Jira issues are authoritative in principle. | create-work-item-jira | manage-work-items-jira | Unsupported placeholder; every create or manage operation returns BLOCKED without mutation |
+| file | Work-item content is stored in repository files under backlog. | create-work-item-file | manage-work-items-file | Supported |
+| github | Work-item content is stored in GitHub issues. | create-work-item-github | manage-work-items-github | Supported when the configured GitHub issue interface is available and authorized |
+| gitlab | Work-item content is stored in GitLab issues. | create-work-item-gitlab | manage-work-items-gitlab | Supported when the configured GitLab issue interface is available and authorized |
+| azure-devops | Work-item content would be stored in Azure DevOps work items. | create-work-item-azure-devops | manage-work-items-azure-devops | Unsupported placeholder; every create or manage operation returns BLOCKED without mutation |
+| jira | Work-item content would be stored in Jira issues. | create-work-item-jira | manage-work-items-jira | Unsupported placeholder; every create or manage operation returns BLOCKED without mutation |
 | none | The project has no durable work-item provider. | None | None | Supported for explicitly interactive work only; terminal evidence remains in the task result and durable create or manage operations are invalid |
 | UNSET | The project has not selected a provider. | Not resolved | Not resolved | The pertinent agent asks for a user decision before a provider operation |
 
@@ -36,7 +38,7 @@ The create-work-item Interface Skill owns the provider-neutral creation contract
 Every lifecycle consumer loads manage-work-items for the opaque identity, canonical lifecycle,
 result vocabulary, and five public procedures. Project guidance selects exactly one management
 provider from Persistence. The selected provider preserves the interface meanings while it owns
-native inventory, authority, mutation, recovery, completion, and reporting behavior.
+native inventory, storage, mutation, recovery, completion, and reporting behavior.
 
 ### Commit selector
 
@@ -63,7 +65,7 @@ The matrix distinguishes a valid executable combination, a valid decision bounda
 | gitlab | Valid. Manage the GitLab issue and complete after main observation. | Valid. Manage the GitLab issue, publish a merge request, enter AWAITING_REVIEW, and complete after merge observation. | Decision required before implementation or delivery; do not infer completion. |
 | azure-devops | Valid selector pair but operationally BLOCKED at the provider boundary. No external or local mutation. | Valid selector pair but operationally BLOCKED at the provider boundary. No external or local mutation. | Provider operations are BLOCKED; a later completion operation also requires an explicit decision. |
 | jira | Valid selector pair but operationally BLOCKED at the provider boundary. No external or local mutation. | Valid selector pair but operationally BLOCKED at the provider boundary. No external or local mutation. | Provider operations are BLOCKED; a later completion operation also requires an explicit decision. |
-| none | Valid only for an explicit interactive work item that needs no durable provider lifecycle. Return READY with task-local COMPLETED evidence after main observation. | Valid only for an explicit interactive work item that needs no durable provider lifecycle. Publish, record task-local AWAITING_REVIEW, then return READY with task-local COMPLETED evidence after merge observation. | Decision required before implementation or delivery. Durable create and manage operations remain invalid. |
+| none | Valid only for an explicit interactive work item that needs no durable Work-item lifecycle. Return READY with task-local COMPLETED evidence after main observation. | Valid only for an explicit interactive work item that needs no durable Work-item lifecycle. Publish, record task-local AWAITING_REVIEW, then return READY with task-local COMPLETED evidence after merge observation. | Decision required before implementation or delivery. Durable create and manage operations remain invalid. |
 | UNSET | Provider decision required before provider persistence; an already explicit interactive item may proceed only if the user also explicitly chooses no durable provider. | Provider decision required before provider persistence; an already explicit interactive item may proceed only if the user also explicitly chooses no durable provider. | Both decisions remain open and must be requested at their respective operation boundaries. |
 
 The following combinations or uses are invalid and fail validation or operation dispatch with an actionable error:
@@ -77,9 +79,9 @@ The following combinations or uses are invalid and fail validation or operation 
 - A provider issue or work-item reference used as delivery evidence without the completion selector's required commit and merge evidence.
 - An override that attempts to encode provider and completion as one combined identifier.
 
-## Canonical Work-Item Record
+## Canonical Work-Item Content
 
-Every provider maps its native record to the following logical fields. Providers may store fields in issue bodies, labels, project fields, comments, file sections, or native state, but they must preserve the field's meaning and recovery evidence.
+Every provider maps its native storage object to the following logical fields. Providers may store fields in issue bodies, labels, project fields, comments, file sections, or native state, but they must preserve the field's meaning and recovery evidence.
 
 ### Identity and creation
 
@@ -135,10 +137,10 @@ Every provider maps its native record to the following logical fields. Providers
 | publication_evidence | Host-observed branch and pull-request or merge-request state when feature-branch is selected. |
 | merge_evidence | Host or Git evidence that the configured merge occurred. Publication alone never supplies this field. |
 | main_observation | Commit identity plus proof that it is reachable from the configured main branch. |
-| terminal_evidence | Provider lifecycle update, delivery evidence, claim release, and final state needed to prove the terminal outcome. For provider none, the interactive task result owns this evidence and the provider-update component is not applicable. |
+| terminal_evidence | Work-item lifecycle update, delivery evidence, claim release, and final state needed to prove the terminal outcome. For provider none, the interactive task result owns this evidence and the Persistence-update component is not applicable. |
 | completed_at | Time completion was recorded after all terminal evidence existed. |
 
-Sensitive, private, proprietary, credential, or company-internal evidence must remain in an appropriate private evidence store. A public provider record may link to a safe reference but must not disclose unsuitable content.
+Sensitive, private, proprietary, credential, or company-internal evidence must remain in an appropriate private evidence store. Public Work-item content may link to a safe reference but must not disclose unsuitable content.
 
 ## Exact Work-Item Claim Contract
 
@@ -146,7 +148,7 @@ The claim system exposes one provider-independent scope keyed by the complete op
 
 A work-item claim is separate from path and shared-resource claims. Apply each independently when its event occurs. A work-item claim does not grant repository-path or runtime-resource ownership, and those operational claims do not grant work-item ownership.
 
-Before outcome work or provider mutation begins, the owner acquires the exact Work Item ID. At the activity boundary it releases with disposition exactly done, blocked, or handoff. Blocked may include one bounded opaque blocker reference; when present it must be canonical, non-empty, single-line, and at most 200 characters. Done and handoff prohibit that reference. Strict handoff sequencing uses ordinary exclusivity: the current owner releases with handoff before the next owner acquires the same ID. The provider remains the durable lifecycle authority throughout this claim sequence.
+Before outcome work or provider mutation begins, the owner acquires the exact Work Item ID. At the activity boundary it releases with disposition exactly done, blocked, or handoff. Blocked may include one bounded opaque blocker reference; when present it must be canonical, non-empty, single-line, and at most 200 characters. Done and handoff prohibit that reference. Strict handoff sequencing uses ordinary exclusivity: the current owner releases with handoff before the next owner acquires the same ID. The lifecycle state in the Work-item content remains authoritative throughout this claim sequence.
 
 The live registry and status preserve work_item_id and activity with the existing claim ID, incarnation ID, owner, root task, claim and heartbeat timestamps, checkout fields, and acquisition outcome. Acquisition, conflict, and release journal events preserve the same identity plus event outcome, release disposition, and blocker reference when applicable. Invalid or missing acquisition and release combinations are structured rejections and do not change the live registry. Legacy non-work-item releases remain disposition-free.
 
@@ -161,7 +163,7 @@ one absent destination, and one atomic rationale. manage-work-items-file retains
 move, and archive transactions. An unknown operation, invalid role shape, or missing, inferred,
 wildcard, directory, partial, or mismatched manifest is invalid.
 
-The shared creation transaction applies only to canonical provider records under backlog. Its
+The shared creation transaction applies only to canonical file-provider Work-item files under backlog. Its
 promotion source must be a retained canonical Future Idea. Created destinations must be absent
 and use exclusive-create. Immutable proof covers the complete operation manifest.
 
@@ -237,7 +239,7 @@ Example Work Item ID: jira.example issue PROJ-42.
 
 ### None and UNSET
 
-Provider none is an explicit decision that durable provider lifecycle is out of scope. It permits an interactive work item normalized in the active task, but it cannot satisfy a request to create, inventory, recover, or close a durable work item.
+Provider none is an explicit decision that durable Work-item lifecycle is out of scope. It permits an interactive work item normalized in the active task, but it cannot satisfy a request to create, inventory, recover, or close a durable work item.
 
 For provider none, the active task result is the complete non-durable record. It carries the normalized interactive work-item fields, completion disposition, source and integration commits, review and check evidence, main observation, clean claim state, lifecycle status COMPLETED, and completed-at time. Work Item ID, provider-native state, provider ownership mutation, provider terminal update, and provider manager are not applicable. The completion skill performs this task-local finalization after its delivery proof and does not dispatch a nonexistent provider skill.
 
@@ -247,12 +249,12 @@ Provider UNSET preserves the undecided state. At the first operation that requir
 
 Two state dimensions remain separate:
 
-- Provider lifecycle status describes the work item from creation through terminal recording. Its values are listed in the table below. For provider none, the same lifecycle status exists only in the active task result.
-- Completion disposition is returned by the selected completion skill. READY means the delivery proof is complete and the provider lifecycle update is ready to apply; AWAITING_REVIEW means feature-branch publication is valid but merge proof is incomplete; BLOCKED means the completion process cannot advance safely.
+- Work-item lifecycle status describes the work item from creation through terminal recording. Its values are listed in the table below. For provider none, the same lifecycle status exists only in the active task result.
+- Completion disposition is returned by the selected completion skill. READY means the delivery proof is complete and the Work-item lifecycle update is ready to apply; AWAITING_REVIEW means feature-branch publication is valid but merge proof is incomplete; BLOCKED means the completion process cannot advance safely.
 
-READY as a completion disposition is not the provider lifecycle status READY. A provider-backed item with completion disposition READY remains lifecycle RUNNING until its provider manager records terminal evidence and lifecycle COMPLETED. Provider none has no manager, so the completion skill records lifecycle COMPLETED in the task result before returning completion disposition READY.
+READY as a completion disposition is not the Work-item lifecycle status READY. A provider-backed item with completion disposition READY remains lifecycle RUNNING until its provider manager records terminal evidence and lifecycle COMPLETED. Provider none has no manager, so the completion skill records lifecycle COMPLETED in the task result before returning completion disposition READY.
 
-The canonical provider lifecycle vocabulary is provider-neutral while native provider state remains provider-accurate.
+The canonical Work-item lifecycle vocabulary is provider-neutral while native provider state remains provider-accurate.
 
 | State | Entry condition | Permitted next states | Required evidence |
 | --- | --- | --- | --- |
@@ -268,7 +270,7 @@ The canonical provider lifecycle vocabulary is provider-neutral while native pro
 
 Provider-native open, closed, reopened, resolved, done, label, assignee, board, or project-field states map to this vocabulary. They do not redefine it. A native closed state without required completion evidence is inconsistent and must be reconciled, not accepted as proof.
 
-Azure DevOps and Jira placeholder operations return BLOCKED without creating a remote or file-backed record. When no durable record exists, the task result carries the BLOCKED evidence; it must not pretend that a provider lifecycle transition was persisted.
+Azure DevOps and Jira placeholder operations return BLOCKED without creating a remote or file-backed storage object. When no durable Work-item content exists, the task result carries the BLOCKED evidence; it must not pretend that a Work-item lifecycle transition was persisted.
 
 ## Completion Contracts
 
@@ -312,11 +314,11 @@ Branch publication, a ready review, an approved review, green checks, a closed d
 
 - A failed publish, review, check, integration, or main observation prevents completion disposition READY and lifecycle COMPLETED.
 - After completion disposition READY has been returned, a failed or partially observed provider terminal update preserves READY as the successful delivery handoff but prohibits lifecycle COMPLETED. For feature-branch delivery, preserve lifecycle AWAITING_REVIEW for the same delivery identity. For main-branch delivery, preserve lifecycle RUNNING. Record lifecycle BLOCKED when safe reconciliation cannot continue. Never unconditionally reset lifecycle to RUNNING. A retry does not rerun or invalidate already accepted delivery evidence unless that evidence has become stale or contradictory.
-- A correctable review finding preserves durable AWAITING_REVIEW for the same delivery identity while correction work resumes on the same item and branch. It does not transition the provider lifecycle back to RUNNING.
+- A correctable review finding preserves durable AWAITING_REVIEW for the same delivery identity while correction work resumes on the same item and branch. It does not transition the Work-item lifecycle back to RUNNING.
 - AWAITING_REVIEW never authorizes lifecycle COMPLETED. Its one nonterminal Persistence update is distinct from the one terminal update authorized only by later Commit READY evidence.
 - A provider terminal-update failure after merge follows the same delivery-mode recovery lifecycle while preserving delivery disposition READY and its evidence until reconciliation succeeds.
 - A missing merge after successful publication remains AWAITING_REVIEW, not BLOCKED, unless a concrete prerequisite or failure prevents review or merge.
-- A stale or interrupted execution resumes from the provider record, accepted candidate commit, claims, delivery reference, checks, and open issues rather than inferring success from a stopped task.
+- A stale or interrupted execution resumes from the Work-item content, accepted candidate commit, claims, delivery reference, checks, and open issues rather than inferring success from a stopped task.
 
 ## Selector Decision And Validation Rules
 
@@ -340,11 +342,11 @@ The migration is atomic at the accepted steady state. Compatibility behavior exi
 | file-based-backlog | create-work-item-file and manage-work-items-file | Absorb routing and authority rules into the symmetric pair, then retire the routing skill. No compatibility alias after the migration gate. |
 | github-issues-backlog | create-work-item-github and manage-work-items-github | Split creation from management while preserving GitHub issue authority and no-shadow-file behavior, then retire the combined skill. |
 | execute-workitem | deliver-work-item, deliver-work-item-main-branch, and deliver-work-item-feature-branch | Move normalized shared delivery fields into the interface and split completion behavior by selector. Retire process selection from execute-workitem after all callers migrate. |
-| execute-workitem terminal READY | Completion disposition READY plus provider lifecycle COMPLETED | Preserve READY as the completion skill's successful delivery disposition, not a provider lifecycle state. Migrate roles, callers, examples, and evaluations so READY authorizes the required provider lifecycle update; only the provider manager, or the provider-none task result, records lifecycle COMPLETED. |
+| execute-workitem terminal READY | Completion disposition READY plus Work-item lifecycle COMPLETED | Preserve READY as the completion skill's successful delivery disposition, not a Work-item lifecycle state. Migrate roles, callers, examples, and evaluations so READY authorizes the required Work-item lifecycle update; only the provider manager, or the provider-none task result, records lifecycle COMPLETED. |
 | simple-workitem | main-branch | Replace the prototype process value and reference with the main-branch completion selector and skill. Preserve the stricter main-observation terminal rule. |
 | feature-branch-workitem | feature-branch | Replace the prototype process value and reference with the feature-branch completion selector and skill. Extend publication-only AWAITING_REVIEW into observed-merge completion. |
 | create-pull-request | deliver-work-item-feature-branch | Retain as a subordinate GitHub publication capability when used by the completion skill. It does not own terminal completion. GitLab uses a merge-request capability and terminology. |
-| integrate-agent-work | completion skill selected by PROJECT.yaml | Retain as an integration capability for concurrent branches and worktrees. It supplies merge evidence but does not own provider lifecycle. |
+| integrate-agent-work | completion skill selected by PROJECT.yaml | Retain as an integration capability for concurrent branches and worktrees. It supplies merge evidence but does not own Work-item lifecycle. |
 | resource-claim | provider and completion skills | Retain as shared mutation-authority infrastructure. File provider operations and completion operations use separate narrow claim scopes. |
 
 Creation providers belong to the create-work-item-* family, and create-work-item publishes their shared contract. Management providers belong to the manage-work-items-* family, and manage-work-items publishes their shared contract. The completion interface is deliver-work-item. Its providers are deliver-work-item-main-branch and deliver-work-item-feature-branch.

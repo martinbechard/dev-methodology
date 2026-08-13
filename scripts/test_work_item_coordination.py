@@ -28,6 +28,66 @@ ROLE_PATHS = {
         "dev-orchestrator",
     )
 }
+CANONICAL_WORK_ITEM_AUTHORITY = (
+    "The Work-item content is the Work-item authority and is stored according to the "
+    "Persistence provider's specific format."
+)
+CURRENT_TERMINOLOGY_PATHS = (
+    Path(".agents/skills/backlog-dispatcher/SKILL.md"),
+    Path("README.md"),
+    Path("skills/create-work-item/SKILL.md"),
+    Path("skills/create-work-item-file/SKILL.md"),
+    Path("skills/create-work-item-github/SKILL.md"),
+    Path("skills/create-work-item-gitlab/SKILL.md"),
+    Path("skills/manage-work-items/SKILL.md"),
+    Path("skills/manage-work-items-file/SKILL.md"),
+    Path("skills/manage-work-items-github/SKILL.md"),
+    Path("skills/manage-work-items-gitlab/SKILL.md"),
+    Path("skills/manage-work-items-azure-devops/SKILL.md"),
+    Path("skills/manage-work-items-jira/SKILL.md"),
+    Path("skills/coordinate-work-items/SKILL.md"),
+    Path("skills/coordinate-codex-tasks/SKILL.md"),
+    Path("skills/resource-claim/SKILL.md"),
+    Path("skills/manage-complex-development-plan/SKILL.md"),
+    Path("skills/deliver-work-item-main-branch/SKILL.md"),
+    Path("skills/set-multitask-mode/SKILL.md"),
+    Path("skills/set-solo-mode/SKILL.md"),
+    Path("agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"),
+    Path("agents/roles/dev-activities/dev-backlog-steward.role.yaml"),
+    Path("agents/roles/dev-activities/dev-backlog-watchdog.role.yaml"),
+    Path("agents/roles/dev-activities/dev-orchestrator.role.yaml"),
+    Path("design/work-item-provider-and-completion-contracts.md"),
+    Path("design/orchestrated-development-lifecycle.html"),
+    Path("design/documentation-templates.html"),
+    Path("design/agents/work-item-dispatching-and-delivery.md"),
+    Path("design/agents/review-and-verification.md"),
+    Path("design/agentic-configuration.html"),
+    Path("evals/agent-scenarios.yaml"),
+    Path("evals/judges.yaml"),
+    Path("evals/agent-tests/dev-backlog-coordinator/scenarios.yaml"),
+    Path("evals/agent-tests/dev-backlog-coordinator/fixtures/cases.yaml"),
+    Path(
+        "evals/agent-tests/dev-backlog-coordinator/skills/"
+        "dev-backlog-coordinator-suite-contract/SKILL.md"
+    ),
+    Path("evals/agent-tests/dev-backlog-watchdog/scenarios.yaml"),
+    Path("evals/agent-tests/dev-backlog-watchdog/watchdog_simulator.py"),
+    Path(
+        "evals/agent-tests/dev-backlog-watchdog/skills/"
+        "dev-backlog-watchdog-suite-contract/SKILL.md"
+    ),
+    Path("design/generated/skill-definitions.js"),
+    Path("design/generated/role-definitions.js"),
+    Path("design/agent-and-skill-evaluations.html"),
+)
+GENERIC_PROVIDER_RECORD_PATTERN = re.compile(
+    r"(?<!file-)\bprovider records?\b", re.IGNORECASE
+)
+PROVIDER_AUTHORITY_PATTERNS = (
+    re.compile(r"\bprovider lifecycle (?:is )?authoritative\b", re.IGNORECASE),
+    re.compile(r"\bprovider records? as lifecycle authority\b", re.IGNORECASE),
+    re.compile(r"\bprovider remains (?:the durable )?lifecycle authority\b", re.IGNORECASE),
+)
 
 
 def _section(text: str, heading: str) -> str:
@@ -104,7 +164,7 @@ class WorkItemCoordinationPackageTests(unittest.TestCase):
     def test_portable_skill_keeps_provider_and_delivery_authority_external(self) -> None:
         normalized = " ".join(self.portable.split())
         for clause in (
-            "effective Persistence-selected provider record is the durable work-item authority",
+            CANONICAL_WORK_ITEM_AUTHORITY,
             "Git records branches, commits, delivery, and cleanup eligibility; it is not a work-item provider",
             "When resource-claim is loaded, use its Claim Events table and supporting rules",
             "effective Commit-selected skill",
@@ -113,6 +173,28 @@ class WorkItemCoordinationPackageTests(unittest.TestCase):
         ):
             with self.subTest(clause=clause):
                 self.assertIn(clause, normalized)
+
+    def test_current_methodology_uses_work_item_content_authority(self) -> None:
+        """Reject generic storage terminology on every maintained current surface."""
+
+        self.assertIn(CANONICAL_WORK_ITEM_AUTHORITY, self.portable)
+        errors: list[str] = []
+        paths = list(CURRENT_TERMINOLOGY_PATHS)
+        paths.extend(
+            path.relative_to(ROOT)
+            for path in (ROOT / "generated" / "adapters").glob("*/agents/*")
+            if path.is_file()
+        )
+        for path in paths:
+            text = (ROOT / path).read_text(encoding="utf-8")
+            for match in GENERIC_PROVIDER_RECORD_PATTERN.finditer(text):
+                errors.append(f"{path}: generic {match.group(0)!r}")
+                break
+            for pattern in PROVIDER_AUTHORITY_PATTERNS:
+                if match := pattern.search(text):
+                    errors.append(f"{path}: provider authority {match.group(0)!r}")
+                    break
+        self.assertEqual([], errors, "\n".join(errors))
 
     def test_starting_and_running_use_portable_execution_evidence(self) -> None:
         normalized = " ".join(self.portable.split())
@@ -218,7 +300,7 @@ class WorkItemCoordinationPackageTests(unittest.TestCase):
         for clause in (
             "never performs scheduling or recovery",
             "outside the provider queue and active capacity",
-            "must not change repository files, provider records, lifecycle state, claims",
+            "must not change repository files, Work-item content, lifecycle state, claims",
             "Notify the Coordinator only when a specific decision is required",
             "When no decision is required, send nothing",
         ):

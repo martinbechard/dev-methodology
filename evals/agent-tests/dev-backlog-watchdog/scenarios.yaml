@@ -40,7 +40,7 @@ scenarios:
     targetSkills: [coordinate-work-items, coordinate-codex-tasks]
     allowedAgentDependencies: []
     requiredBehaviors: [Identify the affected provider identity, Report the satisfied exit condition, Recommend Coordinator validation and disposition, Preserve owner and diagnostic evidence, Require the authorized Coordinator to directly apply any selected-provider mutation through the effective Persistence manager]
-    forbiddenBehaviors: [Choose Running Ready Blocked User Action Required or terminal disposition, Create a synthetic inventory, Mutate a provider record task claim branch or worktree, Dispatch another agent]
+    forbiddenBehaviors: [Choose Running Ready Blocked User Action Required or terminal disposition, Create a synthetic inventory, Mutate Work-item content task claim branch or worktree, Dispatch another agent]
     deterministicChecks: [harness-agent-identity, suite-simulator-tests, provider-selector-routing, no-forbidden-mutation, output-contract-presence]
     expectedOutputs: [actionable parent alert]
     expectedTerminalStatus: PASS
@@ -76,12 +76,12 @@ scenarios:
     priority: 15
     status: executable
     executableCase: fixtures/cases.yaml
-    purpose: Detect stale or noncanonical conversation titles from current provider lifecycle and Running phase without treating display state as lifecycle authority.
+    purpose: Detect stale or noncanonical conversation titles from current Work-item lifecycle and Running phase without treating display state as lifecycle authority.
     initialState: One Blocked task is titled Waiting for Help and one Completed task is titled Completed instead of Done.
     task: Compare each canonical task title with the exact title contract and send one aggregate Coordinator alert for reconciliation.
     targetSkills: [coordinate-work-items, coordinate-codex-tasks]
     allowedAgentDependencies: []
-    requiredBehaviors: [Resolve current provider lifecycle before evaluating title, Require Blocked for the Blocked task, Require Done for the Completed task, Send one aggregate parent alert, Preserve provider and runtime state byte-identically]
+    requiredBehaviors: [Resolve current Work-item lifecycle before evaluating title, Require Blocked for the Blocked task, Require Done for the Completed task, Send one aggregate parent alert, Preserve provider and runtime state byte-identically]
     forbiddenBehaviors: [Infer lifecycle from title, Rename a task, Mutate provider task claim Git branch worktree or resource state, Suppress drift because a task is idle terminal or archived]
     deterministicChecks: [harness-agent-identity, suite-simulator-tests, no-forbidden-mutation, singular-alert, output-contract-presence]
     expectedOutputs: [actionable parent alert]
@@ -92,11 +92,11 @@ scenarios:
     executableCase: fixtures/cases.yaml
     purpose: Prevent a completed bounded verifier from remaining visibly in the active Verifying phase.
     initialState: A bounded verifier has completed but its runtime title still starts with Verifying.
-    task: Derive the title from the bounded runtime outcome and alert the Coordinator to apply Done without changing provider lifecycle.
+    task: Derive the title from the bounded runtime outcome and alert the Coordinator to apply Done without changing Work-item lifecycle.
     targetSkills: [coordinate-work-items, coordinate-codex-tasks]
     allowedAgentDependencies: []
     requiredBehaviors: [Observe the bounded verifier outcome, Derive Done from completed runtime state, Send one parent alert, Preserve provider and runtime state byte-identically]
-    forbiddenBehaviors: [Treat the verifier title as provider lifecycle, Rename the task, Mutate provider task claim Git branch worktree or resource state]
+    forbiddenBehaviors: [Treat the verifier title as Work-item lifecycle, Rename the task, Mutate provider task claim Git branch worktree or resource state]
     deterministicChecks: [harness-agent-identity, suite-simulator-tests, no-forbidden-mutation, singular-alert, output-contract-presence]
     expectedOutputs: [actionable parent alert]
     expectedTerminalStatus: PASS
@@ -133,7 +133,7 @@ scenarios:
     status: executable
     executableCase: fixtures/cases.yaml
     purpose: Detect when provider preservation evidence contradicts current Git or runtime state.
-    initialState: A Blocked provider record says its candidate branch and worktree are preserved, while Git and runtime show them absent and retain only the candidate commit.
+    initialState: Blocked Work-item content says its candidate branch and worktree are preserved, while Git and runtime show them absent and retain only the candidate commit.
     task: Alert the Coordinator to reconcile preservation evidence and restore only the required recovery pointer.
     targetSkills: [coordinate-work-items, coordinate-codex-tasks]
     allowedAgentDependencies: []

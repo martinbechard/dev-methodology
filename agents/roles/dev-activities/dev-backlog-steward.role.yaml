@@ -75,7 +75,7 @@ instructions:
     its evidence without reimplementing recovery.
 modelProfile: simple
 examples:
-- purpose: Audit terminal provider records without wrapping ordinary lifecycle operations.
+- purpose: Audit terminal Work-item content without wrapping ordinary lifecycle operations.
   runtimeInvocations:
     codex: "$dev_backlog_steward Audit completed file-backed items for stale active duplicates and report exact recovery actions."
     claude-code: "@agent-dev-backlog-steward Audit completed file-backed items for stale active duplicates and report exact recovery actions."

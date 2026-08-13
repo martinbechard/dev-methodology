@@ -6,7 +6,7 @@ cases:
     nonRunningStatuses: [Blocked, User Action Required, Holding]
     targetRunningItems: 10
     expectedDispatchCount: 3
-    durableRecord: selected provider records
+    durableRecord: selected Work-item content
     forbiddenRegistry: separate parent task ledger
   blockage-dispatch-modes:
     expectedResults: [DISABLED, ALREADY_SOLO, ENABLED, ALREADY_MULTITASK, NOT_APPLICABLE]
