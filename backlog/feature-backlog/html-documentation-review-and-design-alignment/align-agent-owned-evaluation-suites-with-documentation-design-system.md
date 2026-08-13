@@ -2,7 +2,7 @@
 
 Owner: Dev Orchestrator
 
-Status: User Action Required
+Status: Blocked
 
 Type: Feature
 
@@ -196,7 +196,7 @@ The remaining alternatives both expand authority beyond the accepted implementat
 
 ### Resolution
 
-Pending.
+The user authorized Option B: create and deliver a focused dev-methodology defect that supports verified configured canonical primary branches, including `master`, while retaining primary-worktree-only authority.
 
 ### Unattended Work Boundary
 
@@ -205,6 +205,19 @@ Do not rename an upstream branch, create upstream provider records, change gover
 - Provider Update Claim: `agent-owned-primary-branch-authority-019ff2c3`; event `9e3d097c-8998-470f-8707-b1f28a0fecb1`.
 - Provider Paths Claim: `agent-owned-primary-branch-provider-path-019ff2c3`; acquisition event `c6426fe8-cc0d-424c-a80b-169fba885e57`; destination extension event `b4b42000-5277-4958-8668-44a1f8ad58e9`.
 - Required Runtime Title: `Waiting for User — Align Agent-Owned Evaluation Suites With Documentation Design System`.
+
+### Configured-Primary-Branch Recovery Dependency
+
+- Recorded At: 2026-08-13T22:45:00Z.
+- Transition: `User Action Required -> Blocked`.
+- Resolved Decision: Option B is approved. Do not ask the branch-authority question again.
+- Recovery Work Item: `support-configured-primary-branches-in-file-provider-transactions`.
+- Exact Blocker: The selected file provider cannot create the authorized upstream record until the recovery Work Item completes and its configured-primary-branch contract is installed and revision-matched.
+- Recovery Owner: Dev Backlog Coordinator through crisis epoch `blocked-crisis-20260813T223935Z`.
+- Unblock Condition: The recovery Work Item is Completed on main, applicable installed skill bytes are refreshed, and a revision-matched load proves atomic provider authority for `py-json-render`'s configured canonical `master` primary worktree.
+- Preserved Canonical Task and Conversation: `019ffc96-f685-7481-b2eb-1557d82119bf` on host `local`.
+- Required Runtime Title: `Blocked — Align Agent-Owned Evaluation Suites With Documentation Design System`.
+- Crisis Coordination: Added back to the active crisis set as a dependent Blocked item. No claim operation was used after the epoch reset.
 
 ### Transition Evidence
 
