@@ -126,24 +126,37 @@ Dependency Resolution: Satisfied by completed Work Item `review-agent-owned-eval
 
 ### Question for the User
 
-Should `scripts/build-agent-skill-evaluation-docs.py` become the authoritative generator for `design/agent-owned-evaluation-suites.html` as a second deterministic output?
+Should the authorized upstream `py-json-render` work use a file-backed backlog under `/Users/martinbechard/dev/py-json-render/backlog`?
 
 ### Why User Input Is Required
 
-Choosing the durable authoritative source for a maintained documentation page changes its future maintenance ownership. The current implementation evidence cannot make that product and documentation-governance decision.
+The user approved using and extending `py-json-render` and authorized creation of its upstream backlog items, but that project's Persistence provider remains `UNSET`. Provider selection belongs to the user and cannot be inferred from the repository path or available skills.
 
 ### Options and Tradeoffs
 
-- **Yes — expand the generator (recommended):** Preserve the accepted page semantics, generate both evaluation pages deterministically, and add freshness tests proving both outputs remain synchronized. This centralizes shared evaluation-page ownership but couples both pages to one generator.
-- **No — keep the page independently maintained:** Do not expand the generator. Revise this task's plan around an independently owned page and record how generated-output freshness is satisfied or seek a documented variation. If the existing acceptance contract cannot be satisfied, the item remains nonterminal.
+- **Yes — select file-backed persistence:** Use the file provider and create authorized upstream work items under `/Users/martinbechard/dev/py-json-render/backlog`. This keeps the upstream queue in that repository and enables the approved generator work to be recorded there.
+- **No — choose another provider:** Name the intended supported provider. Upstream work remains paused until that provider is configured and available.
 
 ### Resolution
 
-Pending in canonical Task and Conversation `019ffc96-f685-7481-b2eb-1557d82119bf`.
+Original Decision: The user said exactly `ok I added the py-json-render project, you can create backlog items for it`. This approves the recommended use and extension of `py-json-render` and authorizes creating its upstream backlog items.
+
+Current Decision: Pending selection of the `py-json-render` Persistence provider in canonical Task and Conversation `019ffc96-f685-7481-b2eb-1557d82119bf`.
 
 ### Unattended Work Boundary
 
-Do not mutate, review, verify, deliver, or close this Work Item until the user answers in its canonical visible task. Preserve the accepted semantic baseline, plan, execution identity, and all evidence. Unrelated eligible Work Items may continue.
+Do not create upstream provider records or resume implementation until the user selects the `py-json-render` Persistence provider in the canonical visible task. Preserve the accepted semantic baseline, plan, candidate if any, execution identity, and all evidence. Unrelated eligible Work Items may continue.
+
+### Provider-Selection Reconciliation
+
+- Recorded At: 2026-08-13T21:54:17Z.
+- Canonical Task and Conversation: `019ffc96-f685-7481-b2eb-1557d82119bf` on host `local`.
+- Satisfied Gate: Generator ownership and upstream-project authorization are resolved by the exact user answer recorded above.
+- Current Gate: `py-json-render` Persistence is `UNSET`; the user must select file-backed persistence or name another supported provider.
+- Lifecycle: Remains `User Action Required`; no implementation, upstream provider creation, task replacement, or capacity use is authorized.
+- Provider Update Claim: `update-agent-owned-suites-upstream-provider-question-019ff2c3`; event `bffb7169-77e5-49e9-b2fa-f401c175988e`.
+- Provider Path Claim: `update-agent-owned-suites-upstream-provider-path-019ff2c3`; event `9c4931c2-3c10-4d8d-a6b5-e8ee21486071`.
+- Required Runtime Title: `Waiting for User — Align Agent-Owned Evaluation Suites With Documentation Design System`.
 
 ### Transition Evidence
 
