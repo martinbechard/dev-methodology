@@ -209,3 +209,15 @@ Until this feature is delivered, the current short backlog-domain claim requirem
 - Dispatch Architecture: Create exactly one user-visible Codex task. Its initial reference-plus-delta prompt starts one Dev Orchestrator collaboration subagent for this provider record.
 - Transition Claim: `start-durable-defect-terminal-reconciliation-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `e64fb1b9-3bf7-448a-aa94-66714a00a01d`.
 - Next Reconciliation: Adopt the exact visible task identity. Its nested Dev Orchestrator records Starting -> Running before any provider reconciliation or mutation.
+
+## Current Canonical Runtime Assignment
+
+- Assigned At: 2026-08-13T06:11:51Z.
+- Codex Task ID: `019ff9bf-5c7e-79d1-b966-8a5f209ebb25`.
+- Conversation ID: `019ff9bf-5c7e-79d1-b966-8a5f209ebb25`.
+- Host: `local`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Requested Title: `Starting — Require Durable Defect Logging And Direct-Main Creation`.
+- Initial Action: Start one Dev Orchestrator collaboration subagent for this authoritative provider record.
+- Creation Outcome: Unique success with no pending client identity and no retry.
+- Lifecycle Boundary: This assignment remains Starting until the nested Dev Orchestrator accepts and records Starting -> Running.
