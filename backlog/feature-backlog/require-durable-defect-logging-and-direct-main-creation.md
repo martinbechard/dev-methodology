@@ -1,6 +1,6 @@
 # Require Durable Defect Logging And Direct-Main Work-Item Creation
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -196,3 +196,16 @@ None.
 ## Notes
 
 Until this feature is delivered, the current short backlog-domain claim requirement remains in force. This Ready item is not authorization to change a governed canonical definition without a user-approved exact scope and approval record.
+
+## Current Terminal-Reconciliation Reservation
+
+- Reserved At: 2026-08-13T06:10:45Z.
+- Transition: `Ready -> Starting`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Baseline: `9d77328df4bd40c1bd5da986ffd9644cf2a6ce53` on primary `main`.
+- Finish-Lane Decision: This is the oldest eligible independent process item and retains prior accepted delivery and terminal evidence. Reconcile that evidence before considering new implementation.
+- Live Git Reconciliation: Accepted commit `503de4bc4cfd28155f6f4e2c020581889a24687e` and final policy commit `637760d006058eac74f7b2b65622f7f67a18a6ad` are ancestors of current main. The recorded source branch and worktree are absent. Claims are empty.
+- Dispatch Architecture: Create exactly one user-visible Codex task. Its initial reference-plus-delta prompt starts one Dev Orchestrator collaboration subagent for this provider record.
+- Transition Claim: `start-durable-defect-terminal-reconciliation-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `e64fb1b9-3bf7-448a-aa94-66714a00a01d`.
+- Next Reconciliation: Adopt the exact visible task identity. Its nested Dev Orchestrator records Starting -> Running before any provider reconciliation or mutation.
