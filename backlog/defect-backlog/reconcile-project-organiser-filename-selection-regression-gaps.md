@@ -1,6 +1,6 @@
 # Reconcile Project Organiser Filename-Selection Regression Gaps
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -90,3 +90,21 @@ None.
 - Runtime Created At: `2026-08-13T15:53:35Z` (`1786636415`).
 - Requested Title: `Starting — Reconcile Project Organiser Filename Selection Regression Gaps`; the runtime preview is ellipsized only.
 - Runtime Creation Outcome: Unique success with no client or pending identity. Creation does not imply Running.
+
+## Running Acceptance Evidence
+
+- Transition: `Starting -> Running`.
+- Accepted At: 2026-08-13T15:55:20Z.
+- Owner: Dev Orchestrator `/root/reconcile_project_organiser`.
+- Canonical Task ID: `019ffbd4-33a1-7e91-8460-1f5ab8a10bcd`.
+- Canonical Conversation ID: `019ffbd4-33a1-7e91-8460-1f5ab8a10bcd`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Accepted Branch: `main`.
+- Accepted Worktree: `/Users/martinbechard/dev/dev-methodology` (primary worktree).
+- Accepted Baseline: `e31b4ea5c69c7bb256bb40090598d4f7ee29b284`.
+- Phase: implementation and TDD planning before source mutation.
+- Commit Selection: `main-branch` through `deliver-work-item-main-branch`.
+- Work-Item Update Claim: `reconcile-project-organiser-regression-update-019ffbd4`; acquisition event `05266bf0-fef3-4fe0-bc52-71f4fe803fc8`.
+- Provider Path Claim: `reconcile-project-organiser-regression-backlog-019ffbd4`; acquisition event `9f5680b4-70e4-4270-ad6f-2084bc4f4c7a`.
+- Accepted Execution: The canonical Codex task is running, the selected file-provider manager accepted this exact transition evidence, and source mutation remains gated on planning and independent architecture review.
