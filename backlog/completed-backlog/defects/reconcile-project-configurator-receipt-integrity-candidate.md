@@ -115,3 +115,13 @@ None.
 - Delivery Disposition: `READY` through the configured `main-branch` completion contract. No remote publication requirement was configured for this item.
 - Terminal Provider Claim: `complete-reconcile-project-configurator-receipt-integrity-work-item`; event `748cd10e-64ba-4aba-8d76-98dddc13ae9a`.
 - Terminal Backlog Claim: `complete-reconcile-project-configurator-receipt-integrity-provider`; event `87b4979f-8505-42fd-b9ce-bc43ef021e9e`.
+
+## External Cleanup Evidence
+
+- Cleanup Reconciled At: 2026-08-13T15:12:27Z.
+- Claims: Configured schema-v2 status contained no Receipt ownership before cleanup.
+- Source Checkout: Clean worktree at `ea4649db` removed non-forced; exact source branch deleted after minus-only delivery equivalence was rechecked.
+- Plan Preservation: Plan branch tip `a247686` contained only `project-configurator-receipt-integrity-plan-019ffb0c.{json,html}`. Exact blobs were preserved as untracked primary evidence before the clean plan worktree and branch were removed. SHA-256: JSON `2bae7e66a891d5b306fc4a79314eb3dfa0074837317d43165ab9decaa3db0c6e`; HTML `d7a2073624b5bb5c51716a9f6f26128f7a13b3b3e6dc3a759e396f0aebd88128`.
+- Git Cleanup: Both exact worktree registrations, directories, and branch refs are absent; metadata was pruned. Detached worktree `69b1` and unrelated plan artifacts were preserved.
+- Runtime Persistence Limitation: Exact Task/Conversation `019ffb0c-4e81-73a2-abd5-a7fd6b76dd83`, host `local`, remains archived with status `notLoaded` and title `Completed — Reconcile Project Configurator Receipt Integrity`. The governed title correction returned `no rollout found for thread id`; the task was not reopened, re-archived, or replaced. Terminal provider and delivery evidence remain authoritative.
+- Provider Mutation Claim: `record-receipt-cleanup-and-offline-task-provider`; event `3d036bc6-4aec-45e1-baaa-bf2391854a75`.

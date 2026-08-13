@@ -77,3 +77,17 @@ None.
 - Dispatch Architecture: Create one visible Codex task whose initial prompt launches one Dev Orchestrator subagent and states the visible root title-and-messaging responsibility.
 - Transition Claims: Work Item `start-offline-staging-strict-schema-work-item`; event `198251b6-5468-42f4-92d0-a829582c9d9e`. Provider `start-offline-staging-strict-schema-provider`; event `3172aaa9-ed3c-46e5-8842-b7df75e61c27`.
 - Runtime Identity: Pending caller-owned visible task creation. Creation does not imply Running.
+
+## Canonical Runtime Assignment
+
+- Assigned At: 2026-08-13T15:11:59Z.
+- Codex Task ID: `019ffbae-1b4f-7f02-99af-5502621100d3`.
+- Conversation ID: `019ffbae-1b4f-7f02-99af-5502621100d3`.
+- Host: `local`.
+- Created At: 2026-08-13T15:11:59Z (`1786633919`).
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Requested Title: `Starting — Reconcile Offline Staging And Strict Result Schema`.
+- Initial Action: The visible root starts one Dev Orchestrator subagent for this authoritative Work Item and owns required Codex title and subagent messaging.
+- Creation Outcome: Unique direct `threadId` and host success in the saved dev-methodology project, with no client or pending identity and no retry. The UI display ellipsized the requested title without changing its requested value.
+- Lifecycle Boundary: This assignment remains `Starting` until the nested Dev Orchestrator accepts and records `Starting -> Running`.
+- Adoption Claim: Work Item `adopt-offline-staging-task`; event `8c96c8d6-85f1-4030-b0f5-8ded6d922bf2`.
