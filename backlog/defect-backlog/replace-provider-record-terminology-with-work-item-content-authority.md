@@ -1,6 +1,6 @@
 # Replace Provider-Record Terminology with Work-Item Content Authority
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -69,3 +69,17 @@ None.
 
 - Historical archived Work items remain evidence of the terminology in use when they were created and are not migration targets.
 - This defect changes terminology and conceptual authority only; it does not redesign Persistence providers or lifecycle behavior.
+
+## Starting Handoff Evidence
+
+- Reserved At: 2026-08-13T13:08:59Z.
+- Transition: `Ready -> Starting`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Baseline: `5a6fd30cc79d12ceedd85f5f08b3091565a844a0` on primary `main`.
+- Capacity: Uses one of two available slots after `estimate-agent-work` entered User Action Required and `keep-user-decisions-in-visible-worker-tasks` completed external cleanup. Active usage becomes four of five.
+- Dependencies: None. The item is independent of active evaluation-terminology, dependency-routing, and Project Configurator receipt work.
+- Overlap: The completed dispatcher correction is already integrated on `main`. The new execution must claim exact approved paths before mutation and reconcile any later shared generated-output overlap rather than acquiring broad ownership.
+- Dispatch Architecture: Create one visible Codex task whose initial prompt launches one Dev Orchestrator subagent and states the visible root title-and-messaging responsibility.
+- Transition Claims: Work Item `start-replace-provider-record-terminology-work-item`; event `374ca7bf-24e1-4712-b916-b7d6f0219342`. Provider `start-replace-provider-record-terminology-provider`; event `1955c585-35ee-4e91-b08f-7b308df9eed4`.
+- Runtime Identity: Pending caller-owned visible task creation. Creation does not imply Running.
