@@ -142,3 +142,13 @@ Approved by the user's 2026-08-13 instruction to log the defect and update all l
 - Exclusions: Project Bootstrapper and Project Configurator role definitions, delivery skills, runtime adapters unrelated to the approved skill projections, `py-json-render`, and branch rename or remote-default mutation remain excluded unless a concrete implementation finding proves one is unavoidable and returns to the Coordinator before mutation.
 - Plan Gate: Correct the existing plan to this boundary and obtain fresh technical acceptance before source mutation. Do not substitute static prose assertions for executable main/master/wrong/unset/worktree behavior.
 - Required Runtime Title: `Implementing — Support Configured Primary Branches In File Provider Transactions`.
+
+### Required Future-Ideas Consumer Expansion
+
+- Recorded At: 2026-08-13T22:55:00Z.
+- Decision: Approved as the smallest complete boundary. `manage-future-ideas` directly invokes `commit-file-provider-transaction` for capture and promotion and independently hard-codes primary-main authority. Leaving it unchanged would still reject a verified configured `master` before the corrected shared transaction runs.
+- Additional Governed Canonical Source: `skills/manage-future-ideas/SKILL.md`, limited to consuming the same verified configured-primary-branch authority contract.
+- Additional Dependent Scope: Only directly affected `README.md`, maintained design-contract statements, Future Ideas evaluation/probe assertions, and focused bundle/transaction tests that contain or enforce the obsolete literal-main authority. Mechanically generated projections remain generator-owned.
+- Required Behavior: Future Ideas capture and promotion must accept verified configured `main` and `master`, and reject wrong, unset, linked, detached, or Git-inferred authority through the same shared resolver and transaction boundary.
+- Exclusions: No change to Future Ideas lifecycle, provider selection, promotion semantics, duplicate rules, record format, or transaction mechanics beyond primary-branch authority.
+- Review Gate: Update the authoritative plan with this exact consumer and dependent assertion manifest, then obtain one fresh architecture acceptance before source mutation.
