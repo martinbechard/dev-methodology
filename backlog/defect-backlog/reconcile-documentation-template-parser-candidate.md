@@ -68,3 +68,16 @@ None.
 - Capacity: Slot 5 of 5. Independent Dev Documentation Writer parser-fixture scope; exclude private Backlog Dispatcher, provenance, evaluation terminology, and Dev Orchestrator routing paths.
 - Transition Claims: `start-reconcile-documentation-template-parser-candidate-work-item`; event `15cd995b-42fc-4349-b444-1e6285b3566d`. `start-reconcile-documentation-template-parser-candidate-provider`; event `2a464966-4444-480a-ad81-fc595bbe1e79`.
 - Runtime Identity: Pending caller-owned visible task creation. Creation does not imply Running.
+
+## Canonical Runtime Assignment
+
+- Assigned At: 2026-08-13T11:46:27Z.
+- Codex Task ID: `019ffaf1-8f30-7470-b274-de3293c49bec`.
+- Conversation ID: `019ffaf1-8f30-7470-b274-de3293c49bec`.
+- Host: `local`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Requested Title: `Starting — Reconcile Documentation Template Parser Candidate`.
+- Initial Action: Launch one Dev Orchestrator subagent for this authoritative provider record.
+- Creation Outcome: Unique success decoded from a complete JSON-string envelope, with no client or pending identity and no retry.
+- Lifecycle Boundary: This assignment remains `Starting` until the nested Dev Orchestrator accepts and records `Starting -> Running`.
+- Adoption Claims: `adopt-reconcile-documentation-template-parser-candidate-visible-task`; event `e19fe050-5824-40ea-8e61-7bcc73f3889a`. `adopt-reconcile-documentation-template-parser-candidate-provider`; event `c2558b55-6929-4697-ab70-1ba6646d4e99`.
