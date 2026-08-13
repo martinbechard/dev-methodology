@@ -9748,6 +9748,15 @@ class BundleContentTests(unittest.TestCase):
         ).read_text(encoding="utf-8")
         self.assertIn("CONFIGURED-PRIMARY-BRANCH-MISMATCH", task_text)
         self.assertNotIn("NON-MAIN-AUTHORITY", task_text)
+        design_text = (
+            REPOSITORY_ROOT
+            / "design"
+            / "work-item-provider-and-completion-contracts.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn(
+            "Configured-primary-branch-only file authority", design_text
+        )
+        self.assertNotIn("Primary-main-only file authority", design_text)
 
     def test_file_work_item_skills_own_behavior_after_legacy_retirement(self) -> None:
         primary_root = resolve_primary_repository_root()

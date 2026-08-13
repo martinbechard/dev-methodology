@@ -423,7 +423,7 @@ Each downstream implementation must provide focused evidence for its owned part 
 - Every cell in the combination matrix, including invalid operations.
 - Symmetric create and manage identifier mapping for every provider.
 - Shared-field round trips without provider-inaccurate naming.
-- Primary-main-only file authority and absence of provider shadow files.
+- Configured-primary-branch-only file authority and absence of provider shadow files.
 - No-mutation BLOCKED behavior for Azure DevOps and Jira.
 - Main-branch main-observation and feature-branch AWAITING_REVIEW-to-merge behavior.
 - Recovery from interrupted integration, review, provider update, and terminal recording.
