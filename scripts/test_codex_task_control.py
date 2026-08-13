@@ -37,6 +37,7 @@ Apply skills/coordinate-work-items/SKILL.md for portable capacity, lifecycle rec
 Remain strictly read-only. Do not mutate repository files, provider lifecycle, claims, tasks, branches, worktrees, or shared resources. Do not dispatch, integrate, clean up, archive, or run expensive or live verification. Notify Coordinator task {coordinator_task_id} only when a specific Coordinator decision is required. State the affected item, decision, and smallest recommended action without copying durable evidence into the message. When healthy, send nothing."""
 
 REFERENCE_PLUS_DELTA_LAUNCH_PROMPT = """Launch one Dev Orchestrator subagent to execute Work Item <opaque Work Item ID>.
+As the root task, you provide the Codex title and messaging the subagents may need.
 Authoritative provider: <provider locator>
 Dispatch-time delta: <launch-only facts absent from the provider, or none>"""
 
@@ -197,7 +198,14 @@ class CodexTaskControlPackageTests(unittest.TestCase):
 
         self.assertEqual(REFERENCE_PLUS_DELTA_LAUNCH_PROMPT, launch_prompt)
         self.assertEqual(1, launch_prompt.count("Launch one Dev Orchestrator subagent"))
-        self.assertEqual(3, len(launch_prompt.splitlines()))
+        self.assertEqual(4, len(launch_prompt.splitlines()))
+        self.assertEqual(
+            1,
+            launch_prompt.count(
+                "As the root task, you provide the Codex title and messaging "
+                "the subagents may need."
+            ),
+        )
         for copied_heading in (
             "Requirements:",
             "Scope:",
@@ -225,6 +233,8 @@ class CodexTaskControlPackageTests(unittest.TestCase):
             "For Backlog Dispatcher launches, this project-private skill governs launch topology",
             "takes precedence over the generic root Dev Orchestrator task wording in coordinate-codex-tasks",
             "coordinate-codex-tasks supplies task-control mechanics only",
+            "This project-private runtime specialization does not move provider lifecycle, capacity, Persistence, or resource-claim authority to the visible task wrapper",
+            "except the direct User Action Required answer recovery assigned below to the nested Dev Orchestrator",
             "The user-visible Codex task is the canonical Work Item runtime identity",
             "The nested Dev Orchestrator collaboration subagent is not that canonical task",
         ):
@@ -265,6 +275,110 @@ class CodexTaskControlPackageTests(unittest.TestCase):
         ):
             with self.subTest(clause=clause):
                 self.assertIn(clause, normalized_contract)
+
+    def test_visible_root_prompt_defines_title_and_messaging_owner(self) -> None:
+        launch_prompt = _prompt_template(
+            self.dispatcher,
+            "Reference-Plus-Delta Launch Prompt",
+        )
+
+        self.assertEqual(REFERENCE_PLUS_DELTA_LAUNCH_PROMPT, launch_prompt)
+        for clause in (
+            "root task means the visible Work Item root task",
+            "It does not mean the root Backlog Dispatcher or the nested Dev Orchestrator",
+        ):
+            with self.subTest(clause=clause):
+                self.assertIn(clause, self.normalized_dispatcher)
+
+    def test_user_action_required_question_stays_in_visible_context(self) -> None:
+        for clause in (
+            "visible Work Item root task owns the user-facing question and retained conversation",
+            "one exact clear question with concrete examples or options",
+            "The question must not exist only in the hidden nested Dev Orchestrator context",
+            "The root Backlog Dispatcher must not become the waiting conversation or relay the question or answer",
+        ):
+            with self.subTest(clause=clause):
+                self.assertIn(clause, self.normalized_dispatcher)
+
+    def test_visible_root_synchronizes_own_title_before_reporting(self) -> None:
+        for clause in (
+            "synchronizes its own title immediately after durable authoritative lifecycle or material-phase evidence exists",
+            "before reporting that evidence",
+            "No separate authorization is required solely for this own-title update",
+            "Waiting for User — short work-item title",
+        ):
+            with self.subTest(clause=clause):
+                self.assertIn(clause, self.normalized_dispatcher)
+
+    def test_clear_answer_runs_ordered_recovery_directly(self) -> None:
+        handoff = self.dispatcher.split(
+            "## User Action Required Handoff",
+            1,
+        )[1].split("## Dispatch Workflow", 1)[0]
+        normalized_handoff = " ".join(handoff.split())
+        sequence = (
+            "forwards the user's clear answer directly to its nested Dev Orchestrator",
+            "persists that exact answer through the selected Persistence manager",
+            "records User Action Required -> Ready",
+            "Ready -> Starting",
+            "Starting -> Running",
+            "resumes the preserved work",
+        )
+
+        for clause in sequence:
+            with self.subTest(clause=clause):
+                self.assertIn(clause, normalized_handoff)
+        positions = [normalized_handoff.index(clause) for clause in sequence]
+        self.assertEqual(sorted(positions), positions)
+
+    def test_user_action_required_preserves_same_task_and_evidence(self) -> None:
+        for clause in (
+            "preserves the same canonical visible Work Item root task",
+            "candidate, provider evidence, and resumption context",
+            "must not replace or archive that preserved task while the answer is pending",
+        ):
+            with self.subTest(clause=clause):
+                self.assertIn(clause, self.normalized_dispatcher)
+
+    def test_recovery_reacquires_claims_only_at_claim_events(self) -> None:
+        self.assertIn(
+            "reacquires each claim only at its applicable Claim Event boundary",
+            self.normalized_dispatcher,
+        )
+
+    def test_user_action_required_releases_active_capacity(self) -> None:
+        self.assertIn(
+            "User Action Required releases active execution capacity",
+            self.normalized_dispatcher,
+        )
+        self.assertNotIn(
+            "User Action Required retains active execution capacity",
+            self.normalized_dispatcher,
+        )
+
+    def test_dispatcher_continues_unrelated_eligible_work(self) -> None:
+        self.assertIn(
+            "continues dispatching unrelated eligible Work Items",
+            self.normalized_dispatcher,
+        )
+        self.assertIn(
+            "does not wait for the user's answer",
+            self.normalized_dispatcher,
+        )
+
+    def test_user_action_required_escalation_has_bounded_exceptions(self) -> None:
+        self.assertIn(
+            "For this handoff, consult the Coordinator only for",
+            self.normalized_dispatcher,
+        )
+        for clause in (
+            "an ambiguous answer",
+            "conflicting authoritative evidence",
+            "an out-of-scope request or authority expansion",
+            "a cross-item priority or capacity decision",
+        ):
+            with self.subTest(clause=clause):
+                self.assertIn(clause, self.normalized_dispatcher)
 
     def test_resumption_preserves_canonical_live_hidden_execution(self) -> None:
         launch_contract = self.dispatcher.split(

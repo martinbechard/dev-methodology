@@ -36,7 +36,7 @@ The Coordinator owns:
 
 - authoritative provider inventory and lifecycle reconciliation;
 - dependency, capacity, finish-lane, overlap, ownership, claim, Watchdog, re-homing, and cleanup decisions;
-- Ready-to-Starting reservations and other Coordinator-owned provider transitions;
+- Ready-to-Starting reservations and other Coordinator-owned provider transitions, except the direct User Action Required answer recovery assigned below to the nested Dev Orchestrator;
 - selection of the canonical existing execution or authorization to create one;
 - the reference-plus-delta launch packet as the entire launch payload, or authorization to resume the canonical existing execution without copied provider or selected-skill facts.
 
@@ -58,13 +58,21 @@ Coders, writers, and other producers create or correct artifacts within their as
 
 ## Visible Work Item Task Launch
 
-For Backlog Dispatcher launches, this project-private skill governs launch topology and takes precedence over the generic root Dev Orchestrator task wording in coordinate-codex-tasks. coordinate-codex-tasks supplies task-control mechanics only. The user-visible Codex task is the canonical Work Item runtime identity. The nested Dev Orchestrator collaboration subagent is not that canonical task.
+For Backlog Dispatcher launches, this project-private skill governs launch topology and takes precedence over the generic root Dev Orchestrator task wording in coordinate-codex-tasks. coordinate-codex-tasks supplies task-control mechanics only. This project-private runtime specialization does not move provider lifecycle, capacity, Persistence, or resource-claim authority to the visible task wrapper. The user-visible Codex task is the canonical Work Item runtime identity. The nested Dev Orchestrator collaboration subagent is not that canonical task.
 
 The root Backlog Dispatcher creates exactly one user-visible Codex task. The root Dispatcher gives that visible task the exact Reference-Plus-Delta Launch Prompt below as its initial prompt. The visible task then launches exactly one nested Dev Orchestrator collaboration subagent for the authoritative provider record. The root Dispatcher must not directly launch that hidden collaboration subagent as the Work Item launch. The nested Dev Orchestrator independently records Starting -> Running before any source mutation.
 
-Lifecycle and material Running-phase title operations remain on the visible Codex task and its retained user-visible context. They do not target the nested Dev Orchestrator collaboration subagent.
+Lifecycle and material Running-phase title operations remain on the visible Codex task and its retained user-visible context. They do not target the nested Dev Orchestrator collaboration subagent. The visible Work Item root task synchronizes its own title immediately after durable authoritative lifecycle or material-phase evidence exists and before reporting that evidence. No separate authorization is required solely for this own-title update.
 
 Preserve an already-live hidden Work Item execution as its existing owner until it stops or completes. Do not create a visible replacement task while that hidden execution is live, and do not launch duplicate implementation.
+
+## User Action Required Handoff
+
+When durable authoritative evidence records User Action Required, the visible Work Item root task owns the user-facing question and retained conversation. It presents one exact clear question with concrete examples or options, and the visible worker authors its wording. The question must not exist only in the hidden nested Dev Orchestrator context. The visible task synchronizes its own title to Waiting for User — short work-item title under the immediate own-title rule above.
+
+User Action Required releases active execution capacity and preserves the same canonical visible Work Item root task, candidate, provider evidence, and resumption context. The root Backlog Dispatcher must not become the waiting conversation or relay the question or answer. It continues dispatching unrelated eligible Work Items and does not wait for the user's answer. It must not replace or archive that preserved task while the answer is pending.
+
+The visible task forwards the user's clear answer directly to its nested Dev Orchestrator. The nested Dev Orchestrator persists that exact answer through the selected Persistence manager, records User Action Required -> Ready, then Ready -> Starting, then Starting -> Running, reacquires each claim only at its applicable Claim Event boundary, and resumes the preserved work. For this handoff, consult the Coordinator only for an ambiguous answer, conflicting authoritative evidence, an out-of-scope request or authority expansion, or a cross-item priority or capacity decision.
 
 ## Dispatch Workflow
 
@@ -79,14 +87,17 @@ Preserve an already-live hidden Work Item execution as its existing owner until 
 
 ## Dispatch Packet
 
-A launch prompt contains only one execution action, the authoritative provider locator, and dispatch-time delta only. The action must launch one Dev Orchestrator subagent for the identified Work Item. Dispatch-time delta is limited to launch-only facts that cannot already be authoritative in the provider record.
+A launch prompt contains only one execution action, the root-task runtime-responsibility sentence, the authoritative provider locator, and dispatch-time delta only. The action must launch one Dev Orchestrator subagent for the identified Work Item. Dispatch-time delta is limited to launch-only facts that cannot already be authoritative in the provider record.
 
 Persist every stable assignment fact missing from the provider record before launch. A launch is invalid while a stable assignment fact is absent from the provider record.
+
+In this prompt, root task means the visible Work Item root task. It does not mean the root Backlog Dispatcher or the nested Dev Orchestrator.
 
 ### Reference-Plus-Delta Launch Prompt
 
 ```text
 Launch one Dev Orchestrator subagent to execute Work Item <opaque Work Item ID>.
+As the root task, you provide the Codex title and messaging the subagents may need.
 Authoritative provider: <provider locator>
 Dispatch-time delta: <launch-only facts absent from the provider, or none>
 ```
