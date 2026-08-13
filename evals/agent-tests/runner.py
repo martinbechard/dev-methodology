@@ -4441,13 +4441,10 @@ def _legacy_claim_artifact_is_marker(path: Path, artifact: str) -> bool:
 
 def _claim_events(repository: Path, fixture_root: Path) -> tuple[dict[str, Any], ...]:
     """Load contained claim-journal events retained by one disposable repository."""
-    event_root = _claim_state_artifact(
-        repository,
-        fixture_root,
-        "agent-claim-events",
-    ) / "hot"
+    claim_state_root = _claim_state_root(repository, fixture_root)
+    event_root = claim_state_root / "agent-claim-events" / "hot"
     resolved_event_root = event_root.resolve()
-    boundary = fixture_root.resolve()
+    boundary = claim_state_root.resolve()
     if resolved_event_root != boundary and boundary not in resolved_event_root.parents:
         raise RuntimeError(f"Claim release journal escapes fixture containment: {event_root}")
     events: list[dict[str, Any]] = []

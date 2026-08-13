@@ -545,6 +545,53 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                 with self.assertRaisesRegex(RuntimeError, "Claim release journal escapes fixture containment"):
                     runner._release_events(candidate, fixture)
 
+    def test_canonical_release_journal_cannot_redirect_outside_claim_state_root(self) -> None:
+        """A contained linked worktree cannot read a sibling canonical release journal."""
+        with tempfile.TemporaryDirectory() as directory:
+            fixture = Path(directory) / "fixture"
+            source = fixture / "source"
+            candidate = fixture / "candidate"
+            sibling_hot = fixture / "sibling-hot"
+            source.mkdir(parents=True)
+            subprocess.run(["git", "init", "--quiet"], cwd=source, check=True)
+            subprocess.run(["git", "config", "user.name", "Fixture"], cwd=source, check=True)
+            subprocess.run(
+                ["git", "config", "user.email", "fixture@example.invalid"],
+                cwd=source,
+                check=True,
+            )
+            (source / "evidence.txt").write_text("synthetic\n", encoding="utf-8")
+            subprocess.run(["git", "add", "evidence.txt"], cwd=source, check=True)
+            subprocess.run(["git", "commit", "--quiet", "-m", "fixture"], cwd=source, check=True)
+            subprocess.run(
+                ["git", "worktree", "add", "--quiet", "--detach", str(candidate)],
+                cwd=source,
+                check=True,
+            )
+
+            sibling_hot.mkdir()
+            (sibling_hot / "2026-08-13.jsonl").write_text(
+                json.dumps(
+                    {
+                        "schema_version": 1,
+                        "action": "release",
+                        "outcome": "RELEASED",
+                        "event_id": "sibling-release",
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            canonical_events = source / ".codex" / "agent-claim" / "agent-claim-events"
+            canonical_events.mkdir(parents=True)
+            (canonical_events / "hot").symlink_to(sibling_hot, target_is_directory=True)
+
+            with self.assertRaisesRegex(
+                RuntimeError,
+                "Claim release journal escapes fixture containment",
+            ):
+                runner._release_events(candidate, fixture)
+
     def test_project_bootstrapper_judge_defers_runner_owned_audits(self) -> None:
         """Bootstrapper semantic judgment cannot fail only on evidence owned by the outer runner."""
         contract = (
