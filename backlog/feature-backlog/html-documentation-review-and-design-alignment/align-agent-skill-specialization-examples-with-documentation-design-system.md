@@ -1,8 +1,8 @@
 # Align Agent and Skill Specialization Examples with the Documentation Design System
 
-Owner: Unowned
+Owner: Dev Orchestrator `/root/align_skill_examples`
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -233,6 +233,19 @@ Option A is accepted. It authorizes only useful known page-specific provenance, 
 - Provider Path Claim: `resume-specialization-fixed-port-path-019ff2c3`; event `8e73846e-fde2-443d-8eef-9740d8345466`.
 - Required Runtime Title: `Starting — Align Agent And Skill Specialization Examples With Documentation Design System`.
 - Next Action: The same Dev Orchestrator records `Starting -> Running`, reacquires its Work Item and exact browser resource claims, and reruns browser verification against candidate `344ac687` with a preclaimed exact port and the repository-owned fixed-port harness. Continue the remaining review and delivery gates only after browser verification passes.
+
+### Fixed-Port Verification Running Acceptance
+
+- Transition: `Starting -> Running`.
+- Accepted At: 2026-08-13T21:46:13Z.
+- Canonical Task and Conversation: `019ffca1-15fa-7940-a0cb-e0a51da36aae`.
+- Dev Orchestrator: `/root/align_skill_examples`.
+- Phase: `Verifying`.
+- Preserved Candidate: `344ac687e628d9c4958731558d9c3e75ea2fac93`.
+- Accepted Scope: Rerun browser verification with the repository-owned fixed-port harness, then continue review, integration, and delivery only after PASS.
+- Work-Item Update Claim: `accept-fixed-port-specialization-019ffca1`; event `6f35f6d2-2b1d-4a18-87d9-ecdd2a25dc7f`.
+- Backlog Claim: `accept-fixed-port-specialization-backlog-019ffca1`; event `7eeab6ef-9e25-4de3-99c3-531ccb56fc44`.
+- Required Runtime Title: `Verifying — Align Agent And Skill Specialization Examples With Documentation Design System`.
 
 ### Authorized Resumed Running Acceptance
 
