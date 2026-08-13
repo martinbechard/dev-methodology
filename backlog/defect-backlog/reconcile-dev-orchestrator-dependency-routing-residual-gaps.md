@@ -81,3 +81,16 @@ None.
 - Capacity: Slot 4 of 5. Independent Dev Orchestrator evaluation-fixture scope; exclude private Backlog Dispatcher, provenance, evaluation-terminology targets, and documentation-template parser paths.
 - Transition Claims: `start-reconcile-dev-orchestrator-dependency-routing-residual-gaps-work-item`; event `6304333c-89a7-4665-8dee-4d6b913bded1`. `start-reconcile-dev-orchestrator-dependency-routing-residual-gaps-provider`; event `968c81d8-b150-444a-9b01-53c10e2ac578`.
 - Runtime Identity: Pending caller-owned visible task creation. Creation does not imply Running.
+
+## Canonical Runtime Assignment
+
+- Assigned At: 2026-08-13T11:46:27Z.
+- Codex Task ID: `019ffaf1-81d3-7b82-9e97-20fad7cf56ba`.
+- Conversation ID: `019ffaf1-81d3-7b82-9e97-20fad7cf56ba`.
+- Host: `local`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Requested Title: `Starting — Reconcile Dev Orchestrator Dependency Routing Gaps`.
+- Initial Action: Launch one Dev Orchestrator subagent for this authoritative provider record.
+- Creation Outcome: Unique success decoded from a complete JSON-string envelope, with no client or pending identity and no retry.
+- Lifecycle Boundary: This assignment remains `Starting` until the nested Dev Orchestrator accepts and records `Starting -> Running`.
+- Adoption Claims: `adopt-reconcile-dev-orchestrator-dependency-routing-residual-gaps-visible-task`; event `015759a3-1ca2-44cd-8922-0d09f6ff58ab`. `adopt-reconcile-dev-orchestrator-dependency-routing-residual-gaps-provider`; event `3dc87295-54f0-4b2f-9174-5e0c9671ab72`.
