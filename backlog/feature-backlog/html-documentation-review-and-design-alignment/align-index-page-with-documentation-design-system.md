@@ -1,8 +1,8 @@
 # Align AI-Assisted Coding Toolkit Index with the Documentation Design System
 
-Owner: Unowned
+Owner: Dev Orchestrator `/root/align_index_page_orchestrator`
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -107,3 +107,15 @@ Dependency Resolution: Satisfied by accepted candidate 6874526448340418cd5b074a2
 - Creation Outcome: Unique direct `threadId` and host success in the saved dev-methodology project, with no client or pending identity and no retry.
 - Lifecycle Boundary: This assignment remains `Starting` until the nested Dev Orchestrator accepts and records `Starting -> Running`.
 - Adoption Claims: Work Item `adopt-align-index-design-task`; event `f447d04f-7e99-4017-8382-96b12856bbb7`. Provider `adopt-align-index-design-provider`; event `bb1e45e8-2c13-4da6-ae9a-1aa54832ff29`.
+
+## Running Acceptance Evidence
+
+- Accepted At: 2026-08-13T13:37:27Z.
+- Transition: `Starting -> Running`.
+- Accepted By: Dev Orchestrator `/root/align_index_page_orchestrator`.
+- Canonical Codex Task ID: `019ffb56-187f-7563-aabf-a679c63994d1`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Work-Item Claim: `align-index-page-with-documentation-design-system-work`; acquisition outcome `SHARED_CHECKOUT_ACQUIRED`; event `7bf05d78-7168-4768-b836-3818aaf10daa`.
+- Provider Mutation Claim: `align-index-page-running-provider`; acquisition outcome `SHARED_CHECKOUT_ACQUIRED`; event `99dc5f10-4249-42d7-a318-b06de4168e02`.
+- Accepted Baseline: `d38242ad65b352dc502a18815343db5bbb169425` on primary `main`.
+- Scope Boundary: Align `index.html` and directly required page-specific verification only. Preserve the accepted semantic baseline and do not absorb unrelated active work.
