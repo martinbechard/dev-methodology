@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: Blocked
+Status: User Action Required
 
 Type: Feature
 
@@ -138,3 +138,42 @@ Dependency Resolution: Satisfied by completed Work Item `review-agent-and-skill-
 - Claim Handoff: Work Item claim `align-agent-skill-definitions-work-019ffc29` released `blocked` with blocker `align-definitions-verification-runtime-blockers`; event `08fd6063-66ae-4493-9b99-5628c62077c1`.
 - Provider Transition Claim: `block-align-definitions-runtime-019ff2c3`; event `99c57074-bc39-4fd3-98e1-0fa9265ef4d7`.
 - Required Runtime Title: `Blocked — Align Agent And Skill Definitions With Documentation Design System`.
+
+## Recovery Diagnosis Resolution
+
+- Reconciled At: 2026-08-13T19:31:10Z.
+- Playwright Diagnosis: Candidate `42476c0169fc8347b8675f839d7c578679d39036` is not causal. The repository-owned evaluation runtime imports Playwright 1.61.1 under Node 24.1.0, and the focused smoke reached Chromium launch readiness without launching a browser.
+- Runtime Unblock: Browser verification may be rerun with the repository-owned runtime; no supporting runtime code correction is required.
+- Shared Review: The coordinator returned a schema-valid report with one attempt and an integrated `BLOCKED` verdict. DDS-COM-001, 002, 004, 006, and 009 passed; DDS-COM-003, 005, 007, and 008 await browser evidence.
+- Remaining Finding: DDS-COM-010 fails because the footer lacks visible page-specific provenance, scope, or compatibility context.
+- Authority Boundary: Adding visible footer context changes the accepted semantic baseline. The design-alignment item does not independently authorize that content decision, and a separate defect would not resolve the required acceptance choice for this same page.
+
+## User Action Required
+
+### Question for the User
+
+For DDS-COM-010, should this page add a concise visible footer note containing only known page-specific provenance, scope, or compatibility facts, or should it preserve the accepted text baseline and seek a documented page-specific variation from that checklist item?
+
+### Why User Input Is Required
+
+The first option deliberately expands visible page content; the second deliberately preserves the accepted semantic baseline while accepting a design-system variation. Both are product/documentation boundary choices rather than technical recovery decisions.
+
+### Options and Tradeoffs
+
+- **Add concise known-facts footer context (recommended):** Authorize only a short visible note using facts already established by the accepted source record. Correct the same candidate, obtain fresh content review, rerun the Shared review and repository-owned browser verification, and preserve every other accepted semantic node.
+- **Preserve the baseline and seek a documented variation:** Add no visible content. Ask the Shared review coordinator to assess a source-backed DDS-COM-010 variation, then rerun browser verification. If the variation is rejected, the item remains nonterminal and requires another decision.
+
+### Resolution
+
+Pending in canonical Task and Conversation `019ffc29-0d20-78f1-b3d6-f0797e7bb5b6`.
+
+### Unattended Work Boundary
+
+Do not mutate, integrate, deliver, or close this candidate until the user answers in the canonical visible task. Preserve candidate `42476c0169fc8347b8675f839d7c578679d39036`, its clean branch/worktree, accepted source and artifact reviews, plans, and all browser/review evidence. Unrelated eligible Work Items may continue.
+
+### Transition Evidence
+
+- Transition: `Blocked -> User Action Required`.
+- Canonical Task and Conversation: `019ffc29-0d20-78f1-b3d6-f0797e7bb5b6`.
+- Provider Transition Claim: `definitions-footer-context-uar-019ff2c3`; event `5a753d79-7c46-4143-a8dc-71376407f745`.
+- Required Runtime Title: `Waiting for User — Align Agent And Skill Definitions With Documentation Design System`.
