@@ -1,6 +1,6 @@
 # Reconcile Offline Staging and Strict Result Schema
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
@@ -109,3 +109,20 @@ None.
 - Provider File Claim: `reconcile-offline-running-provider-file`; event `5a6c253c-a56c-4746-bb37-6b0cf6025725`.
 - Backlog Resource Claim: `reconcile-offline-running-backlog-resource`; event `572190af-0ce9-41cc-8441-eb345015d3b1`.
 - Overlap Boundary: The active Index lane owns only `index.html`, `scripts/test_documentation_design_system.py`, `scripts/test_bundle_content.py`, and `design/documentation-design-system/assets/design-system.css`. Diagnose and plan only within offline runner staging and strict coordinator-result schema paths. Preserve all unrelated plan artifacts.
+
+## Completion Evidence
+
+- Completed At: 2026-08-13T16:15:15Z.
+- Completion Disposition: `READY` through `deliver-work-item-main-branch`.
+- Accepted Source Commit: `e31b4ea5c69c7bb256bb40090598d4f7ee29b284`.
+- Observed Main Branch: `main`.
+- Observed Main Tip Before Terminal Provider Update: `8cd3c2df8b0b23d78bf3c7f0a7bfb36e18a3853c`.
+- Reachability: The accepted source commit is an ancestor of the observed main tip, and all three accepted source blobs match.
+- Independent Review: `PASS` with no findings for the exact accepted commit.
+- Independent Verification: `PASS`; focused groups ran 5, 6, and 2 tests, and the configured primary checkout ran all 185 changed-surface tests.
+- Integrated Verification: A clean checkout at the observed main tip passed the focused 5, 6, and 2 test groups, `py_compile`, selected `dev-orchestrator` validate-only, and candidate diff checks.
+- Scoped Omissions: A broad clean-checkout rerun could not load ignored Playwright dependencies. The unrestricted validate-only workflow separately retains a confirmed unrelated Dev Runtime Diagnostician skill defect.
+- Excluded Issue Disposition: File Work Item ID `reconcile-dev-runtime-diagnostician-required-skill` records the confirmed unrelated `structured-explanation` defect.
+- Main Integration Claim: `reconcile-offline-main-observation`; acquired event `dc383736-9314-47c8-b394-0c0f69d46be2`, released event `14abf63e-1c1b-4d2e-bd5a-3ecf951e0e09`.
+- Complex Plan: `reconcile-offline-staging-strict-schema-offline-schema-coder-019ffbae.json` and its sibling HTML are synchronized with 56 of 56 nodes complete.
+- Provider Transition: `Running -> Completed`; archived under `backlog/completed-backlog/defects`.
