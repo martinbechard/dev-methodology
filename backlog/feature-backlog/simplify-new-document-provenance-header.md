@@ -1,6 +1,6 @@
 # Simplify New-Document Provenance Headers
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -213,3 +213,19 @@ Make no source mutation while this question is pending. Preserve the accepted pl
 - Canonical Execution Preserved: Codex Task `019ffaf1-7879-7973-9bcb-a34652fbce7f` and Dev Orchestrator `/root/simplify_new_document_provenance_header`.
 - Next Action: Parent Dev Backlog Coordinator reconciles capacity and records `Ready -> Starting` for this preserved canonical task; the root Dev Orchestrator then separately accepts `Starting -> Running` before source mutation.
 - Corrected Gate: Revise the accepted plan for the expanded six-template scope and obtain corrected Dev Architect review before implementation.
+
+## Approved-Scope Resumption Starting Evidence
+
+- Reserved At: 2026-08-13T17:22:20Z.
+- Transition: `Ready -> Starting`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Canonical Task and Conversation: `019ffaf1-7879-7973-9bcb-a34652fbce7f` on host `local`.
+- Preserved Dev Orchestrator: `/root/simplify_new_document_provenance_header`.
+- Baseline: `e143f8a84aded718679a9617911b021c40984cca` on primary `main`.
+- Capacity: One of five active slots is reserved. The only other active item is `map-evaluation-contracts-to-inspect-ai`; its exact file scope is disjoint.
+- Dependency Decision: The user's approval of all six named templates is durably recorded and no hard dependency remains.
+- Scope Boundary: Resume only the existing accepted plan through its required six-template correction and fresh architecture review. Preserve every unrelated untracked plan and temporary artifact.
+- Dispatch Result: Resume the same canonical visible task and nested Dev Orchestrator; no new task or replacement execution is authorized.
+- Transition Claim: `reserve-simplify-provenance-019ff2c3`; event `cae3ec2b-9a9d-4f10-8fd0-55d474d34325`.
+- Next Action: The preserved Dev Orchestrator records `Starting -> Running`, then reacquires the Work Item and exact path claims before any mutation.
