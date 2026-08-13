@@ -1,6 +1,6 @@
 # Simplify New-Document Provenance Headers
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -147,3 +147,12 @@ Approved at creation from the user's 2026-08-12 message and expanded by the user
 - User Direction: HTML provenance is a concise visible footnote with only useful known facts. Unknown values and internal evidence labels are omitted and history is never invented.
 - Ownership Decision: This existing Work Item absorbs the policy correction and bounded wiki-page migration because it already owns the canonical provenance sources, validator, fixtures, and design guidance.
 - Transition Claim: `update-concise-visible-provenance-policy-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `f20f61f9-ad49-4d60-bec9-85b7baaecef8`.
+
+## Running Acceptance Evidence
+
+- Accepted At: 2026-08-13T11:47:52Z.
+- Transition: `Starting -> Running`.
+- Canonical Codex Task ID: `019ffaf1-7879-7973-9bcb-a34652fbce7f`.
+- Accepted By: Dev Orchestrator `/root/simplify_new_document_provenance_header`.
+- Work Claim: `simplify-new-document-provenance-header-work`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `ff8a99c5-d9cf-49e6-a94d-43340cff459b`.
+- Provider Transition Claim: `run-simplify-new-document-provenance-header-provider`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `1da6ec1b-a055-49b0-8d0c-b364f109c98c`.
