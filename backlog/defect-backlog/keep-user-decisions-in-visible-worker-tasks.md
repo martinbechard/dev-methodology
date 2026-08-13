@@ -81,3 +81,16 @@ This item does not change provider lifecycle definitions or portable Dev Orchest
 - Dispatch Architecture: Create one user-visible Codex task whose initial reference-plus-delta prompt starts one Dev Orchestrator collaboration subagent for this provider record.
 - Transition Claims: `start-visible-worker-uar-dispatcher-rule`; event `b636b7ab-11f2-4e23-b983-ae659017eea3`. `start-visible-worker-uar-provider`; event `6998554f-9a57-4dd2-aa6c-3317325a0c49`.
 - Runtime Identity: Pending the caller-owned visible task creation result. Creation does not imply Running.
+
+## Canonical Runtime Assignment
+
+- Assigned At: 2026-08-13T11:42:03Z.
+- Codex Task ID: `019ffaed-9208-7cb1-8564-b63317455fba`.
+- Conversation ID: `019ffaed-9208-7cb1-8564-b63317455fba`.
+- Host: `local`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Requested Title: `Starting — Keep User Decisions In Visible Worker Tasks`.
+- Initial Action: Launch one Dev Orchestrator subagent for this authoritative provider record.
+- Creation Outcome: Unique success with no client or pending ambiguity and no retry.
+- Lifecycle Boundary: This assignment remains `Starting` until the nested Dev Orchestrator accepts and records `Starting -> Running`.
+- Adoption Claims: `adopt-visible-worker-uar-rule-task`; event `6fb5f7f2-714b-4e4b-83a3-866c49ae1073`. `adopt-visible-worker-uar-rule-provider`; event `10c376cc-917f-4dce-8dab-13db7d3a5d54`.
