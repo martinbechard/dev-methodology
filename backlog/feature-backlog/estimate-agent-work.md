@@ -114,3 +114,15 @@ This item defines an estimation method, not a promise that generated-token throu
 - Dispatch Architecture: Create one user-visible Codex task whose initial reference-plus-delta prompt starts one Dev Orchestrator collaboration subagent for this provider record.
 - Transition Claim: `start-estimate-agent-work-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `e9c27b39-0ace-4126-8720-75eab3725253`.
 - Next Reconciliation: Adopt the exact visible task identity. Its nested Dev Orchestrator records Starting -> Running before mutation.
+
+## Canonical Runtime Assignment
+
+- Assigned At: 2026-08-13T08:29:10Z.
+- Codex Task ID: `019ffa3d-191f-7343-aaeb-2499de1ad605`.
+- Conversation ID: `019ffa3d-191f-7343-aaeb-2499de1ad605`.
+- Host: `local`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Requested Title: `Starting — Estimate Agent Work`.
+- Initial Action: Start one Dev Orchestrator collaboration subagent for this authoritative provider record.
+- Creation Outcome: Unique success with no pending client identity and no retry.
+- Lifecycle Boundary: This assignment remains Starting until the nested Dev Orchestrator accepts and records Starting -> Running.
