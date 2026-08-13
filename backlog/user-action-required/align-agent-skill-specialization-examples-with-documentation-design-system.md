@@ -1,8 +1,8 @@
 # Align Agent and Skill Specialization Examples with the Documentation Design System
 
-Owner: Dev Orchestrator `/root/align_skill_examples`
+Owner: Unowned
 
-Status: Running
+Status: User Action Required
 
 Type: Feature
 
@@ -122,3 +122,40 @@ Dependency Resolution: Satisfied by completed Work Item `review-agent-skill-spec
 - Transition Work-Item Claim: `accept-align-specialization-examples-019ffca1`; event `f8a9a321-3813-42ae-b127-a915961d755e`.
 - Transition Backlog Claim: `accept-align-specialization-backlog-019ffca1`; event `9a34c734-0c19-47bc-8504-d3f6d30fccc6`.
 - Required Runtime Title: `Implementing — Align Agent And Skill Specialization Examples With Documentation Design System`.
+
+## User Action Required
+
+### Question for the User
+
+May this page add concise visible footer context so it can satisfy DDS-COM-010?
+
+### Why User Input Is Required
+
+The accepted immutable content baseline does not contain page-specific provenance, scope, or compatibility context. Adding that visible context changes the approved content boundary; preserving the baseline instead requires an explicit design-system variation.
+
+### Options and Tradeoffs
+
+- **Add concise known-facts footer context (recommended):** Add only useful known page-specific provenance, scope, and compatibility facts, then run fresh content review, browser verification, and Documentation Design System review.
+- **Preserve the baseline and seek a DDS-COM-010 variation:** Keep the visible content unchanged and request an explicit variation. Delivery remains paused unless the variation is accepted.
+
+### Resolution
+
+Pending in canonical Task and Conversation `019ffca1-15fa-7940-a0cb-e0a51da36aae`.
+
+### Unattended Work Boundary
+
+Do not mutate, integrate, deliver, or close this candidate until the user answers in the canonical visible task. Preserve candidate `9b768f37adf8d96fbfbae47d9eb663d67929c383`, the same `/root/align_skill_examples` execution, accepted plan and review evidence, and all verification evidence. Unrelated eligible Work Items may continue.
+
+### Transition Evidence
+
+- Transition: `Running -> User Action Required`.
+- Recorded At: 2026-08-13T20:23:53Z.
+- Canonical Task and Conversation: `019ffca1-15fa-7940-a0cb-e0a51da36aae`.
+- Preserved Dev Orchestrator: `/root/align_skill_examples`.
+- Preserved Candidate: `9b768f37adf8d96fbfbae47d9eb663d67929c383`.
+- Exact Blocker: DDS-COM-010 requires visible page-specific provenance, scope, or compatibility context that is absent from the accepted immutable content baseline.
+- Path Claim Release: `paths-align-specialization-examples-019ffca1`; event `ea22216b-9b3f-41ae-b1cf-4f0f8d8d7f31`.
+- Browser Claim Release: `browser-align-specialization-examples-019ffca1`; event `c53c7873-7637-45bb-bdc2-7522dfe3e4d8`; no browser process was started.
+- Work Item Claim Release: `work-align-specialization-examples-019ffca1`; disposition `blocked`; blocker `specialization-examples-footer-context-decision`; event `5448692a-1bfb-41ff-826f-f4bd3f93cb58`.
+- Provider Transition Claim: `specialization-footer-context-uar-019ff2c3`; event `9b60c0e9-323b-4581-9aaa-77d19d775bd4`.
+- Required Runtime Title: `Waiting for User — Align Agent And Skill Specialization Examples With Documentation Design System`.
