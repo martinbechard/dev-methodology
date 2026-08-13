@@ -92,3 +92,15 @@ Dependency Resolution: Satisfied by completed Work Item `review-generic-agent-de
 - Transition Claim: `reserve-generic-agent-definitions-019ff2c3`; event `43cce56b-a841-41d2-9819-4b66219b1c75`.
 - Dispatch Architecture: Create one visible Codex task whose reference-plus-delta prompt starts one Dev Orchestrator collaboration subagent.
 - Next Action: Reconcile the unique visible task identity; its nested Dev Orchestrator records `Starting -> Running` before mutation.
+
+## Canonical Runtime Assignment
+
+- Assigned At: 2026-08-13T20:32:03Z.
+- Codex Task ID: `019ffcd2-8892-7522-95fd-4811067fd5c4`.
+- Conversation ID: `019ffcd2-8892-7522-95fd-4811067fd5c4`.
+- Host: `local`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Runtime Project: saved `dev-methodology` project at `/Users/martinbechard/dev/dev-methodology`.
+- Creation Outcome: Unique direct success with no client or pending identity and no retry.
+- Lifecycle Boundary: Provider remains `Starting` until exactly one nested Dev Orchestrator accepts and records `Starting -> Running`.
+- Adoption Claim: `adopt-generic-agent-definitions-task-019ff2c3`; event `876d4458-211a-4c1b-814d-705da72ff849`.
