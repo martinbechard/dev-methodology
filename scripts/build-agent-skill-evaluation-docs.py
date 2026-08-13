@@ -849,7 +849,7 @@ def render_skill_card(skill: dict[str, object]) -> str:
         deterministic = probe.get("judgePlan", {}).get("deterministicChecks", [])
         model_rubric = probe.get("judgePlan", {}).get("modelRubric")
         probe_html = f"""
-        <dl class="compact-list">
+        <dl class="panel definition-list compact-list">
           <div><dt>Probe</dt><dd>{source_link('evals/skill-probes.yaml', str(probe['id']))}</dd></div>
           <div><dt>Coverage state</dt><dd>{escape(probe.get('coverageStatus', 'Not declared'))}: catalog declaration, not a verified run</dd></div>
           <div><dt>Kind</dt><dd>{escape(probe.get('evaluationKind', 'Not declared'))}</dd></div>
@@ -911,7 +911,7 @@ def render_skill_card(skill: dict[str, object]) -> str:
         "none": "No recorded evaluation evidence",
     }
     return f"""
-    <article class="evaluation-card skill-card" id="skill-{escape(skill['id'])}"
+    <article class="card evaluation-card skill-card" id="skill-{escape(skill['id'])}"
       data-kind="skill" data-status="{escape(skill['classification'])}" data-search="{escape(search_text)}">
       <div class="card-heading">
         <div><span class="card-kicker">Skill</span><h3>{escape(skill['id'])}</h3></div>
@@ -923,7 +923,7 @@ def render_skill_card(skill: dict[str, object]) -> str:
       {probe_html}
       <h4>Selected Campaign scenario links</h4>
       {governed_html}
-      <dl class="compact-list">
+      <dl class="panel definition-list compact-list">
         <div><dt>Linked Campaign Evaluation results</dt><dd>{escape(skill['latestGovernedOutcome'])}</dd></div>
         <div><dt>Evidence level</dt><dd>Agent-scenario evidence only; no skill-level Evaluation result</dd></div>
         <div><dt>Limitation</dt><dd>{escape(skill['limitation'])}</dd></div>
@@ -1020,7 +1020,7 @@ def render_agent_card(agent: dict[str, object], campaign: dict[str, object]) -> 
             for item in agent["followUps"]
         ) + "</ul>"
     return f"""
-    <article class="evaluation-card agent-card" id="agent-{escape(agent['id'])}"
+    <article class="card evaluation-card agent-card" id="agent-{escape(agent['id'])}"
       data-kind="agent" data-status="{escape(agent['freshness'])}" data-search="{escape(search_text)}">
       <div class="card-heading">
         <div><span class="card-kicker">Conceptual agent</span><h3>{escape(agent['id'])}</h3></div>
@@ -1032,7 +1032,7 @@ def render_agent_card(agent: dict[str, object], campaign: dict[str, object]) -> 
         {source_link(str(agent['suitePath']), 'Suite')} &middot;
         {source_link(str(agent['scenariosPath']), 'Scenarios')}
       </p>
-      <dl class="compact-list">
+      <dl class="panel definition-list compact-list">
         <div><dt>Campaign Evaluation result aggregate</dt><dd>{escape(verdict_text)}</dd></div>
         <div><dt>Evidence level</dt><dd>{escape(campaign['evidenceLevel'])}; scenario Evaluation results are not skill Evaluation results</dd></div>
         <div><dt>Execution context</dt><dd>{escape(campaign['harness'])}; disposable synthetic workspaces; per-scenario containment not reported</dd></div>
@@ -1040,9 +1040,9 @@ def render_agent_card(agent: dict[str, object], campaign: dict[str, object]) -> 
         <div><dt>Unresolved</dt><dd>{escape('; '.join(unresolved))}</dd></div>
       </dl>
       {followup_html}
-      <div class="table-scroll" tabindex="0" aria-label="Scenario results for {escape(agent['id'])}">
-        <table>
-          <thead><tr><th>Scenario</th><th>Purpose</th><th>Expected target status</th><th>Evaluation result</th><th>Evidence alignment</th><th>Catalog state</th><th>Proved drift fields</th></tr></thead>
+      <div class="table-wrap" tabindex="0" role="region" aria-label="Scenario results for {escape(agent['id'])}">
+        <table class="wide-table">
+          <thead><tr><th scope="col">Scenario</th><th scope="col">Purpose</th><th scope="col">Expected target status</th><th scope="col">Evaluation result</th><th scope="col">Evidence alignment</th><th scope="col">Catalog state</th><th scope="col">Proved drift fields</th></tr></thead>
           <tbody>{''.join(scenario_rows)}</tbody>
         </table>
       </div>
@@ -1084,96 +1084,44 @@ def render_page(model: dict[str, object]) -> str:
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="design-system-version" content="1.0.0">
   <title>Agent and Skill Evaluations</title>
+  <link rel="stylesheet" href="documentation-design-system/assets/design-system.css">
   <style>
-    :root {{
-      --ink: #172033; --muted: #536079; --page: #f2f5f8; --panel: #ffffff;
-      --line: #cbd5e1; --navy: #17406d; --teal: #006b67; --amber: #8a4b00;
-      --red: #9f2431; --green: #17633b; --violet: #5a3b8a; --soft-blue: #e5eef8;
-      --soft-teal: #def2ef; --soft-amber: #fff0d2; --soft-red: #fbe4e7;
-      --soft-violet: #eee8f7; --soft-gray: #edf1f5; --shadow: 0 14px 36px rgba(23,32,51,.08);
-      --radius: .7rem; --content: 1240px;
-    }}
-    * {{ box-sizing: border-box; }}
-    html {{ scroll-behavior: smooth; }}
-    body {{ margin: 0; color: var(--ink); background: linear-gradient(180deg,#e5eef8 0,transparent 25rem),var(--page); font-family: Inter,ui-sans-serif,system-ui,sans-serif; line-height: 1.55; }}
-    a {{ color: var(--navy); }}
-    a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, [tabindex="0"]:focus-visible {{ outline: 3px solid #b35f00; outline-offset: 3px; }}
-    h1,h2,h3,h4 {{ margin: 0; line-height: 1.15; }}
-    h1 {{ max-width: 900px; font-size: clamp(2.5rem,6vw,5rem); }}
-    h2 {{ font-size: clamp(1.8rem,4vw,3rem); }}
-    h3 {{ overflow-wrap: anywhere; font-size: 1.25rem; }}
-    h4 {{ margin-top: .4rem; font-size: .93rem; text-transform: uppercase; letter-spacing: .04em; }}
-    p {{ margin: 0; color: var(--muted); }}
-    p + p {{ margin-top: .65rem; }}
-    .site-header, main, .site-footer {{ width: min(100% - 2rem,var(--content)); margin-inline: auto; }}
-    .site-header {{ display: flex; align-items: center; gap: .75rem; padding-top: 1.2rem; }}
-    .site-brand {{ display: inline-flex; min-width: 0; align-items: center; gap: .75rem; color: var(--ink); font-weight: 800; text-decoration: none; }}
-    .site-logo {{ width: 2.35rem; height: 2.35rem; border-radius: .45rem; }}
-    main {{ padding: 2rem 0 5rem; }}
-    .document-nav, .document-sequence {{ display: flex; flex-wrap: wrap; gap: .65rem; }}
-    .document-nav {{ justify-content: space-between; margin-bottom: 3rem; }}
-    .document-nav a {{ padding: .5rem .8rem; border: 1px solid var(--line); border-radius: 999px; background: rgba(255,255,255,.8); color: var(--muted); font-size: .86rem; font-weight: 750; text-decoration: none; }}
-    .hero {{ display: grid; gap: 1.4rem; padding: clamp(2rem,6vw,5rem) 0 2rem; }}
-    .eyebrow, .card-kicker {{ color: var(--teal); font-size: .78rem; font-weight: 850; letter-spacing: .08em; text-transform: uppercase; }}
-    .lede {{ max-width: 900px; font-size: 1.15rem; }}
-    .scope-note {{ max-width: 980px; padding: 1rem 1.2rem; border-left: .35rem solid var(--amber); background: var(--panel); box-shadow: var(--shadow); }}
-    .chapter-nav {{ position: sticky; top: 0; z-index: 5; display: flex; gap: .35rem; margin: 1rem 0 4rem; padding: .55rem; overflow-x: auto; border: 1px solid var(--line); border-radius: 999px; background: rgba(255,255,255,.94); box-shadow: var(--shadow); }}
-    .chapter-nav a {{ flex: 0 0 auto; padding: .5rem .75rem; border-radius: 999px; color: var(--muted); font-size: .8rem; font-weight: 800; text-decoration: none; }}
-    .chapter-nav a:hover {{ background: var(--soft-teal); color: var(--teal); }}
-    .section {{ margin-top: clamp(4rem,9vw,7rem); scroll-margin-top: 6rem; }}
-    .section-heading {{ display: grid; gap: .65rem; max-width: 850px; margin-bottom: 2rem; }}
-    .grid {{ display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,18rem),1fr)); gap: 1rem; }}
-    .metric, .method-card, .evaluation-card, .filters {{ border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); box-shadow: var(--shadow); }}
-    .metric {{ display: grid; gap: .2rem; padding: 1.2rem; }}
-    .metric strong {{ font-size: 2rem; }}
-    .metric span {{ color: var(--muted); font-weight: 700; }}
-    .method-card {{ padding: 1.2rem; }}
-    .method-card h3 {{ margin-bottom: .55rem; }}
-    .method-card ul {{ margin-bottom: 0; padding-left: 1.2rem; color: var(--muted); }}
-    .legend {{ display: flex; flex-wrap: wrap; gap: .55rem; margin-top: 1rem; }}
-    .status {{ display: inline-flex; width: fit-content; max-width: 100%; box-sizing: border-box; align-items: center; padding: .25rem .55rem; border: 1px solid currentColor; border-radius: 999px; background: var(--soft-gray); color: var(--navy); font-size: .76rem; font-weight: 850; white-space: nowrap; }}
-    .status--pass, .status--snapshot-aligned, .status--historical-snapshot-aligned {{ background: var(--soft-teal); color: var(--green); }}
-    .status--fail {{ background: var(--soft-red); color: var(--red); }}
-    .status--blocked, .status--historical-drift, .status--historical-removed {{ background: var(--soft-amber); color: var(--amber); }}
-    .status--missing, .status--none {{ background: var(--soft-violet); color: var(--violet); }}
-    .status--declared, .status--historical-id-only, .status--historical-unknown, .status--direct-probe, .status--direct-governed, .status--indirect-only {{ background: var(--soft-blue); color: var(--navy); }}
-    .filters {{ display: grid; grid-template-columns: minmax(12rem,1fr) minmax(11rem,.35fr) auto; gap: 1rem; align-items: end; margin-bottom: 1.2rem; padding: 1rem; }}
-    .field {{ display: grid; gap: .35rem; color: var(--ink); font-weight: 750; }}
-    input, select, button {{ min-height: 2.65rem; padding: .5rem .65rem; border: 1px solid #8492a6; border-radius: .4rem; background: white; color: var(--ink); font: inherit; }}
-    button {{ cursor: pointer; font-weight: 800; }}
-    .result-count {{ min-height: 1.6rem; margin-bottom: 1rem; color: var(--muted); }}
-    .catalog {{ display: grid; gap: 1rem; }}
-    .evaluation-card {{ display: grid; min-width: 0; gap: 1rem; padding: clamp(1rem,2.5vw,1.5rem); scroll-margin-top: 6rem; }}
+    .catalog {{ display: grid; gap: var(--ds-space-4); }}
+    .evaluation-card {{ scroll-margin-top: 6rem; }}
     .evaluation-card[hidden] {{ display: none; }}
     .card-heading {{ display: flex; min-width: 0; flex-wrap: wrap; justify-content: space-between; gap: 1rem; align-items: start; }}
     .card-heading > * {{ min-width: 0; }}
     .source-row {{ font-size: .88rem; }}
-    .compact-list {{ display: grid; margin: 0; border-top: 1px solid var(--line); }}
-    .compact-list div {{ display: grid; grid-template-columns: minmax(10rem,.3fr) minmax(0,1fr); gap: 1rem; padding: .65rem 0; border-bottom: 1px solid var(--line); }}
-    .compact-list dt {{ font-weight: 800; }}
-    .compact-list dd {{ margin: 0; color: var(--muted); overflow-wrap: anywhere; }}
-    .link-list {{ margin: 0; padding-left: 1.2rem; color: var(--muted); }}
-    .table-scroll {{ overflow-x: auto; }}
-    table {{ width: 100%; min-width: 52rem; border-collapse: collapse; font-size: .88rem; }}
-    th,td {{ padding: .7rem; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }}
-    th {{ color: var(--ink); }}
-    td {{ color: var(--muted); }}
-    .site-footer {{ padding: 1.5rem 0 3rem; border-top: 1px solid var(--line); }}
+    .compact-list > div {{ display: grid; grid-template-columns: minmax(10rem,.3fr) minmax(0,1fr); gap: var(--ds-space-4); }}
+    .compact-list dd {{ overflow-wrap: anywhere; }}
+    .status {{ width: fit-content; max-width: 100%; overflow-wrap: anywhere; }}
+    .result-count {{ min-height: 1.6rem; }}
     @media (max-width: 720px) {{
-      .chapter-nav {{ position: static; border-radius: var(--radius); }}
-      .filters {{ grid-template-columns: 1fr; }}
-      .compact-list div {{ grid-template-columns: 1fr; gap: .2rem; }}
-      .status {{ overflow-wrap: anywhere; white-space: normal; }}
+      .compact-list > div {{ grid-template-columns: 1fr; gap: var(--ds-space-1); }}
     }}
-    @media print {{ .chapter-nav,.filters,.document-nav {{ display: none; }} body {{ background: white; }} .evaluation-card {{ break-inside: avoid; box-shadow: none; }} }}
+    @media print {{ .evaluation-card {{ break-inside: avoid; }} }}
   </style>
 </head>
-<body>
-<header class="site-header">
+<body id="top">
+<a class="skip-link" href="#main-content">Skip to main content</a>
+<header class="site-header ds-header">
   <a class="site-brand" href="../index.html"><img class="site-logo" src="../logo.png" alt="DevConsult Canada logo"><span>AI-Assisted Coding Toolkit Index</span></a>
 </header>
-<main>
+<nav class="suite-nav" aria-label="Documentation pages">
+  <a href="agent-and-skill-definitions.html">Agent And Skill Definitions</a>
+  <a href="agent-and-skill-evaluations.html" aria-current="page">Agent And Skill Evaluations</a>
+  <a href="agent-owned-evaluation-suites.html">Agent-Owned Evaluation Suites</a>
+  <a href="agentic-configuration.html">Agentic Configuration</a>
+  <a href="skills-modularization.html">Skills Modularization</a>
+  <a href="generic-agent-definitions-source.html">Generic Agent Definitions Source</a>
+  <a href="agent-skill-specialization-examples.html">Agent And Skill Specialization Examples</a>
+  <a href="orchestrated-development-lifecycle.html">Orchestrated Development Lifecycle</a>
+  <a href="documentation-templates.html">Documentation Templates</a>
+  <a href="wiki-skills-and-project-context.html">Wiki Skills And Project Context</a>
+</nav>
+<main id="main-content" tabindex="-1">
   <nav class="document-nav" aria-label="Documentation navigation">
     <div class="document-sequence">
       <a href="agent-and-skill-definitions.html" rel="prev"><span aria-hidden="true">&larr;</span> Previous: Core Agent and Skills</a>
@@ -1184,10 +1132,10 @@ def render_page(model: dict[str, object]) -> str:
     <span class="eyebrow">Evaluation evidence</span>
     <h1 id="page-title">Agent and Skill Evaluations</h1>
     <p class="lede">Current catalogs and one selected historical Campaign Test report show how the bundle is evaluated. The page keeps catalog coverage, historical Evaluation results, definition freshness, and missing evidence separate.</p>
-    <p class="scope-note"><strong>Evidence boundary.</strong> Probe declarations describe diagnostic plans. Linked agent-scenario Evaluation results do not establish skill-level Evaluation results. Historical alignment, result categories, manual observations, Judge results, calibration, functional isolation, and security containment remain separate evidence dimensions.</p>
+    <p class="callout callout--warning scope-note"><strong>Evidence boundary.</strong> Probe declarations describe diagnostic plans. Linked agent-scenario Evaluation results do not establish skill-level Evaluation results. Historical alignment, result categories, manual observations, Judge results, calibration, functional isolation, and security containment remain separate evidence dimensions.</p>
   </section>
   <nav class="chapter-nav" aria-label="Page sections">
-    <a href="#methodology">Purpose and method</a><a href="#coverage">Coverage and cases</a><a href="#campaign">Campaign Evaluation results</a><a href="#limitations">Limitations</a><a href="#history">Historical evidence</a><a href="#agents">Agents</a><a href="#skills">Skills</a><a href="#follow-ups">Follow-ups</a><a href="#sources">Sources</a>
+    <a href="#top">Top</a><a href="#methodology">Purpose and method</a><a href="#coverage">Coverage and cases</a><a href="#campaign">Campaign Evaluation results</a><a href="#limitations">Limitations</a><a href="#history">Historical evidence</a><a href="#agents">Agents</a><a href="#skills">Skills</a><a href="#follow-ups">Follow-ups</a><a href="#sources">Sources</a>
   </nav>
 
   <section class="section" id="methodology" aria-labelledby="methodology-title">
@@ -1297,12 +1245,25 @@ def render_page(model: dict[str, object]) -> str:
     </div>
   </section>
 </main>
-<footer class="site-footer"><p>Copyright (c) 2026 Martin.Bechard@DevConsult.ca - <a href="../LICENSE">MIT License</a></p></footer>
+<footer class="site-footer ds-footer">
+  <p class="footer-context">Scope: current agent and skill catalogs and one selected historical Campaign Test report.</p>
+  <p><span class="ds-version">Design system v1.0.0</span> · Copyright (c) 2026 Martin.Bechard@DevConsult.ca - <a href="../LICENSE">MIT License</a></p>
+</footer>
 <script src="documentation-settings.js"></script>
 <script src="agent-and-skill-evaluations.js"></script>
 </body>
 </html>
 """
+    for current_markup, adopted_markup in (
+        ('class="method-card"', 'class="card method-card"'),
+        ('class="compact-list"', 'class="panel definition-list compact-list"'),
+        ('class="scope-note"', 'class="callout callout--warning scope-note"'),
+        (
+            '<button type="button" data-filter-clear=',
+            '<button class="button" type="button" data-filter-clear=',
+        ),
+    ):
+        page = page.replace(current_markup, adopted_markup)
     return "\n".join(line.rstrip() for line in page.splitlines()) + "\n"
 
 

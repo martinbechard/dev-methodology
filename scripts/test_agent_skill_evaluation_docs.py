@@ -16,6 +16,7 @@ import unittest
 from collections import Counter
 from contextlib import contextmanager
 from contextlib import redirect_stderr
+from html import unescape
 from pathlib import Path
 
 
@@ -23,6 +24,27 @@ ROOT = Path(__file__).resolve().parents[1]
 GENERATOR_PATH = ROOT / "scripts" / "build-agent-skill-evaluation-docs.py"
 PAGE_PATH = ROOT / "design" / "agent-and-skill-evaluations.html"
 SCRIPT_PATH = ROOT / "design" / "agent-and-skill-evaluations.js"
+DESIGN_SYSTEM_VERSION_PATH = ROOT / "design" / "documentation-design-system" / "VERSION"
+ACCEPTED_CONTENT_COMMIT = "34a69070b4c1f86d38190b3cde9fbcff35604ddd"
+TOOLKIT_NAVIGATION = (
+    ("Agent And Skill Definitions", "agent-and-skill-definitions.html"),
+    ("Agent And Skill Evaluations", "agent-and-skill-evaluations.html"),
+    ("Agent-Owned Evaluation Suites", "agent-owned-evaluation-suites.html"),
+    ("Agentic Configuration", "agentic-configuration.html"),
+    ("Skills Modularization", "skills-modularization.html"),
+    ("Generic Agent Definitions Source", "generic-agent-definitions-source.html"),
+    (
+        "Agent And Skill Specialization Examples",
+        "agent-skill-specialization-examples.html",
+    ),
+    ("Orchestrated Development Lifecycle", "orchestrated-development-lifecycle.html"),
+    ("Documentation Templates", "documentation-templates.html"),
+    ("Wiki Skills And Project Context", "wiki-skills-and-project-context.html"),
+)
+AUTHORIZED_FOOTER_CONTEXT = (
+    '<p class="footer-context">Scope: current agent and skill catalogs and one '
+    "selected historical Campaign Test report.</p>"
+)
 BACKLOG_STEWARD_SCENARIOS_PATH = (
     ROOT / "evals" / "agent-tests" / "dev-backlog-steward" / "scenarios.yaml"
 )
@@ -88,6 +110,106 @@ def load_generator():
     return module
 
 
+def git_file(commit: str, path: str) -> str:
+    """Return one immutable tracked file from the accepted content baseline."""
+    result = subprocess.run(
+        ["git", "-C", str(ROOT), "show", f"{commit}:{path}"],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0:
+        raise RuntimeError(result.stderr)
+    return result.stdout
+
+
+def strip_source_driven_records(source: str) -> str:
+    """Remove source-derived records while retaining fixed page copy and order."""
+    source = re.sub(
+        r'<article\b[^>]*\bdata-kind="(?:agent|skill)"[^>]*>.*?</article>',
+        "<article data-kind=\"source-driven-records\"></article>",
+        source,
+        flags=re.DOTALL,
+    )
+    source = re.sub(
+        r"<tbody>.*?</tbody>",
+        "<tbody>source-driven-rows</tbody>",
+        source,
+        flags=re.DOTALL,
+    )
+    source = re.sub(
+        r'<ol class="link-list">.*?</ol>',
+        '<ol class="link-list">source-driven-follow-ups</ol>',
+        source,
+        flags=re.DOTALL,
+    )
+    source = re.sub(
+        r"<code>[0-9a-f]{64}</code>",
+        "<code>source-driven-digest</code>",
+        source,
+    )
+    numeric_region_patterns = (
+        r'<article class="[^"]*\bmetric\b[^"]*">.*?</article>',
+        r'<article class="[^"]*\bmethod-card\b[^"]*">\s*'
+        r"<h3>(?:Skill catalog states|Harness and evidence breakdown|"
+        r"Evidence that does not prove a pass|Evidence alignment states|"
+        r"Method and catalogs)</h3>.*?</article>",
+        r'<p class="result-count"[^>]*>.*?</p>',
+        r'<div class="section-heading"><h2 id="follow-ups-title">.*?</div>',
+        r"<div><dt>Execution range</dt><dd>.*?</dd></div>",
+    )
+
+    def mask_numbers(match: re.Match[str]) -> str:
+        return re.sub(r"\d+(?:\.\d+)?", "source-driven-number", match.group(0))
+
+    for pattern in numeric_region_patterns:
+        source = re.sub(pattern, mask_numbers, source, flags=re.DOTALL)
+    return source
+
+
+def fixed_semantic_text(source: str) -> str:
+    """Return accepted visible semantics after exact shell additions are removed."""
+    source = strip_source_driven_records(source)
+    source = source.replace(AUTHORIZED_FOOTER_CONTEXT, "")
+    source = re.sub(r'<a class="skip-link".*?</a>', "", source, flags=re.DOTALL)
+    source = re.sub(
+        r'<nav class="suite-nav".*?</nav>', "", source, flags=re.DOTALL
+    )
+    source = source.replace('<a href="#top">Top</a>', "")
+    source = re.sub(
+        r'<span class="ds-version">Design system v[^<]+</span>\s*[·-]?\s*',
+        "",
+        source,
+    )
+    source = re.sub(
+        r"<(?:style|script)\b.*?</(?:style|script)>",
+        "",
+        source,
+        flags=re.DOTALL,
+    )
+    visible_text = re.sub(r"<[^>]+>", " ", source)
+    return " ".join(unescape(visible_text).split())
+
+
+def fixed_links(source: str) -> list[tuple[str, str]]:
+    """Return links outside source-driven records and authorized shell additions."""
+    source = strip_source_driven_records(source)
+    source = re.sub(r'<a class="skip-link".*?</a>', "", source, flags=re.DOTALL)
+    source = re.sub(
+        r'<nav class="suite-nav".*?</nav>', "", source, flags=re.DOTALL
+    )
+    source = source.replace('<a href="#top">Top</a>', "")
+    links = []
+    for href, label in re.findall(
+        r'<a\b[^>]*href="([^"]+)"[^>]*>(.*?)</a>', source, flags=re.DOTALL
+    ):
+        visible_label = " ".join(
+            unescape(re.sub(r"<[^>]+>", " ", label)).split()
+        )
+        links.append((href, visible_label))
+    return links
+
+
 class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
     """Protect the source-derived evaluation documentation contract."""
 
@@ -97,6 +219,182 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
         cls.generator = load_generator()
         cls.model = cls.generator.build_model(ROOT)
         cls.page = cls.generator.render_page(cls.model)
+
+    def test_shared_design_system_shell_contract(self) -> None:
+        """The consuming page must use the adopted versioned documentation shell."""
+        version = DESIGN_SYSTEM_VERSION_PATH.read_text(encoding="utf-8").strip()
+        self.assertEqual("1.0.0", version)
+        self.assertIn(
+            '<meta name="design-system-version" content="1.0.0">', self.page
+        )
+        self.assertIn(
+            '<link rel="stylesheet" '
+            'href="documentation-design-system/assets/design-system.css">',
+            self.page,
+        )
+        self.assertIn('<body id="top">', self.page)
+        skip_link = '<a class="skip-link" href="#main-content">Skip to main content</a>'
+        self.assertEqual(1, self.page.count(skip_link))
+        self.assertLess(self.page.index(skip_link), self.page.index("<header"))
+        self.assertIn('<header class="site-header ds-header">', self.page)
+        self.assertIsNone(re.search(r"\.site-header\s*\{", self.page))
+        self.assertIsNone(re.search(r"\.site-brand\s*\{", self.page))
+        self.assertEqual(1, self.page.count('<main id="main-content" tabindex="-1">'))
+
+        suite_nav = self.page.split(
+            '<nav class="suite-nav" aria-label="Documentation pages">', 1
+        )[1].split("</nav>", 1)[0]
+        navigation_links = re.findall(
+            r'<a href="([^"]+)"(?: aria-current="page")?>([^<]+)</a>', suite_nav
+        )
+        self.assertEqual(
+            [(href, label) for label, href in TOOLKIT_NAVIGATION], navigation_links
+        )
+        self.assertEqual(1, suite_nav.count('aria-current="page"'))
+        self.assertIn(
+            '<a href="agent-and-skill-evaluations.html" aria-current="page">'
+            "Agent And Skill Evaluations</a>",
+            suite_nav,
+        )
+        self.assertIn(
+            '<nav class="chapter-nav" aria-label="Page sections">\n'
+            '    <a href="#top">Top</a>',
+            self.page,
+        )
+        self.assertIn('<footer class="site-footer ds-footer">', self.page)
+        self.assertEqual(
+            1,
+            self.page.count(
+                '<span class="ds-version">Design system v1.0.0</span>'
+            ),
+        )
+
+    def test_footer_identifies_the_page_specific_scope(self) -> None:
+        """The shared footer must state this page's bounded evidence scope."""
+        footer = self.page.split(
+            '<footer class="site-footer ds-footer">', 1
+        )[1].split("</footer>", 1)[0]
+        self.assertEqual(1, footer.count(AUTHORIZED_FOOTER_CONTEXT))
+
+    def test_fixed_semantic_guard_rejects_numeric_prose_mutations(self) -> None:
+        """Fixed report and copyright numbers must not be normalized away."""
+        report_count_mutation = self.page.replace(
+            "All 78 report scenarios were executed.",
+            "All 77 report scenarios were executed.",
+            1,
+        )
+        copyright_year_mutation = self.page.replace(
+            "Copyright (c) 2026 Martin.Bechard@DevConsult.ca - "
+            '<a href="../LICENSE">MIT License</a>',
+            "Copyright (c) 2025 Martin.Bechard@DevConsult.ca - "
+            '<a href="../LICENSE">MIT License</a>',
+            1,
+        )
+        self.assertNotEqual(
+            fixed_semantic_text(self.page),
+            fixed_semantic_text(report_count_mutation),
+        )
+        self.assertNotEqual(
+            fixed_semantic_text(self.page),
+            fixed_semantic_text(copyright_year_mutation),
+        )
+
+    def test_adopted_catalog_component_contract(self) -> None:
+        """Dense evaluation records must compose shared data-display components."""
+        self.assertNotIn("--ink:", self.page)
+        self.assertIn('class="card method-card"', self.page)
+        self.assertIn('class="card evaluation-card agent-card"', self.page)
+        self.assertIn('class="card evaluation-card skill-card"', self.page)
+        self.assertIn('class="panel definition-list compact-list"', self.page)
+        self.assertIn('class="callout callout--warning scope-note"', self.page)
+        self.assertIn('class="filters" data-filter-scope="agent"', self.page)
+        self.assertIn('class="filters" data-filter-scope="skill"', self.page)
+        self.assertIn('class="button" type="button" data-filter-clear="agent"', self.page)
+        self.assertIn('class="button" type="button" data-filter-clear="skill"', self.page)
+
+        table_count = self.page.count('<table class="wide-table">')
+        wrappers = re.findall(
+            r'<div class="table-wrap" tabindex="0" role="region" '
+            r'aria-label="Scenario results for [^"]+">',
+            self.page,
+        )
+        self.assertGreater(table_count, 0)
+        self.assertEqual(table_count, len(wrappers))
+        for heading_row in re.findall(r"<thead><tr>(.*?)</tr></thead>", self.page):
+            self.assertNotIn("<th>", heading_row)
+            self.assertGreater(heading_row.count('<th scope="col">'), 0)
+        self.assertGreater(self.page.count('<th scope="row">'), 0)
+        self.assertIn(".catalog { display: grid; gap: var(--ds-space-4); }", self.page)
+        self.assertIn("@media (max-width: 720px)", self.page)
+
+    def test_accepted_semantics_survive_shell_alignment(self) -> None:
+        """Only enumerated shell, class, and accessibility additions may change."""
+        accepted = git_file(
+            ACCEPTED_CONTENT_COMMIT, "design/agent-and-skill-evaluations.html"
+        )
+        self.assertEqual(fixed_semantic_text(accepted), fixed_semantic_text(self.page))
+        self.assertEqual(fixed_links(accepted), fixed_links(self.page))
+        self.assertEqual(
+            accepted.split("<html", 1)[0],
+            self.page.split("<html", 1)[0],
+        )
+        self.assertEqual(
+            re.findall(r'<script src="([^"]+)"></script>', accepted),
+            re.findall(r'<script src="([^"]+)"></script>', self.page),
+        )
+        self.assertIn(
+            "Copyright (c) 2026 Martin.Bechard@DevConsult.ca - "
+            '<a href="../LICENSE">MIT License</a>',
+            self.page,
+        )
+
+        prose_mutation = self.page.replace(
+            "Evaluation purpose and method", "Changed evaluation purpose", 1
+        )
+        link_mutation = self.page.replace(
+            'href="../evals/README.md"', 'href="../evals/changed.md"', 1
+        )
+        provenance_mutation = self.page.replace(
+            "Artifact-ID: 5a1eb6bc-bd8c-4dc4-bb88-62d9064841ed",
+            "Artifact-ID: changed",
+            1,
+        )
+        script_mutation = self.page.replace(
+            'src="agent-and-skill-evaluations.js"', 'src="changed.js"', 1
+        )
+        footer_context_mutation = self.page.replace(
+            AUTHORIZED_FOOTER_CONTEXT,
+            '<p class="footer-context">Scope: all Campaign Test reports.</p>',
+            1,
+        )
+        expected_agent_count = (
+            f'<p class="result-count" id="agent-result-count" aria-live="polite">'
+            f"Showing all {self.model['summary']['roleCount']} agents.</p>"
+        )
+        source_count_mutation = self.page.replace(
+            expected_agent_count,
+            '<p class="result-count" id="agent-result-count" aria-live="polite">'
+            "Showing all 999 agents.</p>",
+            1,
+        )
+        self.assertNotEqual(fixed_semantic_text(accepted), fixed_semantic_text(prose_mutation))
+        self.assertNotEqual(fixed_links(accepted), fixed_links(link_mutation))
+        self.assertNotEqual(
+            accepted.split("<html", 1)[0], provenance_mutation.split("<html", 1)[0]
+        )
+        self.assertNotEqual(
+            re.findall(r'<script src="([^"]+)"></script>', accepted),
+            re.findall(r'<script src="([^"]+)"></script>', script_mutation),
+        )
+        self.assertNotEqual(
+            fixed_semantic_text(accepted),
+            fixed_semantic_text(footer_context_mutation),
+        )
+        self.assertIn(expected_agent_count, self.page)
+        self.assertEqual(
+            fixed_semantic_text(self.page),
+            fixed_semantic_text(source_count_mutation),
+        )
 
     def test_inventories_and_selected_campaign_reconcile(self) -> None:
         """Current catalogs and the selected governed campaign must reconcile exactly."""
@@ -524,7 +822,7 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
             "Test report metadata",
             "<dt>Test report</dt>",
             "<h3>Evaluation results</h3>",
-            "<th>Evaluation result</th>",
+            '<th scope="col">Evaluation result</th>',
             "Selected-report Test suites / current Test suites",
             "Selected-report Evaluation results / current scenarios",
             "Linked Campaign Evaluation results",
@@ -603,8 +901,12 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
 
     def test_static_page_contains_every_entry_without_javascript(self) -> None:
         """Generated details must remain complete when the optional filter script is absent."""
-        self.assertEqual(146, self.page.count('class="evaluation-card skill-card"'))
-        self.assertEqual(33, self.page.count('class="evaluation-card agent-card"'))
+        self.assertEqual(
+            146, self.page.count('class="card evaluation-card skill-card"')
+        )
+        self.assertEqual(
+            33, self.page.count('class="card evaluation-card agent-card"')
+        )
         for opening_tag in re.findall(r"<(?:article|section)\b[^>]*>", self.page):
             attributes_only = re.sub(r'=(?:"[^"]*"|\'[^\']*\')', '=""', opening_tag)
             self.assertNotRegex(attributes_only, r"\shidden(?:\s|=|>)")
@@ -613,9 +915,10 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
         self.assertIn('<a class="site-brand" href="../index.html">', self.page)
         self.assertIn("<span>AI-Assisted Coding Toolkit Index</span>", self.page)
         self.assertNotIn("Back to Documentation Index", self.page)
-        self.assertRegex(
+        self.assertIn(
+            '<link rel="stylesheet" '
+            'href="documentation-design-system/assets/design-system.css">',
             self.page,
-            r"\.site-header \{[^}]*display: flex;[^}]*align-items: center;",
         )
         self.assertIn('<noscript>', self.page)
         self.assertIn(
@@ -625,19 +928,31 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
 
     def test_responsive_controls_and_statuses_have_accessible_text_contracts(self) -> None:
         """Responsive layout, focus visibility, labels, and live counts must be explicit."""
+        shared_css = (
+            ROOT
+            / "design"
+            / "documentation-design-system"
+            / "assets"
+            / "design-system.css"
+        ).read_text(encoding="utf-8")
         self.assertIn("@media (max-width: 720px)", self.page)
-        self.assertIn("width: fit-content; max-width: 100%; box-sizing: border-box", self.page)
-        self.assertIn(".evaluation-card { display: grid; min-width: 0", self.page)
-        self.assertIn("overflow-wrap: anywhere; white-space: normal", self.page)
-        self.assertIn(":focus-visible", self.page)
+        self.assertIn(
+            ".status { width: fit-content; max-width: 100%; overflow-wrap: anywhere; }",
+            self.page,
+        )
+        self.assertIn(".card {", shared_css)
+        self.assertIn("display: grid;", shared_css)
+        self.assertIn(":focus-visible", shared_css)
+        self.assertIn("@media (max-width: 820px)", shared_css)
+        self.assertIn("@media (max-width: 560px)", shared_css)
         self.assertIn('aria-label="Page sections"', self.page)
         self.assertEqual(2, self.page.count('aria-live="polite"'))
         for control_id in ("agent-search", "agent-status", "skill-search", "skill-status"):
             with self.subTest(control_id=control_id):
                 self.assertIn(f'for="{control_id}"', self.page)
                 self.assertIn(f'id="{control_id}"', self.page)
-        self.assertIn('<th>Evaluation result</th>', self.page)
-        self.assertIn('<th>Evidence alignment</th>', self.page)
+        self.assertIn('<th scope="col">Evaluation result</th>', self.page)
+        self.assertIn('<th scope="col">Evidence alignment</th>', self.page)
         self.assertNotIn("https://", self.page)
         self.assertNotIn("http://", self.page)
 

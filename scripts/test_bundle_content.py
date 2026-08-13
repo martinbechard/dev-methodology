@@ -2037,10 +2037,11 @@ class BundleContentTests(unittest.TestCase):
                 self._assert_documentation_navigation(
                     (REPOSITORY_ROOT / relative_path).read_text(encoding="utf-8"),
                     expected_sequence_links,
-                    expects_top_link=(
-                        Path(relative_path).name
-                        == "orchestrated-development-lifecycle.html"
-                    ),
+                    expects_top_link=Path(relative_path).name
+                    in {
+                        "agent-and-skill-evaluations.html",
+                        "orchestrated-development-lifecycle.html",
+                    },
                 )
 
     def test_documentation_navigation_rejects_invalid_ids_and_sequence_links(
@@ -16288,28 +16289,76 @@ Visible after.
             "index.html": index_text,
             **settings_consumer_text,
         }
+        shared_stylesheet_link = (
+            '<link rel="stylesheet" '
+            'href="documentation-design-system/assets/design-system.css">'
+        )
+        shared_stylesheet_text = (
+            REPOSITORY_ROOT
+            / "design"
+            / "documentation-design-system"
+            / "assets"
+            / "design-system.css"
+        ).read_text(encoding="utf-8")
+
+        def assert_settings_shell(filename: str, text: str) -> None:
+            uses_shared_shell = '<header class="site-header ds-header">' in text
+            style_source = text
+            header_selector = ".site-header"
+            if filename == "index.html":
+                uses_shared_shell = True
+                self.assertIn(
+                    '<link rel="stylesheet" '
+                    'href="design/documentation-design-system/assets/design-system.css">',
+                    text,
+                )
+            elif uses_shared_shell:
+                self.assertEqual(
+                    1, text.count('<header class="site-header ds-header">')
+                )
+                self.assertEqual(
+                    1, text.count('<footer class="site-footer ds-footer">')
+                )
+                self.assertIn(shared_stylesheet_link, text)
+            if uses_shared_shell:
+                style_source = shared_stylesheet_text
+                header_selector = ".ds-header"
+
+            site_header = css_rule_declarations(style_source, header_selector)
+            self.assertEqual("flex", site_header.get("display"))
+            self.assertEqual("center", site_header.get("align-items"))
+            self.assertTrue(site_header.get("gap"))
+
+            site_brand = css_rule_declarations(style_source, ".site-brand")
+            self.assertEqual("inline-flex", site_brand.get("display"))
+            self.assertEqual("0", site_brand.get("min-width"))
+
         for filename, text in settings_site_chrome_pages.items():
             with self.subTest(settings_site_chrome=filename):
-                style_source = text
-                if filename == "index.html":
-                    style_source = (
-                        REPOSITORY_ROOT
-                        / "design"
-                        / "documentation-design-system"
-                        / "assets"
-                        / "design-system.css"
-                    ).read_text(encoding="utf-8")
-                header_selector = (
-                    ".ds-header" if filename == "index.html" else ".site-header"
-                )
-                site_header = css_rule_declarations(style_source, header_selector)
-                self.assertEqual("flex", site_header.get("display"))
-                self.assertEqual("center", site_header.get("align-items"))
-                self.assertTrue(site_header.get("gap"))
+                assert_settings_shell(filename, text)
 
-                site_brand = css_rule_declarations(style_source, ".site-brand")
-                self.assertEqual("inline-flex", site_brand.get("display"))
-                self.assertEqual("0", site_brand.get("min-width"))
+        evaluation_page = settings_consumer_text["agent-and-skill-evaluations.html"]
+        self.assertIsNone(re.search(r"\.site-header\s*\{", evaluation_page))
+        self.assertIsNone(re.search(r"\.site-brand\s*\{", evaluation_page))
+        shell_mutations = {
+            "header": evaluation_page.replace(
+                '<header class="site-header ds-header">',
+                '<header class="site-header">',
+                1,
+            ),
+            "footer": evaluation_page.replace(
+                '<footer class="site-footer ds-footer">',
+                '<footer class="site-footer">',
+                1,
+            ),
+            "stylesheet": evaluation_page.replace(shared_stylesheet_link, "", 1),
+        }
+        for mutation_name, mutated_page in shell_mutations.items():
+            with self.subTest(settings_shell_mutation=mutation_name):
+                with self.assertRaises(AssertionError):
+                    assert_settings_shell(
+                        "agent-and-skill-evaluations.html", mutated_page
+                    )
 
         license_text = (REPOSITORY_ROOT / "LICENSE").read_text(encoding="utf-8")
         self.assertIn("MIT License", license_text)
