@@ -1,6 +1,6 @@
 # Estimate Agent Work In Agent-Hours
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -272,3 +272,16 @@ Do not modify, review, verify, deliver, or close this Work Item until the user a
 - Normalized Objective: Complete correction cycle 1 of 2 for separate low/high critical-path attribution and mapping-form compact `expected_parallelism` examples, then obtain fresh independent review.
 - Launch Result: Existing canonical execution resumed; no replacement execution created.
 - Next Action: The same Dev Orchestrator records `Starting -> Running`, then acquires exact outcome and implementation-path ownership before mutation.
+
+## Second Correction Resumption Running Evidence
+
+- Accepted At: 2026-08-13T16:55:47Z.
+- Transition: `Starting -> Running`.
+- Owner: Dev Orchestrator.
+- Canonical Task and Conversation: `019ffa3d-191f-7343-aaeb-2499de1ad605`.
+- Root Agent Execution: `/root/estimate_agent_work`.
+- Branch and Worktree: `main` at `/Users/martinbechard/dev/dev-methodology`.
+- Preserved Candidate: `12d5c5c978592f01c8d71d4bd26b60705bfbed89`.
+- Phase: Implementing newly authorized correction cycle 1 of 2.
+- Accepted Execution: Add separate low/high critical-path attribution when bounds select different paths and replace compact scalar `expected_parallelism` examples with the required explanatory mapping form, followed by fresh independent review.
+- Required Title: `Implementing — Estimate Agent Work`.
