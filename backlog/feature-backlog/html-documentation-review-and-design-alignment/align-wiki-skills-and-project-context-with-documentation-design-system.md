@@ -1,8 +1,8 @@
 # Align Wiki Skills and Project Context with the Documentation Design System
 
-Owner: Unowned
+Owner: Dev Orchestrator
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -200,3 +200,13 @@ Dependency Reconciliation: Satisfied by completed Work Item `review-wiki-skills-
 - Provider Path Claim: `resume-wiki-provenance-digest-path-019ff2c3`; event `955dd380-38e3-4a72-abfa-18cc6d28ed85`.
 - Required Runtime Title: `Starting — Align Wiki Skills And Project Context With Documentation Design System`.
 - Next Action: The same nested Dev Orchestrator records `Starting -> Running`, reacquires its Work Item claim, and resumes from the accepted plan with the revision-matched compact-v2 provenance skill.
+
+## Compact Provenance Recovered Running Evidence
+
+- Accepted At: 2026-08-13T21:40:02Z.
+- Transition: `Starting -> Running`.
+- Owner: Dev Orchestrator.
+- Canonical Task and Conversation: `019ffcd2-a09c-7c91-a09c-d61bc1c04a64`.
+- Branch and Worktree: `main` at `/Users/martinbechard/dev/dev-methodology`.
+- Accepted Execution Evidence: Fresh MCP revision `f132fa36a2f34792426443026d4ff0381fdb5d0a96e7fffbf8e9eab132e4b541` exposes compact-v2 `document-provenance` digest `2f50ecb30a023fd4c74ca8f57773dea475bb122b7537c3958639404672914563`.
+- Phase: Correct the preserved implementation and TDD plan, obtain fresh Dev Architect acceptance, then implement.
