@@ -38,6 +38,10 @@ _HTML_READER_FIELDS = (
     "Dispatched-Model",
     "Reasoning-Effort",
 )
+_HTML_READER_TAGS = {
+    field: "time" if field == "Created-Local" else "span"
+    for field in _HTML_READER_FIELDS
+}
 _LEGACY_CORE_FIELDS = (
     "Artifact-ID",
     "Created-UTC",
@@ -140,6 +144,9 @@ _BLANK_LINES_PATTERN = re.compile(r"(?:[ \t]*(?:\r\n|\n|\r))*")
 _UTC_TIMESTAMP_PATTERN = re.compile(
     r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|\+00:00)$"
 )
+_V2_UTC_TIMESTAMP_PATTERN = re.compile(
+    r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z$"
+)
 _LOCAL_TIMESTAMP_PATTERN = re.compile(
     r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?"
     r"[+-](?:0\d|1[0-4]):[0-5]\d$"
@@ -190,8 +197,11 @@ class RuntimeEnvelope:
 class _HtmlFootnote:
     in_footer: bool
     fields: dict[str, list[str]]
+    field_tags: dict[str, list[str]]
     time_datetimes: dict[str, list[str | None]]
     text_parts: list[str]
+    comments: list[str]
+    attribute_values: list[str]
 
 
 class _ProvenanceHtmlParser(HTMLParser):
@@ -235,8 +245,11 @@ class _ProvenanceHtmlParser(HTMLParser):
             current = _HtmlFootnote(
                 in_footer=self.footer_depth > 0,
                 fields={},
+                field_tags={},
                 time_datetimes={},
                 text_parts=[],
+                comments=[],
+                attribute_values=[],
             )
             self.footnotes.append(current)
             self._current = current
@@ -246,9 +259,13 @@ class _ProvenanceHtmlParser(HTMLParser):
             ).append(attr_map.get("data-document-provenance") or "")
         if self._current is None:
             return
+        self._current.attribute_values.extend(
+            value for _, value in attrs if value is not None
+        )
         label = attr_map.get("data-provenance-field")
         if label is not None:
             self._field_stack.append((label, len(self._elements), []))
+            self._current.field_tags.setdefault(label, []).append(tag)
             if tag == "time":
                 self._current.time_datetimes.setdefault(label, []).append(
                     attr_map.get("datetime")
@@ -260,6 +277,10 @@ class _ProvenanceHtmlParser(HTMLParser):
         self._current.text_parts.append(data)
         for _, _, parts in self._field_stack:
             parts.append(data)
+
+    def handle_comment(self, data: str) -> None:
+        if self._current is not None:
+            self._current.comments.append(data)
 
     def handle_endtag(self, tag: str) -> None:
         depth = len(self._elements)
@@ -596,7 +617,7 @@ def _validate_common_v2_values(record: Mapping[str, str], index: int) -> None:
     local = _parse_local_timestamp(record["Created-Local"])
     if local is None:
         raise ValueError(f"runtime envelope record {index} has an invalid Created-Local")
-    utc = _parse_utc_timestamp(record["Created-UTC"])
+    utc = _parse_v2_utc_timestamp(record["Created-UTC"])
     if utc is None:
         raise ValueError(f"runtime envelope record {index} has an invalid Created-UTC")
     if local.astimezone(timezone.utc) != utc:
@@ -614,7 +635,7 @@ def _validate_historical_times(
     local = known.get("Created-Local", {}).get("Value")
     utc = known.get("Created-UTC", {}).get("Value")
     parsed_local = _parse_local_timestamp(local) if local is not None else None
-    parsed_utc = _parse_utc_timestamp(utc) if utc is not None else None
+    parsed_utc = _parse_v2_utc_timestamp(utc) if utc is not None else None
     if local is not None and parsed_local is None:
         raise ValueError(
             f"runtime envelope record {index} Known-Facts Created-Local is invalid"
@@ -727,10 +748,23 @@ def _validate_compact_html(
     versions = footnote.fields.pop("Footnote-Version", [])
     if versions != ["v2"]:
         findings.append(_finding(path, "Footnote", "provenance footnote marker must equal v2"))
-    visible_text = _normalize_text(" ".join(footnote.text_parts))
-    if _FORBIDDEN_VISIBLE_METADATA.search(visible_text):
+    inspected_metadata = " ".join(
+        [
+            _normalize_text(" ".join(footnote.text_parts)),
+            *footnote.comments,
+            *footnote.attribute_values,
+        ]
+    )
+    if (
+        _FORBIDDEN_VISIBLE_METADATA.search(inspected_metadata)
+        or _PLACEHOLDER_PATTERN.search(inspected_metadata)
+    ):
         findings.append(
-            _finding(path, "Footnote", "internal correlation or evidence metadata is visible")
+            _finding(
+                path,
+                "Footnote",
+                "internal correlation, evidence, or placeholder metadata is present",
+            )
         )
     findings.extend(_validate_footnote_fields(path, footnote, record, route, copyright_statement))
     return findings
@@ -779,6 +813,16 @@ def _validate_footnote_fields(
             findings.append(_finding(path, field, "provenance footnote field is duplicated"))
         if actual[0] != value:
             findings.append(_finding(path, field, "footnote value does not match authoritative evidence"))
+        tags = footnote.field_tags.get(field, [])
+        expected_tag = _HTML_READER_TAGS[field]
+        if len(tags) != len(actual) or any(tag != expected_tag for tag in tags):
+            findings.append(
+                _finding(
+                    path,
+                    field,
+                    f"must use the exact {expected_tag} semantic element",
+                )
+            )
     for field in forbidden:
         if field in footnote.fields:
             findings.append(_finding(path, field, "externally unknown fact must be omitted"))
@@ -845,6 +889,7 @@ def _parse_block(
     encountered: list[str] = []
     for line in lines:
         if line == copyright_statement:
+            encountered.append("Copyright")
             continue
         if line.lower().startswith("copyright"):
             continue
@@ -867,7 +912,7 @@ def _parse_block(
         if len(field_values) > 1:
             findings.append(_finding(path, field, "provenance field is duplicated"))
         values[field] = field_values[0]
-    if encountered != list(required_fields):
+    if encountered != ["Copyright", *required_fields]:
         findings.append(_finding(path, "Provenance", "provenance fields are not in canonical order"))
     return values, findings
 
@@ -962,7 +1007,11 @@ def _compare_compact_record(
     record_utc = record.get("Created-UTC")
     if isinstance(local, str):
         parsed_local = _parse_local_timestamp(local)
-        parsed_utc = _parse_utc_timestamp(record_utc) if isinstance(record_utc, str) else None
+        parsed_utc = (
+            _parse_v2_utc_timestamp(record_utc)
+            if isinstance(record_utc, str)
+            else None
+        )
         if parsed_local is not None and parsed_utc is not None:
             if parsed_local.astimezone(timezone.utc) != parsed_utc:
                 findings.append(_finding(path, "Created-Local", "must represent the same instant as Created-UTC"))
@@ -1141,6 +1190,17 @@ def _parse_utc_timestamp(value: str | None) -> datetime | None:
     if parsed.utcoffset() is None or parsed.utcoffset().total_seconds() != 0:
         return None
     return parsed.astimezone(timezone.utc)
+
+
+def _parse_v2_utc_timestamp(value: str | None) -> datetime | None:
+    if value is None or _V2_UTC_TIMESTAMP_PATTERN.fullmatch(value) is None:
+        return None
+    try:
+        return datetime.fromisoformat(value[:-1] + "+00:00").astimezone(
+            timezone.utc
+        )
+    except ValueError:
+        return None
 
 
 def _parse_local_timestamp(value: str | None) -> datetime | None:

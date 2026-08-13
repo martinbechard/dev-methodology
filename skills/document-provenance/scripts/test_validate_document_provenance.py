@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import contextlib
 import io
+import json
 import tempfile
 import unittest
 from pathlib import Path
@@ -84,6 +85,54 @@ class DocumentProvenanceValidatorTest(unittest.TestCase):
                         runtime_envelope=self.runtime_envelope,
                     ),
                 )
+
+    def test_v2_created_utc_schema_and_validator_require_z(self) -> None:
+        schema = json.loads(
+            (_PACKAGE_ROOT / "assets/provenance-envelope.schema.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        pattern = schema["$defs"]["createdUtc"]["pattern"]
+        self.assertRegex("2026-08-08T18:15:00Z", pattern)
+        self.assertNotRegex("2026-08-08T18:15:00+00:00", pattern)
+
+        record = dict(self.runtime_envelope.records["artifact-test-compact"])
+        record["Created-UTC"] = "2026-08-08T18:15:00+00:00"
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "runtime-envelope.json"
+            path.write_text(
+                json.dumps({"schema_version": 2, "records": [record]}),
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(ValueError, "invalid Created-UTC"):
+                load_runtime_envelope(path)
+
+            historical = json.loads(
+                json.dumps(
+                    self.runtime_envelope.records["artifact-historical-all-known"]
+                )
+            )
+            historical["Known-Facts"]["Created-UTC"]["Value"] = (
+                "2026-07-20T08:01:32+00:00"
+            )
+            path.write_text(
+                json.dumps({"schema_version": 2, "records": [historical]}),
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(ValueError, "Created-UTC is invalid"):
+                load_runtime_envelope(path)
+
+    def test_v1_created_utc_keeps_zero_offset_compatibility(self) -> None:
+        record = dict(next(iter(self.legacy_envelope.records.values())))
+        record["Created-UTC"] = "2026-08-08T18:22:49+00:00"
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "runtime-envelope.json"
+            path.write_text(
+                json.dumps({"schema_version": 1, "records": [record]}),
+                encoding="utf-8",
+            )
+            loaded = load_runtime_envelope(path)
+        self.assertEqual(1, loaded.schema_version)
 
     def test_legacy_route_accepts_unchanged_package_headers(self) -> None:
         paths = (
@@ -173,6 +222,9 @@ class DocumentProvenanceValidatorTest(unittest.TestCase):
             "html-artifact-mismatch.html",
             "html-value-mismatch.html",
             "html-visible-evidence.html",
+            "html-wrong-field-tag.html",
+            "html-task-id-comment.html",
+            "html-task-id-attribute.html",
         )
 
         for filename in cases:
@@ -184,6 +236,18 @@ class DocumentProvenanceValidatorTest(unittest.TestCase):
                     runtime_envelope=self.runtime_envelope,
                 )
                 self.assertNotEqual([], findings)
+
+    def test_rejects_reordered_compact_copyright(self) -> None:
+        findings = validate_document(
+            _FIXTURES / "invalid/reordered-copyright.md",
+            route="new",
+            copyright_statement=_COPYRIGHT,
+            runtime_envelope=self.runtime_envelope,
+        )
+        self.assertTrue(
+            any(finding.field == "Provenance" for finding in findings),
+            findings,
+        )
 
     def test_historical_known_and_unknown_facts_control_visibility(self) -> None:
         known_findings = validate_document(
