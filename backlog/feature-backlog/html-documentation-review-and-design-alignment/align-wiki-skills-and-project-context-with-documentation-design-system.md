@@ -1,8 +1,8 @@
 # Align Wiki Skills and Project Context with the Documentation Design System
 
-Owner: Dev Orchestrator
+Owner: Unowned
 
-Status: Running
+Status: Blocked
 
 Type: Feature
 
@@ -117,3 +117,18 @@ Dependency Reconciliation: Satisfied by completed Work Item `review-wiki-skills-
 - Phase: implementation planning and design-system scope discovery.
 - Accepted Execution Evidence: The canonical Dev Orchestrator accepted the reserved assignment after confirming the provider record, satisfied dependency, primary `main` checkout, and empty claim registry.
 - Next Action: Produce and independently review a bounded implementation and TDD plan before source mutation.
+
+## Blocked Evidence
+
+- Recorded At: 2026-08-13T20:42:05Z.
+- Transition: `Running -> Blocked`.
+- Canonical Task and Conversation: `019ffcd2-a09c-7c91-a09c-d61bc1c04a64` on host `local`.
+- Preserved Dev Orchestrator: the same nested execution launched by the canonical visible task.
+- Source State: No source mutation or candidate exists.
+- Exact Blocker: Configured `mcp-agent-ops` resolves `review-documentation-design-system` version `0.1.0`, while this repository requires version `1.0.0`.
+- Recovery Owner: Project Configurator and the configured MCP skill-catalog owner.
+- Unblock Condition: Refresh the configured MCP skill catalog and prove a revision-matched load resolves `review-documentation-design-system` version `1.0.0`.
+- Work Claim Release: `align-wiki-skills-context-work-019ffcd2`; disposition `blocked`; event `990c8b3f-8257-4b6f-a489-9ac5fc6edd9d`.
+- Provider Transition Claim: `block-wiki-skill-version-019ff2c3`; event `f592cb31-755b-4648-93fa-3835d40a6507`.
+- Required Runtime Title: `Blocked — Align Wiki Skills And Project Context With Documentation Design System`.
+- Safe Resume: After the unblock condition, preserve the same canonical task and resume only through `Blocked -> Ready -> Starting -> Running`.
