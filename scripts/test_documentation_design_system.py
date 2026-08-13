@@ -102,6 +102,15 @@ TOOLKIT_CARD_OWNERS = (
 TOOLKIT_BASELINE_SEMANTIC_SHA256 = (
     "f35a9a08bcfeaae5ce4b0425adf202a8729fd78cf06b1eee6ebd9047ac2107d4"
 )
+TOOLKIT_SKIP_LINK = (
+    '<a class="skip-link" href="#main-content">Skip to main content</a>'
+)
+TOOLKIT_SUITE_NAV_START = (
+    '<nav class="suite-nav" aria-label="Documentation pages">'
+)
+TOOLKIT_DESIGN_VERSION = (
+    f'<span class="ds-version">Design system v{VERSION}</span>'
+)
 
 
 class _PageParser(HTMLParser):
@@ -206,24 +215,21 @@ def _lifecycle_semantic_text(source: str) -> str:
 
 
 def _toolkit_semantic_text(source: str) -> str:
-    """Return accepted toolkit prose after removing only authorized additions."""
+    """Validate the shell, then return prose without exact authorized additions."""
 
-    without_additions = re.sub(
-        r'<a class="skip-link" href="#main-content">Skip to main content</a>',
-        "",
+    _validate_toolkit_index_structure(source)
+
+    suite_nav_match = re.search(
+        rf"{re.escape(TOOLKIT_SUITE_NAV_START)}.*?</nav>",
         source,
-    )
-    without_additions = re.sub(
-        r'<nav class="suite-nav" aria-label="Documentation pages">.*?</nav>',
-        "",
-        without_additions,
         flags=re.DOTALL,
     )
-    without_additions = re.sub(
-        rf'<span class="ds-version">Design system v{re.escape(VERSION)}</span>',
-        "",
-        without_additions,
-    )
+    if suite_nav_match is None:
+        raise ValueError("suite navigation must be available for normalization")
+
+    without_additions = source.replace(TOOLKIT_SKIP_LINK, "", 1)
+    without_additions = without_additions.replace(suite_nav_match.group(0), "", 1)
+    without_additions = without_additions.replace(TOOLKIT_DESIGN_VERSION, "", 1)
     visible_markup = re.sub(
         r"<(?:style|script)\b.*?</(?:style|script)>",
         "",
@@ -232,6 +238,115 @@ def _toolkit_semantic_text(source: str) -> str:
     )
     visible_text = re.sub(r"<[^>]+>", " ", visible_markup)
     return " ".join(unescape(visible_text).split())
+
+
+def _validate_toolkit_index_structure(source: str) -> None:
+    """Reject shell or accessibility drift before semantic normalization."""
+
+    def require(condition: bool, message: str) -> None:
+        if not condition:
+            raise ValueError(message)
+
+    def class_count(tag: str, class_name: str) -> int:
+        return len(
+            re.findall(
+                rf'<{tag}\b[^>]*class="[^"]*\b{re.escape(class_name)}\b[^"]*"[^>]*>',
+                source,
+            )
+        )
+
+    require(source.count(TOOLKIT_SKIP_LINK) == 1, "skip link must be exact and unique")
+    require(class_count("a", "skip-link") == 1, "skip-link class use must be exact")
+    require(
+        re.search(
+            rf'<body id="top">\s*{re.escape(TOOLKIT_SKIP_LINK)}',
+            source,
+        )
+        is not None,
+        "skip link must be the first body child",
+    )
+    require(
+        source.count('<main id="main-content" tabindex="-1">') == 1,
+        "main content must be an exact programmatic focus target",
+    )
+
+    suite_nav_matches = re.findall(
+        rf"{re.escape(TOOLKIT_SUITE_NAV_START)}(.*?)</nav>",
+        source,
+        flags=re.DOTALL,
+    )
+    require(len(suite_nav_matches) == 1, "suite navigation must be exact and unique")
+    require(class_count("nav", "suite-nav") == 1, "suite-nav class use must be exact")
+    suite_nav = suite_nav_matches[0]
+    anchor_pattern = re.compile(
+        r'<a href="([^"]+)"( aria-current="page")?>([^<]+)</a>'
+    )
+    navigation_links = [
+        (href, label, current == ' aria-current="page"')
+        for href, current, label in anchor_pattern.findall(suite_nav)
+    ]
+    require(
+        navigation_links
+        == [
+            (href, label, index == 0)
+            for index, (label, href) in enumerate(TOOLKIT_NAVIGATION)
+        ],
+        "suite navigation must match the authoritative anchor inventory",
+    )
+    require(
+        not anchor_pattern.sub("", suite_nav).strip(),
+        "suite navigation must contain anchors and whitespace only",
+    )
+
+    expected_card_indexes = [f"{index:02d}" for index in range(1, 11)]
+    card_indexes = re.findall(
+        r'<span class="card-index" aria-hidden="true">(\d{2})</span>',
+        source,
+    )
+    require(
+        card_indexes == expected_card_indexes,
+        "every card index must retain exact aria-hidden markup",
+    )
+    require(class_count("span", "card-index") == 10, "card-index class use must be exact")
+    require(class_count("span", "ds-version") == 1, "ds-version class use must be exact")
+    parser = _PageParser()
+    parser.feed(source)
+    require(
+        parser.ids == ["top", "main-content", "page-title", "documents-title"],
+        "toolkit IDs must match the accepted accessibility inventory",
+    )
+    require(
+        re.findall(r'aria-label="([^"]+)"', source) == ["Documentation pages"],
+        "aria-label inventory must remain exact",
+    )
+    require(
+        re.findall(r'aria-labelledby="([^"]+)"', source)
+        == ["page-title", "documents-title"],
+        "aria-labelledby inventory must remain exact",
+    )
+    require(
+        re.findall(r'aria-current="([^"]+)"', source) == ["page"],
+        "aria-current inventory must remain exact",
+    )
+    require(
+        re.findall(r'aria-hidden="([^"]+)"', source) == ["true"] * 10,
+        "aria-hidden inventory must remain exact",
+    )
+    require(
+        re.findall(r'alt="([^"]+)"', source) == ["DevConsult Canada logo"],
+        "image alternative text inventory must remain exact",
+    )
+    for exact_structure in (
+        '<section class="hero" aria-labelledby="page-title">',
+        '<h1 id="page-title">AI-Assisted Coding Toolkit</h1>',
+        '<section aria-labelledby="documents-title">',
+        '<h2 id="documents-title">Toolkit Documentation</h2>',
+        TOOLKIT_DESIGN_VERSION,
+    ):
+        require(
+            source.count(exact_structure) == 1,
+            f"required structure must remain exact: {exact_structure}",
+        )
 
 
 class DocumentationDesignSystemTests(unittest.TestCase):
@@ -299,7 +414,7 @@ class DocumentationDesignSystemTests(unittest.TestCase):
             r'<body id="top">\s*'
             r'<a class="skip-link" href="#main-content">Skip to main content</a>',
         )
-        self.assertIn('<main id="main-content">', index_text)
+        self.assertIn('<main id="main-content" tabindex="-1">', index_text)
         self.assertEqual(1, parser.h1_count)
         self.assertEqual(len(parser.ids), len(set(parser.ids)))
         self.assertEqual(
@@ -363,6 +478,98 @@ class DocumentationDesignSystemTests(unittest.TestCase):
             hashlib.sha256(
                 _toolkit_semantic_text(index_text).encode("utf-8")
             ).hexdigest(),
+        )
+
+    def test_toolkit_semantics_reject_adversarial_accessibility_mutations(
+        self,
+    ) -> None:
+        """Normalization must not conceal unauthorized text or attribute drift."""
+
+        index_text = (REPOSITORY_ROOT / "index.html").read_text(encoding="utf-8")
+        valid_structure = index_text.replace(
+            '<main id="main-content">',
+            '<main id="main-content" tabindex="-1">',
+            1,
+        )
+        mutations = {
+            "suite navigation text": (
+                valid_structure.replace(
+                    TOOLKIT_SUITE_NAV_START,
+                    f"{TOOLKIT_SUITE_NAV_START}\n    Unauthorized navigation text",
+                    1,
+                ),
+                "anchors and whitespace only",
+            ),
+            "changed documents label": (
+                valid_structure.replace(
+                    '<section aria-labelledby="documents-title">',
+                    '<section aria-labelledby="page-title">',
+                    1,
+                ),
+                "aria-labelledby inventory",
+            ),
+            "removed documents label": (
+                valid_structure.replace(
+                    '<section aria-labelledby="documents-title">',
+                    "<section>",
+                    1,
+                ),
+                "aria-labelledby inventory",
+            ),
+        }
+        for mutation_name, (mutation, expected_error) in mutations.items():
+            with self.subTest(mutation=mutation_name):
+                self.assertNotEqual(valid_structure, mutation)
+                with self.assertRaisesRegex(ValueError, expected_error):
+                    _toolkit_semantic_text(mutation)
+
+        for card_index in range(1, 11):
+            exact_index = f"{card_index:02d}"
+            card_markup = (
+                f'<span class="card-index" aria-hidden="true">{exact_index}</span>'
+            )
+            for mutation_name, mutation in {
+                "removed": valid_structure.replace(
+                    card_markup,
+                    f'<span class="card-index">{exact_index}</span>',
+                    1,
+                ),
+                "moved": valid_structure.replace(
+                    f"<header>\n            {card_markup}",
+                    f'<header aria-hidden="true">\n            '
+                    f'<span class="card-index">{exact_index}</span>',
+                    1,
+                ),
+            }.items():
+                with self.subTest(card=exact_index, mutation=mutation_name):
+                    self.assertNotEqual(valid_structure, mutation)
+                    with self.assertRaisesRegex(
+                        ValueError,
+                        "every card index must retain exact aria-hidden markup",
+                    ):
+                        _toolkit_semantic_text(mutation)
+
+    def test_shared_css_honors_reduced_motion(self) -> None:
+        """Reduced motion disables smooth scrolling and decorative card movement."""
+
+        css = (DESIGN_ROOT / "assets" / "design-system.css").read_text(
+            encoding="utf-8"
+        )
+        marker = "@media (prefers-reduced-motion: reduce) {"
+        self.assertIn(marker, css)
+        reduced_motion = css.split(marker, 1)[1].split("@media print", 1)[0]
+        self.assertRegex(
+            reduced_motion,
+            r"html\s*\{[^}]*scroll-behavior:\s*auto;",
+        )
+        self.assertRegex(
+            reduced_motion,
+            r"\.card--link\s*\{[^}]*transition:\s*none;",
+        )
+        self.assertRegex(
+            reduced_motion,
+            r"\.card--link:hover,\s*"
+            r"\.card--link:focus-visible\s*\{[^}]*transform:\s*none;",
         )
 
     def test_index_discovers_every_detail_page_and_assets_exist(self) -> None:

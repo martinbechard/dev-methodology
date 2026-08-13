@@ -1930,6 +1930,7 @@ class BundleContentTests(unittest.TestCase):
     def test_index_detail_pages_expose_complete_section_navigation(self) -> None:
         """Index suite links and detail-page section navigation stay complete."""
         index_text = (REPOSITORY_ROOT / "index.html").read_text(encoding="utf-8")
+        self.assertIn('<main id="main-content" tabindex="-1">', index_text)
         suite_nav_match = re.search(
             r'<nav class="suite-nav" aria-label="Documentation pages">(.*?)</nav>',
             index_text,
