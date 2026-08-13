@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: Running
+Status: Blocked
 
 Type: Feature
 
@@ -222,3 +222,19 @@ Do not mutate, integrate, deliver, or close this candidate until the user answer
 - Update Claim: `accept-resumed-definitions-update-019ffc29`; event `329b631d-c7b2-4282-be54-ca96a529fd3a`.
 - Provider Path Claim: `accept-resumed-definitions-backlog-019ffc29`; event `b3b84e28-0e5f-4133-8500-e62a66055807`.
 - Checkout Topology: Private-worktree correction remains claim-free. Exact primary-main coordination is deferred to integration; browser resources are deferred to browser verification.
+
+## File-Provider Creation Capability Blocker
+
+- Recorded At: 2026-08-13T21:37:16Z.
+- Transition: `Running -> Blocked`.
+- Preserved Canonical Task and Conversation: `019ffc29-0d20-78f1-b3d6-f0797e7bb5b6` on host `local`.
+- Preserved Candidate: `05b2bda3b929d8258a9a096b8dbc9870ab2d5629` on the existing clean branch and worktree.
+- Preserved Gates: Source review `ACCEPTED`; artifact review `GOOD`; Shared Documentation Design System review `10/10 ACCEPTED`; browser verification `PASS`; final verification `PASS`.
+- Blocker: The configured runtime does not expose the verified callable `commit-file-provider-transaction` ordinary-creation operation required to create the focused Defect for the obsolete exact-header assertion in `scripts/test_bundle_content.py`.
+- Blocker Owner: Project Configurator or the configured file-provider transaction capability owner.
+- Unblock Condition: The same runtime exposes and verifies the atomic ordinary-creation operation. The Coordinator then creates exactly one focused Defect with immutable transaction proof and resumes this same canonical task for integration.
+- Prohibition: Do not install, emulate, bypass, or substitute the missing transaction operation. Do not discard, replace, or reimplement the preserved candidate.
+- Claim Handoff: Work Item claim `align-agent-skill-definitions-work-resumed-019ffc29` released `blocked` with blocker `definitions-file-provider-creation-capability-unavailable`; event `20bdbdd7-475c-4881-95e8-1bba70e7831d`.
+- Provider Update Claim: `block-definitions-file-provider-capability-019ff2c3`; event `70213173-629e-46b0-a704-e95e5eb5c35f`.
+- Provider Path Claim: `block-definitions-file-provider-path-019ff2c3`; event `a9103a44-edaa-42df-8b33-25528437b8e3`.
+- Required Runtime Title: `Blocked — Align Agent And Skill Definitions With Documentation Design System`.
