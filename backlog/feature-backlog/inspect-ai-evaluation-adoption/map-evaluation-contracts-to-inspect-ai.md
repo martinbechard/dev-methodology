@@ -1,6 +1,6 @@
 # Map Evaluation Contracts To Inspect AI
 
-Status: Starting
+Status: Running
 
 Type: Analysis
 
@@ -80,3 +80,13 @@ None.
 - Runtime Created At: `2026-08-13T16:18:30Z` (`1786637910`).
 - Requested Title: `Starting — Map Evaluation Contracts To Inspect AI`; the runtime preview is ellipsized only.
 - Runtime Creation Outcome: Unique success with no client or pending identity. Creation does not imply Running.
+
+## Running Acceptance Evidence
+
+- Accepted At: 2026-08-13T16:19:59Z.
+- Owner: `/root/map_evaluation_contracts_to_inspect_ai` under the Dev Orchestrator Role.
+- Canonical Codex Task: `019ffbeb-02ee-7d52-9460-d1bfdbdbe20b`.
+- Canonical Conversation: `019ffbeb-02ee-7d52-9460-d1bfdbdbe20b`.
+- Branch and Worktree: primary `main` at `/Users/martinbechard/dev/dev-methodology`.
+- Phase: source inspection and bounded implementation planning.
+- Acceptance: The dispatched root accepted execution ownership after acquiring the exact Work Item ID and provider path.
