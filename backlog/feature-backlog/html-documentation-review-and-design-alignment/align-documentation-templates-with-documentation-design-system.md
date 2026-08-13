@@ -92,3 +92,15 @@ Dependency Resolution: Satisfied by completed Work Item `review-documentation-te
 - Transition Claim: `reserve-documentation-templates-019ff2c3`; event `3a3e8e6e-5712-4f86-a89b-4203a894a3b3`.
 - Dispatch Architecture: Create one visible Codex task whose reference-plus-delta prompt starts one Dev Orchestrator collaboration subagent.
 - Next Action: Reconcile the unique visible task identity; its nested Dev Orchestrator records `Starting -> Running` before mutation.
+
+## Canonical Runtime Assignment
+
+- Assigned At: 2026-08-13T20:32:02Z.
+- Codex Task ID: `019ffcd2-81e5-7981-ae97-8258bb0ef4d5`.
+- Conversation ID: `019ffcd2-81e5-7981-ae97-8258bb0ef4d5`.
+- Host: `local`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Runtime Project: saved `dev-methodology` project at `/Users/martinbechard/dev/dev-methodology`.
+- Creation Outcome: Unique direct success with no client or pending identity and no retry.
+- Lifecycle Boundary: Provider remains `Starting` until exactly one nested Dev Orchestrator accepts and records `Starting -> Running`.
+- Adoption Claim: `adopt-documentation-templates-task-019ff2c3`; event `44a373b5-36f4-419b-9953-9ef91e679eb0`.
