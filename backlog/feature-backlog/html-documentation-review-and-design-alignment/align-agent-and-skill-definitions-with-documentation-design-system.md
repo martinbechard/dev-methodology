@@ -148,6 +148,22 @@ Dependency Resolution: Satisfied by completed Work Item `review-agent-and-skill-
 - Remaining Finding: DDS-COM-010 fails because the footer lacks visible page-specific provenance, scope, or compatibility context.
 - Authority Boundary: Adding visible footer context changes the accepted semantic baseline. The design-alignment item does not independently authorize that content decision, and a separate defect would not resolve the required acceptance choice for this same page.
 
+## Backlog Blockage Crisis Epoch
+
+- Declared At: 2026-08-13T22:39:35Z.
+- Crisis Epoch: `blocked-crisis-20260813T223935Z`.
+- Trigger: Five active Work Items stored `Blocked`, satisfying the backlog-blockage threshold.
+- Initial Stored-Blocked Count: 5.
+- Initial Crisis Set: `align-agent-and-skill-definitions-with-documentation-design-system`; `align-agentic-configuration-with-documentation-design-system`; `align-skills-modularization-with-documentation-design-system`; `avoid-re-home-terminology-and-use-plain-language`; `replace-evaluation-oracle-terminology-with-judge`.
+- Coordinator: `/root/backlog_coordinator`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Dispatch Mode: Effective `SOLO`; the runtime exposes no callable secondary-thread dispatch toggle, so mechanism mutation is `NOT_APPLICABLE` and the root dispatcher suppresses parallel dispatch.
+- Preservation Boundary: Every known non-crisis mutator was instructed to stop and returned preserved or terminal evidence before the claim reset phase.
+- Recovery Rule: Complete exactly one crisis-set Work Item at a time in one separate canonical task without claims. No ordinary claim operation or Ready-work dispatch is permitted between the single reset and crisis exit.
+- Initial-Marker Update Claim: `record-crisis-epoch-20260813t223935z`; event `d157fffb-b548-4f25-b46e-9a40e520b4ed`.
+- Initial-Marker Path Claim: `record-crisis-epoch-path-20260813t223935z`; event `eefb3166-8e44-4afe-afc9-ed6a65c15737`.
+- Membership Reconciliation: `align-agent-owned-evaluation-suites-with-documentation-design-system` entered `User Action Required` before declaration and is excluded. The stopped Specialization execution remains provider `Running` pending its distinct FAIL disposition and is not inferred into the initial stored-Blocked set.
+
 ## User Action Required
 
 ### Question for the User
