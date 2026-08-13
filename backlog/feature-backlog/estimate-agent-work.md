@@ -151,3 +151,13 @@ This item defines an estimation method, not a promise that generated-token throu
 - Preserved State: No source candidate or tracked dirty bytes exist. Claims are empty. Preserve the canonical visible task, nested Dev Orchestrator, plan pair, candidate `03a94762451efe4322fe781f77191b769bf6c7b1`, all User Action Required records, and the other four plan artifacts.
 - Transition: Provider remains `Running`; no lifecycle transition or replacement execution is authorized.
 - Transition Claim: `authorize-estimate-plan-review-retry-019ffa3d`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `3e39017a-abab-45c7-8aba-54c44fd47adc`.
+
+## Final Mechanical Plan-Schema Correction
+
+- Authorized At: 2026-08-13T09:44:14Z.
+- Attempt Classification: The corrected plan still expresses the same first plan-review finding. It names the required probe but omits the repository-native probe fields. This authorizes the second and final bounded correction attempt, not a new finding.
+- Correction Boundary: Update only the preserved plan pair for `probe-estimate-agent-work` so it specifies `evaluationCategory`, `evaluationKind`, `ablation`, `activationCondition`, `negativeCondition`, `expectedBehavior`, and `judgePlan`, together with the already authorized association and focused inventory assertions. Use existing `evals/skill-probes.yaml` entries as the schema source. Do not mutate source during this correction.
+- Review Gate: Obtain one fresh plan review after the mechanical correction. Another occurrence of this same probe-schema or catalog-dependency finding exhausts the correction limit and requires a new Coordinator disposition; it does not authorize another retry.
+- Preserved State: No source candidate or tracked dirty bytes exist. Claims were empty before this provider transaction. Preserve the canonical visible task, nested Dev Orchestrator, plan pair, candidate `03a94762451efe4322fe781f77191b769bf6c7b1`, all User Action Required records, and the other four plan artifacts.
+- Transition: Provider remains `Running`; no lifecycle transition, title change, replacement execution, or source mutation is authorized.
+- Transition Claims: `authorize-estimate-final-plan-schema-correction-019ffa3d`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `3f100a95-0b6e-48ce-ac02-35e1d62327b8`. `authorize-estimate-final-plan-schema-provider-019ffa3d`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `922ca1cc-df4e-49f2-81ca-2d25daffa097`.
