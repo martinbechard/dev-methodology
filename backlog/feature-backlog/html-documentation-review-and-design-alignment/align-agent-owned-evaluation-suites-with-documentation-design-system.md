@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -79,3 +79,19 @@ Dependency Resolution: Satisfied by completed Work Item `review-agent-owned-eval
 
 - This item must not start before its page-specific text review is Completed.
 - Creation of this work item does not dispatch it while backlog crisis recovery remains active.
+
+## Starting Handoff Evidence
+
+- Reserved At: 2026-08-13T19:25:26Z.
+- Transition: `Ready -> Starting`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Baseline: `188cb72979da16392bdd07c3b339af9bd979718a` on primary `main`.
+- Normalized Objective: Align `design/agent-owned-evaluation-suites.html` with the Documentation Design System while preserving its accepted text baseline and generator ownership.
+- Dependency Evidence: `review-agent-owned-evaluation-suites-text` is Completed; no hard prerequisite remains.
+- Capacity: Slot 2 of 5. Evaluations alignment remains Running at a clean review handoff; Definitions alignment is Blocked and excluded.
+- Release Evidence: Evaluations released its exact generator/test/page claim and browser resource. Fresh registry retains only its Work Item claim; `scripts/build-agent-skill-evaluation-docs.py` and `scripts/test_agent_skill_evaluation_docs.py` are free.
+- Overlap Boundary: Before mutation, publish and acquire the exact target-page, authoritative-generator, focused-test, shared-asset, and browser-resource scope. Preserve Evaluations candidate `cf6ab423`, Definitions candidate/worktree `42476c01`, all plans, and unrelated state. Return one decision on any new overlap rather than polling or substituting.
+- Dispatch Architecture: Create one visible Codex task whose reference-plus-delta prompt starts one Dev Orchestrator collaboration subagent and assigns exact self-task title and messaging responsibility to the visible root.
+- Transition Claim: `reserve-align-agent-owned-evaluation-suites-019ff2c3`; event `92b3b513-7ed2-4b58-8f91-f43f1d15328b`.
+- Next Action: Reconcile the unique visible task identity; its nested Dev Orchestrator records `Starting -> Running` before mutation.
