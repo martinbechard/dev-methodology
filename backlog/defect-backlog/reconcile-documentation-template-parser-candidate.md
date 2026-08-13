@@ -94,3 +94,50 @@ None.
 - Phase: implementation planning and current-main reconciliation.
 - Accepted Execution Evidence: The canonical Dev Orchestrator acquired work-item update ownership and accepted the normalized assignment on the reserved primary-main execution.
 - Next Action: Compare the four candidate commits with current main, review a bounded implementation and TDD plan, then port only confirmed gaps.
+
+## Candidate Behavior Dispositions
+
+The current-main comparison classified all 31 distinct candidate behaviors as `Already covered`. No candidate behavior is obsolete, and no current defect remains.
+
+1. `Already covered` — Require the contract-owned `docs/inventory-normalization-module-design.md` artifact and read evidence only from that path.
+2. `Already covered` — Resolve required source and test paths relative to the artifact, and reject absolute, escaping, nonexistent, or missing references.
+3. `Already covered` — Run artifact tests through a copied fixture so relative resolution is exercised without changing the source fixture.
+4. `Already covered` — Parse backtick and tilde fences, HTML comments, visible prose, and structural prose separately, and reject unclosed containers.
+5. `Already covered` — Count only top-level level-two headings while retaining nested blockquote headings as visible prose.
+6. `Already covered` — Read readiness from the first visible line and accept only plain or balanced-bold `READY.` and `BLOCKED.` leads.
+7. `Already covered` — Require exactly one command-only `bash`, `sh`, or `shell` fence and inventory its complete non-comment lines.
+8. `Already covered` — Detect runnable commands outside that fence in directives, inline code, non-shell fences, quoted prose, and list items.
+9. `Already covered` — Recognize assignments, shell operators, runner names, and `command`, `exec`, `nohup`, `env`, `sudo`, and `timeout` wrappers.
+10. `Already covered` — Exclude explanatory Node prose from runnable-command detection.
+11. `Already covered` — Inventory local inline, full-reference, and shortcut-reference links with normalized labels, angle-bracket destinations, and titles.
+12. `Already covered` — Prevent external reference destinations from replacing required local evidence while allowing unrelated external references.
+13. `Already covered` — Evaluate coverage claims from visible prose while retaining negative disclaimers and bounded source-only or success-path context.
+14. `Already covered` — Reject the six original source-coverage contradiction forms.
+15. `Already covered` — Ignore hidden required disclaimers, commands, and contradiction prose according to visible-evidence semantics.
+16. `Already covered` — Treat HTML comment markers inside a fence as literal fenced content.
+17. `Already covered` — Treat nested blockquote disclaimers and contradictions as visible evidence-bearing prose.
+18. `Already covered` — Verify that routed-authoring deterministic check identifiers exist in the Judge catalog.
+19. `Already covered` — Derive the source-test count from the subprocess result while disabling bytecode writes.
+20. `Already covered` — Exclude inline-image and reference-image destinations from source and test evidence.
+21. `Already covered` — Track blockquote depth for fences so quoted fences cannot supply headings, commands, paths, or coverage evidence.
+22. `Already covered` — Treat HTML comment markers inside quoted fences as literal content.
+23. `Already covered` — Reject a fence closed from a different blockquote container.
+24. `Already covered` — Recognize `To verify, run`, `env -u`, `timeout -s`, and adjacent shell-segment command forms.
+25. `Already covered` — Extend contradiction grammar to checks and suites, including the three added contradiction cases.
+26. `Already covered` — Detect an imperative command after an introductory clause such as `After editing, run`.
+27. `Already covered` — Avoid treating bare connective `that` as source-branch anaphora.
+28. `Already covered` — Recognize comma, colon, and whitespace separators after `After editing`.
+29. `Already covered` — Do not extend an HTML comment across a blockquote-depth change; expose the intervening command and mark the container invalid.
+30. `Already covered` — Reject fence content crossing from quoted to unquoted containers.
+31. `Already covered` — Reject fence content crossing from unquoted to quoted containers.
+
+The legacy whole-file context is rejected because it points at the retired `skills/development-methodology` template path and outdated scenario skill names. Current main uses `skills/route-documentation-work` and adds stricter bold-command and `command --` detection. Restoring either legacy file wholesale would regress accepted current behavior.
+
+## Independent Review And Verification Evidence
+
+- Dev Architect: `ACCEPT`; the no-source-change plan is the smallest sound approach.
+- Dev Code Reviewer: `PASS`; all 31 dispositions are accepted with no material findings.
+- Dev Verifier: `VERIFIED — PASS`; all four commit objects exist, both candidate paths are clean, and the bounded legacy-tip comparison found no removed behavior.
+- Focused Check: `PYTHONDONTWRITEBYTECODE=1 python3 evals/agent-tests/dev-documentation-writer/test_fixtures.py` passed 38 tests.
+- Whitespace Check: scoped `git diff --check` passed for `validate_fixture.py` and `test_fixtures.py`.
+- Source Candidate: No source change and no empty commit are justified. The legacy branch is unnecessary for future implementation after this record is delivered.
