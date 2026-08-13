@@ -8,7 +8,7 @@ Provider: file
 
 Work Item ID: establish-ste-technical-documentation-standard
 
-Provider Reference: backlog/feature-backlog/establish-ste-technical-documentation-standard.md
+Provider Reference: backlog/completed-backlog/features/establish-ste-technical-documentation-standard.md
 
 Owner: Completed by Dev Orchestrator /root/ste_documentation_standard
 
