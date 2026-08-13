@@ -7490,14 +7490,7 @@ class BundleContentTests(unittest.TestCase):
                     routed_agents[skill_name].add(role["name"])
 
         self.assertEqual(
-            {
-                "dev-coder",
-                "dev-documentation-writer",
-                "methodology-maintainer",
-                "wiki-architect",
-                "wiki-ingester",
-                "wiki-writer",
-            },
+            set(),
             routed_agents["terminology-standard"],
         )
         self.assertEqual(

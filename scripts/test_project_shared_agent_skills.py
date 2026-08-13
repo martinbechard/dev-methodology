@@ -247,7 +247,11 @@ class ProjectSharedAgentSkillsTests(unittest.TestCase):
         ]
 
         self.assertEqual(
-            ["effective-communication", "ste-technical-writing"],
+            [
+                "effective-communication",
+                "ste-technical-writing",
+                "terminology-standard",
+            ],
             shared_skills,
         )
 
