@@ -1,6 +1,6 @@
 # Keep User Decisions In Visible Worker Tasks
 
-Status: Starting
+Status: Completed
 
 Type: Defect
 
@@ -94,3 +94,25 @@ This item does not change provider lifecycle definitions or portable Dev Orchest
 - Creation Outcome: Unique success with no client or pending ambiguity and no retry.
 - Lifecycle Boundary: This assignment remains `Starting` until the nested Dev Orchestrator accepts and records `Starting -> Running`.
 - Adoption Claims: `adopt-visible-worker-uar-rule-task`; event `6fb5f7f2-714b-4e4b-83a3-866c49ae1073`. `adopt-visible-worker-uar-rule-provider`; event `10c376cc-917f-4dce-8dab-13db7d3a5d54`.
+
+## Running Acceptance Evidence
+
+- Accepted At: 2026-08-13T11:43:16Z.
+- Transition: `Starting -> Running`.
+- Root Dev Orchestrator: `/root/keep_user_decisions_visible`.
+- Canonical Codex Task ID: `019ffaed-9208-7cb1-8564-b63317455fba`.
+- Work Claim: `keep-user-decisions-visible-work`; event `26adc248-6dfc-4369-bafc-2e62b0ad1b24`.
+- Provider Mutation Claim: `keep-user-decisions-running-provider`; event `11b67e3a-d78b-4202-a12b-638161352ab0`.
+- Complexity Gate: False. This is one routine source contribution lane with ordinary review, verification, and main-branch delivery only.
+
+## Completion Evidence
+
+- Completed At: 2026-08-13T13:04:44Z.
+- Accepted Candidate: `e20cebf9ce84883262163489c18de6aeb284b6d7` on `candidate/keep-user-decisions-visible`.
+- Integration Mapping: candidate commits `82b532a9ea777de3fe1f1e24c5bc023b052f8ce6`, `62b616ccddf01f155e5d8849a3f6d3982176ecd4`, and `e20cebf9ce84883262163489c18de6aeb284b6d7` were replayed as main commits `cdccd4c6`, `f6c31e8d`, and `bebf44d0`.
+- Observed Main: `main` at `bebf44d0ebcabfce20b0143911acbdc3c4d42720`.
+- Independent Source Review: PASS after two bounded correction cycles; final review found no blocking issue.
+- Independent Verification: PASS; 38 focused tests, configured skill validation, diff whitespace, exact-path audit, ancestry, and clean candidate checks passed.
+- Integrated Verification: PASS; 38 focused tests and configured skill validation passed on observed main. The integration changed only `.agents/skills/backlog-dispatcher/SKILL.md` and `scripts/test_codex_task_control.py`.
+- Confirmed Issue Dispositions: outcome-classification and contradiction-test findings were corrected in this delivery. Coordinator-relay restoration was deliberately rejected because it contradicted the user-authorized project-private specialization and accepted architecture; it is not an excluded defect.
+- Completion Disposition: READY through configured `main-branch` delivery with file Persistence terminal closure.
