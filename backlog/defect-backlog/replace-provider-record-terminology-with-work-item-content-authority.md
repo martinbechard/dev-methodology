@@ -1,6 +1,6 @@
 # Replace Provider-Record Terminology with Work-Item Content Authority
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -96,3 +96,14 @@ None.
 - Creation Outcome: Unique direct `threadId` and host success in the saved dev-methodology project, with no client or pending identity and no retry.
 - Lifecycle Boundary: This assignment remains `Starting` until the nested Dev Orchestrator accepts and records `Starting -> Running`.
 - Adoption Claims: Work Item `adopt-provider-terminology-task`; event `e37607d1-68cc-4ffb-9a17-2db317889f54`. Provider `adopt-provider-terminology-provider`; event `6e2e03c0-7048-4cbb-a0d4-364f7358fbc5`.
+
+## Running Acceptance Evidence
+
+- Accepted At: 2026-08-13T13:11:48Z.
+- Transition: `Starting -> Running`.
+- Canonical Codex Task ID: `019ffb3e-c71d-7593-8cd1-c566b1678667`.
+- Canonical Conversation ID: `019ffb3e-c71d-7593-8cd1-c566b1678667`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Accepted Owner: `/root/replace_provider_record_terminology` acting as Dev Orchestrator.
+- Work Item Claim: `replace-provider-record-terminology-running-update`; event `cd6f9199-8b38-4d13-847f-34997d98c3bc`.
