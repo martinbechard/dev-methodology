@@ -1,6 +1,6 @@
 # Distinguish Blocked From Queued Dependency Waits
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -153,6 +153,18 @@ Approved at creation by the user's explicit 2026-08-12 lifecycle-policy clarific
 - Preserved Plans: The authoritative JSON and HTML plan artifacts remain untracked at the primary repository root.
 - Transition: `Blocked -> Ready`.
 - Transition Claim: `ready-distinguish-blocked-waits-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `221653b9-c464-4eb3-b7ca-62895019e876`.
+
+## Restart Handoff Evidence
+
+- Reserved At: 2026-08-13T03:39:19Z.
+- Transition: `Ready -> Starting`.
+- Canonical Execution: `/root/distinguish_blocked_waits`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Baseline: `ee9a1bef8271b0374136ba0df31523399ee6fb6f` on primary `main`.
+- Preserved Candidate State: No source candidate exists. Reuse the reviewed authoritative plan pair and correct its outstanding Architect findings against the now-clean generated projection baseline.
+- Transition Claim: `restart-distinguish-blocked-waits-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `8b9d8f4f-924d-47af-9dba-1073f78e3cb1`.
+- Next Reconciliation: The same canonical execution records Starting -> Running before mutation and acquires its work and path claims at the first matching event.
 
 ## Same-Execution Running Acceptance
 
