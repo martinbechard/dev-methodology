@@ -2,7 +2,7 @@
 
 Owner: Dev Orchestrator
 
-Status: Running
+Status: User Action Required
 
 Type: Feature
 
@@ -121,3 +121,36 @@ Dependency Resolution: Satisfied by completed Work Item `review-agent-owned-eval
 - Material Phase: implementation planning and bounded source discovery.
 - Accepted Execution Evidence: The nested Dev Orchestrator accepted the unique provider-adopted runtime identity at provider commit `add42a9ff9ac5afd054bb318026e87c12827da45` and acquired exact Work Item update ownership through claim `align-agent-owned-evaluation-suites-update-019ffc96` before this atomic transition.
 - Next Action: Acquire the Work Item work claim and exact target-page, authoritative-generator, focused-test, shared-asset, and browser-resource scopes, then route a bounded implementation and TDD plan through independent technical review before source mutation.
+
+## User Action Required
+
+### Question for the User
+
+Should `scripts/build-agent-skill-evaluation-docs.py` become the authoritative generator for `design/agent-owned-evaluation-suites.html` as a second deterministic output?
+
+### Why User Input Is Required
+
+Choosing the durable authoritative source for a maintained documentation page changes its future maintenance ownership. The current implementation evidence cannot make that product and documentation-governance decision.
+
+### Options and Tradeoffs
+
+- **Yes — expand the generator (recommended):** Preserve the accepted page semantics, generate both evaluation pages deterministically, and add freshness tests proving both outputs remain synchronized. This centralizes shared evaluation-page ownership but couples both pages to one generator.
+- **No — keep the page independently maintained:** Do not expand the generator. Revise this task's plan around an independently owned page and record how generated-output freshness is satisfied or seek a documented variation. If the existing acceptance contract cannot be satisfied, the item remains nonterminal.
+
+### Resolution
+
+Pending in canonical Task and Conversation `019ffc96-f685-7481-b2eb-1557d82119bf`.
+
+### Unattended Work Boundary
+
+Do not mutate, review, verify, deliver, or close this Work Item until the user answers in its canonical visible task. Preserve the accepted semantic baseline, plan, execution identity, and all evidence. Unrelated eligible Work Items may continue.
+
+### Transition Evidence
+
+- Recorded At: 2026-08-13T19:35:40Z.
+- Transition: `Running -> User Action Required`.
+- Canonical Task and Conversation: `019ffc96-f685-7481-b2eb-1557d82119bf` on host `local`.
+- Child Claim Release: `align-agent-owned-evaluation-suites-files-019ffc96`; event `cb02560e-117d-46d1-80f1-26aa6c4db929`.
+- Work Claim Release: `align-agent-owned-evaluation-suites-work-019ffc96`; disposition `blocked`; blocker `agent-owned-suites-generator-ownership-decision`; event `b09eacda-42b0-4662-a493-b72ffcf965f8`.
+- Provider Transition Claim: `agent-owned-suites-generator-uar-019ff2c3`; event `89ec7ff4-8626-412b-878f-4e31fed45ba8`.
+- Required Runtime Title: `Waiting for User — Align Agent-Owned Evaluation Suites With Documentation Design System`.
