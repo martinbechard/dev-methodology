@@ -1,6 +1,6 @@
 # Distinguish Blocked From Queued Dependency Waits
 
-Status: Running
+Status: Blocked
 
 Type: Defect
 
@@ -133,6 +133,16 @@ Approved at creation by the user's explicit 2026-08-12 lifecycle-policy clarific
 - Resume Delta: Retry the required hierarchy-plan creation once with the optional `output_folder` omitted; use the configured provider default and verify the returned JSON and HTML artifacts.
 - Transition Claim: `restart-folder-dependency-plan-default-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `e7f5f499-01ad-4c33-aed5-6468d32079de`.
 - Acceptance Boundary: The same Dev Orchestrator records Starting -> Running before the retry or source mutation.
+
+## Generated Projection Blocker
+
+- Recorded At: 2026-08-13T01:19:17Z.
+- Exact Blocker: `design/generated/skill-definitions.js` contains pre-existing generated drift from `coordinate-codex-tasks` owned by Work Item `document-external-terminal-cleanup`. This item must later regenerate the same whole projection from its three authorized skill changes and cannot safely split or absorb the unrelated source ownership by generated hunk.
+- Blocker Owner: Dev Backlog Coordinator.
+- Recovery Decision: Complete `document-external-terminal-cleanup` first so it integrates the deferred projection against its authoritative sources. Do not authorize a generated-hunk handoff.
+- Unblock Condition: `document-external-terminal-cleanup` reaches Completed on main with fresh generated-output verification and a clean projection baseline. Then resume `/root/distinguish_blocked_waits` through Blocked -> Ready -> Starting and regenerate from current authoritative sources.
+- Preserved Evidence: Authoritative JSON/HTML hierarchy plan exists at the repository root; no implementation candidate exists and no source mutation began.
+- Transition Claim: `block-folder-policy-generated-projection-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `c1370c23-40e1-4525-b2fb-245342e61de3`.
 
 ## Same-Execution Running Acceptance
 
