@@ -1,6 +1,8 @@
 # Document External Terminal Cleanup
 
-Status: Starting
+Status: Running
+
+Owner: /root/document_external_cleanup
 
 Type: Feature
 
@@ -100,3 +102,14 @@ The immediate source-only item intentionally leaves `design/generated/skill-defi
 - Operational Boundary: The primary checkout contains only the other item's two untracked hierarchy-plan artifacts. Preserve them; use configured resource coordination and an isolated checkout when required.
 - Transition Claim: `start-document-external-cleanup-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `a14302c0-3757-4d67-aa4f-688578873af2`.
 - Next Reconciliation: Reconcile the exact creation result; the Dev Orchestrator records Starting -> Running before mutation.
+
+## Running Acceptance Evidence
+
+- Accepted At: 2026-08-13T01:28:39Z.
+- Canonical Conversation: Runtime parent `019ff2c3-1710-7aa1-89c4-9d6066f51fe4` retained the authorized execution context.
+- Root Agent Task: `/root/document_external_cleanup`.
+- Root Role: Dev Orchestrator.
+- Branch: `main`.
+- Worktree: `/Users/martinbechard/dev/dev-methodology`.
+- Phase: Planning.
+- Accepted Execution: The root Dev Orchestrator resolved reservation commit `8c53dc117f909e95fce3bc997e7c47e33a79a9ee`, acquired the exact Work Item ID through the configured claim helper, and accepted the authorized canonical execution.
