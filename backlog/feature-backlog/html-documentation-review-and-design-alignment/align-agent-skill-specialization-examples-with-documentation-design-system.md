@@ -2,7 +2,7 @@
 
 Owner: Dev Orchestrator `/root/align_skill_examples`
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -152,6 +152,14 @@ Option A is accepted. It authorizes only useful known page-specific provenance, 
 - Preserved Execution: Dev Orchestrator `/root/align_skill_examples` in canonical Task and Conversation `019ffca1-15fa-7940-a0cb-e0a51da36aae`.
 - Work-Item Update Claim: `resume-update-specialization-examples-019ffca1`; event `625a7345-83b4-4493-93d4-30d9f93cddeb`.
 - Backlog Claim: `resume-backlog-specialization-examples-019ffca1`; event `04aed926-440f-4377-9ee0-ac7c0cbcfdf6`.
+
+### Restart Reservation Evidence
+
+- Transition: `Ready -> Starting`.
+- Recorded At: 2026-08-13T20:37:06Z.
+- Capacity: Existing canonical execution resumed under available priority and capacity.
+- Work-Item Update Claim: `restart-update-specialization-examples-019ffca1`; event `154d7b1a-1254-4f01-bcf2-d7d67ffc5af9`.
+- Backlog Claim: `restart-backlog-specialization-examples-019ffca1`; event `52f9ffcb-fb97-4c56-98aa-7b7cf50a9a79`.
 
 ### Unattended Work Boundary
 
