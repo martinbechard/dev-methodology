@@ -1,6 +1,6 @@
 # Reconcile Project Organiser Filename-Selection Regression Gaps
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -70,3 +70,17 @@ None.
 
 - This item concerns deterministic regression assertions. The separate replace-evaluation-oracle-terminology-with-judge item governs terminology for Evaluation evaluators and must not be broadened into a generic test-vocabulary rewrite.
 - The four legacy branches are evidence inputs, not accepted implementation candidates.
+
+## Starting Handoff Evidence
+
+- Reserved At: 2026-08-13T15:52:49Z.
+- Transition: `Ready -> Starting`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Baseline: `19287867c625a82e2001f01b2d271b43cdec73de` on primary `main`.
+- Priority: Oldest eligible independent process-correctness defect after the terminology correction entered Blocked.
+- Capacity: Runs alongside `reconcile-offline-staging-and-strict-result-schema`; Blocked and User Action Required items are excluded.
+- Overlap: Offline owns only its exact evaluation runner, test, fixture, and plan paths. This task must claim its exact current regression-test and evidence scope before mutation and must not touch Offline paths or unrelated artifacts.
+- Dispatch Architecture: Create one visible Codex task whose initial prompt launches one Dev Orchestrator subagent and assigns title and messaging responsibility to the visible root task.
+- Transition Claims: Work Item `start-project-organiser-regression-work-item`; event `5dd010aa-956f-4eb2-ad85-d42956981895`. Provider `start-project-organiser-regression-provider`; event `cafe677b-b3cb-4794-8c73-8dec4eddb3cc`.
+- Runtime Identity: Pending caller-owned visible task creation. Creation does not imply Running.
