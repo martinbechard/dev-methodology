@@ -1,6 +1,6 @@
 # Estimate Agent Work In Agent-Hours
 
-Status: Running
+Status: User Action Required
 
 Type: Feature
 
@@ -161,3 +161,37 @@ This item defines an estimation method, not a promise that generated-token throu
 - Preserved State: No source candidate or tracked dirty bytes exist. Claims were empty before this provider transaction. Preserve the canonical visible task, nested Dev Orchestrator, plan pair, candidate `03a94762451efe4322fe781f77191b769bf6c7b1`, all User Action Required records, and the other four plan artifacts.
 - Transition: Provider remains `Running`; no lifecycle transition, title change, replacement execution, or source mutation is authorized.
 - Transition Claims: `authorize-estimate-final-plan-schema-correction-019ffa3d`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `3f100a95-0b6e-48ce-ac02-35e1d62327b8`. `authorize-estimate-final-plan-schema-provider-019ffa3d`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `922ca1cc-df4e-49f2-81ca-2d25daffa097`.
+
+## Exhausted Correction Disposition
+
+- Recorded At: 2026-08-13T11:35:41Z.
+- Transition: `Running -> User Action Required`.
+- Preserved Candidate: `e6931e2a9bbdf28db7fd1fc59cd01c7f188b0850` on primary `main`, following correction commits `8d8a44a6` and `562dfe5d`.
+- Finding: The accepted reusable example and output-shape contract still lacks explicit cross-path concurrency semantics and validation that rejects malformed `expected_parallelism` values.
+- Attempt History: Two bounded correction attempts are consumed. Another correction and fresh independent review require explicit user authorization.
+- Preserved Runtime: Canonical Task and Conversation `019ffa3d-191f-7343-aaeb-2499de1ad605`; nested Dev Orchestrator `/root/estimate_agent_work`; completed estimate plan pair. Do not replace this execution.
+- Claim Handoff: Project-files claim `estimate-agent-work-files-019ffa3d` released at event `85356a32-d747-4bb3-bc67-d6ed7f2eeece`. Work Item claim `estimate-agent-work-outcome-019ffa3d` released with disposition `blocked` and blocker `estimate-agent-work-correction-limit-exhausted` at event `5005ac24-db9f-49b1-8cf6-602f799e4abf`.
+- Capacity: User Action Required does not consume active execution capacity. The canonical visible task remains the user-facing decision context and must not be replaced or counted as Running.
+
+## User Action Required
+
+### Question for the User
+
+Do you authorize one exceptional additional correction and fresh independent review cycle to define and validate cross-path concurrency and reject malformed `expected_parallelism` values?
+
+### Why User Input Is Required
+
+The normal correction limit is exhausted. Continuing would require new authority. Excluding the finding would accept a known gap in a required reusable output shape.
+
+### Options and Tradeoffs
+
+- **Authorize one exceptional correction and review (recommended):** Preserve all accepted requirements. Define how parallel work paths combine and add negative validation for malformed values such as zero, negative, non-numeric, or structurally inconsistent `expected_parallelism` data.
+- **Exclude the finding and create a follow-up defect:** Accept candidate `e6931e2a9bbdf28db7fd1fc59cd01c7f188b0850` without this validation. Record the residual risk and defer the gap to a separate defect.
+
+### Resolution
+
+Pending.
+
+### Unattended Work Boundary
+
+Do not modify, review, verify, deliver, or close this Work Item until the user answers in canonical Task and Conversation `019ffa3d-191f-7343-aaeb-2499de1ad605`. Unrelated eligible Work Items may continue.
