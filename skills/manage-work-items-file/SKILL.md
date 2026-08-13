@@ -4,6 +4,23 @@ description: Manage authoritative repository-backed work items through inventory
 metadata:
   category: development-practice
 ---
+<!--
+Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+Artifact-ID: 639b4b55-8ebe-4261-a949-70e9f680d49b
+Created-UTC: historical-unknown
+Creating-Agent: historical-unknown
+Runtime: historical-unknown
+Dispatched-Model: historical-unknown
+Reasoning-Effort: historical-unknown
+Task-ID: historical-unknown
+Artifact-ID-Evidence: migration-assigned
+Created-UTC-Evidence: historical-unknown
+Creating-Agent-Evidence: historical-unknown
+Runtime-Evidence: historical-unknown
+Dispatched-Model-Evidence: historical-unknown
+Reasoning-Effort-Evidence: historical-unknown
+Task-ID-Evidence: historical-unknown
+-->
 
 # Manage File Work Items
 
@@ -78,6 +95,26 @@ When an active folder contains a subfolder with index.md, treat it as one relate
   Action Required, or Holding children, report the exact child-state inventory instead of
   collapsing it to one series state.
 
+### Stored And Effective Child State
+
+Treat Status as stored lifecycle. To derive a dependent child's current scheduling and
+reporting view, apply Ordered Series Dependency State from coordinate-work-items. This file
+provider resolves the index-defined required predecessor IDs and supplies their current stored
+lifecycle and canonical locations. It does not redefine the resolver.
+
+Inventory records stored lifecycle, effective state, and causal Work Item ID when effective
+Blocked is derived. A derived Holding or Blocked result is a read-only normalized view. Do not
+mutate a downstream record to persist derived Holding or Blocked. Recovery updates only the
+child with the genuine preventing condition, then inventory recalculates every affected view.
+
+Reject a new active cross-folder Work Item edge and require same-series migration before
+dispatch. An archived terminal-successful predecessor remains resolvable through its stable
+Work Item ID and canonical series-index link; retaining that historical edge does not authorize
+a new cross-folder dependency.
+
+The caller owns schedulability and capacity decisions. This manager must not calculate active
+capacity or count a derived downstream Blocked result as another stored Blocked item.
+
 ### Terminal Series Archive
 
 Keep a series index in its active typed backlog while any required child is nonterminal. This
@@ -126,7 +163,8 @@ Do not move a nonterminal or mixed-state series merely to remove an active coord
 
 Use explicit provider lifecycle states and never infer success from silence:
 
-- READY: authorized, complete enough to dispatch, and without unmet prerequisites.
+- READY: authorized and complete enough for its own work, without a genuine preventing
+  condition on that child. Required predecessor state is derived separately.
 - STARTING: the Coordinator durably reserved the item and requested one root task launch.
 - RUNNING: the caller authorized and supplied evidence for accepted execution ownership.
 - STALLED: current evidence indicates that the item is not making progress while the causal blocker or unblock condition remains unknown.
@@ -156,6 +194,8 @@ When asked for status:
 
 - Scan active folders, User Action Required, Holding, completed archives, failed archives, and applicable runner state.
 - Classify each Markdown item by opaque Work Item ID, current diagnostic path, status, type, provider, dependency Work Item IDs, series, owner, phase, and archive location.
+- For each series child, report stored lifecycle separately from derived effective state and
+  include the causal Work Item ID for effective Blocked.
 - Treat backlog/user-action-required/README.md and series index.md files as guidance or coordination artifacts unless explicitly runnable.
 - Validate required user-action fields, Work Item ID uniqueness, and provider fields.
 - Report invalid, unreadable, duplicated, shadow, or provider-mismatched items rather than silently skipping them.
@@ -175,12 +215,11 @@ If closed items remain in active folders, explicit status is the open or closed 
   opaque Work Item ID. Resolve that ID across active and archive folders before mutation.
   Reject a request that asks this file manager to infer runtime state,
   active eligibility, capacity, or a conversation disposition.
-- Before any transition that would write Status: Ready, resolve every
-  declared hard dependency by immutable Work Item ID across active and terminal provider
-  folders. Reject Ready when any hard prerequisite is unresolved or nonterminal. When the
-  caller authorizes dependency reconciliation for queued work, record Status: Blocked,
-  Owner: Unowned, the exact dependency evidence, blocker owner, and observable unblock
-  condition instead of writing an invalid Ready state.
+- Before any transition that would write Status: Ready, confirm that no genuine condition on
+  that child prevents its own work. Resolve each required Work Item predecessor by immutable ID
+  only to validate the same-series index contract and calculate the normalized effective view.
+  A nonterminal required predecessor does not change stored Ready. Reject a new cross-folder
+  Work Item edge and require same-series migration instead of storing Blocked downstream.
 - For Ready -> Starting, record the caller-supplied parent coordination identity,
   reservation, normalized objective, dispatch time, and Starting handoff evidence atomically.
 - For Starting -> Running, record the caller-supplied canonical conversation identity,
@@ -298,9 +337,9 @@ Resume blocked work through the same provider and startup boundaries as new work
    candidate and gate evidence, remaining risk, and restart decision. Correct stale,
    contradictory, over-scoped, or incomplete provider content before resumption.
 3. Reconcile the blocker and confirm that the recorded unblock condition is satisfied.
-4. Re-resolve every declared hard dependency against current provider state. Continue only
-   when each recorded hard prerequisite has a terminal successful disposition and the exact
-   unblock condition is satisfied. Otherwise leave Blocked unchanged.
+4. Confirm that the blocked child's own unblock condition is satisfied. Resolve its required
+   Work Item predecessors for the normalized effective view, but do not require them to be
+   terminal before restoring the child's stored Ready state.
 5. In one short provider transaction, restore Status: Ready with Owner: Unowned while retaining
    the blocker, unblock condition, evidence, and acceptance criteria as recovery history. If
    this transaction fails, restore the byte-for-byte pre-attempt Blocked item and do not infer
@@ -394,10 +433,10 @@ Preserve the same Work Item ID at the terminal destination and report that desti
 
 ## Report Work Items
 
-For each considered work item, report the canonical lifecycle state, any invalid Ready
-dependency state requiring reconciliation, any unmet hard blocker, any coordination-only
-overlap constraint, and any deferred edit, shared-resource, or integration event as distinct
-facts. Do not create a second effective lifecycle beside the provider record.
+For each considered work item, report stored canonical lifecycle and derived effective state as
+distinct fields. Include the causal Work Item ID for effective Blocked, any genuine condition on
+the item, any coordination-only overlap constraint, and any deferred edit, shared-resource, or
+integration event. Derived state is a normalized read-only view, not a second provider record.
 
 Return provider file, each opaque Work Item ID with its current diagnostic active or archive path, lifecycle counts, separate Stalled inventory with diagnostic owners and next investigation actions, User Action Required questions, next runnable items, dependency Work Item IDs, blockers, owner, canonical task, delivery evidence, review and check results, main observation, archive evidence, commit references, invalid or duplicate records, and the next safe action.
 

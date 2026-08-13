@@ -92,6 +92,9 @@ class WorkItem:
 
     provider_identity: str
     status: str
+    effective_status: str = ""
+    causal_work_item_id: str = ""
+    dependency_state_issue: str = ""
     phase: str = ""
     canonical_thread: str = ""
     root_task: str = ""
@@ -222,6 +225,16 @@ class WatchdogAlert:
 
 
 @dataclass(frozen=True)
+class DependencyEffect:
+    """Retain one derived dependency effect without changing provider state."""
+
+    provider_identity: str
+    stored_status: str
+    effective_status: str
+    causal_work_item_id: str
+
+
+@dataclass(frozen=True)
 class CycleResult:
     """Return retained reconciliations plus one no-action or aggregate alert outcome."""
 
@@ -230,6 +243,7 @@ class CycleResult:
     alert: WatchdogAlert | None
     blocked_reconciliations: tuple[BlockedReconciliation, ...] = ()
     terminal_reconciliations: tuple[TerminalReconciliation, ...] = ()
+    dependency_effects: tuple[DependencyEffect, ...] = ()
     mutated: bool = False
 
 
@@ -311,7 +325,34 @@ class WatchdogCycle:
         observations: list[WatchdogAlert] = []
         blocked_reconciliations: list[BlockedReconciliation] = []
         terminal_reconciliations: list[TerminalReconciliation] = []
+        dependency_effects: list[DependencyEffect] = []
+        normalized_dependency_view_seen = False
         for item in items:
+            normalized_dependency_view_seen = bool(
+                normalized_dependency_view_seen or item.effective_status
+            )
+            if item.effective_status and item.effective_status != item.status:
+                dependency_effects.append(
+                    DependencyEffect(
+                        provider_identity=item.provider_identity,
+                        stored_status=item.status,
+                        effective_status=item.effective_status,
+                        causal_work_item_id=item.causal_work_item_id,
+                    )
+                )
+            if item.dependency_state_issue.strip():
+                observations.append(
+                    WatchdogAlert(
+                        provider_identity=item.provider_identity,
+                        evidence=item.dependency_state_issue,
+                        reason="normalized dependency state contradicts its source evidence",
+                        recommended_action=(
+                            "Coordinator reconciles the series index and normalized "
+                            "stored/effective view without changing provider lifecycle"
+                        ),
+                        preventing_cause="",
+                    )
+                )
             if item.status in TERMINAL_STATUSES:
                 reconciliation = self._reconcile_terminal(item)
                 terminal_reconciliations.append(reconciliation)
@@ -449,12 +490,24 @@ class WatchdogCycle:
                     )
                 )
         if not observations:
+            message = "No actionable watchdog condition observed."
+            if dependency_effects:
+                message = (
+                    f"Observed {len(dependency_effects)} derived dependency "
+                    "effect(s); no actionable watchdog condition observed."
+                )
+            elif normalized_dependency_view_seen:
+                message = (
+                    "Normalized dependency view has no derived effects; no "
+                    "actionable watchdog condition observed."
+                )
             return CycleResult(
                 "NO_ACTION",
-                "No actionable watchdog condition observed.",
+                message,
                 None,
                 tuple(blocked_reconciliations),
                 tuple(terminal_reconciliations),
+                tuple(dependency_effects),
             )
         return CycleResult(
             "ALERT",
@@ -465,6 +518,7 @@ class WatchdogCycle:
             self._aggregate_alert(observations),
             tuple(blocked_reconciliations),
             tuple(terminal_reconciliations),
+            tuple(dependency_effects),
         )
 
     @staticmethod

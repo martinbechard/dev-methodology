@@ -4,6 +4,23 @@ description: Coordinate multiple provider-selected work items through one parent
 metadata:
   category: development-practice
 ---
+<!--
+Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+Artifact-ID: 3c736aa0-1fb2-4872-bb6a-99d69ca4a0c7
+Created-UTC: historical-unknown
+Creating-Agent: historical-unknown
+Runtime: historical-unknown
+Dispatched-Model: historical-unknown
+Reasoning-Effort: historical-unknown
+Task-ID: historical-unknown
+Artifact-ID-Evidence: migration-assigned
+Created-UTC-Evidence: historical-unknown
+Creating-Agent-Evidence: historical-unknown
+Runtime-Evidence: historical-unknown
+Dispatched-Model-Evidence: historical-unknown
+Reasoning-Effort-Evidence: historical-unknown
+Task-ID-Evidence: historical-unknown
+-->
 
 # Coordinate Work Items
 
@@ -113,6 +130,38 @@ For a selected Persistence provider, use its management skill to record phase-ap
 
 Use the effective Persistence-selected management skill when a material lifecycle state changes. Preserve the same canonical root execution and provider identity through corrections, delivery, and closeout. Runtime-specific skills may add runtime identity fields without changing provider authority.
 
+## Ordered Series Dependency State
+
+Dependent Work Items must be children of one series folder when one child requires another.
+The folder's index.md coordination artifact defines required predecessor sets or ordered lanes
+for each dependent child. Only the predecessors named for that child gate it. An earlier
+Markdown link, list entry, or child outside that lane is not a predecessor and does not create
+a dependency merely because it appears earlier in the index.
+
+Reject a new active cross-folder Work Item dependency edge. Move the related active items
+under one index-defined series through a same-series migration before dispatch. An archived
+terminal-successful predecessor already named by the series remains valid after archival when
+the index preserves its stable Work Item identity and canonical index link; that retained
+history is not permission to create a new cross-folder edge. External prerequisites are
+conditions, not Work Item dependency edges, and apply only to the genuinely affected item.
+
+Stored Status remains the canonical lifecycle. Resolve a dependent child's effective state
+without mutating its provider record:
+
+1. Find the earliest required predecessor whose stored Status is Blocked. Derive effective
+   Blocked for the child and report that predecessor's opaque identity as the causal Work Item ID.
+2. When no required predecessor stores Blocked but at least one required predecessor lacks a
+   terminal-successful disposition, derive effective Holding. This includes a healthy wait
+   behind a Ready, Starting, Running, or Awaiting Review predecessor.
+3. When every required predecessor has a terminal-successful disposition, use the child's own
+   stored lifecycle as its effective state.
+
+The resolver must not rewrite the downstream child's record to copy Blocked or Holding.
+Recalculate effective state whenever a required predecessor's stored lifecycle changes.
+Recovery changes only the record with the genuine preventing condition. A child is schedulable
+only when every required predecessor has a terminal-successful disposition and the child's own
+stored lifecycle is dispatchable under Queue Target And Scheduling.
+
 ## Queue Target And Scheduling
 
 Obtain queue inventory, lifecycle counts, provider identities, and dispatchable state only by applying the effective Persistence-selected management skill.
@@ -124,7 +173,14 @@ Obtain queue inventory, lifecycle counts, provider identities, and dispatchable 
 - Provider none has no durable inventory, count, creation, transition, or closure. Coordinate only the explicit execution and retain task-local evidence.
 - Provider UNSET or an unavailable selected skill stops before durable inventory or mutation and requests the missing project selection or capability.
 
-An unmet hard prerequisite makes the item dispatch-ineligible. A constraint is a hard prerequisite only when no bounded delivery phase can begin safely before it is satisfied. Treat a note that predicts later overlap on an exact path, shared resource, or integration lane as coordination-only. Canonical Status: Ready means the provider already resolved every hard prerequisite. If a Ready record still has an unmet hard dependency, reject dispatch and have the provider reconcile that invalid lifecycle to Blocked with an exact unblock condition. A coordination-only overlap note does not block a safe private-worktree start. Do not invent an effective lifecycle beside the provider record.
+An unmet hard prerequisite makes the item dispatch-ineligible. When that prerequisite is an
+external condition and no bounded delivery phase can begin safely, store Blocked only on the
+genuinely affected item.
+A nonterminal required Work Item predecessor does not rewrite a downstream child's stored
+Ready lifecycle. Apply Ordered Series Dependency State to derive Holding or Blocked and to
+decide schedulability. Treat a note that predicts later overlap on an exact path, shared
+resource, or integration lane as coordination-only. A coordination-only overlap note does not
+block a safe private-worktree start.
 
 When a coordination-only note references a Blocked or Unowned item and no live claim protects the exact conflict, the candidate remains dispatch-eligible. Before scheduling, reconcile duplicate ownership or implementation evidence, preserve one canonical effort, and stop an additional launch. Coordinate an exact-path conflict at the relevant edit, shared-resource, or integration event. Defer only that event; continue non-conflicting work in isolated private worktrees.
 

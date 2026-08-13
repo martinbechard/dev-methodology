@@ -115,6 +115,133 @@ class WatchdogSimulatorTests(unittest.TestCase):
         ]
         self.assertEqual((), backlog_blockage_reasons(excluded))
 
+    def test_queued_dependency_waits_do_not_count_as_blocked(self) -> None:
+        """A healthy predecessor wait is derived Holding, not stored Blocked."""
+
+        queued = WorkItem(
+            "queued-child",
+            "Ready",
+            effective_status="Holding",
+            causal_work_item_id="running-predecessor",
+        )
+        before = deepcopy(queued)
+
+        self.assertEqual((), backlog_blockage_reasons((queued,)))
+        result = WatchdogCycle().evaluate((queued,))
+
+        self.assertEqual("NO_ACTION", result.status)
+        self.assertEqual(1, len(result.dependency_effects))
+        self.assertEqual("Holding", result.dependency_effects[0].effective_status)
+        self.assertEqual(before, queued)
+        self.assertFalse(result.mutated)
+
+    def test_first_stored_blocker_counts_once_and_derives_downstream_effects(
+        self,
+    ) -> None:
+        """One stored blocker remains one crisis input despite downstream effects."""
+
+        blocker = WorkItem(
+            "blocked-predecessor",
+            "Blocked",
+            preventing_cause="missing approval",
+            blocker_owner="user",
+            unblock_condition="approval received",
+            next_action_owner="user",
+            git_state="candidate preserved",
+        )
+        downstream = tuple(
+            WorkItem(
+                f"downstream-{index}",
+                "Ready",
+                effective_status="Blocked",
+                causal_work_item_id=blocker.provider_identity,
+            )
+            for index in range(3)
+        )
+        items = (blocker, *downstream)
+        before = deepcopy(items)
+
+        self.assertEqual((), backlog_blockage_reasons(items))
+        result = WatchdogCycle().evaluate(items)
+
+        self.assertEqual(
+            "Observed 3 derived dependency effect(s); no actionable watchdog "
+            "condition observed.",
+            result.message,
+        )
+        self.assertEqual(1, len(result.blocked_reconciliations))
+        self.assertEqual(3, len(result.dependency_effects))
+        self.assertEqual(
+            {blocker.provider_identity},
+            {effect.causal_work_item_id for effect in result.dependency_effects},
+        )
+        self.assertEqual(before, items)
+        self.assertFalse(result.mutated)
+
+    def test_recovery_recalculates_effective_states_without_downstream_mutation(
+        self,
+    ) -> None:
+        """A fresh normalized view clears a derived effect without stored writes."""
+
+        waiting = WorkItem(
+            "downstream",
+            "Ready",
+            effective_status="Blocked",
+            causal_work_item_id="predecessor",
+        )
+        recovered = WorkItem(
+            "downstream",
+            "Ready",
+            effective_status="Ready",
+        )
+        before = deepcopy((waiting, recovered))
+
+        waiting_result = WatchdogCycle().evaluate((waiting,))
+        recovered_result = WatchdogCycle().evaluate((recovered,))
+
+        self.assertEqual(1, len(waiting_result.dependency_effects))
+        self.assertEqual((), recovered_result.dependency_effects)
+        self.assertEqual(
+            "Normalized dependency view has no derived effects; no actionable "
+            "watchdog condition observed.",
+            recovered_result.message,
+        )
+        self.assertEqual(before, (waiting, recovered))
+        self.assertFalse(waiting_result.mutated)
+        self.assertFalse(recovered_result.mutated)
+
+    def test_order_and_state_contradictions_alert_read_only(self) -> None:
+        """Normalized dependency contradictions are parent alerts, never repairs."""
+
+        items = (
+            WorkItem(
+                "order-issue",
+                "Ready",
+                effective_status="Holding",
+                causal_work_item_id="predecessor",
+                dependency_state_issue="series order contradicts the index lane",
+            ),
+            WorkItem(
+                "state-issue",
+                "Blocked",
+                effective_status="Holding",
+                dependency_state_issue="stored and effective states contradict",
+            ),
+        )
+        before = deepcopy(items)
+
+        result = WatchdogCycle().evaluate(items)
+
+        self.assertEqual("ALERT", result.status)
+        self.assertIsNotNone(result.alert)
+        alert = result.alert
+        assert alert is not None
+        self.assertIn("series order contradicts", alert.evidence)
+        self.assertIn("stored and effective states contradict", alert.evidence)
+        self.assertIn("Coordinator reconciles", alert.recommended_action)
+        self.assertEqual(before, items)
+        self.assertFalse(result.mutated)
+
     def test_active_blockage_observation_is_idempotent_and_read_only(self) -> None:
         """Report continued recovery once and surface a satisfied exit without mutation."""
 

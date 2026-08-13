@@ -2237,6 +2237,14 @@ class BundleContentTests(unittest.TestCase):
         self.assertNotIn("Respect any user pause on archival.", codex_text)
         self.assertIn("Send exactly one aggregate parent alert", watchdog_text)
         self.assertIn("Never infer or inherit a campaign-wide pause", watchdog_text)
+        for clause in (
+            "Consume the normalized stored and effective dependency view",
+            "Count each stored Blocked Work Item once",
+            "Exclude derived downstream effects from crisis counts",
+            "Alert on series-order or stored/effective contradictions",
+        ):
+            with self.subTest(watchdog_dependency_clause=clause):
+                self.assertIn(clause, watchdog_text)
         for scenario_id in (
             "canonical-title-drift-alert",
             "finished-bounded-verifier-title-drift",
@@ -8196,7 +8204,7 @@ class BundleContentTests(unittest.TestCase):
         self.assertNotIn("set its active status according to project convention", manage_text)
 
     def test_file_backlog_dependency_lifecycle_is_canonical_before_dispatch(self) -> None:
-        """Creation, mutation, and coordination enforce one Ready meaning."""
+        """File providers preserve stored lifecycle and expose derived dependency state."""
         create_text = (SKILLS_ROOT / "create-work-item-file" / "SKILL.md").read_text(
             encoding="utf-8"
         )
@@ -8206,24 +8214,51 @@ class BundleContentTests(unittest.TestCase):
         coordinate_text = (
             SKILLS_ROOT / "coordinate-work-items" / "SKILL.md"
         ).read_text(encoding="utf-8")
+        create_contract = " ".join(create_text.split())
+        manage_contract = " ".join(manage_text.split())
+        coordinate_contract = " ".join(coordinate_text.split())
 
-        self.assertIn("Before assigning Ready", create_text)
-        self.assertIn("Status: Blocked", create_text)
-        self.assertIn("observable Blocked -> Ready condition", create_text)
-        self.assertIn("hard dependency", create_text)
+        for clause in (
+            "coordinate-work-items owns the stored-versus-effective dependency policy",
+            "Keep each dependent child's own stored lifecycle",
+            "Do not write Blocked or Holding to a downstream child",
+            "Only a child with its own genuine preventing condition stores Blocked",
+            "Reject a new active cross-folder Work Item edge",
+            "same-series migration before dispatch",
+            "archived terminal-successful predecessor",
+            "stable Work Item ID and canonical series-index link",
+            "External prerequisites are conditions, not Work Item dependency edges",
+        ):
+            with self.subTest(create_clause=clause):
+                self.assertIn(clause, create_contract)
 
-        self.assertIn(
-            "Before any transition that would write Status: Ready",
-            manage_text,
+        for clause in (
+            "Treat Status as stored lifecycle",
+            "apply Ordered Series Dependency State from coordinate-work-items",
+            "stored lifecycle, effective state, and causal Work Item ID",
+            "must not calculate active capacity",
+            "Do not mutate a downstream record to persist derived Holding or Blocked",
+            "Reject a new active cross-folder Work Item edge",
+            "same-series migration before dispatch",
+            "archived terminal-successful predecessor",
+            "stable Work Item ID and canonical series-index link",
+        ):
+            with self.subTest(manage_clause=clause):
+                self.assertIn(clause, manage_contract)
+
+        for clause in (
+            "Stored Status remains the canonical lifecycle",
+            "derive effective Holding",
+            "causal Work Item ID",
+            "must not rewrite the downstream child's record",
+        ):
+            with self.subTest(coordinate_clause=clause):
+                self.assertIn(clause, coordinate_contract)
+
+        self.assertNotIn(
+            "provider reconcile that invalid lifecycle to Blocked",
+            coordinate_contract,
         )
-        self.assertIn("Status: Blocked", manage_text)
-        self.assertIn("observable unblock", manage_text)
-        self.assertIn("hard dependency", manage_text)
-
-        self.assertIn("Canonical Status: Ready means", coordinate_text)
-        self.assertIn("reject dispatch", coordinate_text)
-        self.assertIn("provider reconcile that invalid lifecycle to Blocked", coordinate_text)
-        self.assertIn("effective lifecycle beside the provider record", coordinate_text)
 
     def test_file_work_item_template_and_approval_boundary_are_complete(self) -> None:
         """The real fixture enforces item shape and approval behavior."""

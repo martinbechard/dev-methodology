@@ -140,6 +140,35 @@ class WorkItemCoordinationPackageTests(unittest.TestCase):
             with self.subTest(clause=clause):
                 self.assertIn(clause, queue)
 
+    def test_ordered_series_dependency_effective_state_contract(self) -> None:
+        """Ordered lanes, not incidental index links, define predecessor gating."""
+
+        policy = " ".join(
+            _section(self.portable, "Ordered Series Dependency State").split()
+        )
+        for clause in (
+            "one series folder",
+            "required predecessor sets or ordered lanes",
+            "index.md",
+            "Only the predecessors named for that child gate it.",
+            "An earlier Markdown link, list entry, or child outside that lane is not a predecessor",
+            "Stored Status remains the canonical lifecycle",
+            "derive effective Holding",
+            "earliest required predecessor whose stored Status is Blocked",
+            "causal Work Item ID",
+            "must not rewrite the downstream child's record",
+            "Recalculate effective state",
+            "every required predecessor has a terminal-successful disposition",
+            "the child's own stored lifecycle is dispatchable",
+            "Reject a new active cross-folder Work Item dependency edge",
+            "same-series migration before dispatch",
+            "archived terminal-successful predecessor",
+            "stable Work Item identity and canonical index link",
+            "External prerequisites are conditions, not Work Item dependency edges",
+        ):
+            with self.subTest(clause=clause):
+                self.assertIn(clause, policy)
+
     def test_definition_authorization_uses_exact_work_item_provenance(self) -> None:
         authorization = " ".join(
             _section(self.portable, "Governed Definition Work-Item Authorization").split()

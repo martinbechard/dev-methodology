@@ -4,6 +4,23 @@ description: Create one authoritative repository-backed work item with typed pla
 metadata:
   category: development-practice
 ---
+<!--
+Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+Artifact-ID: 71a2477e-a724-4eab-8304-600b77476881
+Created-UTC: historical-unknown
+Creating-Agent: historical-unknown
+Runtime: historical-unknown
+Dispatched-Model: historical-unknown
+Reasoning-Effort: historical-unknown
+Task-ID: historical-unknown
+Artifact-ID-Evidence: migration-assigned
+Created-UTC-Evidence: historical-unknown
+Creating-Agent-Evidence: historical-unknown
+Runtime-Evidence: historical-unknown
+Dispatched-Model-Evidence: historical-unknown
+Reasoning-Effort-Evidence: historical-unknown
+Task-ID-Evidence: historical-unknown
+-->
 
 # Create Work Item File
 
@@ -27,9 +44,10 @@ Only the primary worktree on main may create canonical files under backlog. The 
 
 Another worktree may inspect backlog but must not create the item. If the primary worktree is not on main, it must not create the item. Return BLOCKED with the observed worktree, branch, and required handoff. Do not create another queue elsewhere.
 
-Keep backlog creation separate from implementation ownership. Record and commit the complete
-canonical lifecycle first: Ready when no hard prerequisite remains, or Blocked when the
-authorized item is waiting for one.
+Keep backlog creation separate from implementation ownership. Record and commit the child's
+own canonical stored lifecycle first. Use Ready when no condition on that child prevents its
+work. Use Blocked only when that child has its own genuine preventing condition. A nonterminal
+required predecessor affects derived effective state, not the child's stored lifecycle.
 
 ## File Provider Transaction
 
@@ -51,14 +69,20 @@ Ordinary creation excludes backlog/future-ideas from lifecycle processing and du
 
 Start each item from [file-work-item-template.md](../route-documentation-work/assets/templates/file-work-item-template.md). Replace every TODO instruction with source-backed content. Remove every guidance comment before commit. Remove an optional Series, User Action Required, or Notes section when it does not apply; do not leave empty headings or placeholder boilerplate.
 
-- Before assigning Ready, resolve every declared hard dependency by immutable Work Item ID
-  across the active and terminal provider folders. Ready items have no unmet hard
-  prerequisite and remain dispatchable while Open Questions contain only agent-resolvable
-  technical uncertainty.
-- When authorized work has an unmet hard dependency, create it in its typed active folder
-  with Status: Blocked and Owner: Unowned. Record the dependency, the exact evidence that
-  will satisfy it, the blocker owner, and the observable Blocked -> Ready condition. Do not
-  create Ready and rely on a downstream dispatcher or report to reinterpret it.
+- Before assigning stored lifecycle, distinguish a required Work Item predecessor from an
+  external prerequisite condition. coordinate-work-items owns the stored-versus-effective
+  dependency policy.
+- For a required Work Item predecessor, resolve its immutable Work Item ID across active and
+  terminal provider folders. Require the same series folder and an index-defined predecessor
+  set or ordered lane. Keep each dependent child's own stored lifecycle. Do not write Blocked
+  or Holding to a downstream child merely because a required predecessor is nonterminal.
+- Reject a new active cross-folder Work Item edge and require same-series migration before
+  dispatch. An archived terminal-successful predecessor remains valid only when the series
+  retains its stable Work Item ID and canonical series-index link; do not treat that retained
+  history as authority for a new cross-folder edge.
+- Only a child with its own genuine preventing condition stores Blocked. Record the condition,
+  owner, evidence, and observable Blocked -> Ready condition on that child. External
+  prerequisites are conditions, not Work Item dependency edges.
 - User Action Required items keep the complete user question, reason, resolution, and unattended-work boundary in the item body.
 - Holding items keep Status: Holding and record the deferral authority and resumption condition without inventing a user question.
 - Related series children keep the optional Series field with the canonical repository-relative index.md path; standalone items remove it.
@@ -90,6 +114,11 @@ When one goal naturally contains multiple related work items, create a subfolder
 Create an index.md file inside the subfolder. The index describes the overall goal, purpose, current data or design anchors, non-goals, definition of good, and recommended implementation order. The index is a coordination artifact, not a runnable work item.
 
 Create the smaller work items as separate Markdown files in the same subfolder. Each child item must remain independently dispatchable and link back to index.md. The index must link to every child item and group them by sequence or theme.
+
+When one child requires another, the index must name each child's required predecessor set or
+ordered lane. Ordinary link or list order does not create a dependency. The creation provider
+records the child's stored lifecycle and leaves effective-state derivation to
+coordinate-work-items.
 
 Use a series folder when:
 
@@ -131,9 +160,10 @@ Do not place an item in backlog/user-action-required merely because the task is 
 Do not turn a synthetic evaluation boundary into user-action-required work unless it represents a genuine unresolved project decision. A scenario designed to prove safe blocking is test evidence, not automatically a user obligation.
 
 A direct user request or explicit user authorization is sufficient authority to create an item
-in its typed active backlog. Authority does not satisfy a declared hard dependency. Assign
-Status: Ready only when dependency resolution proves that no hard prerequisite remains;
-otherwise assign Status: Blocked with the dependency and exact unblock condition. A predicted
+in its typed active backlog. Authority does not satisfy an external prerequisite condition.
+Assign Status: Blocked only when such a condition genuinely prevents the child's own work; a
+nonterminal required Work Item predecessor derives effective state without changing stored
+Ready. A predicted
 governed-definition boundary or other possible future user-owned decision is not by itself a
 hard dependency: record it as an implementation constraint or Note without manufacturing a
 creation-time approval question for work the user already requested.
@@ -142,9 +172,10 @@ Use User Action Required at creation when an agent independently identifies defi
 
 After creation, route a user-requested item to backlog/user-action-required only when execution
 reaches a distinct concrete user-owned decision, authority grant, action, risk acceptance, or
-user-held fact that the original request did not resolve. Keep it Ready while no hard
-prerequisite remains, record it Blocked when an ordinary hard dependency prevents all bounded
-work, or route it to backlog/holding when the user explicitly defers it.
+user-held fact that the original request did not resolve. Keep its stored lifecycle Ready while
+no condition on that child prevents work, record it Blocked when an external or other genuine
+condition prevents all bounded work, or route it to backlog/holding when the user explicitly
+defers it.
 
 Use Open Questions for unresolved technical matters. Agents resolve ordinary technical uncertainty through discovery, design, review, and verification. Technical questions do not make an otherwise authorized item non-dispatchable.
 
@@ -178,9 +209,9 @@ Before writing, search every active typed folder, backlog/user-action-required, 
 Write each item as a self-contained work package with these fields and sections:
 
 - Title: one clear heading naming the work.
-- Status: Ready for authorized active work without unmet hard prerequisites, Blocked for
-  authorized queued work waiting on a hard dependency, User Action Required for a user-owned
-  answer, or Holding for explicit deferral.
+- Status: the child's stored canonical lifecycle. Use Ready for authorized work without its
+  own preventing condition, Blocked for a genuine condition on that child, User Action Required
+  for a user-owned answer, or Holding for explicit deferral.
 - Type: Defect, Feature, Analysis, Investigation, or Holding.
 - Provider: file.
 - Work Item ID: the immutable filename stem, without `.md`.
@@ -214,6 +245,8 @@ The creation commit and result must preserve Work Item ID, current provider-owne
 - Mark unknown facts as questions or assumptions instead of inventing them.
 - Keep requirements testable and separate them from acceptance criteria.
 - Use opaque Work Item IDs for dependencies so the provider can resolve them after movement.
+- Use Work Item dependency IDs only for index-defined required predecessors in the same series.
+  Record an external prerequisite as a condition instead of a Work Item edge.
 - Phrase user questions neutrally and expose viable tradeoffs.
 - Keep completed or failed outcomes out of newly created active items.
 - Use imperative, steady-state language.
@@ -232,8 +265,9 @@ Before reporting completion:
 - Confirm the item is in the right typed folder and has a stable globally unique Work Item ID.
 - Confirm related multi-item goals have an index.md and linked independently runnable children.
 - Confirm the complete required item shape, source evidence, dependencies, and verification expectations are present.
-- Confirm every declared hard dependency was resolved before lifecycle assignment, Ready has
-  none unmet, and Blocked dependency waits name the exact unblock condition.
+- Confirm every Work Item dependency is an index-defined required predecessor in the same
+  series, each child preserves its own stored lifecycle, and every stored Blocked item names
+  its own exact preventing condition and unblock condition.
 - Confirm Open Questions contain only agent-resolvable uncertainty and do not create a false user-action gate.
 - Confirm governed-definition approval evidence names exact canonical paths and user-message provenance before mutation.
 - Confirm user-action-required content has the complete question and unattended boundary.

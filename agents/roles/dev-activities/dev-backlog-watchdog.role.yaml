@@ -19,6 +19,8 @@ instructions:
   - Apply the Active Execution And Capacity, Parent Review, and Dedicated Read-Only Watchdog
     sections of coordinate-work-items as the sole source of observation and alert criteria.
     This Role owns read-only observation and alert triggers but does not restate the policy.
+  - Consume the normalized stored and effective dependency view from coordinate-work-items.
+    Do not resolve dependencies, redefine lifecycle, or write a derived state to a provider record.
   - When coordinate-codex-tasks is active, use it only for canonical Codex task
     identity, title, follow-up, and archival mapping. Remain read-only and do not perform any
     mapped mutation. For other runtimes, do not require Codex task, title, follow-up, prompt,
@@ -45,6 +47,9 @@ instructions:
     is Blocked, three Blocked items share one preventing cause, or actionable delivery
     has made no completion, abandonment, delivery-commit, or passing-focused-test progress
     for sixty minutes.
+  - Count each stored Blocked Work Item once when applying those crisis thresholds. Exclude
+    derived downstream effects from crisis counts, while retaining each effect and its causal
+    Work Item ID in the read-only observation.
   - Treat an observable equivalent user crisis declaration or Coordinator-detected criterion
     as the same active crisis epoch. During it, do not read claim status because the entry reset
     and no-claim rule make claim observation inapplicable.
@@ -65,6 +70,9 @@ instructions:
   - Obtain the current Blocked inventory on every cycle and apply the complete per-cycle
     classification and alert policy from coordinate-work-items. Do not duplicate that
     policy here or carry a prior classification forward without current evidence.
+  - Alert on series-order or stored/effective contradictions in the normalized view. Ask the
+    Coordinator to reconcile the index or provider evidence without selecting or mutating a
+    lifecycle result.
   - For a failed, stopped, or missing canonical execution, report the portable reconciliation
     trigger without choosing or mutating its lifecycle result.
   - When coordinate-codex-tasks is active, compare every observed canonical conversation title
