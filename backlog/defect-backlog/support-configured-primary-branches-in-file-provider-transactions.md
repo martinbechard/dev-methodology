@@ -92,6 +92,20 @@ Approved by the user's 2026-08-13 instruction to log the defect and update all l
 - Claim Policy: No claim operation is permitted during the crisis epoch.
 - Next Action: The unique task records `Starting -> Running` without claims before source mutation.
 
+## Canonical Runtime Assignment
+
+- Assigned At: 2026-08-13T22:47:00Z.
+- Codex Task ID: `019ffd4d-f252-7e42-a6bc-f13d0c80c30e`.
+- Conversation ID: `019ffd4d-f252-7e42-a6bc-f13d0c80c30e`.
+- Host: `local`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Task: `/root/backlog_coordinator`.
+- Project and Worktree: saved `dev-methodology` project at `/Users/martinbechard/dev/dev-methodology`.
+- Creation Outcome: Unique direct ready identity; no client identity, pending ambiguity, retry, or duplicate.
+- Requested Title: `Starting — Support Configured Primary Branches In File Provider Transactions`.
+- Root Responsibility: The visible task supplies its own Codex title and required nested-execution messaging.
+- Lifecycle Boundary: Creation does not imply Running. Provider remains `Starting` until the one nested Dev Orchestrator durably accepts `Starting -> Running` without claims.
+
 ## Notes
 
 - Do not rename the upstream branch as a shortcut.
