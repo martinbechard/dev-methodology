@@ -1,6 +1,6 @@
 # Distinguish Blocked From Queued Dependency Waits
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -95,3 +95,15 @@ Approved at creation by the user's explicit 2026-08-12 lifecycle-policy clarific
 - Launch State: Authorized under restored MULTITASK mode; successful creation does not imply Running.
 - Transition Claim: `start-folder-derived-dependency-policy-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `fa8af8ea-a2bd-49a2-ae75-e5b6ebee2e31`.
 - Next Reconciliation: Reconcile the exact creation result; the Dev Orchestrator records Starting -> Running before mutation.
+
+## Running Acceptance Evidence
+
+- Accepted At: 2026-08-13T00:40:57Z.
+- Owner: Dev Orchestrator `/root/distinguish_blocked_waits`.
+- Canonical Conversation: Runtime parent Task `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Root Agent Task: `/root/distinguish_blocked_waits`.
+- Branch: `main`.
+- Worktree: `/Users/martinbechard/dev/dev-methodology`.
+- Phase: implementation planning and technical review.
+- Accepted Execution Evidence: The authorized canonical collaboration execution resolved reservation commit `cba1acefc37402689033229787323ecccced6809` and acquired Work Item update claim `distinguish-blocked-waits-running-update` with outcome `SHARED_CHECKOUT_ACQUIRED` and event `f82bbefd-dc96-4d5c-af8d-58eca1ce1601`.
+- Next Action: Dev Coder creates the bounded implementation and TDD plan and the required authoritative hierarchy plan before source mutation.
