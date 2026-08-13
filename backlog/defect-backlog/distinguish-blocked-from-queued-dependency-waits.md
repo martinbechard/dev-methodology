@@ -1,6 +1,6 @@
 # Distinguish Blocked From Queued Dependency Waits
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -177,3 +177,16 @@ Approved at creation by the user's explicit 2026-08-12 lifecycle-policy clarific
 - Phase: hierarchy-plan recovery and technical review.
 - Accepted Execution Evidence: The same canonical execution resolved recovery commits `4fec0d60b90d400bfe086ba3577ab2cbcbb64d50`, `b5ffef747e1d62d67b555f89aeab343e279517e2`, and `951aa60b4b7aa837526f70fffeca94a32f58b9f0`, then acquired Work Item update claim `distinguish-blocked-waits-resume-running` with outcome `SHARED_CHECKOUT_ACQUIRED` and event `ab287ef3-5102-4b02-a2eb-30c8baf982b9`.
 - Next Action: The existing Dev Coder retries `create_hierarchy_plan` exactly once with `output_folder` omitted and verifies only the provider-returned JSON and sibling HTML.
+
+## Final Same-Execution Running Acceptance
+
+- Accepted At: 2026-08-13T03:40:20Z.
+- Owner: Dev Orchestrator `/root/distinguish_blocked_waits`.
+- Canonical Conversation: Runtime parent Task `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Root Agent Task: `/root/distinguish_blocked_waits`.
+- Branch: `main`.
+- Worktree: `/Users/martinbechard/dev/dev-methodology`.
+- Phase: plan correction and technical re-review.
+- Accepted Execution Evidence: The same canonical execution resolved reservation commit `88ee11e4ac5de06964916b3c39bbab426ba60e50` on clean generated-projection baseline `ee9a1bef8271b0374136ba0df31523399ee6fb6f`, then acquired Work Item update claim `distinguish-blocked-waits-final-resume-running` with outcome `SHARED_CHECKOUT_ACQUIRED` and event `47d5127b-6b0d-480f-b072-468af8a6e88e`.
+- Preserved Plans: The authoritative dependency-policy JSON/HTML plan pair and the separate parser JSON/HTML plan pair remain untracked and untouched.
+- Next Action: The original Dev Coder corrects the outstanding Architect findings in the same authoritative hierarchy plan before source mutation.
