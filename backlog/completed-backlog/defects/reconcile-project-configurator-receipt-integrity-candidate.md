@@ -1,6 +1,6 @@
 # Reconcile Project Configurator Receipt-Integrity Candidate
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
@@ -97,3 +97,21 @@ None.
 - Accepted Execution: The nested Dev Orchestrator loaded the configured workflow, Commit, Persistence, and resource-coordination skills, verified the canonical runtime identity, and accepted the provider-scoped execution.
 - Runtime Display Handoff: The visible root task owns the Codex conversation title change to `Running — Reconcile Project Configurator Receipt Integrity` before implementation dispatch.
 - Transition Claims: `run-reconcile-project-configurator-receipt-integrity-work-item`; event `e4e261f4-8a3a-4486-a593-f4968b35f00f`. `run-reconcile-project-configurator-receipt-integrity-provider`; event `9d12fbb0-de03-447f-9514-8272c88d5df8`.
+
+## Completed Delivery Evidence
+
+- Completed At: 2026-08-13T15:01:57Z.
+- Transition: `Running -> Completed` after Commit disposition `READY`.
+- Accepted Source Commit: `ea4649dbe705fdddfa226a7a66a01ab7a68fd00d`.
+- Integration Commit: `0a42bab85a1762cbb0cf3ef3c44bce7f12d5bf9c` by reviewed cherry-pick onto current `main`.
+- Observed Main: `02ce0f63b56d4b26a9872a863bd6a7d4791014d1`; integration commit is an ancestor and all nine accepted paths are byte-unchanged since integration.
+- Independent Plan Review: Accepted after two bounded corrections; the smaller scenario-specific runner audit remained proportional.
+- Independent Source Review: Passed for `ea4649dbe705fdddfa226a7a66a01ab7a68fd00d` after two correction cycles.
+- Source Verification: Passed ten focused receipt tests, twenty Project Configurator fixture tests, Project Configurator validate-only, skill validation, YAML and TOML parsing, and `git diff --check`.
+- Integrated Verification: Passed in a clean isolated checkout at exact observed main. The integration mapping, nine-path stability, scope exclusions, deterministic checks, and absence of residue were verified.
+- Broad Check Evidence: The complete runner and bundle failures that require unavailable Playwright or reflect unrelated contract drift reproduced on the exact pre-change baseline; no candidate-caused regression remained.
+- Candidate Dispositions: `37689f67` receipt auditing gap retained while its helper, legacy check ID, and `agent-claim` wording are obsolete; `3949bb9e` root and observation binding gap retained; `a79ce66f` existing containment is covered and mixed-root auditing retained; `06f49f98` receipt closure retained while its JSON-only extractor is obsolete; `ce6e0a49` contamination rejection retained.
+- Exclusions Preserved: Offline dependency, strict-schema behavior, `runner-owned-repository-read-receipts`, generated projections, and unrelated backlog or workspace state were not absorbed.
+- Delivery Disposition: `READY` through the configured `main-branch` completion contract. No remote publication requirement was configured for this item.
+- Terminal Provider Claim: `complete-reconcile-project-configurator-receipt-integrity-work-item`; event `748cd10e-64ba-4aba-8d76-98dddc13ae9a`.
+- Terminal Backlog Claim: `complete-reconcile-project-configurator-receipt-integrity-provider`; event `87b4979f-8505-42fd-b9ce-bc43ef021e9e`.
