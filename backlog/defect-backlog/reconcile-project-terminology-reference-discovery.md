@@ -1,6 +1,6 @@
 # Reconcile Project Terminology Reference Discovery
 
-Status: Starting
+Status: User Action Required
 
 Type: Defect
 
@@ -86,3 +86,47 @@ None.
 - Creation Outcome: Unique direct `threadId` and host success in the saved dev-methodology project, with no client or pending identity and no retry.
 - Lifecycle Boundary: This assignment remains `Starting` until the nested Dev Orchestrator accepts and records `Starting -> Running`.
 - Adoption Claims: Work Item `adopt-terminology-reference-discovery-task`; event `18b6eb70-c19b-4dbe-99ac-37877f84e211`. Provider `adopt-terminology-reference-discovery-provider`; event `60cc1726-3cd2-4396-a536-74dc3d84d2c9`.
+
+## Running Acceptance Evidence
+
+- Accepted At: 2026-08-13T13:58:06Z.
+- Transition: `Starting -> Running`.
+- Root Owner: Dev Orchestrator `/root/reconcile_terminology/terminology_reference_orchestrator`.
+- Canonical Codex Task ID: `019ffb67-9ecc-7c53-8412-c486d62d06c2`.
+- Canonical Conversation ID: `019ffb67-9ecc-7c53-8412-c486d62d06c2`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Runtime Parent Delta: The nested Dev Orchestrator executes under canonical visible task `019ffb67-9ecc-7c53-8412-c486d62d06c2`; the durable upstream runtime parent remains `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Branch: `main`.
+- Worktree: `/Users/martinbechard/dev/dev-methodology`.
+- Baseline: `91337d5db54f533ea0867772b3b9567c7c3c3074`.
+- Accepted Execution: The nested Dev Orchestrator loaded the configured workflow, Commit, Persistence, resource-coordination, repository-maintenance, and terminology skills; verified the canonical runtime identity, provider state, Git state, and claim state; and accepted the provider-scoped execution.
+- Runtime Display Handoff: The visible root task owns the Codex conversation title change to `Running — Reconcile Project Terminology Reference Discovery` before implementation dispatch.
+- Transition Claims: Work Item `run-reconcile-project-terminology-reference-discovery-work-item`; event `2603c20f-3c85-4163-8b01-64abe4574f21`. Provider `run-reconcile-project-terminology-reference-discovery-provider`; event `adeb5f98-c7fc-41bb-a416-79c233a7ac0d`.
+
+## User Action Required
+
+### Question for the User
+
+Which Persistence and Commit workflows should govern the required source work in `/Users/martinbechard/dev/mcp-agent-ops`?
+
+- **A — GitHub + feature branch (recommended):** Use the existing GitHub repository identity for durable work and deliver through an independently reviewed pull-request branch.
+- **B — File + main branch:** Add project configuration and a repository file backlog, then deliver verified work directly to `main`.
+- **C — None + main branch:** Keep only task-local work evidence and deliver verified work directly to `main`; this external repository will have no durable provider inventory for the repair.
+
+The repository has a GitHub `origin`, a `.github` directory, no `PROJECT.yaml`, and no file backlog. No source mutation can begin until both selectors are explicit.
+
+### Resolution
+
+Pending the user's selection of A, B, or C.
+
+## User-Decision Handoff
+
+- Requested At: 2026-08-13T14:11:13Z.
+- Transition: `Running -> User Action Required`.
+- Preserved Plan: `reconcile-project-terminology-reference-discovery-plan-019ffb67.json` with synchronized sibling HTML.
+- Source Mutation: None.
+- External Repository State: `/Users/martinbechard/dev/mcp-agent-ops` is on `main`, has no `PROJECT.yaml`, and contains unrelated untracked files that must remain untouched.
+- Canonical Task: Preserve Task/Conversation `019ffb67-9ecc-7c53-8412-c486d62d06c2`; it asks the question and adopts the answer.
+- Resume Boundary: A clear A, B, or C answer is persisted here, then the same task performs `User Action Required -> Ready -> Starting -> Running`, configures or applies the selected workflows, reacquires claims, and continues. Ambiguous or expanded authority returns to the Coordinator.
+- Transition Claims: Work Item `uar-terminology-reference-workflows-work-item`; event `22e3727b-b6f5-4666-b201-1d24617b94ef`. Provider `uar-terminology-reference-workflows-provider`; event `44a1d63f-7293-422a-a283-52ffa8f78c9b`.
