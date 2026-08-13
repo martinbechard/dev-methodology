@@ -1,6 +1,6 @@
 # Estimate Agent Work In Agent-Hours
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -99,3 +99,18 @@ Approved at creation. On 2026-08-12, in Codex task 019ff660-663f-7271-a4da-c30e6
 ## Notes
 
 This item defines an estimation method, not a promise that generated-token throughput is constant. Implementers must preserve the distinction between an assumed planning rate, an observed rate, and a provider-specific billing rate.
+
+## Starting Handoff Evidence
+
+- Reserved At: 2026-08-13T08:28:14Z.
+- Transition: `Ready -> Starting`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Baseline: `9303d68370c706735fe437e4b801009bb4bbef3f` on primary `main`.
+- Priority: Oldest eligible independent process-efficiency item with complete governed-definition approval. Older terminology items require scope-authority reconciliation before mutation and are not selected here.
+- Effective Dependencies: None. Inspect AI downstream children remain effective Holding behind their ordered predecessor. HTML documentation series remains outside this independent process item.
+- Overlap: Candidate `03a94762451efe4322fe781f77191b769bf6c7b1`, all three User Action Required records, and all four untracked plan artifacts remain excluded. Any shared generated or focused-test path must be based on current main and must not alter the preserved UAR record or candidate history.
+- Historical Cleanup: The two unclaimed, unchecked-out STE integration branches remain outside this Work Item and are not authorized cleanup targets.
+- Dispatch Architecture: Create one user-visible Codex task whose initial reference-plus-delta prompt starts one Dev Orchestrator collaboration subagent for this provider record.
+- Transition Claim: `start-estimate-agent-work-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `e9c27b39-0ace-4126-8720-75eab3725253`.
+- Next Reconciliation: Adopt the exact visible task identity. Its nested Dev Orchestrator records Starting -> Running before mutation.
