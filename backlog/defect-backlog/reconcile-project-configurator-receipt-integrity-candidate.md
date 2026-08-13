@@ -1,6 +1,6 @@
 # Reconcile Project Configurator Receipt-Integrity Candidate
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -83,3 +83,17 @@ None.
 - Creation Outcome: Unique direct `threadId` and `hostId` success with no client or pending identity and no retry.
 - Lifecycle Boundary: This assignment remains `Starting` until the nested Dev Orchestrator accepts and records `Starting -> Running`.
 - Adoption Claims: `adopt-project-configurator-receipt-task`; event `9c50f3a7-9c69-458e-8ac7-420ade137454`. `adopt-project-configurator-receipt-provider`; event `c3ed1310-eff7-4c4d-8445-609738d00720`.
+
+## Running Acceptance Evidence
+
+- Accepted At: 2026-08-13T12:17:19Z.
+- Transition: `Starting -> Running`.
+- Root Owner: Dev Orchestrator `/root/reconcile_project_configurator_receipt_integrity_candidate/receipt_integrity_orchestrator`.
+- Canonical Conversation: `019ffb0c-4e81-73a2-abd5-a7fd6b76dd83`.
+- Canonical Task: `019ffb0c-4e81-73a2-abd5-a7fd6b76dd83`.
+- Branch: `main`.
+- Worktree: `/Users/martinbechard/dev/dev-methodology`.
+- Baseline: `9cb7f74a54ea04800e4a8a3555c90fd7b8a46b88`.
+- Accepted Execution: The nested Dev Orchestrator loaded the configured workflow, Commit, Persistence, and resource-coordination skills, verified the canonical runtime identity, and accepted the provider-scoped execution.
+- Runtime Display Handoff: The visible root task owns the Codex conversation title change to `Running — Reconcile Project Configurator Receipt Integrity` before implementation dispatch.
+- Transition Claims: `run-reconcile-project-configurator-receipt-integrity-work-item`; event `e4e261f4-8a3a-4486-a593-f4968b35f00f`. `run-reconcile-project-configurator-receipt-integrity-provider`; event `9d12fbb0-de03-447f-9514-8272c88d5df8`.
