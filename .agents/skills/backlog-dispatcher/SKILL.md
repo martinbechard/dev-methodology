@@ -38,7 +38,7 @@ The Coordinator owns:
 - dependency, capacity, finish-lane, overlap, ownership, claim, Watchdog, re-homing, and cleanup decisions;
 - Ready-to-Starting reservations and other Coordinator-owned provider transitions;
 - selection of the canonical existing execution or authorization to create one;
-- complete dispatch or resumption packets.
+- the reference-plus-delta launch packet as the entire launch payload, or authorization to resume the canonical existing execution without copied provider or selected-skill facts.
 
 The dispatcher owns:
 
@@ -61,7 +61,7 @@ Coders, writers, and other producers create or correct artifacts within their as
 1. Send the Dev Backlog Coordinator the user's requested dispatch outcome and the caller's known runtime capabilities. Include relevant incoming coordination messages without treating their assertions as authoritative state.
 2. Require the Coordinator to reconcile the provider, active and archived runtime tasks, dependencies, capacity, claims, finish lanes, path overlap, preserved candidates, worktrees, Watchdog, and cleanup eligibility.
 3. Require one decision for each selected Work Item: reserve and dispatch, resume the canonical execution, retain a truthful non-active state, or identify one concrete user decision.
-4. Do not perform runtime dispatch until the Coordinator returns durable reservation evidence and a complete execution packet.
+4. Do not launch until the provider locator resolves to durable reservation evidence and the Coordinator returns the reference-plus-delta packet as the entire launch payload. Treat canonical resumption as a distinct runtime operation without copied provider or selected-skill facts.
 5. Execute the approved runtime operation with caller-owned tools. Do not ask the Coordinator's delegated runtime to create tasks when that runtime lacks the capability and the caller has it.
 6. Return every successful, failed, pending, or ambiguous runtime outcome to the Coordinator with the exact Work Item ID and runtime identity. The Coordinator reconciles provider lifecycle; the dispatcher does not infer that task creation means Running.
 7. Observe the created or resumed task until its identity is stable enough for reconciliation. Use runtime waiting and inspection rather than heartbeat or progress messages.

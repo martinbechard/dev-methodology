@@ -238,6 +238,18 @@ class CodexTaskControlPackageTests(unittest.TestCase):
             with self.subTest(superseded_clause=superseded_clause):
                 self.assertNotIn(superseded_clause, normalized_contract)
 
+        for legacy_complete_packet_clause in (
+            "complete dispatch or resumption packets",
+            "a complete execution packet",
+        ):
+            with self.subTest(
+                legacy_complete_packet_clause=legacy_complete_packet_clause,
+            ):
+                self.assertNotIn(
+                    legacy_complete_packet_clause,
+                    self.normalized_dispatcher,
+                )
+
     def test_dispatcher_prohibits_cross_project_runtime_control(self) -> None:
         for clause in (
             "A local claim or modified files do not extend runtime-control authority outside the current project or working-directory coordination context",
