@@ -1,6 +1,6 @@
 # Migrate Wiki Skills and Project Context Historical Provenance
 
-Status: User Action Required
+Status: Abandoned
 
 Type: Defect
 
@@ -75,8 +75,17 @@ The defect is confirmed, but altering historical creation metadata requires expl
 
 ### Resolution
 
-Pending.
+Superseded on 2026-08-13. The user rejected the verbose hidden historical-migration contract and directed concise visible HTML provenance containing only useful known facts. The corrected policy and bounded page migration now belong to Work Item `simplify-new-document-provenance-header`.
 
 ### Unattended Work Boundary
 
 Do not alter the provenance block or creation metadata in design/wiki-skills-and-project-context.html until the user approves. Read-only historical evidence discovery may continue.
+
+## Terminal Supersession Evidence
+
+- Completed At: 2026-08-13T01:29:41Z.
+- Disposition: Abandoned as superseded before implementation or dispatch.
+- Authority: Direct user correction rejected `historical-unknown`, `migration-assigned`, per-field evidence labels, and hidden-only HTML provenance.
+- Successor: `simplify-new-document-provenance-header` owns the corrected visible-footnote policy and bounded migration of `design/wiki-skills-and-project-context.html`.
+- Preserved Boundary: No page, provenance source, validator, test, Git delivery, or runtime task was mutated by this obsolete proposal.
+- Transition Claim: `supersede-verbose-wiki-provenance-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `dd13fa9e-4d6a-47e5-9cd1-e8213c803480`.
