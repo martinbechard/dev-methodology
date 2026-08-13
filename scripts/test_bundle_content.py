@@ -192,9 +192,20 @@ def validate_estimate_output_shape(shape: object) -> dict[str, dict[str, tuple[f
         return float(low), float(high)
 
     delivery = estimate.get("delivery_critical_path")
-    if not isinstance(delivery, dict) or delivery.get("path") not in paths:
-        raise ValueError("delivery_critical_path must name a declared path")
-    delivery_path = delivery["path"]
+    if not isinstance(delivery, dict) or set(delivery) != {"low", "high"}:
+        raise ValueError("delivery_critical_path must contain separate low and high attribution")
+    delivery_paths: dict[str, str] = {}
+    for bound in ("low", "high"):
+        attribution = delivery[bound]
+        if (
+            not isinstance(attribution, dict)
+            or set(attribution) != {"path", "combined_hours"}
+            or attribution.get("path") not in paths
+        ):
+            raise ValueError(
+                f"delivery_critical_path {bound} must name a declared path and combined_hours"
+            )
+        delivery_paths[bound] = attribution["path"]
     expected_runtime_categories = {
         "tool_runtime",
         "build_runtime",
@@ -224,7 +235,7 @@ def validate_estimate_output_shape(shape: object) -> dict[str, dict[str, tuple[f
             raise ValueError(f"{category} parallelizable runtime requires an overlap group")
         if disposition != "parallelizable" and overlap_group is not None:
             raise ValueError(f"{category} nonparallel runtime cannot name an overlap group")
-        if disposition == "off_critical_path" and path_name == delivery_path:
+        if disposition == "off_critical_path" and path_name in delivery_paths.values():
             raise ValueError(f"{category} off_critical_path runtime is on the delivery critical path")
         range_pair({"low": interval.get("low"), "high": interval.get("high")}, category)
         runtime_by_path[path_name].append((category, interval))
@@ -300,11 +311,23 @@ def validate_estimate_output_shape(shape: object) -> dict[str, dict[str, tuple[f
 
     selected_low = max(calculated, key=lambda name: calculated[name]["combined_delivery_hours"][0])
     selected_high = max(calculated, key=lambda name: calculated[name]["combined_delivery_hours"][1])
-    if selected_low != selected_high or delivery_path != selected_low:
-        raise ValueError("delivery critical path does not match the longest combined path")
-    delivery_combined = calculated[delivery_path]["combined_delivery_hours"]
-    if range_pair(delivery.get("combined_hours"), "delivery critical path") != delivery_combined:
-        raise ValueError("delivery critical path total does not match its path summary")
+    selected_paths = {"low": selected_low, "high": selected_high}
+    wall_clock_bounds: dict[str, float] = {}
+    for index, bound in enumerate(("low", "high")):
+        selected_path = selected_paths[bound]
+        selected_total = calculated[selected_path]["combined_delivery_hours"][index]
+        attribution = delivery[bound]
+        if attribution["path"] != selected_path:
+            raise ValueError(
+                f"delivery critical path {bound} does not match the longest combined path"
+            )
+        if not isinstance(attribution["combined_hours"], (int, float)):
+            raise ValueError(f"delivery critical path {bound} combined_hours must be numeric")
+        if float(attribution["combined_hours"]) != selected_total:
+            raise ValueError(
+                f"delivery critical path {bound} total does not match its path summary"
+            )
+        wall_clock_bounds[bound] = selected_total
 
     generated_path_low = max(
         calculated,
@@ -325,15 +348,31 @@ def validate_estimate_output_shape(shape: object) -> dict[str, dict[str, tuple[f
         raise ValueError("generated-effort critical path does not match path inputs")
 
     critical_generated = estimate.get("critical_path_agent_hours")
-    if not isinstance(critical_generated, dict) or critical_generated.get("path") != delivery_path:
-        raise ValueError("critical_path_agent_hours must name the delivery critical path")
-    if range_pair(
-        {"low": critical_generated.get("low"), "high": critical_generated.get("high")},
-        "critical_path_agent_hours",
-    ) != calculated[delivery_path]["generated_effort_agent_hours"]:
-        raise ValueError("critical_path_agent_hours must contain only selected-path generated effort")
+    if not isinstance(critical_generated, dict) or set(critical_generated) != {"low", "high"}:
+        raise ValueError("critical_path_agent_hours must contain separate low and high attribution")
+    for index, bound in enumerate(("low", "high")):
+        attribution = critical_generated[bound]
+        selected_path = selected_paths[bound]
+        selected_generated = calculated[selected_path]["generated_effort_agent_hours"][index]
+        if (
+            not isinstance(attribution, dict)
+            or set(attribution) != {"path", "agent_hours"}
+            or attribution.get("path") != selected_path
+        ):
+            raise ValueError(
+                f"critical_path_agent_hours {bound} must name the delivery critical path"
+            )
+        if not isinstance(attribution["agent_hours"], (int, float)):
+            raise ValueError(f"critical_path_agent_hours {bound} agent_hours must be numeric")
+        if float(attribution["agent_hours"]) != selected_generated:
+            raise ValueError(
+                f"critical_path_agent_hours {bound} must contain only selected-path generated effort"
+            )
 
-    if range_pair(estimate.get("wall_clock_duration_hours"), "wall clock") != delivery_combined:
+    if range_pair(estimate.get("wall_clock_duration_hours"), "wall clock") != (
+        wall_clock_bounds["low"],
+        wall_clock_bounds["high"],
+    ):
         raise ValueError("wall clock duration does not match the delivery critical path")
     total_generated = (
         sum(values["generated_effort_agent_hours"][0] for values in calculated.values()),
@@ -3561,6 +3600,44 @@ class BundleContentTests(unittest.TestCase):
         self.assertIsNotNone(parallel)
         self.assertIsNotNone(asymmetric)
         assert serial is not None and parallel is not None and asymmetric is not None
+
+        def example_parallelism(body: str) -> dict[str, object]:
+            mapping = re.search(
+                r"```yaml\n(?P<yaml>expected_parallelism:.*?)\n```",
+                body,
+                re.DOTALL,
+            )
+            self.assertIsNotNone(mapping)
+            assert mapping is not None
+            parsed = yaml.safe_load(mapping["yaml"])
+            self.assertIsInstance(parsed, dict)
+            return parsed["expected_parallelism"]
+
+        self.assertNotRegex(serial["body"], r"expected_parallelism:\s*\d")
+        self.assertNotRegex(parallel["body"], r"expected_parallelism:\s*\d")
+        serial_parallelism = example_parallelism(serial["body"])
+        parallel_parallelism = example_parallelism(parallel["body"])
+        self.assertEqual(
+            {
+                "low": 1,
+                "high": 1,
+                "concurrency_groups": [],
+                "modeled_generation_intervals": None,
+            },
+            serial_parallelism,
+        )
+        self.assertEqual(
+            {
+                "low": 1,
+                "high": 2,
+                "concurrency_groups": [["path-a", "path-b"]],
+                "modeled_generation_intervals": None,
+            },
+            parallel_parallelism,
+        )
+        validate_expected_parallelism({"path-a"}, serial_parallelism)
+        validate_expected_parallelism({"path-a", "path-b"}, parallel_parallelism)
+
         serial_text = " ".join(serial["body"].split())
         parallel_text = " ".join(parallel["body"].split())
         asymmetric_text = " ".join(asymmetric["body"].split())
@@ -3668,6 +3745,20 @@ class BundleContentTests(unittest.TestCase):
         self.assertIsNotNone(reusable_shape)
         assert reusable_shape is not None
         parsed_shape = yaml.safe_load(reusable_shape["yaml"])
+        self.assertEqual(
+            {
+                "low": {"path": "path-a", "combined_hours": 1.25},
+                "high": {"path": "path-a", "combined_hours": 2.5},
+            },
+            parsed_shape["estimate"]["delivery_critical_path"],
+        )
+        self.assertEqual(
+            {
+                "low": {"path": "path-a", "agent_hours": 1.0},
+                "high": {"path": "path-a", "agent_hours": 2.0},
+            },
+            parsed_shape["estimate"]["critical_path_agent_hours"],
+        )
         calculated_paths = validate_estimate_output_shape(parsed_shape)
         self.assertEqual(
             {
@@ -3697,6 +3788,68 @@ class BundleContentTests(unittest.TestCase):
             },
             calculated_paths,
         )
+
+        crossing_shape = json.loads(json.dumps(parsed_shape))
+        crossing_estimate = crossing_shape["estimate"]
+        crossing_estimate["paths"]["path-a"].update(
+            {
+                "generated_tokens": {"low": 270000, "high": 315000},
+                "generated_effort_agent_hours": {"low": 1.5, "high": 1.75},
+            }
+        )
+        crossing_estimate["paths"]["path-b"].update(
+            {
+                "generated_tokens": {"low": 135000, "high": 180000},
+                "generated_effort_agent_hours": {"low": 0.75, "high": 1.0},
+            }
+        )
+        for interval in crossing_estimate["non_model_runtime"].values():
+            interval.update(
+                {
+                    "low": 0.0,
+                    "high": 0.0,
+                    "disposition": "blocking",
+                    "path": "path-a",
+                    "overlap_group": None,
+                    "overlaps_with": [],
+                }
+            )
+        crossing_estimate["non_model_runtime"]["approval_runtime"].update(
+            {"low": 0.5, "high": 1.5, "path": "path-b"}
+        )
+        crossing_estimate["path_summaries"] = {
+            "path-a": {
+                "generated_effort_agent_hours": {"low": 1.5, "high": 1.75},
+                "serial_runtime_hours": {"low": 0.0, "high": 0.0},
+                "overlap_runtime_hours": {"low": 0.0, "high": 0.0},
+                "non_model_runtime_hours": {"low": 0.0, "high": 0.0},
+                "combined_delivery_hours": {"low": 1.5, "high": 1.75},
+            },
+            "path-b": {
+                "generated_effort_agent_hours": {"low": 0.75, "high": 1.0},
+                "serial_runtime_hours": {"low": 0.5, "high": 1.5},
+                "overlap_runtime_hours": {"low": 0.0, "high": 0.0},
+                "non_model_runtime_hours": {"low": 0.5, "high": 1.5},
+                "combined_delivery_hours": {"low": 1.25, "high": 2.5},
+            },
+        }
+        crossing_estimate["total_agent_hours"] = {"low": 2.25, "high": 2.75}
+        crossing_estimate["generated_effort_critical_path"] = {
+            "path": "path-a",
+            "agent_hours": {"low": 1.5, "high": 1.75},
+        }
+        crossing_estimate["delivery_critical_path"] = {
+            "low": {"path": "path-a", "combined_hours": 1.5},
+            "high": {"path": "path-b", "combined_hours": 2.5},
+        }
+        crossing_estimate["critical_path_agent_hours"] = {
+            "low": {"path": "path-a", "agent_hours": 1.5},
+            "high": {"path": "path-b", "agent_hours": 1.0},
+        }
+        crossing_estimate["wall_clock_duration_hours"] = {"low": 1.5, "high": 2.5}
+        crossing_paths = validate_estimate_output_shape(crossing_shape)
+        self.assertEqual((1.5, 1.75), crossing_paths["path-a"]["combined_delivery_hours"])
+        self.assertEqual((1.25, 2.5), crossing_paths["path-b"]["combined_delivery_hours"])
 
         malformed_overlap = json.loads(json.dumps(parsed_shape))
         malformed_overlap["estimate"]["non_model_runtime"]["test_runtime"][

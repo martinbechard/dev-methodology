@@ -117,10 +117,12 @@ wall_clock_duration_hours = max(path_delivery_hours for every dependency path)
 ```
 
 The generated-effort critical path is the path with the greatest implementation-generation
-agent-hours. The delivery critical path is the path with the greatest combined generated effort
-and path runtime. They can be different. When reporting `critical_path_agent_hours`, name the
-selected path and include only its generated effort. Never select a generation-only path and
-then add runtime from another path.
+agent-hours. At each range bound, the delivery critical path is the path with the greatest
+combined generated effort and path runtime at that bound. Attribute `delivery_critical_path.low`
+and `delivery_critical_path.high` separately because ranges can cross and select different paths.
+For each bound, `critical_path_agent_hours` names that bound's selected delivery path and contains
+only the selected path's generated effort at the same bound. Never select a generation-only path,
+reuse one path attribution for both bounds without checking, or add runtime from another path.
 
 Report `expected_parallelism.low` as the minimum positive number of implementation agents active
 during modeled generation work. Do not count unattended zero-agent runtime waits. Require `low: 1`
@@ -160,7 +162,7 @@ categories, and keep cost distinct from generated-token effort and elapsed time.
 4. Record the throughput value, evidence kind, model, reasoning profile, harness, and environment.
 5. Convert each implementation range to agent-hours and sum total effort.
 6. Calculate every path's generated effort and runtime, including serial and overlapping intervals.
-7. Select wall-clock duration from the longest combined delivery path, name its generated-only `critical_path_agent_hours`, and separately identify a different generated-effort critical path when applicable.
+7. Select the longest combined delivery path independently at each bound, attribute each bound's generated-only `critical_path_agent_hours`, and separately identify a different generated-effort critical path when applicable.
 8. Record separate live-evaluation consumption, uncertainty, confidence, and optional price-backed cost.
 9. Return the reusable shape with compact arithmetic and the evidence that would change it.
 
@@ -169,8 +171,18 @@ categories, and keep cost distinct from generated-token effort and elapsed time.
 One workstream is estimated at 180,000–360,000 implementation generated tokens, or 1.0–2.0
 generated-effort agent-hours at the assumed 50 generated tokens per second. It needs 3–5
 autonomous turns and 0.5–0.5 hours of serial blocking test runtime on the same path. With
-`expected_parallelism: 1`, total and critical-path agent-hours are both 1.0–2.0, and the combined
-path produces 1.5–2.5 wall-clock hours. A live evaluation
+this explanatory mapping, total and critical-path agent-hours are both 1.0–2.0, and the combined
+path produces 1.5–2.5 wall-clock hours:
+
+```yaml
+expected_parallelism:
+  low: 1
+  high: 1
+  concurrency_groups: []
+  modeled_generation_intervals: null
+```
+
+A live evaluation
 may separately consume 100,000 input tokens, 20,000 cached tokens, 40,000 generated tokens, and
 0.25 runtime hours; none of those tokens are implementation generated-token effort.
 
@@ -180,8 +192,18 @@ Two independent workstreams total 360,000–540,000 implementation generated tok
 total agent-hours. Each path has 1.0–1.5 generated-effort agent-hours. On each path, 0.25–0.5
 hours of overlapping build runtime and 0.25–0.5 hours of overlapping test runtime share one
 overlap group, so they contribute 0.25–0.5 hours rather than 0.5–1.0 hours. With
-`expected_parallelism: 2`, the longest combined path is 1.25–2.0 wall-clock hours. Parallelism
-does not reduce total agent-hours: the estimate remains 2.0–3.0.
+this explanatory mapping, the longest combined path is 1.25–2.0 wall-clock hours:
+
+```yaml
+expected_parallelism:
+  low: 1
+  high: 2
+  concurrency_groups:
+    - [path-a, path-b]
+  modeled_generation_intervals: null
+```
+
+Parallelism does not reduce total agent-hours: the estimate remains 2.0–3.0.
 
 ## Asymmetric Path Example
 
@@ -191,6 +213,12 @@ hours of path runtime, for 2.25 delivery hours. Path B is therefore the 2.25-hou
 critical path and reports `critical_path_agent_hours: 0.75`, while path A remains the separate
 generated-effort critical path. A 0.5-hour external-service wait overlaps a 0.5-hour test wait in
 the same path overlap group and is not double-counted; together they contribute 0.5 hours.
+
+Estimate range paths can cross. If path A is longest at the low bound and path B is longest at
+the high bound, report A under `delivery_critical_path.low` and B under
+`delivery_critical_path.high`. Report A's low-bound generated effort under
+`critical_path_agent_hours.low` and B's high-bound generated effort under
+`critical_path_agent_hours.high`.
 
 ## Reusable Estimate Shape
 
@@ -250,8 +278,12 @@ estimate:
       combined_delivery_hours: {low: 0.5, high: 0.75}
   total_agent_hours: {low: 1.5, high: 2.75}
   generated_effort_critical_path: {path: path-a, agent_hours: {low: 1.0, high: 2.0}}
-  delivery_critical_path: {path: path-a, combined_hours: {low: 1.25, high: 2.5}}
-  critical_path_agent_hours: {path: path-a, low: 1.0, high: 2.0}
+  delivery_critical_path:
+    low: {path: path-a, combined_hours: 1.25}
+    high: {path: path-a, combined_hours: 2.5}
+  critical_path_agent_hours:
+    low: {path: path-a, agent_hours: 1.0}
+    high: {path: path-a, agent_hours: 2.0}
   expected_parallelism:
     low: 1
     high: 2
