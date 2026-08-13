@@ -1,6 +1,6 @@
 # Distinguish Blocked From Queued Dependency Waits
 
-Status: Running
+Status: User Action Required
 
 Type: Defect
 
@@ -190,3 +190,37 @@ Approved at creation by the user's explicit 2026-08-12 lifecycle-policy clarific
 - Accepted Execution Evidence: The same canonical execution resolved reservation commit `88ee11e4ac5de06964916b3c39bbab426ba60e50` on clean generated-projection baseline `ee9a1bef8271b0374136ba0df31523399ee6fb6f`, then acquired Work Item update claim `distinguish-blocked-waits-final-resume-running` with outcome `SHARED_CHECKOUT_ACQUIRED` and event `47d5127b-6b0d-480f-b072-468af8a6e88e`.
 - Preserved Plans: The authoritative dependency-policy JSON/HTML plan pair and the separate parser JSON/HTML plan pair remain untracked and untouched.
 - Next Action: The original Dev Coder corrects the outstanding Architect findings in the same authoritative hierarchy plan before source mutation.
+
+## Exhausted Correction Review
+
+- Recorded At: 2026-08-13T05:02:57Z.
+- Preserved Candidate: `03a94762451efe4322fe781f77191b769bf6c7b1` on primary `main`.
+- Attempt Disposition: Three fresh source-review cycles returned the same Watchdog policy-attribution regression gap. The bounded correction limit is exhausted.
+- Remaining Finding: `scripts/test_bundle_content.py` iterates Watchdog instruction dictionary keys instead of flattening instruction strings. Its negative assertions therefore cannot reject future causal-selection or contradiction attribution to `resolve-backlog-blockage`.
+- Candidate Scope: The policy source is correct. The remaining gap is incomplete regression enforcement in the accepted candidate.
+- Preserved Execution: `/root/distinguish_blocked_waits`.
+- Claims: Empty at decision boundary.
+- Preserved Plans: Both dependency-policy plan artifacts and both parser plan artifacts remain untracked and preserved.
+
+## User Action Required
+
+### Question for the User
+
+Do you authorize one exceptional additional correction and fresh review cycle to flatten the Watchdog instruction values and prove the negative assertion?
+
+### Why User Input Is Required
+
+The ordinary bounded correction limit is exhausted. Another correction cycle requires explicit exception authority, or the remaining regression gap must be deliberately excluded and assigned to a separate follow-up Work Item.
+
+### Options and Tradeoffs
+
+- Authorize one exception: preserve the same execution and candidate, make the focused test correction, and run one fresh cumulative review. This closes the known regression gap before delivery.
+- Exclude and follow up: accept the current policy candidate without that enforcement and create a separate defect for the missing regression. This delivers sooner but leaves the known guardrail incomplete.
+
+### Resolution
+
+Pending.
+
+### Unattended Work Boundary
+
+No further correction, review, integration, delivery, or replacement execution may proceed until the user chooses one option. The candidate, execution, plans, and empty-claim state remain preserved.
