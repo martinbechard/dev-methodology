@@ -213,6 +213,59 @@ class CodexTaskControlPackageTests(unittest.TestCase):
             with self.subTest(copied_heading=copied_heading):
                 self.assertNotIn(copied_heading, launch_prompt)
 
+    def test_private_dispatcher_precedence_narrows_generic_launch_topology(
+        self,
+    ) -> None:
+        self.assertIn(
+            "create at most one root Dev Orchestrator task",
+            self.normalized,
+        )
+
+        for clause in (
+            "For Backlog Dispatcher launches, this project-private skill governs launch topology",
+            "takes precedence over the generic root Dev Orchestrator task wording in coordinate-codex-tasks",
+            "coordinate-codex-tasks supplies task-control mechanics only",
+            "The user-visible Codex task is the canonical Work Item runtime identity",
+            "The nested Dev Orchestrator collaboration subagent is not that canonical task",
+        ):
+            with self.subTest(clause=clause):
+                self.assertIn(clause, self.normalized_dispatcher)
+
+    def test_visible_dispatch_sequence_has_exact_actors_and_title_owner(
+        self,
+    ) -> None:
+        self.assertIn("## Visible Work Item Task Launch", self.dispatcher)
+        launch_contract = self.dispatcher.split(
+            "## Visible Work Item Task Launch",
+            1,
+        )[1].split("## Dispatch Workflow", 1)[0]
+        normalized_contract = " ".join(launch_contract.split())
+        launch_prompt = _prompt_template(
+            self.dispatcher,
+            "Reference-Plus-Delta Launch Prompt",
+        )
+        sequence = (
+            "The root Backlog Dispatcher creates exactly one user-visible Codex task",
+            "The root Dispatcher gives that visible task the exact Reference-Plus-Delta Launch Prompt below as its initial prompt",
+            "The visible task then launches exactly one nested Dev Orchestrator collaboration subagent for the authoritative provider record",
+            "The nested Dev Orchestrator independently records Starting -> Running before any source mutation",
+        )
+
+        positions = [normalized_contract.index(clause) for clause in sequence]
+        self.assertEqual(sorted(positions), positions)
+        self.assertEqual(REFERENCE_PLUS_DELTA_LAUNCH_PROMPT, launch_prompt)
+        self.assertEqual(1, launch_prompt.count("Launch one Dev Orchestrator subagent"))
+        for clause in (
+            "The root Dispatcher must not directly launch that hidden collaboration subagent as the Work Item launch",
+            "Lifecycle and material Running-phase title operations remain on the visible Codex task",
+            "They do not target the nested Dev Orchestrator collaboration subagent",
+            "Preserve an already-live hidden Work Item execution as its existing owner until it stops or completes",
+            "Do not create a visible replacement task while that hidden execution is live",
+            "do not launch duplicate implementation",
+        ):
+            with self.subTest(clause=clause):
+                self.assertIn(clause, normalized_contract)
+
     def test_dispatcher_rejects_reconstructed_launch_packets(self) -> None:
         packet_contract = self.dispatcher.split("## Dispatch Packet", 1)[1].split(
             "## Incoming Coordination Messages",

@@ -56,13 +56,23 @@ Reviewers are zero-write role owners. They inspect and report; they do not creat
 
 Coders, writers, and other producers create or correct artifacts within their assigned sandbox and claims. Reviewer zero-write authority is a role and instruction boundary. Do not reinterpret it as a requirement that every mutation-capable tool be absent from the reviewer runtime unless an explicit security requirement separately says so.
 
+## Visible Work Item Task Launch
+
+For Backlog Dispatcher launches, this project-private skill governs launch topology and takes precedence over the generic root Dev Orchestrator task wording in coordinate-codex-tasks. coordinate-codex-tasks supplies task-control mechanics only. The user-visible Codex task is the canonical Work Item runtime identity. The nested Dev Orchestrator collaboration subagent is not that canonical task.
+
+The root Backlog Dispatcher creates exactly one user-visible Codex task. The root Dispatcher gives that visible task the exact Reference-Plus-Delta Launch Prompt below as its initial prompt. The visible task then launches exactly one nested Dev Orchestrator collaboration subagent for the authoritative provider record. The root Dispatcher must not directly launch that hidden collaboration subagent as the Work Item launch. The nested Dev Orchestrator independently records Starting -> Running before any source mutation.
+
+Lifecycle and material Running-phase title operations remain on the visible Codex task and its retained user-visible context. They do not target the nested Dev Orchestrator collaboration subagent.
+
+Preserve an already-live hidden Work Item execution as its existing owner until it stops or completes. Do not create a visible replacement task while that hidden execution is live, and do not launch duplicate implementation.
+
 ## Dispatch Workflow
 
 1. Send the Dev Backlog Coordinator the user's requested dispatch outcome and the caller's known runtime capabilities. Include relevant incoming coordination messages without treating their assertions as authoritative state.
 2. Require the Coordinator to reconcile the provider, active and archived runtime tasks, dependencies, capacity, claims, finish lanes, path overlap, preserved candidates, worktrees, Watchdog, and cleanup eligibility.
 3. Require one decision for each selected Work Item: reserve and dispatch, resume the canonical execution, retain a truthful non-active state, or identify one concrete user decision.
 4. Do not launch until the provider locator resolves to durable reservation evidence and the Coordinator returns the reference-plus-delta packet as the entire launch payload. Treat canonical resumption as a distinct runtime operation without copied provider or selected-skill facts.
-5. Execute the approved runtime operation with caller-owned tools. Do not ask the Coordinator's delegated runtime to create tasks when that runtime lacks the capability and the caller has it.
+5. For a new dispatch, create the visible task defined above with the reference-plus-delta packet as its initial prompt. For a resumption, resume the canonical visible task. Do not ask the Coordinator's delegated runtime to create tasks when that runtime lacks the capability and the caller has it.
 6. Return every successful, failed, pending, or ambiguous runtime outcome to the Coordinator with the exact Work Item ID and runtime identity. The Coordinator reconciles provider lifecycle; the dispatcher does not infer that task creation means Running.
 7. Observe the created or resumed task until its identity is stable enough for reconciliation. Use runtime waiting and inspection rather than heartbeat or progress messages.
 8. Forward only a final outcome or one specific Coordinator decision between workers and the Coordinator.
@@ -132,7 +142,7 @@ Treat a timeout, disconnect, delayed worktree setup, pending client identifier, 
 - Report matched, unmatched, and still-pending outcomes separately to the Coordinator.
 - Let the Coordinator decide whether a Starting reservation remains valid, returns to Ready, resumes an existing task, or requires recovery.
 
-Successful creation is not Running evidence. The root execution accepts Running through the provider workflow before repository mutation.
+Successful visible task creation is not Running evidence. The nested Dev Orchestrator accepts Running through the provider workflow before repository mutation.
 
 ## Bounded Successor Execution
 
