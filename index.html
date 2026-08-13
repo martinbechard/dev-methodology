@@ -3,277 +3,32 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="design-system-version" content="1.0.0">
   <title>AI-Assisted Coding Toolkit</title>
-  <style>
-    :root {
-      --color-ink: #172033;
-      --color-muted: #5b6678;
-      --color-page: #f6f8fb;
-      --color-panel: #ffffff;
-      --color-line: #d9e1ea;
-      --color-blue: #2563eb;
-      --color-green: #0f766e;
-      --color-amber: #b45309;
-      --color-purple: #7c3aed;
-      --color-rose: #be123c;
-      --color-soft-blue: #e8f0ff;
-      --color-soft-green: #e4f7f4;
-      --color-soft-amber: #fff1d8;
-      --color-soft-purple: #f0e8ff;
-      --color-soft-rose: #ffe5ec;
-      --shadow-panel: 0 14px 32px rgba(31, 41, 55, 0.08);
-      --space-2: 0.5rem;
-      --space-3: 0.75rem;
-      --space-4: 1rem;
-      --space-5: 1.25rem;
-      --space-6: 1.5rem;
-      --space-8: 2rem;
-      --space-10: 2.5rem;
-      --radius: 0.5rem;
-      --content-max: 1120px;
-      --font-sm: 0.92rem;
-      --font-xs: 0.78rem;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      color: var(--color-ink);
-      background:
-        linear-gradient(180deg, rgba(232, 240, 255, 0.9), rgba(246, 248, 251, 0) 340px),
-        var(--color-page);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      line-height: 1.52;
-    }
-
-    main {
-      max-width: var(--content-max);
-      margin: 0 auto;
-      padding: var(--space-10) var(--space-6);
-    }
-
-    h1,
-    h2,
-    h3 {
-      margin: 0;
-      line-height: 1.15;
-      letter-spacing: 0;
-    }
-
-    h1 {
-      max-width: 860px;
-      font-size: clamp(2rem, 4vw, 3.65rem);
-    }
-
-    h2 {
-      margin-bottom: var(--space-4);
-      font-size: clamp(1.35rem, 2vw, 2rem);
-    }
-
-    h3 {
-      font-size: 1.05rem;
-    }
-
-    p {
-      margin: 0;
-      color: var(--color-muted);
-    }
-
-    p + p {
-      margin-top: 0.65rem;
-    }
-
-    a {
-      color: inherit;
-    }
-
-    .hero {
-      display: grid;
-      gap: var(--space-5);
-      margin-bottom: var(--space-8);
-    }
-
-    .lede {
-      max-width: 840px;
-      font-size: 1.08rem;
-    }
-
-    .doc-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: var(--space-4);
-    }
-
-    .doc-card {
-      display: grid;
-      min-height: 100%;
-      gap: var(--space-4);
-      padding: var(--space-5);
-      border: 1px solid var(--color-line);
-      border-radius: var(--radius);
-      background: var(--color-panel);
-      box-shadow: var(--shadow-panel);
-      text-decoration: none;
-      transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
-    }
-
-    .doc-card:hover,
-    .doc-card:focus-visible {
-      transform: translateY(-2px);
-      border-color: var(--card-color);
-      box-shadow: 0 18px 38px rgba(31, 41, 55, 0.12);
-      outline: none;
-    }
-
-    .doc-card header {
-      display: flex;
-      align-items: flex-start;
-      gap: var(--space-3);
-    }
-
-    .icon {
-      display: inline-grid;
-      flex: 0 0 auto;
-      width: 2.15rem;
-      height: 2.15rem;
-      place-items: center;
-      border-radius: var(--radius);
-      background: var(--card-soft);
-      color: var(--card-color);
-      font-weight: 800;
-    }
-
-    .doc-card p {
-      font-size: var(--font-sm);
-    }
-
-    .path {
-      align-self: end;
-      padding-top: var(--space-2);
-      color: var(--color-muted);
-      font-size: var(--font-xs);
-      word-break: break-word;
-    }
-
-    .blue {
-      --card-color: var(--color-blue);
-      --card-soft: var(--color-soft-blue);
-    }
-
-    .green {
-      --card-color: var(--color-green);
-      --card-soft: var(--color-soft-green);
-    }
-
-    .amber {
-      --card-color: var(--color-amber);
-      --card-soft: var(--color-soft-amber);
-    }
-
-    .purple {
-      --card-color: var(--color-purple);
-      --card-soft: var(--color-soft-purple);
-    }
-
-    .rose {
-      --card-color: var(--color-rose);
-      --card-soft: var(--color-soft-rose);
-    }
-
-    @media (max-width: 680px) {
-      main {
-        padding: var(--space-8) var(--space-4);
-      }
-
-      .doc-card {
-        padding: var(--space-4);
-      }
-    }
-
-    body {
-      display: flex;
-      min-height: 100vh;
-      flex-direction: column;
-    }
-
-    main {
-      width: 100%;
-      flex: 1 0 auto;
-    }
-
-    .site-header,
-    .site-footer {
-      width: 100%;
-      max-width: var(--content-max);
-      margin: 0 auto;
-      padding-right: var(--space-6);
-      padding-left: var(--space-6);
-    }
-
-    .site-header {
-      display: flex;
-      align-items: center;
-      gap: var(--space-3);
-      padding-top: var(--space-4);
-    }
-
-    .site-brand {
-      display: inline-flex;
-      min-width: 0;
-      align-items: center;
-      gap: var(--space-3);
-      color: var(--color-ink);
-      font-size: clamp(0.88rem, 1.4vw, 0.95rem);
-      font-weight: 750;
-      line-height: 1.2;
-      text-decoration: none;
-    }
-
-    .site-logo {
-      width: 2.25rem;
-      height: 2.25rem;
-      border-radius: var(--radius-small, 0.35rem);
-      object-fit: cover;
-      box-shadow: 0 4px 12px rgba(31, 41, 55, 0.14);
-    }
-
-    .site-footer {
-      flex: 0 0 auto;
-      padding-bottom: var(--space-6);
-    }
-
-    .site-footer p {
-      padding-top: var(--space-4);
-      border-top: 1px solid var(--color-line);
-      color: var(--color-muted);
-      font-size: var(--font-xs);
-    }
-
-    .site-footer a {
-      color: inherit;
-      font-weight: 700;
-    }
-
-    @media (max-width: 680px) {
-      .site-header,
-      .site-footer {
-        padding-right: var(--space-4);
-        padding-left: var(--space-4);
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="design/documentation-design-system/assets/design-system.css">
 </head>
-<body>
-  <header class="site-header">
+<body id="top">
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <header class="site-header ds-header">
     <a class="site-brand" href="index.html">
       <img class="site-logo" src="logo.png" alt="DevConsult Canada logo">
       <span>AI-Assisted Coding Toolkit</span>
     </a>
   </header>
-  <main>
+  <nav class="suite-nav" aria-label="Documentation pages">
+    <a href="index.html" aria-current="page">Index</a>
+    <a href="design/agent-and-skill-definitions.html">Agent And Skill Definitions</a>
+    <a href="design/agent-and-skill-evaluations.html">Agent And Skill Evaluations</a>
+    <a href="design/agent-owned-evaluation-suites.html">Agent-Owned Evaluation Suites</a>
+    <a href="design/agentic-configuration.html">Agentic Configuration</a>
+    <a href="design/skills-modularization.html">Skills Modularization</a>
+    <a href="design/generic-agent-definitions-source.html">Generic Agent Definitions Source</a>
+    <a href="design/agent-skill-specialization-examples.html">Agent And Skill Specialization Examples</a>
+    <a href="design/orchestrated-development-lifecycle.html">Orchestrated Development Lifecycle</a>
+    <a href="design/documentation-templates.html">Documentation Templates</a>
+    <a href="design/wiki-skills-and-project-context.html">Wiki Skills And Project Context</a>
+  </nav>
+  <main id="main-content">
     <section class="hero" aria-labelledby="page-title">
       <h1 id="page-title">AI-Assisted Coding Toolkit</h1>
       <p class="lede">The toolkit provides portable Skills, conceptual Agent definitions, project guidance, and Evaluation methods for software development. The repository generator uses runtime adapter mappings to convert conceptual Agent definitions into supported Agent harness formats. Use this index to find each maintained explanation and its information owner.</p>
@@ -281,91 +36,91 @@
 
     <section aria-labelledby="documents-title">
       <h2 id="documents-title">Toolkit Documentation</h2>
-      <div class="doc-grid">
-        <a class="doc-card amber" data-information-owner="catalog" href="design/agent-and-skill-definitions.html">
+      <div class="card-grid">
+        <a class="card card--link" data-information-owner="catalog" href="design/agent-and-skill-definitions.html">
           <header>
-            <span class="icon" aria-hidden="true">01</span>
+            <span class="card-index" aria-hidden="true">01</span>
             <h3>Core Agent and Skills</h3>
           </header>
           <p>Presents generated conceptual Agent and Skill catalogs, Agent-Skill relationships, output contracts, and delivery responsibilities for Work items.</p>
           <span class="path">design/agent-and-skill-definitions.html</span>
         </a>
 
-        <a class="doc-card blue" data-information-owner="evaluations" href="design/agent-and-skill-evaluations.html">
+        <a class="card card--link" data-information-owner="evaluations" href="design/agent-and-skill-evaluations.html">
           <header>
-            <span class="icon" aria-hidden="true">02</span>
+            <span class="card-index" aria-hidden="true">02</span>
             <h3>Agent and Skill Evaluations</h3>
           </header>
           <p>Explains Evaluation layers, selected Campaign Evidence, current catalog coverage, and the limits on Agent-level and Skill-level results.</p>
           <span class="path">design/agent-and-skill-evaluations.html</span>
         </a>
 
-        <a class="doc-card blue" data-information-owner="evaluation-suites" href="design/agent-owned-evaluation-suites.html">
+        <a class="card card--link" data-information-owner="evaluation-suites" href="design/agent-owned-evaluation-suites.html">
           <header>
-            <span class="icon" aria-hidden="true">03</span>
+            <span class="card-index" aria-hidden="true">03</span>
             <h3>Agent-Owned Evaluation Suites</h3>
           </header>
           <p>Maps each conceptual Agent to an executable Evaluation suite with retained Evidence, exact checks, independent judging, bounded runtime facilities, and immutable reporting.</p>
           <span class="path">design/agent-owned-evaluation-suites.html</span>
         </a>
 
-        <a class="doc-card green" data-information-owner="configuration" href="design/agentic-configuration.html">
+        <a class="card card--link" data-information-owner="configuration" href="design/agentic-configuration.html">
           <header>
-            <span class="icon" aria-hidden="true">04</span>
+            <span class="card-index" aria-hidden="true">04</span>
             <h3>Coding-Agent Runtime Configuration And Its Cross-Harness Evaluation</h3>
           </header>
           <p>Explains how skills, agent definitions, and project instructions configure supported Agent harnesses. It also describes cross-harness Evaluation configuration and audit Evidence.</p>
           <span class="path">design/agentic-configuration.html</span>
         </a>
 
-        <a class="doc-card green" data-information-owner="modularization" href="design/skills-modularization.html">
+        <a class="card card--link" data-information-owner="modularization" href="design/skills-modularization.html">
           <header>
-            <span class="icon" aria-hidden="true">05</span>
+            <span class="card-index" aria-hidden="true">05</span>
             <h3>Agent Skill Architecture</h3>
           </header>
           <p>Explains core Skill categories and ownership, conditional selection, runtime delivery, and setup-time technology bindings.</p>
           <span class="path">design/skills-modularization.html</span>
         </a>
 
-        <a class="doc-card rose" data-information-owner="agent-definitions" href="design/generic-agent-definitions-source.html">
+        <a class="card card--link" data-information-owner="agent-definitions" href="design/generic-agent-definitions-source.html">
           <header>
-            <span class="icon" aria-hidden="true">06</span>
+            <span class="card-index" aria-hidden="true">06</span>
             <h3>Generic Agent Definitions Source</h3>
           </header>
           <p>Distinguishes portable Skill packages from conceptual Agent sources. It explains schemas, model profiles, generation, and native runtime packaging.</p>
           <span class="path">design/generic-agent-definitions-source.html</span>
         </a>
 
-        <a class="doc-card purple" data-information-owner="examples" href="design/agent-skill-specialization-examples.html">
+        <a class="card card--link" data-information-owner="examples" href="design/agent-skill-specialization-examples.html">
           <header>
-            <span class="icon" aria-hidden="true">07</span>
+            <span class="card-index" aria-hidden="true">07</span>
             <h3>Agent And Skill Specialization Examples</h3>
           </header>
           <p>Uses three customer-safe examples to show root-only guidance, nested application guidance, and separate wiki source and synthesis workflows.</p>
           <span class="path">design/agent-skill-specialization-examples.html</span>
         </a>
 
-        <a class="doc-card blue" data-information-owner="execution" href="design/orchestrated-development-lifecycle.html">
+        <a class="card card--link" data-information-owner="execution" href="design/orchestrated-development-lifecycle.html">
           <header>
-            <span class="icon" aria-hidden="true">08</span>
+            <span class="card-index" aria-hidden="true">08</span>
             <h3>Orchestrated Development Lifecycle</h3>
           </header>
           <p>Explains Work item flow from backlog intake through Private Work, independent Review and Verification, delivery, and completion. It also covers blocker recovery.</p>
           <span class="path">design/orchestrated-development-lifecycle.html</span>
         </a>
 
-        <a class="doc-card purple" data-information-owner="templates" href="design/documentation-templates.html">
+        <a class="card card--link" data-information-owner="templates" href="design/documentation-templates.html">
           <header>
-            <span class="icon" aria-hidden="true">09</span>
+            <span class="card-index" aria-hidden="true">09</span>
             <h3>Documentation Templates</h3>
           </header>
           <p>Describes eight source-backed templates, their selection and Review routes, and the shared project wiki page format.</p>
           <span class="path">design/documentation-templates.html</span>
         </a>
 
-        <a class="doc-card green" data-information-owner="wiki-context" href="design/wiki-skills-and-project-context.html">
+        <a class="card card--link" data-information-owner="wiki-context" href="design/wiki-skills-and-project-context.html">
           <header>
-            <span class="icon" aria-hidden="true">10</span>
+            <span class="card-index" aria-hidden="true">10</span>
             <h3>Wiki Skills And Project Context</h3>
           </header>
           <p>Explains how eight wiki-related Skills use raw and project Evidence, an OKF-compatible representation, source authority, and independent Verification to maintain project context.</p>
@@ -375,8 +130,9 @@
     </section>
 
   </main>
-  <footer class="site-footer">
+  <footer class="site-footer ds-footer">
     <p>Version 1.0.0 &middot; Copyright (c) 2026 Martin.Bechard@DevConsult.ca &middot; <a href="LICENSE">MIT License</a></p>
+    <p><span class="ds-version">Design system v1.0.0</span></p>
   </footer>
   <script src="design/documentation-settings.js"></script>
 </body>

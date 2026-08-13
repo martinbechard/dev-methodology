@@ -65,6 +65,43 @@ LIFECYCLE_NAVIGATION = (
 LIFECYCLE_BASELINE_SEMANTIC_SHA256 = (
     "42271356d892a26fe0b8467c266cc2e0fb8099928a1214d8b1d167d8ea7b2b96"
 )
+TOOLKIT_NAVIGATION = (
+    ("Index", "index.html"),
+    ("Agent And Skill Definitions", "design/agent-and-skill-definitions.html"),
+    ("Agent And Skill Evaluations", "design/agent-and-skill-evaluations.html"),
+    ("Agent-Owned Evaluation Suites", "design/agent-owned-evaluation-suites.html"),
+    ("Agentic Configuration", "design/agentic-configuration.html"),
+    ("Skills Modularization", "design/skills-modularization.html"),
+    (
+        "Generic Agent Definitions Source",
+        "design/generic-agent-definitions-source.html",
+    ),
+    (
+        "Agent And Skill Specialization Examples",
+        "design/agent-skill-specialization-examples.html",
+    ),
+    (
+        "Orchestrated Development Lifecycle",
+        "design/orchestrated-development-lifecycle.html",
+    ),
+    ("Documentation Templates", "design/documentation-templates.html"),
+    ("Wiki Skills And Project Context", "design/wiki-skills-and-project-context.html"),
+)
+TOOLKIT_CARD_OWNERS = (
+    "catalog",
+    "evaluations",
+    "evaluation-suites",
+    "configuration",
+    "modularization",
+    "agent-definitions",
+    "examples",
+    "execution",
+    "templates",
+    "wiki-context",
+)
+TOOLKIT_BASELINE_SEMANTIC_SHA256 = (
+    "f35a9a08bcfeaae5ce4b0425adf202a8729fd78cf06b1eee6ebd9047ac2107d4"
+)
 
 
 class _PageParser(HTMLParser):
@@ -168,6 +205,35 @@ def _lifecycle_semantic_text(source: str) -> str:
     return " ".join(unescape(visible_text).split())
 
 
+def _toolkit_semantic_text(source: str) -> str:
+    """Return accepted toolkit prose after removing only authorized additions."""
+
+    without_additions = re.sub(
+        r'<a class="skip-link" href="#main-content">Skip to main content</a>',
+        "",
+        source,
+    )
+    without_additions = re.sub(
+        r'<nav class="suite-nav" aria-label="Documentation pages">.*?</nav>',
+        "",
+        without_additions,
+        flags=re.DOTALL,
+    )
+    without_additions = re.sub(
+        rf'<span class="ds-version">Design system v{re.escape(VERSION)}</span>',
+        "",
+        without_additions,
+    )
+    visible_markup = re.sub(
+        r"<(?:style|script)\b.*?</(?:style|script)>",
+        "",
+        without_additions,
+        flags=re.DOTALL,
+    )
+    visible_text = re.sub(r"<[^>]+>", " ", visible_markup)
+    return " ".join(unescape(visible_text).split())
+
+
 class DocumentationDesignSystemTests(unittest.TestCase):
     """Protect the approved static pages, checklist catalog, and interaction contracts."""
 
@@ -196,6 +262,108 @@ class DocumentationDesignSystemTests(unittest.TestCase):
                     if parts.fragment:
                         _, target_parser = _parse_page(target)
                         self.assertIn(parts.fragment, target_parser.ids, href)
+
+    def test_toolkit_index_uses_versioned_shared_shell_and_preserves_semantics(
+        self,
+    ) -> None:
+        """The toolkit index adopts the shared shell without changing accepted prose."""
+
+        index_path = REPOSITORY_ROOT / "index.html"
+        index_text, parser = _parse_page(index_path)
+        suite_nav_match = re.search(
+            r'<nav class="suite-nav" aria-label="Documentation pages">(.*?)</nav>',
+            index_text,
+            flags=re.DOTALL,
+        )
+        self.assertIsNotNone(suite_nav_match)
+        assert suite_nav_match is not None
+        suite_nav = suite_nav_match.group(1)
+        navigation_links = re.findall(
+            r'<a href="([^"]+)"(?: aria-current="page")?>([^<]+)</a>',
+            suite_nav,
+        )
+        card_links = re.findall(
+            r'<a class="card card--link" data-information-owner="([^"]+)" '
+            r'href="([^"]+)">',
+            index_text,
+        )
+
+        self.assertEqual([VERSION], parser.version_meta)
+        self.assertEqual(
+            ["design/documentation-design-system/assets/design-system.css"],
+            parser.stylesheets,
+        )
+        self.assertIn('<body id="top">', index_text)
+        self.assertRegex(
+            index_text,
+            r'<body id="top">\s*'
+            r'<a class="skip-link" href="#main-content">Skip to main content</a>',
+        )
+        self.assertIn('<main id="main-content">', index_text)
+        self.assertEqual(1, parser.h1_count)
+        self.assertEqual(len(parser.ids), len(set(parser.ids)))
+        self.assertEqual(
+            [(href, label) for label, href in TOOLKIT_NAVIGATION],
+            navigation_links,
+        )
+        self.assertEqual(1, suite_nav.count('aria-current="page"'))
+        self.assertIn(
+            '<a href="index.html" aria-current="page">Index</a>',
+            suite_nav,
+        )
+        self.assertEqual(
+            [
+                (owner, href)
+                for owner, (_, href) in zip(
+                    TOOLKIT_CARD_OWNERS,
+                    TOOLKIT_NAVIGATION[1:],
+                    strict=True,
+                )
+            ],
+            card_links,
+        )
+        self.assertEqual(10, index_text.count('class="card card--link"'))
+        self.assertEqual(10, index_text.count('class="card-index" aria-hidden="true"'))
+        self.assertIn('<header class="site-header ds-header">', index_text)
+        self.assertIn('<footer class="site-footer ds-footer">', index_text)
+        self.assertNotIn("<style>", index_text)
+        self.assertNotIn('aria-label="Page sections"', index_text)
+        self.assertEqual(
+            ["design/documentation-settings.js"],
+            parser.scripts,
+        )
+        for _, href in TOOLKIT_NAVIGATION:
+            with self.subTest(navigation_target=href):
+                self.assertTrue((index_path.parent / href).is_file())
+        self.assertIn(
+            '<img class="site-logo" src="logo.png" alt="DevConsult Canada logo">',
+            index_text,
+        )
+        self.assertIn(
+            '<section class="hero" aria-labelledby="page-title">',
+            index_text,
+        )
+        self.assertIn(
+            '<h1 id="page-title">AI-Assisted Coding Toolkit</h1>',
+            index_text,
+        )
+        self.assertIn("Version 1.0.0", index_text)
+        self.assertNotRegex(
+            index_text,
+            r'<span class="ds-version">\s*Version 1\.0\.0\s*</span>',
+        )
+        self.assertEqual(
+            1,
+            index_text.count(
+                f'<span class="ds-version">Design system v{VERSION}</span>'
+            ),
+        )
+        self.assertEqual(
+            TOOLKIT_BASELINE_SEMANTIC_SHA256,
+            hashlib.sha256(
+                _toolkit_semantic_text(index_text).encode("utf-8")
+            ).hexdigest(),
+        )
 
     def test_index_discovers_every_detail_page_and_assets_exist(self) -> None:
         """The single entry page must discover every concern and required static asset."""
