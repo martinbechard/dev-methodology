@@ -140,3 +140,14 @@ This item defines an estimation method, not a promise that generated-token throu
 - Phase: Implementation and TDD planning.
 - Accepted Execution: The nested Dev Orchestrator accepted the authoritative file-provider assignment and will preserve the dispatch exclusions while coordinating the required plan, implementation, independent review, verification, and main-branch delivery.
 - Title Handoff: Unsynchronized because neither this execution nor its authorized caller path exposes conversation rename authority. The required title is `Implementing — Estimate Agent Work`.
+
+## Bounded Plan-Review Recovery
+
+- Authorized At: 2026-08-13T09:28:10Z.
+- Review Attempt: One fresh finding-linked plan correction and re-review is authorized. This is the first plan-review correction for this Work Item; no repeated or exhausted finding exists.
+- Finding: The plan omitted the direct evaluation-catalog dependency for the new skill. The package must add `probe-estimate-agent-work` and update only the exact inventory assertions that consume the registered skill and probe.
+- Scope Decision: `evals/skill-probes.yaml` and mechanically required focused catalog/inventory assertions are allowed dependent test artifacts because repository-supported evaluation and inventory checks directly consume the new approved skill package. This does not authorize another governed skill or Agent definition.
+- Correction Boundary: Update the preserved plan pair only for `probe-estimate-agent-work`, its exact executable association, and consuming inventory assertions. Obtain one fresh plan review before implementation.
+- Preserved State: No source candidate or tracked dirty bytes exist. Claims are empty. Preserve the canonical visible task, nested Dev Orchestrator, plan pair, candidate `03a94762451efe4322fe781f77191b769bf6c7b1`, all User Action Required records, and the other four plan artifacts.
+- Transition: Provider remains `Running`; no lifecycle transition or replacement execution is authorized.
+- Transition Claim: `authorize-estimate-plan-review-retry-019ffa3d`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `3e39017a-abab-45c7-8aba-54c44fd47adc`.
