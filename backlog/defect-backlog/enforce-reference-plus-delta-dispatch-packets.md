@@ -1,6 +1,6 @@
 # Enforce Reference-Plus-Delta Dispatch Packets
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -152,3 +152,11 @@ Approved at creation by the user's explicit 2026-08-12 instruction to incorporat
 - Current Path Evidence: Primary `main` is clean. `scripts/test_bundle_content.py` has no dirty ownership bytes, and the exact focused method remains at accepted commit `66a2a5663a527b7772801038fb556ff6d9552cda`.
 - User Authority: The user explicitly clarified that dev-methodology may continue its own work. This permits the exact isolated test-method correction without inferring claim release or contacting another project.
 - Disposition: Ownership ended, so Starting -> Ready. Preserve and reuse the same collaboration execution; do not create a replacement.
+
+## Same-Execution Restart
+
+- Reserved At: 2026-08-12.
+- Transition: Ready -> Starting.
+- Canonical Execution: `/root/enforce_reference_plus_delta`.
+- Resume Delta: Reconcile the exact dispatcher-focused method in `scripts/test_bundle_content.py` with the reference-plus-delta contract; all other stable assignment facts remain in this provider record.
+- Acceptance Boundary: The same execution records Starting -> Running before mutation. Claims remain suspended and no cross-project runtime control is permitted.
