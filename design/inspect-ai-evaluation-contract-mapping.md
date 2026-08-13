@@ -20,15 +20,17 @@ Task-ID-Evidence: runtime-supplied
 
 ## Decision
 
-Proceed to Phase 2 with a bounded read-only pilot. This is a deterministic GO under the predicate in this document. Inspect AI and inspect-swe are execution and evidence candidates. They do not replace repository authority for Agent identity, topology, independent judgment, resource claims, Git evidence, containment verification, cleanup verification, categorical status, receipt validation, immutable reporting, or publication.
+Authorize Phase 2 to prepare and run a bounded read-only pilot. The authorization outcome is deterministic GO from Phase 1 evidence. Pilot acceptance remains pending until Phase 2 produces its required execution proofs. Inspect AI and inspect-swe are execution and evidence candidates. They do not replace repository authority for Agent identity, topology, independent judgment, resource claims, Git evidence, containment verification, cleanup verification, categorical status, receipt validation, immutable reporting, or publication.
 
-The mapping has 62 governed responsibilities. It marks 16 responsibilities as INSPECT_CANDIDATE, 39 as RETAINED, and 7 as GAP. Each GAP has one later Work Item owner. Phase 2 must reverse to NO-GO if its four required proofs fail or if the adapter must duplicate a retained verifier.
+The mapping has 62 governed responsibilities. It marks 16 responsibilities as INSPECT_CANDIDATE, 39 as RETAINED, and 7 as GAP. Each GAP has one later Work Item owner. Phase 2 authorization does not claim that pilot parity is proven. The pilot fails acceptance if any required execution proof fails or if the adapter must duplicate a retained verifier.
 
 ## Scope and authority
 
 This document maps the complete 33-suite agent evaluation contract to Inspect AI and inspect-swe. It does not implement an adapter, generator, simulator, runner, or live evaluation. It does not authorize a paid model call.
 
-The authoring snapshot starts at commit cf30388e125cc543a69b318827b5cb8a055917f1. The target path was ABSENT. The source ledger records 282 repository authority entries and 21 immutable upstream entries. Each completion digest must equal its authoring-start digest. Any difference is source drift and stops delivery.
+The authoring snapshot starts at commit cf30388e125cc543a69b318827b5cb8a055917f1. The target path was ABSENT. The source ledger records 280 repository authority entries and 21 immutable upstream entries. Each completion digest must equal its authoring-start digest. Any difference is source drift and stops delivery.
+
+The durable Work Item at SRC-L041 owns the mapping requirements and the requirement for independent architecture acceptance. The accepted hierarchy-plan JSON and HTML were untracked runtime artifacts. They are non-authoritative execution evidence outside the frozen source ledger. They cannot supply a source, link, digest, or acceptance claim.
 
 Authority ranks resolve conflicts in this order:
 
@@ -67,7 +69,7 @@ backlog/feature-backlog/inspect-ai-evaluation-adoption/
 
 ## Governed responsibility inventory
 
-Each row is one distinct responsibility. A bounded adapter implements only named INSPECT_CANDIDATE responsibilities. It calls every applicable RETAINED verifier. It does not duplicate identity, containment, Judge, receipt, or categorical-status logic.
+Each row is one distinct responsibility. The Phase 2 bounded adapter implements only R-015, R-042, R-046, R-049, and R-050. It supplies evidence for retained version-pinning responsibility R-037 and Phase 2 parity responsibility R-062. It calls retained validation for R-040 and R-041 without implementing those responsibilities. It calls every other applicable RETAINED verifier. It does not duplicate identity, containment, Judge, receipt, or categorical-status logic. R-054 is a Phase 6 GAP and is outside the R-042 through R-053 interval.
 
 | ID | Governed responsibility | Disposition | Steady-state owner | First parity gate |
 | --- | --- | --- | --- | --- |
@@ -282,22 +284,33 @@ flowchart LR
     P8 -->|Gate fails| S
 ```
 
-## Deterministic Phase 2 decision
+## Deterministic Phase 2 authorization
 
-Phase 2 is GO if and only if all conditions are true:
+Phase 2 is authorized if and only if Phase 1 evidence establishes all conditions:
 
-1. Every Phase 2 responsibility has one named candidate or retained owner.
-2. The tuple pins Inspect AI, inspect-swe, Codex, Python, platform architecture, EvalLog schema, and package digests.
-3. The generated target configuration is exact and matches the frozen conceptual role and native adapter.
-4. The outer Docker sandbox has exact engine and image identity before execution.
-5. The pilot uses one frozen read-only suite and proves unchanged fixtures and Git state.
-6. The retained independent Judge contract binds the authorized Judge session and result.
-7. The adapter implements only R-015, R-021, R-033, R-037, R-042–R-053, and R-062 where the gate names them.
-8. The adapter calls every applicable RETAINED verifier.
-9. The adapter contains no duplicate identity, containment, Judge, receipt, or categorical-status logic.
-10. The run uses no paid live model without separate authorization.
+1. Every Phase 2 responsibility has one named candidate, retained owner, or explicit GAP owner.
+2. The proposed tuple pins Inspect AI, inspect-swe, Codex, Python, platform architecture, EvalLog schema, and package digests without a floating version.
+3. The bounded adapter scope is exactly R-015, R-042, R-046, R-049, and R-050.
+4. The adapter supplies evidence for R-037 and R-062 and calls retained validation for R-040 and R-041 without implementing those responsibilities.
+5. Every applicable retained identity, containment, Judge, receipt, categorical-status, privacy, claim, Git, and cleanup verifier remains authoritative.
+6. Every runtime unknown is explicit and assigned to prove-read-only-inspect-ai-execution with a stop condition.
+7. No paid live-model run occurs without separate authorization.
 
-The current mapping satisfies conditions 1, 2, 7, 8, 9, and 10 by design. Conditions 3 through 6 are the four execution proofs owned by prove-read-only-inspect-ai-execution. Therefore, this Work Item selects GO to start that bounded proof. The pilot itself must stop and record NO-GO if any execution proof fails. A need to duplicate a retained verifier also forces NO-GO.
+The frozen responsibility inventory, pilot tuple, ownership tables, Phase 2 gate, and explicit-unknown table satisfy all seven authorization conditions. The deterministic current authorization outcome is GO. This outcome authorizes only the bounded Phase 2 proof. It does not accept the pilot or establish parity.
+
+## Deterministic Phase 2 pilot acceptance
+
+The Phase 2 pilot is accepted if and only if its execution evidence establishes all conditions:
+
+1. The generated target configuration is exact and matches the frozen conceptual role and native adapter.
+2. The outer Docker sandbox has exact engine and image identity before execution.
+3. The pilot uses one frozen read-only suite and proves unchanged fixtures and Git state.
+4. The retained independent Judge contract binds the authorized Judge session and result.
+5. The adapter stays within R-015, R-042, R-046, R-049, and R-050, supplies the required R-037 and R-062 evidence, and invokes R-040 and R-041 validation.
+6. Every applicable RETAINED verifier passes, and the adapter duplicates none of its logic.
+7. No prohibited file, process, port, container, claim, credential, or host effect remains.
+
+No pilot execution occurs in this Work Item. The deterministic current pilot-acceptance outcome is PENDING, not GO. Phase 2 records NO-GO and stops if any condition fails or lacks evidence.
 
 ## Explicit unknowns
 
@@ -502,8 +515,8 @@ The ledger records the complete frozen source set cited for this mapping. Start 
 | SRC-L180 | [evals/agent-tests/skills/agent-suite-supervision/SKILL.md](../evals/agent-tests/skills/agent-suite-supervision/SKILL.md) | 4 | R-008, R-012–R-014 | 1ab578aa7a522129ac1098de43513dbfd776921450003639745a7f50d8b78611 | 1ab578aa7a522129ac1098de43513dbfd776921450003639745a7f50d8b78611 | Applies within its declared suite or method scope | agent-suite maintainers |
 | SRC-L181 | [evals/agent-tests/suite-index.yaml](../evals/agent-tests/suite-index.yaml) | 1 | R-001, R-012, R-036 | afc50f3f01e962321c633b7a5182b9e48a891d3032ed3cbec60fc38ec3cf7548 | afc50f3f01e962321c633b7a5182b9e48a891d3032ed3cbec60fc38ec3cf7548 | Controls within its declared schema or policy domain | agent-suite maintainers |
 | SRC-L182 | [evals/agent-tests/suite_reporting.py](../evals/agent-tests/suite_reporting.py) | 2 | R-012–R-043, R-055–R-056 | 5f5b0ba17f6a1a6e3b867cb9bd704d8f723e817175e06bcf5d3e3258ae71a8b6 | 5f5b0ba17f6a1a6e3b867cb9bd704d8f723e817175e06bcf5d3e3258ae71a8b6 | Controls observed enforcement behavior | evaluation runner maintainers |
-| SRC-L183 | [evals/agent-tests/test_runner.py](../evals/agent-tests/test_runner.py) | 2 | R-012–R-043, R-055–R-056 | 065e71e2095b63a89a3e1d7fdff17f4bc8f5573256cc7ab51fd02bd0eeebadb6 | 065e71e2095b63a89a3e1d7fdff17f4bc8f5573256cc7ab51fd02bd0eeebadb6 | Controls observed enforcement behavior | evaluation runner maintainers |
-| SRC-L184 | [evals/agent-tests/test_suite_reporting.py](../evals/agent-tests/test_suite_reporting.py) | 2 | R-012–R-043, R-055–R-056 | f69db3e3f86667022f3cac6eddd32805ff642f8a2fc684c8c2246cb13f8f39db | f69db3e3f86667022f3cac6eddd32805ff642f8a2fc684c8c2246cb13f8f39db | Controls observed enforcement behavior | evaluation runner maintainers |
+| SRC-L183 | [evals/agent-tests/test_runner.py](../evals/agent-tests/test_runner.py) | 7 | R-012–R-043, R-055–R-056 | 065e71e2095b63a89a3e1d7fdff17f4bc8f5573256cc7ab51fd02bd0eeebadb6 | 065e71e2095b63a89a3e1d7fdff17f4bc8f5573256cc7ab51fd02bd0eeebadb6 | Corroborates; cannot override implementation or schema | test maintainers |
+| SRC-L184 | [evals/agent-tests/test_suite_reporting.py](../evals/agent-tests/test_suite_reporting.py) | 7 | R-012–R-043, R-055–R-056 | f69db3e3f86667022f3cac6eddd32805ff642f8a2fc684c8c2246cb13f8f39db | f69db3e3f86667022f3cac6eddd32805ff642f8a2fc684c8c2246cb13f8f39db | Corroborates; cannot override implementation or schema | test maintainers |
 | SRC-L185 | [evals/agent-tests/test_workspace_inventory.py](../evals/agent-tests/test_workspace_inventory.py) | 7 | R-002–R-003, R-012–R-043, R-055–R-056 | 6537da14819ad8f94034d469edf305d73b18c02b68d92dfca93bddbcf902a3a0 | 6537da14819ad8f94034d469edf305d73b18c02b68d92dfca93bddbcf902a3a0 | Corroborates; cannot override implementation or schema | test maintainers |
 | SRC-L186 | [evals/agent-tests/wiki-architect/agents/judge.toml](../evals/agent-tests/wiki-architect/agents/judge.toml) | 6 | R-007, R-026–R-027 | d58b8036cac60ae967e806284ce0b5cacb748722fd34c431c3fe80e3e8cbe7ef | d58b8036cac60ae967e806284ce0b5cacb748722fd34c431c3fe80e3e8cbe7ef | Applies within its declared suite or method scope | suite owner |
 | SRC-L187 | [evals/agent-tests/wiki-architect/agents/supervisor.toml](../evals/agent-tests/wiki-architect/agents/supervisor.toml) | 6 | R-006, R-013–R-014 | 01276f2720bd2d1d1fae8f83a508ca8aad16affee93c3bf89bf9ac4e5f9938d2 | 01276f2720bd2d1d1fae8f83a508ca8aad16affee93c3bf89bf9ac4e5f9938d2 | Applies within its declared suite or method scope | suite owner |
@@ -587,8 +600,6 @@ The ledger records the complete frozen source set cited for this mapping. Start 
 | SRC-L265 | [generated/adapters/codex/agents/wiki-source-collector.toml](../generated/adapters/codex/agents/wiki-source-collector.toml) | 3 | R-005, R-013, R-036 | 464506b694c614121ed7342827de1f0b7c2a7970be282d263bcb88a9060b4050 | 464506b694c614121ed7342827de1f0b7c2a7970be282d263bcb88a9060b4050 | Controls native Codex identity; portable semantics remain upstream | adapter generator maintainers |
 | SRC-L266 | [generated/adapters/codex/agents/wiki-topic-verifier.toml](../generated/adapters/codex/agents/wiki-topic-verifier.toml) | 3 | R-005, R-013, R-036 | 22cee2b26f9377afc2c7e3acbd410fd5b58ddf7a0c5642d47d66657587ead822 | 22cee2b26f9377afc2c7e3acbd410fd5b58ddf7a0c5642d47d66657587ead822 | Controls native Codex identity; portable semantics remain upstream | adapter generator maintainers |
 | SRC-L267 | [generated/adapters/codex/agents/wiki-writer.toml](../generated/adapters/codex/agents/wiki-writer.toml) | 3 | R-005, R-013, R-036 | 709e874cd7c83a075bf0c9b3ddb94981597021b320d17fa2d8bf68e70bab4c84 | 709e874cd7c83a075bf0c9b3ddb94981597021b320d17fa2d8bf68e70bab4c84 | Controls native Codex identity; portable semantics remain upstream | adapter generator maintainers |
-| SRC-L268 | [map-evaluation-contracts-to-inspect-ai-plan-019ffbeb.html](../map-evaluation-contracts-to-inspect-ai-plan-019ffbeb.html) | 1 | R-001–R-062 | d94b5309f925e83ccead7e1c79523f5203427993f2633ef0aaadd2ac51ec47b7 | d94b5309f925e83ccead7e1c79523f5203427993f2633ef0aaadd2ac51ec47b7 | Controls within its declared schema or policy domain | Dev Architect and Orchestrator |
-| SRC-L269 | [map-evaluation-contracts-to-inspect-ai-plan-019ffbeb.json](../map-evaluation-contracts-to-inspect-ai-plan-019ffbeb.json) | 1 | R-001–R-062 | 813bf6cf2273e4c8e910b9da99f2f12ca14d65871527193a13a3ec244252f6ab | 813bf6cf2273e4c8e910b9da99f2f12ca14d65871527193a13a3ec244252f6ab | Controls within its declared schema or policy domain | Dev Architect and Orchestrator |
 | SRC-L270 | [scripts/agent_skill_evals/commands.py](../scripts/agent_skill_evals/commands.py) | 4 | R-001–R-062 | befa81fcd9baeab12bfafae490daa40afd8a327f588eacf22cbdd56bed9a37a7 | befa81fcd9baeab12bfafae490daa40afd8a327f588eacf22cbdd56bed9a37a7 | Applies within its declared suite or method scope | repository maintainer |
 | SRC-L271 | [scripts/agent_skill_evals/invocations.py](../scripts/agent_skill_evals/invocations.py) | 4 | R-001–R-062 | be0fdde6ed98176d03b2b83f62bbb917bc3c88b695731717ed32551b2f281212 | be0fdde6ed98176d03b2b83f62bbb917bc3c88b695731717ed32551b2f281212 | Applies within its declared suite or method scope | repository maintainer |
 | SRC-L272 | [scripts/agent_skill_evals/judges.py](../scripts/agent_skill_evals/judges.py) | 4 | R-001–R-062 | 71eb2605fa61f150f3e4f59d42c29935e992eb6bdd4b2b2e944378840a933b10 | 71eb2605fa61f150f3e4f59d42c29935e992eb6bdd4b2b2e944378840a933b10 | Applies within its declared suite or method scope | repository maintainer |
@@ -638,7 +649,7 @@ A maintainer updates this mapping only after all cited repository sources are fr
 Before commit, verification must:
 
 1. Confirm the target is the only staged path.
-2. Confirm all 282 repository ledger paths are present at their recorded digest or are one of the four recorded ABSENT files.
+2. Confirm all 280 repository ledger paths are present at their recorded digest or are one of the four recorded ABSENT files.
 3. Confirm the 33-suite ledger has exactly 33 rows, 33 conceptual roles, 33 native adapters, 66 project-agent references, 99 shared-skill references, 31 suite-skill references, and four ABSENT files.
 4. Validate provenance against the runtime envelope.
 5. Check all local links, exact cited paths, and immutable upstream URLs.
