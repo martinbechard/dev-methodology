@@ -1,6 +1,6 @@
 # Parse Nested User Action Required Report Fields
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -71,3 +71,15 @@ None.
 - User Direction: Add exact-identity runtime update, state, and actually-running reporting while preserving truthful offline behavior.
 - Concurrency Decision: Safe to run concurrently with `document-external-terminal-cleanup`; no exact source, test, generated-projection, or integration path overlap exists. The blocked dependency-policy item remains preserved and does not own these paths.
 - Transition Claim: `expand-backlog-report-runtime-state-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `06a0eca7-d485-4cae-8bea-7f643cc9fa9f`.
+
+## Starting Handoff Evidence
+
+- Reserved At: 2026-08-13T01:31:25Z.
+- Parent Runtime Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Intended Root Role: Dev Orchestrator.
+- Baseline: `52ca4e5d5c8fc74b4562cd1ae6621599e374044e` on primary `main`.
+- Dispatch Reservation: Exactly one isolated canonical collaboration execution; identity pending caller-owned creation.
+- Concurrency: Safe beside `/root/document_external_cleanup`; exact owned source/test paths do not overlap. Preserve the blocked policy item's untracked hierarchy-plan artifacts.
+- Transition Claim: `start-backlog-report-runtime-fields-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `dd691a2e-e1c4-4911-b51d-f7d592c36e30`.
+- Next Reconciliation: Reconcile the exact creation result; the Dev Orchestrator records Starting -> Running before mutation.
