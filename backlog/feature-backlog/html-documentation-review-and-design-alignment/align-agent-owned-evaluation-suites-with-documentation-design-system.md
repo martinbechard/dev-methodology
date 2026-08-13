@@ -95,3 +95,16 @@ Dependency Resolution: Satisfied by completed Work Item `review-agent-owned-eval
 - Dispatch Architecture: Create one visible Codex task whose reference-plus-delta prompt starts one Dev Orchestrator collaboration subagent and assigns exact self-task title and messaging responsibility to the visible root.
 - Transition Claim: `reserve-align-agent-owned-evaluation-suites-019ff2c3`; event `92b3b513-7ed2-4b58-8f91-f43f1d15328b`.
 - Next Action: Reconcile the unique visible task identity; its nested Dev Orchestrator records `Starting -> Running` before mutation.
+
+## Canonical Runtime Assignment
+
+- Assigned At: 2026-08-13T19:26:36Z.
+- Codex Task ID: `019ffc96-f685-7481-b2eb-1557d82119bf`.
+- Conversation ID: `019ffc96-f685-7481-b2eb-1557d82119bf`.
+- Host: `local`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Runtime Project: saved `dev-methodology` project at `/Users/martinbechard/dev/dev-methodology`.
+- Requested Title: `Starting — Align Agent-Owned Evaluation Suites With Documentation Design System`.
+- Creation Outcome: Unique direct success with no client or pending identity and no retry.
+- Lifecycle Boundary: Provider remains `Starting` until exactly one nested Dev Orchestrator accepts and durably records `Starting -> Running`.
+- Adoption Claim: `adopt-align-agent-owned-suites-task-019ffc96`; event `ff5d99f5-b1f1-4b71-82aa-c184bed0b4e2`.
