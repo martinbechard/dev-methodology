@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: User Action Required
+Status: Ready
 
 Type: Feature
 
@@ -165,7 +165,9 @@ The first option deliberately expands visible page content; the second deliberat
 
 ### Resolution
 
-Pending in canonical Task and Conversation `019ffc29-0d20-78f1-b3d6-f0797e7bb5b6`.
+User Answer: `I authorize Option 1`.
+
+Resulting Disposition: `User Action Required -> Ready`. Option 1 authorizes only a concise visible footer note containing known page-specific provenance, scope, or compatibility facts. The preserved candidate must then receive fresh content review, Shared review, and repository-owned browser verification.
 
 ### Unattended Work Boundary
 
@@ -177,3 +179,19 @@ Do not mutate, integrate, deliver, or close this candidate until the user answer
 - Canonical Task and Conversation: `019ffc29-0d20-78f1-b3d6-f0797e7bb5b6`.
 - Provider Transition Claim: `definitions-footer-context-uar-019ff2c3`; event `5a753d79-7c46-4143-a8dc-71376407f745`.
 - Required Runtime Title: `Waiting for User — Align Agent And Skill Definitions With Documentation Design System`.
+
+## Ready Resumption Evidence
+
+- Recorded At: 2026-08-13T20:38:57Z.
+- Transition: `User Action Required -> Ready`.
+- Exact User Answer: `I authorize Option 1`.
+- Canonical Task and Conversation: `019ffc29-0d20-78f1-b3d6-f0797e7bb5b6`.
+- Preserved Candidate: `42476c0169fc8347b8675f839d7c578679d39036`.
+- Preserved Branch: `codex/align-agent-skill-definitions-019ffc29`.
+- Preserved Clean Worktree: `/Users/martinbechard/dev/dev-methodology-worktrees/align-agent-skill-definitions-019ffc29`.
+- Preserved Nested Execution: `/root/align_agent_skill_docs_design/align_agent_skill_docs_design_orchestrator`.
+- Authorized Delta: Add only a concise visible footer note containing known page-specific provenance, scope, or compatibility facts. Preserve every other accepted candidate path and evidence.
+- Required Follow-up: Fresh content review, complete Shared review, and repository-owned browser verification.
+- Update Claim: `resume-align-definitions-update-019ffc29`; event `ea69c867-826e-45f7-b866-f287b59ad0c1`.
+- Provider Path Claim: `resume-align-definitions-backlog-019ffc29`; event `04def548-e7ca-4f84-a982-4be3d4cf3867`.
+- Capacity Boundary: This transaction stops at Ready. It does not record `Ready -> Starting` or `Starting -> Running`, acquire implementation scope, mutate source, or change the runtime title.
