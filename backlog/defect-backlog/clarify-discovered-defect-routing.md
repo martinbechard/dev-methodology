@@ -1,6 +1,6 @@
 # Clarify Discovered Defect Routing
 
-Status: User Action Required
+Status: Ready
 
 Type: Defect
 
@@ -95,8 +95,16 @@ The defect is confirmed, but the correction changes two governed skill definitio
 
 ### Resolution
 
-Pending.
+Approved on 2026-08-13. The user explicitly approved changing both governed canonical paths, `skills/manage-work-items-file/SKILL.md` and `skills/create-work-item-file/SKILL.md`, with focused tests.
 
 ### Unattended Work Boundary
 
 Do not modify either governed skill definition or its focused contract tests until the user approves the exact manifest. Read-only discovery and review of the current workflow may continue.
+
+## User Action Resolution Evidence
+
+- Transition: User Action Required -> Ready.
+- Resolution: Both governed paths and focused tests are approved exactly as listed in Governed Definition Approval.
+- Approval Provenance: Direct user instruction on 2026-08-13.
+- Next Action: Schedule through ordinary priority and capacity after current Starting reservations are reconciled.
+- Transition Claim: `resolve-discovered-defect-routing-uar-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `9d85eaa9-1345-4cec-9fa7-95d94d05a5a8`.
