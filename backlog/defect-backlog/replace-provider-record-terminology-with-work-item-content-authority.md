@@ -83,3 +83,16 @@ None.
 - Dispatch Architecture: Create one visible Codex task whose initial prompt launches one Dev Orchestrator subagent and states the visible root title-and-messaging responsibility.
 - Transition Claims: Work Item `start-replace-provider-record-terminology-work-item`; event `374ca7bf-24e1-4712-b916-b7d6f0219342`. Provider `start-replace-provider-record-terminology-provider`; event `1955c585-35ee-4e91-b08f-7b308df9eed4`.
 - Runtime Identity: Pending caller-owned visible task creation. Creation does not imply Running.
+
+## Canonical Runtime Assignment
+
+- Assigned At: 2026-08-13T13:10:38Z.
+- Codex Task ID: `019ffb3e-c71d-7593-8cd1-c566b1678667`.
+- Conversation ID: `019ffb3e-c71d-7593-8cd1-c566b1678667`.
+- Host: `local`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Requested Title: `Starting — Replace Provider Record Terminology With Work Item Content Authority`.
+- Initial Action: The visible root starts one Dev Orchestrator subagent for this authoritative Work Item and owns required Codex title and subagent messaging.
+- Creation Outcome: Unique direct `threadId` and host success in the saved dev-methodology project, with no client or pending identity and no retry.
+- Lifecycle Boundary: This assignment remains `Starting` until the nested Dev Orchestrator accepts and records `Starting -> Running`.
+- Adoption Claims: Work Item `adopt-provider-terminology-task`; event `e37607d1-68cc-4ffb-9a17-2db317889f54`. Provider `adopt-provider-terminology-provider`; event `6e2e03c0-7048-4cbb-a0d4-364f7358fbc5`.
