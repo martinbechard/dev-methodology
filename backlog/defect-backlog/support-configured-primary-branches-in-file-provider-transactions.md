@@ -1,6 +1,6 @@
 # Support Configured Primary Branches In File Provider Transactions
 
-Status: Blocked
+Status: Starting
 
 Type: Defect
 
@@ -75,6 +75,22 @@ Approved by the user's 2026-08-13 instruction to log the defect and update all l
 - Recovery Owner: Dev Backlog Coordinator.
 - Unblock Condition: Select this item as the sole crisis execution, clarify the configured-primary-branch authority source during bounded planning, and complete it without claims.
 - No claim operation was used after the epoch's single reset.
+
+## Crisis Starting Handoff
+
+- Reserved At: 2026-08-13T22:46:00Z.
+- Transitions: `Blocked -> Ready -> Starting` as two serialized provider decisions in this one committed crisis handoff.
+- Crisis Epoch: `blocked-crisis-20260813T223935Z`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Intended Root Role: Dev Orchestrator.
+- Canonical Visible Task: Pending unique caller-owned creation.
+- Normalized Objective: Correct configured-primary-branch authority for atomic file-provider transactions, supporting verified `main` and `master` while retaining primary-worktree-only authority.
+- Baseline: `73638187` on primary `main`.
+- Dispatch Boundary: Exactly one separate visible Work Item task is permitted. Its initial prompt starts one Dev Orchestrator collaboration subagent. The crisis task performs all bounded implementation, review, verification, delivery, and provider completion without claims.
+- Parallel Boundary: Every other mutating execution remains stopped and preserved. Do not resume Generic Definitions, Specialization, or another recovery item until this Work Item is terminal and cleaned up.
+- Claim Policy: No claim operation is permitted during the crisis epoch.
+- Next Action: The unique task records `Starting -> Running` without claims before source mutation.
 
 ## Notes
 
