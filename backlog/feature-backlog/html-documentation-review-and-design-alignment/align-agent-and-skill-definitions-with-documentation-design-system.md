@@ -164,6 +164,16 @@ Dependency Resolution: Satisfied by completed Work Item `review-agent-and-skill-
 - Initial-Marker Path Claim: `record-crisis-epoch-path-20260813t223935z`; event `eefb3166-8e44-4afe-afc9-ed6a65c15737`.
 - Membership Reconciliation: `align-agent-owned-evaluation-suites-with-documentation-design-system` entered `User Action Required` before declaration and is excluded. The stopped Specialization execution remains provider `Running` pending its distinct FAIL disposition and is not inferred into the initial stored-Blocked set.
 
+### Post-Reset Non-Crisis Violation
+
+- Recorded At: 2026-08-13T22:51:00Z.
+- Non-Crisis Work Item: `map-evaluation-contracts-to-inspect-ai`, canonical task `019ffbeb-02ee-7d52-9460-d1bfdbdbe20b`.
+- Violation: Before receiving the crisis stop directive, the preserved task changed its title, acquired claim `create-orchestrate-template-first-review-checklists-019ffbeb`, and created uncommitted draft `orchestrate-template-first-artifact-review-checklists.md` after the epoch's single reset.
+- Preservation: The task is now idle and stopped. It performed no later provider, claim, title, source, plan, resource, dispatch, revert, or resume operation. Preserve its Map candidate, plan, request, claim evidence, and draft bytes exactly.
+- Crisis Membership: Excluded. The methodology draft is not required to finish an existing crisis member and must not become a second crisis execution.
+- Claim Boundary: Do not query, release, reset, reconstruct, or otherwise operate on the stray claim while the crisis remains active.
+- Unmet Exit Cleanup: Crisis exit remains subject to completing every crisis item and the ordinary exit gates. After the Watchdog confirms those gates, restore MULTITASK first, then restore ordinary claim policy. The exact Map owner must then release only `create-orchestrate-template-first-review-checklists-019ffbeb`, reconcile the draft through the Map provider's preserved nonterminal state, restore the governed title, and await ordinary scheduling. No proxy cleanup, draft deletion, or methodology delivery is authorized.
+
 ## User Action Required
 
 ### Question for the User
