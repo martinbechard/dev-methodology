@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: Blocked
+Status: Starting
 
 Type: Feature
 
@@ -215,6 +215,24 @@ Option A is accepted. It authorizes only useful known page-specific provenance, 
 - Provider Transition Claim: `block-specialization-browser-runtime-019ff2c3`; event `fb669a84-4ac4-4ecb-b49e-e5b118eb0f6c`.
 - Required Runtime Title: `Blocked — Align Agent And Skill Specialization Examples With Documentation Design System`.
 - Safe Resume: Preserve the same task and candidate, then resume only through `Blocked -> Ready -> Starting -> Running` after the unblock proof.
+
+### Fixed-Port Harness Recovery And Reservation
+
+- Recovered At: 2026-08-13T21:44:38Z.
+- Transitions: `Blocked -> Ready -> Starting`.
+- Recovery Delivery: Supporting source `3d933294` is present on main through `cc25cd99a9f3658c23aff1feecc74b89466e6793`, which is an ancestor of the reservation baseline.
+- Runtime Capability: The repository harness validates `--port <1..65535>` before listener creation, binds exactly `127.0.0.1`, reports requested and selected ports, and preserves ephemeral behavior when the option is omitted.
+- Verification: Independent review `GOOD`; fixed-port tests `2/2 PASS` on preclaimed port `18769`; syntax, compile, diff, main-observation, listener cleanup, and claim cleanup pass.
+- Supporting Handoff: `91ae345b-99b5-46ba-be6b-35481bf0cc47`.
+- Supporting File Claim Release: `specialization-browser-harness-repair-files-019ffca1`; event `1fc7e0f7-4e6d-4d17-a54b-9e802618898b`.
+- Preserved Candidate: `344ac687` with content and code review `GOOD`.
+- Preserved Canonical Task and Conversation: `019ffca1-15fa-7940-a0cb-e0a51da36aae` on host `local`.
+- Preserved Dev Orchestrator: `/root/align_skill_examples`.
+- Capacity: One ordinary slot is available; technical Blocked and User Action Required items are excluded.
+- Provider Update Claim: `resume-specialization-fixed-port-019ff2c3`; event `03796437-a3aa-4919-b2f7-2f3caee85119`.
+- Provider Path Claim: `resume-specialization-fixed-port-path-019ff2c3`; event `8e73846e-fde2-443d-8eef-9740d8345466`.
+- Required Runtime Title: `Starting — Align Agent And Skill Specialization Examples With Documentation Design System`.
+- Next Action: The same Dev Orchestrator records `Starting -> Running`, reacquires its Work Item and exact browser resource claims, and reruns browser verification against candidate `344ac687` with a preclaimed exact port and the repository-owned fixed-port harness. Continue the remaining review and delivery gates only after browser verification passes.
 
 ### Authorized Resumed Running Acceptance
 
