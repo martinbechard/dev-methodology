@@ -1,6 +1,6 @@
 # Require Durable Defect Logging And Direct-Main Work-Item Creation
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -12,7 +12,7 @@ Provider Reference: backlog/feature-backlog/require-durable-defect-logging-and-d
 
 Completion: direct-main
 
-Owner: Unowned
+Owner: Dev Orchestrator (`/root/durable_defect_logging`)
 
 Claim: None
 
@@ -221,3 +221,14 @@ Until this feature is delivered, the current short backlog-domain claim requirem
 - Initial Action: Start one Dev Orchestrator collaboration subagent for this authoritative provider record.
 - Creation Outcome: Unique success with no pending client identity and no retry.
 - Lifecycle Boundary: This assignment remains Starting until the nested Dev Orchestrator accepts and records Starting -> Running.
+
+## Terminal-Reconciliation Running Acceptance
+
+- Accepted At: 2026-08-13T06:13:21Z.
+- Transition: `Starting -> Running`.
+- Root Dev Orchestrator: `/root/durable_defect_logging`.
+- Canonical Codex Task And Conversation: `019ff9bf-5c7e-79d1-b966-8a5f209ebb25`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Scope: Reconcile the existing accepted delivery and terminal evidence before any new implementation.
+- Complexity Gate: False. This is one bounded evidence-reconciliation and provider-closeout lane; no implementation decomposition or externalized development plan is required.
+- Delivery Reconciliation: Accepted commit `503de4bc4cfd28155f6f4e2c020581889a24687e` and final policy commit `637760d006058eac74f7b2b65622f7f67a18a6ad` are ancestors of current `main`. The recorded delivery branch and worktree are absent. No replacement implementation is authorized.
