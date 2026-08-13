@@ -128,6 +128,19 @@ Approved at creation from the user's 2026-08-12 message and expanded by the user
 - Transition Claims: `start-simplify-new-document-provenance-header-work-item`; event `d0bd6ece-b12a-4174-bbd1-f1fce12a7ef2`. `start-simplify-new-document-provenance-header-provider`; event `450af136-cade-4d7a-9a4d-28d1b64ff762`.
 - Runtime Identity: Pending caller-owned visible task creation. Creation does not imply Running.
 
+## Canonical Runtime Assignment
+
+- Assigned At: 2026-08-13T11:46:27Z.
+- Codex Task ID: `019ffaf1-7879-7973-9bcb-a34652fbce7f`.
+- Conversation ID: `019ffaf1-7879-7973-9bcb-a34652fbce7f`.
+- Host: `local`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Requested Title: `Starting — Simplify New Document Provenance Headers`.
+- Initial Action: Launch one Dev Orchestrator subagent for this authoritative provider record.
+- Creation Outcome: Unique success decoded from a complete JSON-string envelope, with no client or pending identity and no retry.
+- Lifecycle Boundary: This assignment remains `Starting` until the nested Dev Orchestrator accepts and records `Starting -> Running`.
+- Adoption Claims: `adopt-simplify-new-document-provenance-header-visible-task`; event `30fee46c-8126-48fc-bf87-d4e4210820b8`. `adopt-simplify-new-document-provenance-header-provider`; event `d624ab97-c532-443e-b8fd-c11c28473404`.
+
 ## Policy Supersession Evidence
 
 - Reconciled At: 2026-08-13T01:28:46Z.
