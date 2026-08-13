@@ -266,16 +266,18 @@ Every gate freezes inputs before execution, compares retained and candidate outp
 
 ```mermaid
 flowchart LR
-    P1[Phase 1: contract map] --> D{Phase 2 predicate}
-    D -->|GO| P2[Read-only pilot]
-    D -->|NO-GO| S[Stop and retain current runner]
-    P2 --> P3[Identity and topology]
+    P1[Phase 1: contract map] --> A{Phase 2 authorization}
+    A -->|GO: current| P2[Phase 2 pilot execution]
+    A -->|NO-GO| S[Stop and retain current runner]
+    P2 --> D{Phase 2 pilot acceptance}
+    D -->|PENDING: current| W[Await execution proofs]
+    D -->|Accepted: GO to Phase 3| P3[Identity and topology]
+    D -->|NO-GO| S
     P3 --> P4[Mutation lifecycle]
     P4 --> P5[Exceptional runtime]
     P5 --> P6[Reporting evidence]
     P6 --> P7[Catalog projection]
     P7 --> P8[Migration and retirement]
-    P2 -->|Gate fails| S
     P3 -->|Gate fails| S
     P4 -->|Gate fails| S
     P5 -->|Gate fails| S
@@ -293,10 +295,10 @@ Phase 2 is authorized if and only if Phase 1 evidence establishes all conditions
 3. The bounded adapter scope is exactly R-015, R-042, R-046, R-049, and R-050.
 4. The adapter supplies evidence for R-037 and R-062 and calls retained validation for R-040 and R-041 without implementing those responsibilities.
 5. Every applicable retained identity, containment, Judge, receipt, categorical-status, privacy, claim, Git, and cleanup verifier remains authoritative.
-6. Every runtime unknown is explicit and assigned to prove-read-only-inspect-ai-execution with a stop condition.
+6. Every Phase 2 runtime unknown is assigned to prove-read-only-inspect-ai-execution.
 7. No paid live-model run occurs without separate authorization.
 
-The frozen responsibility inventory, pilot tuple, ownership tables, Phase 2 gate, and explicit-unknown table satisfy all seven authorization conditions. The deterministic current authorization outcome is GO. This outcome authorizes only the bounded Phase 2 proof. It does not accept the pilot or establish parity.
+The Phase 2 runtime unknowns are exactly: the Docker engine version and image digest; the generated target configuration; unchanged fixture and Git proof; and authorized Judge context and result binding. The explicit-unknown table assigns each one to prove-read-only-inspect-ai-execution. The frozen responsibility inventory, pilot tuple, ownership tables, Phase 2 gate, and explicit-unknown table therefore satisfy all seven authorization conditions. The deterministic current authorization outcome remains GO. This outcome authorizes only the bounded Phase 2 proof. It does not accept the pilot or establish parity.
 
 ## Deterministic Phase 2 pilot acceptance
 
@@ -316,10 +318,10 @@ No pilot execution occurs in this Work Item. The deterministic current pilot-acc
 
 | Unknown | Why it is not inferred | Resolution owner |
 | --- | --- | --- |
-| Exact Docker engine version and image digest | The authoring host and Inspect package do not select an immutable sandbox image. | Phase 2 Work Item |
-| Exact generated target configuration for the chosen read-only suite | No adapter exists in this Work Item. | Phase 2 Work Item |
-| Unchanged fixture and Git proof under Inspect execution | API capability is not runtime evidence. | Phase 2 Work Item |
-| Authorized Judge context and result binding through Inspect | EvalLog and Scorer do not prove the repository Judge contract. | Phase 2 and Phase 6 Work Items |
+| Exact Docker engine version and image digest | The authoring host and Inspect package do not select an immutable sandbox image. | prove-read-only-inspect-ai-execution |
+| Exact generated target configuration for the chosen read-only suite | No adapter exists in this Work Item. | prove-read-only-inspect-ai-execution |
+| Unchanged fixture and Git proof under Inspect execution | API capability is not runtime evidence. | prove-read-only-inspect-ai-execution |
+| Authorized Judge context and result binding through Inspect | EvalLog and Scorer do not prove the repository Judge contract. Phase 6 separately owns the later reporting projection. | prove-read-only-inspect-ai-execution |
 | Exact child identity and topology from inspect-swe events | V1 event attribution can use prompt substring matching and outer-span fallback. | Phase 3 Work Item |
 | Resource-claim, mutation, and commit parity | Inspect and inspect-swe do not own repository claim or Git semantics. | Phase 4 Work Item |
 | Browser, process, network, sandbox, and cleanup parity on every exceptional path | Cleanup callbacks are not independent postcondition evidence. | Phase 5 Work Item |
@@ -381,8 +383,8 @@ The ledger records the complete frozen source set cited for this mapping. Start 
 | SRC-L046 | [backlog/feature-backlog/inspect-ai-evaluation-adoption/prove-read-only-inspect-ai-execution.md](../backlog/feature-backlog/inspect-ai-evaluation-adoption/prove-read-only-inspect-ai-execution.md) | 1 | R-054, R-057–R-062 | 43cb7632ae4bb122227605461019e93d3c34ea9c2fbab080695d14e7477b7a7d | 43cb7632ae4bb122227605461019e93d3c34ea9c2fbab080695d14e7477b7a7d | Controls within its declared schema or policy domain | Work Item owner |
 | SRC-L047 | [evals/README.md](../evals/README.md) | 8 | R-001–R-062 | 3f80a55789020f4b93064be5858d877d8e837f14363ca0a8ed7d74d6677b3fd7 | 3f80a55789020f4b93064be5858d877d8e837f14363ca0a8ed7d74d6677b3fd7 | Explains; cannot override higher-ranked authority | document owner |
 | SRC-L048 | [evals/agent-scenarios.yaml](../evals/agent-scenarios.yaml) | 4 | R-001–R-062 | 7cbc0da9b086912eff04c8942254cb1fa645c9bec9b66b95350da7650bed2fda | 7cbc0da9b086912eff04c8942254cb1fa645c9bec9b66b95350da7650bed2fda | Applies within its declared suite or method scope | repository maintainer |
-| SRC-L049 | [evals/agent-tests/AGENTS.md](../evals/agent-tests/AGENTS.md) | 7 | R-002–R-003, R-012–R-043, R-055–R-056 | f8902a8208fb92a1c03e154b1d955a4df30fc48c7955a573933af101e152f7ca | f8902a8208fb92a1c03e154b1d955a4df30fc48c7955a573933af101e152f7ca | Corroborates; cannot override implementation or schema | test maintainers |
-| SRC-L050 | [evals/agent-tests/README.md](../evals/agent-tests/README.md) | 7 | R-002–R-003, R-012–R-043, R-055–R-056 | 6af6f416bb3f0d6f21ed9c73047bf7cc75881c00ab8d02621bed82d5307a02d0 | 6af6f416bb3f0d6f21ed9c73047bf7cc75881c00ab8d02621bed82d5307a02d0 | Corroborates; cannot override implementation or schema | test maintainers |
+| SRC-L049 | [evals/agent-tests/AGENTS.md](../evals/agent-tests/AGENTS.md) | 4 | R-001–R-027, R-029–R-032, R-036, R-040, R-055 | f8902a8208fb92a1c03e154b1d955a4df30fc48c7955a573933af101e152f7ca | f8902a8208fb92a1c03e154b1d955a4df30fc48c7955a573933af101e152f7ca | Controls the common suite protocol below conceptual and native identity and above suite-local sources | agent-suite protocol maintainers |
+| SRC-L050 | [evals/agent-tests/README.md](../evals/agent-tests/README.md) | 8 | R-001–R-014, R-018–R-027, R-029–R-043, R-055–R-056 | 6af6f416bb3f0d6f21ed9c73047bf7cc75881c00ab8d02621bed82d5307a02d0 | 6af6f416bb3f0d6f21ed9c73047bf7cc75881c00ab8d02621bed82d5307a02d0 | Explains steady-state operation; cannot override protocol, schema, configuration, or implementation | documentation maintainers |
 | SRC-L051 | [evals/agent-tests/dev-architect/agents/judge.toml](../evals/agent-tests/dev-architect/agents/judge.toml) | 6 | R-007, R-026–R-027 | 2ccb3a2de2e67d6b9b0c03ba6da45698ea3548db395f274af0ed4e109e11ea7a | 2ccb3a2de2e67d6b9b0c03ba6da45698ea3548db395f274af0ed4e109e11ea7a | Applies within its declared suite or method scope | suite owner |
 | SRC-L052 | [evals/agent-tests/dev-architect/agents/supervisor.toml](../evals/agent-tests/dev-architect/agents/supervisor.toml) | 6 | R-006, R-013–R-014 | 0f47591234a2c3c54ea7fedf2bfc0e24928926cb1a7065be037a646e4f3d6224 | 0f47591234a2c3c54ea7fedf2bfc0e24928926cb1a7065be037a646e4f3d6224 | Applies within its declared suite or method scope | suite owner |
 | SRC-L053 | [evals/agent-tests/dev-architect/scenarios.yaml](../evals/agent-tests/dev-architect/scenarios.yaml) | 5 | R-003, R-018, R-025, R-027 | 12fd6ea2f665c9ead36de8c867c23f25f2d855171d770822d8ac62235d610564 | 12fd6ea2f665c9ead36de8c867c23f25f2d855171d770822d8ac62235d610564 | Applies within its declared suite or method scope | suite owner |
@@ -471,7 +473,7 @@ The ledger records the complete frozen source set cited for this mapping. Start 
 | SRC-L136 | [evals/agent-tests/dev-verifier/scenarios.yaml](../evals/agent-tests/dev-verifier/scenarios.yaml) | 5 | R-003, R-018, R-025, R-027 | 89cd8a57be4264e410c4bb37fb7d9487f86f36689b6bcdf48eb514a49eb48b37 | 89cd8a57be4264e410c4bb37fb7d9487f86f36689b6bcdf48eb514a49eb48b37 | Applies within its declared suite or method scope | suite owner |
 | SRC-L137 | [evals/agent-tests/dev-verifier/skills/dev-verifier-suite-contract/SKILL.md](../evals/agent-tests/dev-verifier/skills/dev-verifier-suite-contract/SKILL.md) | 6 | R-011, R-025–R-027 | e3e53304ead9893b11e5d9598e10ccd876d452a406c5f5d639fa350376c1e5f1 | e3e53304ead9893b11e5d9598e10ccd876d452a406c5f5d639fa350376c1e5f1 | Applies within its declared suite or method scope | suite owner |
 | SRC-L138 | [evals/agent-tests/dev-verifier/suite.yaml](../evals/agent-tests/dev-verifier/suite.yaml) | 5 | R-002, R-005–R-007, R-011–R-014 | 42a48cf237280634d1bbb3a7fad402ea5d05fa390c50eca3a21a973d46cea5fc | 42a48cf237280634d1bbb3a7fad402ea5d05fa390c50eca3a21a973d46cea5fc | Applies within its declared suite or method scope | suite owner |
-| SRC-L139 | [evals/agent-tests/implementation-plan.md](../evals/agent-tests/implementation-plan.md) | 7 | R-002–R-003, R-012–R-043, R-055–R-056 | 45ad75002dd6b751717974787883a9ecc9542d7975869907debed48f12610ba5 | 45ad75002dd6b751717974787883a9ecc9542d7975869907debed48f12610ba5 | Corroborates; cannot override implementation or schema | test maintainers |
+| SRC-L139 | [evals/agent-tests/implementation-plan.md](../evals/agent-tests/implementation-plan.md) | 9 | R-001–R-027, R-029–R-043, R-055–R-056 | 45ad75002dd6b751717974787883a9ecc9542d7975869907debed48f12610ba5 | 45ad75002dd6b751717974787883a9ecc9542d7975869907debed48f12610ba5 | Historical rollout context only; cannot override any steady-state source | historical artifact owner |
 | SRC-L140 | [evals/agent-tests/methodology-artifact-reviewer/agents/judge.toml](../evals/agent-tests/methodology-artifact-reviewer/agents/judge.toml) | 6 | R-007, R-026–R-027 | f017510b227676b01baee704edcc5c6cbf33ea93914d5a87353fcc8e6c1dfb49 | f017510b227676b01baee704edcc5c6cbf33ea93914d5a87353fcc8e6c1dfb49 | Applies within its declared suite or method scope | suite owner |
 | SRC-L141 | [evals/agent-tests/methodology-artifact-reviewer/agents/supervisor.toml](../evals/agent-tests/methodology-artifact-reviewer/agents/supervisor.toml) | 6 | R-006, R-013–R-014 | f422d0a6d0bde0430e7c1967cacd6884c46cb71a1d4e8148d9c0209bffbec9e0 | f422d0a6d0bde0430e7c1967cacd6884c46cb71a1d4e8148d9c0209bffbec9e0 | Applies within its declared suite or method scope | suite owner |
 | SRC-L142 | [evals/agent-tests/methodology-artifact-reviewer/scenarios.yaml](../evals/agent-tests/methodology-artifact-reviewer/scenarios.yaml) | 5 | R-003, R-018, R-025, R-027 | 342050a8501e6824ccbef0211a823b14e672f309113bcaf39f4435d5d2e01c4e | 342050a8501e6824ccbef0211a823b14e672f309113bcaf39f4435d5d2e01c4e | Applies within its declared suite or method scope | suite owner |
@@ -492,8 +494,8 @@ The ledger records the complete frozen source set cited for this mapping. Start 
 | SRC-L157 | [evals/agent-tests/methodology-maintainer/scenarios.yaml](../evals/agent-tests/methodology-maintainer/scenarios.yaml) | 5 | R-003, R-018, R-025, R-027 | c7b294529ffbacca3edd471c6fbd03b4c684f2e525476efed7bdb44f248e5fc7 | c7b294529ffbacca3edd471c6fbd03b4c684f2e525476efed7bdb44f248e5fc7 | Applies within its declared suite or method scope | suite owner |
 | SRC-L158 | [evals/agent-tests/methodology-maintainer/skills/methodology-maintainer-suite-contract/SKILL.md](../evals/agent-tests/methodology-maintainer/skills/methodology-maintainer-suite-contract/SKILL.md) | 6 | R-011, R-025–R-027 | 8ccab0f93e9137d58a8f30267ed7c154f1a00987adf877212d81a93442293ce7 | 8ccab0f93e9137d58a8f30267ed7c154f1a00987adf877212d81a93442293ce7 | Applies within its declared suite or method scope | suite owner |
 | SRC-L159 | [evals/agent-tests/methodology-maintainer/suite.yaml](../evals/agent-tests/methodology-maintainer/suite.yaml) | 5 | R-002, R-005–R-007, R-011–R-014 | 9b8faa9073b77d00aaa70112c0e14f17b4bbbdd21a350b2a5f507bcf02c35c9b | 9b8faa9073b77d00aaa70112c0e14f17b4bbbdd21a350b2a5f507bcf02c35c9b | Applies within its declared suite or method scope | suite owner |
-| SRC-L160 | [evals/agent-tests/package-lock.json](../evals/agent-tests/package-lock.json) | 7 | R-002–R-003, R-012–R-043, R-055–R-056 | 266449b43cf5676ee0fdb6245ce83ec4a10fe664b36ac1f1107ed50740d25254 | 266449b43cf5676ee0fdb6245ce83ec4a10fe664b36ac1f1107ed50740d25254 | Corroborates; cannot override implementation or schema | test maintainers |
-| SRC-L161 | [evals/agent-tests/package.json](../evals/agent-tests/package.json) | 7 | R-002–R-003, R-012–R-043, R-055–R-056 | 5839b686247863f33473ccbcc537cc9565f3c3ff0d85bc52f9971da516a1f65b | 5839b686247863f33473ccbcc537cc9565f3c3ff0d85bc52f9971da516a1f65b | Corroborates; cannot override implementation or schema | test maintainers |
+| SRC-L160 | [evals/agent-tests/package-lock.json](../evals/agent-tests/package-lock.json) | 1 | R-022, R-037, R-040 | 266449b43cf5676ee0fdb6245ce83ec4a10fe664b36ac1f1107ed50740d25254 | 266449b43cf5676ee0fdb6245ce83ec4a10fe664b36ac1f1107ed50740d25254 | Controls exact browser-runtime dependency resolution for the tracked manifest | browser-runtime configuration maintainers |
+| SRC-L161 | [evals/agent-tests/package.json](../evals/agent-tests/package.json) | 6 | R-022, R-037, R-040 | 5839b686247863f33473ccbcc537cc9565f3c3ff0d85bc52f9971da516a1f65b | 5839b686247863f33473ccbcc537cc9565f3c3ff0d85bc52f9971da516a1f65b | Controls declared browser-runtime dependency configuration; the lockfile controls exact resolution | browser-runtime configuration maintainers |
 | SRC-L162 | [evals/agent-tests/project-bootstrapper/agents/judge.toml](../evals/agent-tests/project-bootstrapper/agents/judge.toml) | 6 | R-007, R-026–R-027 | dd1722dc75e0e8441f50ce95fd91e8fa56fd602ecf724310e0f76c2f8788d579 | dd1722dc75e0e8441f50ce95fd91e8fa56fd602ecf724310e0f76c2f8788d579 | Applies within its declared suite or method scope | suite owner |
 | SRC-L163 | [evals/agent-tests/project-bootstrapper/agents/supervisor.toml](../evals/agent-tests/project-bootstrapper/agents/supervisor.toml) | 6 | R-006, R-013–R-014 | 6578fdf3dece5ee1f0c6a0ec1e1cbcf2a21ecfdb7d184167a550b04bdbe286e4 | 6578fdf3dece5ee1f0c6a0ec1e1cbcf2a21ecfdb7d184167a550b04bdbe286e4 | Applies within its declared suite or method scope | suite owner |
 | SRC-L164 | [evals/agent-tests/project-bootstrapper/scenarios.yaml](../evals/agent-tests/project-bootstrapper/scenarios.yaml) | 5 | R-003, R-018, R-025, R-027 | fba73d2226905a0d79b12b665b4e7de8d0b5c0e101b62440ac93277ce90ba37c | fba73d2226905a0d79b12b665b4e7de8d0b5c0e101b62440ac93277ce90ba37c | Applies within its declared suite or method scope | suite owner |
@@ -558,7 +560,7 @@ The ledger records the complete frozen source set cited for this mapping. Start 
 | SRC-L223 | [evals/agent-tests/wiki-writer/scenarios.yaml](../evals/agent-tests/wiki-writer/scenarios.yaml) | 5 | R-003, R-018, R-025, R-027 | f5653aebfc68f26712c0b533b5b588773b883b9d9049a39a05369922d5e909fa | f5653aebfc68f26712c0b533b5b588773b883b9d9049a39a05369922d5e909fa | Applies within its declared suite or method scope | suite owner |
 | SRC-L224 | [evals/agent-tests/wiki-writer/skills/wiki-writer-suite-contract/SKILL.md](../evals/agent-tests/wiki-writer/skills/wiki-writer-suite-contract/SKILL.md) | 6 | R-011, R-025–R-027 | f92f782fc65ca903414aa2650911de23fcbe4503574181ac90147c9177eb86ee | f92f782fc65ca903414aa2650911de23fcbe4503574181ac90147c9177eb86ee | Applies within its declared suite or method scope | suite owner |
 | SRC-L225 | [evals/agent-tests/wiki-writer/suite.yaml](../evals/agent-tests/wiki-writer/suite.yaml) | 5 | R-002, R-005–R-007, R-011–R-014 | 106e9884ea97f859fed62d79c86006a783bec109d86e383d1b5b52c71528741e | 106e9884ea97f859fed62d79c86006a783bec109d86e383d1b5b52c71528741e | Applies within its declared suite or method scope | suite owner |
-| SRC-L226 | [evals/agent-tests/workspace_inventory.py](../evals/agent-tests/workspace_inventory.py) | 7 | R-002–R-003, R-012–R-043, R-055–R-056 | 704e47bda006fa474d5310881318549759eb38a21620881b3724dc969f682343 | 704e47bda006fa474d5310881318549759eb38a21620881b3724dc969f682343 | Corroborates; cannot override implementation or schema | test maintainers |
+| SRC-L226 | [evals/agent-tests/workspace_inventory.py](../evals/agent-tests/workspace_inventory.py) | 2 | R-018–R-019, R-024, R-030, R-032, R-041 | 704e47bda006fa474d5310881318549759eb38a21620881b3724dc969f682343 | 704e47bda006fa474d5310881318549759eb38a21620881b3724dc969f682343 | Controls workspace inventory, mutation comparison, Git-state evidence, and created-path cleanup behavior | evaluation runner maintainers |
 | SRC-L227 | [evals/cases.yaml](../evals/cases.yaml) | 4 | R-001–R-062 | d5ae4c476d8e05744b5117f6a7ceb2cdd687cb8f5d6c9b5eb6b22c32ada65e3c | d5ae4c476d8e05744b5117f6a7ceb2cdd687cb8f5d6c9b5eb6b22c32ada65e3c | Applies within its declared suite or method scope | repository maintainer |
 | SRC-L228 | [evals/evidence-schema.yaml](../evals/evidence-schema.yaml) | 4 | R-001–R-062 | 73aa231abe00e07261eb373ec94037a66aac335085f6878b81a1beb97948f950 | 73aa231abe00e07261eb373ec94037a66aac335085f6878b81a1beb97948f950 | Applies within its declared suite or method scope | repository maintainer |
 | SRC-L229 | [evals/judge-output-schema.yaml](../evals/judge-output-schema.yaml) | 4 | R-001–R-062 | 79364d025a1417b54a5f999936ec8da5f9d1b37e81d05051f62e74cec9c225eb | 79364d025a1417b54a5f999936ec8da5f9d1b37e81d05051f62e74cec9c225eb | Applies within its declared suite or method scope | repository maintainer |
