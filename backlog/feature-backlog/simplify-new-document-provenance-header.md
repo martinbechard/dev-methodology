@@ -12,7 +12,7 @@ Completion: main-branch
 
 ## Summary
 
-Simplify the hidden provenance header for newly created governed documents. Record creation time in local time with an explicit UTC offset, omit Task-ID from the document, and remove redundant per-field runtime-supplied evidence lines while preserving deterministic external validation and historical compatibility.
+Replace verbose internal provenance blocks with concise human-facing provenance, including a visible HTML footnote that shows only useful facts actually known.
 
 ## Context
 
@@ -33,6 +33,10 @@ The current contract is defined by skills/document-provenance/SKILL.md and skill
 ## Requirements
 
 - Define a compact canonical provenance block for newly created governed documents.
+- For maintained HTML, render provenance as a concise visible footnote in the document rather than relying only on a hidden detailed comment.
+- Show only provenance facts useful to a reader and actually supported by authoritative evidence. Omit unknown fields; never invent or reconstruct history.
+- Prohibit user-facing placeholders and evidence mechanics such as `historical-unknown`, `migration-assigned`, per-field `*-Evidence` labels, runtime envelope terminology, or internal validation classifications.
+- Keep any machine-only correlation or validation data outside the human-facing footnote and minimize hidden document metadata to what deterministic validation strictly requires.
 - Replace the UTC-only creation field with a clearly named local creation-time field whose ISO 8601 value includes an explicit numeric UTC offset.
 - Resolve local time from authoritative project or runtime-envelope timezone data. Do not ask the document-writing model to infer a timezone.
 - Remove Task-ID from the embedded document block. Retain runtime task or execution identity outside the document only where the coordinator, harness, external envelope, or execution record needs it.
@@ -40,9 +44,10 @@ The current contract is defined by skills/document-provenance/SKILL.md and skill
 - Keep Artifact-ID as the stable document-to-envelope correlation key so deterministic validation does not depend on an embedded Task-ID.
 - Continue to compare every new-document value with authoritative external envelope data. A shorter document block must not permit model-authored or profile-inferred provenance.
 - Define a bounded compatibility rule for existing valid headers. Existing documents must remain valid without automatic migration unless a separate authorized change updates them.
-- Preserve field-level evidence distinctions for historical migration only where different fields genuinely have different evidence sources. Do not force the verbose historical representation into newly created documents.
+- Preserve truthful evidence distinctions in external validation or migration records when required, but never expose internal placeholder or per-field evidence labels in user-facing documentation.
 - Update the canonical format contract, template, envelope schema, validator, fixtures, and focused tests together.
 - Update design/documentation-templates.html if its displayed provenance guidance or examples describe the old canonical block.
+- After the corrected policy and validation contract pass, migrate `design/wiki-skills-and-project-context.html` as the bounded representative historical page: add the concise visible provenance footnote using only known facts, omit unknowns, preserve its accepted semantic baseline, and make no page-wide visual or unrelated content change.
 - Avoid adding a replacement metadata line that merely restates that the whole new-document envelope is runtime-supplied unless validation has a concrete need that cannot be satisfied externally.
 
 ## Acceptance Criteria
@@ -53,6 +58,9 @@ The current contract is defined by skills/document-provenance/SKILL.md and skill
 - The validator correlates a document to its runtime envelope by Artifact-ID and rejects mismatched, missing, inferred, placeholder, malformed, or offset-free new-document values.
 - The validator accepts the new compact form and continues to handle existing valid blocks under an explicit compatibility policy.
 - Historical validation retains truthful mixed-source evidence behavior without making the new-document header verbose.
+- Maintained HTML exposes one concise provenance footnote containing only useful known facts, with no internal placeholder, migration classification, or per-field evidence label.
+- Historical HTML with incomplete creation evidence remains truthful by omitting unknown facts rather than displaying or inventing them.
+- `design/wiki-skills-and-project-context.html` passes the corrected provenance validator and focused semantic, HTML, navigation, and link checks without visible-content drift beyond the approved footnote.
 - Positive fixtures cover Markdown with and without front matter, reserved wiki pages, maintained HTML, and generated documents using the compact header.
 - Negative fixtures cover missing or malformed offsets, envelope mismatches, inferred values, unexpected Task-ID in the new canonical form, and redundant or unsupported evidence metadata as required by the selected compatibility policy.
 - Focused document-provenance tests, skill validation, affected generated-output freshness checks, documentation validation, and Git diff checks pass.
@@ -75,7 +83,7 @@ None.
 
 - Should the portable contract prefer an explicit project-configured IANA timezone and fall back to authoritative runtime-local timezone data, or require the runtime envelope to always supply both the local offset-bearing timestamp and timezone source?
 - Should legacy new-document blocks remain accepted indefinitely or be accepted only as a versioned legacy form while all newly generated documents use the compact form?
-- Can historical evidence classifications move entirely to an external migration record, or must mixed-source historical blocks retain compact field-level qualifiers for standalone auditability?
+- Which minimum machine-only correlation field, if any, must remain embedded after visible footnote validation is implemented?
 
 ## Governed Definition Approval
 
@@ -93,15 +101,25 @@ None.
 - skills/document-provenance/scripts/test_validate_document_provenance.py
 - skills/document-provenance/fixtures/runtime-envelope.json
 - design/documentation-templates.html
+- design/wiki-skills-and-project-context.html
+- Focused bundle-content, HTML, navigation, link, and provenance test files proven necessary by the corrected visible-footnote contract.
 
 Focused fixture files under skills/document-provenance/fixtures may change only as test data needed to prove the approved canonical contract. Supported generated mirrors may change only through their owning source and normal regeneration workflow.
 
 ### Approval Resolution
 
-Approved at creation from the user's 2026-08-12 message in the current Codex task. Approval covers the exact requested provenance-header behavior and the governed canonical sources listed above. It does not authorize unrelated document metadata, historical content reconstruction, or changes to other skill definitions.
+Approved at creation from the user's 2026-08-12 message and expanded by the user's explicit 2026-08-13 correction. Approval covers concise human-facing HTML provenance footnotes, omission of unknown facts and internal evidence labels, the exact governed canonical sources listed above, and the bounded wiki page migration. It does not authorize invented historical content, unrelated page redesign, or changes to other skill definitions.
 
 ## Notes
 
 - The work item changes the canonical format for future new documents; it does not itself migrate existing document headers.
 - The numeric offset preserves an exact instant while presenting the creation time in local civil time.
 - Git remains the default modification-history authority. This item does not add mutable modification metadata to document headers.
+- The obsolete `migrate-wiki-skills-and-project-context-historical-provenance` proposal is superseded rather than approved. Its page correction is the final bounded phase of this item, avoiding a duplicate policy owner or cross-folder dependency.
+
+## Policy Supersession Evidence
+
+- Reconciled At: 2026-08-13T01:28:46Z.
+- User Direction: HTML provenance is a concise visible footnote with only useful known facts. Unknown values and internal evidence labels are omitted and history is never invented.
+- Ownership Decision: This existing Work Item absorbs the policy correction and bounded wiki-page migration because it already owns the canonical provenance sources, validator, fixtures, and design guidance.
+- Transition Claim: `update-concise-visible-provenance-policy-019ff2c3`; outcome `SHARED_CHECKOUT_ACQUIRED`; event `f20f61f9-ad49-4d60-bec9-85b7baaecef8`.
