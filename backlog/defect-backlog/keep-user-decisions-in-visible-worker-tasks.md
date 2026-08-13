@@ -1,6 +1,6 @@
 # Keep User Decisions In Visible Worker Tasks
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -70,3 +70,14 @@ The user explicitly authorized this exact concise dispatcher skill correction an
 ## Notes
 
 This item does not change provider lifecycle definitions or portable Dev Orchestrator authority. It corrects only the project-private dispatcher runtime contract.
+
+## Starting Handoff Evidence
+
+- Reserved At: 2026-08-13T11:36:41Z.
+- Transition: `Ready -> Starting`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Baseline: `ed426ee1a52b75038907dab97c4a61d8fd9ef4fa` on primary `main`.
+- Dispatch Architecture: Create one user-visible Codex task whose initial reference-plus-delta prompt starts one Dev Orchestrator collaboration subagent for this provider record.
+- Transition Claims: `start-visible-worker-uar-dispatcher-rule`; event `b636b7ab-11f2-4e23-b983-ae659017eea3`. `start-visible-worker-uar-provider`; event `6998554f-9a57-4dd2-aa6c-3317325a0c49`.
+- Runtime Identity: Pending the caller-owned visible task creation result. Creation does not imply Running.
