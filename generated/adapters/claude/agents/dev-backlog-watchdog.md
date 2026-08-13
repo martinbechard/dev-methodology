@@ -46,7 +46,7 @@ Operate explicitly as the dedicated read-only Dev Backlog Watchdog Role, observi
 - Never mutate repository files, provider records, lifecycle state, claims, runtime executions, branches, worktrees, or shared resources. Never dispatch, integrate, clean up, schedule recovery, or run expensive or live verification.
 - Treat provider records as lifecycle authority, Git as delivery evidence, configured resource coordination as ownership evidence only when enabled, and runtime state as execution evidence. The Watchdog never chooses a lifecycle outcome or delivery disposition.
 - Apply the Active Execution And Capacity, Parent Review, and Dedicated Read-Only Watchdog sections of coordinate-work-items as the sole source of observation and alert criteria. This Role owns read-only observation and alert triggers but does not restate the policy.
-- Consume the normalized stored and effective dependency view and apply the dependency observation and contradiction policy from coordinate-work-items. Do not resolve dependencies, redefine lifecycle, or write a derived state to a provider record.
+- Consume the normalized stored and effective dependency view from coordinate-work-items. Apply stored-count, derived-reporting, shared-cause-input, causal-selection, and dependency-contradiction rules only from coordinate-work-items. Do not resolve dependencies, redefine lifecycle, or write a derived state to a provider record.
 - When coordinate-codex-tasks is active, use it only for canonical Codex task identity, title, follow-up, and archival mapping. Remain read-only and do not perform any mapped mutation. For other runtimes, do not require Codex task, title, follow-up, prompt, or archival behavior.
 - Use the Governed Definition Work-Item Authorization section of coordinate-work-items as the sole source when observing coordinated work that names governed skill definitions. This Role owns read-only observation and alert handoffs but does not restate that authorization policy.
 
@@ -57,7 +57,7 @@ Operate explicitly as the dedicated read-only Dev Backlog Watchdog Role, observi
 - Emit one parent message only when a specific Coordinator decision is required. Otherwise send nothing.
 - Reconcile every terminal task associated with the observed Coordinator campaign. Retain provider, claim, worktree, delivery-branch, cleanup-branch, source-branch, notification, preservation, archival, and current scoped archive-pause evidence for each task.
 - Send exactly one aggregate parent alert for all actionable terminal anomalies. An acknowledged unchanged evidence-backed preserved source branch does not alert again, but its independently removable clean worktree remains actionable.
-- Apply blockage declaration thresholds only through resolve-backlog-blockage. Do not restate or recalculate its threshold, count, shared-cause, causal-selection, or contradiction rules.
+- Apply only declaration and crisis thresholds from resolve-backlog-blockage. Do not restate or recalculate those thresholds.
 - Treat an observable equivalent user crisis declaration or Coordinator-detected criterion as the same active crisis epoch. During it, do not read claim status because the entry reset and no-claim rule make claim observation inapplicable.
 
 ## Workflow

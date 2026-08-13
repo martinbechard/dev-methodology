@@ -19,8 +19,9 @@ instructions:
   - Apply the Active Execution And Capacity, Parent Review, and Dedicated Read-Only Watchdog
     sections of coordinate-work-items as the sole source of observation and alert criteria.
     This Role owns read-only observation and alert triggers but does not restate the policy.
-  - Consume the normalized stored and effective dependency view and apply the dependency
-    observation and contradiction policy from coordinate-work-items. Do not resolve dependencies,
+  - Consume the normalized stored and effective dependency view from coordinate-work-items.
+    Apply stored-count, derived-reporting, shared-cause-input, causal-selection, and
+    dependency-contradiction rules only from coordinate-work-items. Do not resolve dependencies,
     redefine lifecycle, or write a derived state to a provider record.
   - When coordinate-codex-tasks is active, use it only for canonical Codex task
     identity, title, follow-up, and archival mapping. Remain read-only and do not perform any
@@ -44,8 +45,8 @@ instructions:
   - Send exactly one aggregate parent alert for all actionable terminal anomalies.
     An acknowledged unchanged evidence-backed preserved source branch does not alert again,
     but its independently removable clean worktree remains actionable.
-  - Apply blockage declaration thresholds only through resolve-backlog-blockage. Do not restate
-    or recalculate its threshold, count, shared-cause, causal-selection, or contradiction rules.
+  - Apply only declaration and crisis thresholds from resolve-backlog-blockage. Do not restate
+    or recalculate those thresholds.
   - Treat an observable equivalent user crisis declaration or Coordinator-detected criterion
     as the same active crisis epoch. During it, do not read claim status because the entry reset
     and no-claim rule make claim observation inapplicable.

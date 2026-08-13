@@ -2239,8 +2239,8 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("Never infer or inherit a campaign-wide pause", watchdog_text)
         for clause in (
             "Consume the normalized stored and effective dependency view",
-            "apply the dependency observation and contradiction policy from coordinate-work-items",
-            "Apply blockage declaration thresholds only through resolve-backlog-blockage",
+            "Apply stored-count, derived-reporting, shared-cause-input, causal-selection, and dependency-contradiction rules only from coordinate-work-items",
+            "Apply only declaration and crisis thresholds from resolve-backlog-blockage",
         ):
             with self.subTest(watchdog_dependency_clause=clause):
                 self.assertIn(clause, watchdog_text)
@@ -2252,6 +2252,18 @@ class BundleContentTests(unittest.TestCase):
         ):
             with self.subTest(watchdog_duplicate_policy=duplicate_policy):
                 self.assertNotIn(duplicate_policy, watchdog_text)
+        self.assertNotIn(
+            "resolve-backlog-blockage. Do not restate or recalculate its threshold, count, shared-cause, causal-selection, or contradiction rules",
+            watchdog_text,
+        )
+        for instruction in watchdog["instructions"]:
+            if "resolve-backlog-blockage" not in instruction:
+                continue
+            for coordinate_owned_term in ("causal-selection", "contradiction"):
+                with self.subTest(
+                    resolve_blockage_misattribution=coordinate_owned_term
+                ):
+                    self.assertNotIn(coordinate_owned_term, instruction)
         for scenario_id in (
             "canonical-title-drift-alert",
             "finished-bounded-verifier-title-drift",
@@ -2305,7 +2317,15 @@ class BundleContentTests(unittest.TestCase):
                 )
                 self.assertIn("Send exactly one aggregate parent alert", generated_text)
                 self.assertIn(
-                    "Apply blockage declaration thresholds only through resolve-backlog-blockage",
+                    "Apply only declaration and crisis thresholds from resolve-backlog-blockage",
+                    generated_text,
+                )
+                self.assertIn(
+                    "Apply stored-count, derived-reporting, shared-cause-input, causal-selection, and dependency-contradiction rules only from coordinate-work-items",
+                    generated_text,
+                )
+                self.assertNotIn(
+                    "resolve-backlog-blockage. Do not restate or recalculate its threshold, count, shared-cause, causal-selection, or contradiction rules",
                     generated_text,
                 )
                 self.assertNotIn("Count each stored Blocked Work Item once", generated_text)
