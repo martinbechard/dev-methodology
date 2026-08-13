@@ -1,8 +1,8 @@
 # Align Coding-Agent Runtime Configuration with the Documentation Design System
 
-Owner: Dev Orchestrator
+Owner: Unowned
 
-Status: Running
+Status: User Action Required
 
 Type: Feature
 
@@ -113,6 +113,44 @@ Dependency Resolution: Satisfied by the completed Work Item archived in provider
 - Canonical Codex Task: `019ffcd1-c9a0-78f0-8713-ef8951f1f9b5`.
 - Accepted Baseline: `00705f4a7fcb25e305d5e4487850a25b7d6e8187` on primary `main`.
 - Work Claim: `align-agentic-configuration-work-019ffcd1`; event `7ab7d65f-4a6c-4cdb-89cf-bea3f54cd1bd`.
+
+## User Action Required
+
+### Question for the User
+
+For DDS-COM-010, should the Coding-Agent Runtime Configuration page add concise visible footer context using only useful known page-specific provenance, scope, and compatibility facts, or preserve the accepted content baseline and seek an explicit source-backed variation?
+
+### Why User Input Is Required
+
+Adding visible footer context changes the accepted content baseline. Preserving the baseline instead requires an explicit design-system variation. This content-boundary choice belongs to the user.
+
+### Options and Tradeoffs
+
+- **Add concise known-facts footer context (recommended):** Add only useful facts already established by authoritative sources, then obtain fresh content review, browser verification, and Documentation Design System review.
+- **Preserve the baseline and seek a variation:** Add no visible context and request an explicit source-backed DDS-COM-010 variation. Delivery remains paused unless the variation is accepted.
+
+### Resolution
+
+Pending in canonical Task and Conversation `019ffcd1-c9a0-78f0-8713-ef8951f1f9b5`.
+
+### Additional Technical Prerequisite
+
+Project Configurator must restore the repository-current version `1.0.0` of the Documentation Design System review skill and applicable checklist bytes in configured `mcp-agent-ops`. A revision-matched load must prove those bytes before this item resumes review.
+
+### Unattended Work Boundary
+
+Do not mutate, integrate, deliver, or close this item until the user answers and the technical prerequisite is satisfied. Preserve the same canonical task and nested Dev Orchestrator. No source mutation or candidate exists.
+
+### Transition Evidence
+
+- Transition: `Running -> User Action Required`.
+- Recorded At: 2026-08-13T21:03:28Z.
+- Canonical Task and Conversation: `019ffcd1-c9a0-78f0-8713-ef8951f1f9b5`.
+- Source State: No source mutation or candidate exists.
+- Work Claim Release: `align-agentic-configuration-work-019ffcd1`; disposition `handoff`; event `13c3ad11-88a6-488c-820a-156ae4b4849c`.
+- Redundant Release Reconciliation: Event `c88a0d9c` returned `CLAIM_NOT_FOUND`, confirming no live claim remained; no retry occurred.
+- Provider Transition Claim: `agentic-footer-uar-019ff2c3`; event `51e2550f-ebbd-462b-8fe6-7b802a0818f7`.
+- Required Runtime Title: `Waiting for User — Align Coding Agent Runtime Configuration With Documentation Design System`.
 - Provider Record Claim: `align-agentic-configuration-running-record-019ffcd1`; event `2dd35652-58f4-4fb7-9d74-1fd0e2714b83`.
 - Adoption Release Evidence: task event `409f0116-ed86-4953-9b12-64e8a079744a`; backlog event `c62b4717-5a71-49aa-b331-174b3c7f22c8`.
 - Next Action: Evaluate implementation complexity, confirm the accepted content baseline and generator boundary, then route the bounded plan for independent technical review.
