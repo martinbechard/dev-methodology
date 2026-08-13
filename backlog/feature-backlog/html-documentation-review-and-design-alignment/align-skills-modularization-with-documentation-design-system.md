@@ -92,3 +92,15 @@ Dependency Reconciliation: Satisfied by completed Work Item `review-skills-modul
 - Transition Claim: `reserve-skills-modularization-019ff2c3`; event `62a0a62a-7f39-4fce-95a3-f51cfd2802fc`.
 - Dispatch Architecture: Create one visible Codex task whose reference-plus-delta prompt starts one Dev Orchestrator collaboration subagent.
 - Next Action: Reconcile the unique visible task identity; its nested Dev Orchestrator records `Starting -> Running` before mutation.
+
+## Canonical Runtime Assignment
+
+- Assigned At: 2026-08-13T20:32:03Z.
+- Codex Task ID: `019ffcd2-9428-7bb1-9446-049d52f87bca`.
+- Conversation ID: `019ffcd2-9428-7bb1-9446-049d52f87bca`.
+- Host: `local`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Runtime Project: saved `dev-methodology` project at `/Users/martinbechard/dev/dev-methodology`.
+- Creation Outcome: Unique direct success with no client or pending identity and no retry.
+- Lifecycle Boundary: Provider remains `Starting` until exactly one nested Dev Orchestrator accepts and records `Starting -> Running`.
+- Adoption Claim: `adopt-skills-modularization-task-019ff2c3`; event `965ff68f-ca82-40e6-b066-116b537c033e`.
