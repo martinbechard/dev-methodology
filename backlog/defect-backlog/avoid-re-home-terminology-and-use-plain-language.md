@@ -1,6 +1,6 @@
 # Avoid Re-Home Terminology and Use Plain Language
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -85,3 +85,14 @@ None.
 - Runtime Created At: `2026-08-13T15:45:23Z` (`1786635923`).
 - Requested Title: `Starting — Avoid Re-Home Terminology And Use Plain Language`; the runtime preview is ellipsized only.
 - Runtime Creation Outcome: Unique success with no client or pending identity. Creation does not imply Running.
+
+## Running Acceptance Evidence
+
+- Accepted At: 2026-08-13T15:46:55Z.
+- Transition: `Starting -> Running`.
+- Canonical Codex Task ID: `019ffbcc-b014-72e0-b6bc-ea5925712b74`.
+- Canonical Conversation ID: `019ffbcc-b014-72e0-b6bc-ea5925712b74`.
+- Executing Agent: `dev-orchestrator:/root/avoid_re_home_terminology`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Work Claim: `avoid-re-home-terminology-work`; event `803910c4-bdbd-4b6f-907c-725f4fb69ab4`.
