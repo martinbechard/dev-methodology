@@ -2,7 +2,7 @@
 
 Owner: Dev Orchestrator `/root/align_skill_examples`
 
-Status: Running
+Status: Blocked
 
 Type: Feature
 
@@ -233,6 +233,25 @@ Option A is accepted. It authorizes only useful known page-specific provenance, 
 - Provider Path Claim: `resume-specialization-fixed-port-path-019ff2c3`; event `8e73846e-fde2-443d-8eef-9740d8345466`.
 - Required Runtime Title: `Starting — Align Agent And Skill Specialization Examples With Documentation Design System`.
 - Next Action: The same Dev Orchestrator records `Starting -> Running`, reacquires its Work Item and exact browser resource claims, and reruns browser verification against candidate `344ac687` with a preclaimed exact port and the repository-owned fixed-port harness. Continue the remaining review and delivery gates only after browser verification passes.
+
+### Hold-Open Browser Lifecycle Blocker
+
+- Recorded At: 2026-08-13T22:12:05Z.
+- Transition: `Running -> Blocked`.
+- Preserved Canonical Task and Conversation: `019ffca1-15fa-7940-a0cb-e0a51da36aae` on host `local`.
+- Preserved Dev Orchestrator: `/root/align_skill_examples`.
+- Preserved Candidate: `344ac687e628d9c4958731558d9c3e75ea2fac93`.
+- Verified Evidence: The repository fixed-port harness started correctly. The corrected verifier passed its post-Escape hidden-dialog assertion, DDS-COM-001 through DDS-COM-006, ARIA, fragments, the exact Option A footer, loopback resources, and console checks.
+- Incomplete Evidence: Persistence reload, final overflow, links, contrast, and DDS-COM-008 through DDS-COM-010 have no complete verdict. No overall `PASS` is inferred.
+- Exact Blocker: The repository harness closed preclaimed `127.0.0.1:18772` before the persistence reload, which caused `net::ERR_CONNECTION_REFUSED`.
+- Recovery Owner: The `evals/agent-tests` harness or scenario owner.
+- Unblock Condition: Provide and verify a repository-authorized fixed-port lifecycle that keeps the preclaimed listener open through persistence reload and every remaining browser check.
+- Retry Boundary: The one corrected detailed-verifier run is consumed. No further page verifier retry is authorized before the unblock condition.
+- Claim Releases: Port event `5a55f661`; browser event `d75ddd2a`; Work Item claim released `blocked` at event `41f1223c`.
+- Provider Update Claim: `block-specialization-hold-open-runtime-019ff2c3`; event `02262007-0b21-419d-82f1-e730e5157be8`.
+- Provider Path Claim: `block-specialization-hold-open-runtime-path-019ff2c3`; event `0071ee70-7a2b-4984-afbe-2b9b00299c9f`.
+- Required Runtime Title: `Blocked — Align Agent And Skill Specialization Examples With Documentation Design System`.
+- Supporting Recovery: Use exactly one bounded runtime repair under this preserved canonical task. Do not mutate the page candidate, rerun page verification before repair evidence, or create a replacement execution.
 
 ### Fixed-Port Verification Running Acceptance
 
