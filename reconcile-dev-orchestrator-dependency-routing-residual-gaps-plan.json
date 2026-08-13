@@ -98,26 +98,26 @@
     },
     {
       "text": "Verification and handoff",
-      "complete": false,
+      "complete": true,
       "children": [
         {
           "text": "Run the three focused AgentSuiteRunnerTests for linked-worktree containment, symlink journal containment, and malformed checkpoint diagnostic retention with CPython 3.11 or newer",
-          "complete": false,
+          "complete": true,
           "children": []
         },
         {
           "text": "Run the four focused DependencyRoutingFixtureTests for required fields, required lanes, producer session evidence, and alias rejection with PYTHONPATH bound to evals/agent-tests",
-          "complete": false,
+          "complete": true,
           "children": []
         },
         {
           "text": "If source changes are authorized, run both complete focused test files, python compilation for changed Python, and git diff --check without weakening gates",
-          "complete": false,
+          "complete": true,
           "children": []
         },
         {
           "text": "Recheck current main and candidate paths for concurrent drift, preserve unrelated changes, and return exact evidence to Dev Orchestrator for independent review",
-          "complete": false,
+          "complete": true,
           "children": []
         }
       ]
