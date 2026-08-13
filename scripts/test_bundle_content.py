@@ -5279,6 +5279,8 @@ class BundleContentTests(unittest.TestCase):
         self.assertEqual(
             "Launch one Dev Orchestrator subagent to execute Work Item "
             "<opaque Work Item ID>.\n"
+            "As the root task, you provide the Codex title and messaging "
+            "the subagents may need.\n"
             "Authoritative provider: <provider locator>\n"
             "Dispatch-time delta: <launch-only facts absent from the provider, or none>",
             launch_prompt,
@@ -5326,7 +5328,7 @@ class BundleContentTests(unittest.TestCase):
         )
 
         dispatcher_reference_contract = (
-            "persist every stable assignment fact missing from the Work-item content before launch",
+            "persist every stable assignment fact missing from the work-item content before launch",
             "authoritative provider locator",
             "dispatch-time delta only",
             "preserve the bytes and evidence",
@@ -5354,6 +5356,58 @@ class BundleContentTests(unittest.TestCase):
         )
         self.assertIn(
             "never create or request another successor",
+            normalized_sources["backlog-dispatcher"],
+        )
+
+    def test_visible_worker_self_title_contract_matches_private_dispatcher(
+        self,
+    ) -> None:
+        """Keep exact self-title identity checks aligned across both skills."""
+
+        codex_text = (
+            SKILLS_ROOT / "coordinate-codex-tasks" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        dispatcher_text = (
+            REPOSITORY_ROOT
+            / ".agents"
+            / "skills"
+            / "backlog-dispatcher"
+            / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        normalized_sources = {
+            "coordinate-codex-tasks": " ".join(codex_text.split()),
+            "backlog-dispatcher": " ".join(dispatcher_text.split()),
+        }
+
+        shared_contract = (
+            "own recorded canonical Codex Task ID and Conversation ID",
+            "one atomic provider observation",
+            "same authoritative provider revision",
+            "exactly match both recorded identifiers before the title operation",
+            "Confirm the same Task ID, Conversation ID, and authoritative provider revision",
+            "Report a post-call identity mismatch",
+            "Do not report title success for that outcome",
+            "delegation source",
+            "source_thread_id",
+            "runtime parent",
+            "root Backlog Dispatcher",
+            "Coordinator task",
+            "nested Dev Orchestrator",
+            "title-derived identity",
+            "perform zero title mutation",
+            "one specific Coordinator decision request",
+        )
+        for source_name, source_text in normalized_sources.items():
+            for clause in shared_contract:
+                with self.subTest(source=source_name, clause=clause):
+                    self.assertIn(clause, source_text)
+
+        self.assertIn(
+            "root Backlog Dispatcher title is governed independently",
+            normalized_sources["backlog-dispatcher"],
+        )
+        self.assertIn(
+            "must not suppress an unresolved visible worker title mismatch",
             normalized_sources["backlog-dispatcher"],
         )
 

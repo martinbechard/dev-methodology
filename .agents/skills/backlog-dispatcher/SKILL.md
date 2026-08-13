@@ -64,6 +64,12 @@ The root Backlog Dispatcher creates exactly one user-visible Codex task. The roo
 
 Lifecycle and material Running-phase title operations remain on the visible Codex task and its retained user-visible context. They do not target the nested Dev Orchestrator collaboration subagent. The visible Work Item root task synchronizes its own title immediately after durable authoritative lifecycle or material-phase evidence exists and before reporting that evidence. No separate authorization is required solely for this own-title update.
 
+For each self-title operation, the visible Work Item root task uses only its own recorded canonical Codex Task ID and Conversation ID from authoritative provider Work-item content. Before the title operation, resolve both identifiers together as one atomic provider observation under the same authoritative provider revision. Do not assemble the pair from separate observations or revisions. The requested task target and conversation target must exactly match both recorded identifiers before the title operation. The visible Work Item root task must not target the root Backlog Dispatcher.
+
+After the title operation, resolve another atomic provider observation. Confirm the same Task ID, Conversation ID, and authoritative provider revision before reporting success. Report a post-call identity mismatch when the post-call pair or revision differs, is missing, is ambiguous, or conflicts with authoritative Work-item content. Do not report title success for that outcome.
+
+The delegation source, `source_thread_id`, runtime parent, root Backlog Dispatcher, Coordinator task, nested Dev Orchestrator, and any title-derived identity are routing or evidence fields only. Each must not be a self-title target. If either recorded identifier is missing, ambiguous, or conflicts with authoritative Work-item content, perform zero title mutation and return one specific Coordinator decision request. The root Backlog Dispatcher title is governed independently from every visible worker lifecycle and material-phase title.
+
 Preserve an already-live hidden Work Item execution as its existing owner until it stops or completes. Do not create a visible replacement task while that hidden execution is live, and do not launch duplicate implementation.
 
 ## User Action Required Handoff
@@ -180,6 +186,8 @@ Return BLOCKED only when a required operation is unavailable across the authoriz
 ## Watchdog Boundary
 
 Retain one canonical read-only Watchdog outside queue capacity. When a Watchdog schedule is configured, it must wake the Watchdog task to perform its own observation cycle.
+
+An observed corrected root Dispatcher title is terminal suppression evidence for the same root-title incident. This suppression must not suppress an unresolved visible worker title mismatch. The Watchdog still compares each visible worker against that worker's own provider-recorded canonical identity and expected title.
 
 Do not schedule the Coordinator merely to relay routine heartbeat or progress prompts. A Watchdog message that requests a coordination decision is handled through the incoming-message workflow above.
 

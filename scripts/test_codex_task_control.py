@@ -5,6 +5,8 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
+from dataclasses import dataclass, replace
 import json
 from pathlib import Path
 import re
@@ -41,6 +43,89 @@ As the root task, you provide the Codex title and messaging the subagents may ne
 Authoritative provider: <provider locator>
 Dispatch-time delta: <launch-only facts absent from the provider, or none>"""
 
+ORDINARY_WORKER_IDENTITY = {
+    "task_id": "task-visible-worker-123",
+    "conversation_id": "conversation-visible-worker-456",
+}
+COMBINED_RUNTIME_IDENTITY = {
+    "task_id": "combined-visible-worker-789",
+    "conversation_id": "combined-visible-worker-789",
+}
+
+_TITLE_UPDATED = "TITLE_UPDATED"
+_COORDINATOR_DECISION_REQUIRED = "COORDINATOR_DECISION_REQUIRED"
+_POST_CALL_IDENTITY_MISMATCH = "POST_CALL_IDENTITY_MISMATCH"
+_PROVIDER_RECORDED_TARGET = "provider-recorded worker identity"
+
+
+@dataclass(frozen=True)
+class _ProviderIdentityObservation:
+    """Represent both canonical identifiers from one provider observation."""
+
+    task_id: str
+    conversation_id: str
+    task_revision: str
+    conversation_revision: str
+    ambiguous: bool = False
+    conflicting: bool = False
+
+
+@dataclass(frozen=True)
+class _TitleTarget:
+    """Represent the requested title target and its claimed provenance."""
+
+    task_id: str
+    conversation_id: str
+    source: str
+
+
+def _is_atomic_provider_identity(
+    observation: _ProviderIdentityObservation | None,
+) -> bool:
+    """Return whether one conclusive provider revision supplied both IDs."""
+
+    return bool(
+        observation is not None
+        and observation.task_id
+        and observation.conversation_id
+        and observation.task_revision
+        and observation.task_revision == observation.conversation_revision
+        and not observation.ambiguous
+        and not observation.conflicting
+    )
+
+
+def _execute_self_title_operation(
+    before: _ProviderIdentityObservation | None,
+    target: _TitleTarget,
+    after: _ProviderIdentityObservation | None,
+    title_call: Callable[[str, str], None],
+) -> str:
+    """Apply the executable self-title identity and zero-call contract."""
+
+    if not _is_atomic_provider_identity(before):
+        return _COORDINATOR_DECISION_REQUIRED
+    assert before is not None
+    if (
+        target.source != _PROVIDER_RECORDED_TARGET
+        or target.task_id != before.task_id
+        or target.conversation_id != before.conversation_id
+    ):
+        return _COORDINATOR_DECISION_REQUIRED
+
+    title_call(target.task_id, target.conversation_id)
+
+    if not _is_atomic_provider_identity(after):
+        return _POST_CALL_IDENTITY_MISMATCH
+    assert after is not None
+    if (
+        after.task_id != before.task_id
+        or after.conversation_id != before.conversation_id
+        or after.task_revision != before.task_revision
+    ):
+        return _POST_CALL_IDENTITY_MISMATCH
+    return _TITLE_UPDATED
+
 
 def _selected_skills(role: dict[str, object]) -> dict[str, dict[str, str]]:
     """Return a role's skill entries by skill identifier."""
@@ -69,6 +154,26 @@ def _user_action_required_section(text: str) -> str:
 
     section = text.split("## User Action Required Handoff", 1)[1].split(
         "## Dispatch Workflow",
+        1,
+    )[0]
+    return " ".join(section.split())
+
+
+def _conversation_title_section(text: str) -> str:
+    """Return the normalized canonical conversation-title contract."""
+
+    section = text.split("## Conversation Title Contract", 1)[1].split(
+        "## Codex Runtime Reconciliation",
+        1,
+    )[0]
+    return " ".join(section.split())
+
+
+def _visible_task_launch_section(text: str) -> str:
+    """Return the normalized visible Work Item task launch contract."""
+
+    section = text.split("## Visible Work Item Task Launch", 1)[1].split(
+        "## User Action Required Handoff",
         1,
     )[0]
     return " ".join(section.split())
@@ -219,6 +324,270 @@ class CodexTaskControlPackageTests(unittest.TestCase):
                 self.assertRegex(self.normalized, rf"{re.escape(lifecycle)}[^.;]*—")
         self.assertIn("conversation title is display state", self.normalized)
         self.assertIn("after every successful lifecycle transition", self.normalized)
+
+    def test_self_title_requires_exact_recorded_identity_pair(self) -> None:
+        title_contract = _conversation_title_section(self.codex)
+
+        self.assertNotEqual(
+            ORDINARY_WORKER_IDENTITY["task_id"],
+            ORDINARY_WORKER_IDENTITY["conversation_id"],
+        )
+        for clause in (
+            "own recorded canonical Codex Task ID and Conversation ID",
+            "one atomic provider observation",
+            "same authoritative provider revision",
+            "exactly match both recorded identifiers before the title operation",
+            "Confirm the same Task ID, Conversation ID, and authoritative provider revision",
+            "Report a post-call identity mismatch",
+            "Do not report title success for that outcome",
+            "does not collapse the two required identity checks",
+        ):
+            with self.subTest(clause=clause):
+                self.assertIn(clause, title_contract)
+
+    def test_self_title_runtime_call_contract_is_table_driven(self) -> None:
+        ordinary_before = _ProviderIdentityObservation(
+            task_id=ORDINARY_WORKER_IDENTITY["task_id"],
+            conversation_id=ORDINARY_WORKER_IDENTITY["conversation_id"],
+            task_revision="provider-revision-101",
+            conversation_revision="provider-revision-101",
+        )
+        ordinary_target = _TitleTarget(
+            task_id=ordinary_before.task_id,
+            conversation_id=ordinary_before.conversation_id,
+            source=_PROVIDER_RECORDED_TARGET,
+        )
+        combined_before = _ProviderIdentityObservation(
+            task_id=COMBINED_RUNTIME_IDENTITY["task_id"],
+            conversation_id=COMBINED_RUNTIME_IDENTITY["conversation_id"],
+            task_revision="provider-revision-202",
+            conversation_revision="provider-revision-202",
+        )
+        combined_target = _TitleTarget(
+            task_id=combined_before.task_id,
+            conversation_id=combined_before.conversation_id,
+            source=_PROVIDER_RECORDED_TARGET,
+        )
+        cases = (
+            (
+                "accepted unequal pair",
+                ordinary_before,
+                ordinary_target,
+                ordinary_before,
+                _TITLE_UPDATED,
+                1,
+            ),
+            (
+                "accepted combined identity",
+                combined_before,
+                combined_target,
+                combined_before,
+                _TITLE_UPDATED,
+                1,
+            ),
+            *(
+                (
+                    f"rejected {source}",
+                    ordinary_before,
+                    _TitleTarget(
+                        task_id=ordinary_before.task_id,
+                        conversation_id=ordinary_before.conversation_id,
+                        source=source,
+                    ),
+                    ordinary_before,
+                    _COORDINATOR_DECISION_REQUIRED,
+                    0,
+                )
+                for source in (
+                    "delegation source",
+                    "source_thread_id",
+                    "runtime parent",
+                    "root Dispatcher",
+                    "Coordinator",
+                    "nested Orchestrator",
+                    "title-derived target",
+                )
+            ),
+            (
+                "missing evidence",
+                None,
+                ordinary_target,
+                ordinary_before,
+                _COORDINATOR_DECISION_REQUIRED,
+                0,
+            ),
+            (
+                "missing conversation identity",
+                _ProviderIdentityObservation(
+                    task_id=ordinary_before.task_id,
+                    conversation_id="",
+                    task_revision=ordinary_before.task_revision,
+                    conversation_revision=ordinary_before.conversation_revision,
+                ),
+                ordinary_target,
+                ordinary_before,
+                _COORDINATOR_DECISION_REQUIRED,
+                0,
+            ),
+            (
+                "ambiguous evidence",
+                replace(ordinary_before, ambiguous=True),
+                ordinary_target,
+                ordinary_before,
+                _COORDINATOR_DECISION_REQUIRED,
+                0,
+            ),
+            (
+                "target conflicts with provider pair",
+                ordinary_before,
+                _TitleTarget(
+                    task_id="task-other-worker-303",
+                    conversation_id=ordinary_before.conversation_id,
+                    source=_PROVIDER_RECORDED_TARGET,
+                ),
+                ordinary_before,
+                _COORDINATOR_DECISION_REQUIRED,
+                0,
+            ),
+            (
+                "conflicting evidence",
+                replace(ordinary_before, conflicting=True),
+                ordinary_target,
+                ordinary_before,
+                _COORDINATOR_DECISION_REQUIRED,
+                0,
+            ),
+            (
+                "split provider revisions",
+                _ProviderIdentityObservation(
+                    task_id=ordinary_before.task_id,
+                    conversation_id=ordinary_before.conversation_id,
+                    task_revision="provider-revision-101",
+                    conversation_revision="provider-revision-102",
+                ),
+                ordinary_target,
+                ordinary_before,
+                _COORDINATOR_DECISION_REQUIRED,
+                0,
+            ),
+            (
+                "post-call pair mismatch",
+                ordinary_before,
+                ordinary_target,
+                _ProviderIdentityObservation(
+                    task_id="task-other-worker-303",
+                    conversation_id=ordinary_before.conversation_id,
+                    task_revision=ordinary_before.task_revision,
+                    conversation_revision=ordinary_before.conversation_revision,
+                ),
+                _POST_CALL_IDENTITY_MISMATCH,
+                1,
+            ),
+            (
+                "post-call revision mismatch",
+                ordinary_before,
+                ordinary_target,
+                _ProviderIdentityObservation(
+                    task_id=ordinary_before.task_id,
+                    conversation_id=ordinary_before.conversation_id,
+                    task_revision="provider-revision-303",
+                    conversation_revision="provider-revision-303",
+                ),
+                _POST_CALL_IDENTITY_MISMATCH,
+                1,
+            ),
+        )
+
+        for label, before, target, after, expected, expected_calls in cases:
+            calls: list[tuple[str, str]] = []
+
+            def title_call(task_id: str, conversation_id: str) -> None:
+                calls.append((task_id, conversation_id))
+
+            with self.subTest(case=label):
+                outcome = _execute_self_title_operation(
+                    before,
+                    target,
+                    after,
+                    title_call,
+                )
+                self.assertEqual(expected, outcome)
+                self.assertEqual(expected_calls, len(calls))
+                if expected_calls:
+                    self.assertEqual(
+                        [(target.task_id, target.conversation_id)],
+                        calls,
+                    )
+
+    def test_combined_runtime_still_validates_both_identity_fields(self) -> None:
+        title_contract = _conversation_title_section(self.codex)
+
+        self.assertEqual(
+            COMBINED_RUNTIME_IDENTITY["task_id"],
+            COMBINED_RUNTIME_IDENTITY["conversation_id"],
+        )
+        self.assertIn(
+            "When one combined runtime surface supplies the same value for both fields",
+            title_contract,
+        )
+        self.assertIn(
+            "validate that value independently as the recorded Task ID and Conversation ID",
+            title_contract,
+        )
+
+    def test_self_title_rejects_routing_parent_and_derived_targets(self) -> None:
+        title_contract = _conversation_title_section(self.codex)
+
+        for rejected_target in (
+            "delegation source",
+            "source_thread_id",
+            "runtime parent",
+            "root Backlog Dispatcher",
+            "Coordinator task",
+            "nested Dev Orchestrator",
+            "title-derived identity",
+        ):
+            with self.subTest(rejected_target=rejected_target):
+                self.assertIn(rejected_target, title_contract)
+        self.assertIn("routing or evidence fields only", title_contract)
+        self.assertIn("must not be a self-title target", title_contract)
+
+    def test_self_title_ambiguity_stops_before_mutation(self) -> None:
+        title_contract = _conversation_title_section(self.codex)
+
+        for clause in (
+            "missing, ambiguous, or conflicts with authoritative Work-item content",
+            "perform zero title mutation",
+            "one specific Coordinator decision request",
+        ):
+            with self.subTest(clause=clause):
+                self.assertIn(clause, title_contract)
+
+    def test_visible_worker_title_cannot_change_root_dispatcher_title(self) -> None:
+        launch_contract = _visible_task_launch_section(self.dispatcher)
+
+        for clause in (
+            "uses only its own recorded canonical Codex Task ID and Conversation ID",
+            "must not target the root Backlog Dispatcher",
+            "root Backlog Dispatcher title is governed independently",
+        ):
+            with self.subTest(clause=clause):
+                self.assertIn(clause, launch_contract)
+
+    def test_dispatcher_title_suppression_is_identity_scoped(self) -> None:
+        watchdog = self.dispatcher.split("## Watchdog Boundary", 1)[1].split(
+            "## Live Refinement",
+            1,
+        )[0]
+        normalized_watchdog = " ".join(watchdog.split())
+
+        for clause in (
+            "corrected root Dispatcher title is terminal suppression evidence",
+            "same root-title incident",
+            "must not suppress an unresolved visible worker title mismatch",
+        ):
+            with self.subTest(clause=clause):
+                self.assertIn(clause, normalized_watchdog)
 
     def test_follow_up_resumes_the_same_task(self) -> None:
         normalized_lower = self.normalized.lower()

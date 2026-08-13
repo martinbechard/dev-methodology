@@ -71,6 +71,12 @@ Use this lifecycle and phase mapping:
 - Failed: Failed — short work-item title.
 - Abandoned: Abandoned — short work-item title.
 
+Every task that performs a self-title operation must use its own recorded canonical Codex Task ID and Conversation ID from authoritative Work-item content. Before the title operation, resolve both identifiers together as one atomic provider observation under the same authoritative provider revision. Do not assemble the pair from separate observations or revisions. The requested task target and conversation target must exactly match both recorded identifiers before the title operation.
+
+After the title operation, resolve another atomic provider observation. Confirm the same Task ID, Conversation ID, and authoritative provider revision before reporting success. Report a post-call identity mismatch when the post-call pair or revision differs, is missing, is ambiguous, or conflicts with authoritative Work-item content. Do not report title success for that outcome. When one combined runtime surface supplies the same value for both fields, validate that value independently as the recorded Task ID and Conversation ID. Equality in a combined surface does not collapse the two required identity checks.
+
+The delegation source, `source_thread_id`, runtime parent, root Backlog Dispatcher, Coordinator task, nested Dev Orchestrator, and any title-derived identity are routing or evidence fields only. Each must not be a self-title target. If either recorded identifier is missing, ambiguous, or conflicts with authoritative Work-item content, perform zero title mutation and return one specific Coordinator decision request.
+
 The owning Coordinator or Orchestrator is accountable after every successful lifecycle transition. When its runtime exposes rename authority, it renames the canonical conversation directly. Otherwise it supplies the exact title operation to the authorized root runtime dispatcher and reconciles the returned outcome. When neither authorized path exposes rename authority, leave the title unsynchronized and retain that limitation in the durable record; do not send a title-only task message. A failed title update does not roll back a durable lifecycle transition.
 
 Apply the title contract when the task is created, after each successful lifecycle transition, and at each material Running phase change. Never use raw prompt text, markup, error output, identifiers, or a generic title.
