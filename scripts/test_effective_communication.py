@@ -92,7 +92,11 @@ class EffectiveCommunicationContractTests(unittest.TestCase):
         schema = yaml.safe_load(ROLE_SCHEMA_PATH.read_text(encoding="utf-8"))
         shared_entries = schema["fixedBehavior"]["sharedSkills"]
         self.assertEqual(
-            ["effective-communication", "ste-technical-writing"],
+            [
+                "effective-communication",
+                "ste-technical-writing",
+                "terminology-standard",
+            ],
             [next(iter(entry)) for entry in shared_entries],
         )
 

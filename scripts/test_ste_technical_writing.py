@@ -179,7 +179,11 @@ class SteTechnicalWritingContractTests(unittest.TestCase):
             for entry in schema["fixedBehavior"]["sharedSkills"]
         ]
         self.assertEqual(
-            ["effective-communication", "ste-technical-writing"],
+            [
+                "effective-communication",
+                "ste-technical-writing",
+                "terminology-standard",
+            ],
             shared_skills,
         )
 
