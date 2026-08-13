@@ -1,8 +1,8 @@
 # Align Wiki Skills and Project Context with the Documentation Design System
 
-Owner: Dev Orchestrator
+Owner: Unowned
 
-Status: Running
+Status: Blocked
 
 Type: Feature
 
@@ -156,6 +156,22 @@ Dependency Reconciliation: Satisfied by completed Work Item `review-wiki-skills-
 - Transition Claim: `unblock-wiki-skill-version-019ff2c3`; event `0ca0a1f7-43c6-4ba9-a799-64e471a954bd`.
 - Required Runtime Title: `Starting — Align Wiki Skills And Project Context With Documentation Design System`.
 - Next Action: The same nested Dev Orchestrator records `Starting -> Running`, reacquires its Work Item claim, and resumes planning with the revision-matched v1.0.0 review skill and checklists.
+
+## Provenance Catalog Blocked Evidence
+
+- Recorded At: 2026-08-13T21:31:18Z.
+- Transition: `Running -> Blocked`.
+- Canonical Task and Conversation: `019ffcd2-a09c-7c91-a09c-d61bc1c04a64`.
+- Preserved Execution: The same nested Dev Orchestrator and accepted implementation plan.
+- Source State: No source mutation or candidate exists.
+- Exact Blocker: Catalog revision `cff1fd094bd840c97adb17b079cc118d1d1d4d0621cdc3a6785b61fed1d2591e` resolves `document-provenance` digest `ed1c5c69…`, while repository compact-v2 authority requires digest `2f50ecb30a023fd4c74ca8f57773dea475bb122b7537c3958639404672914563`.
+- Recovery Owner: Project Configurator and configured MCP skill-catalog owner.
+- Unblock Condition: A revision-matched configured `skill_load` returns `document-provenance` digest `2f50ecb30a023fd4c74ca8f57773dea475bb122b7537c3958639404672914563`.
+- Path Claim Release: `paths-wiki-skills-context-019ffcd2`; event `edbd11a2-259c-4b7b-8959-363243f12acf`. The preceding disposition-bearing release was rejected and made no change.
+- Work Claim Release: `resume-wiki-skills-context-work-019ffcd2`; disposition `blocked`; event `e40e7133-472b-472a-bfc7-44955f2bd215`.
+- Provider Transition Claim: `block-wiki-provenance-digest-019ff2c3`; event `7d647467-41c4-4015-ab5e-38ece34772ca`.
+- Required Runtime Title: `Blocked — Align Wiki Skills And Project Context With Documentation Design System`.
+- Safe Resume: Preserve the same task and plan, then resume only through `Blocked -> Ready -> Starting -> Running` after the exact digest proof.
 
 ## Recovered Running Acceptance Evidence
 
