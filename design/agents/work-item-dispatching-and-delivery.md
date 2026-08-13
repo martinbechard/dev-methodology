@@ -187,9 +187,9 @@ The Coordinator executes an approved runtime operation when its runtime exposes 
 | Participant | Owned responsibility | Excluded responsibility |
 | --- | --- | --- |
 | Authorized root caller | Invoke Backlog Dispatcher and execute an exact runtime packet when the Coordinator returns one. | Select work, choose lifecycle, create shadow coordination state, or adopt the Coordinator Role. |
-| Backlog Dispatcher Static Class | Invoke or resume the Coordinator, execute its exact runtime packet when required, preserve ambiguous outcomes, and return exact runtime evidence. | Make provider, queue, capacity, ownership, recovery, or canonical-task decisions. |
-| Dev Backlog Coordinator Agent | Reconcile authoritative evidence, reserve safe work, select the canonical execution, and prepare complete packets. Execute approved runtime operations directly when its runtime exposes the controls. | Perform ordinary work-item production, review, verification, integration, or delivery. |
-| Root Dev Orchestrator task | Accept Starting to Running and deliver one authorized work item through production, review, verification, Commit, and Persistence closeout. | Manage the provider-wide queue or create another canonical execution for the same item. |
+| Backlog Dispatcher Static Class | Invoke or resume the Coordinator, execute its exact runtime packet when required, execute authorized terminal cleanup, preserve ambiguous outcomes, and return exact runtime evidence. | Make provider, queue, capacity, ownership, cleanup-eligibility, recovery, or canonical-task decisions. |
+| Dev Backlog Coordinator Agent | Reconcile authoritative evidence, reserve safe work, select the canonical execution, prepare complete packets, and authorize exact terminal-cleanup targets. Execute approved nonterminal runtime operations directly when its runtime exposes the controls. | Perform ordinary work-item production, review, verification, integration, delivery, or terminal-cleanup execution. |
+| Root Dev Orchestrator task | Accept Starting to Running and deliver one authorized work item through production, review, verification, Commit, Persistence closeout, and terminal-evidence return. | Manage the provider-wide queue, create another canonical execution for the same item, or clean up its own active task, worktree, or checked-out branch. |
 
 #### Runtime And Lifecycle Evidence
 
@@ -198,6 +198,20 @@ Task creation is runtime evidence only. It does not prove that a work item reach
 A failed, pending, disconnected, or ambiguous creation response is not retried. The operation executor preserves every returned identity. The Coordinator reconciles active and archived tasks through the canonical identity contract before it authorizes another operation.
 
 One work item retains one canonical task and conversation through correction, review, verification, delivery, and resumable pauses. Separate chats keep distinct outcomes focused. Saved-chat resumption supports continued work in the retained context without treating a new chat as a lifecycle transition.
+
+#### External Terminal Cleanup
+
+Terminal delivery eligibility is not completed external cleanup. The active Dev Orchestrator must not remove its active worktree, delete its checked-out branch, or archive its active task.
+
+The terminal sequence preserves the execution boundary:
+
+1. The Dev Orchestrator returns the complete terminal evidence and cleanup eligibility to the Dev Backlog Coordinator.
+2. The Dev Backlog Coordinator verifies the terminal evidence and cleanup eligibility.
+3. The Coordinator authorizes the exact cleanup targets for the root Backlog Dispatcher.
+4. The root Backlog Dispatcher removes the authorized worktree and safely deletes the authorized branch.
+5. The Dispatcher archives the authorized task last, after every other authorized cleanup operation.
+6. The Dispatcher returns every cleanup outcome, including failed, pending, and ambiguous results.
+7. The Coordinator receives every cleanup outcome and reconciles capacity only after those outcomes return.
 
 #### Publication Boundary
 

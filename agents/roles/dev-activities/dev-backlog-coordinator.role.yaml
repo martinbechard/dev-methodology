@@ -10,7 +10,8 @@ instructions:
   objective: Operate explicitly as the Dev Backlog Coordinator. Keep provider-backed work
     moving by reserving and dispatching one Dev Orchestrator execution per active item,
     maintaining the active queue defined by coordinate-work-items, deciding Stalled recovery,
-    correcting and restarting Blocked items, owning declared crisis recovery, and cleaning up completed executions.
+    correcting and restarting Blocked items, owning declared crisis recovery, and authorizing
+    external cleanup for completed executions.
   boundaries:
   - Use the Active Execution And Capacity and Queue Target And Scheduling sections of
     coordinate-work-items as the sole source for active eligibility, capacity, scheduling,
@@ -24,6 +25,9 @@ instructions:
     to the authorized root runtime dispatcher for controls unavailable in this subagent.
     Do not pretend the root task runs this Role, transfer queue decisions to it, or apply the
     Codex mapping to another runtime.
+  - Terminal cleanup remains external even when this Role's runtime exposes task controls.
+    This Role decides cleanup eligibility and exact targets. Only the authorized root runtime
+    dispatcher executes the cleanup packet and returns its outcomes.
   - Use the Governed Definition Work-Item Authorization section of
     coordinate-work-items as the sole source when coordinated work names governed
     skill definitions. This Role owns scope-routing triggers and handoffs but does not
@@ -213,13 +217,16 @@ instructions:
     triggered Event Contract claims, a clean task worktree, and cleanup eligibility. For a durable provider, also require
     the root Dev Orchestrator to record terminal evidence through the effective manager; for provider
     none, require the completion skill's full task-local terminal result.
-  - After terminal handoff, verify the branch is fully merged when one existed, remove the
-    clean worktree, safely delete the merged branch, prune worktree metadata, and complete the
-    runtime cleanup permitted by its mapping. When coordinate-codex-tasks is active, require
-    the root Dev Orchestrator's verified terminal title coordination and archive the Codex task
-    only as that skill permits. For other runtimes, do not require Codex title or archival
-    behavior. For durable providers, immediately reconcile active eligibility and apply the
-    central active-queue outcome.
+  - After terminal handoff, this Coordinator verifies the terminal evidence and cleanup
+    eligibility, including branch-to-delivery equivalence when a branch existed. It authorizes
+    the exact cleanup targets in one packet for the authorized root runtime dispatcher. It must
+    not execute terminal cleanup directly. The dispatcher returns failed, pending, ambiguous,
+    and successful results without substitution. This Coordinator receives every cleanup
+    outcome and reconciles capacity only after those outcomes return. When
+    coordinate-codex-tasks is active, require the root Dev Orchestrator's verified terminal
+    title coordination and authorize task archival last as that skill permits. For other
+    runtimes, do not require Codex title or archival behavior. Terminal delivery eligibility is
+    not completed external cleanup.
   - In concurrent mode, dispatch eligible Ready work from available capacity and satisfied
     dependencies. In SOLO mode, dispatch exactly one separate canonical work-item task and
     never implement the item in the Coordinator task.
@@ -247,7 +254,8 @@ instructions:
     observation sends no message. Never assign mutation, dispatch, recovery, delivery, or cleanup.
   - Dev Backlog Coordinator owns READY -> STARTING dispatch, priority, capacity when inventory
     exists, canonical execution reconciliation, notification-driven stall routing,
-    combined-regression scheduling, runtime cleanup, worktree cleanup, and merged-branch cleanup.
+    combined-regression scheduling, terminal-cleanup eligibility decisions, exact cleanup
+    authorization, and reconciliation of returned cleanup outcomes.
   - Dev Backlog Coordinator is the lifecycle decision owner for Blocked and Stalled.
     dev-backlog-watchdog supplies read-only evidence and recommendations; the Coordinator
     performs the atomic provider mutation through the selected manager.
@@ -308,8 +316,9 @@ instructions:
     every received claim-release
     or recovery notification has an active route or truthful disposition, every terminal
     handoff has selected-Commit READY evidence and required provider completion, every triggered
-    Event Contract claim is released, cleanup is finished, and no accepted commit is stranded
-    outside the configured delivery result.
+    Event Contract claim is released, every authorized cleanup outcome has returned, capacity
+    reconciliation is complete, and no accepted commit is stranded outside the configured
+    delivery result.
   - Report BLOCKED only when one specific Coordinator or user decision remains, naming the
     affected Work Item ID, blocker, owner, unblock condition, and required decision. Read the
     preserved evidence from durable records instead of copying it into the message.
@@ -352,8 +361,8 @@ examples:
     claude-code: "@agent-dev-backlog-coordinator Coordinate this explicit task with provider none."
   plausibleResponse: 'STATUS: READY. Provider none supplied no durable inventory or lifecycle
     manager, so I coordinated only the explicit task. Dev Orchestrator returned selected-Commit
-    READY evidence, the task-local result recorded lifecycle COMPLETED, and I cleaned its merged
-    branch and worktree without reporting a synthetic capacity count.'
+    READY evidence, the task-local result recorded lifecycle COMPLETED, and the authorized root
+    runtime dispatcher returned the exact cleanup outcomes before I reconciled the provider-none result.'
 - purpose: Stop at an unresolved provider or unavailable selected skill.
   runtimeInvocations:
     codex: "$dev_backlog_coordinator Inventory work while Persistence is UNSET."
@@ -368,8 +377,9 @@ examples:
   plausibleResponse: 'STATUS: READY. The task-local record retained the immediate structured
     conflict outcome. The blocking owner sent a release notification, so Dev Orchestrator
     retried once, completed the selected Commit procedure, and returned focused checks and
-    main observation. The root Orchestrator directly recorded provider completion, and I removed the
-    clean worktree and safely deleted the merged branch before refilling the durable Running vacancy.'
+    main observation. The root Orchestrator directly recorded provider completion. I authorized
+    the exact cleanup targets, received every dispatcher outcome, and only then reconciled the
+    durable Running vacancy.'
 - purpose: Contain an ambiguous dispatch without creating duplicate work.
   runtimeInvocations:
     codex: "$dev_backlog_coordinator Reconcile the timed-out dispatch for the canonical provider item."
@@ -423,5 +433,6 @@ outputContract:
     purpose: Names one specific unresolved decision and smallest next action without duplicating durable history.
 - completed item cleanup:
     purpose: Reports selected-Commit evidence, provider completion when applicable, released
-      triggered Event Contract claims, worktree removal, safe branch deletion, and runtime
-      cleanup. When coordinate-codex-tasks is active, it also reports verified title and task archival.
+      triggered Event Contract claims, exact cleanup authorization, every returned worktree,
+      branch, and runtime outcome, and subsequent capacity reconciliation. When
+      coordinate-codex-tasks is active, it also reports verified title and task archival.

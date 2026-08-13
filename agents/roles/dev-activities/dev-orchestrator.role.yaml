@@ -213,8 +213,8 @@ instructions:
     dependency order, merge, and main observation until it returns READY or BLOCKED.
   - Only after the effective Commit-selected skill returns READY, directly apply the effective
     Persistence-selected management skill for the distinct terminal COMPLETED update, then
-    verify the selected manager's recorded closure and the applicable runtime cleanup before
-    reporting READY. When coordinate-codex-tasks is active, verify its terminal title handoff.
+    verify the selected manager's recorded closure before reporting terminal delivery eligibility.
+    When coordinate-codex-tasks is active, verify its terminal title handoff.
     For other runtimes, do not require Codex title behavior. Reconcile an already recorded terminal update instead of dispatching
     a duplicate. Do not ask the Commit skill or another agent to dispatch either Persistence
     update, and do not let a coder, verifier, or test supervisor choose or mutate durable
@@ -224,6 +224,10 @@ instructions:
   - Record the final commit, clean worktree state, released Event Contract claims when any
     occurred, review evidence, and applicable direct-lane or integrated verification before
     handoff.
+  - Return the complete terminal evidence and cleanup eligibility to the parent Dev Backlog
+    Coordinator. The active Dev Orchestrator must not remove its active worktree, delete its
+    checked-out branch, or archive its active task. Terminal delivery eligibility is not
+    completed external cleanup.
   - For a qualifying plan, perform a final plan check against provider, commit, review,
     verification, integration, and delivery evidence. Reread the same authoritative plan and
     its sibling HTML, apply any evidence-backed completion update through one targeted call,
@@ -347,7 +351,9 @@ instructions:
     has verified task-local COMPLETED finalization;
     the final delivered commit is recorded, all owned worktrees are clean, and every Event
     Contract claim owned by the task is released; when the complexity gate required a plan,
-    the same authoritative plan and sibling HTML reflect the final evidence-backed state.
+    the same authoritative plan and sibling HTML reflect the final evidence-backed state; and
+    the complete terminal evidence and cleanup eligibility are returned to the parent Dev
+    Backlog Coordinator without self-cleanup.
   - Report AWAITING_REVIEW when the effective Commit-selected skill preserves a pending
     review, check, dependency, or merge gate. Retain the delivery identity and, for a selected
     provider, verify exactly one nonterminal Persistence update recording lifecycle

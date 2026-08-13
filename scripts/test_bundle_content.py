@@ -4520,6 +4520,36 @@ class BundleContentTests(unittest.TestCase):
         normalized_codex = " ".join(codex_text.split())
         normalized_delivery = " ".join(delivery_text.split())
 
+        orchestrator_role = " ".join(
+            (
+                ROLES_ROOT
+                / "dev-activities"
+                / "dev-orchestrator.role.yaml"
+            ).read_text(encoding="utf-8").split()
+        )
+        coordinator_role = " ".join(
+            (
+                ROLES_ROOT
+                / "dev-activities"
+                / "dev-backlog-coordinator.role.yaml"
+            ).read_text(encoding="utf-8").split()
+        )
+        dispatch_design = " ".join(
+            (
+                REPOSITORY_ROOT
+                / "design"
+                / "agents"
+                / "work-item-dispatching-and-delivery.md"
+            ).read_text(encoding="utf-8").split()
+        )
+        lifecycle_design = " ".join(
+            (
+                REPOSITORY_ROOT
+                / "design"
+                / "orchestrated-development-lifecycle.html"
+            ).read_text(encoding="utf-8").split()
+        )
+
         for phrase in (
             "returns the complete terminal evidence and cleanup eligibility",
             "must not archive its active Codex task",
@@ -4556,6 +4586,69 @@ class BundleContentTests(unittest.TestCase):
             normalized_dispatcher.index(phrase) for phrase in ordered_cleanup
         ]
         self.assertEqual(sorted(positions), positions)
+
+        orchestrator_prohibitions = (
+            "must not remove its active worktree",
+            "delete its checked-out branch",
+            "archive its active task",
+        )
+        for source_name, source_text in (
+            ("Dev Orchestrator role", orchestrator_role),
+            ("dispatch design", dispatch_design),
+            ("lifecycle design", lifecycle_design),
+        ):
+            for phrase in orchestrator_prohibitions:
+                with self.subTest(source=source_name, prohibition=phrase):
+                    self.assertIn(phrase, source_text)
+
+        coordinator_contract = (
+            "verifies the terminal evidence and cleanup eligibility",
+            "authorizes the exact cleanup targets",
+            "receives every cleanup outcome",
+            "reconciles capacity only after those outcomes return",
+        )
+        for source_name, source_text in (
+            ("Dev Backlog Coordinator role", coordinator_role),
+            ("dispatch design", dispatch_design),
+            ("lifecycle design", lifecycle_design),
+        ):
+            for phrase in coordinator_contract:
+                with self.subTest(source=source_name, contract=phrase):
+                    self.assertIn(phrase, source_text)
+
+        for source_name, source_text in (
+            ("Dev Orchestrator role", orchestrator_role),
+            ("Dev Backlog Coordinator role", coordinator_role),
+            ("dispatch design", dispatch_design),
+            ("lifecycle design", lifecycle_design),
+        ):
+            with self.subTest(source=source_name, delivery_cleanup_distinction=True):
+                self.assertIn(
+                    "Terminal delivery eligibility is not completed external cleanup.",
+                    source_text,
+                )
+
+        ordered_external_cleanup = (
+            "returns the complete terminal evidence and cleanup eligibility",
+            "verifies the terminal evidence and cleanup eligibility",
+            "authorizes the exact cleanup targets",
+            "removes the authorized worktree",
+            "archives the authorized task last",
+            "returns every cleanup outcome",
+            "reconciles capacity only after those outcomes return",
+        )
+        for source_name, source_text in (
+            ("dispatch design", dispatch_design),
+            ("lifecycle design", lifecycle_design),
+        ):
+            for phrase in ordered_external_cleanup:
+                with self.subTest(source=source_name, ordered_marker=phrase):
+                    self.assertIn(phrase, source_text)
+            if not all(phrase in source_text for phrase in ordered_external_cleanup):
+                continue
+            positions = [source_text.index(phrase) for phrase in ordered_external_cleanup]
+            with self.subTest(source=source_name, ordered_cleanup=True):
+                self.assertEqual(sorted(positions), positions)
 
     def test_main_branch_completion_requires_integrated_main_evidence(self) -> None:
         skill_name = "deliver-work-item-main-branch"
@@ -10504,7 +10597,9 @@ Visible after.
             "send only a final outcome or one specific Coordinator decision",
             "canonical execution identity",
             "When coordinate-codex-tasks is active, also retain its canonical Codex task and conversation identifiers",
-            "remove the clean worktree",
+            "authorizes the exact cleanup targets",
+            "authorized root runtime dispatcher",
+            "receives every cleanup outcome",
         ):
             with self.subTest(contract=required_contract):
                 self.assertIn(required_contract, role_text)
@@ -11792,9 +11887,9 @@ Visible after.
             "nested Merge Coordinator",
             "inside the same work item",
             "Re-review reconciled content when integration changes meaning",
-            "Verify and delete delivery or cleanup branches only when the effective Commit contract created them.",
-            "Delete delivery and cleanup branches only when the effective Commit contract created them and their cleanup gates pass.",
-            "refill queue capacity",
+            "The Coordinator verifies the terminal evidence and cleanup eligibility",
+            "The root Dispatcher removes the authorized worktree, safely deletes the authorized branch",
+            "reconciles capacity only after those outcomes return",
         ):
             with self.subTest(delivery_phrase=phrase):
                 self.assertIn(phrase, lifecycle_text)
