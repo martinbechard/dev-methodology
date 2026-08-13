@@ -1,6 +1,6 @@
 # Simplify New-Document Provenance Headers
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -116,6 +116,17 @@ Approved at creation from the user's 2026-08-12 message and expanded by the user
 - The numeric offset preserves an exact instant while presenting the creation time in local civil time.
 - Git remains the default modification-history authority. This item does not add mutable modification metadata to document headers.
 - The obsolete `migrate-wiki-skills-and-project-context-historical-provenance` proposal is superseded rather than approved. Its page correction is the final bounded phase of this item, avoiding a duplicate policy owner or cross-folder dependency.
+
+## Starting Handoff Evidence
+
+- Reserved At: 2026-08-13T11:43:11Z.
+- Transition: `Ready -> Starting`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Baseline: `e8923f2cb1fe967806a0542359d15af01d94ac19` on primary `main`.
+- Capacity: Slot 3 of 5. Independent document-provenance scope; exclude private Backlog Dispatcher, evaluation terminology, Dev Orchestrator routing, and documentation-template parser paths.
+- Transition Claims: `start-simplify-new-document-provenance-header-work-item`; event `d0bd6ece-b12a-4174-bbd1-f1fce12a7ef2`. `start-simplify-new-document-provenance-header-provider`; event `450af136-cade-4d7a-9a4d-28d1b64ff762`.
+- Runtime Identity: Pending caller-owned visible task creation. Creation does not imply Running.
 
 ## Policy Supersession Evidence
 
