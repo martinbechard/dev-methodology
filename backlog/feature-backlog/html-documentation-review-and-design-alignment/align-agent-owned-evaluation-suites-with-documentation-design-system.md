@@ -1,8 +1,8 @@
 # Align Agent-Owned Evaluation Suites with the Documentation Design System
 
-Owner: Dev Orchestrator
+Owner: Preserved canonical Dev Orchestrator execution
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -240,3 +240,19 @@ Do not rename an upstream branch, create upstream provider records, change gover
 - Preserved Execution: Canonical Task and Conversation `019ffc96-f685-7481-b2eb-1557d82119bf` on host `local`, with the same nested Dev Orchestrator, plan, accepted semantic baseline, and source-unmodified state.
 - Coordination Boundary: Claim-free crisis transition. No upstream backlog record or page implementation was created or resumed.
 - Next Action: Reserve this Ready item for the same canonical execution, then require claim-free `Starting -> Running` acceptance before creating the already-authorized upstream file-provider record or mutating page sources.
+
+## Crisis Starting Reservation
+
+- Transition: `Ready -> Starting`.
+- Reserved At: 2026-08-14T01:25:21Z.
+- Crisis Epoch: `blocked-crisis-20260813T223935Z`.
+- Baseline: `1b6978e6` on configured dev-methodology primary branch `main`.
+- Canonical Task and Conversation: `019ffc96-f685-7481-b2eb-1557d82119bf` on host `local`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Execution Decision: Resume the preserved visible task and its existing nested Dev Orchestrator; do not create or replace an execution.
+- Capacity: The sole crisis recovery lane. No other crisis or ordinary work-item execution may mutate concurrently.
+- Coordination Boundary: Claim-free crisis reservation. No claim operation is permitted before crisis exit.
+- Required Acceptance: The preserved Dev Orchestrator must atomically record `Starting -> Running` without claims before upstream provider creation or source mutation.
+- Required Runtime Title: `Starting — Align Agent-Owned Evaluation Suites With Documentation Design System`.
+- Authorized Work: Create the already-authorized py-json-render file-backed upstream Work Item through the corrected configured-primary-branch transaction, then continue the accepted generator-ownership plan and page alignment through independent review and focused verification.
