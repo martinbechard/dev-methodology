@@ -1810,7 +1810,6 @@ def _coordinator_schema() -> dict[str, Any]:
                                                             "type": "array",
                                                             "minItems": 1,
                                                             "maxItems": 1,
-                                                            "uniqueItems": True,
                                                             "items": {"type": "string"},
                                                         }
                                                     },

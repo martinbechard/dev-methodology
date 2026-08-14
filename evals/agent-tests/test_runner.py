@@ -438,6 +438,54 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             delivery_schema["properties"]["status"]["enum"],
         )
 
+    def test_coordinator_schema_uses_codex_compatible_single_claim_release_event(self) -> None:
+        """The model-facing schema expresses one event without unsupported uniqueness syntax."""
+        event_ids_schema = runner._coordinator_schema()["properties"]["runs"]["items"][
+            "properties"
+        ]["scenarioResults"]["items"]["properties"]["handoffReceipts"]["items"][
+            "properties"
+        ]["claimRelease"]["properties"]["eventIds"]
+
+        self.assertEqual(
+            {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 1,
+                "items": {"type": "string"},
+            },
+            event_ids_schema,
+        )
+
+    def test_claim_release_semantics_accept_one_event_and_reject_duplicate_events(self) -> None:
+        """Runtime validation preserves exact-one semantics outside the model-facing schema."""
+        suite = self._suite("claim-release")
+        scenario = dict(suite.scenarios[0])
+        valid_receipt = {
+            "lane": "integration",
+            "claimRelease": {"eventIds": ["release-event-1"]},
+        }
+        duplicate_receipt = json.loads(json.dumps(valid_receipt))
+        duplicate_receipt["claimRelease"]["eventIds"].append("release-event-1")
+
+        with mock.patch.object(
+            runner,
+            "_scenario_resource_coordination",
+            return_value=("resource-claim", {"claimedLanes": ["integration"]}),
+        ):
+            runner._validate_conditional_handoff_receipts(
+                "claim-release:happy",
+                suite,
+                scenario,
+                (valid_receipt,),
+            )
+            with self.assertRaisesRegex(RuntimeError, "exactly one claim release eventId"):
+                runner._validate_conditional_handoff_receipts(
+                    "claim-release:happy",
+                    suite,
+                    scenario,
+                    (duplicate_receipt,),
+                )
+
     def test_coordinator_schema_requires_every_strict_object_property(self) -> None:
         """Codex strict-object schemas require every declared property at every object level."""
         pending = [("$", runner._coordinator_schema())]
@@ -3605,13 +3653,26 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                     codex_home.mkdir()
                     return workspace, codex_home, ()
 
+                submission_boundary_reached = False
+
                 def run_process(command: object, *arguments: object, **keywords: object) -> dict[str, object]:
+                    nonlocal submission_boundary_reached
+                    submission_boundary_reached = True
                     values = list(command)
                     schema_path = Path(values[values.index("--output-schema") + 1])
+                    emitted_schema = json.loads(schema_path.read_text(encoding="utf-8"))
                     self.assertEqual(
                         runner._coordinator_schema(),
-                        json.loads(schema_path.read_text(encoding="utf-8")),
+                        emitted_schema,
                     )
+                    event_ids_schema = emitted_schema["properties"]["runs"]["items"][
+                        "properties"
+                    ]["scenarioResults"]["items"]["properties"]["handoffReceipts"]["items"][
+                        "properties"
+                    ]["claimRelease"]["properties"]["eventIds"]
+                    self.assertNotIn("uniqueItems", event_ids_schema)
+                    self.assertEqual(1, event_ids_schema["minItems"])
+                    self.assertEqual(1, event_ids_schema["maxItems"])
                     add_dirs = [Path(values[index + 1]) for index, value in enumerate(values) if value == "--add-dir"]
                     checkpoint_root = add_dirs[-1]
                     checkpoint = checkpoint_root / "checkpoint-suite" / "happy.json"
@@ -3665,6 +3726,7 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                         ),
                     )
 
+                self.assertTrue(submission_boundary_reached)
                 result = results[0]
                 self.assertEqual("infrastructure-failed", result["status"])
                 self.assertNotIn("error", result)
