@@ -4,164 +4,24 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Coding-Agent Runtime Configuration And Evaluation Across Agent harnesses</title>
+  <meta name="design-system-version" content="1.0.0">
+  <link rel="stylesheet" href="documentation-design-system/assets/design-system.css">
   <style>
-    :root {
-      --color-ink: #18212f;
-      --color-muted: #596579;
-      --color-page: #f6f8fb;
-      --color-panel: #ffffff;
-      --color-line: #d9e0ea;
-      --color-agent: #2563eb;
-      --color-project: #0f766e;
-      --color-soft-blue: #e8f0ff;
-      --color-soft-green: #e4f7f4;
-      --shadow-panel: 0 12px 30px rgba(31, 41, 55, 0.08);
-      --space-2: 0.5rem;
-      --space-3: 0.75rem;
-      --space-4: 1rem;
-      --space-5: 1.25rem;
-      --space-6: 1.5rem;
-      --space-8: 2rem;
-      --space-10: 2.5rem;
-      --radius: 0.5rem;
-      --content-max: 1160px;
-      --font-sm: 0.92rem;
-      --font-xs: 0.78rem;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      color: var(--color-ink);
-      background:
-        linear-gradient(180deg, rgba(232, 240, 255, 0.9), rgba(246, 248, 251, 0) 340px),
-        var(--color-page);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      line-height: 1.52;
-    }
-
-    main {
-      max-width: var(--content-max);
-      margin: 0 auto;
-      padding: var(--space-10) var(--space-6);
-    }
-
-    h1,
-    h2,
-    h3,
-    h4 {
-      margin: 0;
-      line-height: 1.15;
-    }
-
-    h1 {
-      max-width: 900px;
-      font-size: clamp(2rem, 4vw, 3.55rem);
-    }
-
-    h2 {
-      margin-bottom: var(--space-4);
-      font-size: clamp(1.35rem, 2vw, 2rem);
-    }
-
-    h3 {
-      font-size: 1.08rem;
-    }
-
-    h4 {
-      font-size: 1rem;
-    }
-
-    p {
-      margin: 0;
-      color: var(--color-muted);
-    }
-
-    p + p {
-      margin-top: 0.65rem;
-    }
-
-    a {
-      color: var(--color-agent);
-      font-weight: 700;
-    }
-
-    code {
-      padding: 0.1rem 0.24rem;
-      border-radius: 0.25rem;
-      background: #edf1f6;
-      font-size: 0.9em;
-    }
-
-    .document-nav {
-      display: grid;
-      gap: var(--space-3);
-      margin-bottom: var(--space-6);
-    }
-
-    .document-sequence {
-      display: flex;
-      flex-wrap: wrap;
-      gap: var(--space-3);
-    }
-
-    .document-nav a {
-      display: inline-flex;
-      width: max-content;
-      align-items: center;
-      gap: var(--space-2);
-      padding: 0.45rem 0.75rem;
-      border: 1px solid var(--color-line);
-      border-radius: var(--radius);
-      background: var(--color-panel);
-      color: var(--color-muted);
-      font-size: var(--font-sm);
-      text-decoration: none;
-      box-shadow: var(--shadow-panel);
-      transition: border-color 160ms ease, color 160ms ease, transform 160ms ease;
-    }
-
-    .document-nav a:hover,
-    .document-nav a:focus-visible {
-      transform: translateY(-1px);
-      border-color: var(--color-agent);
-      color: var(--color-ink);
-      outline: none;
-    }
-
-    .hero {
-      display: grid;
-      gap: var(--space-5);
-      margin-bottom: var(--space-8);
-    }
-
-    .lede {
-      max-width: 920px;
-      font-size: 1.08rem;
-    }
-
     .boundary {
       max-width: 920px;
-      padding: var(--space-4) var(--space-5);
-      border-left: 0.35rem solid var(--color-project);
-      background: var(--color-soft-green);
-      color: var(--color-ink);
-    }
-
-    .section {
-      margin-top: var(--space-8);
+      padding: var(--ds-space-4) var(--ds-space-5);
+      border-left: 0.35rem solid var(--ds-teal);
+      background: var(--ds-soft-teal);
+      color: var(--ds-ink);
     }
 
     .section > .lede {
-      margin-bottom: var(--space-4);
+      margin-bottom: var(--ds-space-4);
     }
 
     .context-layers {
       display: grid;
-      gap: var(--space-3);
+      gap: var(--ds-space-3);
       margin: 0;
       padding: 0;
       list-style: none;
@@ -171,14 +31,14 @@
     .context-layer {
       display: grid;
       grid-template-columns: 3rem minmax(0, 1fr);
-      gap: var(--space-4);
+      gap: var(--ds-space-4);
       align-items: start;
-      padding: var(--space-5);
-      border: 1px solid var(--color-line);
+      padding: var(--ds-space-5);
+      border: 1px solid var(--ds-line);
       border-left: 0.35rem solid var(--layer-color);
-      border-radius: var(--radius);
-      background: var(--color-panel);
-      box-shadow: var(--shadow-panel);
+      border-radius: var(--ds-radius);
+      background: var(--ds-panel);
+      box-shadow: var(--ds-shadow);
     }
 
     .context-layer::before {
@@ -191,29 +51,29 @@
       border-radius: 50%;
       background: var(--layer-soft-color);
       color: var(--layer-color);
-      font-size: var(--font-xs);
+      font-size: 0.78rem;
       font-weight: 800;
     }
 
     .context-layer:nth-child(1) {
-      --layer-color: var(--color-agent);
-      --layer-soft-color: var(--color-soft-blue);
+      --layer-color: var(--ds-blue);
+      --layer-soft-color: var(--ds-soft-blue);
     }
 
     .context-layer:nth-child(2) {
-      --layer-color: var(--color-project);
-      --layer-soft-color: var(--color-soft-green);
+      --layer-color: var(--ds-teal);
+      --layer-soft-color: var(--ds-soft-teal);
     }
 
     .layer-copy h3 {
-      margin-bottom: var(--space-2);
+      margin-bottom: var(--ds-space-2);
     }
 
     .nested-layers {
       display: grid;
-      gap: var(--space-3);
-      margin: var(--space-4) 0 0 var(--space-3);
-      padding: 0 0 0 var(--space-5);
+      gap: var(--ds-space-3);
+      margin: var(--ds-space-4) 0 0 var(--ds-space-3);
+      padding: 0 0 0 var(--ds-space-5);
       border-left: 2px solid var(--layer-color);
       list-style: none;
       counter-reset: nested-layer;
@@ -222,11 +82,11 @@
     .nested-layer {
       display: grid;
       grid-template-columns: 3rem minmax(0, 1fr);
-      gap: var(--space-3);
-      padding: var(--space-4);
-      border: 1px solid var(--color-line);
-      border-radius: var(--radius);
-      background: var(--color-page);
+      gap: var(--ds-space-3);
+      padding: var(--ds-space-4);
+      border: 1px solid var(--ds-line);
+      border-radius: var(--ds-radius);
+      background: var(--ds-page);
     }
 
     .nested-layer::before {
@@ -239,106 +99,42 @@
       border-radius: 50%;
       background: var(--layer-soft-color);
       color: var(--layer-color);
-      font-size: var(--font-xs);
+      font-size: 0.78rem;
       font-weight: 800;
     }
 
     .nested-copy h4 {
-      margin-bottom: var(--space-2);
-    }
-
-    .table-controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: var(--space-3) var(--space-5);
-      align-items: end;
-      justify-content: space-between;
-      margin-bottom: var(--space-4);
-      padding: var(--space-4);
-      border: 1px solid var(--color-line);
-      border-radius: var(--radius);
-      background: var(--color-panel);
-      box-shadow: var(--shadow-panel);
-    }
-
-    .filter-field {
-      display: grid;
-      gap: var(--space-2);
-    }
-
-    .filter-field label {
-      color: var(--color-ink);
-      font-size: var(--font-sm);
-      font-weight: 800;
-    }
-
-    .filter-field select {
-      width: min(18rem, 100%);
-      min-height: 2.75rem;
-      padding: 0.55rem 2.25rem 0.55rem 0.7rem;
-      border: 1px solid var(--color-muted);
-      border-radius: var(--radius);
-      background: var(--color-panel);
-      color: var(--color-ink);
-      font: inherit;
-    }
-
-    .filter-field select:focus-visible {
-      outline: 3px solid var(--color-agent);
-      outline-offset: 2px;
+      margin-bottom: var(--ds-space-2);
     }
 
     .filter-status {
-      font-size: var(--font-sm);
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      overflow: hidden;
-      border: 1px solid var(--color-line);
-      border-radius: var(--radius);
-      background: var(--color-panel);
-      box-shadow: var(--shadow-panel);
-    }
-
-    th,
-    td {
-      padding: 0.85rem;
-      border-bottom: 1px solid var(--color-line);
-      text-align: left;
-      vertical-align: top;
-    }
-
-    th {
-      background: var(--color-soft-blue);
-      color: var(--color-ink);
-      font-size: var(--font-xs);
-      text-transform: uppercase;
+      align-self: end;
+      margin-bottom: 0;
+      font-size: 0.92rem;
     }
 
     .purpose-heading th {
-      background: var(--color-soft-green);
+      background: var(--ds-soft-teal);
       font-size: 1rem;
       text-transform: none;
     }
 
     .purpose-group + .purpose-group .purpose-heading th {
-      border-top: 0.25rem solid var(--color-project);
+      border-top: 0.25rem solid var(--ds-teal);
     }
 
     .purpose-summary {
       display: block;
-      margin-top: var(--space-2);
-      color: var(--color-muted);
-      font-size: var(--font-sm);
+      margin-top: var(--ds-space-2);
+      color: var(--ds-muted);
+      font-size: 0.92rem;
       font-weight: 400;
     }
 
     .format-heading th {
-      background: var(--color-soft-blue);
-      color: var(--color-project);
-      font-size: var(--font-sm);
+      background: var(--ds-soft-blue);
+      color: var(--ds-teal);
+      font-size: 0.92rem;
       text-transform: none;
     }
 
@@ -346,30 +142,22 @@
       display: none;
     }
 
-    tr:last-child td {
-      border-bottom: 0;
-    }
-
     .name {
-      color: var(--color-ink);
+      color: var(--ds-ink);
       font-weight: 800;
     }
 
     .table-note {
-      margin-top: var(--space-3);
-      font-size: var(--font-sm);
+      margin-top: var(--ds-space-3);
+      font-size: 0.92rem;
     }
 
     .boundary-heading {
-      margin-top: var(--space-6);
-      margin-bottom: var(--space-3);
+      margin-top: var(--ds-space-6);
+      margin-bottom: var(--ds-space-3);
     }
 
     @media (max-width: 620px) {
-      main {
-        padding: var(--space-8) var(--space-4);
-      }
-
       .context-layer {
         grid-template-columns: 1fr;
       }
@@ -381,95 +169,30 @@
       .nested-layer {
         grid-template-columns: 1fr;
       }
-
-      table {
-        display: block;
-        overflow-x: auto;
-      }
-    }
-
-    body {
-      display: flex;
-      min-height: 100vh;
-      flex-direction: column;
-    }
-
-    main {
-      width: 100%;
-      flex: 1 0 auto;
-    }
-
-    .site-header,
-    .site-footer {
-      width: 100%;
-      max-width: var(--content-max);
-      margin: 0 auto;
-      padding-right: var(--space-6);
-      padding-left: var(--space-6);
-    }
-
-    .site-header {
-      display: flex;
-      align-items: center;
-      gap: var(--space-3);
-      padding-top: var(--space-4);
-    }
-
-    .site-brand {
-      display: inline-flex;
-      min-width: 0;
-      align-items: center;
-      gap: var(--space-3);
-      color: var(--color-ink);
-      font-size: clamp(0.88rem, 1.4vw, 0.95rem);
-      font-weight: 750;
-      line-height: 1.2;
-      text-decoration: none;
-    }
-
-    .site-logo {
-      width: 2.25rem;
-      height: 2.25rem;
-      border-radius: var(--radius-small, 0.35rem);
-      object-fit: cover;
-      box-shadow: 0 4px 12px rgba(31, 41, 55, 0.14);
-    }
-
-    .site-footer {
-      flex: 0 0 auto;
-      padding-bottom: var(--space-6);
-    }
-
-    .site-footer p {
-      padding-top: var(--space-4);
-      border-top: 1px solid var(--color-line);
-      color: var(--color-muted);
-      font-size: var(--font-xs);
-    }
-
-    .site-footer a {
-      color: inherit;
-      font-weight: 700;
-    }
-
-    @media (max-width: 680px) {
-      .site-header,
-      .site-footer {
-        padding-right: var(--space-4);
-        padding-left: var(--space-4);
-      }
     }
   </style>
-  <link rel="stylesheet" href="page-section-navigation.css">
 </head>
-<body>
-  <header class="site-header">
+<body id="top">
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <header class="site-header ds-header">
     <a class="site-brand" href="../index.html">
       <img class="site-logo" src="../logo.png" alt="DevConsult Canada logo">
       <span>AI-Assisted Coding Toolkit Index</span>
     </a>
   </header>
-  <main>
+  <nav class="suite-nav" aria-label="Documentation pages">
+    <a href="agent-and-skill-definitions.html">Agent And Skill Definitions</a>
+    <a href="agent-and-skill-evaluations.html">Agent And Skill Evaluations</a>
+    <a href="agent-owned-evaluation-suites.html">Agent-Owned Evaluation Suites</a>
+    <a href="agentic-configuration.html" aria-current="page">Agentic Configuration</a>
+    <a href="skills-modularization.html">Skills Modularization</a>
+    <a href="generic-agent-definitions-source.html">Generic Agent Definitions Source</a>
+    <a href="agent-skill-specialization-examples.html">Agent And Skill Specialization Examples</a>
+    <a href="orchestrated-development-lifecycle.html">Orchestrated Development Lifecycle</a>
+    <a href="documentation-templates.html">Documentation Templates</a>
+    <a href="wiki-skills-and-project-context.html">Wiki Skills And Project Context</a>
+  </nav>
+  <main id="main-content" tabindex="-1">
     <nav class="document-nav" aria-label="Documentation navigation">
       <div class="document-sequence">
         <a href="agent-owned-evaluation-suites.html" rel="prev"><span aria-hidden="true">&larr;</span> Previous: Agent-Owned Evaluation Suites</a>
@@ -483,7 +206,8 @@
       <p class="boundary">This page describes how coding agent runtimes use generated files and how evaluations across Agent harnesses configure and audit those runtimes.</p>
     </section>
 
-    <nav class="page-section-nav" aria-label="Page sections">
+    <nav class="page-nav" aria-label="Page sections">
+      <a href="#top">Top</a>
       <a href="#glossary-title">Glossary</a>
       <a href="#context-title">Knowledge structure</a>
       <a href="#layers-title">Context layers</a>
@@ -574,8 +298,8 @@
     <section class="section" aria-labelledby="locations-title">
       <h2 id="locations-title">Runtime Configuration File Locations</h2>
       <p class="lede">The table lists where each Agent harness discovers shared or user-level files, where project-level files live, and which runtime-specific file format or precedence rule applies. The bundle installer currently deploys generated agents for Codex, Claude Code, Gemini CLI, and Junie CLI. GitHub Copilot rows are documentation-only because the installer has no Copilot adapter.</p>
-      <div class="table-controls">
-        <div class="filter-field">
+      <div class="filters">
+        <div class="field">
           <label for="harness-filter">Show Agent harness</label>
           <select id="harness-filter">
             <option value="all">All Agent harnesses</option>
@@ -588,7 +312,8 @@
         </div>
         <p id="harness-filter-status" class="filter-status" aria-live="polite">Showing 20 rows across 5 Agent harnesses.</p>
       </div>
-      <table>
+      <div class="table-wrap" tabindex="0" role="region" aria-labelledby="locations-title">
+        <table class="wide-table">
         <thead>
           <tr>
             <th scope="col">Agent harness</th>
@@ -740,7 +465,8 @@
             <td>Junie documents root project guidelines rather than nested discovery. Use project skills for task-specific or folder-specific procedures.</td>
           </tr>
         </tbody>
-      </table>
+        </table>
+      </div>
       <p class="table-note">The <a href="generic-agent-definitions-source.html">Generic Agent Definitions Source</a> page owns conversion from conceptual definitions to Agent harness-specific outputs. This table covers only what each runtime file contributes, where the Agent harness discovers it, and which incompatible Agent harness-specific rule or format applies.</p>
     </section>
 
@@ -780,8 +506,14 @@
       <p class="table-note">The audit must contain one call-bearing MCP process stream. A completed call in another stream invalidates exact-once evidence. Each required operation is bound to its privacy-safe argument digest and bounded outcome on the same completed call. An outcome-less completed call is not semantic evidence. These boundaries protect reproducibility and host state; they do not claim hostile-code containment.</p>
     </section>
   </main>
-  <footer class="site-footer">
-    <p>Copyright (c) 2026 Martin.Bechard@DevConsult.ca - <a href="../LICENSE">MIT License</a></p>
+  <footer class="site-footer ds-footer">
+    <p>
+      <span class="ds-version">Design system v1.0.0</span>
+      <br>
+      <span class="footer-context">Page context: Hand-maintained Coding-Agent Runtime Configuration reference; accepted content baseline: review-agentic-configuration-text; Documentation Design System compatibility: v1.0.0.</span>
+      <br>
+      Copyright (c) 2026 Martin.Bechard@DevConsult.ca - <a href="../LICENSE">MIT License</a>
+    </p>
   </footer>
   <script src="documentation-settings.js"></script>
   <script>

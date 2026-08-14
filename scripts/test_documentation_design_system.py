@@ -189,6 +189,44 @@ WIKI_CONTEXT_SECTION_NAVIGATION = (
     ("Compounding context", "#health-title"),
     ("Sources", "#sources-title"),
 )
+AGENTIC_CONFIGURATION_PATH = (
+    REPOSITORY_ROOT / "design" / "agentic-configuration.html"
+)
+AGENTIC_CONFIGURATION_BASELINE_SEMANTIC_SHA256 = (
+    "fd0a7add182ff6a5a71d14b096aaef523460ed51146205093663337277404510"
+)
+AGENTIC_CONFIGURATION_ACCESSIBILITY_CONTRACT_SHA256 = (
+    "e831edf443a4cd9317820fcae23e4f6f05e32a3f686e0c63e9f3e1c69cda88b0"
+)
+AGENTIC_CONFIGURATION_ANCHOR_CONTRACT_SHA256 = (
+    "ba66063c388b64398718169991dbc7c7589aef6bcf7785cccc47917957102cea"
+)
+AGENTIC_CONFIGURATION_SCRIPT_CONTENT_SHA256 = (
+    "8310ca48b24a1e186129eec7c5882edc3306efb76df649295bb0cee18f40aa98"
+)
+AGENTIC_CONFIGURATION_SKIP_LINK = (
+    '<a class="skip-link" href="#main-content">Skip to main content</a>'
+)
+AGENTIC_CONFIGURATION_SUITE_NAV_START = (
+    '<nav class="suite-nav" aria-label="Documentation pages">'
+)
+AGENTIC_CONFIGURATION_DESIGN_VERSION = (
+    f'<span class="ds-version">Design system v{VERSION}</span>'
+)
+AGENTIC_CONFIGURATION_FOOTER_CONTEXT = (
+    "Page context: Hand-maintained Coding-Agent Runtime Configuration reference; "
+    "accepted content baseline: review-agentic-configuration-text; Documentation "
+    "Design System compatibility: v1.0.0."
+)
+AGENTIC_CONFIGURATION_SECTION_NAVIGATION = (
+    ("Top", "#top"),
+    ("Glossary", "#glossary-title"),
+    ("Knowledge structure", "#context-title"),
+    ("Context layers", "#layers-title"),
+    ("Configuration files", "#locations-title"),
+    ("Deployment and setup", "#bundle-runtime-title"),
+    ("Evaluation environment", "#evaluation-title"),
+)
 
 
 class _PageParser(HTMLParser):
@@ -509,6 +547,336 @@ def _wiki_context_semantic_text(source: str) -> str:
     )
     visible_text = re.sub(r"<[^>]+>", " ", visible_markup)
     return " ".join(unescape(visible_text).split())
+
+
+def _agentic_configuration_semantic_text(source: str) -> str:
+    """Validate the migrated shell and return the accepted page semantics."""
+
+    _validate_agentic_configuration_structure(source)
+    suite_nav_match = re.search(
+        rf"{re.escape(AGENTIC_CONFIGURATION_SUITE_NAV_START)}.*?</nav>",
+        source,
+        flags=re.DOTALL,
+    )
+    if suite_nav_match is None:
+        raise ValueError("suite navigation must be available for normalization")
+
+    without_additions = source.replace(AGENTIC_CONFIGURATION_SKIP_LINK, "", 1)
+    without_additions = without_additions.replace(suite_nav_match.group(0), "", 1)
+    without_additions = without_additions.replace('<a href="#top">Top</a>', "", 1)
+    without_additions = without_additions.replace(
+        AGENTIC_CONFIGURATION_DESIGN_VERSION,
+        "",
+        1,
+    )
+    without_additions = without_additions.replace(
+        f'<span class="footer-context">{AGENTIC_CONFIGURATION_FOOTER_CONTEXT}</span>',
+        "",
+        1,
+    )
+    visible_markup = re.sub(
+        r"<(?:style|script)\b.*?</(?:style|script)>",
+        "",
+        without_additions,
+        flags=re.DOTALL,
+    )
+    visible_text = re.sub(r"<[^>]+>", " ", visible_markup)
+    return " ".join(unescape(visible_text).split())
+
+
+def _validate_agentic_configuration_structure(source: str) -> None:
+    """Reject unauthorized Agentic Configuration contract drift."""
+
+    def require(condition: bool, message: str) -> None:
+        if not condition:
+            raise ValueError(message)
+
+    require(
+        source.startswith("<!doctype html>\n<html lang=\"en\">"),
+        "the approved absence of a creation-provenance block must remain unchanged",
+    )
+    require(
+        source.count(AGENTIC_CONFIGURATION_SKIP_LINK) == 1,
+        "skip link must be exact and unique",
+    )
+    require(
+        re.search(
+            rf'<body id="top">\s*{re.escape(AGENTIC_CONFIGURATION_SKIP_LINK)}',
+            source,
+        )
+        is not None,
+        "skip link must be the first body child",
+    )
+    require(
+        source.count('<main id="main-content" tabindex="-1">') == 1,
+        "main content must be an exact programmatic focus target",
+    )
+
+    suite_nav_matches = re.findall(
+        rf"{re.escape(AGENTIC_CONFIGURATION_SUITE_NAV_START)}(.*?)</nav>",
+        source,
+        flags=re.DOTALL,
+    )
+    require(len(suite_nav_matches) == 1, "suite navigation must be exact and unique")
+    anchor_pattern = re.compile(
+        r'<a href="([^"]+)"( aria-current="page")?>([^<]+)</a>'
+    )
+    suite_links = [
+        (href, label, current == ' aria-current="page"')
+        for href, current, label in anchor_pattern.findall(suite_nav_matches[0])
+    ]
+    require(
+        suite_links
+        == [
+            (href, label, index == 3)
+            for index, (label, href) in enumerate(LIFECYCLE_NAVIGATION)
+        ],
+        "suite navigation must match the authoritative anchor inventory",
+    )
+    require(
+        not anchor_pattern.sub("", suite_nav_matches[0]).strip(),
+        "suite navigation must contain anchors and whitespace only",
+    )
+
+    page_nav_matches = re.findall(
+        r'<nav class="page-nav" aria-label="Page sections">(.*?)</nav>',
+        source,
+        flags=re.DOTALL,
+    )
+    require(len(page_nav_matches) == 1, "page navigation must be exact and unique")
+    page_links = [
+        (label, href)
+        for href, current, label in anchor_pattern.findall(page_nav_matches[0])
+        if not current
+    ]
+    require(
+        page_links == list(AGENTIC_CONFIGURATION_SECTION_NAVIGATION),
+        "page navigation must preserve every accepted section in exact order",
+    )
+    require(
+        not anchor_pattern.sub("", page_nav_matches[0]).strip(),
+        "page navigation must contain anchors and whitespace only",
+    )
+
+    parser = _PageParser()
+    parser.feed(source)
+    require(parser.version_meta == [VERSION], "design-system metadata must be exact")
+    require(
+        parser.stylesheets
+        == ["documentation-design-system/assets/design-system.css"],
+        "the page must load only the adopted shared stylesheet",
+    )
+    require(
+        parser.ids
+        == [
+            "top",
+            "main-content",
+            "page-title",
+            "glossary-title",
+            "context-title",
+            "layers-title",
+            "locations-title",
+            "harness-filter",
+            "harness-filter-status",
+            "bundle-runtime-title",
+            "evaluation-title",
+        ],
+        "identifier inventory must match the accepted page structure",
+    )
+    require(len(parser.ids) == len(set(parser.ids)), "identifiers must remain unique")
+    require(
+        re.findall(r'aria-label="([^"]+)"', source)
+        == ["Documentation pages", "Documentation navigation", "Page sections"],
+        "aria-label inventory must remain exact",
+    )
+    require(
+        re.findall(r'aria-labelledby="([^"]+)"', source)
+        == [
+            "page-title",
+            "glossary-title",
+            "context-title",
+            "layers-title",
+            "locations-title",
+            "locations-title",
+            "bundle-runtime-title",
+            "evaluation-title",
+        ],
+        "aria-labelledby inventory must remain exact",
+    )
+    require(
+        re.findall(r'aria-current="([^"]+)"', source) == ["page"],
+        "aria-current inventory must remain exact",
+    )
+    require(
+        re.findall(r'aria-hidden="([^"]+)"', source) == ["true", "true"],
+        "decorative-arrow inventory must remain exact",
+    )
+    require(
+        re.findall(r'alt="([^"]+)"', source) == ["DevConsult Canada logo"],
+        "image alternative text inventory must remain exact",
+    )
+    require(
+        parser.script_sources == ["documentation-settings.js", None],
+        "settings and inline filter scripts must retain their accepted order",
+    )
+    require(
+        _ordered_contract_sha256(parser.script_contents)
+        == AGENTIC_CONFIGURATION_SCRIPT_CONTENT_SHA256,
+        "inline filter behavior must remain byte-for-byte unchanged",
+    )
+    require(parser.h1_count == 1, "the page must retain one h1")
+
+    contract_parser = _WikiContextContractParser()
+    contract_parser.feed(source)
+    normalized_accessibility_attributes = list(contract_parser.accessibility_attributes)
+    normalized_accessibility_attributes.remove(
+        ("div", "aria-labelledby", "locations-title")
+    )
+    require(
+        _ordered_contract_sha256(normalized_accessibility_attributes)
+        == AGENTIC_CONFIGURATION_ACCESSIBILITY_CONTRACT_SHA256,
+        "ordered accessibility attributes must preserve the accepted bindings",
+    )
+    normalized_anchor_contracts = list(contract_parser.anchor_contracts)
+    normalized_anchor_contracts.remove(
+        ("Skip to main content", "Skip to main content", "", "", "#main-content")
+    )
+    normalized_anchor_contracts.remove(("Top", "Top", "", "", "#top"))
+    require(
+        _ordered_contract_sha256(normalized_anchor_contracts)
+        == AGENTIC_CONFIGURATION_ANCHOR_CONTRACT_SHA256,
+        "ordered non-suite anchor text and destinations must remain exact",
+    )
+
+    require(
+        re.findall(r'data-harness="([^"]+)"', source)
+        == [
+            "codex",
+            "claude",
+            "gemini",
+            "junie",
+            "copilot",
+            "codex",
+            "claude",
+            "gemini",
+            "junie",
+            "copilot",
+            "codex",
+            "claude",
+            "gemini",
+            "junie",
+            "copilot",
+            "codex",
+            "claude",
+            "gemini",
+            "copilot",
+            "junie",
+        ],
+        "harness row inventory must remain exact",
+    )
+    require(
+        re.findall(r'data-harness-format="([^"]+)"', source)
+        == ["claude gemini junie copilot"],
+        "harness format inventory must remain exact",
+    )
+    require(
+        re.findall(r'<option value="([^"]+)">([^<]+)</option>', source)
+        == [
+            ("all", "All Agent harnesses"),
+            ("codex", "Codex"),
+            ("claude", "Claude Code"),
+            ("gemini", "Gemini CLI"),
+            ("junie", "Junie CLI"),
+            ("copilot", "GitHub Copilot"),
+        ],
+        "filter option inventory must remain exact",
+    )
+
+    footer_context_markup = (
+        f'<span class="footer-context">{AGENTIC_CONFIGURATION_FOOTER_CONTEXT}</span>'
+    )
+    footer_pattern = re.compile(
+        rf'<footer class="site-footer ds-footer">\s*<p>\s*'
+        rf'{re.escape(AGENTIC_CONFIGURATION_DESIGN_VERSION)}\s*<br>\s*'
+        rf'{re.escape(footer_context_markup)}\s*<br>\s*'
+        r'Copyright \(c\) 2026 Martin\.Bechard@DevConsult\.ca - '
+        r'<a href="\.\./LICENSE">MIT License</a>\s*</p>\s*</footer>'
+    )
+    require(
+        source.count(AGENTIC_CONFIGURATION_DESIGN_VERSION) == 1,
+        "design-system version must be exact and unique",
+    )
+    require(
+        source.count(footer_context_markup) == 1,
+        "Option A footer context must be exact and unique",
+    )
+    require(
+        footer_pattern.search(source) is not None,
+        "footer nodes must retain the adopted shared-shell order",
+    )
+    for exact_structure in (
+        '<header class="site-header ds-header">',
+        '<footer class="site-footer ds-footer">',
+        '<section class="hero" aria-labelledby="page-title">',
+        '<h1 id="page-title">Coding-Agent Runtime Configuration And Evaluation Across Agent harnesses</h1>',
+        '<div class="filters">',
+        '<div class="field">',
+        '<div class="table-wrap" tabindex="0" role="region" '
+        'aria-labelledby="locations-title">',
+        '<table class="wide-table">',
+    ):
+        require(
+            source.count(exact_structure) == 1,
+            f"required structure must remain exact: {exact_structure}",
+        )
+    require(
+        "page-section-navigation.css" not in source,
+        "obsolete section-navigation stylesheet must remain removed",
+    )
+    for shared_selector in (
+        ":root",
+        "body",
+        "main",
+        ".site-header",
+        ".site-brand",
+        ".site-logo",
+        ".site-footer",
+        ".document-nav",
+        ".document-sequence",
+        ".hero",
+        ".table-controls",
+        ".filter-field",
+        "table",
+    ):
+        require(
+            re.search(
+                rf"^\s*{re.escape(shared_selector)}\s*\{{",
+                source,
+                flags=re.MULTILINE,
+            )
+            is None,
+            f"shared CSS must remain authoritative for {shared_selector}",
+        )
+    require(
+        "Document-Provenance" not in source and "Artifact-ID:" not in source,
+        "creation-provenance facts must not be invented",
+    )
+    for href in parser.hrefs:
+        parts = urlsplit(href)
+        if parts.scheme or parts.netloc:
+            continue
+        target = (
+            AGENTIC_CONFIGURATION_PATH
+            if not parts.path
+            else AGENTIC_CONFIGURATION_PATH.parent / parts.path
+        )
+        require(target.is_file(), f"local link must resolve: {href}")
+        if parts.fragment:
+            _, target_parser = _parse_page(target)
+            require(
+                target_parser.ids.count(parts.fragment) == 1,
+                f"fragment must resolve exactly once: {href}",
+            )
 
 
 def _validate_wiki_context_structure(source: str) -> None:
@@ -1007,6 +1375,112 @@ class DocumentationDesignSystemTests(unittest.TestCase):
             hashlib.sha256(
                 _wiki_context_semantic_text(source).encode("utf-8")
             ).hexdigest(),
+        )
+
+    def test_agentic_configuration_uses_shared_shell_and_preserves_semantics(
+        self,
+    ) -> None:
+        """Agentic Configuration adopts the shared shell with one content exception."""
+
+        source = AGENTIC_CONFIGURATION_PATH.read_text(encoding="utf-8")
+        self.assertEqual(
+            AGENTIC_CONFIGURATION_BASELINE_SEMANTIC_SHA256,
+            hashlib.sha256(
+                _agentic_configuration_semantic_text(source).encode("utf-8")
+            ).hexdigest(),
+        )
+
+    def test_agentic_configuration_rejects_adversarial_contract_drift(
+        self,
+    ) -> None:
+        """Normalization rejects shell, footer, and accepted-content mutations."""
+
+        source = AGENTIC_CONFIGURATION_PATH.read_text(encoding="utf-8")
+        _validate_agentic_configuration_structure(source)
+        version = AGENTIC_CONFIGURATION_DESIGN_VERSION
+        context = (
+            f'<span class="footer-context">'
+            f"{AGENTIC_CONFIGURATION_FOOTER_CONTEXT}</span>"
+        )
+        structural_mutations = {
+            "missing-version": source.replace(version, "", 1),
+            "changed-version": source.replace(
+                version,
+                version.replace("1.0.0", "1.0.1"),
+                1,
+            ),
+            "duplicate-version": source.replace(version, f"{version}{version}", 1),
+            "misplaced-version": source.replace(
+                f"{version}\n      <br>\n      {context}",
+                f"{context}\n      <br>\n      {version}",
+                1,
+            ),
+            "missing-context": source.replace(context, "", 1),
+            "changed-context": source.replace(
+                context,
+                context.replace("Hand-maintained", "Generated"),
+                1,
+            ),
+            "duplicate-context": source.replace(context, f"{context}{context}", 1),
+            "misplaced-context": source.replace(
+                f"{context}\n      <br>\n      Copyright",
+                "Copyright",
+                1,
+            ).replace(
+                "</p>\n  </footer>",
+                f"<br>\n      {context}</p>\n  </footer>",
+                1,
+            ),
+            "changed-suite-label": source.replace(
+                ">Agentic Configuration</a>",
+                ">Runtime Configuration</a>",
+                1,
+            ),
+            "duplicate-identifier": source.replace(
+                'id="context-title"',
+                'id="glossary-title"',
+                1,
+            ),
+            "unnamed-table-region": source.replace(
+                ' role="region" aria-labelledby="locations-title"',
+                "",
+                1,
+            ),
+            "changed-filter-option": source.replace(
+                '<option value="codex">Codex</option>',
+                '<option value="codex">OpenAI Codex</option>',
+                1,
+            ),
+            "changed-harness-row": source.replace(
+                'data-harness="codex"',
+                'data-harness="claude"',
+                1,
+            ),
+            "changed-script-source": source.replace(
+                '<script src="documentation-settings.js"></script>',
+                '<script src="other-settings.js"></script>',
+                1,
+            ),
+        }
+        for mutation_name, mutation in structural_mutations.items():
+            with self.subTest(mutation=mutation_name):
+                self.assertNotEqual(source, mutation)
+                with self.assertRaises((AssertionError, ValueError)):
+                    normalized = _agentic_configuration_semantic_text(mutation)
+                    self.assertEqual(
+                        AGENTIC_CONFIGURATION_BASELINE_SEMANTIC_SHA256,
+                        hashlib.sha256(normalized.encode("utf-8")).hexdigest(),
+                    )
+
+        semantic_mutation = source.replace(
+            "The table lists where each Agent harness discovers",
+            "The table summarizes where each Agent harness discovers",
+            1,
+        )
+        self.assertNotEqual(source, semantic_mutation)
+        self.assertNotEqual(
+            _agentic_configuration_semantic_text(source),
+            _agentic_configuration_semantic_text(semantic_mutation),
         )
 
     def test_wiki_context_rejects_shell_semantic_and_accessibility_drift(
