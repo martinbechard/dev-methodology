@@ -207,7 +207,8 @@ The accepted candidate needs executable positive and negative evaluation coverag
 - Canonical Task and Conversation: `01a00236-ec5c-7811-ad56-6877828d2287` on host `local`.
 - Root Orchestrator: `/root/require_explicit_user_approval_for_new_infrastructure`.
 - Preserved Candidate And Worktree: `e658f6d00a779e731098cbd1ea6e698b0104c2af`, branch `work-item/require-explicit-user-approval-for-new-infrastructure-01a00236`, and the exact dirty private-worktree manifest recorded above.
-- User Disclosure Authorization: The user explicitly authorized sending the exact provenance identifier `Martin.Bechard@DevConsult.ca` to live evaluation models for all runs. This standing authorization does not permit unrelated disclosure or scope expansion.
+- Exact Latest User Answer: `Not just for this run - all runs`.
+- User Disclosure Authorization: The user explicitly authorized sending the exact provenance identifier `Martin.Bechard@DevConsult.ca` to live evaluation models for all runs. This standing authorization does not permit unrelated disclosure, logging, or scope expansion.
 - Coordination: Claim-free acceptance under the sole local crisis reservation. No Resource Claim event was triggered by lifecycle acceptance or private-worktree mutation.
 - Required Runtime Title: `Implementing — Require Explicit User Approval For New Infrastructure`.
 - Next Action: Preserve and complete the existing internal evaluation-contract correction, run the authorized existing live-model suite, then repeat fresh review and independent verification.
