@@ -1,6 +1,6 @@
 # Map Evaluation Contracts To Inspect AI
 
-Status: Ready
+Status: Starting
 
 Type: Analysis
 
@@ -241,6 +241,22 @@ The authorized fourth cycle completed both required traceability ledgers, and th
 - Coordination Boundary: Claim-free crisis reconciliation. No claim query or release occurred.
 - Required Runtime Title: `Ready — Map Evaluation Contracts To Inspect AI` until separately reserved.
 - Next Action: When sole local capacity is available, reserve and resume this same canonical execution for only the authorized fifth and final cycle.
+
+## Reconciled Fifth-Cycle Crisis Reservation
+
+- Transition: `Ready -> Starting`.
+- Reserved At: `2026-08-14T22:59:10Z`.
+- Crisis Epoch: `blocked-crisis-20260813T223935Z`.
+- Baseline: `fdcea5a59cfed6ae0a87e0b25290669583afa0d3` on configured primary branch `main`.
+- Capacity Trigger: Agent-Owned Evaluation Suites entered User Action Required at `df094a00a0ce4b8d53bb9cd47d68ea1338cca4ed`, releasing the sole local crisis slot.
+- Canonical Task and Conversation: `019ffbeb-02ee-7d52-9460-d1bfdbdbe20b` on host `local`.
+- Preserved Dev Orchestrator: `/root/map_evaluation_contracts_to_inspect_ai` with interrupted fifth-cycle writer context.
+- Preserved Candidate: `86b158051ada82cca2891d484f7a32cd6c68541c`, clean mapping artifact, plan pair, and all accepted review evidence.
+- Authorized Scope: Only the user-approved fifth and final current-main snapshot, semantic review of nine changed sources, refresh of affected completion digests, `SRC-L041` provider path/digest correction, fresh independent review, and focused verification.
+- Hard Boundary: No sixth cycle, replacement, claim operation, unrelated methodology work, later Inspect series work, or scope expansion.
+- Coordination Boundary: Claim-free sole local crisis reservation.
+- Required Runtime Title: `Starting — Map Evaluation Contracts To Inspect AI`.
+- Required Acceptance: The same Dev Orchestrator records a new claim-free `Starting -> Running` acceptance before any correction resumes.
 - Authorized Scope: Only the user-approved fifth-cycle snapshot, semantic review, affected digest refresh, `SRC-L041` correction, fresh review, and focused verification.
 
 ### Fifth-Cycle Running Acceptance
