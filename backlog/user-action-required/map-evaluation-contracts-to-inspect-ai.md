@@ -1,6 +1,6 @@
 # Map Evaluation Contracts To Inspect AI
 
-Status: Running
+Status: User Action Required
 
 Type: Analysis
 
@@ -178,3 +178,32 @@ Do not modify, review, verify, deliver, or close this Work Item before the prese
 - Preserved Candidate: `33d6a25350f5230cb359c1ad76397fea4dda44fc` with all previously accepted mapping content.
 - Accepted Scope: One exceptional fourth correction cycle limited to the two user-authorized ledgers, followed by fresh independent review and focused verification.
 - Coordination Boundary: Claim-free crisis execution. No claim operation occurred before or during this acceptance.
+
+## Fifth-Cycle Snapshot Decision
+
+### Question for the User
+
+Do you authorize one fifth and final correction cycle to establish a new frozen source snapshot, semantically review the nine changed authoritative sources, refresh their completion digests, and correct `SRC-L041` to the current analysis-backlog provider path and digest?
+
+### Why User Input Is Required
+
+The authorized fourth cycle completed both required traceability ledgers, and their focused checks pass. Fresh independent review then found that nine frozen completion digests changed after the original snapshot and that `SRC-L041` still points to the former feature-backlog location rather than the current authoritative analysis-backlog Work Item. These findings affect source authority and cannot be corrected or excluded safely within the exhausted fourth-cycle authorization.
+
+### Options and Tradeoffs
+
+- **Authorize one fifth and final cycle (recommended):** Freeze a new current-main source snapshot, semantically review the nine changed sources, refresh only the affected digests, correct `SRC-L041` path and digest, then obtain fresh independent review and focused verification. No sixth cycle is authorized.
+- **Do not authorize and abandon successful delivery:** Preserve candidate `86b158051ada82cca2891d484f7a32cd6c68541c` and all review evidence as incomplete. This Work Item will not complete, and later ordered Inspect AI phases remain unable to proceed.
+
+### Preserved Evidence And Unattended Boundary
+
+- Transition: `Running -> User Action Required`.
+- Recorded At: `2026-08-14T22:50:10Z`.
+- Canonical Task and Conversation: `019ffbeb-02ee-7d52-9460-d1bfdbdbe20b` on host `local`.
+- Preserved Dev Orchestrator: `/root/map_evaluation_contracts_to_inspect_ai`.
+- Preserved Candidate: `86b158051ada82cca2891d484f7a32cd6c68541c` on current main.
+- Fourth-Cycle Result: Both user-authorized traceability checks pass.
+- Review Result: Fresh independent review fails only on nine drifted frozen completion digests and the stale `SRC-L041` provider path/digest.
+- Verification State: Focused verification correctly did not start after review failure.
+- Coordination Boundary: Claim-free crisis transition. No claim operation occurred.
+- Required Runtime Title: `Waiting for User — Map Evaluation Contracts To Inspect AI`.
+- Unattended Work Boundary: Do not correct, review, verify, deliver, replace the execution, start later Inspect AI phases, or infer approval until the user answers in this canonical task. Preserve the candidate, plan, review history, and all accepted content.
