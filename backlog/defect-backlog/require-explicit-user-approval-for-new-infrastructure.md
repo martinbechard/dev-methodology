@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -87,4 +87,23 @@ None.
 
 Provider creation does not authorize execution. While crisis epoch `blocked-crisis-20260813T223935Z` remains active, this Ready Defect must wait until the Dev Backlog Coordinator selects it as the one sole local work-item execution.
 
-User Priority Override: High. This is the next eligible local crisis Work Item immediately after the current Specialization Examples task reaches terminal or truthful non-active cleanup. It takes precedence over other queued work to prevent further architecture-authority drift. Status remains `Ready`; this priority update does not reserve or dispatch an execution.
+User Priority Override: High. This was the next eligible local crisis Work Item after Specialization Examples reached terminal cleanup. It takes precedence over other queued work to prevent further architecture-authority drift. The Starting handoff below records its separate reservation.
+
+## Starting Handoff Evidence
+
+- Transition: `Ready -> Starting`.
+- Reserved At: `2026-08-14T21:37:25Z`.
+- Crisis Epoch: `blocked-crisis-20260813T223935Z`.
+- Priority: High, by explicit user override.
+- Baseline: `5c2cf1a832500beab322ca6f7d63c9b55a107d03` on configured primary branch `main`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Normalized Objective: Require explicit user approval before architecture authorizes a new harness, runner, simulator, service, or equivalent material infrastructure, while preserving ordinary authority for non-infrastructure fixtures, helpers, and focused tests.
+- Intended Root Owner: One Dev Orchestrator execution launched by one canonical visible Codex Work Item task.
+- Capacity: Sole local dev-methodology crisis execution. Map Evaluation Contracts remains Ready and unexecuted.
+- Coordination Boundary: Claim-free crisis reservation. No claim operation occurred; SOLO supplies local exclusivity.
+- Preserved State: Retain the dirty terminology provider bytes, Map draft and post-reset claim evidence, historical Specialization verifier worktree and branch, other preserved candidates, and untracked plans and temporary artifacts.
+- Approved Scope: The governed definitions and direct dependent artifacts listed in Governed Scope Authorization. No unrelated skill definition, agent definition, ordinary fixture, helper, runtime implementation, or infrastructure implementation is authorized.
+- Required Dispatch: Create one visible Codex task with the exact reference-plus-delta prompt, then launch exactly one nested Dev Orchestrator. Creation does not imply Running.
+- Required Acceptance: The nested Dev Orchestrator records `Starting -> Running` claim-free before source mutation.
+- Required Runtime Title: `Starting — Require Explicit User Approval For New Infrastructure`.
