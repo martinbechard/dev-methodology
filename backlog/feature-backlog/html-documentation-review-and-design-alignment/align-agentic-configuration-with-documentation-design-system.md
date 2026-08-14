@@ -2,7 +2,7 @@
 
 Owner: Preserved canonical Dev Orchestrator execution
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -236,3 +236,19 @@ Do not mutate, integrate, deliver, or close this item until the user answers and
 - Preserved Execution: Canonical Task and Conversation `019ffcd1-c9a0-78f0-8713-ef8951f1f9b5` on host `local`, with the same nested Dev Orchestrator and all plan/review evidence.
 - Browser Boundary: Use the repository-owned loopback/fixed-port harness, keep the listener local, complete every previously `NOT TESTED` browser assertion, shut down and prove cleanup, and perform no claim operation.
 - Next Action: Reserve this Ready item for the same canonical execution, then require claim-free `Starting -> Running` acceptance before browser verification.
+
+## Crisis Browser Verification Reservation
+
+- Transition: `Ready -> Starting`.
+- Reserved At: 2026-08-14T02:09:29Z.
+- Crisis Epoch: `blocked-crisis-20260813T223935Z`.
+- Baseline: `b370f428` on configured primary branch `main`.
+- Canonical Task and Conversation: `019ffcd1-c9a0-78f0-8713-ef8951f1f9b5` on host `local`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Execution Decision: Resume the preserved visible task and its existing nested Dev Orchestrator; do not create or replace an execution.
+- Capacity: The sole local dev-methodology crisis execution. External project execution is outside this provider queue and runtime-control boundary.
+- Coordination Boundary: Claim-free crisis reservation. No claim operation is permitted; SOLO supplies local resource exclusivity.
+- Required Acceptance: The preserved Dev Orchestrator must atomically record `Starting -> Running` without claims before starting the loopback browser runtime.
+- Required Runtime Title: `Starting — Align Coding Agent Runtime Configuration With Documentation Design System`.
+- Authorized Work: Run the complete pending browser, interaction, accessibility, persistence, print, reduced-motion, and Documentation Design System verification through the repository-owned fixed-port loopback harness; prove listener/process cleanup; then reconcile delivery of candidate `027994c0`.
