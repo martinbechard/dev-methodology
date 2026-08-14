@@ -6,6 +6,8 @@ Status: Ready
 
 Type: Defect
 
+Priority: High
+
 Provider: file
 
 Work Item ID: require-explicit-user-approval-for-new-infrastructure
@@ -84,3 +86,5 @@ None.
 ## Scheduling Boundary
 
 Provider creation does not authorize execution. While crisis epoch `blocked-crisis-20260813T223935Z` remains active, this Ready Defect must wait until the Dev Backlog Coordinator selects it as the one sole local work-item execution.
+
+User Priority Override: High. This is the next eligible local crisis Work Item immediately after the current Specialization Examples task reaches terminal or truthful non-active cleanup. It takes precedence over other queued work to prevent further architecture-authority drift. Status remains `Ready`; this priority update does not reserve or dispatch an execution.
