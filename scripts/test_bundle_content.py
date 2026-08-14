@@ -14873,16 +14873,30 @@ Visible after.
         self.assertIn("Dev Architect Planning Gate", lifecycle)
         self.assertIn("Third failed review", lifecycle)
         self.assertIn("coding without planning", lifecycle)
+        self.assertIn(
+            "An explicitly approved material-infrastructure outcome can proceed",
+            lifecycle,
+        )
+        self.assertIn(
+            "Without either approval source, preserve the proposal and route exactly one "
+            "contextual User Action Required question",
+            lifecycle,
+        )
         for label in (
             "Accepted",
             "Correction required",
-            "Larger design justified",
+            "Material infrastructure justified",
+            "Material test infrastructure justified",
             "Complex test infrastructure",
-            "User confirms the larger",
+            "Exact infrastructure outcome",
+            "explicitly approved?",
+            "Preserve proposal · ask once",
             "User Action Required",
         ):
             with self.subTest(svg_label=label):
                 self.assertIn(label, svg_text)
+        self.assertNotIn("User confirms the larger", svg_text)
+        self.assertNotIn("No · return for a smaller plan", svg_text)
         groups_by_id = {
             group.attrib["id"]: group
             for group in root.findall(f".//{svg_namespace}g")
@@ -14922,10 +14936,11 @@ Visible after.
             ("third-failed-review-decision", "user-action-required"),
             connections,
         )
+        self.assertIn(("scale-confirmation", "user-action-required"), connections)
         expected_complex_test_scale_connections = {
             ("test-design-decision", "complex-test-scale-confirmation"),
             ("complex-test-scale-confirmation", "implementation"),
-            ("complex-test-scale-confirmation", "complex-test-plan-update"),
+            ("complex-test-scale-confirmation", "user-action-required"),
         }
         self.assertTrue(expected_complex_test_scale_connections <= connections)
         lane_connections = {
@@ -14974,6 +14989,71 @@ Visible after.
             if connection_from is not None
         }
         self.assertFalse(correction_nodes - nodes_with_outgoing_connections)
+
+    def test_architecture_material_infrastructure_requires_explicit_user_approval(
+        self,
+    ) -> None:
+        """Require explicit user authority for new material infrastructure."""
+
+        architecture_skill = re.sub(
+            r"\s+",
+            " ",
+            (SKILLS_ROOT / "create-architecture" / "SKILL.md").read_text(
+                encoding="utf-8"
+            ),
+        )
+        architect = load_yaml_object(
+            ROLES_ROOT / "dev-activities" / "dev-architect.role.yaml"
+        )
+        architect_contract = re.sub(
+            r"\s+",
+            " ",
+            yaml.safe_dump(
+                {
+                    "instructions": architect["instructions"],
+                    "examples": architect["examples"],
+                    "outputContract": architect["outputContract"],
+                },
+                sort_keys=False,
+            ),
+        )
+        contracts = {
+            "create-architecture": architecture_skill,
+            "dev-architect": architect_contract,
+        }
+        required_phrases = (
+            "Material infrastructure is a new harness, runner, simulator, service, or "
+            "equivalent durable execution facility.",
+            "Approval exists only when the original user request explicitly includes the "
+            "exact infrastructure outcome or a later recorded User Action Required answer "
+            "explicitly approves it.",
+            "Technical justification, reviewer acceptance, architecture acceptance, broad "
+            "scope language, implementation need, convenience, test coverage goals, and an "
+            "agent recommendation do not provide approval.",
+            "Ordinary fixtures, helpers, and focused tests remain within normal "
+            "implementation authority when they do not introduce material infrastructure.",
+            "When approval is absent, preserve the proposed architecture and do not authorize "
+            "infrastructure implementation.",
+            "Return exactly one contextual, plain-language User Action Required question "
+            "through Dev Orchestrator.",
+            "The question must identify the proposed infrastructure, explain why approval is "
+            "required, give concrete options and practical tradeoffs, and ask for one decision.",
+            "Until the user answers, do not authorize infrastructure implementation.",
+        )
+        for contract_name, contract in contracts.items():
+            for phrase in required_phrases:
+                with self.subTest(contract=contract_name, phrase=phrase):
+                    self.assertIn(phrase, contract)
+
+        self.assertNotIn(
+            "Do not infer scale approval from the original documentation or implementation "
+            "request.",
+            architecture_skill,
+        )
+        self.assertNotIn(
+            "Do not infer approval from the original implementation request.",
+            architect_contract,
+        )
 
     def test_dev_architect_legacy_documents_have_bounded_historical_provenance(
         self,

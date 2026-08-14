@@ -33,7 +33,7 @@
             "careful-coding",
             "test-driven-development"
           ],
-          "sha256": "ebf6f70d8de4fab56002cda1ebf80ef177cbb84a74bddcbda91293ba29b77a52",
+          "sha256": "d7e79ffbbca4200ab095db3f8271bbe863292b84cc1c7307928bb865d7e8b4b7",
           "source": "agents/roles/dev-activities/dev-architect.role.yaml"
         },
         {
@@ -1243,7 +1243,7 @@
             "test-driven-development",
             "codex-harness-directives"
           ],
-          "sha256": "35461851c04743860746caef3cf7c42bda6efbc7aae286152dfcacc2bbf70d04",
+          "sha256": "08e960ff4c23d209306ce51b3c5949b7847e27b1b1ed20c866c30a6f91ac67ba",
           "source": "agents/roles/dev-activities/dev-architect.role.yaml"
         },
         {
@@ -2486,7 +2486,7 @@
             "careful-coding",
             "test-driven-development"
           ],
-          "sha256": "22a4fb8b806b14cc3edc8e7a099f15392a40b50399a85a955e5bb6d771343050",
+          "sha256": "6262151a572cb8f40ba01b02e87a8d7622772c6ad1797692329ff220979070d1",
           "source": "agents/roles/dev-activities/dev-architect.role.yaml"
         },
         {
@@ -3739,7 +3739,7 @@
             "careful-coding",
             "test-driven-development"
           ],
-          "sha256": "7178b8df226d99bbff0337c49a297226394bc7aa5081c7bbbb222e4be9d360c5",
+          "sha256": "f9b1a37b282d791996cb21f83676a1fdb3a32fcfba14e6011605c8a5f5e6be84",
           "source": "agents/roles/dev-activities/dev-architect.role.yaml"
         },
         {

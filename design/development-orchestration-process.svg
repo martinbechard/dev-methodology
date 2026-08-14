@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 3300" role="img" aria-labelledby="development-orchestration-title development-orchestration-description">
   <title id="development-orchestration-title">Development orchestration process</title>
-  <desc id="development-orchestration-description">A flowchart showing the explicit coding-without-planning path; Dev Coder planning; optional methodology review; Dev Architect plan, architecture, and complex-test design review; user confirmation for justified larger designs; independent code review and verification; lane-specific correction returns; and one shared third-failed-review exit to User Action Required.</desc>
+  <desc id="development-orchestration-description">A flowchart showing the explicit coding-without-planning path; Dev Coder planning; optional methodology review; Dev Architect plan, architecture, and complex-test design review; explicit user approval gates for justified material infrastructure; independent code review and verification; lane-specific correction returns; and shared exits to User Action Required.</desc>
   <defs>
     <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
       <path d="M0 0 L10 5 L0 10 Z" fill="#315b72"/>
@@ -102,20 +102,20 @@
   </g>
   <text class="label" x="912" y="1278">Accepted</text>
   <path class="connector" data-from="plan-architecture-decision" data-to="implementation" d="M900 1250 V1510"/>
-  <text class="label" x="315" y="1220">Larger design justified</text>
+  <text class="label" x="285" y="1220">Material infrastructure justified</text>
   <path class="connector" data-from="plan-architecture-decision" data-to="scale-confirmation" d="M645 1130 H330 V1300"/>
   <text class="correction-label" x="1170" y="1110">Correction required</text>
   <path class="collector" data-from="plan-architecture-decision" data-to="third-failed-review-decision" d="M1155 1130 H1140 V2430 H1165"/>
 
   <g id="scale-confirmation" class="decision" transform="translate(330 1405)">
     <polygon points="0,-105 235,0 0,105 -235,0"/>
-    <text class="decision-title" x="0" y="-12">User confirms the</text>
-    <text class="decision-title" x="0" y="18">larger scale?</text>
+    <text class="decision-title" x="0" y="-12">Exact infrastructure outcome</text>
+    <text class="decision-title" x="0" y="18">explicitly approved?</text>
   </g>
-  <text class="label" x="520" y="1390">Yes</text>
+  <text class="label" x="520" y="1390">Yes · implement</text>
   <path class="connector" data-from="scale-confirmation" data-to="implementation" d="M565 1405 H595 V1575 H620"/>
-  <text class="correction-label" x="80" y="1540">No · return for a smaller plan</text>
-  <path class="correction-edge" data-from="scale-confirmation" data-to="dev-coder-plan" d="M330 1510 V1545 H45 V660 H620"/>
+  <text class="correction-label" x="55" y="1540">No · Preserve proposal · ask once</text>
+  <path class="collector" data-from="scale-confirmation" data-to="user-action-required" d="M330 1510 H25 V2945 H1210"/>
 
   <text class="section-label" x="70" y="1625">IMPLEMENTATION AND TEST-DESIGN GATE</text>
   <g id="implementation" class="node planning" transform="translate(620 1510)">
@@ -155,21 +155,21 @@
   </g>
   <text class="label" x="510" y="2195">Accepted · resume coding</text>
   <path class="connector" data-from="test-design-decision" data-to="implementation" d="M575 2310 H605 V1575 H620"/>
-  <text class="label" x="345" y="2510">Larger design justified</text>
+  <text class="label" x="280" y="2510">Material test infrastructure justified</text>
   <path class="connector" data-from="test-design-decision" data-to="complex-test-scale-confirmation" d="M330 2430 V2575"/>
   <text class="correction-label" x="590" y="2340">Correction required</text>
   <path class="collector" data-from="test-design-decision" data-to="third-failed-review-decision" d="M575 2310 H1090 V2430 H1165"/>
 
   <g id="complex-test-scale-confirmation" class="decision" transform="translate(330 2680)">
     <polygon points="0,-105 245,0 0,105 -245,0"/>
-    <text class="decision-title" x="0" y="-28">User confirms the larger</text>
-    <text class="decision-title" x="0" y="2">complex-test</text>
-    <text class="decision-title" x="0" y="32">design?</text>
+    <text class="decision-title" x="0" y="-28">Exact material test</text>
+    <text class="decision-title" x="0" y="2">infrastructure outcome</text>
+    <text class="decision-title" x="0" y="32">explicitly approved?</text>
   </g>
   <text class="label" x="585" y="2660">Yes · resume coding</text>
   <path class="connector" data-from="complex-test-scale-confirmation" data-to="implementation" d="M575 2680 H600 V1575 H620"/>
-  <text class="correction-label" x="80" y="2640">No · Dev Coder revises the plan</text>
-  <path class="correction-edge" data-from="complex-test-scale-confirmation" data-to="complex-test-plan-update" d="M85 2680 H55 V1930 H90"/>
+  <text class="correction-label" x="45" y="2640">No · Preserve proposal · ask once</text>
+  <path class="collector" data-from="complex-test-scale-confirmation" data-to="user-action-required" d="M330 2785 H40 V2945 H1210"/>
 
   <g id="code-review" class="node" transform="translate(620 1980)">
     <rect width="560" height="115"/>

@@ -30,7 +30,11 @@ For planned development, treat architecture as solution design rather than only 
 
 When planned work creates or materially revises one of these technical choices, Dev Architect selects or reviews the choice before document acceptance. Dev Architect traces it to requirements, constraints, repository evidence, or an explicit assumption and compares materially larger proposals with the smallest viable approach. Dev Documentation Writer retains document structure, source use, template conformance, and prose quality. Dev Artifact Reviewer retains independent artifact review.
 
-If a larger architecture is technically justified, stop before treating it as accepted. Return a user-confirmation request through Dev Orchestrator that states the smaller viable approach, additional scope, and practical cost difference. Return an unjustified outsized choice for correction. Do not infer scale approval from the original documentation or implementation request.
+Material infrastructure is a new harness, runner, simulator, service, or equivalent durable execution facility. Architecture may authorize material infrastructure only from explicit user approval. Approval exists only when the original user request explicitly includes the exact infrastructure outcome or a later recorded User Action Required answer explicitly approves it. Technical justification, reviewer acceptance, architecture acceptance, broad scope language, implementation need, convenience, test coverage goals, and an agent recommendation do not provide approval.
+
+Ordinary fixtures, helpers, and focused tests remain within normal implementation authority when they do not introduce material infrastructure. Return an unjustified outsized choice for correction.
+
+When approval is absent, preserve the proposed architecture and do not authorize infrastructure implementation. Return exactly one contextual, plain-language User Action Required question through Dev Orchestrator. The question must identify the proposed infrastructure, explain why approval is required, give concrete options and practical tradeoffs, and ask for one decision. Until the user answers, do not authorize infrastructure implementation.
 
 ## Template
 
