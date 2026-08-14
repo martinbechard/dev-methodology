@@ -1,8 +1,8 @@
 # Align Coding-Agent Runtime Configuration with the Documentation Design System
 
-Owner: Unowned
+Owner: Preserved canonical Dev Orchestrator execution
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -182,3 +182,19 @@ Do not mutate, integrate, deliver, or close this item until the user answers and
 - Preserved Execution: Canonical Task and Conversation `019ffcd1-c9a0-78f0-8713-ef8951f1f9b5` on host `local`, with its existing nested Dev Orchestrator, accepted baseline, plan evidence, and source-unmodified state.
 - Coordination Boundary: This transition used no claim operation. Crisis SOLO remains active, and this item is the selected next serial crisis recovery.
 - Next Action: Reserve this Ready item for the same canonical execution, then require that execution to accept `Starting -> Running` before source mutation.
+
+## Crisis Starting Reservation
+
+- Transition: `Ready -> Starting`.
+- Reserved At: 2026-08-14T00:14:30Z.
+- Crisis Epoch: `blocked-crisis-20260813T223935Z`.
+- Baseline: `4b6bd3af` on configured primary branch `main`.
+- Canonical Task and Conversation: `019ffcd1-c9a0-78f0-8713-ef8951f1f9b5` on host `local`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Execution Decision: Resume the preserved visible task and its existing nested Dev Orchestrator; do not create or replace an execution.
+- Capacity: The sole crisis recovery lane. No other crisis or ordinary work-item execution may mutate concurrently.
+- Coordination Boundary: Claim-free crisis reservation. No claim operation is permitted before crisis exit.
+- Required Acceptance: The preserved Dev Orchestrator must atomically record `Starting -> Running` without claims before source mutation.
+- Required Runtime Title: `Starting — Align Coding Agent Runtime Configuration With Documentation Design System`.
+- Authorized Work: Implement the already-recorded Option A known-facts-only footer, then obtain fresh content, browser, and Documentation Design System review using the restored revision-matched version `1.0.0` skill and checklist bytes.
