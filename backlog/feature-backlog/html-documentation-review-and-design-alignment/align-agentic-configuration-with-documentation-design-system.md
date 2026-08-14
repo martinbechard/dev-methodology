@@ -2,7 +2,7 @@
 
 Owner: Preserved canonical Dev Orchestrator execution
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -198,3 +198,14 @@ Do not mutate, integrate, deliver, or close this item until the user answers and
 - Required Acceptance: The preserved Dev Orchestrator must atomically record `Starting -> Running` without claims before source mutation.
 - Required Runtime Title: `Starting — Align Coding Agent Runtime Configuration With Documentation Design System`.
 - Authorized Work: Implement the already-recorded Option A known-facts-only footer, then obtain fresh content, browser, and Documentation Design System review using the restored revision-matched version `1.0.0` skill and checklist bytes.
+
+## Crisis Running Acceptance
+
+- Transition: `Starting -> Running`.
+- Accepted At: 2026-08-14T00:16:40Z.
+- Crisis Epoch: `blocked-crisis-20260813T223935Z`.
+- Canonical Task and Conversation: `019ffcd1-c9a0-78f0-8713-ef8951f1f9b5` on host `local`.
+- Accepted Baseline: `e7c4511718404d2e1233f57918f6f1761ebf9585` on configured primary branch `main`.
+- Material Phase: Implement the accepted Option A known-facts-only footer and complete fresh content, browser, and Documentation Design System review.
+- Coordination Boundary: Claim-free crisis acceptance. No claim operation was used.
+- Required Runtime Title: `Running — Align Coding Agent Runtime Configuration With Documentation Design System`.
