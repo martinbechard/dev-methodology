@@ -1,6 +1,6 @@
 # Map Evaluation Contracts To Inspect AI
 
-Status: Running
+Status: Ready
 
 Type: Analysis
 
@@ -227,6 +227,20 @@ The authorized fourth cycle completed both required traceability ledgers, and th
 - Preserved Dev Orchestrator: `/root/map_evaluation_contracts_to_inspect_ai`.
 - Preserved Candidate: `86b158051ada82cca2891d484f7a32cd6c68541c`.
 - Coordination Boundary: Claim-free continuation. No claim operation occurred.
+
+## Crisis Capacity Safe-Stop Reconciliation
+
+- Transition: `Running -> Ready`.
+- Recorded At: `2026-08-14T22:58:44Z`.
+- Reason: The fifth-cycle self-resumption occurred after Agent-Owned Evaluation Suites had already occupied the sole local crisis slot. The Coordinator stopped this execution at its next clean boundary and preserved the user-authorized work without treating the capacity violation as candidate failure.
+- Safe-Stop Evidence: Exact canonical task is idle; provider and mapping artifact are clean; no post-answer correction bytes are dirty; plan JSON/HTML remain untracked and preserved.
+- Preserved Canonical Task and Conversation: `019ffbeb-02ee-7d52-9460-d1bfdbdbe20b` on host `local`.
+- Preserved Dev Orchestrator: `/root/map_evaluation_contracts_to_inspect_ai` with the interrupted fifth-cycle writer context.
+- Preserved Candidate: `86b158051ada82cca2891d484f7a32cd6c68541c`.
+- Preserved Lifecycle Evidence: User answer commit `427be8ea`, prior reservation `aaeea2e2`, and prior Running acceptance `792ecf5b` remain historical evidence.
+- Coordination Boundary: Claim-free crisis reconciliation. No claim query or release occurred.
+- Required Runtime Title: `Ready — Map Evaluation Contracts To Inspect AI` until separately reserved.
+- Next Action: When sole local capacity is available, reserve and resume this same canonical execution for only the authorized fifth and final cycle.
 - Authorized Scope: Only the user-approved fifth-cycle snapshot, semantic review, affected digest refresh, `SRC-L041` correction, fresh review, and focused verification.
 
 ### Fifth-Cycle Running Acceptance
