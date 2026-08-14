@@ -17,6 +17,7 @@ import tomllib
 import unittest
 import xml.etree.ElementTree as ET
 from dataclasses import replace
+from html import unescape
 from html.parser import HTMLParser
 from pathlib import Path
 from types import ModuleType
@@ -1103,6 +1104,72 @@ DOCUMENT_NAVIGATION_ORDER = (
     "documentation-templates.html",
     "wiki-skills-and-project-context.html",
 )
+SPECIALIZATION_EXAMPLE_NAVIGATION = (
+    ("Agent And Skill Definitions", "agent-and-skill-definitions.html"),
+    ("Agent And Skill Evaluations", "agent-and-skill-evaluations.html"),
+    ("Agent-Owned Evaluation Suites", "agent-owned-evaluation-suites.html"),
+    ("Agentic Configuration", "agentic-configuration.html"),
+    ("Skills Modularization", "skills-modularization.html"),
+    ("Generic Agent Definitions Source", "generic-agent-definitions-source.html"),
+    (
+        "Agent And Skill Specialization Examples",
+        "agent-skill-specialization-examples.html",
+    ),
+    ("Orchestrated Development Lifecycle", "orchestrated-development-lifecycle.html"),
+    ("Documentation Templates", "documentation-templates.html"),
+    ("Wiki Skills And Project Context", "wiki-skills-and-project-context.html"),
+)
+SPECIALIZATION_EXCERPT_CONTRACT = (
+    (
+        "Northwind Tools PROJECT.yaml excerpt",
+        1038,
+        "617226a1c4d581a2aba85661b4cd88763358f774c06459771a15561b0312b1f6",
+    ),
+    (
+        "Acme Ledger PROJECT.yaml excerpt",
+        1102,
+        "6e010ed255b90e15858e665f1531bfcfc4528242f67b69ab09bb9e4ed921aabb",
+    ),
+    (
+        "Beacon Knowledge Base PROJECT.yaml excerpt",
+        4253,
+        "79f58ecdbefbcab3b101cf92cb7d4267a33bd6e5c8a199ed961dd1bf430675c5",
+    ),
+)
+SPECIALIZATION_CONTENT_LINKS = (
+    (
+        "linked template",
+        "../skills/route-documentation-work/assets/templates/project-template.yaml",
+    ),
+    (
+        "create-project-configuration skill",
+        "../skills/create-project-configuration/SKILL.md",
+    ),
+    (
+        "render-agents-technology-skills.py",
+        "../scripts/render-agents-technology-skills.py",
+    ),
+    ("Northwind Tools: Root-Only Guidance", "#northwind-title"),
+    ("Acme Ledger: Nested Tier Guidance", "#acme-title"),
+    ("Beacon Knowledge Base: Workflow Separation", "#beacon-title"),
+)
+SPECIALIZATION_BASELINE_SEMANTIC_SHA256 = (
+    "5d0b3b30d1940b9c16a321f28bdef7919c789bea7f10c2e611f823ef57e63a24"
+)
+SPECIALIZATION_SKIP_LINK = (
+    '<a class="skip-link" href="#main-content">Skip to main content</a>'
+)
+SPECIALIZATION_SUITE_NAV_START = (
+    '<nav class="suite-nav" aria-label="Documentation pages">'
+)
+SPECIALIZATION_DESIGN_VERSION = (
+    '<span class="ds-version">Design system v1.0.0</span>'
+)
+SPECIALIZATION_FOOTER_CONTEXT = (
+    "<p>Hand-authored Agent and Skill Specialization Examples page · "
+    "Scope: illustrative specialization examples · "
+    "Compatibility: Documentation Design System v1.0.0</p>"
+)
 DOCUMENT_FORBIDDEN_HEADINGS = {
     "skills-modularization.html": (
         "Role Agent Set",
@@ -1427,6 +1494,136 @@ def visible_prose_from_html(html: str) -> list[str]:
     parser = VisibleProseParser()
     parser.feed(html)
     return parser.blocks
+
+
+def validate_specialization_example_structure(source: str) -> None:
+    """Reject shell or accessibility drift before semantic normalization."""
+
+    def require(condition: bool, message: str) -> None:
+        if not condition:
+            raise ValueError(message)
+
+    require(
+        source.count(SPECIALIZATION_SKIP_LINK) == 1,
+        "specialization skip link must be exact and unique",
+    )
+    require(
+        re.search(
+            rf'<body id="top">\s*{re.escape(SPECIALIZATION_SKIP_LINK)}',
+            source,
+        )
+        is not None,
+        "specialization skip link must be the first body child",
+    )
+    require(
+        source.count('<main id="main-content" tabindex="-1">') == 1,
+        "specialization main content must be an exact focus target",
+    )
+    suite_nav_matches = re.findall(
+        rf"{re.escape(SPECIALIZATION_SUITE_NAV_START)}(.*?)</nav>",
+        source,
+        flags=re.DOTALL,
+    )
+    require(
+        len(suite_nav_matches) == 1,
+        "specialization suite navigation must be exact and unique",
+    )
+    suite_nav = suite_nav_matches[0]
+    anchor_pattern = re.compile(
+        r'<a href="([^"]+)"( aria-current="page")?>([^<]+)</a>'
+    )
+    navigation_links = [
+        (label, href, current == ' aria-current="page"')
+        for href, current, label in anchor_pattern.findall(suite_nav)
+    ]
+    require(
+        navigation_links
+        == [
+            (label, href, index == 6)
+            for index, (label, href) in enumerate(
+                SPECIALIZATION_EXAMPLE_NAVIGATION
+            )
+        ],
+        "specialization suite navigation must match the accepted inventory",
+    )
+    require(
+        not anchor_pattern.sub("", suite_nav).strip(),
+        "specialization suite navigation must contain anchors and whitespace only",
+    )
+    content_sections = re.findall(
+        r'<section class="section" aria-labelledby="examples-title">'
+        r"(.*?)</section>\s*</main>",
+        source,
+        flags=re.DOTALL,
+    )
+    require(
+        len(content_sections) == 1,
+        "specialization content section must be exact and unique",
+    )
+    content_links = tuple(
+        (label, href)
+        for href, _current, label in anchor_pattern.findall(
+            content_sections[0]
+        )
+    )
+    require(
+        content_links == SPECIALIZATION_CONTENT_LINKS,
+        "specialization content links must match the accepted sequence",
+    )
+    require(
+        source.count(SPECIALIZATION_DESIGN_VERSION) == 1,
+        "specialization design-system version must be exact and unique",
+    )
+    require(
+        source.count('<header class="site-header ds-header">') == 1,
+        "specialization header must use the shared shell",
+    )
+    require(
+        source.count('<footer class="site-footer ds-footer">') == 1,
+        "specialization footer must use the shared shell",
+    )
+    require(
+        source.count(SPECIALIZATION_FOOTER_CONTEXT) == 1,
+        "specialization footer context must be exact and unique",
+    )
+
+
+def specialization_example_semantic_text(source: str) -> str:
+    """Return accepted page text after removing exact shared-shell additions."""
+
+    validate_specialization_example_structure(source)
+    suite_nav_match = re.search(
+        rf"{re.escape(SPECIALIZATION_SUITE_NAV_START)}.*?</nav>",
+        source,
+        flags=re.DOTALL,
+    )
+    if suite_nav_match is None:
+        raise ValueError("specialization suite navigation must be available")
+    without_additions = source.replace(SPECIALIZATION_SKIP_LINK, "", 1)
+    without_additions = without_additions.replace(suite_nav_match.group(0), "", 1)
+    without_additions = without_additions.replace(
+        '<a href="#top">Top</a>',
+        "",
+        1,
+    )
+    without_additions = without_additions.replace(
+        SPECIALIZATION_DESIGN_VERSION,
+        "",
+        1,
+    )
+    without_additions = without_additions.replace(
+        SPECIALIZATION_FOOTER_CONTEXT,
+        "",
+        1,
+    )
+    visible_markup = re.sub(
+        r"<(?:style|script)\b.*?</(?:style|script)>",
+        "",
+        without_additions,
+        flags=re.DOTALL,
+    )
+    visible_text = re.sub(r"<[^>]+>", " ", visible_markup)
+    return " ".join(unescape(visible_text).split())
 
 
 def load_build_skill_docs_module() -> ModuleType:
@@ -1968,6 +2165,178 @@ class BundleContentTests(unittest.TestCase):
             "Documentation links must match the adjacent index detail pages",
         )
 
+    def test_specialization_examples_use_shared_shell_and_preserve_semantics(
+        self,
+    ) -> None:
+        """The examples page adopts the shared shell without changing accepted text."""
+
+        path = (
+            REPOSITORY_ROOT
+            / "design"
+            / "agent-skill-specialization-examples.html"
+        )
+        source = path.read_text(encoding="utf-8")
+        excerpt_pattern = re.compile(
+            r'<pre class="config-block" aria-label="([^"]+)"><code>'
+            r"(.*?)</code></pre>",
+            re.DOTALL,
+        )
+        excerpts = excerpt_pattern.findall(source)
+        actual_excerpt_contract = tuple(
+            (
+                label,
+                len(body.encode("utf-8")),
+                hashlib.sha256(body.encode("utf-8")).hexdigest(),
+            )
+            for label, body in excerpts
+        )
+
+        self.assertIn('<meta name="design-system-version" content="1.0.0">', source)
+        self.assertIn(
+            '<link rel="stylesheet" '
+            'href="documentation-design-system/assets/design-system.css">',
+            source,
+        )
+        self.assertNotIn("<style>", source)
+        self.assertNotIn('href="page-section-navigation.css"', source)
+        self.assertIn('<body id="top">', source)
+        validate_specialization_example_structure(source)
+        self.assertIn(
+            '<nav class="page-nav" aria-label="Page sections">\n'
+            '    <a href="#top">Top</a>',
+            source,
+        )
+        self.assertEqual(1, source.count('<main id="main-content" tabindex="-1">'))
+        self.assertEqual(1, source.count('<script src="documentation-settings.js"></script>'))
+        self.assertEqual(SPECIALIZATION_EXCERPT_CONTRACT, actual_excerpt_contract)
+        self.assertEqual(
+            SPECIALIZATION_BASELINE_SEMANTIC_SHA256,
+            hashlib.sha256(
+                specialization_example_semantic_text(source).encode("utf-8")
+            ).hexdigest(),
+        )
+        self.assertEqual(
+            [
+                "Documentation pages",
+                "Documentation navigation",
+                "Page sections",
+                *(contract[0] for contract in SPECIALIZATION_EXCERPT_CONTRACT),
+            ],
+            re.findall(r'aria-label="([^"]+)"', source),
+        )
+        self.assertEqual(
+            [
+                "page-title",
+                "examples-title",
+                "northwind-title",
+                "acme-title",
+                "beacon-title",
+            ],
+            re.findall(r'aria-labelledby="([^"]+)"', source),
+        )
+        self.assertEqual(
+            ["DevConsult Canada logo"],
+            re.findall(r'alt="([^"]*)"', source),
+        )
+        self._assert_documentation_navigation(
+            source,
+            [
+                ("prev", "generic-agent-definitions-source.html"),
+                ("next", "orchestrated-development-lifecycle.html"),
+            ],
+            expects_top_link=True,
+        )
+
+        element_ids = re.findall(r'\bid="([^"]+)"', source)
+        self.assertEqual(len(element_ids), len(set(element_ids)))
+        for href in re.findall(r'href="([^"]+)"', source):
+            parsed = urlsplit(href)
+            if parsed.scheme or parsed.netloc:
+                continue
+            target = path if not parsed.path else path.parent / parsed.path
+            self.assertTrue(target.is_file(), href)
+            if parsed.fragment:
+                target_ids = re.findall(
+                    r'\bid="([^"]+)"',
+                    target.read_text(encoding="utf-8"),
+                )
+                self.assertIn(parsed.fragment, target_ids, href)
+
+    def test_specialization_semantic_guards_reject_targeted_mutations(self) -> None:
+        """Shell normalization and excerpt hashes cannot conceal accepted-text drift."""
+
+        source = (
+            REPOSITORY_ROOT
+            / "design"
+            / "agent-skill-specialization-examples.html"
+        ).read_text(encoding="utf-8")
+        structural_mutations = {
+            "skip-link label": source.replace(
+                "Skip to main content",
+                "Skip content",
+                1,
+            ),
+            "current page": source.replace(
+                ' aria-current="page"',
+                "",
+                1,
+            ),
+            "main focus target": source.replace(
+                ' tabindex="-1"',
+                "",
+                1,
+            ),
+            "footer context": source.replace(
+                "Scope: illustrative specialization examples",
+                "Scope: specialization guidance",
+                1,
+            ),
+        }
+        for mutation_name, mutation in structural_mutations.items():
+            with self.subTest(structural_mutation=mutation_name):
+                self.assertNotEqual(source, mutation)
+                with self.assertRaises(ValueError):
+                    specialization_example_semantic_text(mutation)
+
+        wrong_existing_content_link = source.replace(
+            "../skills/create-project-configuration/SKILL.md",
+            "../skills/review-documentation-design-system/SKILL.md",
+            1,
+        )
+        self.assertNotEqual(source, wrong_existing_content_link)
+        self.assertTrue(
+            (
+                REPOSITORY_ROOT
+                / "skills"
+                / "review-documentation-design-system"
+                / "SKILL.md"
+            ).is_file()
+        )
+        with self.assertRaises(ValueError):
+            specialization_example_semantic_text(wrong_existing_content_link)
+
+        excerpt_pattern = re.compile(
+            r'<pre class="config-block" aria-label="([^"]+)"><code>'
+            r"(.*?)</code></pre>",
+            re.DOTALL,
+        )
+        excerpts = excerpt_pattern.findall(source)
+        self.assertEqual(len(SPECIALIZATION_EXCERPT_CONTRACT), len(excerpts))
+        for (label, body), expected in zip(
+            excerpts,
+            SPECIALIZATION_EXCERPT_CONTRACT,
+            strict=True,
+        ):
+            mutated_body = ("S" if body[0] != "S" else "s") + body[1:]
+            mutated_contract = (
+                label,
+                len(mutated_body.encode("utf-8")),
+                hashlib.sha256(mutated_body.encode("utf-8")).hexdigest(),
+            )
+            with self.subTest(excerpt=label):
+                self.assertEqual(expected[:2], mutated_contract[:2])
+                self.assertNotEqual(expected[2], mutated_contract[2])
+
     def test_index_detail_pages_expose_complete_section_navigation(self) -> None:
         """Index suite links and detail-page section navigation stay complete."""
         index_text = (REPOSITORY_ROOT / "index.html").read_text(encoding="utf-8")
@@ -2041,6 +2410,7 @@ class BundleContentTests(unittest.TestCase):
                     in {
                         "agent-and-skill-evaluations.html",
                         "agentic-configuration.html",
+                        "agent-skill-specialization-examples.html",
                         "documentation-templates.html",
                         "orchestrated-development-lifecycle.html",
                         "wiki-skills-and-project-context.html",
@@ -16579,6 +16949,68 @@ Visible after.
         ):
             with self.subTest(documentation_settings_phrase=phrase):
                 self.assertIn(phrase, settings_text)
+
+        def declarations(selector: str) -> dict[str, str]:
+            match = re.search(
+                rf"{re.escape(selector)}\s*\{{(?P<body>[^}}]*)\}}",
+                settings_text,
+            )
+            self.assertIsNotNone(match, f"Missing Settings selector {selector}")
+            assert match is not None
+            return {
+                name.strip(): value.strip()
+                for declaration in match.group("body").split(";")
+                if ":" in declaration
+                for name, value in (declaration.split(":", maxsplit=1),)
+            }
+
+        hover = declarations(".documentation-settings__trigger:hover")
+        self.assertEqual("currentColor", hover.get("border-color"))
+        self.assertEqual("2px solid currentColor", hover.get("outline"))
+        self.assertEqual("2px", hover.get("outline-offset"))
+
+        focus = declarations(".documentation-settings__trigger:focus-visible")
+        self.assertEqual("currentColor", focus.get("border-color"))
+        self.assertEqual("2px solid #fff", focus.get("outline"))
+        self.assertEqual("2px", focus.get("outline-offset"))
+        self.assertEqual("0 0 0 4px #172033", focus.get("box-shadow"))
+
+        normalize_hex = lambda color: "#ffffff" if color == "#fff" else color
+        indicator_tones = (
+            normalize_hex(focus["outline"].rsplit(maxsplit=1)[1]),
+            normalize_hex(focus["box-shadow"].rsplit(maxsplit=1)[1]),
+        )
+        self.assertGreaterEqual(
+            wcag_contrast_ratio(*indicator_tones),
+            3.0,
+        )
+        shared_stylesheet_text = (
+            REPOSITORY_ROOT
+            / "design"
+            / "documentation-design-system"
+            / "assets"
+            / "design-system.css"
+        ).read_text(encoding="utf-8")
+        supported_theme_selectors = {
+            "light": ".theme-preview--light",
+            "narrative dark": ".theme-preview--dark",
+            "report dark": ".theme-preview--report",
+        }
+        for theme, selector in supported_theme_selectors.items():
+            with self.subTest(settings_focus_theme=theme):
+                background = css_hex_property(
+                    shared_stylesheet_text,
+                    selector,
+                    "background",
+                )
+                self.assertRegex(background, r"^#[0-9a-fA-F]{6}$")
+                self.assertGreaterEqual(
+                    max(
+                        wcag_contrast_ratio(tone, background)
+                        for tone in indicator_tones
+                    ),
+                    3.0,
+                )
 
     def test_html_documentation_has_no_repeated_long_prose_blocks(self) -> None:
         occurrences: dict[str, set[str]] = {}

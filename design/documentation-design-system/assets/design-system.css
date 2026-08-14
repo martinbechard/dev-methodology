@@ -515,6 +515,11 @@ p {
 .callout {
   border-left: 5px solid var(--ds-blue);
   background: linear-gradient(90deg, var(--ds-soft-blue), white 52%);
+  color: var(--ds-ink);
+}
+
+.callout p {
+  color: inherit;
 }
 
 .callout--warning {

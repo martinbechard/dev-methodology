@@ -51,11 +51,17 @@
       cursor: pointer;
     }
 
-    .documentation-settings__trigger:hover,
-    .documentation-settings__trigger:focus-visible {
+    .documentation-settings__trigger:hover {
       border-color: currentColor;
       outline: 2px solid currentColor;
       outline-offset: 2px;
+    }
+
+    .documentation-settings__trigger:focus-visible {
+      border-color: currentColor;
+      outline: 2px solid #fff;
+      outline-offset: 2px;
+      box-shadow: 0 0 0 4px #172033;
     }
 
     .documentation-settings__dialog[hidden] {

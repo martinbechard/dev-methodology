@@ -2497,6 +2497,76 @@ class DocumentationDesignSystemTests(unittest.TestCase):
             r"\.card--link:focus-visible\s*\{[^}]*transform:\s*none;",
         )
 
+    def test_shared_callout_text_meets_normal_contrast_threshold(self) -> None:
+        """Standard and warning callouts keep normal text at 4.5:1 or better."""
+
+        css = (DESIGN_ROOT / "assets" / "design-system.css").read_text(
+            encoding="utf-8"
+        )
+
+        def declarations(selector: str) -> dict[str, str]:
+            match = re.search(
+                rf"{re.escape(selector)}\s*\{{(?P<body>[^}}]*)\}}",
+                css,
+            )
+            self.assertIsNotNone(match, f"Missing shared selector {selector}")
+            assert match is not None
+            return {
+                name.strip(): value.strip()
+                for declaration in match.group("body").split(";")
+                if ":" in declaration
+                for name, value in (declaration.split(":", maxsplit=1),)
+            }
+
+        def contrast_ratio(first_hex: str, second_hex: str) -> float:
+            def relative_luminance(hex_color: str) -> float:
+                channels = [
+                    int(hex_color[index:index + 2], 16) / 255
+                    for index in (1, 3, 5)
+                ]
+                linear = [
+                    channel / 12.92
+                    if channel <= 0.04045
+                    else ((channel + 0.055) / 1.055) ** 2.4
+                    for channel in channels
+                ]
+                return 0.2126 * linear[0] + 0.7152 * linear[1] + 0.0722 * linear[2]
+
+            first = relative_luminance(first_hex)
+            second = relative_luminance(second_hex)
+            lighter = max(first, second)
+            darker = min(first, second)
+            return (lighter + 0.05) / (darker + 0.05)
+
+        root_tokens = declarations(":root")
+        callout = declarations(".callout")
+        warning = declarations(".callout--warning")
+        callout_paragraph = declarations(".callout p")
+        self.assertEqual("var(--ds-ink)", callout.get("color"))
+        self.assertEqual("inherit", callout_paragraph.get("color"))
+        self.assertEqual(
+            "linear-gradient(90deg, var(--ds-soft-blue), white 52%)",
+            callout.get("background"),
+        )
+        self.assertEqual(
+            "linear-gradient(90deg, var(--ds-soft-amber), white 52%)",
+            warning.get("background"),
+        )
+
+        foreground = root_tokens["--ds-ink"]
+        gradient_endpoints = {
+            "standard soft": root_tokens["--ds-soft-blue"],
+            "standard white": "#ffffff",
+            "warning soft": root_tokens["--ds-soft-amber"],
+            "warning white": "#ffffff",
+        }
+        for state, background in gradient_endpoints.items():
+            with self.subTest(callout_state=state):
+                self.assertGreaterEqual(
+                    contrast_ratio(foreground, background),
+                    4.5,
+                )
+
     def test_index_discovers_every_detail_page_and_assets_exist(self) -> None:
         """The single entry page must discover every concern and required static asset."""
 
