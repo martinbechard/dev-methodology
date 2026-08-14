@@ -17172,10 +17172,21 @@ Visible after.
         locations_section = configuration_text.split(
             '<section class="section" aria-labelledby="locations-title">', maxsplit=1
         )[1].split("</section>", maxsplit=1)[0]
-        self.assertEqual(
-            [
+        rowgroup_bodies = re.findall(
+            r'<tbody class="purpose-group">(.*?)</tbody>',
+            locations_section,
+            flags=re.DOTALL,
+        )
+        expected_rowgroup_bodies = [
+            (
                 ("purpose-heading", "", "4", "rowgroup", "Skill Definition Files"),
+                ("codex", "claude", "gemini", "junie", "copilot"),
+            ),
+            (
                 ("purpose-heading", "", "4", "rowgroup", "Agent Definition Files"),
+                ("codex",),
+            ),
+            (
                 (
                     "format-heading",
                     "claude gemini junie copilot",
@@ -17183,6 +17194,9 @@ Visible after.
                     "rowgroup",
                     "Markdown Agent Definition Files",
                 ),
+                ("claude", "gemini", "junie", "copilot"),
+            ),
+            (
                 (
                     "purpose-heading",
                     "",
@@ -17190,6 +17204,9 @@ Visible after.
                     "rowgroup",
                     "Root Project Instruction Files",
                 ),
+                ("codex", "claude", "gemini", "junie", "copilot"),
+            ),
+            (
                 (
                     "purpose-heading",
                     "",
@@ -17197,7 +17214,29 @@ Visible after.
                     "rowgroup",
                     "Nested Project Instruction Files",
                 ),
-            ],
+                ("codex", "claude", "gemini", "copilot", "junie"),
+            ),
+        ]
+        observed_rowgroup_bodies = []
+        for body in rowgroup_bodies:
+            headers = re.findall(
+                r'<tr class="([^"]+)"(?: data-harness-format="([^"]+)")?>\s*'
+                r'<th colspan="([^"]+)" scope="([^"]+)">([^<]+)',
+                body,
+            )
+            rows = tuple(
+                re.findall(
+                    r'<tr data-harness-row data-harness="([^"]+)">',
+                    body,
+                )
+            )
+            observed_rowgroup_bodies.append((tuple(headers), rows))
+        self.assertEqual(
+            [((header,), rows) for header, rows in expected_rowgroup_bodies],
+            observed_rowgroup_bodies,
+        )
+        self.assertEqual(
+            [header for header, _ in expected_rowgroup_bodies],
             re.findall(
                 r'<tr class="([^"]+)"(?: data-harness-format="([^"]+)")?>\s*'
                 r'<th colspan="([^"]+)" scope="([^"]+)">([^<]+)',

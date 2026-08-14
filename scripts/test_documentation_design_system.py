@@ -276,6 +276,46 @@ AGENTIC_CONFIGURATION_ROWGROUP_HEADER_CONTRACT = (
     ("purpose-heading", "", "4", "rowgroup", "Root Project Instruction Files"),
     ("purpose-heading", "", "4", "rowgroup", "Nested Project Instruction Files"),
 )
+AGENTIC_CONFIGURATION_ROWGROUP_BODY_CONTRACT = (
+    (
+        ("purpose-heading", "", "4", "rowgroup", "Skill Definition Files"),
+        ("codex", "claude", "gemini", "junie", "copilot"),
+    ),
+    (
+        ("purpose-heading", "", "4", "rowgroup", "Agent Definition Files"),
+        ("codex",),
+    ),
+    (
+        (
+            "format-heading",
+            "claude gemini junie copilot",
+            "4",
+            "rowgroup",
+            "Markdown Agent Definition Files",
+        ),
+        ("claude", "gemini", "junie", "copilot"),
+    ),
+    (
+        (
+            "purpose-heading",
+            "",
+            "4",
+            "rowgroup",
+            "Root Project Instruction Files",
+        ),
+        ("codex", "claude", "gemini", "junie", "copilot"),
+    ),
+    (
+        (
+            "purpose-heading",
+            "",
+            "4",
+            "rowgroup",
+            "Nested Project Instruction Files",
+        ),
+        ("codex", "claude", "gemini", "copilot", "junie"),
+    ),
+)
 AGENTIC_CONFIGURATION_PRINT_FILTER_OVERRIDE = """    @media print {
       tr[hidden] {
         display: table-row;
@@ -497,12 +537,20 @@ class _AgenticConfigurationContractParser(HTMLParser):
             tuple[str, str, tuple[str, ...], str, str | None]
         ] = []
         self.rowgroup_headers: list[tuple[str, str, str, str, str]] = []
+        self.rowgroup_bodies: list[
+            tuple[
+                tuple[tuple[str, str, str, str, str], ...],
+                tuple[str, ...],
+            ]
+        ] = []
         self._active_heading: tuple[str, str, list[str]] | None = None
         self._active_label: tuple[str, str, list[str]] | None = None
         self._active_row: tuple[str, str] | None = None
         self._active_rowgroup_header: tuple[str, str, str, str] | None = None
         self._active_rowgroup_header_text: list[str] = []
         self._rowgroup_header_nested_depth = 0
+        self._active_tbody_headers: list[tuple[str, str, str, str, str]] | None = None
+        self._active_tbody_rows: list[str] | None = None
 
     def handle_starttag(
         self,
@@ -512,7 +560,19 @@ class _AgenticConfigurationContractParser(HTMLParser):
         """Start text capture and record filter element attributes."""
 
         attributes = dict(attrs)
-        if tag == "tr":
+        if tag == "tbody":
+            if attributes.get("class") == "purpose-group":
+                self._active_tbody_headers = []
+                self._active_tbody_rows = []
+            else:
+                self._active_tbody_headers = None
+                self._active_tbody_rows = None
+        elif tag == "tr":
+            if (
+                "data-harness-row" in attributes
+                and self._active_tbody_rows is not None
+            ):
+                self._active_tbody_rows.append(attributes.get("data-harness") or "")
             row_class = attributes.get("class") or ""
             if row_class in {"purpose-heading", "format-heading"}:
                 self._active_row = (
@@ -571,21 +631,32 @@ class _AgenticConfigurationContractParser(HTMLParser):
                 row_class, harness_format, colspan, scope = (
                     self._active_rowgroup_header
                 )
-                self.rowgroup_headers.append(
-                    (
-                        row_class,
-                        harness_format,
-                        colspan,
-                        scope,
-                        " ".join("".join(self._active_rowgroup_header_text).split()),
-                    )
+                header_contract = (
+                    row_class,
+                    harness_format,
+                    colspan,
+                    scope,
+                    " ".join("".join(self._active_rowgroup_header_text).split()),
                 )
+                self.rowgroup_headers.append(header_contract)
+                if self._active_tbody_headers is not None:
+                    self._active_tbody_headers.append(header_contract)
                 self._active_rowgroup_header = None
                 self._active_rowgroup_header_text = []
             elif self._rowgroup_header_nested_depth > 0:
                 self._rowgroup_header_nested_depth -= 1
         if tag == "tr":
             self._active_row = None
+        if tag == "tbody" and self._active_tbody_headers is not None:
+            assert self._active_tbody_rows is not None
+            self.rowgroup_bodies.append(
+                (
+                    tuple(self._active_tbody_headers),
+                    tuple(self._active_tbody_rows),
+                )
+            )
+            self._active_tbody_headers = None
+            self._active_tbody_rows = None
         if self._active_heading is not None and tag == self._active_heading[0]:
             heading_tag, element_id, text_parts = self._active_heading
             self.headings.append(
@@ -935,6 +1006,14 @@ def _validate_agentic_configuration_structure(source: str) -> None:
         page_contract_parser.rowgroup_headers
         == list(AGENTIC_CONFIGURATION_ROWGROUP_HEADER_CONTRACT),
         "ordered row-group header structure and direct labels must remain exact",
+    )
+    require(
+        page_contract_parser.rowgroup_bodies
+        == [
+            ((header,), harnesses)
+            for header, harnesses in AGENTIC_CONFIGURATION_ROWGROUP_BODY_CONTRACT
+        ],
+        "each row-group header must own exactly one tbody and its expected rows",
     )
     require(
         source.count(AGENTIC_CONFIGURATION_PRINT_FILTER_OVERRIDE) == 1,
@@ -1634,6 +1713,15 @@ class DocumentationDesignSystemTests(unittest.TestCase):
             list(AGENTIC_CONFIGURATION_ROWGROUP_HEADER_CONTRACT),
             rowgroup_headers,
         )
+        contract_parser = _AgenticConfigurationContractParser()
+        contract_parser.feed(source)
+        self.assertEqual(
+            [
+                ((header,), harnesses)
+                for header, harnesses in AGENTIC_CONFIGURATION_ROWGROUP_BODY_CONTRACT
+            ],
+            contract_parser.rowgroup_bodies,
+        )
         parser = _PageParser()
         parser.feed(source)
         inline_script = parser.script_contents[1]
@@ -1784,8 +1872,18 @@ class DocumentationDesignSystemTests(unittest.TestCase):
                 1,
             ),
         }
-        for _, _, _, _, label in AGENTIC_CONFIGURATION_ROWGROUP_HEADER_CONTRACT:
+        for (
+            row_class,
+            harness_format,
+            _,
+            _,
+            label,
+        ) in AGENTIC_CONFIGURATION_ROWGROUP_HEADER_CONTRACT:
+            row_attributes = f'class="{row_class}"'
+            if harness_format:
+                row_attributes += f' data-harness-format="{harness_format}"'
             header = f'<th colspan="4" scope="rowgroup">{label}'
+            row_header = f"<tr {row_attributes}>\n            {header}"
             mutation_key = label.lower().replace(" ", "-")
             structural_mutations[f"missing-{mutation_key}-scope"] = source.replace(
                 header,
@@ -1797,8 +1895,55 @@ class DocumentationDesignSystemTests(unittest.TestCase):
                 f'<th colspan="4" scope="col">{label}',
                 1,
             )
+            structural_mutations[f"altered-{mutation_key}-class"] = source.replace(
+                row_header,
+                row_header.replace(
+                    f'class="{row_class}"',
+                    'class="other-heading"',
+                    1,
+                ),
+                1,
+            )
+            if harness_format:
+                altered_format_attributes = row_attributes.replace(
+                    f'data-harness-format="{harness_format}"',
+                    'data-harness-format="codex"',
+                    1,
+                )
+            else:
+                altered_format_attributes = (
+                    f'{row_attributes} data-harness-format="codex"'
+                )
+            structural_mutations[
+                f"altered-{mutation_key}-data-harness-format"
+            ] = source.replace(
+                row_header,
+                row_header.replace(row_attributes, altered_format_attributes, 1),
+                1,
+            )
+            structural_mutations[f"altered-{mutation_key}-colspan"] = source.replace(
+                row_header,
+                row_header.replace('colspan="4"', 'colspan="3"', 1),
+                1,
+            )
+            structural_mutations[
+                f"altered-{mutation_key}-direct-label"
+            ] = source.replace(
+                row_header,
+                row_header.replace(label, f"{label} altered", 1),
+                1,
+            )
         structural_mutations.update(
             {
+                "shared-markdown-rowgroup-tbody": source.replace(
+                    "        </tbody>\n"
+                    '        <tbody class="purpose-group">\n'
+                    '          <tr class="format-heading" '
+                    'data-harness-format="claude gemini junie copilot">',
+                    '          <tr class="format-heading" '
+                    'data-harness-format="claude gemini junie copilot">',
+                    1,
+                ),
                 "wrong-rowgroup-header-order": source.replace(
                     '<th colspan="4" scope="rowgroup">Skill Definition Files',
                     '<th colspan="4" scope="rowgroup">__FIRST_ROWGROUP_HEADER__',
