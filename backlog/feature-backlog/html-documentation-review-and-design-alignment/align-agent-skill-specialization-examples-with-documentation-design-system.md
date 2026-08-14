@@ -2,7 +2,7 @@
 
 Owner: Dev Orchestrator `/root/align_skill_examples`
 
-Status: Running
+Status: User Action Required
 
 Type: Feature
 
@@ -324,4 +324,32 @@ Do not mutate, integrate, deliver, or close this candidate until the user answer
 - Browser Claim Release: `browser-align-specialization-examples-019ffca1`; event `c53c7873-7637-45bb-bdc2-7522dfe3e4d8`; no browser process was started.
 - Work Item Claim Release: `work-align-specialization-examples-019ffca1`; disposition `blocked`; blocker `specialization-examples-footer-context-decision`; event `5448692a-1bfb-41ff-826f-f4bd3f93cb58`.
 - Provider Transition Claim: `specialization-footer-context-uar-019ff2c3`; event `9b60c0e9-323b-4581-9aaa-77d19d775bd4`.
+- Required Runtime Title: `Waiting for User — Align Agent And Skill Specialization Examples With Documentation Design System`.
+
+## Exhausted Verifier Architecture Decision
+
+### Question for the User
+
+The final authorized verifier review proved that `page.request.head()` cannot both retain a successful response's status and headers and then observe a browser `net::ERR_ABORTED` signal: resolving retains the response but exposes no abort, while throwing loses the response. Which contract should govern the durable Documentation Design System verifier?
+
+### Options and Tradeoffs
+
+- **Option A — authorize a new collector architecture cycle (recommended):** Use a collector API that can preserve the ordered request, server observation, successful response status and headers, optional browser abort signal, and completion evidence. This retains the stronger accepted contract but expands the reviewed verifier architecture and requires a new bounded plan, implementation, focused tests, and fresh independent review.
+- **Option B — revise the abort-exception contract:** Define successful HEAD status and headers as sufficient completion evidence for `page.request.head()` and remove the requirement to observe `net::ERR_ABORTED` in that path. This is smaller, but deliberately narrows the accepted verifier evidence model and requires updated schemas, tests, and fresh review.
+
+### Why User Input Is Required
+
+The third and final correction cycle is exhausted. Choosing a new response-plus-abort collector expands the accepted architecture; removing the abort observation changes the accepted verification contract. Neither change is authorized by the existing Work Item boundary, so this is one genuine user-owned authority decision.
+
+### Preserved Evidence And Boundary
+
+- Transition: `Running -> User Action Required`.
+- Recorded At: 2026-08-14T07:47:23Z.
+- Canonical Task and Conversation: `019ffca1-15fa-7940-a0cb-e0a51da36aae` on host `local`.
+- Dev Orchestrator: `/root/align_skill_examples`.
+- Preserved Page Candidate: `d0ce8ad971638b97d54b8cfaa7d7d4055950d3e8`.
+- Preserved Verifier Candidate: `a90a203c3f4800bad0802690093a201af071b600`.
+- Review State: Artifact/schema review `ACCEPTED`; final source review rejects only the impossible response-plus-abort observation through `page.request.head()`.
+- Execution State: No generated projection, browser, listener, or final verification ran after the rejected review. No claim operation occurred.
+- Correction Boundary: Three authorized review/correction cycles are consumed. Do not correct, regenerate, start a browser/listener, deliver, replace the task, or infer PASS until the user chooses one option.
 - Required Runtime Title: `Waiting for User — Align Agent And Skill Specialization Examples With Documentation Design System`.
