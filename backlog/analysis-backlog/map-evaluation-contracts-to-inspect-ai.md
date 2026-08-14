@@ -1,6 +1,6 @@
 # Map Evaluation Contracts To Inspect AI
 
-Status: Ready
+Status: Starting
 
 Type: Analysis
 
@@ -148,4 +148,22 @@ Use conservative defaults. Retain repository authorities, require explicit parit
 
 ### Unattended Work Boundary
 
-Do not modify, review, verify, deliver, or close this Work Item while it remains Ready behind the selected sole local crisis execution. Preserve the canonical execution and candidate. Unrelated eligible Work Items may continue only as crisis policy permits.
+Do not modify, review, verify, deliver, or close this Work Item before the preserved Dev Orchestrator accepts the Starting reservation. Preserve the canonical execution and candidate. Unrelated eligible Work Items may continue only as crisis policy permits.
+
+## Final-Cycle Crisis Reservation
+
+- Transition: `Ready -> Starting`.
+- Reserved At: `2026-08-14T22:32:22Z`.
+- Crisis Epoch: `blocked-crisis-20260813T223935Z`.
+- Baseline: `35555d916c0ed615bad17953bb246a2f5cbe9349` on configured primary branch `main`.
+- Canonical Task and Conversation: `019ffbeb-02ee-7d52-9460-d1bfdbdbe20b` on host `local`.
+- Preserved Dev Orchestrator: `/root/map_evaluation_contracts_to_inspect_ai`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Capacity: Sole local dev-methodology crisis execution after `require-explicit-user-approval-for-new-infrastructure` entered User Action Required.
+- Preserved Candidate: `33d6a25350f5230cb359c1ad76397fea4dda44fc` with existing plan, review history, series evidence, and all accepted content.
+- Authorized Scope: The fourth and final correction cycle is limited to the two ledgers recorded in the Resolution. No fifth cycle, unrelated methodology work, or later-series implementation is authorized.
+- Coordination Boundary: Claim-free crisis reservation. No claim operation occurred; preserve the post-reset draft and claim evidence until crisis exit reconciliation.
+- Required Runtime Title: `Starting — Map Evaluation Contracts To Inspect AI`.
+- Required Acceptance: The same Dev Orchestrator records `Starting -> Running` claim-free before correction, review, verification, or delivery work resumes.
+- Next Action: Resume the preserved canonical task and existing nested execution. After accepted Running evidence, complete only the authorized ledgers, obtain fresh independent review and focused verification, and return a terminal result or one truthful exhausted-boundary disposition.
