@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: Blocked
+Status: Ready
 
 Type: Feature
 
@@ -171,3 +171,14 @@ Do not mutate, integrate, deliver, or close this item until the user answers and
 - Provider Record Claim: `align-agentic-configuration-running-record-019ffcd1`; event `2dd35652-58f4-4fb7-9d74-1fd0e2714b83`.
 - Adoption Release Evidence: task event `409f0116-ed86-4953-9b12-64e8a079744a`; backlog event `c62b4717-5a71-49aa-b331-174b3c7f22c8`.
 - Next Action: Evaluate implementation complexity, confirm the accepted content baseline and generator boundary, then route the bounded plan for independent technical review.
+
+## Crisis Unblock Evidence
+
+- Transition: `Blocked -> Ready`.
+- Recorded At: 2026-08-14T00:14:30Z.
+- Crisis Epoch: `blocked-crisis-20260813T223935Z`.
+- User Decision: The durable blanket Option A answer remains authoritative: add concise visible footer wording using only useful known page-specific provenance, scope, and compatibility facts established by accepted sources. Do not ask this question again.
+- Technical Unblock Proof: The supporting Project Configurator recovery returned a revision-matched configured load of `review-documentation-design-system` version `1.0.0` and the applicable repository-current checklist bytes.
+- Preserved Execution: Canonical Task and Conversation `019ffcd1-c9a0-78f0-8713-ef8951f1f9b5` on host `local`, with its existing nested Dev Orchestrator, accepted baseline, plan evidence, and source-unmodified state.
+- Coordination Boundary: This transition used no claim operation. Crisis SOLO remains active, and this item is the selected next serial crisis recovery.
+- Next Action: Reserve this Ready item for the same canonical execution, then require that execution to accept `Starting -> Running` before source mutation.
