@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -182,6 +182,23 @@ The accepted candidate needs executable positive and negative evaluation coverag
 - Coordination Boundary: Claim-free crisis reconciliation. No claim query or release occurred.
 - Required Runtime Title: `Ready — Require Explicit User Approval For New Infrastructure`.
 - Unattended Work Boundary: Preserve the dirty private worktree byte-for-byte. Do not correct, stage, commit, clean, review, run the live evaluation, verify, integrate, deliver, replace, or resume until the Coordinator reserves this same canonical execution after the current sole crisis item becomes terminal or truthfully non-active.
+
+## Reconciled Evaluation Crisis Reservation
+
+- Transition: `Ready -> Starting`.
+- Reserved At: `2026-08-14T23:23:36Z`.
+- Crisis Epoch: `blocked-crisis-20260813T223935Z`.
+- Baseline: `480cff0ef16e586afa9ca3c6ce1a7ad71088f229` on configured primary branch `main`.
+- Capacity Trigger: Map Evaluation Contracts completed and archived, releasing the sole local crisis slot.
+- Canonical Task and Conversation: `01a00236-ec5c-7811-ad56-6877828d2287` on host `local`.
+- Preserved Dev Orchestrator: `/root/require_explicit_user_approval_for_new_infrastructure`.
+- Preserved Candidate And Worktree: `e658f6d00a779e731098cbd1ea6e698b0104c2af`, branch `work-item/require-explicit-user-approval-for-new-infrastructure-01a00236`, and the exact dirty private-worktree manifest recorded above.
+- Preserved User Policy: Internal test-harness fixtures and evaluation contracts do not require separate approval; deployed skills, agent definitions, templates, and comparable project-consumed artifacts do.
+- Authorized Scope: Continue only the preserved internal evaluation-contract correction, existing live-model Dev Architect suite, fresh governed-definition and prompt review, independent verification, integration, and terminal delivery for this Work Item.
+- Hard Boundary: Preserve dirty bytes; do not reset or reimplement them. Do not expand into new deployed skill, agent, template, infrastructure, or unrelated evaluation scope.
+- Coordination Boundary: Claim-free sole local crisis reservation. No claim operation occurred.
+- Required Runtime Title: `Starting — Require Explicit User Approval For New Infrastructure`.
+- Required Acceptance: The same Dev Orchestrator records a new claim-free `Starting -> Running` acceptance before dirty-worktree mutation or evaluation resumes.
 
 ## Running Acceptance Evidence
 
