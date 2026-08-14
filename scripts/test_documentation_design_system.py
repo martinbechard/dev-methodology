@@ -324,7 +324,14 @@ AGENTIC_CONFIGURATION_PRINT_FILTER_OVERRIDE = """    @media print {
       .filter-status {
         display: none;
       }
+
+      .documentation-settings__trigger {
+        display: none !important;
+      }
     }"""
+AGENTIC_CONFIGURATION_PRINT_SETTINGS_TRIGGER_OVERRIDE = """      .documentation-settings__trigger {
+        display: none !important;
+      }"""
 AGENTIC_CONFIGURATION_SECTION_NAVIGATION = (
     ("Top", "#top"),
     ("Glossary", "#glossary-title"),
@@ -1693,7 +1700,9 @@ class DocumentationDesignSystemTests(unittest.TestCase):
             re.compile(
                 r"@media print\s*\{\s*"
                 r"tr\[hidden\]\s*\{\s*display:\s*table-row;\s*\}\s*"
-                r"\.filter-status\s*\{\s*display:\s*none;\s*\}\s*\}",
+                r"\.filter-status\s*\{\s*display:\s*none;\s*\}\s*"
+                r"\.documentation-settings__trigger\s*\{\s*"
+                r"display:\s*none\s*!important;\s*\}\s*\}",
                 flags=re.DOTALL,
             ),
         )
@@ -1844,6 +1853,20 @@ class DocumentationDesignSystemTests(unittest.TestCase):
             "visible-filter-status-in-print": source.replace(
                 ".filter-status {\n        display: none;",
                 ".filter-status {\n        display: block;",
+                1,
+            ),
+            "missing-print-settings-trigger-override": source.replace(
+                AGENTIC_CONFIGURATION_PRINT_SETTINGS_TRIGGER_OVERRIDE,
+                "",
+                1,
+            ),
+            "weakened-print-settings-trigger-override": source.replace(
+                AGENTIC_CONFIGURATION_PRINT_SETTINGS_TRIGGER_OVERRIDE,
+                AGENTIC_CONFIGURATION_PRINT_SETTINGS_TRIGGER_OVERRIDE.replace(
+                    "display: none !important;",
+                    "display: none;",
+                    1,
+                ),
                 1,
             ),
             "duplicate-identifier": source.replace(
