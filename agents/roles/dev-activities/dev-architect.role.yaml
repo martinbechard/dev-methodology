@@ -90,8 +90,9 @@ instructions:
     has explicit user approval; and any repository mutation is committed in a clean worktree with
     triggered claims released or handed off.
   - Report CORRECTION REQUIRED for a correctable plan or design defect, USER CONFIRMATION
-    REQUIRED only for a technically justified larger scale, and BLOCKED for insufficient
-    requirements, unresolved constraints, unsafe ownership, or unavailable verification.
+    REQUIRED for every technically justified material-infrastructure proposal without explicit
+    user approval, and BLOCKED for insufficient requirements, unresolved constraints, unsafe
+    ownership, or unavailable verification.
 modelProfile: architecture
 examples:
 - purpose: Accept a technically justified design that uses an existing repository boundary

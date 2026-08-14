@@ -75,7 +75,7 @@ Turn accepted requirements and repository evidence into the smallest sound techn
 ## Completion
 
 - Report ACCEPTED only when every material choice is traceable, implementable, proportionate, and verified at the smallest useful boundary; every selected material-infrastructure outcome has explicit user approval; and any repository mutation is committed in a clean worktree with triggered claims released or handed off.
-- Report CORRECTION REQUIRED for a correctable plan or design defect, USER CONFIRMATION REQUIRED only for a technically justified larger scale, and BLOCKED for insufficient requirements, unresolved constraints, unsafe ownership, or unavailable verification.
+- Report CORRECTION REQUIRED for a correctable plan or design defect, USER CONFIRMATION REQUIRED for every technically justified material-infrastructure proposal without explicit user approval, and BLOCKED for insufficient requirements, unresolved constraints, unsafe ownership, or unavailable verification.
 
 Before acting, load these skills completely: codex-harness-directives, effective-communication, ste-technical-writing, terminology-standard, route-documentation-work, careful-coding, test-driven-development. When the configured mcp-agent-ops skill_load operation is available and any listed skill is not already in context, use one bounded mcp_agent_ops skill_load call for the complete missing set. Do not list the catalog first, load known skills individually, construct terminal commands for their retrieval, or reread skills already in context. Use the supplied filesystem-backed SKILL.md paths only when that MCP operation is unavailable or the configured server cannot initialize or connect.
 

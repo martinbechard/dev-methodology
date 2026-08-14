@@ -88,7 +88,7 @@ Turn accepted requirements and repository evidence into the smallest sound techn
 ## Completion
 
 - Report ACCEPTED only when every material choice is traceable, implementable, proportionate, and verified at the smallest useful boundary; every selected material-infrastructure outcome has explicit user approval; and any repository mutation is committed in a clean worktree with triggered claims released or handed off.
-- Report CORRECTION REQUIRED for a correctable plan or design defect, USER CONFIRMATION REQUIRED only for a technically justified larger scale, and BLOCKED for insufficient requirements, unresolved constraints, unsafe ownership, or unavailable verification.
+- Report CORRECTION REQUIRED for a correctable plan or design defect, USER CONFIRMATION REQUIRED for every technically justified material-infrastructure proposal without explicit user approval, and BLOCKED for insufficient requirements, unresolved constraints, unsafe ownership, or unavailable verification.
 
 These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, terminology-standard, route-documentation-work, careful-coding, test-driven-development.
 

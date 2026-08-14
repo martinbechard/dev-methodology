@@ -14609,6 +14609,7 @@ Visible after.
             },
             sort_keys=False,
         )
+        normalized_architect_contract = re.sub(r"\s+", " ", architect_contract)
         for phrase in (
             "smallest approach",
             "mature software",
@@ -14620,7 +14621,7 @@ Visible after.
             "clean worktree",
         ):
             with self.subTest(architect_phrase=phrase):
-                self.assertIn(phrase, architect_contract)
+                self.assertIn(phrase, normalized_architect_contract)
 
         source_profiles = set(load_yaml_object(MODEL_PROFILES_PATH)["profiles"])
         expected_architecture_profiles = {
@@ -14687,6 +14688,20 @@ Visible after.
                 "accepted-design",
                 "ambitious-service-simulator",
                 "insufficient-requirements-and-constraints",
+                "material-infrastructure-original-request-approval",
+                "material-infrastructure-later-answer-approval",
+                "material-infrastructure-technical-justification-not-approval",
+                "material-infrastructure-reviewer-acceptance-not-approval",
+                "material-infrastructure-architecture-acceptance-not-approval",
+                "material-infrastructure-broad-scope-not-approval",
+                "material-infrastructure-implementation-need-not-approval",
+                "material-infrastructure-convenience-not-approval",
+                "material-infrastructure-coverage-goal-not-approval",
+                "material-infrastructure-agent-recommendation-not-approval",
+                "ordinary-fixture-authorized",
+                "ordinary-helper-authorized",
+                "ordinary-focused-test-authorized",
+                "material-infrastructure-missing-approval",
             },
             set(architect_suite_by_id),
         )
@@ -15054,6 +15069,122 @@ Visible after.
             "Do not infer approval from the original implementation request.",
             architect_contract,
         )
+        self.assertNotIn(
+            "USER CONFIRMATION REQUIRED only for a technically justified larger scale",
+            architect_contract,
+        )
+
+        suite_root = AGENT_TEST_SUITES_ROOT / "dev-architect"
+        scenarios = load_yaml_object(suite_root / "scenarios.yaml")["scenarios"]
+        scenarios_by_id = {scenario["id"]: scenario for scenario in scenarios}
+        cases = load_yaml_object(suite_root / "fixtures" / "cases.yaml")["cases"]
+        approval_sources = {
+            "material-infrastructure-original-request-approval": "original-user-request",
+            "material-infrastructure-later-answer-approval": "later-recorded-answer",
+        }
+        rejected_inferences = {
+            "material-infrastructure-technical-justification-not-approval": "technical-justification",
+            "material-infrastructure-reviewer-acceptance-not-approval": "reviewer-acceptance",
+            "material-infrastructure-architecture-acceptance-not-approval": "architecture-acceptance",
+            "material-infrastructure-broad-scope-not-approval": "broad-scope-language",
+            "material-infrastructure-implementation-need-not-approval": "implementation-need",
+            "material-infrastructure-convenience-not-approval": "convenience",
+            "material-infrastructure-coverage-goal-not-approval": "test-coverage-goal",
+            "material-infrastructure-agent-recommendation-not-approval": "agent-recommendation",
+            "material-infrastructure-missing-approval": "none",
+        }
+        ordinary_authority = {
+            "ordinary-fixture-authorized": "ordinary-fixture",
+            "ordinary-helper-authorized": "ordinary-helper",
+            "ordinary-focused-test-authorized": "ordinary-focused-test",
+        }
+        expected_scenario_ids = (
+            set(approval_sources) | set(rejected_inferences) | set(ordinary_authority)
+        )
+        self.assertTrue(expected_scenario_ids <= set(scenarios_by_id))
+        self.assertTrue(expected_scenario_ids <= set(cases))
+
+        for scenario_id, source in approval_sources.items():
+            with self.subTest(scenario=scenario_id, decision="explicit-approval"):
+                scenario = scenarios_by_id[scenario_id]
+                case = cases[scenario_id]
+                expected = case["expectedDecision"]
+                self.assertEqual("ACCEPTED", scenario["expectedRoleStatus"])
+                scenario_contract = " ".join(scenario["requiredBehaviors"])
+                self.assertIn("permitted approval source", scenario_contract)
+                self.assertIn("Authorize only the named runner", scenario_contract)
+                self.assertIn("without", scenario_contract)
+                self.assertIn("User Action Required question", scenario_contract)
+                self.assertEqual(source, case["authorityEvidence"]["source"])
+                self.assertTrue(
+                    case["authorityEvidence"]["explicitlyApprovesExactInfrastructure"]
+                )
+                self.assertEqual("material-infrastructure", case["proposal"]["kind"])
+                self.assertTrue(expected["implementationAuthorized"])
+                self.assertTrue(expected["materialInfrastructureAuthorized"])
+                self.assertTrue(expected["proposalPreserved"])
+                self.assertFalse(expected["infrastructureImplementationStopped"])
+                self.assertEqual(0, expected["userActionRequired"]["questionCount"])
+
+        for scenario_id, source in rejected_inferences.items():
+            with self.subTest(scenario=scenario_id, decision="approval-required"):
+                scenario = scenarios_by_id[scenario_id]
+                case = cases[scenario_id]
+                expected = case["expectedDecision"]
+                question = expected["userActionRequired"]
+                self.assertEqual(
+                    "USER CONFIRMATION REQUIRED", scenario["expectedRoleStatus"]
+                )
+                scenario_contract = " ".join(scenario["requiredBehaviors"])
+                self.assertIn("Preserve the exact infrastructure proposal", scenario_contract)
+                self.assertIn("unauthorized and stopped", scenario_contract)
+                self.assertIn(
+                    "exactly one contextual plain-language User Action Required question",
+                    scenario_contract,
+                )
+                self.assertIn("concrete options with practical tradeoffs", scenario_contract)
+                self.assertIn("ask for one decision", scenario_contract)
+                self.assertEqual(source, case["authorityEvidence"]["source"])
+                self.assertFalse(
+                    case["authorityEvidence"]["explicitlyApprovesExactInfrastructure"]
+                )
+                self.assertEqual("material-infrastructure", case["proposal"]["kind"])
+                self.assertFalse(expected["implementationAuthorized"])
+                self.assertFalse(expected["materialInfrastructureAuthorized"])
+                self.assertTrue(expected["proposalPreserved"])
+                self.assertTrue(expected["infrastructureImplementationStopped"])
+                self.assertEqual(1, question["questionCount"])
+                for field in (
+                    "contextual",
+                    "plainLanguage",
+                    "identifiesProposedInfrastructure",
+                    "explainsWhyApprovalIsRequired",
+                    "includesPracticalTradeoffs",
+                    "asksForOneDecision",
+                ):
+                    self.assertIs(question[field], True, field)
+                self.assertGreaterEqual(len(question["concreteOptions"]), 2)
+
+        for scenario_id, proposal_kind in ordinary_authority.items():
+            with self.subTest(scenario=scenario_id, decision="ordinary-authority"):
+                scenario = scenarios_by_id[scenario_id]
+                case = cases[scenario_id]
+                expected = case["expectedDecision"]
+                self.assertEqual("ACCEPTED", scenario["expectedRoleStatus"])
+                scenario_contract = " ".join(scenario["requiredBehaviors"])
+                self.assertIn("ordinary test content", scenario_contract)
+                self.assertIn("normal Dev Coder implementation authority", scenario_contract)
+                self.assertIn("without a User Action Required question", scenario_contract)
+                self.assertEqual(
+                    "ordinary-implementation-authority",
+                    case["authorityEvidence"]["source"],
+                )
+                self.assertEqual(proposal_kind, case["proposal"]["kind"])
+                self.assertTrue(expected["implementationAuthorized"])
+                self.assertFalse(expected["materialInfrastructureAuthorized"])
+                self.assertTrue(expected["proposalPreserved"])
+                self.assertFalse(expected["infrastructureImplementationStopped"])
+                self.assertEqual(0, expected["userActionRequired"]["questionCount"])
 
     def test_dev_architect_legacy_documents_have_bounded_historical_provenance(
         self,
@@ -16114,6 +16245,8 @@ Visible after.
                     self.assertEqual(14, len(scenarios["scenarios"]))
                 elif entry["id"] == "dev-orchestrator":
                     self.assertEqual(6, len(scenarios["scenarios"]))
+                elif entry["id"] == "dev-architect":
+                    self.assertEqual(17, len(scenarios["scenarios"]))
                 else:
                     self.assertEqual(3, len(scenarios["scenarios"]))
 
