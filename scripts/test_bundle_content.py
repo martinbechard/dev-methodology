@@ -17172,17 +17172,38 @@ Visible after.
         locations_section = configuration_text.split(
             '<section class="section" aria-labelledby="locations-title">', maxsplit=1
         )[1].split("</section>", maxsplit=1)[0]
-        purpose_headings = (
-            "Skill Definition Files",
-            "Agent Definition Files",
-            "Root Project Instruction Files",
-            "Nested Project Instruction Files",
+        self.assertEqual(
+            [
+                ("purpose-heading", "", "4", "rowgroup", "Skill Definition Files"),
+                ("purpose-heading", "", "4", "rowgroup", "Agent Definition Files"),
+                (
+                    "format-heading",
+                    "claude gemini junie copilot",
+                    "4",
+                    "rowgroup",
+                    "Markdown Agent Definition Files",
+                ),
+                (
+                    "purpose-heading",
+                    "",
+                    "4",
+                    "rowgroup",
+                    "Root Project Instruction Files",
+                ),
+                (
+                    "purpose-heading",
+                    "",
+                    "4",
+                    "rowgroup",
+                    "Nested Project Instruction Files",
+                ),
+            ],
+            re.findall(
+                r'<tr class="([^"]+)"(?: data-harness-format="([^"]+)")?>\s*'
+                r'<th colspan="([^"]+)" scope="([^"]+)">([^<]+)',
+                locations_section,
+            ),
         )
-        purpose_positions = [
-            locations_section.index(f'<th colspan="4" scope="rowgroup">{heading}')
-            for heading in purpose_headings
-        ]
-        self.assertEqual(sorted(purpose_positions), purpose_positions)
 
         harnesses = ("codex", "claude", "gemini", "junie", "copilot")
         harness_rows = re.findall(

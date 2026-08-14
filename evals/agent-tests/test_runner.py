@@ -2811,6 +2811,306 @@ class AgentSuiteRunnerTests(unittest.TestCase):
         self.assertIn("dev-methodology-playwright-fixture-evidence", remaining_stdout)
         self.assertNotEqual(0, closed_connection_result)
 
+    def test_agentic_configuration_filter_real_dom_events_are_idempotent_and_persistent(
+        self,
+    ) -> None:
+        """The Agentic filter handles native input/change pairs once and restores persistence."""
+
+        configured_port = os.environ.get("DEV_METHODOLOGY_PLAYWRIGHT_FIXED_PORT")
+        if configured_port is None:
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as probe:
+                probe.bind(("127.0.0.1", 0))
+                requested_port = int(probe.getsockname()[1])
+        else:
+            requested_port = int(configured_port)
+
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            codex_home, _ = self._write_playwright_broker_fixture(
+                root,
+                ("browser-suite:happy",),
+            )
+            runtime = codex_home / "playwright-runtime"
+            runtime_config = json.loads(
+                (runtime / "runtime-config.json").read_text(encoding="utf-8")
+            )
+            fixture_root = Path(
+                runtime_config["scenarios"]["browser-suite:happy"]["fixtureBinding"][
+                    "configuredPath"
+                ]
+            )
+            repository_root = _RUNNER_PATH.parents[2]
+            fixture_design = fixture_root / "design"
+            fixture_assets = (
+                fixture_design / "documentation-design-system" / "assets"
+            )
+            fixture_assets.mkdir(parents=True)
+            shutil.copyfile(
+                repository_root / "design" / "documentation-settings.js",
+                fixture_design / "documentation-settings.js",
+            )
+            shutil.copyfile(
+                repository_root
+                / "design"
+                / "documentation-design-system"
+                / "assets"
+                / "design-system.css",
+                fixture_assets / "design-system.css",
+            )
+
+            source = (
+                repository_root / "design" / "agentic-configuration.html"
+            ).read_text(encoding="utf-8")
+            missing_input = source.replace(
+                '    harnessFilter.addEventListener("input", '
+                "handleHarnessFilterSelection);\n",
+                "",
+                1,
+            )
+            missing_guard = source.replace(
+                "      if (harnessFilter.value === appliedHarnessFilter) return;\n",
+                "",
+                1,
+            )
+            self.assertNotEqual(source, missing_input)
+            self.assertNotEqual(source, missing_guard)
+            variants = {
+                "actual.html": source,
+                "missing-input-listener.html": missing_input,
+                "missing-idempotency-guard.html": missing_guard,
+            }
+            for filename, variant_source in variants.items():
+                (fixture_design / filename).write_text(
+                    variant_source,
+                    encoding="utf-8",
+                )
+
+            browser_check = runtime / "agentic-filter-check.mjs"
+            browser_check.write_text(
+                """import { chromium } from 'playwright';
+                const [baseUrl, executablePath] = process.argv.slice(2);
+                const storageKey = 'dev-methodology.documentation.default-harness';
+                const browser = await chromium.launch({ executablePath, headless: true });
+
+                function requireState(condition, message) {
+                  if (!condition) throw new Error(message);
+                }
+
+                async function settle(page) {
+                  await page.evaluate(() => new Promise((resolve) => {
+                    requestAnimationFrame(() => resolve());
+                  }));
+                }
+
+                async function snapshot(page) {
+                  return page.evaluate((key) => {
+                    const filter = document.querySelector('#harness-filter');
+                    const status = document.querySelector('#harness-filter-status');
+                    const rows = Array.from(document.querySelectorAll('[data-harness-row]'));
+                    const formatRows = Array.from(document.querySelectorAll('[data-harness-format]'));
+                    return {
+                      value: filter.value,
+                      visibleRows: rows.filter((row) => !row.hidden).length,
+                      visibleFormatRows: formatRows.filter((row) => !row.hidden).length,
+                      status: status.textContent,
+                      storedHarness: localStorage.getItem(key),
+                      writes: window.__agenticHarnessWrites.slice(),
+                      renderCount: window.__agenticRenderCount,
+                    };
+                  }, storageKey);
+                }
+
+                async function dispatch(page, value, type) {
+                  await page.evaluate(({ selectedValue, eventType }) => {
+                    const filter = document.querySelector('#harness-filter');
+                    filter.value = selectedValue;
+                    filter.dispatchEvent(new Event(eventType, { bubbles: true }));
+                  }, { selectedValue: value, eventType: type });
+                  await settle(page);
+                }
+
+                async function verify(pathname) {
+                  const context = await browser.newContext();
+                  await context.addInitScript((key) => {
+                    window.__agenticHarnessWrites = [];
+                    const originalSetItem = Storage.prototype.setItem;
+                    Storage.prototype.setItem = function patchedSetItem(name, value) {
+                      if (name === key) window.__agenticHarnessWrites.push([name, value]);
+                      return originalSetItem.call(this, name, value);
+                    };
+                    document.addEventListener('DOMContentLoaded', () => {
+                      window.__agenticRenderCount = 0;
+                      const status = document.querySelector('#harness-filter-status');
+                      window.__agenticRenderObserver = new MutationObserver(() => {
+                        window.__agenticRenderCount += 1;
+                      });
+                      window.__agenticRenderObserver.observe(status, {
+                        childList: true,
+                        characterData: true,
+                        subtree: true,
+                      });
+                    }, { once: true });
+                  }, storageKey);
+                  const page = await context.newPage();
+                  try {
+                    await page.goto(`${baseUrl}/design/${pathname}`, {
+                      waitUntil: 'domcontentloaded',
+                    });
+                    const initial = await snapshot(page);
+                    requireState(initial.value === 'codex', 'initial value was not Codex');
+                    requireState(initial.visibleRows === 4, 'initial row count was not four');
+                    requireState(initial.visibleFormatRows === 0, 'initial format row was visible');
+                    requireState(initial.status === 'Showing 4 rows for Codex.', 'initial status differed');
+                    requireState(initial.storedHarness === null, 'initial state unexpectedly persisted');
+                    requireState(initial.writes.length === 0, 'initialization wrote persistence');
+                    requireState(initial.renderCount === 0, 'initialization reached the event render counter');
+
+                    await dispatch(page, 'all', 'input');
+                    const allInput = await snapshot(page);
+                    requireState(allInput.value === 'all', 'Codex→All input lost selected value');
+                    requireState(allInput.visibleRows === 20, 'Codex→All input did not show 20 rows');
+                    requireState(allInput.visibleFormatRows === 1, 'Codex→All input hid the format row');
+                    requireState(allInput.status === 'Showing 20 rows across 5 Agent harnesses.', 'Codex→All input status differed');
+                    requireState(allInput.storedHarness === null, 'All persisted an unsupported sentinel');
+                    requireState(allInput.writes.length === 0, 'All wrote harness persistence');
+                    requireState(allInput.renderCount === 1, 'Codex→All input did not render exactly once');
+
+                    await dispatch(page, 'all', 'change');
+                    const allChange = await snapshot(page);
+                    requireState(allChange.renderCount === 1, 'Codex→All change rendered again');
+                    requireState(allChange.writes.length === 0, 'Codex→All change wrote persistence');
+
+                    await dispatch(page, 'claude', 'input');
+                    const claudeInput = await snapshot(page);
+                    requireState(claudeInput.value === 'claude', 'All→Claude input lost selected value');
+                    requireState(claudeInput.visibleRows === 4, 'All→Claude input did not show four rows');
+                    requireState(claudeInput.visibleFormatRows === 1, 'All→Claude input hid the format row');
+                    requireState(claudeInput.status === 'Showing 4 rows for Claude Code.', 'All→Claude input status differed');
+                    requireState(claudeInput.storedHarness === 'claude-code', 'All→Claude input did not persist mapping');
+                    requireState(claudeInput.writes.length === 1, 'All→Claude input did not write exactly once');
+                    requireState(claudeInput.writes[0][1] === 'claude-code', 'All→Claude wrote the wrong mapping');
+                    requireState(claudeInput.renderCount === 2, 'All→Claude input did not add one render');
+
+                    await dispatch(page, 'claude', 'change');
+                    const claudeChange = await snapshot(page);
+                    requireState(claudeChange.renderCount === 2, 'All→Claude change rendered again');
+                    requireState(claudeChange.writes.length === 1, 'All→Claude change wrote again');
+
+                    await page.reload({ waitUntil: 'domcontentloaded' });
+                    const reloaded = await snapshot(page);
+                    requireState(reloaded.value === 'claude', 'reload did not restore Claude');
+                    requireState(reloaded.visibleRows === 4, 'reload did not restore four Claude rows');
+                    requireState(reloaded.visibleFormatRows === 1, 'reload hid the Claude format row');
+                    requireState(reloaded.status === 'Showing 4 rows for Claude Code.', 'reload status differed');
+                    requireState(reloaded.storedHarness === 'claude-code', 'reload lost the persisted mapping');
+                    requireState(reloaded.writes.length === 0, 'reload rewrote harness persistence');
+                    requireState(reloaded.renderCount === 0, 'reload reached the event render counter');
+                    return { passed: true, checkpoints: { initial, allInput, allChange, claudeInput, claudeChange, reloaded } };
+                  } catch (error) {
+                    return { passed: false, error: error.message };
+                  } finally {
+                    await context.close();
+                  }
+                }
+
+                try {
+                  const actual = await verify('actual.html');
+                  const missingInput = await verify('missing-input-listener.html');
+                  const missingGuard = await verify('missing-idempotency-guard.html');
+                  requireState(actual.passed, `actual page failed: ${actual.error}`);
+                  requireState(!missingInput.passed, 'missing-input-listener mutant survived');
+                  requireState(!missingGuard.passed, 'missing-idempotency-guard mutant survived');
+                  process.stdout.write(`${JSON.stringify({ actual, missingInput, missingGuard })}\n`);
+                } finally {
+                  await browser.close();
+                }
+                """,
+                encoding="utf-8",
+            )
+
+            process = subprocess.Popen(
+                [
+                    str(runner._bundled_node_executable()),
+                    str(runtime / "playwright-harness.mjs"),
+                    "serve",
+                    "--scenario",
+                    "browser-suite:happy",
+                    "--port",
+                    str(requested_port),
+                ],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                start_new_session=True,
+            )
+            try:
+                ready = runner._read_broker_ready(process)
+                browser_result = subprocess.run(
+                    [
+                        str(runner._bundled_node_executable()),
+                        str(browser_check),
+                        f"http://127.0.0.1:{requested_port}",
+                        str(runner._resolve_playwright_chromium(_RUNNER_PATH.parent)),
+                    ],
+                    check=False,
+                    text=True,
+                    capture_output=True,
+                    timeout=45,
+                )
+                listener_alive_after_reload = process.poll() is None
+                process.terminate()
+                remaining_stdout, stderr = process.communicate(timeout=10)
+            finally:
+                if process.poll() is None:
+                    process.kill()
+                    process.wait(timeout=2)
+            receipt = json.loads(
+                (root / "evidence-0" / "fixture-server.json").read_text(
+                    encoding="utf-8"
+                )
+            )
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as probe:
+                probe.settimeout(1)
+                closed_connection_result = probe.connect_ex(
+                    ("127.0.0.1", requested_port)
+                )
+
+        self.assertEqual("dev-methodology-playwright-fixture-ready", ready["schema"])
+        self.assertEqual(requested_port, ready["requestedPort"])
+        self.assertEqual(requested_port, ready["selectedPort"])
+        self.assertEqual(0, browser_result.returncode, browser_result.stderr)
+        browser_evidence = json.loads(browser_result.stdout)
+        self.assertTrue(browser_evidence["actual"]["passed"])
+        self.assertFalse(browser_evidence["missingInput"]["passed"])
+        self.assertIn(
+            "Codex→All input did not show 20 rows",
+            browser_evidence["missingInput"]["error"],
+        )
+        self.assertFalse(browser_evidence["missingGuard"]["passed"])
+        self.assertIn(
+            "Codex→All change rendered again",
+            browser_evidence["missingGuard"]["error"],
+        )
+        checkpoints = browser_evidence["actual"]["checkpoints"]
+        self.assertEqual(20, checkpoints["allInput"]["visibleRows"])
+        self.assertEqual(1, checkpoints["allChange"]["renderCount"])
+        self.assertEqual("claude", checkpoints["claudeInput"]["value"])
+        self.assertEqual(4, checkpoints["claudeInput"]["visibleRows"])
+        self.assertEqual(
+            [["dev-methodology.documentation.default-harness", "claude-code"]],
+            checkpoints["claudeChange"]["writes"],
+        )
+        self.assertEqual("claude", checkpoints["reloaded"]["value"])
+        self.assertEqual([], checkpoints["reloaded"]["writes"])
+        self.assertTrue(listener_alive_after_reload)
+        self.assertEqual(0, process.returncode, stderr)
+        self.assertEqual("completed", receipt["status"])
+        self.assertEqual("SIGTERM", receipt["stoppedBy"])
+        self.assertTrue(receipt["cleanup"]["server"]["closed"])
+        self.assertGreaterEqual(len(receipt["serviceEvents"]), 2)
+        self.assertIn("dev-methodology-playwright-fixture-evidence", remaining_stdout)
+        self.assertNotEqual(0, closed_connection_result)
+
     def test_playwright_fixture_server_requires_a_preclaimed_fixed_port(self) -> None:
         """Hold-open mode cannot create an operating-system-selected listener."""
         with tempfile.TemporaryDirectory() as temporary:
