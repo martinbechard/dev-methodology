@@ -30,7 +30,7 @@ Planning estimates use generated output tokens, including reasoning, at an assum
 
 ## Required Order
 
-1. [Map Evaluation Contracts To Inspect AI](map-evaluation-contracts-to-inspect-ai.md)
+1. [Map Evaluation Contracts To Inspect AI](../../completed-backlog/analyses/map-evaluation-contracts-to-inspect-ai.md)
 2. [Prove Read-Only Inspect AI Execution](prove-read-only-inspect-ai-execution.md)
 3. [Prove Inspect AI Multi-Agent Identity](prove-inspect-ai-multi-agent-identity.md)
 4. [Prove Inspect AI Mutation And Lifecycle Parity](prove-inspect-ai-mutation-lifecycle-parity.md)
