@@ -1,8 +1,8 @@
 # Require Explicit User Approval for New Infrastructure
 
-Owner: /root/require_explicit_user_approval_for_new_infrastructure
+Owner: Unowned
 
-Status: Running
+Status: Ready
 
 Type: Defect
 
@@ -166,6 +166,22 @@ The accepted candidate needs executable positive and negative evaluation coverag
 - Coordination: Claim-free crisis resumption. Private-worktree correction does not trigger a Resource Claim event.
 - Required Runtime Title: `Running — Require Explicit User Approval For New Infrastructure`.
 - Next Action: Correct the internal evaluation contract, run the existing live-model Dev Architect suite, repeat fresh review, then run independent verification.
+
+## Crisis Capacity Safe-Stop Reconciliation
+
+- Transition: `Running -> Ready`.
+- Recorded At: `2026-08-14T23:08:31Z`.
+- Reason: This Work Item self-resumed from the user's valid deployment-role policy clarification while Map Evaluation Contracts already occupied the sole local crisis slot. The Coordinator stopped it at its next safe boundary without treating the capacity violation as candidate failure.
+- Preserved Canonical Task and Conversation: `01a00236-ec5c-7811-ad56-6877828d2287` on host `local`.
+- Preserved Dev Orchestrator: `/root/require_explicit_user_approval_for_new_infrastructure`.
+- Preserved Candidate: `e658f6d00a779e731098cbd1ea6e698b0104c2af` on branch `work-item/require-explicit-user-approval-for-new-infrastructure-01a00236`.
+- Preserved Dirty Private Worktree: `.worktrees/require-explicit-user-approval-infrastructure-candidate-01a00236` contains exactly three modified tracked files and one untracked evaluation summary: `evals/agent-tests/dev-architect/agents/judge.toml` (5 insertions/1 deletion), `evals/agent-tests/dev-architect/skills/dev-architect-suite-contract/SKILL.md` (5 insertions/1 deletion), `scripts/test_bundle_content.py` (52 insertions), and `evals/agent-tests/run-evidence/summary.json`.
+- Preserved User Clarification: Internal test-harness fixtures and evaluation contracts do not require separate approval; deployed skills, agent definitions, templates, and comparable project-consumed artifacts do.
+- Evaluation State: No model call and no live-evaluation claim occurred before the stop.
+- Preserved Lifecycle Evidence: User-answer/resumption commits `81be0151` and `c916dafe` remain historical evidence.
+- Coordination Boundary: Claim-free crisis reconciliation. No claim query or release occurred.
+- Required Runtime Title: `Ready — Require Explicit User Approval For New Infrastructure`.
+- Unattended Work Boundary: Preserve the dirty private worktree byte-for-byte. Do not correct, stage, commit, clean, review, run the live evaluation, verify, integrate, deliver, replace, or resume until the Coordinator reserves this same canonical execution after the current sole crisis item becomes terminal or truthfully non-active.
 
 ## Running Acceptance Evidence
 
