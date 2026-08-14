@@ -2,7 +2,7 @@
 
 Owner: Preserved canonical Dev Orchestrator execution
 
-Status: Running
+Status: Blocked
 
 Type: Feature
 
@@ -209,3 +209,18 @@ Do not mutate, integrate, deliver, or close this item until the user answers and
 - Material Phase: Implement the accepted Option A known-facts-only footer and complete fresh content, browser, and Documentation Design System review.
 - Coordination Boundary: Claim-free crisis acceptance. No claim operation was used.
 - Required Runtime Title: `Running — Align Coding Agent Runtime Configuration With Documentation Design System`.
+
+## Browser Runtime Technical Blocker
+
+- Transition: `Running -> Blocked`.
+- Recorded At: 2026-08-14T01:09:54Z.
+- Crisis Epoch: `blocked-crisis-20260813T223935Z`.
+- Preserved Candidate: `027994c0` with exact three-path scope.
+- Accepted Gates: Fresh source review `GOOD`, content review `ACCEPTED`, and independent non-browser verification `PASS`.
+- Exact Blocker: The configured in-app browser rejects `file://` navigation before page load. Repository loopback verification requires browser-server and fixed-port resource ownership, but the active crisis epoch prohibits every claim operation until crisis exit. All browser assertions therefore remain `NOT TESTED`; no listener or port was opened.
+- Recovery Owner: Browser-runtime capability owner under the current sole crisis execution.
+- Recovery Action: Provide a project-authorized claim-free browser runtime that supports local-file navigation and the required browser assertions. Do not run a listener or use an unclaimed port, and do not weaken or exclude the browser gate.
+- Observable Unblock Trigger: The preserved candidate completes the required browser, interaction, accessibility, persistence, and Documentation Design System checks through an authorized local-file route without any resource claim or listener.
+- Preserved Execution: Canonical Task and Conversation `019ffcd1-c9a0-78f0-8713-ef8951f1f9b5` on host `local`, its nested Dev Orchestrator, candidate, plan, review, and verification evidence.
+- Coordination Boundary: No claim operation occurred. Crisis claim prohibition remains unchanged; no narrow exception is authorized.
+- Required Runtime Title: `Blocked — Align Coding Agent Runtime Configuration With Documentation Design System`.
