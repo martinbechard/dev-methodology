@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: Running
+Status: User Action Required
 
 Type: Feature
 
@@ -205,6 +205,34 @@ Do not create upstream provider records or resume implementation until the user 
 - Required Runtime Title: `Starting — Align Agent-Owned Evaluation Suites With Documentation Design System`.
 - Required Acceptance: The same Dev Orchestrator records `Starting -> Running` claim-free before downstream generator, tests, page, review, verification, integration, or delivery work resumes.
 - Next Action: Resume the preserved canonical task and existing nested execution; reconcile the delivered upstream contract, then continue focused downstream work through fresh independent review, verification, and terminal delivery evidence.
+
+## Renderer Capability And Dependency Decision
+
+### Question for the User
+
+How should this Work Item obtain the rendering capabilities required by the accepted Agent-Owned Evaluation Suites page contract?
+
+### Why User Input Is Required
+
+The delivered py-json-render contract is insufficient for the accepted page. The local dev-methodology project has no `py_json_render` root dependency manifest, and the approved downstream scope excludes dependency and configuration paths. The upstream 22-component catalog cannot represent the accepted SVG or figure content or the complete Shared shell: `Nav` rejects direct anchors, and no Image, Figure, SVG, Script, custom-metadata, raw-HTML, or arbitrary-attribute mechanism exists. Every viable repair expands dependency configuration, upstream architecture, or downstream source scope.
+
+### Options and Tradeoffs
+
+- **Option A — extend py-json-render (recommended):** Authorize the required dependency installation and configuration paths in dev-methodology, plus an upstream py-json-render extension for the missing semantic and Shared-shell components. This creates the most reusable and source-owned contract, but requires another upstream delivery before this page can resume.
+- **Option B — add bounded downstream composition:** Authorize the required dependency installation and configuration paths plus a bounded dev-methodology renderer or page-specific composition layer. Before work resumes, the exact new downstream source paths must be proposed and approved. This is more local but adds downstream ownership and page-specific maintenance.
+- **Option C — revise the page contract:** Remove unsupported content from the accepted page baseline. This conflicts with the accepted semantic baseline and is not recommended; it requires explicit content-authority revision and fresh review.
+
+### Preserved Evidence And Unattended Boundary
+
+- Transition: `Running -> User Action Required`.
+- Recorded At: `2026-08-14T22:57:05Z`.
+- Canonical Task and Conversation: `019ffc96-f685-7481-b2eb-1557d82119bf` on host `local`.
+- Preserved Dev Orchestrator: Existing nested execution under the canonical visible task.
+- Preserved State: Accepted plan, semantic baseline, upstream completion evidence, and source-unmodified downstream state.
+- Capability Evidence: No local dependency manifest for `py_json_render`; the delivered 22-component catalog lacks the required semantic, Shared-shell, and arbitrary-attribute capabilities listed above.
+- Source And Claim State: No downstream source mutation and no claim operation occurred.
+- Required Runtime Title: `Waiting for User — Align Agent-Owned Evaluation Suites With Documentation Design System`.
+- Unattended Work Boundary: Do not install or configure the dependency, extend the upstream renderer, add downstream composition paths, revise the page baseline, mutate source, review, verify, integrate, deliver, replace the execution, or infer approval until the user answers in this canonical task.
 
 ## Upstream-Delivered Running Acceptance
 
