@@ -2,7 +2,7 @@
 
 Owner: Dev Orchestrator
 
-Status: Running
+Status: Blocked
 
 Type: Feature
 
@@ -121,3 +121,17 @@ Dependency Resolution: Satisfied by completed Work Item `review-generic-agent-de
 - Accepted Execution Evidence: The canonical visible task launched this single nested Dev Orchestrator, which accepted the authoritative file-provider assignment before source mutation.
 - Transition Claims: `align-generic-agent-running-019ffcd2` and `align-generic-agent-running-file-019ffcd2`.
 - Next Action: Produce and review a bounded implementation and TDD plan before source mutation.
+
+## Crisis Serialization Blocker
+
+- Transition: `Running -> Blocked`.
+- Recorded At: 2026-08-14T04:48:51Z.
+- Crisis Epoch: `blocked-crisis-20260813T223935Z`.
+- Exact Blocker: Dev-methodology crisis recovery permits exactly one local work-item execution. The Coordinator selected the stronger accepted Specialization Examples finish lane for the current slot, so this stopped execution cannot truthfully remain Running or mutate concurrently.
+- Recovery Owner: Dev Backlog Coordinator.
+- Observable Unblock Trigger: The selected Specialization Examples crisis execution reaches terminal cleanup or another truthful non-active disposition, and fresh inventory confirms this preserved item is the next eligible serial recovery.
+- Preserved Candidate: `e5a4dd650cd56eccba1085ca06013464c064427f` on branch `codex/align-generic-agent-definitions-019ffcd2` in clean worktree `/Users/martinbechard/dev/dev-methodology/.worktrees/align-generic-agent-definitions-candidate-019ffcd2`.
+- Preserved Execution: Canonical Task and Conversation `019ffcd2-8892-7522-95fd-4811067fd5c4` on host `local`, with its existing nested Dev Orchestrator and synchronized plan artifacts.
+- Coordination Boundary: No claim operation occurred. Preserve the task unarchived with no source, plan, branch, worktree, or candidate mutation.
+- Required Runtime Title: `Blocked — Align Generic Agent Definitions Source With Documentation Design System`.
+- Safe Resume: Resume the same task only through `Blocked -> Ready -> Starting -> Running` after the observable trigger.
