@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: Running
+Status: Blocked
 
 Type: Defect
 
@@ -212,6 +212,23 @@ The accepted candidate needs executable positive and negative evaluation coverag
 - Coordination: Claim-free acceptance under the sole local crisis reservation. No Resource Claim event was triggered by lifecycle acceptance or private-worktree mutation.
 - Required Runtime Title: `Implementing — Require Explicit User Approval For New Infrastructure`.
 - Next Action: Preserve and complete the existing internal evaluation-contract correction, run the authorized existing live-model suite, then repeat fresh review and independent verification.
+
+## Live Evaluation Response-Schema Blocker
+
+- Transition: `Running -> Blocked`.
+- Recorded At: `2026-08-14T23:32:57Z`.
+- Exact Blocker: The existing live Dev Architect suite fails before every scenario because Codex rejects the coordinator response schema. Keyword `uniqueItems` is unsupported at `claimRelease.eventIds`.
+- Evaluation Outcome: `INFRASTRUCTURE_FAILED`; zero scenarios executed and zero Judge results were produced. This is not candidate-failure evidence.
+- Recovery Owner: Existing `evals/agent-tests` runner and coordinator response-schema owner through one bounded supporting recovery under this canonical Work Item.
+- Unblock Condition: Correct the existing runner/schema compatibility boundary so the coordinator response schema is accepted without weakening uniqueness validation, obtain independent source review and focused regression verification, and prove the live suite reaches scenario execution before retrying this Work Item's evaluation.
+- Preserved Canonical Task and Conversation: `01a00236-ec5c-7811-ad56-6877828d2287` on host `local`.
+- Preserved Dev Orchestrator: `/root/require_explicit_user_approval_for_new_infrastructure`.
+- Preserved Candidate And Worktree: `e658f6d00a779e731098cbd1ea6e698b0104c2af`, branch `work-item/require-explicit-user-approval-for-new-infrastructure-01a00236`, three modified tracked files, and untracked `evals/agent-tests/run-evidence/` plus `evals/agent-tests/run-reports/` evidence.
+- User-Data Authority: Standing authorization at provider commits `edb15f37` and `83c699bc` remains valid for existing evaluation-suite runs and is unchanged by this blocker.
+- Resource State: The live-evaluation claim was released; no claim remains. Crisis recovery continues claim-free.
+- Required Runtime Title: `Blocked — Require Explicit User Approval For New Infrastructure`.
+- Supporting Recovery Boundary: Diagnose and correct only the existing runner/coordinator response-schema compatibility needed for `claimRelease.eventIds`. Do not create a new harness, runner, simulator, service, response contract, or unrelated infrastructure; do not weaken the semantic uniqueness requirement.
+- Safe Resume: Preserve all dirty correction and run evidence. Resume the Work Item only through `Blocked -> Ready -> Starting -> Running` after the supporting recovery passes independent review and focused verification.
 
 ## Running Acceptance Evidence
 
