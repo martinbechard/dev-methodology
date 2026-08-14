@@ -2872,12 +2872,21 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                 "",
                 1,
             )
+            missing_print_override = source.replace(
+                "      .documentation-settings__trigger {\n"
+                "        display: none !important;\n"
+                "      }\n",
+                "",
+                1,
+            )
             self.assertNotEqual(source, missing_input)
             self.assertNotEqual(source, missing_guard)
+            self.assertNotEqual(source, missing_print_override)
             variants = {
                 "actual.html": source,
                 "missing-input-listener.html": missing_input,
                 "missing-idempotency-guard.html": missing_guard,
+                "missing-print-override.html": missing_print_override,
             }
             for filename, variant_source in variants.items():
                 (fixture_design / filename).write_text(
@@ -2918,6 +2927,37 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                       renderCount: window.__agenticRenderCount,
                     };
                   }, storageKey);
+                }
+
+                async function settingsSnapshot(page) {
+                  return page.evaluate(() => {
+                    const trigger = document.querySelector('.documentation-settings__trigger');
+                    const dialog = document.querySelector('.documentation-settings__dialog');
+                    const harness = dialog?.querySelector('select[aria-label="Default harness"]');
+                    const editor = dialog?.querySelector('select[aria-label="Editor"]');
+                    const injectedStyle = document.querySelector('#documentation-settings-style');
+                    if (!trigger || !dialog || !harness || !editor || !injectedStyle) {
+                      throw new Error('settings injection did not load');
+                    }
+                    const triggerStyle = getComputedStyle(trigger);
+                    const dialogStyle = getComputedStyle(dialog);
+                    return {
+                      display: triggerStyle.display,
+                      visible: triggerStyle.display !== 'none'
+                        && triggerStyle.visibility !== 'hidden'
+                        && trigger.getClientRects().length > 0,
+                      expanded: trigger.getAttribute('aria-expanded'),
+                      dialogVisible: !dialog.hidden
+                        && dialogStyle.display !== 'none'
+                        && dialog.getClientRects().length > 0,
+                      bodyOpen: document.body.classList.contains('documentation-settings-open'),
+                      harnessValue: harness.value,
+                      editorValue: editor.value,
+                      harnessFocused: document.activeElement === harness,
+                      focusReturned: document.activeElement === trigger,
+                      injected: injectedStyle.isConnected,
+                    };
+                  });
                 }
 
                 async function dispatch(page, value, type) {
@@ -2965,6 +3005,37 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                     requireState(initial.writes.length === 0, 'initialization wrote persistence');
                     requireState(initial.renderCount === 0, 'initialization reached the event render counter');
 
+                    const settingsScreenBefore = await settingsSnapshot(page);
+                    requireState(settingsScreenBefore.injected, 'actual settings style was not injected');
+                    requireState(settingsScreenBefore.display !== 'none', 'settings trigger was hidden under screen media');
+                    requireState(settingsScreenBefore.visible, 'settings trigger was not visible under screen media');
+
+                    await page.emulateMedia({ media: 'print' });
+                    const settingsPrint = await settingsSnapshot(page);
+                    requireState(settingsPrint.display === 'none', 'print settings trigger display was not none');
+                    requireState(!settingsPrint.visible, 'print settings trigger remained visible');
+
+                    await page.emulateMedia({ media: 'screen' });
+                    const settingsScreenAfter = await settingsSnapshot(page);
+                    requireState(settingsScreenAfter.display === settingsScreenBefore.display, 'restored screen trigger display changed');
+                    requireState(settingsScreenAfter.visible, 'settings trigger was not visible after restoring screen media');
+
+                    await page.locator('.documentation-settings__trigger').click();
+                    const settingsOpen = await settingsSnapshot(page);
+                    requireState(settingsOpen.expanded === 'true', 'settings trigger did not expand');
+                    requireState(settingsOpen.dialogVisible, 'settings dialog did not become visible');
+                    requireState(settingsOpen.bodyOpen, 'settings dialog did not set the body state');
+                    requireState(settingsOpen.harnessValue === 'codex', 'settings dialog changed the default harness');
+                    requireState(settingsOpen.editorValue === 'vscode', 'settings dialog changed the default editor');
+                    requireState(settingsOpen.harnessFocused, 'settings dialog did not focus its first control');
+
+                    await page.locator('.documentation-settings__close').click();
+                    const settingsClosed = await settingsSnapshot(page);
+                    requireState(settingsClosed.expanded === 'false', 'settings trigger remained expanded');
+                    requireState(!settingsClosed.dialogVisible, 'settings dialog remained visible');
+                    requireState(!settingsClosed.bodyOpen, 'settings dialog left the body state active');
+                    requireState(settingsClosed.focusReturned, 'settings dialog did not return focus to its trigger');
+
                     await dispatch(page, 'all', 'input');
                     const allInput = await snapshot(page);
                     requireState(allInput.value === 'all', 'Codex→All input lost selected value');
@@ -3005,7 +3076,22 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                     requireState(reloaded.storedHarness === 'claude-code', 'reload lost the persisted mapping');
                     requireState(reloaded.writes.length === 0, 'reload rewrote harness persistence');
                     requireState(reloaded.renderCount === 0, 'reload reached the event render counter');
-                    return { passed: true, checkpoints: { initial, allInput, allChange, claudeInput, claudeChange, reloaded } };
+                    return {
+                      passed: true,
+                      checkpoints: {
+                        initial,
+                        settingsScreenBefore,
+                        settingsPrint,
+                        settingsScreenAfter,
+                        settingsOpen,
+                        settingsClosed,
+                        allInput,
+                        allChange,
+                        claudeInput,
+                        claudeChange,
+                        reloaded,
+                      },
+                    };
                   } catch (error) {
                     return { passed: false, error: error.message };
                   } finally {
@@ -3015,12 +3101,14 @@ class AgentSuiteRunnerTests(unittest.TestCase):
 
                 try {
                   const actual = await verify('actual.html');
+                  const missingPrintOverride = await verify('missing-print-override.html');
                   const missingInput = await verify('missing-input-listener.html');
                   const missingGuard = await verify('missing-idempotency-guard.html');
                   requireState(actual.passed, `actual page failed: ${actual.error}`);
+                  requireState(!missingPrintOverride.passed, 'missing-print-override mutant survived');
                   requireState(!missingInput.passed, 'missing-input-listener mutant survived');
                   requireState(!missingGuard.passed, 'missing-idempotency-guard mutant survived');
-                  process.stdout.write(`${JSON.stringify({ actual, missingInput, missingGuard })}\n`);
+                  process.stdout.write(`${JSON.stringify({ actual, missingPrintOverride, missingInput, missingGuard })}\n`);
                 } finally {
                   await browser.close();
                 }
@@ -3081,6 +3169,11 @@ class AgentSuiteRunnerTests(unittest.TestCase):
         self.assertEqual(0, browser_result.returncode, browser_result.stderr)
         browser_evidence = json.loads(browser_result.stdout)
         self.assertTrue(browser_evidence["actual"]["passed"])
+        self.assertFalse(browser_evidence["missingPrintOverride"]["passed"])
+        self.assertIn(
+            "print settings trigger display was not none",
+            browser_evidence["missingPrintOverride"]["error"],
+        )
         self.assertFalse(browser_evidence["missingInput"]["passed"])
         self.assertIn(
             "Codex→All input did not show 20 rows",
@@ -3092,6 +3185,20 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             browser_evidence["missingGuard"]["error"],
         )
         checkpoints = browser_evidence["actual"]["checkpoints"]
+        self.assertTrue(checkpoints["settingsScreenBefore"]["injected"])
+        self.assertNotEqual("none", checkpoints["settingsScreenBefore"]["display"])
+        self.assertTrue(checkpoints["settingsScreenBefore"]["visible"])
+        self.assertEqual("none", checkpoints["settingsPrint"]["display"])
+        self.assertEqual(
+            checkpoints["settingsScreenBefore"]["display"],
+            checkpoints["settingsScreenAfter"]["display"],
+        )
+        self.assertTrue(checkpoints["settingsScreenAfter"]["visible"])
+        self.assertEqual("true", checkpoints["settingsOpen"]["expanded"])
+        self.assertTrue(checkpoints["settingsOpen"]["dialogVisible"])
+        self.assertEqual("false", checkpoints["settingsClosed"]["expanded"])
+        self.assertFalse(checkpoints["settingsClosed"]["dialogVisible"])
+        self.assertTrue(checkpoints["settingsClosed"]["focusReturned"])
         self.assertEqual(20, checkpoints["allInput"]["visibleRows"])
         self.assertEqual(1, checkpoints["allChange"]["renderCount"])
         self.assertEqual("claude", checkpoints["claudeInput"]["value"])

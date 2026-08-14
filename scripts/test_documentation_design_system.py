@@ -316,19 +316,6 @@ AGENTIC_CONFIGURATION_ROWGROUP_BODY_CONTRACT = (
         ("codex", "claude", "gemini", "copilot", "junie"),
     ),
 )
-AGENTIC_CONFIGURATION_PRINT_FILTER_OVERRIDE = """    @media print {
-      tr[hidden] {
-        display: table-row;
-      }
-
-      .filter-status {
-        display: none;
-      }
-
-      .documentation-settings__trigger {
-        display: none !important;
-      }
-    }"""
 AGENTIC_CONFIGURATION_PRINT_SETTINGS_TRIGGER_OVERRIDE = """      .documentation-settings__trigger {
         display: none !important;
       }"""
@@ -846,6 +833,29 @@ def _agentic_configuration_semantic_text(source: str) -> str:
     return " ".join(unescape(visible_text).split())
 
 
+def _agentic_configuration_print_media_block(source: str) -> str:
+    """Return the page's single complete print-media block."""
+
+    starts = [match.start() for match in re.finditer(r"@media\s+print\b", source)]
+    if len(starts) != 1:
+        raise ValueError("the page must contain exactly one print media block")
+
+    opening_brace = source.find("{", starts[0])
+    if opening_brace == -1:
+        raise ValueError("the print media block must have an opening brace")
+
+    depth = 0
+    for index in range(opening_brace, len(source)):
+        if source[index] == "{":
+            depth += 1
+        elif source[index] == "}":
+            depth -= 1
+            if depth == 0:
+                return source[starts[0] : index + 1]
+
+    raise ValueError("the print media block must have a closing brace")
+
+
 def _validate_agentic_configuration_structure(source: str) -> None:
     """Reject unauthorized Agentic Configuration contract drift."""
 
@@ -1022,9 +1032,34 @@ def _validate_agentic_configuration_structure(source: str) -> None:
         ],
         "each row-group header must own exactly one tbody and its expected rows",
     )
+    print_media_block = _agentic_configuration_print_media_block(source)
     require(
-        source.count(AGENTIC_CONFIGURATION_PRINT_FILTER_OVERRIDE) == 1,
-        "print must restore filtered rows and hide the live filter status",
+        re.search(
+            r"tr\[hidden\]\s*\{\s*display:\s*table-row;\s*\}",
+            print_media_block,
+            flags=re.DOTALL,
+        )
+        is not None,
+        "print must restore filtered rows",
+    )
+    require(
+        re.search(
+            r"\.filter-status\s*\{\s*display:\s*none;\s*\}",
+            print_media_block,
+            flags=re.DOTALL,
+        )
+        is not None,
+        "print must hide the live filter status",
+    )
+    require(
+        re.search(
+            r"\.documentation-settings__trigger\s*\{\s*"
+            r"display:\s*none\s*!important;\s*\}",
+            print_media_block,
+            flags=re.DOTALL,
+        )
+        is not None,
+        "print must hide the settings trigger despite injected screen styles",
     )
     contract_parser = _WikiContextContractParser()
     contract_parser.feed(source)
@@ -1694,15 +1729,27 @@ class DocumentationDesignSystemTests(unittest.TestCase):
         """Printing restores every filtered row and omits the live status."""
 
         source = AGENTIC_CONFIGURATION_PATH.read_text(encoding="utf-8")
+        print_media_block = _agentic_configuration_print_media_block(source)
         self.assertEqual(20, source.count(" data-harness-row"))
         self.assertRegex(
-            source,
+            print_media_block,
             re.compile(
-                r"@media print\s*\{\s*"
-                r"tr\[hidden\]\s*\{\s*display:\s*table-row;\s*\}\s*"
-                r"\.filter-status\s*\{\s*display:\s*none;\s*\}\s*"
+                r"tr\[hidden\]\s*\{\s*display:\s*table-row;\s*\}",
+                flags=re.DOTALL,
+            ),
+        )
+        self.assertRegex(
+            print_media_block,
+            re.compile(
+                r"\.filter-status\s*\{\s*display:\s*none;\s*\}",
+                flags=re.DOTALL,
+            ),
+        )
+        self.assertRegex(
+            print_media_block,
+            re.compile(
                 r"\.documentation-settings__trigger\s*\{\s*"
-                r"display:\s*none\s*!important;\s*\}\s*\}",
+                r"display:\s*none\s*!important;\s*\}",
                 flags=re.DOTALL,
             ),
         )
