@@ -2,7 +2,7 @@
 
 Owner: Dev Orchestrator
 
-Status: Blocked
+Status: Ready
 
 Type: Feature
 
@@ -228,3 +228,15 @@ Do not rename an upstream branch, create upstream provider records, change gover
 - Work Claim Release: `align-agent-owned-evaluation-suites-work-019ffc96`; disposition `blocked`; blocker `agent-owned-suites-generator-ownership-decision`; event `b09eacda-42b0-4662-a493-b72ffcf965f8`.
 - Provider Transition Claim: `agent-owned-suites-generator-uar-019ff2c3`; event `89ec7ff4-8626-412b-878f-4e31fed45ba8`.
 - Required Runtime Title: `Waiting for User — Align Agent-Owned Evaluation Suites With Documentation Design System`.
+
+## Configured Primary Branch Unblock Evidence
+
+- Transition: `Blocked -> Ready`.
+- Recorded At: 2026-08-14T01:25:21Z.
+- Crisis Epoch: `blocked-crisis-20260813T223935Z`.
+- Resolved Dependency: `support-configured-primary-branches-in-file-provider-transactions` is Completed on dev-methodology main with accepted corrected delivery `de4005ca81d6f59029a11d25c0ae128b83e29e97` and provider closure `b8cd1039acd3d73d838c6915433c6c9c90389592`.
+- Upstream Configuration: py-json-render commit `abb8be7566f7a15fcb255abf833af4998065f139` configures `canonical_primary_branch: master`.
+- Installed Authority Proof: Revision `8bbf2b36` loaded four matching corrected provider-skill digests. Focused checks `4/4` and the authority probe accepted the configured primary `master` worktree and rejected configured `main`, unset, Git-only inference, detached, and linked worktrees.
+- Preserved Execution: Canonical Task and Conversation `019ffc96-f685-7481-b2eb-1557d82119bf` on host `local`, with the same nested Dev Orchestrator, plan, accepted semantic baseline, and source-unmodified state.
+- Coordination Boundary: Claim-free crisis transition. No upstream backlog record or page implementation was created or resumed.
+- Next Action: Reserve this Ready item for the same canonical execution, then require claim-free `Starting -> Running` acceptance before creating the already-authorized upstream file-provider record or mutating page sources.
