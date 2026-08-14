@@ -107,3 +107,17 @@ User Priority Override: High. This was the next eligible local crisis Work Item 
 - Required Dispatch: Create one visible Codex task with the exact reference-plus-delta prompt, then launch exactly one nested Dev Orchestrator. Creation does not imply Running.
 - Required Acceptance: The nested Dev Orchestrator records `Starting -> Running` claim-free before source mutation.
 - Required Runtime Title: `Starting — Require Explicit User Approval For New Infrastructure`.
+
+## Canonical Runtime Assignment
+
+- Assigned At: `2026-08-14T21:39:09Z`.
+- Codex Task ID: `01a00236-ec5c-7811-ad56-6877828d2287`.
+- Conversation ID: `01a00236-ec5c-7811-ad56-6877828d2287`.
+- Host: `local`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Runtime Project: Saved `dev-methodology` project at `/Users/martinbechard/dev/dev-methodology`.
+- Requested Title: `Starting — Require Explicit User Approval For New Infrastructure`.
+- Creation Outcome: Unique direct `threadId` success with no client or pending identity and no retry. The read response truncates display text only.
+- Lifecycle Boundary: Provider remains `Starting` until exactly one nested Dev Orchestrator accepts and durably records `Starting -> Running` claim-free.
+- Execution Boundary: The visible root launches exactly one nested Dev Orchestrator for this authoritative Work Item and owns its own title and required subagent messaging.
