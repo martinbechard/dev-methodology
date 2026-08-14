@@ -2,7 +2,7 @@
 
 Owner: Dev Orchestrator `/root/align_skill_examples`
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -365,3 +365,20 @@ The third and final correction cycle is exhausted. Choosing a new response-plus-
 - Preserved Execution: Canonical Task and Conversation `019ffca1-15fa-7940-a0cb-e0a51da36aae` on host `local`, with Dev Orchestrator `/root/align_skill_examples` and original coder context.
 - Coordination Boundary: Claim-free crisis transition. Do not mutate until the exact architecture and plan are corrected to the new contract and receive fresh independent acceptance.
 - Next Action: Reserve this Ready item for the same canonical execution, then require claim-free `Starting -> Running` acceptance before the architecture/plan correction.
+
+## Deterministic Verifier Crisis Reservation
+
+- Transition: `Ready -> Starting`.
+- Reserved At: 2026-08-14T16:59:21Z.
+- Crisis Epoch: `blocked-crisis-20260813T223935Z`.
+- Baseline: `6fb855f2` on configured primary branch `main`.
+- Canonical Task and Conversation: `019ffca1-15fa-7940-a0cb-e0a51da36aae` on host `local`.
+- Dev Orchestrator: `/root/align_skill_examples`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Execution Decision: Resume the preserved visible task and existing nested execution; do not create or replace an execution.
+- Capacity: The sole local dev-methodology crisis execution.
+- Coordination Boundary: Claim-free crisis reservation. No claim operation is permitted; SOLO supplies local resource exclusivity.
+- Required Acceptance: The preserved Dev Orchestrator must atomically record `Starting -> Running` without claims before plan, verifier, generated output, or browser mutation.
+- Required Runtime Title: `Starting — Align Agent And Skill Specialization Examples With Documentation Design System`.
+- Authorized First Phase: Correct the existing architecture and plan to remove all HEAD/ERR_ABORTED requirements and define the deterministic static-documentation checks selected by the user, then obtain fresh independent architecture acceptance before implementation.
