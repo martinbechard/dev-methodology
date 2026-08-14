@@ -157,6 +157,16 @@
       margin-bottom: var(--ds-space-3);
     }
 
+    @media print {
+      tr[hidden] {
+        display: table-row;
+      }
+
+      .filter-status {
+        display: none;
+      }
+    }
+
     @media (max-width: 620px) {
       .context-layer {
         grid-template-columns: 1fr;

@@ -218,6 +218,60 @@ AGENTIC_CONFIGURATION_FOOTER_CONTEXT = (
     "accepted content baseline: review-agentic-configuration-text; Documentation "
     "Design System compatibility: v1.0.0."
 )
+AGENTIC_CONFIGURATION_HEADING_CONTRACT = (
+    (
+        "h1",
+        "page-title",
+        "Coding-Agent Runtime Configuration And Evaluation Across Agent harnesses",
+    ),
+    ("h2", "glossary-title", "Glossary"),
+    ("h2", "context-title", "Knowledge Structure"),
+    ("h2", "layers-title", "Context Layers"),
+    ("h3", "", "Shared Definitions"),
+    ("h4", "", "Skill Definition Files"),
+    ("h4", "", "Agent Definition Files"),
+    ("h3", "", "Project-Specific Definitions"),
+    ("h4", "", "Project Skill Definition Files"),
+    ("h4", "", "Project Agent Definition Files"),
+    ("h4", "", "Root Project Instruction Files"),
+    ("h4", "", "Nested Project Instruction Files"),
+    ("h2", "locations-title", "Runtime Configuration File Locations"),
+    ("h2", "bundle-runtime-title", "Bundle Deployment And Runtime Setup"),
+    ("h3", "", "Installer Destinations And Cleanup"),
+    ("h3", "", "Install Command Examples"),
+    ("h3", "", "Adapter-Owned Skills"),
+    ("h3", "", "MCP Server Configuration"),
+    (
+        "h2",
+        "evaluation-title",
+        "Evaluation Environment, Permission Profiles, And Audit Evidence Across "
+        "Agent harnesses",
+    ),
+    ("h3", "", "Evaluation Environment And Retained Evidence"),
+    ("h3", "", "Permission Profiles And Containment Limits"),
+    ("h3", "", "Audit Validity And Protection Limits"),
+)
+AGENTIC_CONFIGURATION_FILTER_LABEL_CONTRACT = (
+    "label",
+    "harness-filter",
+    "Show Agent harness",
+)
+AGENTIC_CONFIGURATION_FILTER_STATUS_CONTRACT = (
+    "p",
+    "harness-filter-status",
+    ("filter-status",),
+    "polite",
+    None,
+)
+AGENTIC_CONFIGURATION_PRINT_FILTER_OVERRIDE = """    @media print {
+      tr[hidden] {
+        display: table-row;
+      }
+
+      .filter-status {
+        display: none;
+      }
+    }"""
 AGENTIC_CONFIGURATION_SECTION_NAVIGATION = (
     ("Top", "#top"),
     ("Glossary", "#glossary-title"),
@@ -414,6 +468,72 @@ class _WikiContextContractParser(HTMLParser):
             open_tag, _, _ = self._elements.pop()
             if open_tag == tag:
                 break
+
+
+class _AgenticConfigurationContractParser(HTMLParser):
+    """Collect exact headings, filter binding, and live-region contracts."""
+
+    def __init__(self) -> None:
+        """Initialize ordered inventories and text-capture state."""
+
+        super().__init__()
+        self.headings: list[tuple[str, str, str]] = []
+        self.labels: list[tuple[str, str, str]] = []
+        self.select_ids: list[str] = []
+        self.status_contracts: list[
+            tuple[str, str, tuple[str, ...], str, str | None]
+        ] = []
+        self._active_heading: tuple[str, str, list[str]] | None = None
+        self._active_label: tuple[str, str, list[str]] | None = None
+
+    def handle_starttag(
+        self,
+        tag: str,
+        attrs: list[tuple[str, str | None]],
+    ) -> None:
+        """Start text capture and record filter element attributes."""
+
+        attributes = dict(attrs)
+        if re.fullmatch(r"h[1-6]", tag):
+            self._active_heading = (tag, attributes.get("id") or "", [])
+        if tag == "label":
+            self._active_label = (tag, attributes.get("for") or "", [])
+        if tag == "select":
+            self.select_ids.append(attributes.get("id") or "")
+        if attributes.get("id") == "harness-filter-status":
+            self.status_contracts.append(
+                (
+                    tag,
+                    attributes["id"] or "",
+                    tuple((attributes.get("class") or "").split()),
+                    attributes.get("aria-live") or "",
+                    attributes.get("role"),
+                )
+            )
+
+    def handle_data(self, data: str) -> None:
+        """Append text within the active heading and label."""
+
+        if self._active_heading is not None:
+            self._active_heading[2].append(data)
+        if self._active_label is not None:
+            self._active_label[2].append(data)
+
+    def handle_endtag(self, tag: str) -> None:
+        """Finalize matching heading and label contracts."""
+
+        if self._active_heading is not None and tag == self._active_heading[0]:
+            heading_tag, element_id, text_parts = self._active_heading
+            self.headings.append(
+                (heading_tag, element_id, " ".join("".join(text_parts).split()))
+            )
+            self._active_heading = None
+        if self._active_label is not None and tag == self._active_label[0]:
+            label_tag, target_id, text_parts = self._active_label
+            self.labels.append(
+                (label_tag, target_id, " ".join("".join(text_parts).split()))
+            )
+            self._active_label = None
 
 
 def _ordered_contract_sha256(items: object) -> str:
@@ -725,6 +845,32 @@ def _validate_agentic_configuration_structure(source: str) -> None:
         "inline filter behavior must remain byte-for-byte unchanged",
     )
     require(parser.h1_count == 1, "the page must retain one h1")
+
+    page_contract_parser = _AgenticConfigurationContractParser()
+    page_contract_parser.feed(source)
+    require(
+        page_contract_parser.headings
+        == list(AGENTIC_CONFIGURATION_HEADING_CONTRACT),
+        "ordered heading levels, identifiers, and text must remain exact",
+    )
+    require(
+        page_contract_parser.labels
+        == [AGENTIC_CONFIGURATION_FILTER_LABEL_CONTRACT],
+        "filter label element, binding, and text must remain exact",
+    )
+    require(
+        page_contract_parser.select_ids == ["harness-filter"],
+        "filter select identifier must remain exact and unique",
+    )
+    require(
+        page_contract_parser.status_contracts
+        == [AGENTIC_CONFIGURATION_FILTER_STATUS_CONTRACT],
+        "filter status element, class, live region, and role must remain exact",
+    )
+    require(
+        source.count(AGENTIC_CONFIGURATION_PRINT_FILTER_OVERRIDE) == 1,
+        "print must restore filtered rows and hide the live filter status",
+    )
 
     contract_parser = _WikiContextContractParser()
     contract_parser.feed(source)
@@ -1390,6 +1536,21 @@ class DocumentationDesignSystemTests(unittest.TestCase):
             ).hexdigest(),
         )
 
+    def test_agentic_configuration_print_restores_filtered_rows(self) -> None:
+        """Printing restores every filtered row and omits the live status."""
+
+        source = AGENTIC_CONFIGURATION_PATH.read_text(encoding="utf-8")
+        self.assertEqual(20, source.count(" data-harness-row"))
+        self.assertRegex(
+            source,
+            re.compile(
+                r"@media print\s*\{\s*"
+                r"tr\[hidden\]\s*\{\s*display:\s*table-row;\s*\}\s*"
+                r"\.filter-status\s*\{\s*display:\s*none;\s*\}\s*\}",
+                flags=re.DOTALL,
+            ),
+        )
+
     def test_agentic_configuration_rejects_adversarial_contract_drift(
         self,
     ) -> None:
@@ -1434,6 +1595,56 @@ class DocumentationDesignSystemTests(unittest.TestCase):
             "changed-suite-label": source.replace(
                 ">Agentic Configuration</a>",
                 ">Runtime Configuration</a>",
+                1,
+            ),
+            "changed-heading-level": source.replace(
+                '<h2 id="locations-title">Runtime Configuration File Locations</h2>',
+                '<h3 id="locations-title">Runtime Configuration File Locations</h3>',
+                1,
+            ),
+            "changed-filter-label-element": source.replace(
+                '<label for="harness-filter">Show Agent harness</label>',
+                '<span for="harness-filter">Show Agent harness</span>',
+                1,
+            ),
+            "changed-filter-label-binding": source.replace(
+                '<label for="harness-filter">',
+                '<label for="other-filter">',
+                1,
+            ),
+            "changed-filter-select-identifier": source.replace(
+                '<select id="harness-filter">',
+                '<select id="other-filter">',
+                1,
+            ),
+            "changed-filter-status-class": source.replace(
+                'class="filter-status" aria-live="polite"',
+                'class="other-status" aria-live="polite"',
+                1,
+            ),
+            "missing-filter-status-live-region": source.replace(
+                ' class="filter-status" aria-live="polite"',
+                ' class="filter-status"',
+                1,
+            ),
+            "changed-filter-status-live-region": source.replace(
+                'aria-live="polite"',
+                'aria-live="off"',
+                1,
+            ),
+            "presentation-filter-status": source.replace(
+                'aria-live="polite"',
+                'aria-live="polite" role="presentation"',
+                1,
+            ),
+            "missing-print-row-restoration": source.replace(
+                "display: table-row;",
+                "display: none;",
+                1,
+            ),
+            "visible-filter-status-in-print": source.replace(
+                ".filter-status {\n        display: none;",
+                ".filter-status {\n        display: block;",
                 1,
             ),
             "duplicate-identifier": source.replace(
