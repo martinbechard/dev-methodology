@@ -1,6 +1,6 @@
 # Map Evaluation Contracts To Inspect AI
 
-Status: User Action Required
+Status: Ready
 
 Type: Analysis
 
@@ -122,8 +122,30 @@ The normal correction limit is exhausted. Both omissions affect required mapping
 
 ### Resolution
 
-Pending in canonical Task and Conversation `019ffbeb-02ee-7d52-9460-d1bfdbdbe20b`.
+The user authorized one exceptional fourth correction and fresh independent review in canonical Task and Conversation `019ffbeb-02ee-7d52-9460-d1bfdbdbe20b`.
+
+The final correction is limited to:
+
+- one-to-one required `Responsibility-ID` metadata for `R-001` through `R-062`; and
+- explicit retirement-evidence traceability for every retirement row and every Phase 2 through Phase 8 gate.
+
+Use conservative defaults. Retain repository authorities, require explicit parity evidence, retire nothing without proof, and stop later phases when required evidence is missing.
+
+### Answered User Action And Ready Transition
+
+- Transition: `User Action Required -> Ready`.
+- Recorded At: `2026-08-14T21:37:25Z`.
+- Decision Provenance: Exact user authorization supplied to the Dev Backlog Coordinator for the preserved canonical task.
+- Preserved Canonical Task and Conversation: `019ffbeb-02ee-7d52-9460-d1bfdbdbe20b` on host `local`.
+- Preserved Dev Orchestrator: `/root/map_evaluation_contracts_to_inspect_ai`.
+- Preserved Candidate: `33d6a25350f5230cb359c1ad76397fea4dda44fc`.
+- Preserved Evidence: Existing plan, three consumed review/correction cycles, series evidence, and the two unresolved findings.
+- Final-Cycle Boundary: This is the fourth and final correction cycle. No fifth cycle or unrelated methodology work is authorized.
+- Scheduling Boundary: The item remains Ready and unexecuted while the High-priority Defect `require-explicit-user-approval-for-new-infrastructure` owns the sole local crisis slot.
+- Coordination Boundary: Claim-free crisis transition. No claim operation occurred. Preserve the post-reset draft and claim evidence until crisis exit reconciliation.
+- Required Runtime Title: `Ready — Map Evaluation Contracts To Inspect AI` when the canonical runtime record is loaded and title mutation is available.
+- Next Action: After the High-priority Defect becomes terminal or truthfully non-active, reserve this same canonical execution through `Ready -> Starting -> Running` and perform only the authorized final correction, fresh independent review, and focused verification.
 
 ### Unattended Work Boundary
 
-Do not modify, review, verify, deliver, or close this Work Item until the user answers in its canonical visible task. Unrelated eligible Work Items may continue.
+Do not modify, review, verify, deliver, or close this Work Item while it remains Ready behind the selected sole local crisis execution. Preserve the canonical execution and candidate. Unrelated eligible Work Items may continue only as crisis policy permits.
