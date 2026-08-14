@@ -2,7 +2,7 @@
 
 Owner: Preserved canonical Dev Orchestrator execution
 
-Status: Running
+Status: Blocked
 
 Type: Feature
 
@@ -270,3 +270,16 @@ Do not rename an upstream branch, create upstream provider records, change gover
 - Required Acceptance: The preserved Dev Orchestrator must atomically record `Starting -> Running` without claims before upstream provider creation or source mutation.
 - Required Runtime Title: `Starting — Align Agent-Owned Evaluation Suites With Documentation Design System`.
 - Authorized Work: Create the already-authorized py-json-render file-backed upstream Work Item through the corrected configured-primary-branch transaction, then continue the accepted generator-ownership plan and page alignment through independent review and focused verification.
+
+## Upstream Delivery Dependency
+
+- Transition: `Running -> Blocked`.
+- Recorded At: 2026-08-14T01:29:44Z.
+- Crisis Epoch: `blocked-crisis-20260813T223935Z`.
+- Completed Step: The authorized upstream file-provider Work Item `add-documentation-semantic-html-rendering` was created atomically in py-json-render at commit `9c5c453fc79a4406d742c7a9c11f75a3fdb53474` with exact one-path proof.
+- Exact Blocker: The downstream page generator cannot adopt the documentation semantic HTML contract until that upstream Work Item is Completed and its accepted public contract is available on py-json-render's configured primary `master` branch.
+- Recovery Owner: Dev Backlog Coordinator through the same crisis epoch, executing the upstream Work Item as the next sole serial crisis task.
+- Observable Unblock Trigger: `add-documentation-semantic-html-rendering` is Completed with independent source review, focused verification, delivery on configured primary `master`, and a documented consuming contract suitable for the downstream generator.
+- Preserved Execution: Canonical Task and Conversation `019ffc96-f685-7481-b2eb-1557d82119bf` on host `local`, its nested Dev Orchestrator, accepted plan and semantic baseline, and source-unmodified downstream state.
+- Coordination Boundary: No claim operation occurred. Preserve this task unarchived and resume only through `Blocked -> Ready -> Starting -> Running` after the exact upstream completion trigger.
+- Required Runtime Title: `Blocked — Align Agent-Owned Evaluation Suites With Documentation Design System`.
