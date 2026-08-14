@@ -202,7 +202,7 @@ AGENTIC_CONFIGURATION_ANCHOR_CONTRACT_SHA256 = (
     "ba66063c388b64398718169991dbc7c7589aef6bcf7785cccc47917957102cea"
 )
 AGENTIC_CONFIGURATION_SCRIPT_CONTENT_SHA256 = (
-    "8310ca48b24a1e186129eec7c5882edc3306efb76df649295bb0cee18f40aa98"
+    "caf30504d2f70cfbd1de8cd66614b8df39dfb3cab16f5da6c1f2514c47443b8a"
 )
 AGENTIC_CONFIGURATION_SKIP_LINK = (
     '<a class="skip-link" href="#main-content">Skip to main content</a>'
@@ -870,6 +870,13 @@ def _validate_agentic_configuration_structure(source: str) -> None:
     require(
         source.count(AGENTIC_CONFIGURATION_PRINT_FILTER_OVERRIDE) == 1,
         "print must restore filtered rows and hide the live filter status",
+    )
+    require(
+        source.count(
+            '<th colspan="4" scope="rowgroup">Markdown Agent Definition Files</th>'
+        )
+        == 1,
+        "Markdown Agent Definition Files must remain an exact row-group header",
     )
 
     contract_parser = _WikiContextContractParser()
@@ -1551,6 +1558,33 @@ class DocumentationDesignSystemTests(unittest.TestCase):
             ),
         )
 
+    def test_agentic_configuration_preserves_table_and_keyboard_filter_contracts(
+        self,
+    ) -> None:
+        """Subgroup scope and native-select input both remain explicit."""
+
+        source = AGENTIC_CONFIGURATION_PATH.read_text(encoding="utf-8")
+        self.assertIn(
+            '<th colspan="4" scope="rowgroup">Markdown Agent Definition Files</th>',
+            source,
+        )
+        parser = _PageParser()
+        parser.feed(source)
+        inline_script = parser.script_contents[1]
+        self.assertIn("let appliedHarnessFilter;", inline_script)
+        self.assertIn(
+            "if (harnessFilter.value === appliedHarnessFilter) return;",
+            inline_script,
+        )
+        self.assertIn(
+            'harnessFilter.addEventListener("input", handleHarnessFilterSelection);',
+            inline_script,
+        )
+        self.assertIn(
+            'harnessFilter.addEventListener("change", handleHarnessFilterSelection);',
+            inline_script,
+        )
+
     def test_agentic_configuration_rejects_adversarial_contract_drift(
         self,
     ) -> None:
@@ -1635,6 +1669,22 @@ class DocumentationDesignSystemTests(unittest.TestCase):
             "presentation-filter-status": source.replace(
                 'aria-live="polite"',
                 'aria-live="polite" role="presentation"',
+                1,
+            ),
+            "missing-markdown-rowgroup-scope": source.replace(
+                '<th colspan="4" scope="rowgroup">Markdown Agent Definition Files</th>',
+                '<th colspan="4">Markdown Agent Definition Files</th>',
+                1,
+            ),
+            "missing-filter-input-listener": source.replace(
+                'harnessFilter.addEventListener("input", '
+                "handleHarnessFilterSelection);",
+                "",
+                1,
+            ),
+            "missing-filter-event-deduplication": source.replace(
+                "      if (harnessFilter.value === appliedHarnessFilter) return;\n",
+                "",
                 1,
             ),
             "missing-print-row-restoration": source.replace(

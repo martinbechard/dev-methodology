@@ -378,7 +378,7 @@
             <td>One standalone TOML file per agent. Agent harness-specific fields include the name, description, developer instructions, model, reasoning, sandbox, optional MCP configuration, and <code>[[skills.config]]</code> enablement entries. Those entries select catalog availability; they do not preload skill content.</td>
           </tr>
           <tr class="format-heading" data-harness-format="claude gemini junie copilot">
-            <th colspan="4">Markdown Agent Definition Files</th>
+            <th colspan="4" scope="rowgroup">Markdown Agent Definition Files</th>
           </tr>
           <tr data-harness-row data-harness="claude">
             <td><a href="https://code.claude.com/docs/en/sub-agents">Claude Code</a></td>
@@ -542,6 +542,7 @@
     const filterHarnessToSettings = Object.fromEntries(
       Object.entries(settingsHarnessToFilter).map(([settingValue, filterValue]) => [filterValue, settingValue]),
     );
+    let appliedHarnessFilter;
 
     function applyHarnessFilter() {
       const selectedHarness = harnessFilter.value;
@@ -552,6 +553,7 @@
         const supportedHarnesses = row.dataset.harnessFormat.split(" ");
         row.hidden = selectedHarness !== "all" && !supportedHarnesses.includes(selectedHarness);
       }
+      appliedHarnessFilter = selectedHarness;
 
       if (selectedHarness === "all") {
         harnessFilterStatus.textContent = "Showing 20 rows across 5 Agent harnesses.";
@@ -562,17 +564,21 @@
       harnessFilterStatus.textContent = `Showing 4 rows for ${harnessName}.`;
     }
 
+    function handleHarnessFilterSelection() {
+      if (harnessFilter.value === appliedHarnessFilter) return;
+      if (settings && filterHarnessToSettings[harnessFilter.value]) {
+        settings.set("harness", filterHarnessToSettings[harnessFilter.value]);
+      }
+      applyHarnessFilter();
+    }
+
     if (settings) {
       const availableHarnesses = Object.keys(settingsHarnessToFilter);
       const preferredHarness = settings.resolveHarness(availableHarnesses, "codex");
       harnessFilter.value = settingsHarnessToFilter[preferredHarness] || "all";
     }
-    harnessFilter.addEventListener("change", () => {
-      if (settings && filterHarnessToSettings[harnessFilter.value]) {
-        settings.set("harness", filterHarnessToSettings[harnessFilter.value]);
-      }
-      applyHarnessFilter();
-    });
+    harnessFilter.addEventListener("input", handleHarnessFilterSelection);
+    harnessFilter.addEventListener("change", handleHarnessFilterSelection);
     if (settings) {
       document.addEventListener(settings.changeEventName, (event) => {
         harnessFilter.value = settingsHarnessToFilter[event.detail.harness] || "all";

@@ -17199,8 +17199,15 @@ Visible after.
             'row.hidden = selectedHarness !== "all" && row.dataset.harness !== selectedHarness;',
             configuration_text,
         )
+        for event_name in ("input", "change"):
+            with self.subTest(filter_event=event_name):
+                self.assertIn(
+                    f'harnessFilter.addEventListener("{event_name}", '
+                    "handleHarnessFilterSelection);",
+                    configuration_text,
+                )
         self.assertIn(
-            'harnessFilter.addEventListener("change", () => {',
+            "if (harnessFilter.value === appliedHarnessFilter) return;",
             configuration_text,
         )
         self.assertIn(
