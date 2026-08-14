@@ -2,7 +2,7 @@
 
 Owner: Dev Orchestrator `/root/align_skill_examples`
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -396,3 +396,19 @@ The third and final correction cycle is exhausted. Choosing a new response-plus-
 - Cleanup: Close the local browser context and prove browser/process cleanup. No listener or server is required or authorized.
 - Lifecycle: Provider remains `Starting`; the same preserved task must accept `Starting -> Running` without claims before browser verification.
 - Required Runtime Title: `Starting — Align Agent And Skill Specialization Examples With Documentation Design System`.
+
+## Local-File Verification Running Acceptance
+
+- Transition: `Starting -> Running`.
+- Accepted At: 2026-08-14T17:13:14Z.
+- Canonical Task and Conversation: `019ffca1-15fa-7940-a0cb-e0a51da36aae` on host `local`.
+- Dev Orchestrator: `/root/align_skill_examples`.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Phase: `Verifying`.
+- Accepted Execution Evidence: The same preserved nested Dev Orchestrator accepted the claim-free SOLO reservation at provider commit `5c19079b7dda84b85ae027421a2e6f7c293e2250` and accepted only the corrected local-file delivery boundary before runtime verification.
+- Preserved Delivery Candidate: `d0ce8ad971638b97d54b8cfaa7d7d4055950d3e8` with exactly the five delivery paths recorded above.
+- Historical Verifier Evidence Only: `a90a203c3f4800bad0802690093a201af071b600`; it is not an accepted delivery candidate and will not be integrated, repaired, or regenerated.
+- Coordination Boundary: Claim-free SOLO; no claim operation occurred. No source, generated output, listener, server, port, HTTP, or HEAD mutation is authorized.
+- Verification Boundary: Render the tracked page directly through `file://`, retain runtime evidence only in a task-owned temporary directory, and require browser/process cleanup before disposition.
+- Required Runtime Title: `Verifying — Align Agent And Skill Specialization Examples With Documentation Design System`.
