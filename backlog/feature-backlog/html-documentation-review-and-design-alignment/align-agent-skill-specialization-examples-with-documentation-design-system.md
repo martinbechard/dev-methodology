@@ -382,3 +382,17 @@ The third and final correction cycle is exhausted. Choosing a new response-plus-
 - Required Acceptance: The preserved Dev Orchestrator must atomically record `Starting -> Running` without claims before plan, verifier, generated output, or browser mutation.
 - Required Runtime Title: `Starting — Align Agent And Skill Specialization Examples With Documentation Design System`.
 - Authorized First Phase: Correct the existing architecture and plan to remove all HEAD/ERR_ABORTED requirements and define the deterministic static-documentation checks selected by the user, then obtain fresh independent architecture acceptance before implementation.
+
+## Local-File Delivery Boundary Correction
+
+- Recorded At: 2026-08-14T17:09:07Z.
+- Authoritative User Correction: The delivered page is used locally through `file://`. HTTP, HEAD, fixture-server, fixed-port, and `net::ERR_ABORTED` behavior are not acceptance requirements and must not block delivery.
+- Invalid Prior Assumption: Every prior plan, verifier, schema, receipt, test, or review requirement that treated HTTP/HEAD/server/port/ERR_ABORTED as delivery evidence is invalid for this page and is removed from the active acceptance boundary.
+- Preserved Page Candidate: `d0ce8ad971638b97d54b8cfaa7d7d4055950d3e8` remains the only delivery candidate. Its exact tracked manifest is `design/agent-skill-specialization-examples.html`, `design/documentation-design-system/assets/design-system.css`, `design/documentation-settings.js`, `scripts/test_bundle_content.py`, and `scripts/test_documentation_design_system.py`.
+- Verifier Candidate Disposition: `a90a203c3f4800bad0802690093a201af071b600` and its ancestor verifier work are separated from page delivery and discarded as non-authoritative implementation candidates. Preserve their commits and review history only as evidence; do not integrate, regenerate, repair, or cite them as accepted delivery bytes.
+- Final Verification Contract: Open the rendered page through `file://` and verify locally resolved CSS, JavaScript, and other page assets; representative internal navigation and exact fragment targets; keyboard operation and focus behavior; Settings behavior and persistence where the local browser supports it; required responsive layouts; accessibility semantics and names; focus, text, and adjacent contrast; overflow; console and page errors; and DDS-COM-001 through DDS-COM-010.
+- External Links: Validate external URL syntax only. Any external availability audit is separate and non-gating; network results do not block this Work Item.
+- Evidence Boundary: Runtime screenshots, structured observations, console output, and browser cleanup receipts may be written only to a task-owned temporary verification directory. They are verification evidence, not repository delivery paths. The provider record may receive lifecycle and terminal evidence through its configured manager. No new repository-tracked verifier, schema, scenario, README, generated projection, server, harness, or receipt path is authorized.
+- Cleanup: Close the local browser context and prove browser/process cleanup. No listener or server is required or authorized.
+- Lifecycle: Provider remains `Starting`; the same preserved task must accept `Starting -> Running` without claims before browser verification.
+- Required Runtime Title: `Starting — Align Agent And Skill Specialization Examples With Documentation Design System`.
