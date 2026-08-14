@@ -2,7 +2,7 @@
 
 Owner: Dev Orchestrator `/root/align_skill_examples`
 
-Status: User Action Required
+Status: Ready
 
 Type: Feature
 
@@ -353,3 +353,15 @@ The third and final correction cycle is exhausted. Choosing a new response-plus-
 - Execution State: No generated projection, browser, listener, or final verification ran after the rejected review. No claim operation occurred.
 - Correction Boundary: Three authorized review/correction cycles are consumed. Do not correct, regenerate, start a browser/listener, deliver, replace the task, or infer PASS until the user chooses one option.
 - Required Runtime Title: `Waiting for User — Align Agent And Skill Specialization Examples With Documentation Design System`.
+
+## Deterministic Documentation Verification Resolution
+
+- Transition: `User Action Required -> Ready`.
+- Recorded At: 2026-08-14T16:59:21Z.
+- Exact User Direction: HEAD checking is inappropriate for this static-documentation verifier. Remove HEAD checking and the impossible HEAD/`net::ERR_ABORTED` contract. Replace it with deterministic internal file or route existence, fragment-target existence, browser asset-load evidence, and representative internal navigation. Validate external URL syntax or route it to a separate non-gating audit; do not make external network HEAD a delivery gate.
+- Resulting Architecture Choice: Neither prior Option A nor Option B is carried forward. The new user direction replaces the impossible response-plus-abort contract with deterministic repository and browser evidence appropriate to static documentation.
+- Preserved Page Candidate: `d0ce8ad971638b97d54b8cfaa7d7d4055950d3e8`.
+- Preserved Verifier Evidence: Candidate `a90a203c3f4800bad0802690093a201af071b600`, artifact/schema acceptance, final source-review finding, and all prior correction history remain evidence for the bounded redesign; they are not accepted delivery bytes.
+- Preserved Execution: Canonical Task and Conversation `019ffca1-15fa-7940-a0cb-e0a51da36aae` on host `local`, with Dev Orchestrator `/root/align_skill_examples` and original coder context.
+- Coordination Boundary: Claim-free crisis transition. Do not mutate until the exact architecture and plan are corrected to the new contract and receive fresh independent acceptance.
+- Next Action: Reserve this Ready item for the same canonical execution, then require claim-free `Starting -> Running` acceptance before the architecture/plan correction.
