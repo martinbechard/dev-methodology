@@ -1,6 +1,6 @@
 # Support Configured Primary Branches In File Provider Transactions
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
@@ -152,3 +152,25 @@ Approved by the user's 2026-08-13 instruction to log the defect and update all l
 - Required Behavior: Future Ideas capture and promotion must accept verified configured `main` and `master`, and reject wrong, unset, linked, detached, or Git-inferred authority through the same shared resolver and transaction boundary.
 - Exclusions: No change to Future Ideas lifecycle, provider selection, promotion semantics, duplicate rules, record format, or transaction mechanics beyond primary-branch authority.
 - Review Gate: Update the authoritative plan with this exact consumer and dependent assertion manifest, then obtain one fresh architecture acceptance before source mutation.
+
+## Completion Evidence
+
+- Transition: `Running -> Completed`.
+- Completed At: 2026-08-14T00:12:14Z.
+- Completion Selector: `main-branch`.
+- Accepted Source Commit: `ba2fe12a0b270326165f811caf7c2c31d4edbc2c`.
+- Corrected Integration Commit: `de4005ca81d6f59029a11d25c0ae128b83e29e97`.
+- Observed Primary Branch: `main`.
+- Observed Delivery Tip: `de4005ca81d6f59029a11d25c0ae128b83e29e97`.
+- Reachability: Both accepted commits are ancestors of the observed `main` tip.
+- Manifest: The immutable candidate contains exactly 33 authorized paths. The earlier reference to 32 paths was a count error; no path was omitted or unauthorized.
+- Architecture Review: Accepted the explicit `workflow_selection.canonical_primary_branch` scalar, existing renderer path, and pre-write authority gate.
+- Source Review: Fresh corrected-tip review returned `PASS / GOOD` with no actionable findings.
+- Independent Verification: `PASS`; 9 path-limited transaction tests, 23 Future Ideas contract tests, 105 renderer/configuration tests, focused bundle checks, skill validation, YAML parsing, Python compilation, generated-output checks, and `git diff --check` passed.
+- Confirmed Issue Disposition: The obsolete `Primary-main-only` design statement was corrected in commit `de4005ca`, then independently re-reviewed and reverified. No issue was excluded.
+- Baseline Checks: Four full-bundle failures were independently classified as pre-existing or workspace-only and outside the 33-path candidate.
+- Unrelated State: The unstaged terminology-provider record remained byte-for-byte unchanged at SHA-256 `225521d25e131195093cfa182238e0cd7db106721c985bdae773f58d0328a18c`, mode `644`, size `11514`. Unrelated untracked files were preserved.
+- Commit Result: `deliver-work-item-main-branch` is `READY`; the accepted corrected commit is already the configured `main` tip with no integration residue.
+- Remote Observation: No publication was required by this file-provider Work Item.
+- Coordination: Crisis execution completed without any claim operation.
+- Archive Destination: `backlog/completed-backlog/defects/support-configured-primary-branches-in-file-provider-transactions.md`.
