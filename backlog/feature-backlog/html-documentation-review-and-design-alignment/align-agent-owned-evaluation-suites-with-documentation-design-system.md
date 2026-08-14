@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -187,6 +187,24 @@ Do not create upstream provider records or resume implementation until the user 
 - Coordination Boundary: Claim-free crisis transition. No claim operation occurred.
 - Required Runtime Title: `Ready — Align Agent-Owned Evaluation Suites With Documentation Design System` until separately reserved.
 - Next Action: Reserve the same canonical execution through `Ready -> Starting -> Running` before downstream generator or page mutation.
+
+## Upstream-Delivered Crisis Reservation
+
+- Transition: `Ready -> Starting`.
+- Reserved At: `2026-08-14T22:51:42Z`.
+- Crisis Epoch: `blocked-crisis-20260813T223935Z`.
+- Baseline: `2f008277f4b34fbf033d0cffea06c449025071b7` on configured primary branch `main`.
+- Canonical Task and Conversation: `019ffc96-f685-7481-b2eb-1557d82119bf` on host `local`.
+- Preserved Dev Orchestrator: Existing nested execution retained by the canonical visible task.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Execution: `/root/backlog_coordinator`.
+- Capacity: Sole local dev-methodology crisis execution after Map Evaluation Contracts entered User Action Required.
+- Preserved State: Accepted downstream plan and semantic baseline, source-unmodified local state, completed upstream provider and delivery evidence, and all historical recovery evidence.
+- Authorized Scope: Continue the accepted generator-ownership and Agent-Owned Evaluation Suites page-alignment plan against the delivered py-json-render semantic HTML contract. Do not expand into unrelated renderer, infrastructure, or other page work.
+- Coordination Boundary: Claim-free crisis reservation. No claim operation occurred.
+- Required Runtime Title: `Starting — Align Agent-Owned Evaluation Suites With Documentation Design System`.
+- Required Acceptance: The same Dev Orchestrator records `Starting -> Running` claim-free before downstream generator, tests, page, review, verification, integration, or delivery work resumes.
+- Next Action: Resume the preserved canonical task and existing nested execution; reconcile the delivered upstream contract, then continue focused downstream work through fresh independent review, verification, and terminal delivery evidence.
 - Safe Resume: Preserve this task, execution, plan, candidate if any, and evidence. Resume only through `Blocked -> Ready -> Starting -> Running` after the exact upstream provider-authority proof.
 
 ### Primary-Branch Authority Decision
