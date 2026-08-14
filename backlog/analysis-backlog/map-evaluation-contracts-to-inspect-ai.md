@@ -1,6 +1,6 @@
 # Map Evaluation Contracts To Inspect AI
 
-Status: Ready
+Status: Starting
 
 Type: Analysis
 
@@ -218,3 +218,13 @@ The authorized fourth cycle completed both required traceability ledgers, and th
 - Authorized Scope: One fifth and final correction cycle limited to a new current-main frozen snapshot, semantic review of the nine changed authoritative sources, refresh of only affected completion digests, and correction of `SRC-L041` to the current analysis-backlog provider path and digest.
 - Hard Boundary: No sixth cycle, replacement execution, claim operation, unrelated methodology work, later Inspect series item, or scope expansion is authorized.
 - Next Action: Reserve and accept this same canonical execution through separate `Ready -> Starting -> Running` transitions before correction begins.
+
+### Fifth-Cycle Starting Reservation
+
+- Transition: `Ready -> Starting`.
+- Reserved At: `2026-08-14T22:53:46Z`.
+- Canonical Task and Conversation: `019ffbeb-02ee-7d52-9460-d1bfdbdbe20b` on host `local`.
+- Preserved Dev Orchestrator: `/root/map_evaluation_contracts_to_inspect_ai`.
+- Preserved Candidate: `86b158051ada82cca2891d484f7a32cd6c68541c`.
+- Coordination Boundary: Claim-free continuation. No claim operation occurred.
+- Authorized Scope: Only the user-approved fifth-cycle snapshot, semantic review, affected digest refresh, `SRC-L041` correction, fresh review, and focused verification.
