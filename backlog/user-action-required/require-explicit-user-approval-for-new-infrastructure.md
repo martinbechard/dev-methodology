@@ -1,8 +1,8 @@
 # Require Explicit User Approval for New Infrastructure
 
-Owner: /root/require_explicit_user_approval_for_new_infrastructure
+Owner: Unowned
 
-Status: Running
+Status: User Action Required
 
 Type: Defect
 
@@ -121,6 +121,35 @@ User Priority Override: High. This was the next eligible local crisis Work Item 
 - Creation Outcome: Unique direct `threadId` success with no client or pending identity and no retry. The read response truncates display text only.
 - Lifecycle Boundary: Provider remains `Starting` until exactly one nested Dev Orchestrator accepts and durably records `Starting -> Running` claim-free.
 - Execution Boundary: The visible root launches exactly one nested Dev Orchestrator for this authoritative Work Item and owns its own title and required subagent messaging.
+
+## Evaluation-Contract Scope Decision
+
+### Question for the User
+
+May this Work Item expand its approved scope to include `evals/agent-tests/dev-architect/fixtures/cases.yaml` and `evals/agent-tests/dev-architect/scenarios.yaml`, then run the existing live-model Dev Architect evaluation suite?
+
+### Why User Input Is Required
+
+The accepted candidate needs executable positive and negative evaluation coverage before its evaluation gate can pass. The existing Dev Architect evaluation catalogs are the technically appropriate owners, but the durable Governed Scope Authorization names only focused assertions in `scripts/test_bundle_content.py` and explicitly excludes other ordinary fixtures from this Work Item. The Coordinator cannot silently widen that exact boundary.
+
+### Options and Tradeoffs
+
+- **Expand this Work Item (recommended):** Authorize only the two named evaluation-contract files and the existing live-model Dev Architect suite. This keeps the contract and its executable coverage together, then requires fresh architecture, governed-definition, prompt-contract, and independent verification gates.
+- **Create a separate provider-owned Work Item:** Preserve this candidate and create a separate focused evaluation-contract item. This Work Item remains unable to pass its evaluation gate until that dependency is delivered.
+
+### Preserved Evidence And Unattended Boundary
+
+- Transition: `Running -> User Action Required`.
+- Recorded At: `2026-08-14T22:30:56Z`.
+- Canonical Task and Conversation: `01a00236-ec5c-7811-ad56-6877828d2287` on host `local`.
+- Preserved Dev Orchestrator: `/root/require_explicit_user_approval_for_new_infrastructure`.
+- Preserved Candidate: `e658f6d00a779e731098cbd1ea6e698b0104c2af` on branch `work-item/require-explicit-user-approval-for-new-infrastructure-01a00236` in its clean isolated worktree.
+- Preserved Plan: `require-explicit-user-approval-for-new-infrastructure-plan-01a00236.json` with synchronized HTML sibling.
+- Delivery State: Nothing integrated or delivered.
+- Scope Finding: Candidate R1 coverage uses the two named evaluation-contract files, which remain outside the durable approved scope until the user answers.
+- Coordination Boundary: Claim-free crisis transition. No claim operation occurred.
+- Required Runtime Title: `Waiting for User — Require Explicit User Approval For New Infrastructure`.
+- Unattended Work Boundary: Do not modify, review, run the live-model suite, integrate, deliver, replace the execution, or infer approval until the user answers in the canonical task. Preserve the clean candidate, branch, worktree, plan, and all prior evidence.
 
 ## Running Acceptance Evidence
 
