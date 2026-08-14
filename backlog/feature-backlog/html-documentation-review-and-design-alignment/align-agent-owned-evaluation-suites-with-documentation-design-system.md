@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -205,6 +205,19 @@ Do not create upstream provider records or resume implementation until the user 
 - Required Runtime Title: `Starting — Align Agent-Owned Evaluation Suites With Documentation Design System`.
 - Required Acceptance: The same Dev Orchestrator records `Starting -> Running` claim-free before downstream generator, tests, page, review, verification, integration, or delivery work resumes.
 - Next Action: Resume the preserved canonical task and existing nested execution; reconcile the delivered upstream contract, then continue focused downstream work through fresh independent review, verification, and terminal delivery evidence.
+
+## Upstream-Delivered Running Acceptance
+
+- Transition: `Starting -> Running`.
+- Accepted At: `2026-08-14T22:53:11Z`.
+- Canonical Task ID: `019ffc96-f685-7481-b2eb-1557d82119bf`.
+- Canonical Conversation ID: `019ffc96-f685-7481-b2eb-1557d82119bf`.
+- Branch: `main`.
+- Worktree: `/Users/martinbechard/dev/dev-methodology` (primary).
+- Accepted Execution Evidence: The preserved nested Dev Orchestrator accepted the exact claim-free reservation at commit `20d53f475a76c3e824bb6f6a36391bd6021e998b`. The same execution retains the accepted plan, semantic baseline, historical candidates, and evidence.
+- Material Phase: reconcile the delivered `py-json-render` semantic HTML contract and implement the focused downstream generator and page alignment.
+- Resource Coordination: The crisis handoff prohibits claim operations; no claim operation occurred.
+- Next Action: Reconcile only the recorded upstream accepted source and public contract, then route the preserved implementation and TDD plan through fresh independent technical review before source mutation.
 - Safe Resume: Preserve this task, execution, plan, candidate if any, and evidence. Resume only through `Blocked -> Ready -> Starting -> Running` after the exact upstream provider-authority proof.
 
 ### Primary-Branch Authority Decision
