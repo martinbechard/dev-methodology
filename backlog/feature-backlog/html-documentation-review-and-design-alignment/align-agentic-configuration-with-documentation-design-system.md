@@ -2,7 +2,7 @@
 
 Owner: Preserved canonical Dev Orchestrator execution
 
-Status: Blocked
+Status: Ready
 
 Type: Feature
 
@@ -224,3 +224,15 @@ Do not mutate, integrate, deliver, or close this item until the user answers and
 - Preserved Execution: Canonical Task and Conversation `019ffcd1-c9a0-78f0-8713-ef8951f1f9b5` on host `local`, its nested Dev Orchestrator, candidate, plan, review, and verification evidence.
 - Coordination Boundary: No claim operation occurred. Crisis claim prohibition remains unchanged; no narrow exception is authorized.
 - Required Runtime Title: `Blocked — Align Coding Agent Runtime Configuration With Documentation Design System`.
+
+## Crisis Browser Runtime Unblock Evidence
+
+- Transition: `Blocked -> Ready`.
+- Recorded At: 2026-08-14T02:09:29Z.
+- Crisis Epoch: `blocked-crisis-20260813T223935Z`.
+- Policy Reconciliation: The active crisis exception permits the one sole local work-item task to mutate and use required exclusive runtime resources without a claim. SOLO execution supplies exclusivity; the global crisis rule still prohibits claim operations.
+- Resolved Blocker: The repository-owned loopback fixed-port browser harness may run claim-free for this sole local task. A new local-file harness route is unnecessary and must not be implemented.
+- Preserved Candidate: `027994c0` with exact three-path scope, source review `GOOD`, content review `ACCEPTED`, and independent non-browser verification `PASS`.
+- Preserved Execution: Canonical Task and Conversation `019ffcd1-c9a0-78f0-8713-ef8951f1f9b5` on host `local`, with the same nested Dev Orchestrator and all plan/review evidence.
+- Browser Boundary: Use the repository-owned loopback/fixed-port harness, keep the listener local, complete every previously `NOT TESTED` browser assertion, shut down and prove cleanup, and perform no claim operation.
+- Next Action: Reserve this Ready item for the same canonical execution, then require claim-free `Starting -> Running` acceptance before browser verification.
