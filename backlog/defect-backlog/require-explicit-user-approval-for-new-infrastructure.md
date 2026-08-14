@@ -1,8 +1,8 @@
 # Require Explicit User Approval for New Infrastructure
 
-Owner: Unowned
+Owner: /root/require_explicit_user_approval_for_new_infrastructure
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -121,3 +121,16 @@ User Priority Override: High. This was the next eligible local crisis Work Item 
 - Creation Outcome: Unique direct `threadId` success with no client or pending identity and no retry. The read response truncates display text only.
 - Lifecycle Boundary: Provider remains `Starting` until exactly one nested Dev Orchestrator accepts and durably records `Starting -> Running` claim-free.
 - Execution Boundary: The visible root launches exactly one nested Dev Orchestrator for this authoritative Work Item and owns its own title and required subagent messaging.
+
+## Running Acceptance Evidence
+
+- Transition: `Starting -> Running`.
+- Accepted At: `2026-08-14T21:40:20Z`.
+- Root Orchestrator: `/root/require_explicit_user_approval_for_new_infrastructure`.
+- Codex Task ID: `01a00236-ec5c-7811-ad56-6877828d2287`.
+- Conversation ID: `01a00236-ec5c-7811-ad56-6877828d2287`.
+- Execution Mode: Sole local crisis execution under `blocked-crisis-20260813T223935Z`.
+- Coordination: Claim-free acceptance, as reserved by the Starting handoff. No Resource Claim event was triggered.
+- Accepted Scope: Governed definitions and direct dependent artifacts listed in Governed Scope Authorization.
+- Source Boundary: Preserve all unrelated dirty and untracked state recorded by the Starting handoff.
+- Next Action: Dispatch bounded implementation planning to Dev Coder, then obtain Dev Architect plan acceptance before source mutation.
