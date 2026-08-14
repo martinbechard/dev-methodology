@@ -2,7 +2,7 @@
 
 Owner: Preserved canonical Dev Orchestrator execution
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -218,6 +218,20 @@ Do not rename an upstream branch, create upstream provider records, change gover
 - Preserved Canonical Task and Conversation: `019ffc96-f685-7481-b2eb-1557d82119bf` on host `local`.
 - Required Runtime Title: `Blocked — Align Agent-Owned Evaluation Suites With Documentation Design System`.
 - Crisis Coordination: Added back to the active crisis set as a dependent Blocked item. No claim operation was used after the epoch reset.
+
+## Crisis Recovery Running Acceptance
+
+- Accepted At: `2026-08-14T01:27:21Z`.
+- Transition: `Starting -> Running`.
+- Canonical Task ID: `019ffc96-f685-7481-b2eb-1557d82119bf`.
+- Canonical Conversation ID: `019ffc96-f685-7481-b2eb-1557d82119bf`.
+- Branch: `main`.
+- Worktree: `/Users/martinbechard/dev/dev-methodology` (primary).
+- Crisis Epoch: `blocked-crisis-20260813T223935Z`.
+- Accepted Execution Evidence: Preserved sole crisis mutator resumed from claim-free `Blocked -> Ready` commit `1b6978e6` and `Ready -> Starting` commit `2206429f`. Recovery dependency configuration commit `abb8be7566f7a15fcb255abf833af4998065f139` and revision-matched installed catalog digest `8bbf2b365d6286b080a8a7a4508be778473ecdb541a5545ffd2e93a0a89679f5` satisfy the configured-primary-branch prerequisite.
+- Material Phase: upstream dependency record creation.
+- Resource Coordination: Crisis instructions prohibit claim operations for this resumed execution; no claim operation was used.
+- Next Action: Create the authorized file-backed upstream Work Item in `/Users/martinbechard/dev/py-json-render`, then continue the accepted generator-ownership and page-alignment plan.
 
 ### Transition Evidence
 
