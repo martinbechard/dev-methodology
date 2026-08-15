@@ -77,7 +77,13 @@ None.
 - Creation Blob SHA-256: `7a7641f99db260a24911e192f33e4278ef7d0c40018474f8816daedbd694ee3d`.
 - Crisis Epoch: `blocked-crisis-20260813T223935Z`.
 - Capacity: Sole local crisis execution; all other local crisis items remain non-active.
-- Canonical Runtime Identity: Pending one unique visible Codex task creation; adopt the returned Task ID and Conversation ID before nested execution acceptance.
+- Canonical Task ID: `01a0033e-c055-7fd3-b4b9-d7f87b274c6a`.
+- Canonical Conversation ID: `01a0033e-c055-7fd3-b4b9-d7f87b274c6a`.
+- Runtime Host: `local`.
+- Runtime Project And Working Directory: `dev-methodology` at `/Users/martinbechard/dev/dev-methodology`.
+- Identity Adopted At: `2026-08-15T02:27:36Z`.
+- Creation Outcome: Unique direct visible-task creation; no client or pending identity, ambiguity, retry, or replacement.
+- Acceptance Boundary: Creation and identity adoption do not imply `Running`; the same nested Dev Orchestrator must durably record `Starting -> Running` before source mutation.
 - Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
 - Coordinator Task: `/root/backlog_coordinator`.
 - Required Starting Title: `Starting — Accept Shared Shell Class In Bundle Content Header Assertion`.
