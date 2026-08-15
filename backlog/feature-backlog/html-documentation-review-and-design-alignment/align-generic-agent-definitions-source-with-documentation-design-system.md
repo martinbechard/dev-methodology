@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -150,3 +150,20 @@ Dependency Resolution: Satisfied by completed Work Item `review-generic-agent-de
 - Capacity: One available slot of the sole local crisis capacity; this item consumes no slot until `Ready -> Starting` is recorded.
 - Coordination Boundary: Claim-free crisis transition. The live claim registry was reset on crisis entry and no claim operation is permitted before crisis exit.
 - Next Action: Reserve this Ready item for the same canonical execution, then send the exact resume message to that task so its existing root Dev Orchestrator can accept `Starting -> Running` before mutation.
+
+## Crisis Resume Starting Evidence
+
+- Transition: `Ready -> Starting`.
+- Reserved At: 2026-08-15T21:34:37Z.
+- Crisis Epoch: `blocked-crisis-20260813T223935Z`.
+- Reservation Commit Baseline: `5fd6e30dc84db240bff818e58c412008057da95a` on configured primary branch `main`.
+- Normalized Objective: Resume the preserved Generic Agent Definitions Documentation Design System alignment from accepted candidate `e5a4dd650cd56eccba1085ca06013464c064427f`, complete independent review and focused verification, deliver through `deliver-work-item-main-branch`, and record terminal provider evidence.
+- Canonical Task and Conversation: `019ffcd2-8892-7522-95fd-4811067fd5c4` on host `local`.
+- Runtime Parent Task: `01a00756-0c89-7ad0-9468-32da50806a86`.
+- Coordinator Task: `/root/backlog_coordinator`.
+- Intended Root Role: Dev Orchestrator in the preserved canonical task and existing nested execution.
+- Dispatch Decision: Send one follow-up to the non-archived canonical task. Do not create, replace, unarchive, or transfer ownership to another task.
+- Capacity: Sole local dev-methodology crisis execution; zero additional crisis slots remain after this reservation.
+- Coordination Boundary: Claim-free SOLO crisis reservation. Do not query, acquire, extend, heartbeat, release, report, or reset claims before crisis exit.
+- Required Runtime Title: `Starting — Align Generic Agent Definitions Source With Documentation Design System`.
+- Required Acceptance: The preserved root Dev Orchestrator records `Starting -> Running` through `manage-work-items-file` before any plan, source, browser, integration, provider, or claim mutation.
