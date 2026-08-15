@@ -2,7 +2,7 @@
 
 Owner: Unowned
 
-Status: User Action Required
+Status: Blocked
 
 Type: Feature
 
@@ -233,6 +233,25 @@ The delivered py-json-render contract is insufficient for the accepted page. The
 - Source And Claim State: No downstream source mutation and no claim operation occurred.
 - Required Runtime Title: `Waiting for User — Align Agent-Owned Evaluation Suites With Documentation Design System`.
 - Unattended Work Boundary: Do not install or configure the dependency, extend the upstream renderer, add downstream composition paths, revise the page baseline, mutate source, review, verify, integrate, deliver, replace the execution, or infer approval until the user answers in this canonical task.
+
+### Option A Resolution And Follow-Up Dependency
+
+- Recorded At: `2026-08-15T07:30:38Z`.
+- Transition: `User Action Required -> Blocked`.
+- Exact User Decision: Select Option A. Authorize the required `dev-methodology` dependency installation and configuration paths plus a bounded upstream `py-json-render` extension for the missing semantic and Shared-shell capabilities required by the accepted Agent-Owned Evaluation Suites page contract.
+- Preserved Upstream Completion: `add-documentation-semantic-html-rendering` remains Completed at accepted source `303d60c80427c0748e4153a1cef41ad98cb26abc`; this decision does not reopen or alter it.
+- Follow-Up Work Item: `extend-documentation-catalog-for-shared-shell`.
+- Follow-Up Provider Location: `backlog/feature-backlog/extend-documentation-catalog-for-shared-shell.md` in `/Users/martinbechard/dev/py-json-render`.
+- Follow-Up Creation Commit: `f3f4ea4390f1e33731e98474d988bfef841aff59` on configured primary `master`, with parent `ee88411e368b6bd63dbd1dd5c35e9ab899ae72c8` and an exact one-path change.
+- Follow-Up Scope: Typed figure, image, bounded SVG, controlled external-script, custom-metadata, direct-navigation-link, and reusable Shared-shell capabilities only. Raw HTML, arbitrary attributes, inline executable scripts, unrelated renderer infrastructure, and other pages remain excluded.
+- Exact Downstream Dependency And Configuration Authorization: Create `scripts/requirements-agent-skill-evaluation-docs.txt`; update `scripts/build-agent-skill-evaluation-docs.py` and `scripts/test_agent_skill_evaluation_docs.py` to install, import, configure, generate, and freshness-check against the delivered dependency. Existing authorization remains for generated output `design/agent-owned-evaluation-suites.html`. No other dependency, configuration, generator, test, shared-asset, or page path is authorized by this decision.
+- Placement Evidence: The new requirements file belongs under `scripts/` because it configures a repository maintenance generator dependency and follows the tool-required requirements filename format. `docs/project-taxonomy.md` already assigns maintenance and deterministic generation tooling to `scripts/`; no taxonomy change is required.
+- Exact Blocker: The downstream page must not mutate until `extend-documentation-catalog-for-shared-shell` is independently delivered and verified on the configured `py-json-render` primary branch.
+- Blocker Owner: Dev Backlog Coordinator for a separate upstream dispatch.
+- Observable Unblock Condition: The follow-up Work Item is Completed with accepted source on configured primary `master`, fresh independent architecture and source review, focused verification, and a public contract that satisfies the exact recorded capabilities.
+- Preserved Execution: Canonical Task and Conversation `019ffc96-f685-7481-b2eb-1557d82119bf`, the existing nested Dev Orchestrator, accepted semantic baseline, plan, historical candidates, and evidence.
+- Coordination Boundary: No claim operation occurred. No downstream implementation, review, verification, integration, or delivery resumed.
+- Required Runtime Title: `Blocked — Align Agent-Owned Evaluation Suites With Documentation Design System`.
 
 ## Upstream-Delivered Running Acceptance
 
