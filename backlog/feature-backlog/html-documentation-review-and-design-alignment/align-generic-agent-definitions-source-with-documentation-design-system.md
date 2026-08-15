@@ -1,8 +1,8 @@
 # Align Generic Agent Definitions Source with the Documentation Design System
 
-Owner: Dev Orchestrator
+Owner: Unowned
 
-Status: Blocked
+Status: Ready
 
 Type: Feature
 
@@ -135,3 +135,18 @@ Dependency Resolution: Satisfied by completed Work Item `review-generic-agent-de
 - Coordination Boundary: No claim operation occurred. Preserve the task unarchived with no source, plan, branch, worktree, or candidate mutation.
 - Required Runtime Title: `Blocked — Align Generic Agent Definitions Source With Documentation Design System`.
 - Safe Resume: Resume the same task only through `Blocked -> Ready -> Starting -> Running` after the observable trigger.
+
+## Crisis Recovery Ready Evidence
+
+- Transition: `Blocked -> Ready`.
+- Recorded At: 2026-08-15T21:34:11Z.
+- Crisis Epoch: `blocked-crisis-20260813T223935Z`.
+- Resolved Blocker: The selected Specialization Examples crisis execution reached provider `Completed` on configured primary `main`, with accepted delivery, independent review, focused verification, browser cleanup, and a truthful non-active disposition.
+- Recovery Decision: This preserved item is the next eligible serial crisis recovery. Ordinary Ready inventory remains excluded while the crisis epoch is active.
+- Preserved Candidate: `e5a4dd650cd56eccba1085ca06013464c064427f` on branch `codex/align-generic-agent-definitions-019ffcd2` in clean worktree `/Users/martinbechard/dev/dev-methodology/.worktrees/align-generic-agent-definitions-candidate-019ffcd2`.
+- Preserved Canonical Task and Conversation: `019ffcd2-8892-7522-95fd-4811067fd5c4` on host `local`; archived-task reconciliation found no matching archived task, so replacement is prohibited.
+- Runtime Parent Task: `01a00756-0c89-7ad0-9468-32da50806a86`.
+- Coordinator Task: `/root/backlog_coordinator`.
+- Capacity: One available slot of the sole local crisis capacity; this item consumes no slot until `Ready -> Starting` is recorded.
+- Coordination Boundary: Claim-free crisis transition. The live claim registry was reset on crisis entry and no claim operation is permitted before crisis exit.
+- Next Action: Reserve this Ready item for the same canonical execution, then send the exact resume message to that task so its existing root Dev Orchestrator can accept `Starting -> Running` before mutation.
