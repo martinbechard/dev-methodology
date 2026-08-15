@@ -1,10 +1,12 @@
 # Accept Shared Shell Class In Bundle Content Header Assertion
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
 Provider: file
+
+Provider Reference: backlog/completed-backlog/defects/accept-shared-shell-class-in-bundle-content-header-assertion.md
 
 Work Item ID: accept-shared-shell-class-in-bundle-content-header-assertion
 
@@ -102,3 +104,23 @@ None.
 - Effective Commit: `deliver-work-item-main-branch`.
 - Crisis Epoch: `blocked-crisis-20260813T223935Z`; claim-free execution, with no resource-claim operation.
 - Authorized Scope: The smallest correction and focused evidence in `scripts/test_bundle_content.py`, read-only evaluation of the preserved Definitions candidate, independent source review, and main-branch delivery.
+
+## Completion Evidence
+
+- Completed At: `2026-08-15T03:06:06Z`.
+- Transition: `Running -> Completed`.
+- Completion Selector: `deliver-work-item-main-branch`.
+- Delivery Disposition: `READY`.
+- Accepted Source And Main Commit: `458dbe26abc41d995d7733a3fe618e5fab32d667` (`Validate shared shell header placement`).
+- Main Observation: `main` equals the accepted commit before terminal provider closure; the commit contains only `scripts/test_bundle_content.py`.
+- Implemented Contract: The exact shared header must be a direct-body landmark before direct main content and the matching exact shared footer. The existing exact counts and footer, stylesheet, gradient, navigation, settings, accessibility, and legacy-shell assertions remain in force.
+- TDD Evidence: The relocated sole-header regression first failed because the prior count-only contract raised no error. The minimum implementation made that regression and the owning focused method pass.
+- Independent Source Review: `PASS`; fresh review found no findings and confirmed the one-file scope, exact raw landmark matching, ordered placement, preserved assertions, and focused regression.
+- Independent Verification: `PASS`; the owning method passed, three relevant parser/navigation tests passed, the positive and adversarial shell matrix passed, literal `py_compile` passed with temporary cache cleanup, and both working-tree and candidate-range diff checks passed.
+- Preserved Definitions Evaluation: Candidate `05b2bda3b929d8258a9a096b8dbc9870ab2d5629` passes the corrected exact shared-header placement contract. Its separate retained legacy body gradient remains the only observed rejection and stays owned by task `019ffc29-0d20-78f1-b3d6-f0797e7bb5b6`.
+- Confirmed Issue Disposition: Independent review failure 1 identified the misplaced-header false acceptance. The original Dev Coder corrected it in this delivery; fresh re-review and independent verification passed.
+- Scope Audit: No page, browser script, shared asset, generator, unrelated provider record, candidate worktree, branch, historical PASS evidence, or crisis artifact changed.
+- Resource Coordination: Crisis epoch `blocked-crisis-20260813T223935Z` was claim-free. No resource was acquired, so no release operation applies.
+- Worktree State: The owned source path and index are clean. Pre-existing unrelated dirty provider bytes, untracked plans/temp, historical worktrees, and crisis evidence remain preserved.
+- Remote Publication: Not required by the configured main-branch completion contract.
+- Terminal Runtime Handoff: Canonical Task and Conversation `01a0033e-c055-7fd3-b4b9-d7f87b274c6a` are eligible for Completed title synchronization and cleanup after this provider transaction commits.
