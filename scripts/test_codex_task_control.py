@@ -1030,7 +1030,7 @@ class CodexTaskControlPackageTests(unittest.TestCase):
             normalized_launch,
         )
         self.assertIn(
-            "For a resumption, resume the canonical existing execution, including an already-live hidden execution preserved as the existing owner",
+            "this is the ordinary resume operation, including for an idle task or an already-live hidden execution preserved as the existing owner",
             normalized_workflow,
         )
         self.assertIn(
@@ -1041,6 +1041,27 @@ class CodexTaskControlPackageTests(unittest.TestCase):
             "resume the canonical visible task",
             normalized_workflow,
         )
+
+    def test_dispatcher_resumes_unarchived_task_or_transfers_archived_owner(self) -> None:
+        workflow = self.dispatcher.split("## Dispatch Workflow", 1)[1].split(
+            "## Dispatch Packet",
+            1,
+        )[0]
+        normalized_workflow = " ".join(workflow.split())
+
+        for clause in (
+            "first read the provider-recorded canonical task and reconcile whether that exact task is archived",
+            "When it is not archived, call send_message_to_thread with its exact task ID and host",
+            "this is the ordinary resume operation",
+            "When the canonical task is archived, do not send a follow-up to it and do not unarchive it",
+            "Require the Coordinator to authorize one successor",
+            "create exactly one new visible task",
+            "durably transfer runtime ownership in the Work-item provider from the archived identity to the returned successor identity",
+            "Preserve the archived identity as predecessor provenance",
+            "Reconcile an ambiguous creation result before any retry",
+        ):
+            with self.subTest(clause=clause):
+                self.assertIn(clause, normalized_workflow)
 
     def test_dispatcher_rejects_reconstructed_launch_packets(self) -> None:
         packet_contract = self.dispatcher.split("## Dispatch Packet", 1)[1].split(
