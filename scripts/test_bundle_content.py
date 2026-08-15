@@ -11821,6 +11821,9 @@ Visible after.
             "Collaboration Subagent Launch Contract",
             "Context Inheritance",
             "Self-Contained Assignment",
+            "Single-Turn Subagent Iterations",
+            "Compact Durable Handoff",
+            "SOLO Measurement Trial",
             "Launch Announcement",
             "Subagent Return",
             "Separate Codex Task Boundary",
@@ -11840,6 +11843,21 @@ Visible after.
             "Fresh context means fork_turns none",
             "objective, exact scope, durable references, required checks, expected result, and prohibitions",
             "invalid and must not launch",
+            "existing fork_turns none default gives each collaboration subagent fresh launch context",
+            "semantic assignment name",
+            "exactly one execution turn",
+            "Never call followup_task or otherwise reuse a finished collaboration subagent",
+            "even for the same assignment, a correction, retry, rereview, or continuation",
+            "Do not request or enable allow_reuse",
+            "Launch a new fresh-context collaboration subagent for every later turn",
+            "provider locator, semantic assignment, current candidate commit",
+            "Reference stable facts already stored in those sources instead of copying the full conversational or lifecycle history",
+            "use Agent Report after each terminal Work Item",
+            "collaboration subagent identities and execution-turn counts",
+            "cache-inclusive tokens, uncached input plus output tokens, and estimated API-equivalent cost",
+            "no collaboration subagent identity has more than one execution turn",
+            "Measurement is not a delivery gate",
+            "do not rerun work, create synthetic Work Items, or add evaluation cases solely to collect it",
             "exactly one concise user-visible launch announcement",
             "subagent name, assignment, and context inheritance",
             "role and model only when either value is overridden",
@@ -12201,8 +12219,8 @@ Visible after.
             normalized_boundaries,
         )
         self.assertIn(
-            "Return the confirmed issue to the original producing agent when it will be "
-            "corrected in the current delivery",
+            "Return the confirmed issue to the same producing responsibility through a new "
+            "fresh-context agent when it will be corrected in the current delivery",
             normalized_decisions,
         )
         self.assertIn(
@@ -12221,7 +12239,11 @@ Visible after.
         )
         required_policy = (
             "exactly one of two dispositions before delivery closeout",
-            "original producing agent",
+            "same producing responsibility through a new fresh-context agent",
+            "Do not reuse the completed producing agent identity",
+            "one execution turn and a semantic assignment name",
+            "never reuse that identity",
+            "authoritative Work Item, candidate commit, and relevant durable evidence locators",
             "fresh-context re-review",
             "reverification",
             "deliberately exclude",
@@ -12259,7 +12281,7 @@ Visible after.
             defect_example["plausibleResponse"].split()
         ).lower()
         for phrase in (
-            "original dev-coder corrected the issue",
+            "a new fresh-context dev-coder with the same source responsibility corrected the issue",
             "fresh re-review passed",
             "reverification passed",
             "same delivery",
@@ -12797,8 +12819,8 @@ Visible after.
         )
         self.assertRegex(
             correction_text,
-            r"(?i)(?:route|return|send).{0,120}(?:finding|correction).{0,160}"
-            r"original (?:producer|producing agent|executor)",
+            r"(?i)(?:route|return|send).{0,180}(?:finding|correction).{0,240}"
+            r"new fresh-context agent",
         )
 
         integration_indexes = [

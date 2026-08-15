@@ -29,6 +29,22 @@ A collaboration subagent is a bounded internal Codex dispatch owned by the launc
 
 Every assignment states its objective, exact scope, durable references, required checks, expected result, and prohibitions. An assignment that omits any field is invalid and must not launch.
 
+## Single-Turn Subagent Iterations
+
+- The existing fork_turns none default gives each collaboration subagent fresh launch context. This section prevents that context from growing through later reuse.
+- Give each collaboration subagent a semantic assignment name, such as page-coder or verifier-procedure-coder. A sequence number is not required.
+- Give each collaboration subagent exactly one execution turn. After it returns, treat that subagent identity as finished.
+- Never call followup_task or otherwise reuse a finished collaboration subagent, even for the same assignment, a correction, retry, rereview, or continuation. Do not request or enable allow_reuse when a runtime exposes that option.
+- Launch a new fresh-context collaboration subagent for every later turn. This does not replace, archive, or recreate the separate canonical user-visible Work Item task.
+
+## Compact Durable Handoff
+
+Build each later assignment from the authoritative Work Item and durable evidence, not the prior subagent conversation. Include the provider locator, semantic assignment, current candidate commit when one exists, relevant plan, review, test, or receipt locators when they exist, the exact delta, and preservation or prohibition boundaries. Reference stable facts already stored in those sources instead of copying the full conversational or lifecycle history.
+
+## SOLO Measurement Trial
+
+When the user enables this protocol during SOLO operation, use Agent Report after each terminal Work Item to record collaboration subagent identities and execution-turn counts, cache-inclusive tokens, uncached input plus output tokens, and estimated API-equivalent cost with its pricing assumption. The protocol succeeds only when no collaboration subagent identity has more than one execution turn. Measurement is not a delivery gate: do not rerun work, create synthetic Work Items, or add evaluation cases solely to collect it.
+
 ## Launch Announcement
 
 Send exactly one concise user-visible launch announcement immediately before the dispatch. State the subagent name, assignment, and context inheritance. State the role and model only when either value is overridden. Add no plan, progress, lifecycle history, evidence summary, or surrounding explanation, and do not repeat the announcement.

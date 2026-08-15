@@ -424,7 +424,7 @@
             "deliver-work-item",
             "structured-design"
           ],
-          "sha256": "42caaa1c531adbb574296545f2e06eaae678931361c61b0e1f882f3bf184ce50",
+          "sha256": "cc04584899fe5b82b57077b93be06178a6cb39c754bd2ed457bc3527e2d6450a",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -1644,7 +1644,7 @@
             "structured-design",
             "codex-harness-directives"
           ],
-          "sha256": "0d49156b805350669ccd21866a8de3f9258771a225fb58d0647a31ae3775293d",
+          "sha256": "ab46af545bd8a33fcd09bc7a5e83be210c3409c3e49e2f2abd3f8ab2a1d1d911",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -2446,7 +2446,7 @@
       "harnessSkills": [
         {
           "name": "codex-harness-directives",
-          "sha256": "dcc019fb83eea9fdc793b8ff4e3974a2b937b4ea1634a8bdb6cab657c589fdf0",
+          "sha256": "ea29f2012339a499b7b16cba75b3c7cba36a97236b3c3bfacf76639654144364",
           "source": "adapters/codex/skills/codex-harness-directives"
         }
       ],
@@ -2891,7 +2891,7 @@
             "deliver-work-item",
             "structured-design"
           ],
-          "sha256": "92fe12803ac36d26930d1ab8c7b192e19b42ddb40854e9e312c762031deffa2b",
+          "sha256": "a547cd52bdb470bf8095efd3ff2ffefa46db1c2f169ceb55367a8a07299a0550",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -4144,7 +4144,7 @@
             "deliver-work-item",
             "structured-design"
           ],
-          "sha256": "bd363a78be2aab11b4dce003231f286e9b496fe5b3ce12e1c8add549f2c30656",
+          "sha256": "d4233f34fa098262b54013d68b3ed2a023ccd3bc49115be8c5d48febb0ede145",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
