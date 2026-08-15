@@ -185,7 +185,13 @@ Return BLOCKED only when a required operation is unavailable across the authoriz
 
 ## Watchdog Boundary
 
-Retain one canonical read-only Watchdog outside queue capacity. When a Watchdog schedule is configured, it must wake the Watchdog task to perform its own observation cycle.
+For Backlog Dispatcher, this project-private standalone Watchdog rule overrides the generic canonical-task wakeup mapping in coordinate-codex-tasks.
+
+Create or update exactly one standalone project automation named Backlog Watchdog. Associate it with the current saved project and its local execution environment so it starts a fresh Codex task for every run. The automation is not attached to the root Backlog Dispatcher or any existing chat. Do not create a chat-attached heartbeat, and do not set targetThreadId.
+
+Inspect existing automations before creation. When a matching Watchdog heartbeat or standalone automation already exists, update that same automation and preserve its cadence and prompt while changing its execution topology; do not create a duplicate. Use the cadence supplied by the user or existing automation. When neither supplies one, ask for the cadence instead of inventing one.
+
+The standalone prompt makes every run read current authoritative provider and runtime evidence from scratch. It does not rely on a prior Watchdog conversation, cached counts, prior reports, task titles, or historical lifecycle entries when they conflict with current provider records. It remains read-only and outside queue capacity. It sends at most one actionable Coordinator alert. Archive its own run task only when the cycle finds nothing actionable and completed without failure. Leave actionable or failed runs visible.
 
 An observed corrected root Dispatcher title is terminal suppression evidence for the same root-title incident. This suppression must not suppress an unresolved visible worker title mismatch. The Watchdog still compares each visible worker against that worker's own provider-recorded canonical identity and expected title.
 

@@ -13216,6 +13216,15 @@ Visible after.
             agents_section,
         )
         self.assertIn(
+            "The Dev Backlog Watchdog runs as a standalone project automation outside the retained parent conversation and outside delivery capacity.",
+            agents_section,
+        )
+        self.assertIn(
+            "Each schedule creates a fresh read-only task.",
+            agents_section,
+        )
+        self.assertNotIn("standing read-only child Agent", agents_section)
+        self.assertIn(
             '<figcaption id="thread-model-title">Execution Contexts Contain Agents',
             agents_section,
         )
@@ -13259,6 +13268,11 @@ Visible after.
             '<figcaption id="watchdog-cycle-title">Watchdog Observation Is Read-Only',
             runtime_section,
         )
+        self.assertIn(
+            "Archive a healthy run after it finds nothing actionable.",
+            runtime_section,
+        )
+        self.assertIn("Leave failed runs visible.", runtime_section)
         self.assertIn(
             "<h3>Backlog Blockage Recovery And Dispatch Mode</h3>",
             runtime_section,

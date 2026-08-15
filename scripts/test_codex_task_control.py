@@ -589,6 +589,31 @@ class CodexTaskControlPackageTests(unittest.TestCase):
             with self.subTest(clause=clause):
                 self.assertIn(clause, normalized_watchdog)
 
+    def test_dispatcher_watchdog_uses_a_standalone_project_automation(self) -> None:
+        watchdog = self.dispatcher.split("## Watchdog Boundary", 1)[1].split(
+            "## Live Refinement",
+            1,
+        )[0]
+        normalized_watchdog = " ".join(watchdog.split())
+
+        for clause in (
+            "project-private standalone Watchdog rule overrides the generic canonical-task wakeup mapping",
+            "Create or update exactly one standalone project automation named Backlog Watchdog",
+            "current saved project and its local execution environment",
+            "starts a fresh Codex task for every run",
+            "not attached to the root Backlog Dispatcher or any existing chat",
+            "Do not create a chat-attached heartbeat",
+            "do not set targetThreadId",
+            "preserve its cadence and prompt while changing its execution topology",
+            "do not create a duplicate",
+            "read current authoritative provider and runtime evidence from scratch",
+            "Archive its own run task only when the cycle finds nothing actionable",
+            "Leave actionable or failed runs visible",
+            "ask for the cadence instead of inventing one",
+        ):
+            with self.subTest(clause=clause):
+                self.assertIn(clause, normalized_watchdog)
+
     def test_follow_up_resumes_the_same_task(self) -> None:
         normalized_lower = self.normalized.lower()
         for clause in (
