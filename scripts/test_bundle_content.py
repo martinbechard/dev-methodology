@@ -1392,7 +1392,7 @@ class VisibleProseParser(HTMLParser):
 
 
 class DocumentationNavigationParser(HTMLParser):
-    """Inventory section targets, element IDs, and documentation navigation links."""
+    """Inventory navigation, element IDs, and ordered direct-body landmarks."""
 
     _VOID_ELEMENTS = {
         "area",
@@ -1425,6 +1425,7 @@ class DocumentationNavigationParser(HTMLParser):
         self.section_navigation_targets: list[str] = []
         self.document_navigation_count = 0
         self.document_sequence_links: list[tuple[str, str]] = []
+        self.direct_body_landmarks: list[tuple[str, str]] = []
 
     def handle_starttag(
         self,
@@ -1435,6 +1436,11 @@ class DocumentationNavigationParser(HTMLParser):
         parent = self._elements[-1] if self._elements else None
         classes = set((attributes.get("class") or "").split())
         element_id = attributes.get("id")
+
+        if parent == "body" and tag in {"header", "main", "footer"}:
+            self.direct_body_landmarks.append(
+                (tag, self.get_starttag_text() or "")
+            )
 
         if element_id:
             element_id_count = self.element_id_counts.get(element_id, 0) + 1
@@ -2095,6 +2101,30 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(role=role_name):
                 self.assertIn("explain-code-fix", role_skills)
                 self.assertNotIn("fix-explanation", role_skills)
+
+    def _assert_shared_shell_placement(self, html: str) -> None:
+        parser = DocumentationNavigationParser()
+        parser.feed(html)
+
+        exact_header = ("header", '<header class="site-header ds-header">')
+        exact_footer = ("footer", '<footer class="site-footer ds-footer">')
+        diagnostic = (
+            "shared shell header must precede direct main content and its matching footer"
+        )
+        self.assertIn(exact_header, parser.direct_body_landmarks, diagnostic)
+        self.assertIn(exact_footer, parser.direct_body_landmarks, diagnostic)
+        direct_main_indexes = [
+            index
+            for index, (tag, _start_tag) in enumerate(parser.direct_body_landmarks)
+            if tag == "main"
+        ]
+        self.assertTrue(direct_main_indexes, diagnostic)
+        self.assertTrue(
+            parser.direct_body_landmarks.index(exact_header)
+            < direct_main_indexes[0]
+            < parser.direct_body_landmarks.index(exact_footer),
+            diagnostic,
+        )
 
     def _assert_documentation_navigation(
         self,
@@ -17031,6 +17061,7 @@ Visible after.
                         1,
                         text.count('<footer class="site-footer ds-footer">'),
                     )
+                    self._assert_shared_shell_placement(text)
                     self.assertEqual(0, text.count(expected_gradient))
                     if filename == "index.html":
                         self.assertIn(
@@ -17107,6 +17138,7 @@ Visible after.
                 )
                 self.assertIn(shared_stylesheet_link, text)
             if uses_shared_shell:
+                self._assert_shared_shell_placement(text)
                 style_source = shared_stylesheet_text
                 header_selector = ".ds-header"
 
@@ -17145,6 +17177,21 @@ Visible after.
                     assert_settings_shell(
                         "agent-and-skill-evaluations.html", mutated_page
                     )
+
+        shared_header = '<header class="site-header ds-header">'
+        shared_footer = '<footer class="site-footer ds-footer">'
+        relocated_header_page = evaluation_page.replace(shared_header, "", 1).replace(
+            "</body>",
+            f"{shared_header}\n</body>",
+            1,
+        )
+        self.assertEqual(1, relocated_header_page.count(shared_header))
+        self.assertEqual(1, relocated_header_page.count(shared_footer))
+        with self.assertRaisesRegex(
+            AssertionError,
+            "shared shell header must precede direct main content and its matching footer",
+        ):
+            self._assert_shared_shell_placement(relocated_header_page)
 
         license_text = (REPOSITORY_ROOT / "LICENSE").read_text(encoding="utf-8")
         self.assertIn("MIT License", license_text)
