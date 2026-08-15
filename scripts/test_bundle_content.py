@@ -15074,6 +15074,58 @@ Visible after.
             architect_contract,
         )
 
+        evaluation_contracts = {
+            "dev-architect-judge": tomllib.loads(
+                (
+                    AGENT_TEST_SUITES_ROOT
+                    / "dev-architect"
+                    / "agents"
+                    / "judge.toml"
+                ).read_text(encoding="utf-8")
+            )["developer_instructions"],
+            "dev-architect-suite-contract": (
+                AGENT_TEST_SUITES_ROOT
+                / "dev-architect"
+                / "skills"
+                / "dev-architect-suite-contract"
+                / "SKILL.md"
+            ).read_text(encoding="utf-8"),
+        }
+        approval_contract_phrases = (
+            "Approval exists only when the original user request explicitly includes the "
+            "exact infrastructure outcome or a later recorded User Action Required answer "
+            "explicitly approves it.",
+            "Technical justification, reviewer acceptance, architecture acceptance, broad "
+            "scope language, implementation need, convenience, test coverage goals, and an "
+            "agent recommendation do not provide approval.",
+            "Ordinary fixtures, helpers, and focused tests remain within normal implementation "
+            "authority when they do not introduce material infrastructure.",
+            "When approval is absent, preserve the proposed architecture and do not authorize "
+            "infrastructure implementation.",
+            "Return exactly one contextual, plain-language User Action Required question.",
+            "The question must identify the proposed infrastructure, explain why approval is "
+            "required, give concrete options and practical tradeoffs, and ask for one decision.",
+            "Until the user answers, do not authorize infrastructure implementation.",
+        )
+        for evaluation_name, evaluation_contract in evaluation_contracts.items():
+            normalized_evaluation_contract = re.sub(
+                r"\s+", " ", evaluation_contract
+            )
+            for phrase in approval_contract_phrases:
+                with self.subTest(evaluation=evaluation_name, phrase=phrase):
+                    self.assertIn(phrase, normalized_evaluation_contract)
+            for legacy_narrowing in (
+                "user scale approval inferred from the original request",
+                "larger scope accepted without technical justification and required user "
+                "confirmation",
+            ):
+                with self.subTest(
+                    evaluation=evaluation_name, legacy_narrowing=legacy_narrowing
+                ):
+                    self.assertNotIn(
+                        legacy_narrowing, normalized_evaluation_contract
+                    )
+
         suite_root = AGENT_TEST_SUITES_ROOT / "dev-architect"
         scenarios = load_yaml_object(suite_root / "scenarios.yaml")["scenarios"]
         scenarios_by_id = {scenario["id"]: scenario for scenario in scenarios}
