@@ -56,8 +56,6 @@ Each automated Backlog Dispatcher cycle runs as a standalone scheduled task in a
 
 The run reads current authoritative provider and runtime state, obtains one Coordinator decision, performs the authorized runtime operation, returns the exact result to the Coordinator during the same run, and then archives itself.
 
-After the Coordinator selects one Work Item, set the calling Dispatcher run's title to Dispatch followed by the short Work Item title before performing the authorized runtime operation. The title identifies this disposable Dispatcher run, not the canonical Work Item task. When no Work Item is selected, keep the default Backlog Dispatcher title.
-
 A launched Work Item task continues independently after the Dispatcher run ends. Later lifecycle, title, cleanup, or recovery operations may be performed by a later standalone Dispatcher run using the canonical task identity recorded in the Work Item provider. They do not require the original Dispatcher run to remain active.
 
 Runtime Parent Task ID records which Dispatcher run created the task. It is provenance and ambiguous-creation evidence, not a callback address or continuing ownership relationship.

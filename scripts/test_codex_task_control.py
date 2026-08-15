@@ -653,23 +653,21 @@ class CodexTaskControlPackageTests(unittest.TestCase):
             normalized_workflow,
         )
 
-    def test_dispatcher_run_titles_itself_for_the_selected_work_item(self) -> None:
+    def test_dispatcher_run_does_not_require_self_title_mutation(self) -> None:
         run_lifetime = self.dispatcher.split(
             "## Dispatcher Run Lifetime",
             1,
         )[1].split("## Role Division", 1)[0]
         normalized_run_lifetime = " ".join(run_lifetime.split())
 
-        for clause in (
-            "After the Coordinator selects one Work Item",
-            "set the calling Dispatcher run's title to Dispatch followed by the short Work Item title",
-            "before performing the authorized runtime operation",
-            "The title identifies this disposable Dispatcher run",
-            "not the canonical Work Item task",
-            "When no Work Item is selected, keep the default Backlog Dispatcher title",
-        ):
-            with self.subTest(clause=clause):
-                self.assertIn(clause, normalized_run_lifetime)
+        self.assertNotIn(
+            "set the calling Dispatcher run's title",
+            normalized_run_lifetime,
+        )
+        self.assertNotIn(
+            "Dispatch followed by the short Work Item title",
+            normalized_run_lifetime,
+        )
 
     def test_dispatcher_cleanup_and_result_do_not_require_original_run(self) -> None:
         cleanup = self.dispatcher.split("## Terminal Cleanup", 1)[1].split(
