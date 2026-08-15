@@ -2,7 +2,7 @@
 
 Owner: /root/require_explicit_user_approval_for_new_infrastructure
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
@@ -264,3 +264,29 @@ The accepted candidate needs executable positive and negative evaluation coverag
 - Accepted Scope: Governed definitions and direct dependent artifacts listed in Governed Scope Authorization.
 - Source Boundary: Preserve all unrelated dirty and untracked state recorded by the Starting handoff.
 - Next Action: Dispatch bounded implementation planning to Dev Coder, then obtain Dev Architect plan acceptance before source mutation.
+
+## Terminal Delivery Evidence
+
+- Transition: `Running -> Completed`.
+- Completed At: `2026-08-15T02:16:42Z`.
+- Completion Selector: `main-branch`.
+- Commit Delivery Disposition: `READY`.
+- Accepted Integration Commit: `2ed94ed05af84c1d3112a1cf7d32ae84a4f4f10a`.
+- Integration Base: `703da545fbd5187db30abefd56a73a16850203dd`.
+- Observed Branch And Tip: Configured branch `main` at exact accepted commit `2ed94ed05af84c1d3112a1cf7d32ae84a4f4f10a`.
+- Integration Strategy: Existing fast-forward delivery. The accepted commit is the observed main tip and is reachable from `main`.
+- Accepted Manifest: Exactly 19 paths covering the canonical skill and role, evaluation-local contracts and scenarios, focused tests, generator-owned adapters and documentation, and freshness baselines.
+- Original-To-Verification Mapping: `85b0c480a98cc83c3ef35a571a709492b01e3705 -> 575c05f3005155040a651baf183f3a118c255a51`; `e658f6d00a779e731098cbd1ea6e698b0104c2af -> 701f30cdbbb82d48719aca717af0835d3d9333a7`; `8e97879fbe6b6f42979f1da4162088ae78e2256a -> 056760f0fdfa2adfa4002ec2b8e792ab21aba933`.
+- Supporting Recovery Commit: `ae5dfe7b8db9a5e95b4d0ab2aa7f9a5acc99d6da` removed only the unsupported coordinator-schema keyword and preserved exact-one event-ID semantic validation.
+- Review: Fresh final source, governed-skill, prompt-contract, correction-source, and generated-artifact reviews all returned `PASS` with no unresolved candidate finding.
+- Independent Verification: Terminal integrated verification returned `PASS` for exact tip `2ed94ed05af84c1d3112a1cf7d32ae84a4f4f10a` and exact 19-path manifest.
+- Focused Checks: Lifecycle semantic hash, explicit infrastructure-approval contracts, evaluation documentation, generator freshness, skill validation, YAML/TOML/JSON parsing, Python in-memory compilation, and exact diff checks passed.
+- Post-Integration Checks: Three lifecycle and Dev Architect tests passed; all 36 evaluation-document tests passed; skill, hierarchy, support-checklist, and evaluation-document generator checks were current; exact diff check passed.
+- Live Evaluation: Run `20260815T002751Z-166d561f` matched 17 of 17 expected terminal statuses, with 7 `PASS` and 10 intentionally expected `BLOCKED`; 68 of 68 deterministic checks, 17 of 17 targets, Judges, and receipt audits passed; no failure, skip, or infrastructure error occurred; cleanup was clean.
+- Baseline Disposition: Three known catalog mismatches and supplemental broad-suite assertions were blob-identical at integration base and accepted tip and remain unrelated baseline issues. They were not weakened or attributed to this candidate.
+- Unrelated Primary State: The pre-existing tracked diff and index entry, 34 untracked paths, status hash `47eb210f9c17aa390756eee6b687d42fd82fe4ad606f08c86ad36f5d771e4432`, tracked-diff hash `ad62a2753289003db01cfd6f56e943c2a4bb36efaa59e73ee4d7be2af06f5ac5`, and aggregate untracked-content hash `d274b78f39cee479ff2e218d30f384430b673646e3e0eda0158db94918f99000` were identical before and after both integrations.
+- Complex Plan: Authoritative JSON and synchronized HTML contain 49 of 49 completed nodes. Final JSON SHA-256 is `04653dccd05bf17e9d7230e2d69f26a5b9e2a6a8a75412e6b70c2d9cc59be901`; final HTML SHA-256 is `6c7abe89f7f82aeb95e4955349582d2b1ae9eba8b38b2d2b3896aa77bad61294`.
+- Preserved Crisis Claim Anomaly: Claim `require-explicit-user-approval-dev-architect-live-recovery-01a00236` was acquired at event `00cc952c-eadf-441f-aaf3-47d1dcc88f8e` and heartbeated at event `1a138449-faa3-4274-aeed-d66677bc3145` before claim-free crisis instructions arrived. No later claim operation occurred. Post-exit reconciliation remains assigned to the parent Coordinator.
+- Cleanup Eligibility: Runtime task archival and final Git cleanup remain external to this active execution. The original and verification worktrees retain required untracked failed and successful live evidence and are not removal-eligible until the parent reconciles the preserved claim and evidence handoff. The clean supporting-recovery worktree and merged branch were already removed after proof.
+- Canonical Task And Conversation: `01a00236-ec5c-7811-ad56-6877828d2287` on host `local`.
+- Required Runtime Title: `Done — Require Explicit User Approval For New Infrastructure`.
