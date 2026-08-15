@@ -50,6 +50,18 @@ The dispatcher owns:
 
 The dispatcher is not a second Coordinator. It does not create a shadow queue, capacity ledger, mode record, ownership record, or Watchdog.
 
+## Dispatcher Run Lifetime
+
+Each automated Backlog Dispatcher cycle runs as a standalone scheduled task in a fresh conversation. A Dispatcher run is a disposable runtime executor, not a retained coordination conversation.
+
+The run reads current authoritative provider and runtime state, obtains one Coordinator decision, performs the authorized runtime operation, returns the exact result to the Coordinator during the same run, and then archives itself.
+
+A launched Work Item task continues independently after the Dispatcher run ends. Later lifecycle, title, cleanup, or recovery operations may be performed by a later standalone Dispatcher run using the canonical task identity recorded in the Work Item provider. They do not require the original Dispatcher run to remain active.
+
+Runtime Parent Task ID records which Dispatcher run created the task. It is provenance and ambiguous-creation evidence, not a callback address or continuing ownership relationship.
+
+Do not use a Dispatcher conversation as a polling loop, worker mailbox, durable queue, or coordination ledger.
+
 ## Role Division
 
 Reviewers are zero-write role owners. They inspect and report; they do not create, modify, overwrite, delete, integrate, deliver, claim, dispatch, re-home, or clean up artifacts or work-item state.
@@ -92,7 +104,7 @@ For this handoff, consult the Coordinator only for an ambiguous answer, conflict
 4. Do not launch until the provider locator resolves to durable reservation evidence and the Coordinator returns the reference-plus-delta packet as the entire launch payload. Treat canonical resumption as a distinct runtime operation without copied provider or selected-skill facts.
 5. For a new dispatch, create the visible task defined above with the reference-plus-delta packet as its initial prompt. Require the visible wrapper only for a new dispatch. For a resumption, resume the canonical existing execution, including an already-live hidden execution preserved as the existing owner. Do not ask the Coordinator's delegated runtime to create tasks when that runtime lacks the capability and the caller has it.
 6. Return every successful, failed, pending, or ambiguous runtime outcome to the Coordinator with the exact Work Item ID and runtime identity. The Coordinator reconciles Work-item lifecycle; the dispatcher does not infer that task creation means Running.
-7. Observe the created or resumed task until its identity is stable enough for reconciliation. Use runtime waiting and inspection rather than heartbeat or progress messages.
+7. Observe the created or resumed task only until its identity and immediate runtime outcome are stable enough for reconciliation. Return that result to the Coordinator, archive the calling Dispatcher run, and stop. Do not wait for the Work Item task to finish.
 8. Forward only a final outcome or one specific Coordinator decision between workers and the Coordinator.
 
 ## Dispatch Packet
@@ -151,6 +163,8 @@ For each authorized operation, the root Backlog Dispatcher must:
 4. return every cleanup outcome, including failed, pending, or ambiguous outcomes.
 
 The Coordinator reconciles capacity only after those outcomes return. The dispatcher does not infer cleanup eligibility, substitute another target, or reconcile capacity itself.
+
+The Dispatcher run performing terminal cleanup need not be the Dispatcher run that originally created the Work Item task. Authorization and canonical identity come from the current provider record and Coordinator packet.
 
 ## Partial And Ambiguous Runtime Outcomes
 
@@ -211,3 +225,5 @@ Do not create a dedicated Evaluation suite until the user authorizes that phase 
 ## Result
 
 Return the Coordinator decision, executed runtime operations, Work Item-to-task identity mapping, capacity and Watchdog state, ambiguous or partial outcomes, and one specific unresolved blocker or user decision. State whether work is continuing.
+
+After reporting the result, archive the calling Dispatcher run unless it must remain visible for one unresolved user decision or ambiguous runtime mutation. Archiving the run must not pause or delete the recurring Dispatcher automation.

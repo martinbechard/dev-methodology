@@ -614,6 +614,71 @@ class CodexTaskControlPackageTests(unittest.TestCase):
             with self.subTest(clause=clause):
                 self.assertIn(clause, normalized_watchdog)
 
+    def test_dispatcher_run_is_disposable_and_not_a_worker_mailbox(self) -> None:
+        run_lifetime = self.dispatcher.split(
+            "## Dispatcher Run Lifetime",
+            1,
+        )[1].split("## Role Division", 1)[0]
+        normalized_run_lifetime = " ".join(run_lifetime.split())
+
+        for clause in (
+            "Each automated Backlog Dispatcher cycle runs as a standalone scheduled task in a fresh conversation",
+            "disposable runtime executor, not a retained coordination conversation",
+            "obtains one Coordinator decision",
+            "returns the exact result to the Coordinator during the same run",
+            "then archives itself",
+            "A launched Work Item task continues independently after the Dispatcher run ends",
+            "Runtime Parent Task ID records which Dispatcher run created the task",
+            "provenance and ambiguous-creation evidence, not a callback address",
+            "Do not use a Dispatcher conversation as a polling loop, worker mailbox, durable queue, or coordination ledger",
+        ):
+            with self.subTest(clause=clause):
+                self.assertIn(clause, normalized_run_lifetime)
+
+        workflow = self.dispatcher.split("## Dispatch Workflow", 1)[1].split(
+            "## Dispatch Packet",
+            1,
+        )[0]
+        normalized_workflow = " ".join(workflow.split())
+        self.assertIn(
+            "Observe the created or resumed task only until its identity and immediate runtime outcome are stable enough for reconciliation",
+            normalized_workflow,
+        )
+        self.assertIn(
+            "archive the calling Dispatcher run, and stop",
+            normalized_workflow,
+        )
+        self.assertIn(
+            "Do not wait for the Work Item task to finish",
+            normalized_workflow,
+        )
+
+    def test_dispatcher_cleanup_and_result_do_not_require_original_run(self) -> None:
+        cleanup = self.dispatcher.split("## Terminal Cleanup", 1)[1].split(
+            "## Partial And Ambiguous Runtime Outcomes",
+            1,
+        )[0]
+        normalized_cleanup = " ".join(cleanup.split())
+        self.assertIn(
+            "need not be the Dispatcher run that originally created the Work Item task",
+            normalized_cleanup,
+        )
+        self.assertIn(
+            "Authorization and canonical identity come from the current provider record and Coordinator packet",
+            normalized_cleanup,
+        )
+
+        result = self.dispatcher.split("## Result", 1)[1]
+        normalized_result = " ".join(result.split())
+        self.assertIn(
+            "archive the calling Dispatcher run unless it must remain visible for one unresolved user decision or ambiguous runtime mutation",
+            normalized_result,
+        )
+        self.assertIn(
+            "Archiving the run must not pause or delete the recurring Dispatcher automation",
+            normalized_result,
+        )
+
     def test_follow_up_resumes_the_same_task(self) -> None:
         normalized_lower = self.normalized.lower()
         for clause in (

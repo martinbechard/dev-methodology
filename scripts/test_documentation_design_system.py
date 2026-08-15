@@ -64,7 +64,7 @@ LIFECYCLE_NAVIGATION = (
     ("Wiki Skills And Project Context", "wiki-skills-and-project-context.html"),
 )
 LIFECYCLE_BASELINE_SEMANTIC_SHA256 = (
-    "c71553e2b03dd83c1864382205a172ad710f446ce6115f98272599af981a6e84"
+    "fc49af543803b0418f5457bbcc74980af43141ddce3b2d78f0104af6297983ca"
 )
 TOOLKIT_NAVIGATION = (
     ("Index", "index.html"),

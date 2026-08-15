@@ -13216,11 +13216,23 @@ Visible after.
             agents_section,
         )
         self.assertIn(
-            "The Dev Backlog Watchdog runs as a standalone project automation outside the retained parent conversation and outside delivery capacity.",
+            "The Dev Backlog Watchdog runs as a standalone project automation outside Dispatcher and Work-Item tasks and outside delivery capacity.",
             agents_section,
         )
         self.assertIn(
             "Each schedule creates a fresh read-only task.",
+            agents_section,
+        )
+        self.assertIn(
+            "Each scheduled Dispatcher cycle uses a fresh disposable task.",
+            agents_section,
+        )
+        self.assertIn(
+            "The launched Work-Item task continues independently after its Dispatcher run archives itself.",
+            agents_section,
+        )
+        self.assertIn(
+            "A later Dispatcher run may reconcile or clean up that Work Item from its current provider-recorded canonical identity.",
             agents_section,
         )
         self.assertNotIn("standing read-only child Agent", agents_section)
