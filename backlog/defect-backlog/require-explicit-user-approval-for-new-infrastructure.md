@@ -1,8 +1,8 @@
 # Require Explicit User Approval for New Infrastructure
 
-Owner: Unowned
+Owner: /root/require_explicit_user_approval_for_new_infrastructure
 
-Status: Blocked
+Status: Running
 
 Type: Defect
 
@@ -229,6 +229,28 @@ The accepted candidate needs executable positive and negative evaluation coverag
 - Required Runtime Title: `Blocked — Require Explicit User Approval For New Infrastructure`.
 - Supporting Recovery Boundary: Diagnose and correct only the existing runner/coordinator response-schema compatibility needed for `claimRelease.eventIds`. Do not create a new harness, runner, simulator, service, response contract, or unrelated infrastructure; do not weaken the semantic uniqueness requirement.
 - Safe Resume: Preserve all dirty correction and run evidence. Resume the Work Item only through `Blocked -> Ready -> Starting -> Running` after the supporting recovery passes independent review and focused verification.
+
+## Response-Schema Recovery And Resumption
+
+- Supporting Source Commit: `ae5dfe7b8db9a5e95b4d0ab2aa7f9a5acc99d6da` with parent `3d6c2558eeac54c41dbe6b750bcfbece527078f6`.
+- Exact Manifest: `evals/agent-tests/runner.py` and `evals/agent-tests/test_runner.py`.
+- Source Mapping: Fast-forward integration preserved the reviewed supporting commit identity on configured branch `main`.
+- Source Review: Fresh Dev Code Reviewer returned `PASS` with no findings.
+- Independent Verification: Focused schema, exact-one semantic validation, mocked schema-submission reachability, strict-object schema validation, and in-memory compilation passed. Main ran all 160 `test_runner.py` tests successfully.
+- Preserved Primary State: The unrelated tracked diff, index entry, 34 untracked paths, and aggregate untracked-content hash were identical before and after integration.
+- Live Reachability Proof: `dev-architect:accepted-design` completed with process exit 0, four critical deterministic checks passed, independent Judge disposition `passed`, verified identity bindings, clean batch cleanup, and clean workspace cleanup.
+- Live Evidence: `/private/tmp/dev-architect-schema-smoke.mN4OLF/summary.json` with run identity `codex-batch-01-a9de026f1d4c8175dd27dc55a5a12c04`.
+- Live Resource: `live-model-evaluation:dev-architect:schema-smoke:01a00236` acquired at event `6b5a9c34-4dcf-41ac-8ea3-db0bb05dc4c4` and released at event `f2423f05-a14f-4e5d-89f0-888425f6fc4e`.
+- Support Cleanup: Removed only clean worktree `.worktrees/require-explicit-user-approval-schema-compatibility-01a00236` and its merged branch after ancestry and cleanliness proof.
+- Technical Trigger: SATISFIED. Codex accepted the repaired coordinator schema and reached completed scenario and Judge execution without weakening exact-one event-ID validation.
+- Transition Sequence: `Blocked -> Ready -> Starting -> Running`.
+- Resumed At: `2026-08-15T00:23:01Z`.
+- Canonical Task and Conversation: `01a00236-ec5c-7811-ad56-6877828d2287` on host `local`.
+- Resumed Dev Orchestrator: `/root/require_explicit_user_approval_for_new_infrastructure`.
+- Preserved High Candidate: `e658f6d00a779e731098cbd1ea6e698b0104c2af` and its recorded dirty private worktree remain the only authorized implementation continuation.
+- Lifecycle Coordination: Claim-free resumption under the sole local crisis reservation. The separate live-model reachability proof used and released its required timed resource claim.
+- Required Runtime Title: `Implementing — Require Explicit User Approval For New Infrastructure`.
+- Next Action: Complete the preserved internal evaluation-contract correction, rerun the full existing Dev Architect suite, repeat fresh governed-definition and prompt review, run independent verification, then integrate and deliver.
 
 ## Running Acceptance Evidence
 
