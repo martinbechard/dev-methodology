@@ -1,6 +1,6 @@
 # Accept Shared Shell Class In Bundle Content Header Assertion
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -68,3 +68,18 @@ None.
 - This Defect is the sole local serialized crisis execution after reservation.
 - Crisis recovery is claim-free; do not perform any resource-claim operation.
 - Preserve all unrelated dirty provider bytes, untracked plans and temporary evidence, historical worktrees, and crisis evidence.
+
+## Starting Handoff Evidence
+
+- Reserved At: `2026-08-15T02:25:42Z`.
+- Transition: `Ready -> Starting`.
+- Creation Commit: `52d032785930467114f274b378bfdd0acda8bc94`.
+- Creation Blob SHA-256: `7a7641f99db260a24911e192f33e4278ef7d0c40018474f8816daedbd694ee3d`.
+- Crisis Epoch: `blocked-crisis-20260813T223935Z`.
+- Capacity: Sole local crisis execution; all other local crisis items remain non-active.
+- Canonical Runtime Identity: Pending one unique visible Codex task creation; adopt the returned Task ID and Conversation ID before nested execution acceptance.
+- Runtime Parent Task: `019ff2c3-1710-7aa1-89c4-9d6066f51fe4`.
+- Coordinator Task: `/root/backlog_coordinator`.
+- Required Starting Title: `Starting — Accept Shared Shell Class In Bundle Content Header Assertion`.
+- Execution Contract: One canonical visible task, one nested Dev Orchestrator, claim-free crisis delivery, focused implementation and verification, independent review, main-branch delivery, and terminal provider evidence.
+- Preserved Dependency: Definitions task `019ffc29-0d20-78f1-b3d6-f0797e7bb5b6`, candidate `05b2bda3b929d8258a9a096b8dbc9870ab2d5629`, clean branch/worktree, and all PASS gates remain untouched until this Defect is Completed.
