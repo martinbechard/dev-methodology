@@ -13228,6 +13228,10 @@ Visible after.
             agents_section,
         )
         self.assertIn(
+            "After one Work Item is selected, that disposable run retitles itself Dispatch followed by the short Work Item title.",
+            agents_section,
+        )
+        self.assertIn(
             "The launched Work-Item task continues independently after its Dispatcher run archives itself.",
             agents_section,
         )
