@@ -6,9 +6,12 @@
 from __future__ import annotations
 
 import argparse
+import csv
 import sys
 from collections.abc import Iterator, Sequence
+from contextlib import nullcontext
 from pathlib import Path
+from typing import TextIO
 
 from estimate_file_tokens import DEFAULT_ENCODING, TokenEncoder, estimate_tokens, load_encoding
 
@@ -68,7 +71,47 @@ def build_parser() -> argparse.ArgumentParser:
         default=DEFAULT_ENCODING,
         help=f"tiktoken encoding name (default: {DEFAULT_ENCODING})",
     )
+    parser.add_argument(
+        "--csv",
+        type=Path,
+        metavar="OUTPUT",
+        help="Write CSV rows to OUTPUT instead of text; use - for standard output",
+    )
     return parser
+
+
+def write_csv(estimates: Sequence[tuple[str, Path, int]], output: TextIO) -> None:
+    """Write one rectangular CSV row per skill file."""
+
+    writer = csv.writer(output)
+    writer.writerow(("visibility", "path", "tokens"))
+    for visibility, path, count in estimates:
+        writer.writerow((visibility, str(path), count))
+
+
+def write_text(estimates: Sequence[tuple[str, Path, int]], output: TextIO) -> None:
+    """Write the human-readable per-file report and aggregate totals."""
+
+    totals = {visibility: 0 for visibility, _relative_root in SKILL_ROOTS}
+    for visibility, path, count in estimates:
+        totals[visibility] += count
+        print(f"{count}\t{visibility}\t{path}", file=output)
+
+    print(file=output)
+    for visibility, _relative_root in SKILL_ROOTS:
+        file_count = sum(
+            1
+            for item_visibility, _path, _count in estimates
+            if item_visibility == visibility
+        )
+        print(
+            f"{totals[visibility]}\t{visibility} total\t{file_count} files",
+            file=output,
+        )
+    print(
+        f"{sum(totals.values())}\tall skills total\t{len(estimates)} files",
+        file=output,
+    )
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -82,16 +125,20 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(f"error: {error}", file=sys.stderr)
         return 1
 
-    totals = {visibility: 0 for visibility, _relative_root in SKILL_ROOTS}
-    for visibility, path, count in estimates:
-        totals[visibility] += count
-        print(f"{count}\t{visibility}\t{path}")
-
-    print()
-    for visibility, _relative_root in SKILL_ROOTS:
-        file_count = sum(1 for item_visibility, _path, _count in estimates if item_visibility == visibility)
-        print(f"{totals[visibility]}\t{visibility} total\t{file_count} files")
-    print(f"{sum(totals.values())}\tall skills total\t{len(estimates)} files")
+    try:
+        if args.csv is None:
+            write_text(estimates, sys.stdout)
+        else:
+            output_context = (
+                nullcontext(sys.stdout)
+                if str(args.csv) == "-"
+                else args.csv.open("w", encoding="utf-8", newline="")
+            )
+            with output_context as output:
+                write_csv(estimates, output)
+    except OSError as error:
+        print(f"error: {error}", file=sys.stderr)
+        return 1
     return 0
 
 

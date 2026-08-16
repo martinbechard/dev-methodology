@@ -4,12 +4,14 @@
 
 from __future__ import annotations
 
+import csv
+import io
 import tempfile
 import unittest
 from pathlib import Path
 
 from estimate_file_tokens import estimate_tokens
-from estimate_skill_tokens import estimate_skill_tokens, iter_skill_files
+from estimate_skill_tokens import estimate_skill_tokens, iter_skill_files, write_csv
 
 
 class _WordEncoder:
@@ -63,6 +65,21 @@ class EstimateSkillTokensTests(unittest.TestCase):
                 ],
                 estimates,
             )
+
+    def test_writes_rectangular_csv_with_quoted_paths(self) -> None:
+        output = io.StringIO(newline="")
+
+        write_csv(
+            [("publishable", Path("skills/public,one/SKILL.md"), 42)], output
+        )
+
+        self.assertEqual(
+            [
+                ["visibility", "path", "tokens"],
+                ["publishable", "skills/public,one/SKILL.md", "42"],
+            ],
+            list(csv.reader(io.StringIO(output.getvalue()))),
+        )
 
 
 if __name__ == "__main__":
