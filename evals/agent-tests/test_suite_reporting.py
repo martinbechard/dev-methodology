@@ -29,6 +29,49 @@ _SPEC.loader.exec_module(reporting)
 class AgentSuiteReportingTests(unittest.TestCase):
     """Protect selection, resource, scheduling, rendering, and aggregation contracts."""
 
+    def test_dev_orchestrator_target_rollout_gets_observational_token_report(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            renderer = root / "render-token-ledger.py"
+            renderer.write_text("# test renderer\n", encoding="utf-8")
+            rollout = root / "sessions" / "target.jsonl"
+            rollout.parent.mkdir()
+            rollout.write_text(
+                json.dumps(
+                    {
+                        "type": "session_meta",
+                        "payload": {
+                            "id": "target-session",
+                            "agent_role": "dev_orchestrator",
+                        },
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            with (
+                mock.patch.object(reporting, "_TOKEN_LEDGER_RENDERER", renderer),
+                mock.patch.object(
+                    reporting.subprocess,
+                    "run",
+                    return_value=mock.Mock(returncode=0, stderr=""),
+                ) as process,
+            ):
+                diagnostic = reporting._generate_target_token_ledgers(
+                    root, "dev_orchestrator"
+                )
+
+            self.assertIsNone(diagnostic)
+            process.assert_called_once()
+            manifest = json.loads(
+                (root / "token-ledgers" / "index.json").read_text(encoding="utf-8")
+            )
+            self.assertEqual("target-session", manifest["reports"][0]["sessionId"])
+            self.assertEqual(
+                "token-ledgers/target-session.html",
+                manifest["reports"][0]["html"],
+            )
+
     def test_selection_supports_one_many_and_default_all(self) -> None:
         catalog = ("alpha", "beta", "gamma")
 

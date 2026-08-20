@@ -35,6 +35,7 @@ _ROOT = Path(__file__).resolve().parent
 _REPOSITORY_ROOT = _ROOT.parents[1]
 _CATALOG_PATH = _ROOT / "suite-index.yaml"
 _RUNNER_PATH = _ROOT / "runner.py"
+_TOKEN_LEDGER_RENDERER = _REPOSITORY_ROOT / "scripts" / "render-token-ledger.py"
 _HARNESSES = frozenset({"codex", "junie"})
 _TERMINAL_STATUSES = frozenset(
     {"PASS", "FAIL", "BLOCKED", "STALE", "INFRASTRUCTURE_FAILED"}
@@ -275,9 +276,96 @@ def _default_executor(
             summary = loaded if isinstance(loaded, dict) else None
         except json.JSONDecodeError:
             summary = None
-    return SuiteExecution(
+    execution = SuiteExecution(
         completed.returncode, summary, completed.stdout, completed.stderr
     )
+    if harness == "codex" and suite_id == "dev-orchestrator":
+        diagnostic = _generate_target_token_ledgers(result_dir, "dev_orchestrator")
+        if diagnostic:
+            execution = dataclasses.replace(
+                execution,
+                stderr=(execution.stderr + "\n" + diagnostic).strip(),
+            )
+    return execution
+
+
+def _rollout_invocation(path: Path) -> tuple[str, str] | None:
+    """Return the retained session id and agent invocation from one rollout."""
+    try:
+        lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
+    except OSError:
+        return None
+    for line in lines:
+        try:
+            record = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if not isinstance(record, dict) or record.get("type") != "session_meta":
+            continue
+        payload = record.get("payload")
+        if not isinstance(payload, dict):
+            return None
+        session_id = payload.get("id")
+        invocation = payload.get("agent_role")
+        if isinstance(session_id, str) and isinstance(invocation, str):
+            return session_id, invocation
+        return None
+    return None
+
+
+def _generate_target_token_ledgers(result_dir: Path, invocation: str) -> str | None:
+    """Generate observational cost ledgers for retained target rollouts."""
+    if not _TOKEN_LEDGER_RENDERER.is_file():
+        return f"token ledger renderer unavailable: {_TOKEN_LEDGER_RENDERER}"
+    matches: list[tuple[str, Path]] = []
+    for rollout in sorted(result_dir.rglob("*.jsonl")):
+        identity = _rollout_invocation(rollout)
+        if identity is not None and identity[1] == invocation:
+            matches.append((identity[0], rollout))
+    if not matches:
+        return f"no retained {invocation} rollout was available for token reporting"
+    output_root = result_dir / "token-ledgers"
+    output_root.mkdir(parents=True, exist_ok=True)
+    manifest: list[dict[str, str]] = []
+    diagnostics: list[str] = []
+    for session_id, rollout in matches:
+        stem = re.sub(r"[^A-Za-z0-9_.-]", "-", session_id)
+        csv_path = output_root / f"{stem}.csv"
+        html_path = output_root / f"{stem}.html"
+        completed = subprocess.run(
+            (
+                sys.executable,
+                str(_TOKEN_LEDGER_RENDERER),
+                str(csv_path),
+                str(html_path),
+                "--from-rollout",
+                str(rollout),
+                "--title",
+                f"Dev Orchestrator Eval Token Ledger — {session_id}",
+            ),
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        if completed.returncode != 0:
+            diagnostics.append(
+                f"token ledger generation failed for {session_id}: {completed.stderr.strip()}"
+            )
+            continue
+        manifest.append(
+            {
+                "sessionId": session_id,
+                "rollout": rollout.relative_to(result_dir).as_posix(),
+                "csv": csv_path.relative_to(result_dir).as_posix(),
+                "html": html_path.relative_to(result_dir).as_posix(),
+            }
+        )
+    _atomic_write(
+        output_root / "index.json",
+        json.dumps({"targetInvocation": invocation, "reports": manifest}, indent=2)
+        + "\n",
+    )
+    return "; ".join(diagnostics) or None
 
 
 def _scenario_rows(execution: SuiteExecution) -> list[dict[str, Any]]:

@@ -34,6 +34,12 @@ Run one suite and update its independent report plus the global report:
 python3 evals/agent-tests/runner.py reporting run --harness codex --suite dev-coder
 ```
 
+The Codex dev-orchestrator suite also generates one observational token and cost ledger for every retained dev_orchestrator target rollout. These files are written beneath the suite run directory in token-ledgers, with index.json binding each target session to its raw rollout, CSV, and HTML report. Ledger generation does not affect the behavioral verdict; a reporting failure is retained as an execution diagnostic.
+
+```bash
+python3 evals/agent-tests/runner.py reporting run --harness codex --suite dev-orchestrator
+```
+
 Run several selected suites with a lower worker cap:
 
 ```bash
