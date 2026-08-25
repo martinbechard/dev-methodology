@@ -35,14 +35,21 @@ class RuntimeToolCatalogGeneratorTests(unittest.TestCase):
             )
         )
 
-    def test_snapshot_generates_one_file_per_tool_and_group_indexes(self) -> None:
+    def test_snapshot_generates_one_file_per_tool_and_one_index(self) -> None:
         snapshot = generator.load_snapshot()
         expected = generator.expected_files(snapshot)
         tool_count = len(snapshot["tools"])
-        group_count = len({tool["group"] for tool in snapshot["tools"]})
-        self.assertEqual(1 + group_count + tool_count, len(expected))
+        self.assertEqual(1 + tool_count, len(expected))
         self.assertIn(Path("index.md"), expected)
         self.assertIn(Path("collaboration") / "spawn-agent.md", expected)
+        self.assertEqual(
+            [Path("index.md")],
+            sorted(path for path in expected if path.name == "index.md"),
+        )
+        self.assertIn(
+            "[spawn_agent](collaboration/spawn-agent.md)",
+            expected[Path("index.md")],
+        )
 
     def test_checked_in_catalog_matches_snapshot(self) -> None:
         generator.render(generator.load_snapshot(), check=True)

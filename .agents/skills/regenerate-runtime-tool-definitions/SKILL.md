@@ -13,8 +13,7 @@ Maintain a reviewable Codex tool catalog without injecting it into Agent definit
 
 The generated catalog is rooted at references/tools:
 
-- index.md inventories every included tool and group.
-- Each group subfolder has an index.md.
+- index.md is the sole index. It inventories every included tool, grouped by tool family, and links directly to each tool file.
 - Each tool has exactly one Markdown file containing its live name, surface, source, and definition.
 
 The canonical snapshot is references/tool-definitions.json. Generated Markdown is replaceable output; change the snapshot or generator rather than hand-editing it.

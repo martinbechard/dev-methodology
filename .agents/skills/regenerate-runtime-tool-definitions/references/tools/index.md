@@ -9,18 +9,125 @@ Tools: 66
 
 Groups: 11
 
-| Group | Tools | Catalog |
-| --- | ---: | --- |
-| Codex Document Control | 3 | [codex-document-control](codex-document-control/index.md) |
-| Codex Plugin Management | 5 | [codex-plugin-management](codex-plugin-management/index.md) |
-| Codex Safety and Support | 6 | [codex-safety](codex-safety/index.md) |
-| Codex Task and Application Control | 18 | [codex-task-control](codex-task-control/index.md) |
-| Agent Collaboration | 6 | [collaboration](collaboration/index.md) |
-| Generic Local and Control Tools | 14 | [generic-local](generic-local/index.md) |
-| Persistent JavaScript Runtime | 3 | [javascript-runtime](javascript-runtime/index.md) |
-| Media Generation | 1 | [media](media/index.md) |
-| Official OpenAI Documentation | 5 | [openai-documentation](openai-documentation/index.md) |
-| OpenAI Platform Setup | 4 | [openai-platform](openai-platform/index.md) |
-| Web Access | 1 | [web](web/index.md) |
+## Codex Document Control
+
+Tools: 3
+
+- [mcp__codex_apps__codex_document_control_execute_d_7437ad2e4ffa](codex-document-control/mcp-codex-apps-codex-document-control-execute-d-7437ad2e4ffa.md)
+- [mcp__codex_apps__codex_document_control_get_docum_83c7f0565c0f](codex-document-control/mcp-codex-apps-codex-document-control-get-docum-83c7f0565c0f.md)
+- [mcp__codex_apps__codex_document_control_list_document_sessions](codex-document-control/mcp-codex-apps-codex-document-control-list-document-sessions.md)
+
+## Codex Plugin Management
+
+Tools: 5
+
+- [mcp__codex_apps__plugin_management_get_app_permissions](codex-plugin-management/mcp-codex-apps-plugin-management-get-app-permissions.md)
+- [mcp__codex_apps__plugin_management_get_plugin_dependencies](codex-plugin-management/mcp-codex-apps-plugin-management-get-plugin-dependencies.md)
+- [mcp__codex_apps__plugin_management_uninstall_app](codex-plugin-management/mcp-codex-apps-plugin-management-uninstall-app.md)
+- [mcp__codex_apps__plugin_management_update_app_permissions](codex-plugin-management/mcp-codex-apps-plugin-management-update-app-permissions.md)
+- [plugin_management__uninstall_plugin](codex-plugin-management/plugin-management-uninstall-plugin.md)
+
+## Codex Safety and Support
+
+Tools: 6
+
+- [mcp__codex_apps__hotline_get_local_hotline](codex-safety/mcp-codex-apps-hotline-get-local-hotline.md)
+- [mcp__codex_apps__safety_settings_get_family_info](codex-safety/mcp-codex-apps-safety-settings-get-family-info.md)
+- [mcp__codex_apps__safety_settings_get_parental_controls](codex-safety/mcp-codex-apps-safety-settings-get-parental-controls.md)
+- [mcp__codex_apps__safety_settings_get_trusted_contact](codex-safety/mcp-codex-apps-safety-settings-get-trusted-contact.md)
+- [mcp__codex_apps__safety_settings_prepare_parental_02db6ffaefc6](codex-safety/mcp-codex-apps-safety-settings-prepare-parental-02db6ffaefc6.md)
+- [mcp__codex_apps__safety_settings_update_parental_control](codex-safety/mcp-codex-apps-safety-settings-update-parental-control.md)
+
+## Codex Task and Application Control
+
+Tools: 18
+
+- [codex_app__automation_update](codex-task-control/codex-app-automation-update.md)
+- [codex_app__create_thread](codex-task-control/codex-app-create-thread.md)
+- [codex_app__fork_thread](codex-task-control/codex-app-fork-thread.md)
+- [codex_app__get_handoff_status](codex-task-control/codex-app-get-handoff-status.md)
+- [codex_app__handoff_thread](codex-task-control/codex-app-handoff-thread.md)
+- [codex_app__list_archived_threads](codex-task-control/codex-app-list-archived-threads.md)
+- [codex_app__list_projects](codex-task-control/codex-app-list-projects.md)
+- [codex_app__list_threads](codex-task-control/codex-app-list-threads.md)
+- [codex_app__load_workspace_dependencies](codex-task-control/codex-app-load-workspace-dependencies.md)
+- [codex_app__navigate_to_codex_page](codex-task-control/codex-app-navigate-to-codex-page.md)
+- [codex_app__open_in_codex](codex-task-control/codex-app-open-in-codex.md)
+- [codex_app__read_thread](codex-task-control/codex-app-read-thread.md)
+- [codex_app__read_thread_terminal](codex-task-control/codex-app-read-thread-terminal.md)
+- [codex_app__send_message_to_thread](codex-task-control/codex-app-send-message-to-thread.md)
+- [codex_app__set_thread_archived](codex-task-control/codex-app-set-thread-archived.md)
+- [codex_app__set_thread_pinned](codex-task-control/codex-app-set-thread-pinned.md)
+- [codex_app__set_thread_title](codex-task-control/codex-app-set-thread-title.md)
+- [codex_app__wait_threads](codex-task-control/codex-app-wait-threads.md)
+
+## Agent Collaboration
+
+Tools: 6
+
+- [followup_task](collaboration/followup-task.md)
+- [interrupt_agent](collaboration/interrupt-agent.md)
+- [list_agents](collaboration/list-agents.md)
+- [send_message](collaboration/send-message.md)
+- [spawn_agent](collaboration/spawn-agent.md)
+- [wait_agent](collaboration/wait-agent.md)
+
+## Generic Local and Control Tools
+
+Tools: 14
+
+- [apply_patch](generic-local/apply-patch.md)
+- [create_goal](generic-local/create-goal.md)
+- [exec](generic-local/exec.md)
+- [exec_command](generic-local/exec-command.md)
+- [get_goal](generic-local/get-goal.md)
+- [list_mcp_resource_templates](generic-local/list-mcp-resource-templates.md)
+- [list_mcp_resources](generic-local/list-mcp-resources.md)
+- [read_mcp_resource](generic-local/read-mcp-resource.md)
+- [request_plugin_install](generic-local/request-plugin-install.md)
+- [update_goal](generic-local/update-goal.md)
+- [update_plan](generic-local/update-plan.md)
+- [view_image](generic-local/view-image.md)
+- [wait](generic-local/wait.md)
+- [write_stdin](generic-local/write-stdin.md)
+
+## Persistent JavaScript Runtime
+
+Tools: 3
+
+- [mcp__node_repl__js](javascript-runtime/mcp-node-repl-js.md)
+- [mcp__node_repl__js_add_node_module_dir](javascript-runtime/mcp-node-repl-js-add-node-module-dir.md)
+- [mcp__node_repl__js_reset](javascript-runtime/mcp-node-repl-js-reset.md)
+
+## Media Generation
+
+Tools: 1
+
+- [image_gen__imagegen](media/image-gen-imagegen.md)
+
+## Official OpenAI Documentation
+
+Tools: 5
+
+- [mcp__openaiDeveloperDocs__fetch_openai_doc](openai-documentation/mcp-openaideveloperdocs-fetch-openai-doc.md)
+- [mcp__openaiDeveloperDocs__get_openapi_spec](openai-documentation/mcp-openaideveloperdocs-get-openapi-spec.md)
+- [mcp__openaiDeveloperDocs__list_api_endpoints](openai-documentation/mcp-openaideveloperdocs-list-api-endpoints.md)
+- [mcp__openaiDeveloperDocs__list_openai_docs](openai-documentation/mcp-openaideveloperdocs-list-openai-docs.md)
+- [mcp__openaiDeveloperDocs__search_openai_docs](openai-documentation/mcp-openaideveloperdocs-search-openai-docs.md)
+
+## OpenAI Platform Setup
+
+Tools: 4
+
+- [mcp__codex_apps__openai_platform_create_encrypted_d9a2abd7e085](openai-platform/mcp-codex-apps-openai-platform-create-encrypted-d9a2abd7e085.md)
+- [mcp__codex_apps__openai_platform_list_openai_api_key_targets](openai-platform/mcp-codex-apps-openai-platform-list-openai-api-key-targets.md)
+- [mcp__codex_apps__openai_platform_open_codex_api_key_setup](openai-platform/mcp-codex-apps-openai-platform-open-codex-api-key-setup.md)
+- [mcp__openai_api_key_local_confirmation__confirm_ope_8781ece2af3d](openai-platform/mcp-openai-api-key-local-confirmation-confirm-ope-8781ece2af3d.md)
+
+## Web Access
+
+Tools: 1
+
+- [web__run](web/web-run.md)
 
 This catalog is harness evidence. It does not grant tool authorization or inject definitions into Agent prompts.
