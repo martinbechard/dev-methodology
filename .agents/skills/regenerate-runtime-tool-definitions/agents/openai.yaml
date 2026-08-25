@@ -1,0 +1,4 @@
+interface:
+  display_name: Regenerate Runtime Tool Definitions
+  short_description: Refresh the grouped Codex and generic tool catalog
+  default_prompt: Regenerate and validate the repository-local Codex runtime tool-definition catalog from the current harness.
