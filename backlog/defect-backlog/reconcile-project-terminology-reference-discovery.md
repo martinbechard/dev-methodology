@@ -12,19 +12,34 @@ Completion: main-branch
 
 ## Summary
 
-Restore configured mcp-agent-ops discovery and publication verification for the direct project-root `terminology.md` reference.
+Restore mcp-agent-ops discovery and publication verification through conventional project and
+user reference roots that mirror skill discovery.
 
 ## Context
 
-The configured reference provider successfully refreshes revision `89b418948b1bcfdc656fce1c2e50e8bc1fcc12126b6b1c21627e97d7d0e9c13c`, but its published names omit the tracked direct project-root `terminology.md`. A revision-matched `reference_load` therefore returns `reference_not_found`. This is a valid ABSENT result for ordinary terminology application, but it cannot satisfy post-mutation publication verification because no returned digest can match the changed target.
+The configured reference provider successfully refreshes revision `89b418948b1bcfdc656fce1c2e50e8bc1fcc12126b6b1c21627e97d7d0e9c13c`, but its published names omit the tracked terminology reference. A revision-matched `reference_load` therefore returns `reference_not_found`. This is a valid ABSENT result for ordinary terminology application, but it cannot satisfy post-mutation publication verification because no returned digest can match the changed target.
+
+The accepted design does not publish arbitrary files from the project root and does not
+predefine allowed reference filenames. Like skill discovery, it authorizes conventional
+locations and recursively discovers safe reference files beneath them. Project references
+use `<project>/.agents/reference` and `<project>/.codex/reference`. User references use
+`~/.agents/reference` and `~/.codex/reference`.
 
 The preserved Work Item `replace-evaluation-oracle-terminology-with-judge` is Blocked with accepted candidate `6f8e617c2fdb36bac1dbb46a77410e384505437d` until this capability is restored.
 
 ## Requirements
 
 - Reproduce refresh and revision-matched load from the configured dev-methodology project context.
-- Diagnose the configured project-root discovery path before changing configuration or implementation.
-- Make the smallest authoritative correction in Project Configurator source, project configuration, or mcp-agent-ops, according to the diagnosed owner.
+- Add recursive project reference discovery beneath `<project>/.agents/reference` and
+  `<project>/.codex/reference` when the active project is inside an authorized workspace.
+- Add recursive user reference discovery beneath `~/.agents/reference` and
+  `~/.codex/reference` through the supported user configuration and installation boundary.
+- Use location-based authorization and safe relative names. Do not introduce a predefined
+  reference-filename allowlist or recursively publish the project or user home root.
+- Preserve project-before-user precedence and `.agents`-before-`.codex` precedence, matching
+  the corresponding skill-discovery model.
+- Place or project the maintained terminology reference into the appropriate conventional
+  project reference root and keep one authoritative maintained source.
 - Preserve configured user-reference roots, path-free scope labels, immutable snapshot behavior, allowed workspace boundaries, and `reference_not_found` semantics for genuinely absent references.
 - Do not use filesystem fallback or arbitrary user-home search as publication proof.
 - If mcp-agent-ops changes, verify and publish/install the supported package through its own repository and release workflow before project-runtime verification.
@@ -32,10 +47,15 @@ The preserved Work Item `replace-evaluation-oracle-terminology-with-judge` is Bl
 
 ## Acceptance Criteria
 
+- `reference_refresh` recursively discovers safe UTF-8 references beneath project
+  `.agents/reference` and `.codex/reference` roots and user `.agents/reference` and
+  `.codex/reference` roots without a filename allowlist.
 - `reference_refresh` in a fresh configured dev-methodology runtime publishes a revision whose names include `terminology.md`.
-- Revision-matched `reference_load` returns the direct project scope and the validated SHA-256 digest of the tracked target without exposing a physical path.
+- Revision-matched `reference_load` returns the project reference scope and the validated SHA-256 digest of the maintained target without exposing a physical path.
 - Genuine ABSENT behavior still returns only `reference_not_found` when neither configured project nor user scope contains the reference.
-- Workspace-root, aggregation, ordering, deduplication, skipped-root, immutable-snapshot, and path-redaction contracts remain intact.
+- Tests prove project-before-user and `.agents`-before-`.codex` ordering, recursive relative
+  names, resolved-file deduplication, and the absence of arbitrary project-root publication.
+- Workspace-root, aggregation, skipped-root, immutable-snapshot, symlink-containment, and path-redaction contracts remain intact.
 - Focused Project Configurator and mcp-agent-ops reference discovery/publication tests pass.
 - Fresh independent review and verification accept the correction and installed-runtime evidence.
 
@@ -53,7 +73,21 @@ None.
 
 ## Open Questions
 
-None.
+- Which Persistence and Commit workflows should govern the required source work in
+  `/Users/martinbechard/dev/mcp-agent-ops`? The pending A, B, or C delivery decision remains
+  separate from the accepted reference-discovery design.
+
+## Accepted Reference Discovery Design
+
+User directive:
+
+> ok that makes sense. let's add the reference directory at the project and user level under .agents/reference and .codex/reference like for skills.
+
+Decision: discover references recursively from conventional `.agents/reference` and
+`.codex/reference` locations at both project and user scope. Authorization is location-based;
+individual reference filenames are not predefined. This decision supersedes the preserved
+plan's proposed direct project-root `terminology.md` allowlist. The preserved plan must be
+revised before implementation resumes.
 
 ## Notes
 
